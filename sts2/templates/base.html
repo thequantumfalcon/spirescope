@@ -8,7 +8,7 @@
   <meta property="og:title" content="{% block og_title %}Spirescope{% endblock %}">
   <meta property="og:description" content="Slay the Spire 2 companion — cards, relics, enemies, live run tracking, and deck analysis.">
   <meta property="og:type" content="website">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔭</text></svg>">
+  <link rel="icon" type="image/jpeg" href="/static/logo.jpg">
   <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
   <title>{% block title %}Spirescope{% endblock %}</title>
   <link rel="stylesheet" href="/static/style.css?v={{ css_hash }}">
@@ -18,13 +18,7 @@
   <nav aria-label="Main navigation">
     {% set p = request.url.path %}
     <a class="logo" href="/">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M14 2L8 26h12L14 2z" fill="#1f6feb" opacity="0.7"/>
-        <path d="M14 2L10 26h8L14 2z" fill="#58a6ff"/>
-        <circle cx="14" cy="10" r="4" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
-        <circle cx="14" cy="10" r="2" fill="#58a6ff"/>
-        <path d="M10 10L4 7M18 10l6-3" stroke="#58a6ff" stroke-width="1" opacity="0.5"/>
-      </svg>
+      <img src="/static/logo.jpg" alt="Spirescope" width="32" height="32" class="logo-img">
       Spirescope
     </a>
     <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.nextElementSibling.classList.toggle('open')">&#9776;</button>
