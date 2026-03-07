@@ -457,10 +457,10 @@ async def live_stream(player: int = Query(0, ge=0, le=3)):
     if _sse_active >= _SSE_MAX_CONNECTIONS:
         return PlainTextResponse("Too many live connections. Close another tab.",
                                  status_code=429)
+    _sse_active += 1
 
     async def event_generator():
         global _sse_active
-        _sse_active += 1
         try:
             last_hash = ""
             idle_since = time.monotonic()

@@ -117,7 +117,7 @@ def _get_progress():
 def _get_runs():
     global _run_cache, _run_cache_by_id, _run_cache_time
     now = time.monotonic()
-    if not _run_cache or (now - _run_cache_time) > _RUN_CACHE_TTL:
+    if _run_cache_time == 0 or (now - _run_cache_time) > _RUN_CACHE_TTL:
         _run_cache = get_run_history()
         _run_cache_by_id = {r.id: r for r in _run_cache}
         _run_cache_time = now
@@ -132,7 +132,7 @@ def _get_run_by_id(run_id: str):
 def _get_analytics():
     global _analytics_cache, _analytics_cache_time
     now = time.monotonic()
-    if not _analytics_cache or (now - _analytics_cache_time) > _ANALYTICS_CACHE_TTL:
+    if _analytics_cache_time == 0 or (now - _analytics_cache_time) > _ANALYTICS_CACHE_TTL:
         runs = _get_runs()
         progress = _get_progress()
         card_stats = progress.card_stats if progress else {}
