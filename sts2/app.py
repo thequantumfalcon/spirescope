@@ -217,7 +217,25 @@ async def health():
 
 @app.get("/robots.txt", response_class=PlainTextResponse)
 async def robots_txt():
-    return "User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /deck/analyze\n"
+    return "User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /deck/analyze\nSitemap: /sitemap.xml\n"
+
+
+@app.get("/sitemap.xml", response_class=PlainTextResponse)
+async def sitemap_xml(request: Request):
+    """Dynamic sitemap for SEO — lists all detail pages."""
+    base = str(request.base_url).rstrip("/")
+    urls = ["/", "/cards", "/relics", "/potions", "/enemies", "/events", "/deck", "/live", "/runs"]
+    for card in kb.cards:
+        urls.append(f"/cards/{card.id}")
+    for relic in kb.relics:
+        urls.append(f"/relics/{relic.id}")
+    for enemy in kb.enemies:
+        urls.append(f"/enemies/{enemy.id}")
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for url in urls:
+        lines.append(f"  <url><loc>{base}{url}</loc></url>")
+    lines.append("</urlset>")
+    return PlainTextResponse("\n".join(lines), media_type="application/xml")
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -261,11 +279,13 @@ async def cards(request: Request, character: str = None,
     page = min(page, total_pages)
     start = (page - 1) * _CARDS_PER_PAGE
     paged_cards = card_list[start:start + _CARDS_PER_PAGE]
+    progress = _get_progress()
+    card_stats = progress.card_stats if progress else {}
     return templates.TemplateResponse(request, "cards.html", {
         "cards": paged_cards, "total_cards": total_cards, "characters": CHARACTERS,
         "selected_character": character, "selected_type": card_type,
         "selected_rarity": rarity, "selected_cost": cost, "selected_keyword": keyword,
-        "page": page, "total_pages": total_pages,
+        "page": page, "total_pages": total_pages, "card_stats": card_stats,
     })
 
 
@@ -295,10 +315,26 @@ async def relics(request: Request, character: str = None, rarity: str = None):
     })
 
 
+@app.get("/relics/{relic_id:path}", response_class=HTMLResponse)
+async def relic_detail(request: Request, relic_id: str):
+    relic = kb.get_relic_by_id(relic_id)
+    if not relic:
+        return templates.TemplateResponse(request, "error.html", {
+            "error_code": 404, "error_message": f"Relic '{relic_id}' not found.",
+        }, status_code=404)
+    # Find runs where this relic was used
+    relic_runs = [r for r in _get_runs() if relic_id in r.relics]
+    return templates.TemplateResponse(request, "relic_detail.html", {
+        "relic": relic, "relic_runs": relic_runs,
+    })
+
+
 @app.get("/potions", response_class=HTMLResponse)
-async def potions(request: Request):
+async def potions(request: Request, rarity: str = None):
+    potion_list = kb.get_potions(rarity=rarity)
     return templates.TemplateResponse(request, "potions.html", {
-        "potions": kb.potions,
+        "potions": potion_list, "selected_rarity": rarity,
+        "total_potions": len(kb.potions),
     })
 
 

@@ -613,3 +613,86 @@ async def test_events_no_filter(client):
         resp = await c.get("/events")
     assert resp.status_code == 200
     assert "Events" in resp.text
+
+
+async def test_relic_detail_page(client):
+    """Relic detail page should render for a known relic."""
+    from sts2.app import kb as _kb
+    if not _kb.relics:
+        return
+    relic = _kb.relics[0]
+    async with client as c:
+        resp = await c.get(f"/relics/{relic.id}")
+    assert resp.status_code == 200
+    assert relic.name in resp.text
+    assert 'href="/relics"' in resp.text
+
+
+async def test_relic_detail_404(client):
+    """Relic detail page should return 404 for unknown relic."""
+    async with client as c:
+        resp = await c.get("/relics/RELIC.NONEXISTENT")
+    assert resp.status_code == 404
+    assert "not found" in resp.text.lower()
+
+
+async def test_relics_page_links_to_detail(client):
+    """Relics page should link to individual relic detail pages."""
+    from sts2.app import kb as _kb
+    if not _kb.relics:
+        return
+    async with client as c:
+        resp = await c.get("/relics")
+    assert resp.status_code == 200
+    assert f'href="/relics/{_kb.relics[0].id}"' in resp.text
+
+
+async def test_potions_filter_by_rarity(client):
+    """Potions page should accept rarity filter."""
+    async with client as c:
+        resp = await c.get("/potions?rarity=Common")
+    assert resp.status_code == 200
+    assert "All Rarities" in resp.text
+
+
+async def test_potions_no_filter(client):
+    """Potions page without filter should show all potions."""
+    async with client as c:
+        resp = await c.get("/potions")
+    assert resp.status_code == 200
+    assert "Potions" in resp.text
+
+
+async def test_sitemap_xml(client):
+    """Sitemap should list all pages as XML."""
+    async with client as c:
+        resp = await c.get("/sitemap.xml")
+    assert resp.status_code == 200
+    assert "<urlset" in resp.text
+    assert "<url>" in resp.text
+    assert "/cards" in resp.text
+    assert "/relics" in resp.text
+    assert "/enemies" in resp.text
+
+
+async def test_robots_txt_references_sitemap(client):
+    """robots.txt should reference sitemap.xml."""
+    async with client as c:
+        resp = await c.get("/robots.txt")
+    assert resp.status_code == 200
+    assert "sitemap.xml" in resp.text.lower()
+
+
+async def test_cards_page_shows_pick_rate(client):
+    """Cards list should show pick rate when card_stats data exists."""
+    from unittest.mock import patch
+    from sts2.models import PlayerProgress
+
+    mock_progress = PlayerProgress(
+        card_stats={"CARD.BASH": {"picked": 8, "skipped": 2, "won": 5, "lost": 3}},
+    )
+    with patch("sts2.app._get_progress", return_value=mock_progress):
+        async with client as c:
+            resp = await c.get("/cards")
+    if resp.status_code == 200 and "CARD.BASH" in resp.text or "Bash" in resp.text:
+        assert "Picked" in resp.text or "80%" in resp.text

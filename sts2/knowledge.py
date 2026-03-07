@@ -250,6 +250,15 @@ class KnowledgeBase:
             result = [r for r in result if r.rarity.lower() == rarity.lower()]
         return result
 
+    def get_relic_by_id(self, relic_id: str) -> Relic | None:
+        return self._relics_by_id.get(relic_id)
+
+    def get_potions(self, rarity: str = None) -> list[Potion]:
+        result = self.potions
+        if rarity:
+            result = [p for p in result if p.rarity.lower() == rarity.lower()]
+        return result
+
     def get_enemy_by_id(self, enemy_id: str) -> Enemy | None:
         return self._enemies_by_id.get(enemy_id)
 

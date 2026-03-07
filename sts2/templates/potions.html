@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Potions{% endblock %}
 {% block content %}
-<h1>Potions ({{ potions|length }})</h1>
+<h1>Potions ({{ potions|length }}{% if total_potions and potions|length != total_potions %} of {{ total_potions }}{% endif %})</h1>
+
+<div class="filters">
+  <a href="/potions" {% if not selected_rarity %}class="active"{% endif %}>All Rarities</a>
+  {% for r in ['Common', 'Uncommon', 'Rare'] %}
+  <a href="/potions?rarity={{ r }}" {% if selected_rarity == r %}class="active"{% endif %}>{{ r }}</a>
+  {% endfor %}
+</div>
+
 <div class="grid grid-3">
 {% for potion in potions %}
 <div class="card">

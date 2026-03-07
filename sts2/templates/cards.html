@@ -44,6 +44,12 @@
   {% if card.keywords %}
   <p>{% for kw in card.keywords %}<span class="tag tag-keyword">{{ kw }}</span>{% endfor %}</p>
   {% endif %}
+  {% if card_stats and card_stats[card.id] %}
+  {% set cs = card_stats[card.id] %}
+  {% if cs.picked or cs.skipped %}
+  <p style="font-size:0.75rem;color:var(--text2);margin-top:0.25rem">Picked {{ cs.picked }}/{{ cs.picked + cs.skipped }} ({{ ((cs.picked / (cs.picked + cs.skipped)) * 100)|round|int }}%)</p>
+  {% endif %}
+  {% endif %}
 </a>
 {% endfor %}
 </div>
