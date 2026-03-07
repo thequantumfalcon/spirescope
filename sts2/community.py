@@ -53,11 +53,19 @@ _STS2_INDICATORS = re.compile(
 )
 
 
-def _fetch_reddit_json(url: str) -> dict:
-    """Fetch a Reddit JSON endpoint and return parsed data."""
-    req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+def _fetch_reddit_json(url: str, retries: int = 2) -> dict:
+    """Fetch a Reddit JSON endpoint with retry on network error."""
+    for attempt in range(retries + 1):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.URLError as e:
+            if attempt < retries:
+                log.warning("Reddit fetch failed (attempt %d/%d): %s", attempt + 1, retries + 1, e)
+                time.sleep(2 * (attempt + 1))
+            else:
+                raise
 
 
 def _fetch_subreddit_posts(subreddit: str, sort: str = "top",

@@ -309,7 +309,7 @@ async def test_cards_pagination_shows_range(client):
 
 async def test_sse_connection_limit_registered(client):
     """SSE max connections constant is set."""
-    from sts2.app import _SSE_MAX_CONNECTIONS
+    from sts2.routes import _SSE_MAX_CONNECTIONS
     assert _SSE_MAX_CONNECTIONS > 0
 
 
@@ -347,7 +347,7 @@ async def test_player_param_validation(client):
 
 async def test_deck_analyze_caps_card_count(client):
     """Submitting more than MAX_DECK_SIZE cards should not crash."""
-    from sts2.app import _MAX_DECK_SIZE
+    from sts2.routes import _MAX_DECK_SIZE
     card_ids = [f"CARD.FAKE_{i}" for i in range(_MAX_DECK_SIZE + 50)]
     async with client as c:
         resp = await c.post("/deck/analyze", data={

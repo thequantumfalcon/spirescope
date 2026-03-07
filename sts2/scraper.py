@@ -53,6 +53,8 @@ def _extract_json_objects(html: str, category: str) -> list[dict]:
                 results.append(obj)
         except (json.JSONDecodeError, ValueError):
             continue
+    if not results:
+        log.warning("JSON extraction found 0 objects for category=%s (HTML length=%d)", category, len(html))
     return results
 
 
@@ -368,15 +370,17 @@ def _discover_events_from_saves() -> list[dict]:
     return list(discovered.values())
 
 
-def _fetch_with_retry(path: str, retries: int = 1) -> str:
+def _fetch_with_retry(path: str, retries: int = 2) -> str:
     """Fetch a wiki page with retry on network error."""
     for attempt in range(retries + 1):
         try:
             return _fetch_page(path)
-        except urllib.error.URLError:
+        except urllib.error.URLError as e:
             if attempt < retries:
-                time.sleep(2)
+                log.warning("Fetch %s failed (attempt %d/%d): %s", path, attempt + 1, retries + 1, e)
+                time.sleep(2 * (attempt + 1))
             else:
+                log.error("Fetch %s failed after %d attempts: %s", path, retries + 1, e)
                 raise
 
 
@@ -417,12 +421,14 @@ def run_scraper(save_only: bool = False):
                 html = _fetch_with_retry(path)
                 new_data = scraper_fn(html)
                 if not new_data:
+                    log.warning("No %s found from %s — wiki format may have changed", label, path)
                     print(f"    Warning: no {label} found — wiki format may have changed")
                     print(f"    Keeping existing data. Try 'spirescope update --save-only' instead.")
                     continue
                 # Guard: don't overwrite large dataset with empty/tiny wiki result
                 existing = _existing_count(filename)
                 if existing > 20 and len(new_data) < existing * 0.1:
+                    log.warning("Wiki returned %d %s vs %d existing — possible format change, skipping", len(new_data), label, existing)
                     print(f"    Warning: wiki returned only {len(new_data)} {label} vs {existing} existing, skipping overwrite")
                     continue
                 merged = _merge_with_existing(filename, new_data)

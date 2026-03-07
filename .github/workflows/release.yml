@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install ".[dev]"
+
+      - name: Run tests
+        run: pytest -q --tb=short
+
+      - name: Build executable
+        run: python -m PyInstaller spirescope.spec --clean --noconfirm
+
+      - name: Copy distribution README
+        run: |
+          if (Test-Path README_DIST.txt) { Copy-Item README_DIST.txt dist/Spirescope/README.txt }
+        shell: pwsh
+
+      - name: Create zip archive
+        run: Compress-Archive -Path dist/Spirescope -DestinationPath dist/Spirescope-${{ github.ref_name }}-windows.zip
+        shell: pwsh
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/Spirescope-${{ github.ref_name }}-windows.zip
+          generate_release_notes: true

@@ -44,6 +44,8 @@ a = Analysis(
         'PIL', 'cv2', 'sklearn', 'torch', 'tensorflow', 'pytest',
         'setuptools', 'pip', 'wheel', 'pkg_resources',
         'tkinter', 'unittest', 'doctest', 'xmlrpc', 'ftplib',
+        'sphinx', 'babel', 'docutils', 'lxml', 'cryptography', 'zmq',
+        'myst_parser', 'rich', 'Cython', 'psutil', 'dateutil',
     ],
     win_no_prefer_redirects=False,
     cipher=block_cipher,
