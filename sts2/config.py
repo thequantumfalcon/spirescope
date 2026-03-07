@@ -1,4 +1,4 @@
-"""Configuration for STS2 Gaming Assistant."""
+"""Configuration for Spirescope."""
 import os
 import sys
 from pathlib import Path

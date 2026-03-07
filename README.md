@@ -1,18 +1,19 @@
-# STS2 Assistant
+# Spirescope
 
-A local web dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, run history, and strategy guides. All data stays on your machine.
+A local web dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, and strategy guides. All data stays on your machine.
 
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 ## Features
 
-- **Card Browser** — 217 cards across all 5 characters with filters by character, type, rarity, cost, and keyword
+- **Card Browser** — 297 cards across all 5 characters with filters by character, type, rarity, cost, and keyword
 - **Relic & Potion Browser** — Browse and filter all relics and potions
 - **Enemy Guides** — Boss patterns, elite strategies, and encounter tips
 - **Event Guide** — Optimal choices for every event
 - **Strategy Guides** — Per-character archetypes, key cards, key relics, and general tips
 - **Deck Analyzer** — Select cards to get archetype detection, synergy analysis, weakness identification, and suggestions
+- **Live Run Tracker** — Real-time dashboard of your active run with deck, relics, potions, HP, and floor history (auto-refreshes every 5s)
 - **Run History** — Floor-by-floor breakdown of your completed runs with HP tracking, card picks, and damage taken
 - **Global Search** — Fuzzy search across all cards, relics, potions, enemies, and events
 - **Dark Theme** — Gaming-friendly dark UI with character-specific colors
@@ -31,7 +32,7 @@ Opens your browser at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 ## Configuration
 
-The assistant auto-detects your save file location. Override with environment variables if needed:
+Spirescope auto-detects your save file location. Override with environment variables if needed:
 
 | Variable | Description | Default |
 |----------|-------------|---------|

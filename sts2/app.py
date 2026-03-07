@@ -1,4 +1,4 @@
-"""FastAPI web dashboard for STS2 Gaming Assistant."""
+"""FastAPI web dashboard for Spirescope."""
 import logging
 from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse, PlainTextResponse
@@ -11,7 +11,7 @@ from sts2.saves import get_progress, get_run_history, get_current_run
 
 log = logging.getLogger(__name__)
 
-app = FastAPI(title="STS2 Gaming Assistant")
+app = FastAPI(title="Spirescope")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 

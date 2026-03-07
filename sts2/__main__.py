@@ -1,4 +1,4 @@
-"""Entry point for STS2 Gaming Assistant: python -m sts2"""
+"""Entry point for Spirescope: python -m sts2"""
 import sys
 import webbrowser
 import threading
@@ -14,7 +14,7 @@ def main():
 
     url = f"http://{HOST}:{PORT}"
     threading.Timer(1.5, lambda: webbrowser.open(url)).start()
-    print(f"\n  STS2 Gaming Assistant starting at {url}\n")
+    print(f"\n  Spirescope starting at {url}\n")
     uvicorn.run("sts2.app:app", host=HOST, port=PORT, log_level="warning")
 
 if __name__ == "__main__":
