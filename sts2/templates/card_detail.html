@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ card.name if card else 'Card Not Found' }}{% endblock %}
+{% block og_title %}{{ card.name if card else 'Card Not Found' }} — Spirescope{% endblock %}
 {% block content %}
 {% if card %}
 <p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.5rem"><a href="/cards">Cards</a> &rsaquo; <a href="/cards?character={{ card.character }}">{{ card.character }}</a> &rsaquo; {{ card.name }}</p>
@@ -25,6 +26,15 @@
   {% if card_stats.skipped is defined %}<div class="stat-box"><div class="num">{{ card_stats.skipped }}</div><div class="label">Skipped</div></div>{% endif %}
   {% if card_stats.won is defined %}<div class="stat-box"><div class="num">{{ card_stats.won }}</div><div class="label">Wins</div></div>{% endif %}
   {% if card_stats.lost is defined %}<div class="stat-box"><div class="num">{{ card_stats.lost }}</div><div class="label">Losses</div></div>{% endif %}
+</div>
+{% endif %}
+
+{% if card_run_total %}
+<h2>Run History with {{ card.name }}</h2>
+<div class="stat-grid">
+  <div class="stat-box"><div class="num">{{ card_run_total }}</div><div class="label">Runs</div></div>
+  <div class="stat-box"><div class="num win">{{ card_run_wins }}</div><div class="label">Wins</div></div>
+  <div class="stat-box"><div class="num">{{ ((card_run_wins / card_run_total) * 100)|round|int }}%</div><div class="label">Win Rate</div></div>
 </div>
 {% endif %}
 

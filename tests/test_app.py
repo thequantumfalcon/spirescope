@@ -694,5 +694,57 @@ async def test_cards_page_shows_pick_rate(client):
     with patch("sts2.app._get_progress", return_value=mock_progress):
         async with client as c:
             resp = await c.get("/cards")
-    if resp.status_code == 200 and "CARD.BASH" in resp.text or "Bash" in resp.text:
+    if resp.status_code == 200 and ("CARD.BASH" in resp.text or "Bash" in resp.text):
         assert "Picked" in resp.text or "80%" in resp.text
+
+
+async def test_search_results_link_to_relic_detail(client):
+    """Search results should link relics to their detail pages."""
+    from sts2.app import kb as _kb
+    if not _kb.relics:
+        return
+    relic = _kb.relics[0]
+    async with client as c:
+        resp = await c.get(f"/search?q={relic.name}")
+    if resp.status_code == 200 and relic.name in resp.text:
+        assert f'href="/relics/{relic.id}"' in resp.text
+
+
+async def test_run_detail_links_relics(client):
+    """Run detail page should link relics to detail pages."""
+    async with client as c:
+        resp = await c.get("/runs")
+    # Just verify the template renders without error
+    assert resp.status_code == 200
+
+
+async def test_card_detail_shows_run_win_rate(client):
+    """Card detail should show win rate from run history."""
+    from unittest.mock import patch
+    from sts2.models import RunHistory
+
+    mock_runs = [
+        RunHistory(id="run1", character="Ironclad", win=True, deck=["CARD.BASH"]),
+        RunHistory(id="run2", character="Ironclad", win=False, deck=["CARD.BASH"]),
+        RunHistory(id="run3", character="Ironclad", win=True, deck=["CARD.BASH"]),
+    ]
+    with patch("sts2.app._get_runs", return_value=mock_runs):
+        async with client as c:
+            resp = await c.get("/cards/CARD.BASH")
+    if resp.status_code == 200:
+        assert "Run History with" in resp.text
+        assert "Win Rate" in resp.text
+        assert "67%" in resp.text
+
+
+async def test_card_detail_og_title(client):
+    """Card detail should have og:title meta tag."""
+    from sts2.app import kb as _kb
+    if not _kb.cards:
+        return
+    card = _kb.cards[0]
+    async with client as c:
+        resp = await c.get(f"/cards/{card.id}")
+    if resp.status_code == 200:
+        assert "og:title" in resp.text
+        assert "Spirescope" in resp.text

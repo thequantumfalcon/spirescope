@@ -24,7 +24,12 @@
 <h2>Relics ({{ results.relics|length }})</h2>
 <div class="grid grid-3">
 {% for relic in results.relics %}
-<div class="card"><h3>{{ relic.name }}</h3><p><span class="tag tag-{{ relic.rarity|lower }}">{{ relic.rarity }}</span> {{ relic.character }}</p><p>{{ relic.description }}</p></div>
+<a href="/relics/{{ relic.id }}" class="card" style="text-decoration:none">
+  <h3>{{ relic.name }}</h3>
+  <p><span class="tag tag-{{ relic.rarity|lower }}">{{ relic.rarity }}</span>
+     <span class="char-{{ relic.character|lower }}" style="font-size:0.75rem">{{ relic.character }}</span></p>
+  <p>{{ relic.description }}</p>
+</a>
 {% endfor %}
 </div>
 {% endif %}

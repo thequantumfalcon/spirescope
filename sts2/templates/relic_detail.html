@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ relic.name if relic else 'Relic Not Found' }}{% endblock %}
+{% block og_title %}{{ relic.name if relic else 'Relic Not Found' }} — Spirescope{% endblock %}
 {% block content %}
 {% if relic %}
 <p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.5rem"><a href="/relics">Relics</a> &rsaquo; {{ relic.name }}</p>

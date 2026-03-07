@@ -300,9 +300,14 @@ async def card_detail(request: Request, card_id: str):
     strategy = kb.get_strategy(card.character)
     progress = _get_progress()
     card_stats = progress.card_stats.get(card_id, {}) if progress else {}
+    # Compute win rate from run history for this card
+    runs_with_card = [r for r in _get_runs() if card_id in r.deck]
+    card_run_wins = sum(1 for r in runs_with_card if r.win)
+    card_run_total = len(runs_with_card)
     return templates.TemplateResponse(request, "card_detail.html", {
         "card": card, "synergies": synergies, "strategy": strategy,
         "card_stats": card_stats,
+        "card_run_wins": card_run_wins, "card_run_total": card_run_total,
     })
 
 

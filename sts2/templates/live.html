@@ -41,7 +41,7 @@
     <h2>Relics</h2>
     <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:1.5rem">
     {% for relic_id in run.relics %}
-    <span class="tag tag-power">{{ kb.id_to_name(relic_id) }}</span>
+    <a href="/relics/{{ relic_id }}" class="tag tag-power" style="text-decoration:none">{{ kb.id_to_name(relic_id) }}</a>
     {% endfor %}
     </div>
 
