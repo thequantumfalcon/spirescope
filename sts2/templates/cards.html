@@ -2,6 +2,9 @@
 {% block title %}Cards{% endblock %}
 {% block content %}
 <h1>Cards ({{ total_cards }})</h1>
+{% if total_pages > 1 %}
+<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">Showing {{ (page - 1) * 30 + 1 }}&ndash;{{ [page * 30, total_cards]|min }} of {{ total_cards }}</p>
+{% endif %}
 
 <div class="filters">
   <a href="/cards" {% if not selected_character %}class="active"{% endif %}>All</a>

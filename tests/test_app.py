@@ -2,7 +2,7 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 
-from sts2.app import app, _CSRF_TOKEN
+from sts2.app import app, _CSRF_TOKEN, _ADMIN_TOKEN
 
 
 @pytest.fixture
@@ -180,6 +180,11 @@ async def test_security_headers(client):
         resp = await c.get("/")
     assert resp.headers.get("X-Content-Type-Options") == "nosniff"
     assert resp.headers.get("X-Frame-Options") == "DENY"
+    assert resp.headers.get("Referrer-Policy") == "strict-origin-when-cross-origin"
+    csp = resp.headers.get("Content-Security-Policy", "")
+    assert "default-src 'self'" in csp
+    assert "frame-ancestors 'none'" in csp
+    assert "connect-src 'self'" in csp
 
 
 @pytest.mark.asyncio
@@ -274,14 +279,28 @@ async def test_cards_pagination_out_of_range(client):
 
 
 @pytest.mark.asyncio
-async def test_api_reload(client):
+async def test_api_reload_with_valid_token(client):
     async with client as c:
-        resp = await c.post("/api/reload")
+        resp = await c.post(f"/api/reload?token={_ADMIN_TOKEN}")
     assert resp.status_code == 200
     data = resp.json()
     assert data["status"] == "ok"
     assert "cards" in data
     assert data["cards"] > 0
+
+
+@pytest.mark.asyncio
+async def test_api_reload_rejects_bad_token(client):
+    async with client as c:
+        resp = await c.post("/api/reload?token=bad_token")
+    assert resp.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_api_reload_rejects_missing_token(client):
+    async with client as c:
+        resp = await c.post("/api/reload")
+    assert resp.status_code == 422  # missing required query param
 
 
 @pytest.mark.asyncio
@@ -309,3 +328,23 @@ async def test_deck_page_has_save_load_ui(client):
     assert "save-deck" in resp.text
     assert "load-deck" in resp.text
     assert "spirescope_decks" in resp.text
+    # Should have character-namespaced save logic
+    assert "detectCharacter" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_cards_pagination_shows_range(client):
+    """When paginated, shows 'Showing X-Y of Z' indicator."""
+    async with client as c:
+        resp = await c.get("/cards?page=1")
+    assert resp.status_code == 200
+    # If more than one page exists, should show range indicator
+    if "page=2" in resp.text or "Next" in resp.text:
+        assert "Showing" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_sse_connection_limit_registered(client):
+    """SSE max connections constant is set."""
+    from sts2.app import _SSE_MAX_CONNECTIONS
+    assert _SSE_MAX_CONNECTIONS > 0

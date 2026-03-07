@@ -56,12 +56,28 @@
   function setChecked(ids) {
     document.querySelectorAll('input[name="card_ids"]').forEach(function(cb) { cb.checked = ids.indexOf(cb.value) !== -1; });
   }
+  function detectCharacter(ids) {
+    // Infer character from card ID prefix (e.g. CARD.IRONCLAD.BASH -> IRONCLAD)
+    var chars = {};
+    ids.forEach(function(id) {
+      var parts = id.split('.');
+      if (parts.length >= 2 && parts[0] === 'CARD') {
+        var c = parts[1];
+        if (c !== 'COLORLESS' && c !== 'STATUS' && c !== 'CURSE') chars[c] = (chars[c] || 0) + 1;
+      }
+    });
+    var best = ''; var max = 0;
+    for (var k in chars) { if (chars[k] > max) { max = chars[k]; best = k; } }
+    return best || 'Unknown';
+  }
   document.getElementById('save-deck').addEventListener('click', function() {
     var ids = getChecked();
     if (!ids.length) { alert('Select cards first.'); return; }
-    var name = prompt('Deck name:');
+    var character = detectCharacter(ids);
+    var name = prompt('Deck name (saving as ' + character + '):');
     if (!name) return;
-    var decks = getDecks(); decks[name] = ids; saveDecks(decks);
+    var key = character + ' / ' + name;
+    var decks = getDecks(); decks[key] = ids; saveDecks(decks);
     refreshSelect();
   });
   document.getElementById('load-deck').addEventListener('change', function() {

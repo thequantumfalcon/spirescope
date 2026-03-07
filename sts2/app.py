@@ -27,6 +27,10 @@ kb = KnowledgeBase()
 # CSRF token (regenerated per server start, validated on POST)
 _CSRF_TOKEN = secrets.token_hex(32)
 
+# Admin token for protected endpoints (reload)
+_ADMIN_TOKEN = secrets.token_hex(32)
+log.info("Admin token for /api/reload: %s", _ADMIN_TOKEN)
+
 # Simple in-memory rate limiter: IP -> deque of request timestamps
 _rate_limit_store: dict[str, collections.deque] = {}
 _RATE_LIMIT_MAX = 60  # max requests per window
@@ -93,6 +97,15 @@ async def security_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data:; "
+        "connect-src 'self'; "
+        "frame-ancestors 'none'"
+    )
     # Cache static assets for 1 hour
     if request.url.path.startswith("/static/"):
         response.headers["Cache-Control"] = "public, max-age=3600"
@@ -271,30 +284,53 @@ async def api_live_run(player: int = 0):
     return run.model_dump()
 
 
+# SSE connection tracking
+_sse_connections: int = 0
+_SSE_MAX_CONNECTIONS = 10
+_SSE_IDLE_TIMEOUT = 300.0  # close after 5 min of no state changes
+
+
 @app.get("/api/live/stream")
 async def live_stream(player: int = 0):
     """SSE stream that pushes live run state every 3 seconds."""
+    global _sse_connections
+    if _sse_connections >= _SSE_MAX_CONNECTIONS:
+        return PlainTextResponse("Too many live connections. Close another tab.", status_code=429)
+
     async def event_generator():
-        last_hash = ""
-        while True:
-            run = get_current_run(player_index=player)
-            data = run.model_dump()
-            # Only send when data actually changes
-            data_json = json.dumps(data, sort_keys=True)
-            current_hash = str(hash(data_json))
-            if current_hash != last_hash:
-                last_hash = current_hash
-                yield f"data: {data_json}\n\n"
-            await asyncio.sleep(3)
+        global _sse_connections
+        _sse_connections += 1
+        try:
+            last_hash = ""
+            idle_since = time.monotonic()
+            while True:
+                run = get_current_run(player_index=player)
+                data = run.model_dump()
+                data_json = json.dumps(data, sort_keys=True)
+                current_hash = str(hash(data_json))
+                if current_hash != last_hash:
+                    last_hash = current_hash
+                    idle_since = time.monotonic()
+                    yield f"data: {data_json}\n\n"
+                elif time.monotonic() - idle_since > _SSE_IDLE_TIMEOUT:
+                    yield f"event: timeout\ndata: {{}}\n\n"
+                    return
+                await asyncio.sleep(3)
+        finally:
+            _sse_connections -= 1
+
     return StreamingResponse(event_generator(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
 @app.post("/api/reload")
-async def reload_data():
-    """Reload the knowledge base from disk (call after scraper updates)."""
+async def reload_data(request: Request, token: str = Query(...)):
+    """Reload the knowledge base from disk (requires admin token)."""
+    if not secrets.compare_digest(token, _ADMIN_TOKEN):
+        return PlainTextResponse("Unauthorized.", status_code=403)
     global kb
-    kb = KnowledgeBase()
+    new_kb = KnowledgeBase()  # build fully before swapping
+    kb = new_kb
     return {"status": "ok", "cards": len(kb.cards), "relics": len(kb.relics),
             "potions": len(kb.potions), "enemies": len(kb.enemies)}
 
