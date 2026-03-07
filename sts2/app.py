@@ -32,6 +32,8 @@ _CSS_HASH = hashlib.md5(_css_path.read_bytes()).hexdigest()[:8] if _css_path.exi
 
 @contextlib.asynccontextmanager
 async def _lifespan(application):
+    from sts2.updater import check_for_update
+    check_for_update(templates.env.globals.get("version", "0.0.0"))
     asyncio.create_task(_watch_saves())
     yield
 

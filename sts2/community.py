@@ -54,12 +54,24 @@ _STS2_INDICATORS = re.compile(
 
 
 def _fetch_reddit_json(url: str, retries: int = 2) -> dict:
-    """Fetch a Reddit JSON endpoint with retry on network error."""
+    """Fetch a Reddit JSON endpoint with retry on network/HTTP error."""
     for attempt in range(retries + 1):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
             with urllib.request.urlopen(req, timeout=30) as resp:
                 return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                wait = min(int(e.headers.get("Retry-After", 10)), 60)
+                log.warning("Reddit 429 rate limited, waiting %ds (attempt %d/%d)", wait, attempt + 1, retries + 1)
+                if attempt < retries:
+                    time.sleep(wait)
+                    continue
+            if attempt < retries:
+                log.warning("Reddit HTTP %d (attempt %d/%d): %s", e.code, attempt + 1, retries + 1, e)
+                time.sleep(2 * (attempt + 1))
+            else:
+                raise
         except urllib.error.URLError as e:
             if attempt < retries:
                 log.warning("Reddit fetch failed (attempt %d/%d): %s", attempt + 1, retries + 1, e)
@@ -94,6 +106,7 @@ def _fetch_subreddit_posts(subreddit: str, sort: str = "top",
         return posts
     except (urllib.error.URLError, json.JSONDecodeError, OSError) as e:
         log.warning("Failed to fetch r/%s: %s", subreddit, e)
+        print(f"    Skipped r/{subreddit}/{sort} (network error, will continue)")
         return []
 
 
@@ -111,6 +124,8 @@ def _fetch_post_comments(permalink: str, limit: int = 50) -> list[str]:
         return comments[:limit]
     except (urllib.error.URLError, json.JSONDecodeError, OSError) as e:
         log.debug("Failed to fetch comments for %s: %s", permalink, e)
+        return []
+    except Exception:
         return []
 
 

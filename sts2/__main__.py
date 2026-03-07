@@ -58,7 +58,12 @@ def main():
 
         url = f"http://{HOST}:{PORT}"
         threading.Timer(1.5, lambda: webbrowser.open(url)).start()
-        print(f"\n  Spirescope {_get_version()} starting at {url}\n")
+        print(f"\n  Spirescope {_get_version()} starting at {url}")
+        if HOST not in ("127.0.0.1", "localhost", "::1"):
+            print("  WARNING: Spirescope is designed for single-user local use.")
+            print("  Binding to a public address exposes it without authentication.\n")
+        else:
+            print()
         from sts2.app import app
         uvicorn.run(app, host=HOST, port=PORT, log_level="warning")
         return

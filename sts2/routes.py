@@ -62,6 +62,7 @@ async def sitemap_xml(request: Request):
 @router.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     from sts2.knowledge import get_last_updated
+    from sts2.updater import get_update_info
     a = _app()
     progress = a._get_progress()
     runs = a._get_runs()
@@ -70,6 +71,7 @@ async def index(request: Request):
         "kb": a.kb, "total_cards": len(a.kb.cards), "total_relics": len(a.kb.relics),
         "total_potions": len(a.kb.potions), "total_enemies": len(a.kb.enemies),
         "last_updated": get_last_updated(), "data_status": a.kb.get_data_status(),
+        "update_info": get_update_info(),
     })
 
 

@@ -238,6 +238,10 @@ tr:hover { background: var(--bg3); }
 .bar--wide { width: 40px; }
 
 /* ── Error page ── */
+/* Update banner */
+.update-banner { background: var(--accent2); color: var(--text); padding: 0.5rem 1rem; border-radius: var(--radius); margin-bottom: 1rem; text-align: center; font-size: 0.9rem; }
+.update-banner a { color: var(--text); font-weight: 600; text-decoration: underline; }
+
 .error-page { text-align: center; margin-top: 6rem; }
 .error-page h1 { font-size: 5rem; margin-bottom: 0.5rem; color: var(--red); font-weight: 800; }
 .error-page p { font-size: 1.15rem; color: var(--text2); margin-bottom: 2rem; }
