@@ -135,57 +135,14 @@
 </div>
 {% endif %}
 
-<script>
-(function() {
-  var player = {{ selected_player }};
-  var es = new EventSource('/api/live/stream?player=' + player);
-  var lastJson = '';
-  es.onmessage = function(e) {
-    if (e.data !== lastJson) {
-      lastJson = e.data;
-      var d = JSON.parse(e.data);
-      var hp = document.querySelector('.live-hp');
-      if (hp) hp.textContent = d.current_hp + '/' + d.max_hp;
-      var gold = document.querySelector('.live-gold');
-      if (gold) gold.textContent = d.gold;
-      var act = document.querySelector('.live-act');
-      if (act) act.textContent = 'Act ' + d.act;
-      var floor = document.querySelector('.live-floor');
-      if (floor) floor.textContent = 'Floor ' + d.floor;
-      var cards = document.querySelector('.live-cards');
-      if (cards) cards.textContent = d.deck.length;
-      var relics = document.querySelector('.live-relics');
-      if (relics) relics.textContent = d.relics.length;
-      var potions = document.querySelector('.live-potions');
-      if (potions) potions.textContent = d.potions.length;
-      var fill = document.querySelector('.hp-fill');
-      if (fill && d.max_hp > 0) fill.style.width = (d.current_hp / d.max_hp * 100) + '%';
-      var wasActive = {{ 'true' if run.active else 'false' }};
-      if (d.active !== wasActive) location.reload();
-    }
-  };
-  es.onerror = function() {
-    setTimeout(function() { location.reload(); }, 10000);
-  };
-})();
-</script>
+<div id="live-config" data-player="{{ selected_player }}" data-was-active="true"></div>
+<script src="/static/live.js"></script>
 
 {% else %}
 <h1>No Active Run</h1>
 <p class="text-muted mb-md">Start a run in Slay the Spire 2 and this page will automatically show your live progress.</p>
 <p class="text-muted">Checking for an active run...</p>
-<script>
-(function() {
-  var player = {{ selected_player }};
-  var es = new EventSource('/api/live/stream?player=' + player);
-  es.onmessage = function(e) {
-    var d = JSON.parse(e.data);
-    if (d.active) location.reload();
-  };
-  es.onerror = function() {
-    setTimeout(function() { location.reload(); }, 10000);
-  };
-})();
-</script>
+<div id="live-config" data-player="{{ selected_player }}" data-was-active="false"></div>
+<script src="/static/live.js"></script>
 {% endif %}
 {% endblock %}

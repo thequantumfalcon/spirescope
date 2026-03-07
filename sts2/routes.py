@@ -400,7 +400,7 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
 async def deck_analyzer(request: Request):
     a = _app()
     return a.templates.TemplateResponse(request, "deck.html", {
-        "cards": a.kb.cards, "analysis": None, "csrf_token": a._CSRF_TOKEN,
+        "cards": a.kb.cards, "analysis": None, "csrf_token": a.generate_csrf_token(),
     })
 
 
@@ -412,7 +412,7 @@ async def analyze_deck(request: Request):
     a = _app()
     form = await request.form()
     token = form.get("csrf_token", "")
-    if not secrets.compare_digest(token, a._CSRF_TOKEN):
+    if not a.validate_csrf_token(token):
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 403,
             "error_message": "Invalid form submission. Please go back and try again.",
@@ -421,12 +421,12 @@ async def analyze_deck(request: Request):
     if not card_ids:
         return a.templates.TemplateResponse(request, "deck.html", {
             "cards": a.kb.cards, "analysis": {"error": "No cards selected"},
-            "selected_ids": [], "csrf_token": a._CSRF_TOKEN,
+            "selected_ids": [], "csrf_token": a.generate_csrf_token(),
         })
     analysis = a.kb.analyze_deck(card_ids)
     return a.templates.TemplateResponse(request, "deck.html", {
         "cards": a.kb.cards, "analysis": analysis, "selected_ids": card_ids,
-        "kb": a.kb, "csrf_token": a._CSRF_TOKEN,
+        "kb": a.kb, "csrf_token": a.generate_csrf_token(),
     })
 
 

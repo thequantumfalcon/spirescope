@@ -2,7 +2,7 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 
-from sts2.app import app, _CSRF_TOKEN, _ADMIN_TOKEN, _rate_limit_store
+from sts2.app import app, generate_csrf_token, _ADMIN_TOKEN, _rate_limit_store
 
 
 @pytest.fixture
@@ -107,7 +107,7 @@ async def test_deck_analyzer_page(client):
 
 async def test_deck_analyze_empty(client):
     async with client as c:
-        resp = await c.post("/deck/analyze", data={"csrf_token": _CSRF_TOKEN})
+        resp = await c.post("/deck/analyze", data={"csrf_token": generate_csrf_token()})
     assert resp.status_code == 200
     assert "No cards selected" in resp.text
 
@@ -275,7 +275,7 @@ async def test_live_page_has_sse_script(client):
     async with client as c:
         resp = await c.get("/live")
     assert resp.status_code == 200
-    assert "EventSource" in resp.text
+    assert "live.js" in resp.text
 
 
 async def test_live_stream_endpoint_exists(client):
@@ -292,9 +292,7 @@ async def test_deck_page_has_save_load_ui(client):
     assert resp.status_code == 200
     assert "save-deck" in resp.text
     assert "load-deck" in resp.text
-    assert "spirescope_decks" in resp.text
-    # Should have character-namespaced save logic
-    assert "detectCharacter" in resp.text
+    assert "deck.js" in resp.text
 
 
 async def test_cards_pagination_shows_range(client):
@@ -351,7 +349,7 @@ async def test_deck_analyze_caps_card_count(client):
     card_ids = [f"CARD.FAKE_{i}" for i in range(_MAX_DECK_SIZE + 50)]
     async with client as c:
         resp = await c.post("/deck/analyze", data={
-            "csrf_token": _CSRF_TOKEN,
+            "csrf_token": generate_csrf_token(),
             "card_ids": card_ids,
         })
     assert resp.status_code == 200

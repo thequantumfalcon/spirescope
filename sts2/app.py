@@ -7,7 +7,6 @@ import logging
 import os
 import re
 import secrets
-import sys
 import time
 from fastapi import FastAPI, Request
 from fastapi.exceptions import StarletteHTTPException
@@ -51,11 +50,38 @@ except Exception:
 
 kb = KnowledgeBase()
 
-_CSRF_TOKEN = secrets.token_hex(32)
+_CSRF_SECRET = secrets.token_bytes(32)
+_CSRF_MAX_AGE = 14400  # 4 hours
+
+
+def generate_csrf_token() -> str:
+    """Generate an HMAC-signed CSRF token with embedded timestamp."""
+    import hmac
+    import struct
+    ts = int(time.time())
+    msg = struct.pack(">I", ts)
+    sig = hmac.new(_CSRF_SECRET, msg, "sha256").hexdigest()
+    return f"{ts:08x}.{sig}"
+
+
+def validate_csrf_token(token: str) -> bool:
+    """Validate an HMAC-signed CSRF token and check it's not expired."""
+    import hmac
+    import struct
+    try:
+        ts_hex, sig = token.split(".", 1)
+        ts = int(ts_hex, 16)
+    except (ValueError, AttributeError):
+        return False
+    if abs(time.time() - ts) > _CSRF_MAX_AGE:
+        return False
+    msg = struct.pack(">I", ts)
+    expected = hmac.new(_CSRF_SECRET, msg, "sha256").hexdigest()
+    return hmac.compare_digest(sig, expected)
 
 _ADMIN_TOKEN = os.environ.get("SPIRESCOPE_ADMIN_TOKEN", secrets.token_hex(32))
 if "SPIRESCOPE_ADMIN_TOKEN" not in os.environ:
-    print(f"[Spirescope] Admin token: {_ADMIN_TOKEN}", file=sys.stderr)
+    log.debug("Admin token: %s", _ADMIN_TOKEN)
 
 # ---------------------------------------------------------------------------
 # Caches
@@ -165,7 +191,7 @@ async def security_headers(request: Request, call_next):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline'; "
+        "script-src 'self'; "
         "style-src 'self' 'unsafe-inline'; "
         "img-src 'self' data:; "
         "connect-src 'self'; "

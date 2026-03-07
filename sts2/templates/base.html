@@ -21,7 +21,7 @@
       <img src="/static/logo.jpg" alt="Spirescope" width="32" height="32" class="logo-img">
       Spirescope
     </a>
-    <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.nextElementSibling.classList.toggle('open')">&#9776;</button>
+    <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
     <div class="nav-links">
       <a href="/cards" {% if p.startswith('/cards') %}aria-current="page"{% endif %}>Cards</a>
       <a href="/relics" {% if p.startswith('/relics') %}aria-current="page"{% endif %}>Relics</a>
@@ -47,5 +47,6 @@
     <span>Spirescope v{{ version }}</span> &middot;
     <a href="https://github.com/thequantumfalcon/Spirescope">GitHub</a>
   </footer>
+  <script src="/static/nav.js"></script>
 </body>
 </html>
