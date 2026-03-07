@@ -22,10 +22,18 @@ def _clean_description(desc: str) -> str:
     return _MARKUP_RE.sub("", desc).strip()
 
 
+def _get_user_agent() -> str:
+    try:
+        from importlib.metadata import version
+        return f"Spirescope/{version('spirescope')}"
+    except Exception:
+        return "Spirescope/1.0"
+
+
 def _fetch_page(path: str) -> str:
     """Fetch a wiki page and return its HTML content."""
     url = f"{WIKI_BASE}{path}"
-    req = urllib.request.Request(url, headers={"User-Agent": "Spirescope/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": _get_user_agent()})
     with urllib.request.urlopen(req, timeout=30) as resp:
         return resp.read().decode("utf-8")
 
@@ -409,7 +417,8 @@ def run_scraper(save_only: bool = False):
                 html = _fetch_with_retry(path)
                 new_data = scraper_fn(html)
                 if not new_data:
-                    print(f"    Warning: no {label} found, keeping existing data")
+                    print(f"    Warning: no {label} found — wiki format may have changed")
+                    print(f"    Keeping existing data. Try 'spirescope update --save-only' instead.")
                     continue
                 # Guard: don't overwrite large dataset with empty/tiny wiki result
                 existing = _existing_count(filename)
