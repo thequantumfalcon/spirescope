@@ -206,8 +206,7 @@ async def _watch_saves():
                 kb = new_kb
             _save_watcher_last_mtime = mtime
         except Exception:
-            pass  # never crash the watcher
-
+            log.debug("Save watcher error", exc_info=True)
 
 
 @app.get("/health")
@@ -360,10 +359,21 @@ async def strategy(request: Request, character: str):
 
 
 @app.get("/runs", response_class=HTMLResponse)
-async def runs(request: Request):
+async def runs(request: Request, character: str = None, result: str = None):
     run_list = _get_runs()
+    filtered = run_list
+    if character:
+        filtered = [r for r in filtered if r.character == character]
+    if result == "win":
+        filtered = [r for r in filtered if r.win]
+    elif result == "loss":
+        filtered = [r for r in filtered if not r.win]
+    total = len(run_list)
+    wins = sum(1 for r in run_list if r.win)
     return templates.TemplateResponse(request, "runs.html", {
-        "runs": run_list, "kb": kb,
+        "runs": filtered, "kb": kb, "characters": CHARACTERS,
+        "selected_character": character, "selected_result": result,
+        "total_runs": total, "total_wins": wins,
     })
 
 
@@ -477,6 +487,29 @@ async def analyze_deck(request: Request):
         "cards": kb.cards, "analysis": analysis, "selected_ids": card_ids, "kb": kb,
         "csrf_token": _CSRF_TOKEN,
     })
+
+
+@app.get("/api/cards/{card_id}")
+async def api_card(card_id: str):
+    card = kb.get_card_by_id(card_id)
+    if not card:
+        return PlainTextResponse("Card not found.", status_code=404)
+    progress = _get_progress()
+    card_stats = progress.card_stats.get(card_id, {}) if progress else {}
+    return {**card.model_dump(), "stats": card_stats}
+
+
+@app.get("/api/runs")
+async def api_runs(character: str = None, result: str = None):
+    run_list = _get_runs()
+    filtered = run_list
+    if character:
+        filtered = [r for r in filtered if r.character == character]
+    if result == "win":
+        filtered = [r for r in filtered if r.win]
+    elif result == "loss":
+        filtered = [r for r in filtered if not r.win]
+    return [r.model_dump() for r in filtered]
 
 
 @app.get("/api/search")

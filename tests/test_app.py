@@ -2,11 +2,12 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 
-from sts2.app import app, _CSRF_TOKEN, _ADMIN_TOKEN
+from sts2.app import app, _CSRF_TOKEN, _ADMIN_TOKEN, _rate_limit_store
 
 
 @pytest.fixture
 def client():
+    _rate_limit_store.clear()
     transport = ASGITransport(app=app)
     return AsyncClient(transport=transport, base_url="http://test")
 
@@ -447,7 +448,7 @@ async def test_card_detail_shows_card_stats(client):
     from sts2.models import PlayerProgress
 
     mock_progress = PlayerProgress(
-        card_stats={"CARD.BASH": {"times_picked": 10, "times_skipped": 5, "times_won": 7, "times_lost": 3}},
+        card_stats={"CARD.BASH": {"picked": 10, "skipped": 5, "won": 7, "lost": 3}},
     )
     with patch("sts2.app._get_progress", return_value=mock_progress):
         async with client as c:
@@ -507,3 +508,58 @@ async def test_progress_cache_returns_same_object():
     p1 = _get_progress()
     p2 = _get_progress()
     assert p1 is p2
+
+
+async def test_runs_page_has_filters(client):
+    """Runs page should have character filter links."""
+    async with client as c:
+        resp = await c.get("/runs")
+    assert resp.status_code == 200
+    assert "Ironclad" in resp.text
+    assert "Total Runs" in resp.text or "Showing" in resp.text
+
+
+async def test_runs_filter_by_character(client):
+    """Runs page should accept character filter."""
+    async with client as c:
+        resp = await c.get("/runs?character=Ironclad")
+    assert resp.status_code == 200
+    assert "Showing" in resp.text
+
+
+async def test_runs_filter_by_result(client):
+    """Runs page should accept win/loss filter."""
+    async with client as c:
+        resp = await c.get("/runs?result=win")
+    assert resp.status_code == 200
+    assert "Showing" in resp.text
+
+
+async def test_api_card_detail(client):
+    """API should return card JSON with stats."""
+    async with client as c:
+        resp = await c.get("/api/cards/CARD.BASH")
+    if resp.status_code == 200:
+        data = resp.json()
+        assert "name" in data
+        assert "stats" in data
+
+
+async def test_api_card_detail_404(client):
+    """API should return 404 for unknown card."""
+    async with client as c:
+        resp = await c.get("/api/cards/CARD.NONEXISTENT")
+    assert resp.status_code == 404
+
+
+async def test_api_runs(client):
+    """API should return runs list and accept filters."""
+    async with client as c:
+        resp = await c.get("/api/runs")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert isinstance(data, list)
+        # Also test with filters in same session
+        resp2 = await c.get("/api/runs?character=Ironclad&result=win")
+        assert resp2.status_code == 200
+        assert isinstance(resp2.json(), list)

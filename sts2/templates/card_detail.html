@@ -13,13 +13,13 @@
 
 <div class="detail-desc">{{ card.description }}</div>
 
-{% if card_stats and (card_stats.times_picked or card_stats.times_skipped or card_stats.times_won or card_stats.times_lost) %}
+{% if card_stats and (card_stats.picked or card_stats.skipped or card_stats.won or card_stats.lost) %}
 <h2>Your Stats</h2>
 <div class="stat-grid">
-  {% if card_stats.times_picked is defined %}<div class="stat-box"><div class="num">{{ card_stats.times_picked }}</div><div class="label">Picked</div></div>{% endif %}
-  {% if card_stats.times_skipped is defined %}<div class="stat-box"><div class="num">{{ card_stats.times_skipped }}</div><div class="label">Skipped</div></div>{% endif %}
-  {% if card_stats.times_won is defined %}<div class="stat-box"><div class="num">{{ card_stats.times_won }}</div><div class="label">Wins</div></div>{% endif %}
-  {% if card_stats.times_lost is defined %}<div class="stat-box"><div class="num">{{ card_stats.times_lost }}</div><div class="label">Losses</div></div>{% endif %}
+  {% if card_stats.picked is defined %}<div class="stat-box"><div class="num">{{ card_stats.picked }}</div><div class="label">Picked</div></div>{% endif %}
+  {% if card_stats.skipped is defined %}<div class="stat-box"><div class="num">{{ card_stats.skipped }}</div><div class="label">Skipped</div></div>{% endif %}
+  {% if card_stats.won is defined %}<div class="stat-box"><div class="num">{{ card_stats.won }}</div><div class="label">Wins</div></div>{% endif %}
+  {% if card_stats.lost is defined %}<div class="stat-box"><div class="num">{{ card_stats.lost }}</div><div class="label">Losses</div></div>{% endif %}
 </div>
 {% endif %}
 
