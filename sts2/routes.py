@@ -80,7 +80,7 @@ async def index(request: Request):
         "characters": CHARACTERS, "progress": progress, "recent_runs": runs[:5],
         "kb": a.kb, "total_cards": len(a.kb.cards), "total_relics": len(a.kb.relics),
         "total_potions": len(a.kb.potions), "total_enemies": len(a.kb.enemies),
-        "last_updated": get_last_updated(), "data_status": a.kb.get_data_status(),
+        "last_updated": await asyncio.to_thread(get_last_updated), "data_status": a.kb.get_data_status(),
         "update_info": get_update_info(), "undiscovered_cards": undiscovered,
     })
 
@@ -286,7 +286,7 @@ async def strategy(request: Request, character: str):
 
 
 @router.get("/runs", response_class=HTMLResponse)
-async def runs(request: Request, character: str = None, result: str = None):
+async def runs(request: Request, character: str = Query(None, max_length=50), result: str = Query(None, max_length=10)):
     a = _app()
     run_list = a._get_runs()
     filtered = run_list
@@ -510,7 +510,7 @@ async def api_card(card_id: str):
 
 
 @router.get("/api/runs")
-async def api_runs(character: str = None, result: str = None):
+async def api_runs(character: str = Query(None, max_length=50), result: str = Query(None, max_length=10)):
     a = _app()
     run_list = a._get_runs()
     filtered = run_list
