@@ -1,0 +1,62 @@
+[
+  {
+    "character": "Ironclad",
+    "description": "The warrior class. Excels at Strength scaling, Exhaust synergies, and self-damage for powerful effects. Most beginner-friendly character with reliable healing from Burning Blood.",
+    "starting_relic": "Burning Blood",
+    "starting_relic_effect": "Heal 6 HP at end of combat",
+    "archetypes": [
+      {"name": "Strength Scaling", "description": "Stack Strength with Demon Form, Inflame, and multi-hit attacks for massive damage.", "key_cards": ["Demon Form", "Inflame", "Bludgeon", "Dismantle", "Fight Me!", "Stomp"], "key_relics": ["Strike Dummy"], "strategy": "Get Inflame early for immediate value. Demon Form is your late-game win condition. Multi-hit attacks multiply your Strength bonus. Pair with Vulnerable for even more damage."},
+      {"name": "Exhaust Engine", "description": "Use Corruption + Dark Embrace + Feel No Pain for an unstoppable engine that draws cards, gains Block, and thins your deck.", "key_cards": ["Corruption", "Dark Embrace", "Feel No Pain", "Burning Pact", "Fiend Fire", "Evil Eye"], "key_relics": ["Burning Sticks"], "strategy": "The holy trinity: Corruption makes Skills free but Exhausts them, Dark Embrace draws on Exhaust, Feel No Pain blocks on Exhaust. Once assembled, you cycle your entire deck every turn."},
+      {"name": "Barricade Block", "description": "Use Barricade to retain Block between turns, then convert Block to damage with Body Slam.", "key_cards": ["Barricade", "Body Slam", "Blood Wall", "Shrug It Off", "Iron Wave", "Crimson Mantle"], "key_relics": ["Anchor"], "strategy": "Get Barricade online ASAP. Stack Block cards and Body Slam converts your defense into offense. Very tanky build that can handle any boss."}
+    ],
+    "general_tips": ["Burning Blood heals 6 HP per fight - value small fights early", "Exhaust synergies are the strongest Ironclad archetype", "Strength is multiplicative with multi-hit cards", "Don't be afraid to lose HP for powerful effects (Bloodletting, Blood Wall)", "Bash is your only starter with Vulnerable - upgrade it early"]
+  },
+  {
+    "character": "Silent",
+    "description": "The rogue class. Excels at Poison, Shiv spam, and card draw. Ring of the Snake provides excellent turn 1 hands. New Sly keyword adds auto-play when cards are discarded.",
+    "starting_relic": "Ring of the Snake",
+    "starting_relic_effect": "Draw 2 additional cards at start of combat",
+    "archetypes": [
+      {"name": "Poison", "description": "Stack Poison with Deadly Poison, Bouncing Flask, and Accelerant. Poison scales exponentially with Catalyst.", "key_cards": ["Deadly Poison", "Bouncing Flask", "Accelerant", "Bubble Bubble", "Envenom", "Corrosive Wave"], "key_relics": [], "strategy": "Accelerant is the key rare - makes Poison trigger twice per turn. Bubble Bubble for massive Poison on already-poisoned enemies. Works great against bosses with high HP."},
+      {"name": "Shiv Spam", "description": "Generate Shivs with Blade Dance, Cloak and Dagger, and Infinite Blades. Scale with Accuracy and Fan of Knives.", "key_cards": ["Blade Dance", "Cloak and Dagger", "Infinite Blades", "Accuracy", "Fan of Knives", "Finisher"], "key_relics": ["Letter Opener"], "strategy": "Accuracy is core - each Shiv deals 4 extra damage. Fan of Knives makes Shivs hit ALL enemies. Finisher as a closer after playing many attacks. After Image for Block per Shiv."},
+      {"name": "Discard/Sly", "description": "Abuse the Sly keyword - cards with Sly auto-play for free when discarded. Draw and discard for massive value.", "key_cards": ["Acrobatics", "Calculated Gamble", "Prepared", "Dagger Throw", "Expertise"], "key_relics": [], "strategy": "New STS2 mechanic. Cards with Sly play themselves when discarded. Combine with heavy draw and discard effects for virtually limitless free card plays."}
+    ],
+    "general_tips": ["Ring of the Snake gives you 7 cards on turn 1 - powerful opening", "Backflip is one of the best commons (Block + Draw)", "Poison is your best scaling for boss fights", "Weak is very powerful defensively - Neutralize is a great starter", "Shiv builds need Accuracy to work well"]
+  },
+  {
+    "character": "Defect",
+    "description": "The robot class. Manages Orbs (Lightning, Frost, Dark, Plasma) in Orb Slots. Focus increases Orb effectiveness. Methodical playstyle with massive scaling potential.",
+    "starting_relic": "Cracked Core",
+    "starting_relic_effect": "Channel 1 Lightning at start of combat",
+    "archetypes": [
+      {"name": "Orb/Focus Scaling", "description": "Stack Focus with Defragment and channel Frost/Lightning Orbs for automatic damage and Block every turn.", "key_cards": ["Defragment", "Coolheaded", "Glacier", "Cold Snap", "Ball Lightning", "Biased Cognition"], "key_relics": ["Infused Core"], "strategy": "Focus multiplies ALL Orb output. Defragment is your most important card. Frost Orbs + Focus = massive passive Block. Lightning Orbs + Focus = massive passive damage."},
+      {"name": "Claw Deck", "description": "Zero-cost Attack spam with Claw scaling. All for One retrieves all 0-cost cards from discard.", "key_cards": ["Claw", "FTL", "Beam Cell", "Go for the Eyes", "Boost Away", "Compile Driver"], "key_relics": [], "strategy": "Every Claw played increases ALL Claws' damage permanently. FTL and other 0-costs for draw. Very fast, aggressive build. Weak against high-HP enemies without enough Claws."},
+      {"name": "Dark Orb", "description": "Channel Dark Orbs that scale damage over time, then Evoke for massive burst.", "key_cards": ["Darkness", "Dualcast", "Compile Driver"], "key_relics": [], "strategy": "Dark Orbs gain damage passively each turn. Evoke them with Dualcast for huge burst damage. Patient playstyle."}
+    ],
+    "general_tips": ["Focus is king - every point multiplies ALL your Orbs", "Frost Orbs are your primary defense", "Channel order matters - rightmost Orb gets Evoked first", "Capacitor for more Orb Slots means more passive effects", "Echo Form is insane - doubles your first card each turn"]
+  },
+  {
+    "character": "Necrobinder",
+    "description": "Brand new character in STS2. Summons a bone companion 'Osty' who fights alongside you. Uses Doom to execute enemies and Souls for various effects. Graveyard (Exhaust pile) is a resource.",
+    "starting_relic": "Bound Phylactery",
+    "starting_relic_effect": "At start of turn, Summon 1 (adds HP to Osty)",
+    "archetypes": [
+      {"name": "Summon/Osty", "description": "Build up Osty's HP with Summon cards, then use Osty to attack and tank hits for you.", "key_cards": ["Bodyguard", "Afterlife", "Fetch", "Flatten", "Poke", "Calcify", "Pull Aggro", "Bone Shards"], "key_relics": ["Bound Phylactery"], "strategy": "Summon adds HP to Osty. Osty intercepts attacks (second health pool!). Calcify makes Osty hit harder. Bone Shards sacrifices Osty for AoE damage + Block. Reanimate brings Osty back."},
+      {"name": "Doom Execution", "description": "Apply Doom stacks to enemies. When Doom >= enemy HP, they die instantly.", "key_cards": ["Blight Strike", "Countdown", "Deathbringer", "End of Days", "Reaper Form", "Fear"], "key_relics": [], "strategy": "Doom is an execution mechanic - enemy dies when HP <= Doom stacks. Countdown auto-applies 6 Doom per turn. End of Days is the ultimate finisher. Pair with Vulnerable/Weak to survive while Doom builds."},
+      {"name": "Soul Engine", "description": "Generate Souls (0-cost Ethereal cards) and trigger powerful effects when playing them.", "key_cards": ["Capture Spirit", "Sow", "Grave Warden", "Devour Life", "Haunt", "Dirge"], "key_relics": [], "strategy": "Souls trigger Haunt (damage), Devour Life (Summon), and other effects. Grave Warden adds Souls while blocking. Generate Souls then play them for cascading effects."}
+    ],
+    "general_tips": ["Osty is your second health pool - keep him alive", "Bodyguard is your most important starter card", "Doom execution bypasses high-HP enemies", "Souls are free to play and trigger many synergies", "Graveblast and Dredge retrieve cards from discard pile", "You beat Ceremonial Beast with Necrobinder - the character works!"]
+  },
+  {
+    "character": "Regent",
+    "description": "Brand new character in STS2. Uses Stars (persistent, uncapped resource) and Forge (powers up Sovereign Blade). Commands minions through Transform cards. Cosmic power fantasy.",
+    "starting_relic": "Divine Right",
+    "starting_relic_effect": "Gain 1 Star at start of combat",
+    "archetypes": [
+      {"name": "Star Burst", "description": "Accumulate Stars (don't reset between turns, no cap) then spend them on powerful Star-cost cards for massive burst turns.", "key_cards": ["Gather Light", "Glow", "Genesis", "Alignment", "Astral Pulse", "Comet", "Devastate", "Black Hole"], "key_relics": ["Divine Right"], "strategy": "Stars persist between turns and have no cap. Gather Light and Glow generate Stars while blocking/drawing. Genesis auto-generates Stars each turn. Black Hole deals damage whenever you gain/spend Stars. Save for big burst turns."},
+      {"name": "Sovereign Blade Forge", "description": "Use Forge cards to power up Sovereign Blade, then deliver one massive hit.", "key_cards": ["Sovereign Blade", "Beat into Shape", "Conqueror", "Furnace", "Bulwark", "Terraforming", "Big Bang"], "key_relics": [], "strategy": "Sovereign Blade has Retain - stays in hand until played. Forge cards increase its damage and return it to hand. Furnace auto-Forges each turn. Build up then deliver a finishing blow."},
+      {"name": "Minion Commander", "description": "Transform cards into Minion cards that fight for you.", "key_cards": ["BEGONE!", "CHARGE!!", "GUARDS!!!"], "key_relics": ["Vitruvian Minion"], "strategy": "Transform your weaker cards into powerful Minion versions. Minion Strike, Minion Dive Bomb, Minion Sacrifice all do powerful things."}
+    ],
+    "general_tips": ["Stars DON'T reset between turns - accumulate patiently", "Sovereign Blade has Retain - it stays in hand", "Don't rush Star spending early - build up first", "Act 2 can be rough - you died to Bygone Effigy, so build defense", "Falling Star is a great starter - Weak + Vulnerable in one card", "Colorless cards trigger Arsenal's Strength gain"]
+  }
+]

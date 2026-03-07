@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}STS2 Gaming Assistant{% endblock %}
+{% block content %}
+<h1>Slay the Spire 2 - Gaming Assistant</h1>
+
+<div class="stat-grid">
+  <div class="stat-box"><div class="num">{{ total_cards }}</div><div class="label">Cards</div></div>
+  <div class="stat-box"><div class="num">{{ total_relics }}</div><div class="label">Relics</div></div>
+  <div class="stat-box"><div class="num">{{ total_potions }}</div><div class="label">Potions</div></div>
+  <div class="stat-box"><div class="num">{{ total_enemies }}</div><div class="label">Enemies</div></div>
+  {% if progress %}
+  <div class="stat-box"><div class="num">{{ (progress.total_playtime / 60)|int }}m</div><div class="label">Playtime</div></div>
+  <div class="stat-box"><div class="num">{{ progress.discovered_cards|length }}</div><div class="label">Cards Seen</div></div>
+  {% endif %}
+</div>
+
+<h2>Characters</h2>
+<div class="grid grid-5">
+  {% for char in characters %}
+  <a href="/strategy/{{ char }}" class="card" style="text-decoration:none">
+    <h3 class="char-{{ char|lower }}">{{ char }}</h3>
+    {% if progress and progress.character_stats.get(char) %}
+    <p>{{ progress.character_stats[char].wins }}W / {{ progress.character_stats[char].losses }}L
+    &bull; {{ (progress.character_stats[char].playtime / 60)|int }}m played</p>
+    {% else %}
+    <p>Not yet played</p>
+    {% endif %}
+  </a>
+  {% endfor %}
+</div>
+
+{% if recent_runs %}
+<h2>Recent Runs</h2>
+{% for run in recent_runs %}
+<a href="/runs/{{ run.id }}" class="run-item" style="text-decoration:none">
+  <span class="result {{ 'win' if run.win else 'loss' }}">{{ 'WIN' if run.win else 'LOSS' }}</span>
+  <span class="char-{{ run.character|lower }}">{{ run.character }}</span>
+  <span style="color:var(--text2)">{{ run.floors|length }} floors &bull; {{ (run.run_time / 60)|int }}m</span>
+  {% if run.killed_by %}<span style="color:var(--red)">Killed by {{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
+</a>
+{% endfor %}
+{% endif %}
+
+<h2>Quick Links</h2>
+<div class="grid grid-3">
+  <a href="/cards?character=Ironclad" class="card" style="text-decoration:none"><h3 class="char-ironclad">Ironclad Cards</h3><p>Strength, Exhaust, Block</p></a>
+  <a href="/cards?character=Silent" class="card" style="text-decoration:none"><h3 class="char-silent">Silent Cards</h3><p>Poison, Shivs, Discard</p></a>
+  <a href="/cards?character=Defect" class="card" style="text-decoration:none"><h3 class="char-defect">Defect Cards</h3><p>Orbs, Focus, Lightning</p></a>
+  <a href="/cards?character=Necrobinder" class="card" style="text-decoration:none"><h3 class="char-necrobinder">Necrobinder Cards</h3><p>Summon, Doom, Souls</p></a>
+  <a href="/cards?character=Regent" class="card" style="text-decoration:none"><h3 class="char-regent">Regent Cards</h3><p>Stars, Forge, Minions</p></a>
+  <a href="/enemies?type=boss" class="card" style="text-decoration:none"><h3>Boss Guides</h3><p>Patterns & strategies</p></a>
+</div>
+{% endblock %}

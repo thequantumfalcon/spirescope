@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Enemies{% endblock %}
+{% block content %}
+<h1>Enemies</h1>
+
+<div class="filters">
+  <a href="/enemies" {% if not selected_act %}class="active"{% endif %}>All Acts</a>
+  {% for act in ['Act 1', 'Act 2', 'Act 3'] %}
+  <a href="/enemies?act={{ act }}{% if selected_type %}&type={{ selected_type }}{% endif %}"
+     {% if selected_act == act %}class="active"{% endif %}>{{ act }}</a>
+  {% endfor %}
+</div>
+<div class="filters">
+  <a href="/enemies?{% if selected_act %}act={{ selected_act }}{% endif %}" {% if not selected_type %}class="active"{% endif %}>All Types</a>
+  {% for t in ['normal', 'elite', 'boss'] %}
+  <a href="/enemies?type={{ t }}{% if selected_act %}&act={{ selected_act }}{% endif %}"
+     {% if selected_type == t %}class="active"{% endif %}>{{ t|capitalize }}</a>
+  {% endfor %}
+</div>
+
+<div class="grid grid-2">
+{% for enemy in enemies %}
+<a href="/enemies/{{ enemy.id }}" class="card" style="text-decoration:none">
+  <h3>{{ enemy.name }}
+    <span class="tag {% if enemy.type == 'boss' %}tag-attack{% elif enemy.type == 'elite' %}tag-power{% else %}tag-skill{% endif %}">{{ enemy.type }}</span>
+  </h3>
+  <p>{{ enemy.act|join(', ') }} &bull; HP: {{ enemy.hp_range }}</p>
+  {% if enemy.tips %}<p style="color:var(--green);font-size:0.85rem">{{ enemy.tips[0] }}</p>{% endif %}
+</a>
+{% endfor %}
+</div>
+{% endblock %}

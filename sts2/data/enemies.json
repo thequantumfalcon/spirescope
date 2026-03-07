@@ -1,0 +1,398 @@
+[
+  {
+    "id": "MONSTER.AXE_RUBY_RAIDER",
+    "name": "Axe Ruby Raider",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "35-50",
+    "patterns": ["Melee attack pattern", "Appears with other Ruby Raiders"],
+    "tips": ["Part of a group fight — prioritize the most dangerous variant", "AoE damage is effective against Raider packs"]
+  },
+  {
+    "id": "MONSTER.BRUTE_RUBY_RAIDER",
+    "name": "Brute Ruby Raider",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "45-60",
+    "patterns": ["Heavy single-target attacks", "Highest damage of the Ruby Raider variants"],
+    "tips": ["Focus this one first — hits hardest", "Block heavily on its attack turns"]
+  },
+  {
+    "id": "MONSTER.BYGONE_EFFIGY",
+    "name": "Bygone Effigy",
+    "act": ["Act 1"],
+    "type": "elite",
+    "hp_range": "90-110",
+    "patterns": ["Powerful attacks", "May gain buffs over time"],
+    "tips": ["Bring scaling damage to keep up with its buffs", "Block-heavy approach helps survive big hits"]
+  },
+  {
+    "id": "MONSTER.BYRDONIS",
+    "name": "Byrdonis",
+    "act": ["Act 1"],
+    "type": "elite",
+    "hp_range": "100-120",
+    "patterns": ["Powerful multi-hit attacks", "Gains Strength over time", "Can one-shot if unprepared"],
+    "tips": ["One of the hardest Act 1 elites", "Need strong Block cards before attempting", "Weak helps reduce damage significantly", "Don't fight below 60% HP unless deck is strong", "Consider skipping if deck isn't ready"]
+  },
+  {
+    "id": "MONSTER.CEREMONIAL_BEAST",
+    "name": "Ceremonial Beast",
+    "act": ["Act 1"],
+    "type": "boss",
+    "hp_range": "250+",
+    "patterns": ["Boss with rituals", "Gains power each turn", "Escalating damage pattern"],
+    "tips": ["Doom stacking is effective against it", "Need to outpace its scaling", "Front-load damage early before it ramps up"]
+  },
+  {
+    "id": "MONSTER.CHOMPER",
+    "name": "Chomper",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "50-70",
+    "patterns": ["Heavy damage attacks", "Can chomp for large single-hit damage"],
+    "tips": ["Block heavily on attack turns", "Use debuffs like Weak to reduce damage"]
+  },
+  {
+    "id": "MONSTER.CROSSBOW_RUBY_RAIDER",
+    "name": "Crossbow Ruby Raider",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "30-45",
+    "patterns": ["Ranged multi-hit attacks", "Appears with other Ruby Raiders"],
+    "tips": ["Lower HP but hits multiple times", "Consider killing this first to reduce incoming hits"]
+  },
+  {
+    "id": "MONSTER.CUBEX_CONSTRUCT",
+    "name": "Cubex Construct",
+    "act": ["Act 2"],
+    "type": "elite",
+    "hp_range": "130-160",
+    "patterns": ["Alternates between attack and defense phases", "Can gain significant Block"],
+    "tips": ["Time your burst damage for when it's not blocking", "Vulnerability helps punch through its defenses"]
+  },
+  {
+    "id": "MONSTER.DOORMAKER",
+    "name": "Doormaker",
+    "act": ["Act 3"],
+    "type": "boss",
+    "hp_range": "350+",
+    "patterns": ["Complex multi-phase fight", "Summons portals or minions", "Ramps damage over time"],
+    "tips": ["Endgame boss — needs fully built deck", "All scaling synergies should be online", "Burst damage windows are critical"]
+  },
+  {
+    "id": "MONSTER.EXOSKELETON",
+    "name": "Exoskeleton",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "40-60",
+    "patterns": ["High armor with Block", "Hard hitting attacks"],
+    "tips": ["Vulnerable helps cut through armor", "Can be very dangerous in groups"]
+  },
+  {
+    "id": "MONSTER.FLYCONID",
+    "name": "Flyconid",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "20-30",
+    "patterns": ["Flying enemy with multi-hit attacks", "Can buff itself"],
+    "tips": ["Watch for multi-attacks", "AoE effective when they appear in groups"]
+  },
+  {
+    "id": "MONSTER.FOGMOG",
+    "name": "Fogmog",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "35-45",
+    "patterns": ["Strong single attacks", "May apply debuffs"],
+    "tips": ["Block-heavy turns needed", "Straightforward fight if you have enough defense"]
+  },
+  {
+    "id": "MONSTER.FUZZY_WURM_CRAWLER",
+    "name": "Fuzzy Wurm Crawler",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "25-35",
+    "patterns": ["Basic attack pattern", "Slow but steady damage"],
+    "tips": ["Standard fight — good for learning mechanics", "Use as an opportunity to set up powers"]
+  },
+  {
+    "id": "MONSTER.INKLET",
+    "name": "Inklet",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "15-20",
+    "patterns": ["Appears in groups of 3", "Each attacks independently"],
+    "tips": ["AoE is very effective", "Focus weakest first to reduce incoming damage"]
+  },
+  {
+    "id": "MONSTER.KNOWLEDGE_DEMON",
+    "name": "Knowledge Demon",
+    "act": ["Act 2"],
+    "type": "boss",
+    "hp_range": "300+",
+    "patterns": ["Applies Doom stacks to you", "Heals itself", "Ramps Strength over time"],
+    "tips": ["Requires offensive play — can't turtle", "Must outdamage its healing", "Dangerous Doom application can kill you if ignored"]
+  },
+  {
+    "id": "MONSTER.LEAF_SLIME_M",
+    "name": "Leaf Slime (Medium)",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "20-28",
+    "patterns": ["Splits into smaller slimes on death"],
+    "tips": ["AoE damage is effective", "Plan for the split when timing kills"]
+  },
+  {
+    "id": "MONSTER.LEAF_SLIME_S",
+    "name": "Leaf Slime (Small)",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "8-12",
+    "patterns": ["Attacks and can split further"],
+    "tips": ["Kill quickly before they multiply"]
+  },
+  {
+    "id": "MONSTER.LOUSE_PROGENITOR",
+    "name": "Louse Progenitor",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "40-55",
+    "patterns": ["Spawns smaller lice", "Buffs allies"],
+    "tips": ["Kill the progenitor first to stop spawning", "AoE helps manage the swarm"]
+  },
+  {
+    "id": "MONSTER.NIBBIT",
+    "name": "Nibbit",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "10-14",
+    "patterns": ["Simple attack pattern", "Low damage, appears in pairs"],
+    "tips": ["Easy early fight", "Good for learning mechanics"]
+  },
+  {
+    "id": "MONSTER.PHROG_PARASITE",
+    "name": "Phrog Parasite",
+    "act": ["Act 2"],
+    "type": "elite",
+    "hp_range": "120-150",
+    "patterns": ["Debuffs player with parasitic effects", "Scales over time"],
+    "tips": ["Front-load damage if possible", "Doom stacking and Poison are effective", "Don't let the fight drag on"]
+  },
+  {
+    "id": "MONSTER.SHRINKER_BEETLE",
+    "name": "Shrinker Beetle",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "20-30",
+    "patterns": ["Attacks and applies debuffs", "Can reduce your Strength"],
+    "tips": ["Kill quickly to avoid Strength loss", "Block-heavy approach works"]
+  },
+  {
+    "id": "MONSTER.SOUL_FYSH",
+    "name": "Soul Fysh",
+    "act": ["Act 3"],
+    "type": "boss",
+    "hp_range": "300+",
+    "patterns": ["Uses Beckon (1-cost status card, -6 HP if discarded)", "Gains Intangible on turn 5 of pattern rotation", "Turn 4 of each pattern is optimal damage window"],
+    "tips": ["Don't discard Beckon cards — take the HP loss instead", "Burst damage on turn 4 of each cycle", "Intangible on turn 5 means you can't damage it"]
+  },
+  {
+    "id": "MONSTER.THIEVING_HOPPER",
+    "name": "Thieving Hopper",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "30-40",
+    "patterns": ["Steals gold on attack", "Flees after stealing enough"],
+    "tips": ["Kill quickly to minimize gold loss", "Prioritize over other enemies in multi-fights"]
+  },
+  {
+    "id": "MONSTER.TRACKER_RUBY_RAIDER",
+    "name": "Tracker Ruby Raider",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "35-50",
+    "patterns": ["Ranged attacks with tracking", "Appears with other Ruby Raiders"],
+    "tips": ["Part of group fights — use AoE", "Medium threat level among Raiders"]
+  },
+  {
+    "id": "MONSTER.TWIG_SLIME_M",
+    "name": "Twig Slime (Medium)",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "20-28",
+    "patterns": ["Stronger attacks than small variant", "May split on death"],
+    "tips": ["Watch for damage spikes", "AoE helps manage splits"]
+  },
+  {
+    "id": "MONSTER.TWIG_SLIME_S",
+    "name": "Twig Slime (Small)",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "8-12",
+    "patterns": ["Basic attacks", "Low HP"],
+    "tips": ["Simple enemy, focus on preserving HP"]
+  },
+  {
+    "id": "MONSTER.VANTOM",
+    "name": "Vantom",
+    "act": ["Act 1"],
+    "type": "boss",
+    "hp_range": "250+",
+    "patterns": ["Multi-phase boss fight", "Ramps damage over time", "Has multiple attack patterns that cycle"],
+    "tips": ["Need strong scaling (Strength/Poison/Doom)", "Block cards essential for surviving big hits", "Plan your route to arrive with a good deck", "Rest before boss if possible"]
+  },
+  {
+    "id": "MONSTER.VINE_SHAMBLER",
+    "name": "Vine Shambler",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "30-40",
+    "patterns": ["Attacks and gains Block", "Can be tanky if not dealt with quickly"],
+    "tips": ["Apply Vulnerable to cut through Block", "Don't let it stack too much defense"]
+  },
+  {
+    "id": "MONSTER.WRIGGLER",
+    "name": "Wriggler",
+    "act": ["Act 1", "Act 2"],
+    "type": "normal",
+    "hp_range": "15-25",
+    "patterns": ["Appears in groups", "Low individual HP"],
+    "tips": ["AoE effective", "Easy fight unless you lack multi-target damage"]
+  },
+  {
+    "id": "ENCOUNTER.RUBY_RAIDERS_NORMAL",
+    "name": "Ruby Raiders",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Group of 2-3 Ruby Raider variants", "Mix of melee and ranged attacks"],
+    "tips": ["AoE damage is key", "Focus the Brute first for damage reduction", "Can be overwhelming without multi-target cards"]
+  },
+  {
+    "id": "ENCOUNTER.CHOMPERS_NORMAL",
+    "name": "Chompers",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Multiple Chompers attacking together"],
+    "tips": ["Heavy Block needed", "AoE helps thin the group"]
+  },
+  {
+    "id": "ENCOUNTER.EXOSKELETONS_NORMAL",
+    "name": "Exoskeletons",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Multiple armored enemies", "High combined Block and damage"],
+    "tips": ["Vulnerable is crucial", "Can be a tough fight without armor-piercing"]
+  },
+  {
+    "id": "ENCOUNTER.INKLETS_NORMAL",
+    "name": "Inklets",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Group of Inklets"],
+    "tips": ["AoE clears them efficiently"]
+  },
+  {
+    "id": "ENCOUNTER.NIBBITS_NORMAL",
+    "name": "Nibbits",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Pair of Nibbits"],
+    "tips": ["Easy early encounter"]
+  },
+  {
+    "id": "ENCOUNTER.OVERGROWTH_CRAWLERS",
+    "name": "Overgrowth Crawlers",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Group of crawling enemies"],
+    "tips": ["Standard Act 1 fight", "AoE helps manage the group"]
+  },
+  {
+    "id": "ENCOUNTER.DENSE_VEGETATION_EVENT_ENCOUNTER",
+    "name": "Dense Vegetation",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Event-triggered combat encounter"],
+    "tips": ["Triggered from an event choice", "Be prepared before choosing to fight"]
+  },
+  {
+    "id": "ENCOUNTER.SLIMES_WEAK",
+    "name": "Slimes (Weak)",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Easy slime fight"],
+    "tips": ["One of the easiest encounters", "Good for preserving HP"]
+  },
+  {
+    "id": "ENCOUNTER.NIBBITS_WEAK",
+    "name": "Nibbits (Weak)",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Weaker Nibbit variant"],
+    "tips": ["Very easy fight"]
+  },
+  {
+    "id": "ENCOUNTER.FUZZY_WURM_CRAWLER_WEAK",
+    "name": "Fuzzy Wurm Crawler (Weak)",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Weaker crawler variant"],
+    "tips": ["Easy fight — take minimal damage"]
+  },
+  {
+    "id": "ENCOUNTER.SHRINKER_BEETLE_WEAK",
+    "name": "Shrinker Beetle (Weak)",
+    "act": ["Act 1"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Weaker beetle variant"],
+    "tips": ["Still watch for Strength reduction debuff"]
+  },
+  {
+    "id": "ENCOUNTER.EXOSKELETONS_WEAK",
+    "name": "Exoskeletons (Weak)",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Weaker Exoskeleton variant"],
+    "tips": ["Easier than normal variant but still has armor"]
+  },
+  {
+    "id": "ENCOUNTER.THIEVING_HOPPER_WEAK",
+    "name": "Thieving Hopper (Weak)",
+    "act": ["Act 2"],
+    "type": "normal",
+    "hp_range": "varies",
+    "patterns": ["Weaker hopper variant"],
+    "tips": ["Still steals gold — kill fast"]
+  },
+  {
+    "id": "ENCOUNTER.CEREMONIAL_BEAST_BOSS",
+    "name": "Ceremonial Beast (Boss Encounter)",
+    "act": ["Act 1"],
+    "type": "boss",
+    "hp_range": "250+",
+    "patterns": ["Full boss encounter with Ceremonial Beast"],
+    "tips": ["See Ceremonial Beast for detailed strategy"]
+  },
+  {
+    "id": "ENCOUNTER.VANTOM_BOSS",
+    "name": "Vantom (Boss Encounter)",
+    "act": ["Act 1"],
+    "type": "boss",
+    "hp_range": "250+",
+    "patterns": ["Full boss encounter with Vantom"],
+    "tips": ["See Vantom for detailed strategy"]
+  }
+]

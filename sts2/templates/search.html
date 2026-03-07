@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Search: {{ query }}{% endblock %}
+{% block content %}
+<h1>Search: "{{ query }}" <span style="color:var(--text2);font-size:1rem">({{ total }} results)</span></h1>
+
+{% if results.cards %}
+<h2>Cards ({{ results.cards|length }})</h2>
+<div class="grid grid-3">
+{% for card in results.cards %}
+<a href="/cards/{{ card.id }}" class="card" style="text-decoration:none">
+  <h3><span class="char-{{ card.character|lower }}">{{ card.name }}</span> <span class="tag tag-cost">{{ card.cost }}</span></h3>
+  <p>
+    <span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span>
+    <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span>
+    <span class="char-{{ card.character|lower }}" style="font-size:0.75rem">{{ card.character }}</span>
+  </p>
+  <p>{{ card.description }}</p>
+</a>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if results.relics %}
+<h2>Relics ({{ results.relics|length }})</h2>
+<div class="grid grid-3">
+{% for relic in results.relics %}
+<div class="card"><h3>{{ relic.name }}</h3><p><span class="tag tag-{{ relic.rarity|lower }}">{{ relic.rarity }}</span> {{ relic.character }}</p><p>{{ relic.description }}</p></div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if results.potions %}
+<h2>Potions ({{ results.potions|length }})</h2>
+<div class="grid grid-3">
+{% for potion in results.potions %}
+<div class="card"><h3>{{ potion.name }}</h3><p><span class="tag tag-{{ potion.rarity|lower }}">{{ potion.rarity }}</span></p><p>{{ potion.description }}</p></div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if results.enemies %}
+<h2>Enemies ({{ results.enemies|length }})</h2>
+<div class="grid grid-3">
+{% for enemy in results.enemies %}
+<a href="/enemies/{{ enemy.id }}" class="card" style="text-decoration:none">
+  <h3>{{ enemy.name }} <span class="tag tag-{{ enemy.type }}">{{ enemy.type }}</span></h3>
+  <p>{{ enemy.act|join(', ') }} &bull; HP: {{ enemy.hp_range }}</p>
+</a>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if results.events %}
+<h2>Events ({{ results.events|length }})</h2>
+<div class="grid grid-3">
+{% for event in results.events %}
+<div class="card"><h3>{{ event.name }}</h3><p>{{ event.act|join(', ') }}</p><p>{{ event.description }}</p></div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if total == 0 %}
+<p style="color:var(--text2);margin-top:2rem">No results found for "{{ query }}". Try a different search term.</p>
+{% endif %}
+{% endblock %}

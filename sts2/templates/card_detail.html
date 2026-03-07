@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ card.name if card else 'Card Not Found' }}{% endblock %}
+{% block content %}
+{% if card %}
+<div class="detail-header">
+  <h1><span class="char-{{ card.character|lower }}">{{ card.name }}</span>
+    <span class="tag tag-cost" style="font-size:1rem">{{ card.cost }}</span>
+    <span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span>
+    <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span>
+  </h1>
+  <p style="color:var(--text2)">{{ card.character }} &bull; {{ card.id }}</p>
+</div>
+
+<div class="detail-desc">{{ card.description }}</div>
+
+{% if card.keywords %}
+<h2>Keywords</h2>
+<p>{% for kw in card.keywords %}<span class="tag tag-keyword">{{ kw }}</span>{% endfor %}</p>
+{% endif %}
+
+{% if synergies %}
+<h2>Synergies ({{ synergies|length }} cards)</h2>
+<div class="grid grid-3">
+{% for s in synergies %}
+<a href="/cards/{{ s.id }}" class="card" style="text-decoration:none">
+  <h3><span class="char-{{ s.character|lower }}">{{ s.name }}</span> <span class="tag tag-cost">{{ s.cost }}</span></h3>
+  <p><span class="tag tag-{{ s.type|lower }}">{{ s.type }}</span></p>
+  <p>{{ s.description }}</p>
+</a>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if strategy %}
+<h2>{{ card.character }} Strategy</h2>
+{% for arch in strategy.archetypes %}
+{% if card.name in arch.key_cards %}
+<div class="archetype">
+  <h3>{{ arch.name }}</h3>
+  <p>{{ arch.description }}</p>
+  <div class="key-cards">{% for kc in arch.key_cards %}<span class="tag tag-keyword">{{ kc }}</span>{% endfor %}</div>
+  <p style="margin-top:0.5rem">{{ arch.strategy }}</p>
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% else %}
+<h1>Card Not Found</h1>
+<p>The requested card was not found in the database.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Run History{% endblock %}
+{% block content %}
+<h1>Run History ({{ runs|length }} runs)</h1>
+{% if runs %}
+{% for run in runs %}
+<a href="/runs/{{ run.id }}" class="run-item" style="text-decoration:none">
+  <span class="result {{ 'win' if run.win else 'loss' }}" style="min-width:40px">{{ 'WIN' if run.win else 'LOSS' }}</span>
+  <span class="char-{{ run.character|lower }}" style="min-width:100px">{{ run.character }}</span>
+  <span style="color:var(--text2)">A{{ run.ascension }}</span>
+  <span style="color:var(--text2)">{{ run.floors|length }} floors</span>
+  <span style="color:var(--text2)">{{ (run.run_time / 60)|int }}m</span>
+  <span style="color:var(--text2)">{{ run.deck|length }} cards</span>
+  {% if run.killed_by %}<span style="color:var(--red)">{{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
+  <span style="color:var(--text2);margin-left:auto;font-size:0.8rem">{{ run.build_id }}</span>
+</a>
+{% endfor %}
+{% else %}
+<p style="color:var(--text2)">No run history found. Complete some runs to see them here!</p>
+{% endif %}
+{% endblock %}

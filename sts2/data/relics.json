@@ -1,0 +1,2046 @@
+[
+  {
+    "id": "RELIC.CRACKED_CORE",
+    "name": "Cracked Core",
+    "character": "Defect",
+    "rarity": "Starter",
+    "description": "At the start of each combat, Channel 1 Lightning."
+  },
+  {
+    "id": "RELIC.DATA_DISK",
+    "name": "Data Disk",
+    "character": "Defect",
+    "rarity": "Common",
+    "description": "Start each combat with 1 Focus."
+  },
+  {
+    "id": "RELIC.EMOTION_CHIP",
+    "name": "Emotion Chip",
+    "character": "Defect",
+    "rarity": "Rare",
+    "description": "If you lost HP during the previous turn, trigger the passive ability of all Orbs at the start of your turn."
+  },
+  {
+    "id": "RELIC.GOLD_PLATED_CABLES",
+    "name": "Gold-Plated Cables",
+    "character": "Defect",
+    "rarity": "Uncommon",
+    "description": "Your rightmost Orb triggers its passive an additional time."
+  },
+  {
+    "id": "RELIC.INFUSED_CORE",
+    "name": "Infused Core",
+    "character": "Defect",
+    "rarity": "Starter",
+    "description": "At the start of each combat, Channel 3 Lightning."
+  },
+  {
+    "id": "RELIC.METRONOME",
+    "name": "Metronome",
+    "character": "Defect",
+    "rarity": "Rare",
+    "description": "The first time you Channel 7 Orbs each combat, deal damage to ALL enemies."
+  },
+  {
+    "id": "RELIC.POWER_CELL",
+    "name": "Power Cell",
+    "character": "Defect",
+    "rarity": "Rare",
+    "description": "At the start of each combat, add 2 zero-cost cards from your Draw Pile into your Hand."
+  },
+  {
+    "id": "RELIC.RUNIC_CAPACITOR",
+    "name": "Runic Capacitor",
+    "character": "Defect",
+    "rarity": "Shop",
+    "description": "Start each combat with 3 additional Orb Slots."
+  },
+  {
+    "id": "RELIC.SYMBIOTIC_VIRUS",
+    "name": "Symbiotic Virus",
+    "character": "Defect",
+    "rarity": "Uncommon",
+    "description": "Start each combat with 1 Channel Dark."
+  },
+  {
+    "id": "RELIC.BLACK_BLOOD",
+    "name": "Black Blood",
+    "character": "Ironclad",
+    "rarity": "Starter",
+    "description": "At the end of combat, heal 12 HP."
+  },
+  {
+    "id": "RELIC.BRIMSTONE",
+    "name": "Brimstone",
+    "character": "Ironclad",
+    "rarity": "Shop",
+    "description": "At the start of your turn, gain 2 Strength and ALL enemies gain 1 Strength."
+  },
+  {
+    "id": "RELIC.BURNING_BLOOD",
+    "name": "Burning Blood",
+    "character": "Ironclad",
+    "rarity": "Starter",
+    "description": "At the end of combat, heal 6 HP."
+  },
+  {
+    "id": "RELIC.CHARONS_ASHES",
+    "name": "Charon's Ashes",
+    "character": "Ironclad",
+    "rarity": "Rare",
+    "description": "Whenever you Exhaust a card, deal damage to ALL enemies."
+  },
+  {
+    "id": "RELIC.DEMON_TONGUE",
+    "name": "Demon Tongue",
+    "character": "Ironclad",
+    "rarity": "Rare",
+    "description": "The first time you lose HP on your turn, heal HP equal to the amount lost."
+  },
+  {
+    "id": "RELIC.PAPER_PHROG",
+    "name": "Paper Phrog",
+    "character": "Ironclad",
+    "rarity": "Uncommon",
+    "description": "Enemies with Vulnerable take 75% more damage rather than 50%."
+  },
+  {
+    "id": "RELIC.RED_SKULL",
+    "name": "Red Skull",
+    "character": "Ironclad",
+    "rarity": "Common",
+    "description": "While your HP is at or below 50%, you have 3 additional Strength."
+  },
+  {
+    "id": "RELIC.RUINED_HELMET",
+    "name": "Ruined Helmet",
+    "character": "Ironclad",
+    "rarity": "Rare",
+    "description": "The first time you gain Strength each combat, double the amount gained."
+  },
+  {
+    "id": "RELIC.SELF_FORMING_CLAY",
+    "name": "Self-Forming Clay",
+    "character": "Ironclad",
+    "rarity": "Uncommon",
+    "description": "Whenever you lose HP in combat, gain 3 Block next turn."
+  },
+  {
+    "id": "RELIC.BIG_HAT",
+    "name": "Big Hat",
+    "character": "Necrobinder",
+    "rarity": "Rare",
+    "description": "At the start of each combat, add 2 random Ethereal cards into your Hand."
+  },
+  {
+    "id": "RELIC.BONE_FLUTE",
+    "name": "Bone Flute",
+    "character": "Necrobinder",
+    "rarity": "Common",
+    "description": "Whenever Osty attacks, gain 2 Block."
+  },
+  {
+    "id": "RELIC.BOOK_REPAIR_KNIFE",
+    "name": "Book Repair Knife",
+    "character": "Necrobinder",
+    "rarity": "Uncommon",
+    "description": "Whenever a non-Minion enemy dies to Doom, heal 3 HP."
+  },
+  {
+    "id": "RELIC.BOOKMARK",
+    "name": "Bookmark",
+    "character": "Necrobinder",
+    "rarity": "Rare",
+    "description": "At the end of each turn, lower the cost of a random Retained card by 1 until played."
+  },
+  {
+    "id": "RELIC.BOUND_PHYLACTERY",
+    "name": "Bound Phylactery",
+    "character": "Necrobinder",
+    "rarity": "Starter",
+    "description": "At the start of your turn, Summon 1."
+  },
+  {
+    "id": "RELIC.FUNERARY_MASK",
+    "name": "Funerary Mask",
+    "character": "Necrobinder",
+    "rarity": "Uncommon",
+    "description": "At the start of each combat, add 3 Souls into your Draw Pile."
+  },
+  {
+    "id": "RELIC.IVORY_TILE",
+    "name": "Ivory Tile",
+    "character": "Necrobinder",
+    "rarity": "Rare",
+    "description": "Whenever you play a card that costs 3 or more energy, gain 1 energy."
+  },
+  {
+    "id": "RELIC.PHYLACTERY_UNBOUND",
+    "name": "Phylactery Unbound",
+    "character": "Necrobinder",
+    "rarity": "Starter",
+    "description": "At the start of each combat, Summon 5. At the start of your turn, Summon 2."
+  },
+  {
+    "id": "RELIC.UNDYING_SIGIL",
+    "name": "Undying Sigil",
+    "character": "Necrobinder",
+    "rarity": "Shop",
+    "description": "Whenever you enter a Rest Site, start the next combat with additional energy."
+  },
+  {
+    "id": "RELIC.DIVINE_DESTINY",
+    "name": "Divine Destiny",
+    "character": "Regent",
+    "rarity": "Starter",
+    "description": "At the start of each combat, gain 1 Star."
+  },
+  {
+    "id": "RELIC.DIVINE_RIGHT",
+    "name": "Divine Right",
+    "character": "Regent",
+    "rarity": "Starter",
+    "description": "At the start of each combat, gain 1 Star."
+  },
+  {
+    "id": "RELIC.FENCING_MANUAL",
+    "name": "Fencing Manual",
+    "character": "Regent",
+    "rarity": "Common",
+    "description": "At the start of each combat, Forge."
+  },
+  {
+    "id": "RELIC.GALACTIC_DUST",
+    "name": "Galactic Dust",
+    "character": "Regent",
+    "rarity": "Uncommon",
+    "description": "For every Star spent, gain 10 Block."
+  },
+  {
+    "id": "RELIC.LUNAR_PASTRY",
+    "name": "Lunar Pastry",
+    "character": "Regent",
+    "rarity": "Rare",
+    "description": "At the end of your turn, gain 1 Star."
+  },
+  {
+    "id": "RELIC.MINI_REGENT",
+    "name": "Mini Regent",
+    "character": "Regent",
+    "rarity": "Rare",
+    "description": "The first time you spend 1 Star each turn, gain 1 Strength."
+  },
+  {
+    "id": "RELIC.ORANGE_DOUGH",
+    "name": "Orange Dough",
+    "character": "Regent",
+    "rarity": "Rare",
+    "description": "At the start of each combat, add 2 random Colorless cards into your Hand."
+  },
+  {
+    "id": "RELIC.REGALITE",
+    "name": "Regalite",
+    "character": "Regent",
+    "rarity": "Uncommon",
+    "description": "Whenever you create a Colorless card, gain 2 Block."
+  },
+  {
+    "id": "RELIC.VITRUVIAN_MINION",
+    "name": "Vitruvian Minion",
+    "character": "Regent",
+    "rarity": "Shop",
+    "description": "Potions always appear in combat rewards."
+  },
+  {
+    "id": "RELIC.AKABEKO",
+    "name": "Akabeko",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "At the start of each combat, gain 8 Vigor."
+  },
+  {
+    "id": "RELIC.ALCHEMICAL_COFFER",
+    "name": "Alchemical Coffer",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, gain 4 potion slots filled with random potions."
+  },
+  {
+    "id": "RELIC.AMETHYST_AUBERGINE",
+    "name": "Amethyst Aubergine",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Enemies drop 10 additional Gold."
+  },
+  {
+    "id": "RELIC.ANCHOR",
+    "name": "Anchor",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Start each combat with 10 Block."
+  },
+  {
+    "id": "RELIC.ANCHOR_FAKE",
+    "name": "Anchor???",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Start each combat with 4 Block."
+  },
+  {
+    "id": "RELIC.ARCANE_SCROLL",
+    "name": "Arcane Scroll",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, obtain a random Rare Card to add to your Deck."
+  },
+  {
+    "id": "RELIC.ARCHAIC_TOOTH",
+    "name": "Archaic Tooth",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Transform a starter card with an ancient version."
+  },
+  {
+    "id": "RELIC.ART_OF_WAR",
+    "name": "Art of War",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "If you do not play any Attacks during your turn, gain an additional energy next turn."
+  },
+  {
+    "id": "RELIC.ASTROLABE",
+    "name": "Astrolabe",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Transform 3 cards, then Upgrade them."
+  },
+  {
+    "id": "RELIC.BAG_OF_MARBLES",
+    "name": "Bag of Marbles",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "At the start of each combat, apply 1 Vulnerable to ALL enemies."
+  },
+  {
+    "id": "RELIC.BAG_OF_PREPARATION",
+    "name": "Bag of Preparation",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "At the start of each combat, draw 2 additional cards."
+  },
+  {
+    "id": "RELIC.BEATING_REMNANT",
+    "name": "Beating Remnant",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "You cannot lose more than 20 HP in a single turn."
+  },
+  {
+    "id": "RELIC.BEAUTIFUL_BRACELET",
+    "name": "Beautiful Bracelet",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, choose 3 cards in your Deck. Enchant them with Swift 3."
+  },
+  {
+    "id": "RELIC.BELLOWS",
+    "name": "Bellows",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "The first Hand you draw each combat is Upgraded."
+  },
+  {
+    "id": "RELIC.BELT_BUCKLE",
+    "name": "Belt Buckle",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "While you have no potions, you have 2 additional Dexterity."
+  },
+  {
+    "id": "RELIC.BIG_MUSHROOM",
+    "name": "Big Mushroom",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Upon pickup, raise your Max HP. At the start of each combat, draw 2 fewer cards."
+  },
+  {
+    "id": "RELIC.BIIIG_HUG",
+    "name": "Biiig Hug",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, remove 4 cards from your Deck. Whenever you shuffle, add a Soot."
+  },
+  {
+    "id": "RELIC.BING_BONG",
+    "name": "Bing Bong",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you add a card to your Deck, add one additional copy."
+  },
+  {
+    "id": "RELIC.BLACK_STAR",
+    "name": "Black Star",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Elites drop an additional Relic when defeated."
+  },
+  {
+    "id": "RELIC.BLESSED_ANTLER",
+    "name": "Blessed Antler",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Gain energy at the start of each turn. At the start of combat, shuffle 3 Dazed into your Draw Pile."
+  },
+  {
+    "id": "RELIC.BLOOD_VIAL",
+    "name": "Blood Vial",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "At the start of each combat, heal 2 HP."
+  },
+  {
+    "id": "RELIC.BLOOD_VIAL_FAKE",
+    "name": "Blood Vial???",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "At the start of each combat, heal 1 HP."
+  },
+  {
+    "id": "RELIC.BLOOD_SOAKED_ROSE",
+    "name": "Blood-Soaked Rose",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, add 1 Enthralled to your Deck. Gain energy at the start of each turn."
+  },
+  {
+    "id": "RELIC.BONE_TEA",
+    "name": "Bone Tea",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "At the start of the next combats, Upgrade your starting hand."
+  },
+  {
+    "id": "RELIC.BOOK_OF_FIVE_RINGS",
+    "name": "Book of Five Rings",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Every 5 cards you add to your Deck, heal 15 HP."
+  },
+  {
+    "id": "RELIC.BOOMING_CONCH",
+    "name": "Booming Conch",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of Elite combats, draw 2 additional cards."
+  },
+  {
+    "id": "RELIC.BOWLER_HAT",
+    "name": "Bowler Hat",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Gain 20% additional Gold."
+  },
+  {
+    "id": "RELIC.BREAD",
+    "name": "Bread",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "At the start of your first turn, lose 2 energy. At the start of all other turns, gain 1 energy."
+  },
+  {
+    "id": "RELIC.BRILLIANT_SCARF",
+    "name": "Brilliant Scarf",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "The 5th card you play each turn is free."
+  },
+  {
+    "id": "RELIC.BRONZE_SCALES",
+    "name": "Bronze Scales",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Start each combat with 3 Thorns."
+  },
+  {
+    "id": "RELIC.BURNING_STICKS",
+    "name": "Burning Sticks",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "The first time each combat you Exhaust a Skill, add a copy of it into your Hand."
+  },
+  {
+    "id": "RELIC.BYRDPIP",
+    "name": "Byrdpip",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Upon pickup, gain the card Byrd Swoop. A Byrdpip will accompany you in battles."
+  },
+  {
+    "id": "RELIC.CALLING_BELL",
+    "name": "Calling Bell",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, obtain a unique Curse and 3 Relics."
+  },
+  {
+    "id": "RELIC.CANDELABRA",
+    "name": "Candelabra",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "At the start of your 2nd turn, gain 2 energy."
+  },
+  {
+    "id": "RELIC.CAPTAINS_WHEEL",
+    "name": "Captain's Wheel",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "At the start of your 3rd turn, gain 18 Block."
+  },
+  {
+    "id": "RELIC.CAULDRON",
+    "name": "Cauldron",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Upon pickup, brews 5 random potions."
+  },
+  {
+    "id": "RELIC.CENTENNIAL_PUZZLE",
+    "name": "Centennial Puzzle",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "The first time you lose HP each combat, draw 3 cards."
+  },
+  {
+    "id": "RELIC.CHANDELIER",
+    "name": "Chandelier",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "At the start of your 3rd turn, gain 3 energy."
+  },
+  {
+    "id": "RELIC.CHEMICAL_X",
+    "name": "Chemical X",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "The effects of your cost X cards are increased by 2."
+  },
+  {
+    "id": "RELIC.CHOICES_PARADOX",
+    "name": "Choices Paradox",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of each combat, add 1 of 5 random cards into your Hand. Add Retain to the chosen card."
+  },
+  {
+    "id": "RELIC.CIRCLET",
+    "name": "Circlet",
+    "character": "Shared",
+    "rarity": "Special",
+    "description": "It's a circlet."
+  },
+  {
+    "id": "RELIC.CLAWS",
+    "name": "Claws",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Transform up to 6 cards into Maul."
+  },
+  {
+    "id": "RELIC.CLOAK_CLASP",
+    "name": "Cloak Clasp",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "At the end of your turn, gain 1 Block for each card in your Hand."
+  },
+  {
+    "id": "RELIC.CROSSBOW",
+    "name": "Crossbow",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of your turn, add a random Attack into your Hand. It costs 0 energy this turn."
+  },
+  {
+    "id": "RELIC.CURSED_KETTLE",
+    "name": "Cursed Kettle",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Whenever you defeat an Elite, the other Elites in the act will gain Strength at the start of combat."
+  },
+  {
+    "id": "RELIC.CURSED_PEARL",
+    "name": "Cursed Pearl",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, receive Greed. Gain 333 Gold."
+  },
+  {
+    "id": "RELIC.DARKSTONE_PERIAPT",
+    "name": "Darkstone Periapt",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you obtain a Curse, raise your Max HP."
+  },
+  {
+    "id": "RELIC.DAUGHTER_OF_THE_WIND",
+    "name": "Daughter of the Wind",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you play an Attack, gain 1 Block."
+  },
+  {
+    "id": "RELIC.DELICATE_FROND",
+    "name": "Delicate Frond",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of each combat, fill all empty potion slots with random potions."
+  },
+  {
+    "id": "RELIC.DEMON_GLASS",
+    "name": "Demon Glass",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Variant of Sea Glass for Ironclad."
+  },
+  {
+    "id": "RELIC.DEPRECATED_RELIC",
+    "name": "Deprecated Relic",
+    "character": "Shared",
+    "rarity": "Special",
+    "description": "This relic is no longer in the game. Legacy purposes only."
+  },
+  {
+    "id": "RELIC.DIAMOND_DIADEM",
+    "name": "Diamond Diadem",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Whenever you play 2 or fewer cards in a turn, take half damage from enemies."
+  },
+  {
+    "id": "RELIC.DINGY_RUG",
+    "name": "Dingy Rug",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Card rewards can now contain Colorless cards."
+  },
+  {
+    "id": "RELIC.DISTINGUISHED_CAPE",
+    "name": "Distinguished Cape",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, lose 9 Max HP. Add 3 Apparitions to your Deck."
+  },
+  {
+    "id": "RELIC.DOLLYS_MIRROR",
+    "name": "Dolly's Mirror",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Upon pickup, obtain an additional copy of a card in your Deck."
+  },
+  {
+    "id": "RELIC.DRAGON_FRUIT",
+    "name": "Dragon Fruit",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Whenever you gain Gold, raise your Max HP."
+  },
+  {
+    "id": "RELIC.DREAM_CATCHER",
+    "name": "Dream Catcher",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you Rest, you may add a card to your Deck."
+  },
+  {
+    "id": "RELIC.DRIFTWOOD",
+    "name": "Driftwood",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "You may reroll each card reward once."
+  },
+  {
+    "id": "RELIC.DUSTY_TOME",
+    "name": "Dusty Tome",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, obtain an Ancient Card."
+  },
+  {
+    "id": "RELIC.ECTOPLASM",
+    "name": "Ectoplasm",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "You can no longer gain Gold. Gain 1 energy at the start of each turn."
+  },
+  {
+    "id": "RELIC.ELECTRIC_SHRYMP",
+    "name": "Electric Shrymp",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Enchant a Skill with Imbued."
+  },
+  {
+    "id": "RELIC.EMBER_TEA",
+    "name": "Ember Tea",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "At the start of the next combats, gain 2 Strength."
+  },
+  {
+    "id": "RELIC.EMPTY_CAGE",
+    "name": "Empty Cage",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, remove 2 cards from your Deck."
+  },
+  {
+    "id": "RELIC.ENDLESS_APPETITE",
+    "name": "Endless Appetite",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Whenever you Exhaust a card, gain Strength."
+  },
+  {
+    "id": "RELIC.ETERNAL_FEATHER",
+    "name": "Eternal Feather",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "For every 5 cards in your Deck, heal 3 HP when you enter a Rest Site."
+  },
+  {
+    "id": "RELIC.FESTIVE_POPPER",
+    "name": "Festive Popper",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "At the start of each combat, deal damage to ALL enemies."
+  },
+  {
+    "id": "RELIC.FIDDLE",
+    "name": "Fiddle",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of each turn, draw 2 additional cards. You may not draw cards during your turn."
+  },
+  {
+    "id": "RELIC.FORGOTTEN_SOUL",
+    "name": "Forgotten Soul",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you Exhaust a card, deal damage to a random enemy."
+  },
+  {
+    "id": "RELIC.FRAGRANT_MUSHROOM",
+    "name": "Fragrant Mushroom",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Upon pickup, lose HP and Upgrade 3 random cards."
+  },
+  {
+    "id": "RELIC.FRESNEL_LENS",
+    "name": "Fresnel Lens",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you add a card that gains Block, Enchant it with Nimble 2."
+  },
+  {
+    "id": "RELIC.FROZEN_EGG",
+    "name": "Frozen Egg",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Whenever you add a Power into your Deck, Upgrade it."
+  },
+  {
+    "id": "RELIC.FUR_COAT",
+    "name": "Fur Coat",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, mark 7 random combats. Enemies in those rooms have 1 HP."
+  },
+  {
+    "id": "RELIC.GAMBLING_CHIP",
+    "name": "Gambling Chip",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "At the start of each combat, discard any number of cards then draw that many."
+  },
+  {
+    "id": "RELIC.GAME_PIECE",
+    "name": "Game Piece",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Whenever you play a Power, draw 1 card."
+  },
+  {
+    "id": "RELIC.GEAR_GLASS",
+    "name": "Gear Glass",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Variant of Sea Glass for Defect."
+  },
+  {
+    "id": "RELIC.GHOST_SEED",
+    "name": "Ghost Seed",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Strikes and Defends gain Ethereal."
+  },
+  {
+    "id": "RELIC.GIRYA",
+    "name": "Girya",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "You can now gain Strength at Rest Sites. (3 times max)"
+  },
+  {
+    "id": "RELIC.GLASS_EYE",
+    "name": "Glass Eye",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, obtain 2 Common cards, 2 Uncommon cards, and 1 Rare card."
+  },
+  {
+    "id": "RELIC.GLITTER",
+    "name": "Glitter",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Enchant all card rewards with Glam."
+  },
+  {
+    "id": "RELIC.GLOWING_ORB",
+    "name": "Glowing Orb",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Start Elite combats with an additional 1 energy."
+  },
+  {
+    "id": "RELIC.GNARLED_HAMMER",
+    "name": "Gnarled Hammer",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Upon pickup, Enchant up to 3 Attacks with Sharp 3."
+  },
+  {
+    "id": "RELIC.GOLDEN_COMPASS",
+    "name": "Golden Compass",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, replace the Act 2 Map with a single special path."
+  },
+  {
+    "id": "RELIC.GOLDEN_PEARL",
+    "name": "Golden Pearl",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, gain 150 Gold."
+  },
+  {
+    "id": "RELIC.GORGET",
+    "name": "Gorget",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "At the start of each combat, gain 4 Plating."
+  },
+  {
+    "id": "RELIC.GREMLIN_HORN",
+    "name": "Gremlin Horn",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Whenever an enemy dies, gain 1 energy and draw 1 card."
+  },
+  {
+    "id": "RELIC.HAND_DRILL",
+    "name": "Hand Drill",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you break an enemy's Block, apply 2 Vulnerable."
+  },
+  {
+    "id": "RELIC.HAPPY_FLOWER",
+    "name": "Happy Flower",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Every 3 turns, gain 1 energy."
+  },
+  {
+    "id": "RELIC.HAPPY_FLOWER_FAKE",
+    "name": "Happy Flower???",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Every 5 turns, gain 1 energy."
+  },
+  {
+    "id": "RELIC.HISTORY_COURSE",
+    "name": "History Course",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "At the start of your turn, play a copy of your last played Attack or Skill."
+  },
+  {
+    "id": "RELIC.HORN_CLEAT",
+    "name": "Horn Cleat",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "At the start of your 2nd turn, gain 14 Block."
+  },
+  {
+    "id": "RELIC.ICE_CREAM",
+    "name": "Ice Cream",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Energy is now conserved between turns."
+  },
+  {
+    "id": "RELIC.INK_BOTTLE",
+    "name": "Ink Bottle",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Every time you play a certain number of cards, draw cards."
+  },
+  {
+    "id": "RELIC.INTIMIDATING_HELMET",
+    "name": "Intimidating Helmet",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Whenever you play a card that costs 2 or more energy, gain 4 Block."
+  },
+  {
+    "id": "RELIC.IRON_CLUB",
+    "name": "Iron Club",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Every 4 cards you play, draw 1 card."
+  },
+  {
+    "id": "RELIC.JEWELED_MASK",
+    "name": "Jeweled Mask",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of combat put a random Power from your Draw Pile into your Hand, it's free to play."
+  },
+  {
+    "id": "RELIC.JEWELRY_BOX",
+    "name": "Jewelry Box",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, add 1 Apotheosis to your Deck."
+  },
+  {
+    "id": "RELIC.JOSS_PAPER",
+    "name": "Joss Paper",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Every 5 times you Exhaust a card, draw 1 card."
+  },
+  {
+    "id": "RELIC.JUZU_BRACELET",
+    "name": "Juzu Bracelet",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Regular enemy combats are no longer encountered in ? rooms."
+  },
+  {
+    "id": "RELIC.KIFUDA",
+    "name": "Kifuda",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Upon pickup, Enchant up to 3 cards with Adroit."
+  },
+  {
+    "id": "RELIC.KUNAI",
+    "name": "Kunai",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Every time you play 3 Attacks in a single turn, gain 1 Dexterity."
+  },
+  {
+    "id": "RELIC.KUSARIGAMA",
+    "name": "Kusarigama",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Every time you play 3 Attacks in a single turn, deal damage to a random enemy."
+  },
+  {
+    "id": "RELIC.LANTERN",
+    "name": "Lantern",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Start each combat with an additional 1 energy."
+  },
+  {
+    "id": "RELIC.LARGE_CAPSULE",
+    "name": "Large Capsule",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, obtain random Relics. Add an additional Strike and Defend to your Deck."
+  },
+  {
+    "id": "RELIC.LASTING_CANDY",
+    "name": "Lasting Candy",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Every other combat, your card rewards gain an additional Power."
+  },
+  {
+    "id": "RELIC.LAVA_LAMP",
+    "name": "Lava Lamp",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "At the end of combat, Upgrade all card rewards if you took no damage."
+  },
+  {
+    "id": "RELIC.LAVA_ROCK",
+    "name": "Lava Rock",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "The Act 1 Boss drops 2 Relics."
+  },
+  {
+    "id": "RELIC.LEAD_PAPERWEIGHT",
+    "name": "Lead Paperweight",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, choose 1 of 2 Colorless cards to add to your Deck."
+  },
+  {
+    "id": "RELIC.LEAFY_POULTICE",
+    "name": "Leafy Poultice",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Transform 1 of your Strikes and 1 of your Defends and lose Max HP."
+  },
+  {
+    "id": "RELIC.LEES_WAFFLE",
+    "name": "Lee's Waffle",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Upon pickup, raise your Max HP and heal all of your HP."
+  },
+  {
+    "id": "RELIC.LEES_WAFFLE_FAKE",
+    "name": "Lee's Waffle???",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Upon pickup, heal 10% of your HP."
+  },
+  {
+    "id": "RELIC.LETTER_OPENER",
+    "name": "Letter Opener",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Every time you play 3 Skills in a single turn, deal damage to ALL enemies."
+  },
+  {
+    "id": "RELIC.LICH_GLASS",
+    "name": "Lich Glass",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Variant of Sea Glass for Necrobinder."
+  },
+  {
+    "id": "RELIC.LIZARD_TAIL",
+    "name": "Lizard Tail",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "When you would die, heal to 50% of your Max HP instead (works once)."
+  },
+  {
+    "id": "RELIC.LOOMING_FRUIT",
+    "name": "Looming Fruit",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, raise your Max HP."
+  },
+  {
+    "id": "RELIC.LORDS_PARASOL",
+    "name": "Lord's Parasol",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "When you encounter the Merchant, immediately obtain EVERYTHING he sells."
+  },
+  {
+    "id": "RELIC.LOST_COFFER",
+    "name": "Lost Coffer",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, gain 1 card reward and procure 1 random potion."
+  },
+  {
+    "id": "RELIC.LOST_WISP",
+    "name": "Lost Wisp",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you play a Power, deal damage to ALL enemies."
+  },
+  {
+    "id": "RELIC.LUCKY_FYSH",
+    "name": "Lucky Fysh",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Whenever you add a card to your Deck, gain 15 Gold."
+  },
+  {
+    "id": "RELIC.MANGO",
+    "name": "Mango",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Upon pickup, raise your Max HP."
+  },
+  {
+    "id": "RELIC.MANGO_FAKE",
+    "name": "Mango???",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Upon pickup, raise your Max HP."
+  },
+  {
+    "id": "RELIC.MASSIVE_SCROLL",
+    "name": "Massive Scroll",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, choose 1 of 3 Multiplayer Colorless Cards to add to your Deck."
+  },
+  {
+    "id": "RELIC.MAW_BANK",
+    "name": "Maw Bank",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you climb a floor, gain 12 Gold. No longer works when you spend Gold at the shop."
+  },
+  {
+    "id": "RELIC.MEAL_TICKET",
+    "name": "Meal Ticket",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Whenever you enter a shop room, heal 15 HP."
+  },
+  {
+    "id": "RELIC.MEAT_CLEAVER",
+    "name": "Meat Cleaver",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "You may Cook at Rest Sites."
+  },
+  {
+    "id": "RELIC.MEAT_ON_THE_BONE",
+    "name": "Meat on the Bone",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "If your HP is at or below 50% at the end of combat, heal 12 HP."
+  },
+  {
+    "id": "RELIC.MEDICAL_KIT",
+    "name": "Medical Kit",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Status cards can now be played. Playing a Status will Exhaust the card."
+  },
+  {
+    "id": "RELIC.MEMBERSHIP_CARD",
+    "name": "Membership Card",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "50% discount on all products!"
+  },
+  {
+    "id": "RELIC.MERCURY_HOURGLASS",
+    "name": "Mercury Hourglass",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "At the start of your turn, deal damage to ALL enemies."
+  },
+  {
+    "id": "RELIC.MINIATURE_CANNON",
+    "name": "Miniature Cannon",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Upgraded Attacks deal 3 additional damage."
+  },
+  {
+    "id": "RELIC.MINIATURE_TENT",
+    "name": "Miniature Tent",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "You may choose any number of options at Rest Sites."
+  },
+  {
+    "id": "RELIC.MOLTEN_EGG",
+    "name": "Molten Egg",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Whenever you add an Attack card to your Deck, Upgrade it."
+  },
+  {
+    "id": "RELIC.MR_STRUGGLES",
+    "name": "Mr. Struggles",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "At the start of your turn, deal damage equal to the turn number to ALL enemies."
+  },
+  {
+    "id": "RELIC.MUMMIFIED_HAND",
+    "name": "Mummified Hand",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Whenever you play a Power, a random card in your Hand is free to play that turn."
+  },
+  {
+    "id": "RELIC.MUSIC_BOX",
+    "name": "Music Box",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Create an Ethereal copy of the first Attack you play each turn."
+  },
+  {
+    "id": "RELIC.MYSTERIOUS_COCOON",
+    "name": "Mysterious Cocoon",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Upon gaining experience, transform Training Strike into Impale."
+  },
+  {
+    "id": "RELIC.MYSTIC_LIGHTER",
+    "name": "Mystic Lighter",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Enchanted Attacks deal additional damage."
+  },
+  {
+    "id": "RELIC.NEOWS_TORMENT",
+    "name": "Neow's Torment",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, add 1 Neow's Fury to your Deck."
+  },
+  {
+    "id": "RELIC.NEW_LEAF",
+    "name": "New Leaf",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Transform 1 card."
+  },
+  {
+    "id": "RELIC.NOBLE_GLASS",
+    "name": "Noble Glass",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Variant of Sea Glass for Regent."
+  },
+  {
+    "id": "RELIC.NUNCHAKU",
+    "name": "Nunchaku",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Every time you play 10 Attacks, gain 1 energy."
+  },
+  {
+    "id": "RELIC.NUTRITIOUS_OYSTER",
+    "name": "Nutritious Oyster",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, raise your Max HP."
+  },
+  {
+    "id": "RELIC.NUTRITIOUS_SOUP",
+    "name": "Nutritious Soup",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Enchant all Strikes in your Deck with Tezcatara's Ember."
+  },
+  {
+    "id": "RELIC.ODDLY_SMOOTH_STONE",
+    "name": "Oddly Smooth Stone",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Start each combat with 1 Dexterity."
+  },
+  {
+    "id": "RELIC.OLD_COIN",
+    "name": "Old Coin",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Upon pickup, gain 300 Gold."
+  },
+  {
+    "id": "RELIC.ORICHALCUM",
+    "name": "Orichalcum",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "If you end your turn without Block, gain 6 Block."
+  },
+  {
+    "id": "RELIC.ORICHALCUM_FAKE",
+    "name": "Orichalcum???",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "If you end your turn without Block, gain 3 Block."
+  },
+  {
+    "id": "RELIC.ORNAMENTAL_FAN",
+    "name": "Ornamental Fan",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Every time you play 3 Attacks in a single turn, gain 4 Block."
+  },
+  {
+    "id": "RELIC.ORRERY",
+    "name": "Orrery",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Upon pickup, gain 5 card rewards."
+  },
+  {
+    "id": "RELIC.PAELS_BLOOD",
+    "name": "Pael's Blood",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of your turn, draw 1 additional card."
+  },
+  {
+    "id": "RELIC.PAELS_CLAW",
+    "name": "Pael's Claw",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Enchant all Defends with an enchantment."
+  },
+  {
+    "id": "RELIC.PAELS_EYE",
+    "name": "Pael's Eye",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "The first time each combat you end your turn without playing cards, Exhaust your Hand, and take an extra turn."
+  },
+  {
+    "id": "RELIC.PAELS_FLESH",
+    "name": "Pael's Flesh",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Gain an additional 1 energy at the start of your 3rd turn, and every turn after that."
+  },
+  {
+    "id": "RELIC.PAELS_GROWTH",
+    "name": "Pael's Growth",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Enchant a card with an enchantment."
+  },
+  {
+    "id": "RELIC.PAELS_HORN",
+    "name": "Pael's Horn",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, add 2 Relax to your Deck."
+  },
+  {
+    "id": "RELIC.PAELS_LEGION",
+    "name": "Pael's Legion",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Doubles Block gained from a card, then goes to sleep for 2 turns."
+  },
+  {
+    "id": "RELIC.PAELS_TEARS",
+    "name": "Pael's Tears",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "If you end your turn with unspent 1 energy, gain an additional 2 energy next turn."
+  },
+  {
+    "id": "RELIC.PAELS_TOOTH",
+    "name": "Pael's Tooth",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, remove 5 cards from your Deck. After each combat, randomly add 1 back Upgraded."
+  },
+  {
+    "id": "RELIC.PAELS_WING",
+    "name": "Pael's Wing",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "You may sacrifice card rewards to Pael. Every 2 sacrifices, obtain a Relic."
+  },
+  {
+    "id": "RELIC.PANDORAS_BOX",
+    "name": "Pandora's Box",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Transform ALL Strikes and Defends."
+  },
+  {
+    "id": "RELIC.PANTOGRAPH",
+    "name": "Pantograph",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "At the start of each Boss combat, heal 25 HP."
+  },
+  {
+    "id": "RELIC.PARRYING_SHIELD",
+    "name": "Parrying Shield",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "If you end a turn with at least 10 Block, deal damage to a random enemy."
+  },
+  {
+    "id": "RELIC.PEAR",
+    "name": "Pear",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Upon pickup, raise your Max HP."
+  },
+  {
+    "id": "RELIC.PEN_NIB",
+    "name": "Pen Nib",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Every 10th Attack you play deals double damage."
+  },
+  {
+    "id": "RELIC.PENDULUM",
+    "name": "Pendulum",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Whenever you shuffle your Draw Pile, draw a card."
+  },
+  {
+    "id": "RELIC.PERMAFROST",
+    "name": "Permafrost",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "The first time you play a Power each combat, gain 6 Block."
+  },
+  {
+    "id": "RELIC.PETRIFIED_TOAD",
+    "name": "Petrified Toad",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "At the start of each combat, procure a Potion-Shaped Rock."
+  },
+  {
+    "id": "RELIC.PHILOSOPHERS_STONE",
+    "name": "Philosopher's Stone",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Gain 1 energy at the start of each turn. ALL enemies start combat with 1 Strength."
+  },
+  {
+    "id": "RELIC.PLANISPHERE",
+    "name": "Planisphere",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Whenever you enter a ? room, heal 4 HP."
+  },
+  {
+    "id": "RELIC.POCKETWATCH",
+    "name": "Pocketwatch",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Whenever you play 3 or fewer cards during your turn, draw 3 additional cards at the start of your next turn."
+  },
+  {
+    "id": "RELIC.POLLINOUS_CORE",
+    "name": "Pollinous Core",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Every 4 turns, draw 2 additional cards."
+  },
+  {
+    "id": "RELIC.POMANDER",
+    "name": "Pomander",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Upgrade a card."
+  },
+  {
+    "id": "RELIC.POTION_BELT",
+    "name": "Potion Belt",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Upon pickup, gain 2 potion slots."
+  },
+  {
+    "id": "RELIC.PRAYER_WHEEL",
+    "name": "Prayer Wheel",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Normal enemies drop an additional card reward."
+  },
+  {
+    "id": "RELIC.PRECARIOUS_SHEARS",
+    "name": "Precarious Shears",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, remove 2 cards from your Deck and take damage."
+  },
+  {
+    "id": "RELIC.PRECISE_SCISSORS",
+    "name": "Precise Scissors",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, remove 1 card from your Deck."
+  },
+  {
+    "id": "RELIC.PRESERVED_FOG",
+    "name": "Preserved Fog",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, remove 5 cards from your Deck. Add Folly to your Deck."
+  },
+  {
+    "id": "RELIC.PRISMATIC_GEM",
+    "name": "Prismatic Gem",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Gain 1 energy at the start of each turn. Card rewards now contain cards from other colors."
+  },
+  {
+    "id": "RELIC.PUMPKIN_CANDLE",
+    "name": "Pumpkin Candle",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Gain 1 energy at the start of each turn. Extinguishes at the start of Act 3."
+  },
+  {
+    "id": "RELIC.PUNCH_DAGGER",
+    "name": "Punch Dagger",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Upon pickup, Enchant an Attack with Momentum 5."
+  },
+  {
+    "id": "RELIC.RADIANT_PEARL",
+    "name": "Radiant Pearl",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of each combat, add 1 Luminesce into your Hand."
+  },
+  {
+    "id": "RELIC.RAINBOW_RING",
+    "name": "Rainbow Ring",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "The first time you play an Attack, Skill, and Power each turn, gain 1 Strength and 1 Dexterity."
+  },
+  {
+    "id": "RELIC.RAZOR_TOOTH",
+    "name": "Razor Tooth",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Every time you play an Attack or Skill, Upgrade it for the remainder of combat."
+  },
+  {
+    "id": "RELIC.RED_MASK",
+    "name": "Red Mask",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "At the start of each combat, apply 1 Weak to ALL enemies."
+  },
+  {
+    "id": "RELIC.RED_VINE_TEA",
+    "name": "Red Vine Tea",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "At the start of the next combats, draw additional cards."
+  },
+  {
+    "id": "RELIC.REGAL_PILLOW",
+    "name": "Regal Pillow",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Whenever you Rest, heal an additional 15 HP."
+  },
+  {
+    "id": "RELIC.REPTILE_TRINKET",
+    "name": "Reptile Trinket",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Whenever you use a potion, gain 3 Strength this turn."
+  },
+  {
+    "id": "RELIC.RINGING_TRIANGLE",
+    "name": "Ringing Triangle",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Retain your Hand on the first turn of combat."
+  },
+  {
+    "id": "RELIC.RIPPLE_BASIN",
+    "name": "Ripple Basin",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "If you did not play any Attacks during your turn, gain 4 Block."
+  },
+  {
+    "id": "RELIC.ROYAL_POISON",
+    "name": "Royal Poison",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "At the start of each combat, lose HP."
+  },
+  {
+    "id": "RELIC.ROYAL_STAMP",
+    "name": "Royal Stamp",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Upon pickup, choose an Attack or Skill to Enchant."
+  },
+  {
+    "id": "RELIC.RUNIC_PYRAMID",
+    "name": "Runic Pyramid",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the end of your turn, you no longer discard your Hand."
+  },
+  {
+    "id": "RELIC.SAI",
+    "name": "Sai",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of your turn, gain 7 Block."
+  },
+  {
+    "id": "RELIC.SAND_CASTLE",
+    "name": "Sand Castle",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Upgrade 6 random cards."
+  },
+  {
+    "id": "RELIC.SCREAMING_FLAGON",
+    "name": "Screaming Flagon",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "If you end your turn with no cards in your Hand, deal damage to ALL enemies."
+  },
+  {
+    "id": "RELIC.SCROLL_BOXES",
+    "name": "Scroll Boxes",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, lose all Gold and choose 1 of 2 packs of cards to add to your Deck."
+  },
+  {
+    "id": "RELIC.SEA_GLASS",
+    "name": "Sea Glass",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "See 15 cards from another character. Choose any number to add to your Deck."
+  },
+  {
+    "id": "RELIC.SEAL_OF_GOLD",
+    "name": "Seal of Gold",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of your turn, spend 5 Gold to gain 1 energy."
+  },
+  {
+    "id": "RELIC.SERE_TALON",
+    "name": "Sere Talon",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, add 2 random Curses and 3 Wishes to your Deck."
+  },
+  {
+    "id": "RELIC.SHOVEL",
+    "name": "Shovel",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "You can now dig at Rest Sites to obtain a random Relic."
+  },
+  {
+    "id": "RELIC.SHURIKEN",
+    "name": "Shuriken",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Every time you play 3 Attacks in a single turn, gain 1 Strength."
+  },
+  {
+    "id": "RELIC.SIGNET_RING",
+    "name": "Signet Ring",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, gain 999 Gold."
+  },
+  {
+    "id": "RELIC.SILVER_CRUCIBLE",
+    "name": "Silver Crucible",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "The first 3 card rewards are Upgraded. The first Treasure Chest is empty."
+  },
+  {
+    "id": "RELIC.SLING_OF_COURAGE",
+    "name": "Sling of Courage",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Start each Elite combat with 2 Strength."
+  },
+  {
+    "id": "RELIC.SMALL_CAPSULE",
+    "name": "Small Capsule",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, obtain a random Relic."
+  },
+  {
+    "id": "RELIC.SNECKO_EYE",
+    "name": "Snecko Eye",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "At the start of your turn, draw 2 additional cards. Start each combat Confused."
+  },
+  {
+    "id": "RELIC.SNECKO_EYE_FAKE",
+    "name": "Snecko Eye???",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Start each combat Confused."
+  },
+  {
+    "id": "RELIC.SOZU",
+    "name": "Sozu",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Gain 1 energy at the start of each turn. You can no longer obtain potions."
+  },
+  {
+    "id": "RELIC.SPARKLING_ROUGE",
+    "name": "Sparkling Rouge",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "At the start of your 3rd turn, gain 1 Strength and 1 Dexterity."
+  },
+  {
+    "id": "RELIC.SPIKED_GAUNTLETS",
+    "name": "Spiked Gauntlets",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Gain 1 energy at the start of each turn. Powers cost 1 more energy."
+  },
+  {
+    "id": "RELIC.STONE_CALENDAR",
+    "name": "Stone Calendar",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "At the end of turn 7, deal damage to ALL enemies."
+  },
+  {
+    "id": "RELIC.STONE_CRACKER",
+    "name": "Stone Cracker",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "At the start of Boss combats, Upgrade 3 random cards for the rest of combat."
+  },
+  {
+    "id": "RELIC.STONE_HUMIDIFIER",
+    "name": "Stone Humidifier",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Whenever you Rest at a Rest Site, raise your Max HP."
+  },
+  {
+    "id": "RELIC.STORYBOOK",
+    "name": "Storybook",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, add 1 Brightest Flame to your Deck."
+  },
+  {
+    "id": "RELIC.STRAWBERRY",
+    "name": "Strawberry",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Upon pickup, raise your Max HP."
+  },
+  {
+    "id": "RELIC.STRIKE_DUMMY",
+    "name": "Strike Dummy",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Cards containing 'Strike' deal 3 additional damage."
+  },
+  {
+    "id": "RELIC.STRIKE_DUMMY_FAKE",
+    "name": "Strike Dummy???",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Cards containing 'Strike' deal 1 additional damage."
+  },
+  {
+    "id": "RELIC.STURDY_CLAMP",
+    "name": "Sturdy Clamp",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Up to 10 Block persists across turns."
+  },
+  {
+    "id": "RELIC.SWORD_OF_JADE",
+    "name": "Sword of Jade",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Start each combat with 3 Strength."
+  },
+  {
+    "id": "RELIC.SWORD_OF_STONE",
+    "name": "Sword of Stone",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Transforms into a powerful Relic after defeating 5 Elites."
+  },
+  {
+    "id": "RELIC.TANXS_WHISTLE",
+    "name": "Tanx's Whistle",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "The first card you play each combat is played an extra time."
+  },
+  {
+    "id": "RELIC.TEA_OF_DISCOURTESY",
+    "name": "Tea of Discourtesy",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you discard a card during your turn, deal 3 damage to a random enemy."
+  },
+  {
+    "id": "RELIC.THE_ABACUS",
+    "name": "The Abacus",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Whenever you shuffle your Draw Pile, gain Block."
+  },
+  {
+    "id": "RELIC.THE_BOOT",
+    "name": "The Boot",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you would deal 4 or less unblocked attack damage, increase it to 5."
+  },
+  {
+    "id": "RELIC.THE_CHOSEN_CHEESE",
+    "name": "The Chosen Cheese",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "At the end of combat, gain Max HP."
+  },
+  {
+    "id": "RELIC.THE_COURIER",
+    "name": "The Courier",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "The merchant no longer runs out of cards, relics, or potions. Prices reduced by 20%."
+  },
+  {
+    "id": "RELIC.THE_MERCHANTS_RUG_FAKE",
+    "name": "The Merchant's Rug???",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Poor imitation. Does nothing."
+  },
+  {
+    "id": "RELIC.THROWING_AXE",
+    "name": "Throwing Axe",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, replace your starter Relic with an Ancient version."
+  },
+  {
+    "id": "RELIC.TINY_MAILBOX",
+    "name": "Tiny Mailbox",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Whenever you add a Skill into your Deck, Upgrade it."
+  },
+  {
+    "id": "RELIC.TOASTY_MITTENS",
+    "name": "Toasty Mittens",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Upon pickup, obtain 4 Wax Relics. Every 3 combats, your left-most Wax Relic melts."
+  },
+  {
+    "id": "RELIC.TOOLBOX",
+    "name": "Toolbox",
+    "character": "Shared",
+    "rarity": "Shop",
+    "description": "Choose 3 Attacks in your Deck. Enchant them with Instinct."
+  },
+  {
+    "id": "RELIC.TOUCH_OF_OROBAS",
+    "name": "Touch of Orobas",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Whenever you would lose HP, lose 1 less."
+  },
+  {
+    "id": "RELIC.TOXIC_EGG",
+    "name": "Toxic Egg",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Whenever you add a Skill into your Deck, Upgrade it."
+  },
+  {
+    "id": "RELIC.TOY_BOX",
+    "name": "Toy Box",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Whenever you have no cards in Hand during your turn, draw a card."
+  },
+  {
+    "id": "RELIC.TRI_BOOMERANG",
+    "name": "Tri-Boomerang",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Enemies with at least as much Doom as HP deal 50% less damage."
+  },
+  {
+    "id": "RELIC.TUNGSTEN_ROD",
+    "name": "Tungsten Rod",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Whenever you would lose HP, lose 1 less HP."
+  },
+  {
+    "id": "RELIC.TUNING_FORK",
+    "name": "Tuning Fork",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Start each combat with 1 Strength."
+  },
+  {
+    "id": "RELIC.UNCEASING_TOP",
+    "name": "Unceasing Top",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Whenever you have no cards in your Hand during your turn, draw a card."
+  },
+  {
+    "id": "RELIC.UNSETTLING_LAMP",
+    "name": "Unsettling Lamp",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Start each combat with an additional 4 energy."
+  },
+  {
+    "id": "RELIC.VAJRA",
+    "name": "Vajra",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Start each combat with 1 Strength."
+  },
+  {
+    "id": "RELIC.VAMBRACE",
+    "name": "Vambrace",
+    "character": "Shared",
+    "rarity": "Uncommon",
+    "description": "Cards containing Minion deal double damage and gain double Block."
+  },
+  {
+    "id": "RELIC.VELVET_CHOKER",
+    "name": "Velvet Choker",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Gain energy at the start of each turn. You cannot play more than 6 cards per turn."
+  },
+  {
+    "id": "RELIC.VENERABLE_TEA_SET",
+    "name": "Venerable Tea Set",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Whenever you enter a Rest Site, start the next combat with an additional 1 energy."
+  },
+  {
+    "id": "RELIC.VENERABLE_TEA_SET_FAKE",
+    "name": "Venerable Tea Set???",
+    "character": "Shared",
+    "rarity": "Event",
+    "description": "Whenever you enter a Rest Site, start the next combat with an additional 1 energy."
+  },
+  {
+    "id": "RELIC.VENOM_GLASS",
+    "name": "Venom Glass",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Variant of Sea Glass for Silent."
+  },
+  {
+    "id": "RELIC.WAR_PAINT",
+    "name": "War Paint",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "A random card in each card reward is Enchanted with Swift 1."
+  },
+  {
+    "id": "RELIC.WHETSTONE",
+    "name": "Whetstone",
+    "character": "Shared",
+    "rarity": "Common",
+    "description": "Upon pickup, Upgrade 2 random Attacks."
+  },
+  {
+    "id": "RELIC.WHITE_BEAST_STATUE",
+    "name": "White Beast Statue",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "Potions always drop after combat."
+  },
+  {
+    "id": "RELIC.HELICAL_DART",
+    "name": "Helical Dart",
+    "character": "Silent",
+    "rarity": "Rare",
+    "description": "Whenever you play a Shiv, gain 1 Dexterity this turn."
+  },
+  {
+    "id": "RELIC.NINJA_SCROLL",
+    "name": "Ninja Scroll",
+    "character": "Silent",
+    "rarity": "Shop",
+    "description": "At the start of each combat, add 3 Shivs into your Hand."
+  },
+  {
+    "id": "RELIC.PAPER_KRANE",
+    "name": "Paper Krane",
+    "character": "Silent",
+    "rarity": "Rare",
+    "description": "Enemies with Weak deal 40% less damage to you rather than 25%."
+  },
+  {
+    "id": "RELIC.RING_OF_THE_DRAKE",
+    "name": "Ring of the Drake",
+    "character": "Silent",
+    "rarity": "Starter",
+    "description": "At the start of your first 3 turns, draw 2 additional cards."
+  },
+  {
+    "id": "RELIC.RING_OF_THE_SNAKE",
+    "name": "Ring of the Snake",
+    "character": "Silent",
+    "rarity": "Starter",
+    "description": "At the start of each combat, draw 2 additional cards."
+  },
+  {
+    "id": "RELIC.SNECKO_SKULL",
+    "name": "Snecko Skull",
+    "character": "Silent",
+    "rarity": "Common",
+    "description": "Whenever you apply Poison, apply an additional 1 Poison."
+  },
+  {
+    "id": "RELIC.TINGSHA",
+    "name": "Tingsha",
+    "character": "Silent",
+    "rarity": "Uncommon",
+    "description": "Whenever you discard a card during your turn, deal damage to a random enemy."
+  },
+  {
+    "id": "RELIC.TOUGH_BANDAGES",
+    "name": "Tough Bandages",
+    "character": "Silent",
+    "rarity": "Rare",
+    "description": "Whenever you discard a card during your turn, gain Block."
+  },
+  {
+    "id": "RELIC.TWISTED_FUNNEL",
+    "name": "Twisted Funnel",
+    "character": "Silent",
+    "rarity": "Uncommon",
+    "description": "At the start of each combat, apply Poison to ALL enemies."
+  }
+]

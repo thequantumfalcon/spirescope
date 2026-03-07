@@ -1,0 +1,222 @@
+[
+  {
+    "id": "EVENT.BYRDONIS_NEST",
+    "name": "Byrdonis Nest",
+    "act": [
+      "Act 1"
+    ],
+    "description": "Find a Byrdonis nest with an egg inside.",
+    "choices": [
+      {
+        "option": "Take the egg",
+        "outcome": "Receive Byrdonis Egg quest card",
+        "recommendation": "RECOMMENDED - The egg is a quest card that provides value"
+      },
+      {
+        "option": "Eat the egg",
+        "outcome": "Gain +7 Max HP permanently",
+        "recommendation": "Good if you don't want quest card in deck"
+      }
+    ],
+    "notes": "The quest card route can be very rewarding. The +7 Max HP is a safe pick."
+  },
+  {
+    "id": "EVENT.DENSE_VEGETATION",
+    "name": "Dense Vegetation",
+    "act": [
+      "Act 1"
+    ],
+    "description": "Thick vegetation blocks the path.",
+    "choices": [
+      {
+        "option": "Fight through",
+        "outcome": "Combat encounter",
+        "recommendation": "Only if deck is strong enough"
+      },
+      {
+        "option": "Go around",
+        "outcome": "Avoid combat",
+        "recommendation": "Safe option if low on HP"
+      }
+    ],
+    "notes": "Has a combat encounter option."
+  },
+  {
+    "id": "EVENT.INFESTED_AUTOMATON",
+    "name": "Infested Automaton",
+    "act": [
+      "Act 2"
+    ],
+    "description": "An automaton infested with something.",
+    "choices": [
+      {
+        "option": "Investigate",
+        "outcome": "Risk/reward encounter",
+        "recommendation": "Depends on deck strength"
+      }
+    ],
+    "notes": "Act 2 event with combat potential."
+  },
+  {
+    "id": "EVENT.JUNGLE_MAZE_ADVENTURE",
+    "name": "Jungle Maze Adventure",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A maze in the jungle.",
+    "choices": [
+      {
+        "option": "Navigate the maze",
+        "outcome": "Multiple outcomes possible",
+        "recommendation": "Explore for rewards"
+      }
+    ],
+    "notes": "Multi-step event with branching outcomes."
+  },
+  {
+    "id": "EVENT.NEOW",
+    "name": "Neow's Blessing",
+    "act": [
+      "Act 1"
+    ],
+    "description": "Starting event. Neow offers blessings at the start of each run.",
+    "choices": [
+      {
+        "option": "Various blessing options",
+        "outcome": "Depends on offering - may grant relic, cards, gold, or Max HP",
+        "recommendation": "Generally take the relic or Max HP option"
+      }
+    ],
+    "notes": "Always appears at the start. Choose based on your character and planned archetype."
+  },
+  {
+    "id": "EVENT.POTION_COURIER",
+    "name": "Potion Courier",
+    "act": [
+      "Act 1",
+      "Act 2"
+    ],
+    "description": "A courier offers potions.",
+    "choices": [
+      {
+        "option": "Buy potions",
+        "outcome": "Receive potions for gold",
+        "recommendation": "Good if you have gold and need potions"
+      }
+    ],
+    "notes": "Stock up on potions for upcoming fights."
+  },
+  {
+    "id": "EVENT.ROOM_FULL_OF_CHEESE",
+    "name": "Room Full Of Cheese",
+    "act": [],
+    "description": "",
+    "choices": [],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.SAPPHIRE_SEED",
+    "name": "Sapphire Seed",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A glowing sapphire seed.",
+    "choices": [
+      {
+        "option": "Plant the seed",
+        "outcome": "Receive a benefit",
+        "recommendation": "Generally worth doing"
+      }
+    ],
+    "notes": "Low risk event."
+  },
+  {
+    "id": "EVENT.SLIPPERY_BRIDGE",
+    "name": "Slippery Bridge",
+    "act": [],
+    "description": "",
+    "choices": [],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.SPIRIT_GRAFTER",
+    "name": "Spirit Grafter",
+    "act": [
+      "Act 1",
+      "Act 2"
+    ],
+    "description": "A spirit grafter offers to modify your cards.",
+    "choices": [
+      {
+        "option": "Graft a spirit",
+        "outcome": "Card modification",
+        "recommendation": "Good for upgrading key cards"
+      }
+    ],
+    "notes": "Card enhancement event."
+  },
+  {
+    "id": "EVENT.TEA_MASTER",
+    "name": "Tea Master",
+    "act": [
+      "Act 1"
+    ],
+    "description": "Meet a tea master offering refreshments.",
+    "choices": [
+      {
+        "option": "Accept tea",
+        "outcome": "Healing or buff",
+        "recommendation": "Usually worth accepting"
+      }
+    ],
+    "notes": "Generally beneficial event."
+  },
+  {
+    "id": "EVENT.TEZCATARA",
+    "name": "Tezcatara",
+    "act": [
+      "Act 1"
+    ],
+    "description": "Ancient being offering a deal.",
+    "choices": [
+      {
+        "option": "Accept the deal",
+        "outcome": "Power at a cost",
+        "recommendation": "Evaluate the trade-off carefully"
+      }
+    ],
+    "notes": "Can provide powerful effects but may have drawbacks."
+  },
+  {
+    "id": "EVENT.THIS_OR_THAT",
+    "name": "This Or That",
+    "act": [],
+    "description": "",
+    "choices": [],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.WHISPERING_HOLLOW",
+    "name": "Whispering Hollow",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A mysterious hollow that offers choices.",
+    "choices": [
+      {
+        "option": "Enter the hollow",
+        "outcome": "Risk/reward scenario",
+        "recommendation": "Depends on current HP and deck state"
+      }
+    ],
+    "notes": "Evaluate based on your current run health."
+  },
+  {
+    "id": "EVENT.WOOD_CARVINGS",
+    "name": "Wood Carvings",
+    "act": [],
+    "description": "",
+    "choices": [],
+    "notes": ""
+  }
+]

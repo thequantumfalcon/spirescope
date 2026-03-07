@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}STS2 Assistant{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <nav>
+    <a class="logo" href="/">STS2 Assistant</a>
+    <a href="/cards">Cards</a>
+    <a href="/relics">Relics</a>
+    <a href="/potions">Potions</a>
+    <a href="/enemies">Enemies</a>
+    <a href="/events">Events</a>
+    <a href="/deck">Deck Analyzer</a>
+    <a href="/live" style="color:var(--green)">Live Run</a>
+    <a href="/runs">Run History</a>
+    <form class="search-form" action="/search" method="get">
+      <input type="search" name="q" placeholder="Search cards, relics, enemies..." value="{{ query|default('') }}">
+      <button type="submit">Search</button>
+    </form>
+  </nav>
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

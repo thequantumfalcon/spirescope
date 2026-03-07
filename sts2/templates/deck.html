@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Deck Analyzer{% endblock %}
+{% block content %}
+<h1>Deck Analyzer</h1>
+<p style="color:var(--text2);margin-bottom:1rem">Select the cards in your deck to get archetype detection, synergy analysis, and improvement suggestions.</p>
+
+<form method="post" action="/deck/analyze">
+  <h2>Select Cards</h2>
+  {% set chars = {} %}
+  {% for card in cards %}
+    {% if card.character not in ['Status'] %}
+      {% if chars.update({card.character: chars.get(card.character, []) + [card]}) %}{% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% for char_name, char_cards in chars.items() %}
+  <h3 class="char-{{ char_name|lower }}" style="margin-top:1rem">{{ char_name }}</h3>
+  <div class="deck-form">
+    {% for card in char_cards %}
+    <label>
+      <input type="checkbox" name="card_ids" value="{{ card.id }}" {% if selected_ids is defined and card.id in selected_ids %}checked{% endif %}>
+      <span>{{ card.name }} ({{ card.cost }})</span>
+    </label>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
+  <button type="submit" style="margin-top:1rem;padding:0.5rem 2rem;background:var(--accent2);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:1rem">Analyze Deck</button>
+</form>
+
+{% if analysis %}
+<hr style="border-color:var(--border);margin:2rem 0">
+<h2>Analysis Results</h2>
+
+{% if analysis.error %}
+<p style="color:var(--red)">{{ analysis.error }}</p>
+{% else %}
+<div class="stat-grid">
+  <div class="stat-box"><div class="num char-{{ analysis.character|lower }}">{{ analysis.character }}</div><div class="label">Character</div></div>
+  <div class="stat-box"><div class="num">{{ analysis.deck_size }}</div><div class="label">Deck Size</div></div>
+  <div class="stat-box"><div class="num" style="color:var(--red)">{{ analysis.attacks }}</div><div class="label">Attacks</div></div>
+  <div class="stat-box"><div class="num" style="color:var(--accent)">{{ analysis.skills }}</div><div class="label">Skills</div></div>
+  <div class="stat-box"><div class="num" style="color:var(--yellow)">{{ analysis.powers }}</div><div class="label">Powers</div></div>
+</div>
+
+{% if analysis.detected_archetypes %}
+<h3>Detected Archetypes</h3>
+{% for arch in analysis.detected_archetypes %}
+<div class="archetype">
+  <h3>{{ arch.name }}</h3>
+  <p><strong>Matched:</strong> {% for c in arch.matched_cards %}<span class="tag tag-keyword">{{ c }}</span>{% endfor %}</p>
+  {% if arch.missing_key_cards %}<p><strong style="color:var(--yellow)">Missing:</strong> {% for c in arch.missing_key_cards %}<span class="tag" style="opacity:0.6">{{ c }}</span>{% endfor %}</p>{% endif %}
+  <p style="margin-top:0.5rem">{{ arch.strategy }}</p>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if analysis.top_keywords %}
+<h3>Keyword Distribution</h3>
+<div style="display:flex;flex-wrap:wrap;gap:0.5rem">
+{% for kw, count in analysis.top_keywords %}
+<span class="tag tag-keyword">{{ kw }} ({{ count }})</span>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if analysis.weaknesses %}
+<h3 style="color:var(--yellow)">Weaknesses</h3>
+{% for w in analysis.weaknesses %}
+<div class="card" style="margin-bottom:0.5rem;border-left:3px solid var(--yellow)"><p>{{ w }}</p></div>
+{% endfor %}
+{% endif %}
+
+<h3>Cost Curve</h3>
+<div style="display:flex;gap:1rem;align-items:flex-end;margin:1rem 0">
+{% for cost, count in analysis.cost_curve.items() %}
+<div style="text-align:center">
+  <div style="background:var(--accent2);width:40px;height:{{ count * 30 }}px;border-radius:4px 4px 0 0"></div>
+  <div style="font-size:0.8rem;color:var(--text2);margin-top:0.25rem">{{ cost }}</div>
+  <div style="font-size:0.75rem;color:var(--text2)">{{ count }}</div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

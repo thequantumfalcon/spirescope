@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Relics{% endblock %}
+{% block content %}
+<h1>Relics ({{ relics|length }})</h1>
+
+<div class="filters">
+  <a href="/relics" {% if not selected_character %}class="active"{% endif %}>All</a>
+  {% for char in characters %}
+  <a href="/relics?character={{ char }}" {% if selected_character == char %}class="active"{% endif %}>{{ char }}</a>
+  {% endfor %}
+  <a href="/relics?character=Shared" {% if selected_character == 'Shared' %}class="active"{% endif %}>Shared</a>
+</div>
+<div class="filters">
+  <a href="/relics?{% if selected_character %}character={{ selected_character }}{% endif %}" {% if not selected_rarity %}class="active"{% endif %}>All Rarities</a>
+  {% for r in ['Starter', 'Common', 'Uncommon', 'Rare', 'Shop', 'Event'] %}
+  <a href="/relics?rarity={{ r }}{% if selected_character %}&character={{ selected_character }}{% endif %}"
+     {% if selected_rarity == r %}class="active"{% endif %}>{{ r }}</a>
+  {% endfor %}
+</div>
+
+<div class="grid grid-3">
+{% for relic in relics %}
+<div class="card">
+  <h3>{{ relic.name }}</h3>
+  <p><span class="tag tag-{{ relic.rarity|lower }}">{{ relic.rarity }}</span>
+     <span class="char-{{ relic.character|lower }}" style="font-size:0.75rem">{{ relic.character }}</span></p>
+  <p>{{ relic.description }}</p>
+</div>
+{% endfor %}
+</div>
+{% endblock %}

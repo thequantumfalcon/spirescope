@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ enemy.name if enemy else 'Enemy Not Found' }}{% endblock %}
+{% block content %}
+{% if enemy %}
+<div class="detail-header">
+  <h1>{{ enemy.name }}
+    <span class="tag {% if enemy.type == 'boss' %}tag-attack{% elif enemy.type == 'elite' %}tag-power{% else %}tag-skill{% endif %}">{{ enemy.type }}</span>
+  </h1>
+  <p style="color:var(--text2)">{{ enemy.act|join(', ') }} &bull; HP: {{ enemy.hp_range }}</p>
+</div>
+
+{% if enemy.patterns %}
+<h2>Attack Patterns</h2>
+{% for p in enemy.patterns %}
+<div class="card" style="margin-bottom:0.5rem"><p>{{ p }}</p></div>
+{% endfor %}
+{% endif %}
+
+{% if enemy.tips %}
+<h2>Strategy Tips</h2>
+{% for tip in enemy.tips %}
+<div class="card" style="margin-bottom:0.5rem;border-left:3px solid var(--green)"><p>{{ tip }}</p></div>
+{% endfor %}
+{% endif %}
+
+{% if encounter_stats %}
+<h2>Your Stats vs {{ enemy.name }}</h2>
+<table>
+<tr><th>Character</th><th>Wins</th><th>Losses</th></tr>
+{% for char, stats in encounter_stats.items() %}
+<tr><td class="char-{{ char|lower }}">{{ char }}</td><td class="win">{{ stats.wins }}</td><td class="loss">{{ stats.losses }}</td></tr>
+{% endfor %}
+</table>
+{% endif %}
+{% else %}
+<h1>Enemy Not Found</h1>
+{% endif %}
+{% endblock %}

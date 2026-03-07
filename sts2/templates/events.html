@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Events{% endblock %}
+{% block content %}
+<h1>Events ({{ events|length }})</h1>
+{% for event in events %}
+<div class="card" style="margin-bottom:1rem">
+  <h3>{{ event.name }} <span style="color:var(--text2);font-size:0.8rem">{{ event.act|join(', ') }}</span></h3>
+  <p>{{ event.description }}</p>
+  {% for choice in event.choices %}
+  <div class="choice">
+    <div class="option">{{ choice.option }}</div>
+    <div class="outcome">{{ choice.outcome }}</div>
+    {% if choice.recommendation %}<div class="rec">{{ choice.recommendation }}</div>{% endif %}
+  </div>
+  {% endfor %}
+  {% if event.notes %}<p style="color:var(--text2);font-size:0.85rem;margin-top:0.5rem">{{ event.notes }}</p>{% endif %}
+</div>
+{% endfor %}
+{% endblock %}

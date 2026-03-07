@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Potions{% endblock %}
+{% block content %}
+<h1>Potions ({{ potions|length }})</h1>
+<div class="grid grid-3">
+{% for potion in potions %}
+<div class="card">
+  <h3>{{ potion.name }}</h3>
+  <p><span class="tag tag-{{ potion.rarity|lower }}">{{ potion.rarity }}</span></p>
+  <p>{{ potion.description }}</p>
+</div>
+{% endfor %}
+</div>
+{% endblock %}
