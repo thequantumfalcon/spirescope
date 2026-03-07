@@ -106,38 +106,38 @@ _analytics_cache_time: float = 0
 _ANALYTICS_CACHE_TTL = 60.0
 
 
-def _get_progress():
+async def _get_progress():
     global _progress_cache, _progress_cache_time
     now = time.monotonic()
     if _progress_cache is None or (now - _progress_cache_time) > _PROGRESS_CACHE_TTL:
-        _progress_cache = get_progress()
+        _progress_cache = await asyncio.to_thread(get_progress)
         _progress_cache_time = now
     return _progress_cache
 
 
-def _get_runs():
+async def _get_runs():
     global _run_cache, _run_cache_by_id, _run_cache_time
     now = time.monotonic()
     if _run_cache_time == 0 or (now - _run_cache_time) > _RUN_CACHE_TTL:
-        _run_cache = get_run_history()
+        _run_cache = await asyncio.to_thread(get_run_history)
         _run_cache_by_id = {r.id: r for r in _run_cache}
         _run_cache_time = now
     return _run_cache
 
 
-def _get_run_by_id(run_id: str):
-    _get_runs()
+async def _get_run_by_id(run_id: str):
+    await _get_runs()
     return _run_cache_by_id.get(run_id)
 
 
-def _get_analytics():
+async def _get_analytics():
     global _analytics_cache, _analytics_cache_time
     now = time.monotonic()
     if _analytics_cache_time == 0 or (now - _analytics_cache_time) > _ANALYTICS_CACHE_TTL:
-        runs = _get_runs()
-        progress = _get_progress()
+        runs = await _get_runs()
+        progress = await _get_progress()
         card_stats = progress.card_stats if progress else {}
-        _analytics_cache = compute_analytics(runs, card_stats)
+        _analytics_cache = await asyncio.to_thread(compute_analytics, runs, card_stats)
         _analytics_cache_time = now
     return _analytics_cache
 

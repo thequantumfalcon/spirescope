@@ -442,13 +442,13 @@ async def test_footer_present(client):
 
 async def test_card_detail_shows_card_stats(client):
     """Card detail page should show personal stats when card_stats data exists."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.models import PlayerProgress
 
     mock_progress = PlayerProgress(
         card_stats={"CARD.BASH": {"picked": 10, "skipped": 5, "won": 7, "lost": 3}},
     )
-    with patch("sts2.app._get_progress", return_value=mock_progress):
+    with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
         async with client as c:
             resp = await c.get("/cards/CARD.BASH")
     if resp.status_code == 200:
@@ -458,11 +458,11 @@ async def test_card_detail_shows_card_stats(client):
 
 async def test_card_detail_no_stats_when_empty(client):
     """Card detail page should not show stats section when card_stats is empty."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.models import PlayerProgress
 
     mock_progress = PlayerProgress(card_stats={})
-    with patch("sts2.app._get_progress", return_value=mock_progress):
+    with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
         async with client as c:
             resp = await c.get("/cards/CARD.BASH")
     if resp.status_code == 200:
@@ -471,7 +471,7 @@ async def test_card_detail_no_stats_when_empty(client):
 
 async def test_index_shows_character_streaks(client):
     """Index page should show streak/ascension info when available."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.models import PlayerProgress
 
     mock_progress = PlayerProgress(
@@ -484,7 +484,7 @@ async def test_index_shows_character_streaks(client):
             },
         },
     )
-    with patch("sts2.app._get_progress", return_value=mock_progress):
+    with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
         async with client as c:
             resp = await c.get("/")
     assert resp.status_code == 200
@@ -503,8 +503,8 @@ async def test_save_watcher_constants():
 async def test_progress_cache_returns_same_object():
     """Cached progress should return same object within TTL."""
     from sts2.app import _get_progress
-    p1 = _get_progress()
-    p2 = _get_progress()
+    p1 = await _get_progress()
+    p2 = await _get_progress()
     assert p1 is p2
 
 
@@ -683,13 +683,13 @@ async def test_robots_txt_references_sitemap(client):
 
 async def test_cards_page_shows_pick_rate(client):
     """Cards list should show pick rate when card_stats data exists."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.models import PlayerProgress
 
     mock_progress = PlayerProgress(
         card_stats={"CARD.BASH": {"picked": 8, "skipped": 2, "won": 5, "lost": 3}},
     )
-    with patch("sts2.app._get_progress", return_value=mock_progress):
+    with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
         async with client as c:
             resp = await c.get("/cards")
     if resp.status_code == 200 and ("CARD.BASH" in resp.text or "Bash" in resp.text):
@@ -718,7 +718,7 @@ async def test_run_detail_links_relics(client):
 
 async def test_card_detail_shows_run_win_rate(client):
     """Card detail should show win rate from run history."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.models import RunHistory
 
     mock_runs = [
@@ -726,7 +726,7 @@ async def test_card_detail_shows_run_win_rate(client):
         RunHistory(id="run2", character="Ironclad", win=False, deck=["CARD.BASH"]),
         RunHistory(id="run3", character="Ironclad", win=True, deck=["CARD.BASH"]),
     ]
-    with patch("sts2.app._get_runs", return_value=mock_runs):
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=mock_runs)):
         async with client as c:
             resp = await c.get("/cards/CARD.BASH")
     if resp.status_code == 200:
@@ -760,9 +760,9 @@ async def test_analytics_page(client):
 
 async def test_analytics_page_empty_runs(client):
     """Analytics page with no runs should show empty state."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.analytics import compute_analytics
-    with patch("sts2.app._get_analytics", return_value=compute_analytics([])):
+    with patch("sts2.app._get_analytics", new=AsyncMock(return_value=compute_analytics([]))):
         async with client as c:
             resp = await c.get("/analytics")
     assert resp.status_code == 200
@@ -781,7 +781,7 @@ async def test_api_analytics(client):
 
 async def test_analytics_with_mock_runs(client):
     """Analytics with run data should compute stats."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.models import RunHistory
     from sts2.analytics import compute_analytics
 
@@ -793,7 +793,7 @@ async def test_analytics_with_mock_runs(client):
         RunHistory(id="r3", character="Silent", win=True, deck=["CARD.NEUTRALIZE", "CARD.STRIKE"],
                    relics=["RELIC.RING_OF_THE_SNAKE"], run_time=1500),
     ]
-    with patch("sts2.app._get_analytics", return_value=compute_analytics(mock_runs)):
+    with patch("sts2.app._get_analytics", new=AsyncMock(return_value=compute_analytics(mock_runs))):
         async with client as c:
             resp = await c.get("/api/analytics")
     data = resp.json()
@@ -854,14 +854,14 @@ async def test_analytics_synergy_edges():
 
 async def test_analytics_page_shows_overview(client):
     """Analytics HTML page should show overview stats."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.models import RunHistory
     from sts2.analytics import compute_analytics
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], run_time=600),
     ]
-    with patch("sts2.app._get_analytics", return_value=compute_analytics(mock_runs)):
+    with patch("sts2.app._get_analytics", new=AsyncMock(return_value=compute_analytics(mock_runs))):
         async with client as c:
             resp = await c.get("/analytics")
     assert resp.status_code == 200
@@ -958,7 +958,7 @@ async def test_knowledge_base_community_tips():
 
 async def test_card_detail_passes_community_tips(client):
     """Card detail should include community_tips in template context."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.app import kb as _kb
     if not _kb.cards:
         return
@@ -974,7 +974,7 @@ async def test_card_detail_passes_community_tips(client):
 
 async def test_relic_detail_passes_community_tips(client):
     """Relic detail should include community_tips in template context."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.app import kb as _kb
     if not _kb.relics:
         return
@@ -1016,7 +1016,7 @@ async def test_community_page_empty_state(client):
 
 async def test_community_page_with_meta_posts(client):
     """Community page should display meta posts when available."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.app import kb as _kb
     mock_posts = [
         {"title": "Best Ironclad Cards Tier List", "url": "https://reddit.com/r/test/1",
@@ -1048,7 +1048,7 @@ async def test_sitemap_includes_community(client):
 
 async def test_enemy_detail_community_tips(client):
     """Enemy detail should show community tips when available."""
-    from unittest.mock import patch
+    from unittest.mock import AsyncMock, patch
     from sts2.app import kb as _kb
     if not _kb.enemies:
         return
@@ -1065,8 +1065,8 @@ async def test_enemy_detail_community_tips(client):
 async def test_analytics_cache_returns_same_object():
     """Analytics cache should return same object within TTL."""
     from sts2.app import _get_analytics
-    a1 = _get_analytics()
-    a2 = _get_analytics()
+    a1 = await _get_analytics()
+    a2 = await _get_analytics()
     assert a1 is a2
 
 
@@ -1079,7 +1079,7 @@ async def test_analytics_cache_ttl_constant():
 
 async def test_community_page_shows_tier_cards(client):
     """Community page should group cards by tier when tiers are set."""
-    from unittest.mock import patch, PropertyMock
+    from unittest.mock import AsyncMock, patch, PropertyMock
     from sts2.app import kb as _kb
     from sts2.models import Card
     mock_cards = [

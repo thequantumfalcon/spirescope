@@ -20,7 +20,7 @@ def _app():
     """Lazy import to access app.py shared state (kb, templates, caches).
 
     Routes import app → app imports routes, so we break the cycle by deferring.
-    Each route calls a = _app() then uses a.kb, a.templates, a._get_progress(), etc.
+    Each route calls a = _app() then uses a.kb, a.templates, await a._get_progress(), etc.
     This also lets tests mock app-level functions (e.g. patch("sts2.app._get_progress"))
     because routes always do a live lookup rather than capturing a reference at import.
     """
@@ -72,8 +72,8 @@ async def index(request: Request):
     from sts2.knowledge import get_last_updated
     from sts2.updater import get_update_info
     a = _app()
-    progress = a._get_progress()
-    runs = a._get_runs()
+    progress = await a._get_progress()
+    runs = await a._get_runs()
     undiscovered = []
     if progress and progress.discovered_cards:
         undiscovered = a.kb.get_undiscovered_cards(progress.discovered_cards)[:12]
@@ -110,12 +110,12 @@ async def cards(request: Request, character: str = Query(None, max_length=50),
     card_type = type
     card_list = a.kb.get_cards(character=character, card_type=card_type,
                                rarity=rarity, cost=cost, keyword=keyword)
-    progress = a._get_progress()
+    progress = await a._get_progress()
     card_stats = progress.card_stats if progress else {}
 
     # Sort options
     if sort == "winrate":
-        analytics = a._get_analytics()
+        analytics = await a._get_analytics()
         wr_lookup = {cr["id"]: cr["win_rate"] for cr in analytics.get("card_rankings", [])}
         card_list = sorted(card_list, key=lambda c: wr_lookup.get(c.id, -1), reverse=True)
     elif sort == "pickrate":
@@ -148,9 +148,9 @@ async def card_detail(request: Request, card_id: str = Path(max_length=200)):
         }, status_code=404)
     synergies = a.kb.find_synergies(card_id)
     strategy = a.kb.get_strategy(card.character)
-    progress = a._get_progress()
+    progress = await a._get_progress()
     card_stats = progress.card_stats.get(card_id, {}) if progress else {}
-    runs_with_card = [r for r in a._get_runs() if card_id in r.deck]
+    runs_with_card = [r for r in await a._get_runs() if card_id in r.deck]
     card_run_wins = sum(1 for r in runs_with_card if r.win)
     card_run_total = len(runs_with_card)
     community_tips = a.kb.get_community_tips(card.name)
@@ -193,11 +193,11 @@ async def relic_detail(request: Request, relic_id: str = Path(max_length=200)):
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Relic '{relic_id[:100]}' not found.",
         }, status_code=404)
-    relic_runs = [r for r in a._get_runs() if relic_id in r.relics]
+    relic_runs = [r for r in await a._get_runs() if relic_id in r.relics]
     community_tips = a.kb.get_community_tips(relic.name)
     # Relic synergy — other relics commonly found in winning runs with this one
     relic_synergies = []
-    analytics = a._get_analytics()
+    analytics = await a._get_analytics()
     for edge in analytics.get("relic_synergy_edges", []):
         if edge["source"] == relic_id:
             relic_synergies.append({"id": edge["target"], "weight": edge["weight"]})
@@ -217,7 +217,7 @@ async def relic_detail(request: Request, relic_id: str = Path(max_length=200)):
 async def potions(request: Request, rarity: str = Query(None, max_length=50)):
     a = _app()
     potion_list = a.kb.get_potions(rarity=rarity)
-    analytics = a._get_analytics()
+    analytics = await a._get_analytics()
     potion_stats = analytics.get("potion_stats", {})
     return a.templates.TemplateResponse(request, "potions.html", {
         "potions": potion_list, "selected_rarity": rarity,
@@ -244,7 +244,7 @@ async def enemy_detail(request: Request, enemy_id: str = Path(max_length=200)):
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Enemy '{enemy_id[:100]}' not found.",
         }, status_code=404)
-    progress = a._get_progress()
+    progress = await a._get_progress()
     encounter_stats = {}
     if progress:
         for enc_id, stats in progress.encounter_stats.items():
@@ -290,7 +290,7 @@ async def strategy(request: Request, character: str = Path(max_length=50)):
 @router.get("/runs", response_class=HTMLResponse)
 async def runs(request: Request, character: str = Query(None, max_length=50), result: str = Query(None, max_length=10)):
     a = _app()
-    run_list = a._get_runs()
+    run_list = await a._get_runs()
     filtered = run_list
     if character:
         filtered = [r for r in filtered if r.character == character]
@@ -311,7 +311,7 @@ async def runs(request: Request, character: str = Query(None, max_length=50), re
 async def run_detail(request: Request, run_id: str = Path(max_length=200)):
     from sts2.analytics import analyze_run
     a = _app()
-    run = a._get_run_by_id(run_id)
+    run = await a._get_run_by_id(run_id)
     if not run:
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Run '{run_id[:100]}' not found.",
@@ -325,7 +325,7 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
 @router.get("/analytics", response_class=HTMLResponse)
 async def analytics(request: Request):
     a = _app()
-    stats = a._get_analytics()
+    stats = await a._get_analytics()
     return a.templates.TemplateResponse(request, "analytics.html", {
         "stats": stats, "kb": a.kb,
     })
@@ -378,7 +378,7 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
                 "reason": "No Block generation — vulnerable to damage",
             })
         # Add analytics-based suggestions
-        analytics = a._get_analytics()
+        analytics = await a._get_analytics()
         top_cards = analytics.get("card_rankings", [])[:10]
         deck_set = set(run.deck)
         for cr in top_cards:
@@ -438,7 +438,7 @@ async def analyze_deck(request: Request):
 
 @router.get("/api/analytics")
 async def api_analytics():
-    return _app()._get_analytics()
+    return await _app()._get_analytics()
 
 
 @router.get("/api/live")
@@ -506,7 +506,7 @@ async def api_card(card_id: str = Path(max_length=200)):
     card = a.kb.get_card_by_id(card_id)
     if not card:
         return PlainTextResponse("Card not found.", status_code=404)
-    progress = a._get_progress()
+    progress = await a._get_progress()
     card_stats = progress.card_stats.get(card_id, {}) if progress else {}
     return {**card.model_dump(), "stats": card_stats}
 
@@ -515,7 +515,7 @@ async def api_card(card_id: str = Path(max_length=200)):
 async def api_runs(character: str = Query(None, max_length=50), result: str = Query(None, max_length=10),
                    limit: int = Query(50, ge=1, le=200)):
     a = _app()
-    run_list = a._get_runs()
+    run_list = await a._get_runs()
     filtered = run_list
     if character:
         filtered = [r for r in filtered if r.character == character]
