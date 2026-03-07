@@ -56,6 +56,21 @@
 </div>
 {% endif %}
 
+{% if top_enemies %}
+<h2>Enemies Faced</h2>
+<p class="text-sm text-muted mb-sm">Enemies encountered most often in runs with {{ card.name }}.</p>
+<table>
+<tr><th>Enemy</th><th>Fights</th><th>Avg Damage</th></tr>
+{% for enc_id, stats in top_enemies %}
+<tr>
+  <td>{% if kb %}{{ kb.id_to_name(enc_id) }}{% else %}{{ enc_id }}{% endif %}</td>
+  <td>{{ stats.fights }}</td>
+  <td class="text-red">{{ (stats.total_damage / stats.fights)|round|int }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
 {% if community_tips %}
 <h2>Community Tips</h2>
 <div class="community-tips">

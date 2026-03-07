@@ -63,6 +63,19 @@
 </div>
 {% endif %}
 
+{% if undiscovered_cards %}
+<h2>Cards You Haven't Tried ({{ undiscovered_cards|length }}{% if undiscovered_cards|length == 12 %}+{% endif %})</h2>
+<p class="text-sm text-muted mb-sm">Cards in the database you haven't discovered yet.</p>
+<div class="grid grid-3">
+{% for card in undiscovered_cards %}
+<a href="/cards/{{ card.id }}" class="card card-link">
+  <h3><span class="char-{{ card.character|lower }}">{{ card.name }}</span> <span class="tag tag-cost">{{ card.cost }}</span></h3>
+  <p><span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span> <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span></p>
+</a>
+{% endfor %}
+</div>
+{% endif %}
+
 <h2>Quick Links</h2>
 <div class="grid grid-3">
   <a href="/cards?character=Ironclad" class="card card-link"><h3 class="char-ironclad">Ironclad Cards</h3><p>Strength, Exhaust, Block</p></a>

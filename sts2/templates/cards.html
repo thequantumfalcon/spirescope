@@ -7,25 +7,31 @@
 {% endif %}
 
 <div class="filters">
-  <a href="/cards" {% if not selected_character %}class="active"{% endif %}>All</a>
+  <a href="/cards{% if selected_sort %}?sort={{ selected_sort }}{% endif %}" {% if not selected_character %}class="active"{% endif %}>All</a>
   {% for char in characters %}
-  <a href="/cards?character={{ char }}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if selected_rarity %}&rarity={{ selected_rarity }}{% endif %}"
+  <a href="/cards?character={{ char }}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if selected_rarity %}&rarity={{ selected_rarity }}{% endif %}{% if selected_sort %}&sort={{ selected_sort }}{% endif %}"
      {% if selected_character == char %}class="active"{% endif %}>{{ char }}</a>
   {% endfor %}
 </div>
 <div class="filters">
-  <a href="/cards?{% if selected_character %}character={{ selected_character }}{% endif %}" {% if not selected_type %}class="active"{% endif %}>All Types</a>
+  <a href="/cards?{% if selected_character %}character={{ selected_character }}&{% endif %}{% if selected_sort %}sort={{ selected_sort }}{% endif %}" {% if not selected_type %}class="active"{% endif %}>All Types</a>
   {% for t in ['Attack', 'Skill', 'Power'] %}
-  <a href="/cards?type={{ t }}{% if selected_character %}&character={{ selected_character }}{% endif %}"
+  <a href="/cards?type={{ t }}{% if selected_character %}&character={{ selected_character }}{% endif %}{% if selected_sort %}&sort={{ selected_sort }}{% endif %}"
      {% if selected_type == t %}class="active"{% endif %}>{{ t }}</a>
   {% endfor %}
 </div>
 <div class="filters">
-  <a href="/cards?{% if selected_character %}character={{ selected_character }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}" {% if not selected_rarity %}class="active"{% endif %}>All Rarities</a>
+  <a href="/cards?{% if selected_character %}character={{ selected_character }}&{% endif %}{% if selected_type %}type={{ selected_type }}&{% endif %}{% if selected_sort %}sort={{ selected_sort }}{% endif %}" {% if not selected_rarity %}class="active"{% endif %}>All Rarities</a>
   {% for r in ['Starter', 'Common', 'Uncommon', 'Rare'] %}
-  <a href="/cards?rarity={{ r }}{% if selected_character %}&character={{ selected_character }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}"
+  <a href="/cards?rarity={{ r }}{% if selected_character %}&character={{ selected_character }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if selected_sort %}&sort={{ selected_sort }}{% endif %}"
      {% if selected_rarity == r %}class="active"{% endif %}>{{ r }}</a>
   {% endfor %}
+</div>
+{% set base_qs %}{% if selected_character %}character={{ selected_character }}&{% endif %}{% if selected_type %}type={{ selected_type }}&{% endif %}{% if selected_rarity %}rarity={{ selected_rarity }}&{% endif %}{% endset %}
+<div class="filters">
+  <a href="/cards?{{ base_qs }}" {% if not selected_sort %}class="active"{% endif %}>Default</a>
+  <a href="/cards?{{ base_qs }}sort=winrate" {% if selected_sort == 'winrate' %}class="active"{% endif %}>By Win Rate</a>
+  <a href="/cards?{{ base_qs }}sort=pickrate" {% if selected_sort == 'pickrate' %}class="active"{% endif %}>By Pick Rate</a>
 </div>
 
 <div class="grid grid-3">
@@ -56,7 +62,7 @@
 
 {% if total_pages > 1 %}
 <div class="pagination">
-  {% set qs %}{% if selected_character %}character={{ selected_character }}&{% endif %}{% if selected_type %}type={{ selected_type }}&{% endif %}{% if selected_rarity %}rarity={{ selected_rarity }}&{% endif %}{% if selected_cost %}cost={{ selected_cost }}&{% endif %}{% if selected_keyword %}keyword={{ selected_keyword }}&{% endif %}{% endset %}
+  {% set qs %}{% if selected_character %}character={{ selected_character }}&{% endif %}{% if selected_type %}type={{ selected_type }}&{% endif %}{% if selected_rarity %}rarity={{ selected_rarity }}&{% endif %}{% if selected_cost %}cost={{ selected_cost }}&{% endif %}{% if selected_keyword %}keyword={{ selected_keyword }}&{% endif %}{% if selected_sort %}sort={{ selected_sort }}&{% endif %}{% endset %}
   {% if page > 1 %}<a href="/cards?{{ qs }}page={{ page - 1 }}">&laquo; Prev</a>{% endif %}
   {% for p in range(1, total_pages + 1) %}
     {% if p == page %}<span class="active">{{ p }}</span>

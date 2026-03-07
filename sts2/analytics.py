@@ -215,6 +215,61 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None) -> dict:
             break
         synergy_edges.append({"source": c1, "target": c2, "weight": count})
 
+    # --- Win Rate Trend (rolling window) ---
+    win_trend = []
+    if total >= 5:
+        window = min(10, max(3, total // 3))
+        for i in range(window - 1, total):
+            chunk = runs[i - window + 1:i + 1]
+            chunk_wins = sum(1 for r in chunk if r.win)
+            win_trend.append({
+                "run": i + 1,
+                "win_rate": round(chunk_wins / window * 100, 1),
+            })
+
+    # --- Relic Co-occurrence (synergy matrix) ---
+    relic_cooccurrence = Counter()
+    for run in wins:
+        unique_relics = sorted(set(run.relics))
+        for i, r1 in enumerate(unique_relics):
+            for r2 in unique_relics[i + 1:]:
+                relic_cooccurrence[(r1, r2)] += 1
+
+    relic_synergy_edges = []
+    for (r1, r2), count in relic_cooccurrence.most_common(30):
+        if count < 2:
+            break
+        relic_synergy_edges.append({"source": r1, "target": r2, "weight": count})
+
+    # --- Potion Usage Stats ---
+    potion_used_count = Counter()
+    potion_gained_count = Counter()
+    potion_used_in_wins = Counter()
+    potion_used_in_runs = Counter()  # run-level (used at least once)
+    for run in runs:
+        potions_this_run: set[str] = set()
+        for floor in run.floors:
+            for p_id in floor.potions_used:
+                potion_used_count[p_id] += 1
+                potions_this_run.add(p_id)
+            for p_id in floor.potions_gained:
+                potion_gained_count[p_id] += 1
+        for p_id in potions_this_run:
+            potion_used_in_runs[p_id] += 1
+            if run.win:
+                potion_used_in_wins[p_id] += 1
+
+    potion_stats = {}
+    for p_id in potion_used_count:
+        used_in = potion_used_in_runs[p_id]
+        potion_stats[p_id] = {
+            "times_used": potion_used_count[p_id],
+            "times_gained": potion_gained_count.get(p_id, 0),
+            "runs_used_in": used_in,
+            "wins_when_used": potion_used_in_wins.get(p_id, 0),
+            "win_rate": round(potion_used_in_wins.get(p_id, 0) / used_in * 100, 1) if used_in else 0,
+        }
+
     return {
         "overview": overview,
         "card_rankings": card_rankings[:30],
@@ -226,4 +281,57 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None) -> dict:
         "deadly_encounters": deadly_encounters[:15],
         "winning_deck_traits": winning_deck_traits,
         "synergy_edges": synergy_edges,
+        "relic_synergy_edges": relic_synergy_edges,
+        "potion_stats": potion_stats,
+        "win_trend": win_trend,
     }
+
+
+def analyze_run(run: RunHistory) -> dict:
+    """Generate post-mortem insights for a single run."""
+    insights = []
+    total_damage = sum(f.damage_taken for f in run.floors)
+    combat_floors = [f for f in run.floors if f.damage_taken > 0]
+
+    # Deck size analysis
+    if len(run.deck) > 30:
+        insights.append({"type": "warning", "text": f"Bloated deck ({len(run.deck)} cards) — key cards drawn less often. Consider skipping weak picks."})
+    elif len(run.deck) < 12:
+        insights.append({"type": "warning", "text": f"Very thin deck ({len(run.deck)} cards) — risky if key cards get exhausted."})
+    elif 15 <= len(run.deck) <= 25:
+        insights.append({"type": "good", "text": f"Healthy deck size ({len(run.deck)} cards)."})
+
+    # Damage spikes — find the single worst hit
+    if combat_floors:
+        worst = max(combat_floors, key=lambda f: f.damage_taken)
+        if worst.damage_taken > 30:
+            enc_name = worst.encounter or "unknown"
+            insights.append({"type": "bad", "text": f"Took {worst.damage_taken} damage on floor {worst.floor} ({enc_name}) — your biggest spike. Consider more Block for this fight."})
+
+    # Low HP danger zones
+    danger_floors = [f for f in run.floors if f.max_hp > 0 and f.current_hp / f.max_hp < 0.2]
+    if len(danger_floors) >= 3:
+        insights.append({"type": "warning", "text": f"Dropped below 20% HP on {len(danger_floors)} floors — consider prioritizing healing or Block."})
+
+    # Cards picked analysis
+    cards_picked = [f.card_picked for f in run.floors if f.card_picked]
+    if run.floors and len(cards_picked) == 0:
+        insights.append({"type": "warning", "text": "No card rewards picked this run — skipping all rewards weakens your deck."})
+
+    # Relics
+    if len(run.relics) >= 8:
+        insights.append({"type": "good", "text": f"Collected {len(run.relics)} relics — strong relic game."})
+    elif len(run.relics) <= 2 and len(run.floors) > 20:
+        insights.append({"type": "warning", "text": f"Only {len(run.relics)} relics by floor {len(run.floors)} — try fighting more elites for relic drops."})
+
+    # Win-specific
+    if run.win:
+        time_min = run.run_time / 60
+        if time_min < 20:
+            insights.append({"type": "good", "text": f"Speed run! Completed in {time_min:.0f} minutes."})
+        insights.append({"type": "good", "text": f"Victory with {total_damage} total damage taken across {len(combat_floors)} combats."})
+    else:
+        if run.killed_by:
+            insights.append({"type": "bad", "text": f"Killed by {run.killed_by} on floor {len(run.floors)}."})
+
+    return {"insights": insights}

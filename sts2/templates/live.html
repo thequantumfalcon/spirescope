@@ -17,7 +17,7 @@
     <div class="num live-hp" style="color:{% if run.current_hp < run.max_hp * 0.3 %}var(--red){% elif run.current_hp < run.max_hp * 0.6 %}var(--yellow){% else %}var(--green){% endif %}">{{ run.current_hp }}/{{ run.max_hp }}</div>
     <div class="label">HP</div>
     <div class="hp-bar mt-sm">
-      <div class="hp-bg" style="width:100%"><div class="hp-fill" style="width:{{ (run.current_hp / run.max_hp * 100) if run.max_hp > 0 else 0 }}%"></div></div>
+      <div class="hp-bg" style="width:100%" role="progressbar" aria-valuenow="{{ run.current_hp }}" aria-valuemin="0" aria-valuemax="{{ run.max_hp }}" aria-label="HP: {{ run.current_hp }} of {{ run.max_hp }}"><div class="hp-fill" style="width:{{ (run.current_hp / run.max_hp * 100) if run.max_hp > 0 else 0 }}%"></div></div>
     </div>
   </div>
   <div class="stat-box"><div class="num live-gold text-yellow">{{ run.gold }}</div><div class="label">Gold</div></div>
@@ -93,6 +93,18 @@
     {% endfor %}
     </div>
     {% endif %}
+
+    {% if pick_suggestions %}
+    <h3 class="mt-md text-green">Cards to Look For</h3>
+    <p class="text-sm text-muted mb-sm">Based on your deck's needs and your run history.</p>
+    {% for ps in pick_suggestions %}
+    <div class="card card-tip mb-sm">
+      <p><strong>{{ ps.name }}</strong></p>
+      <p class="text-xs text-muted">{{ ps.reason }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+
     {% endif %}
   </div>
 </div>
@@ -114,7 +126,7 @@
     {% if floor.damage_taken %}<span class="loss">-{{ floor.damage_taken }} HP</span>{% endif %}
     {% if floor.hp_healed %}<span class="win">+{{ floor.hp_healed }} HP</span>{% endif %}
     <div class="hp-bar">
-      <div class="hp-bg"><div class="hp-fill" style="width:{{ (floor.current_hp / floor.max_hp * 100) if floor.max_hp > 0 else 0 }}%"></div></div>
+      <div class="hp-bg" role="progressbar" aria-valuenow="{{ floor.current_hp }}" aria-valuemin="0" aria-valuemax="{{ floor.max_hp }}" aria-label="HP: {{ floor.current_hp }} of {{ floor.max_hp }}"><div class="hp-fill" style="width:{{ (floor.current_hp / floor.max_hp * 100) if floor.max_hp > 0 else 0 }}%"></div></div>
       <span class="text-xs text-muted">{{ floor.current_hp }}/{{ floor.max_hp }}</span>
     </div>
   </div>

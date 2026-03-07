@@ -35,6 +35,20 @@
 </div>
 {% endif %}
 
+{% if counter_cards %}
+<h2>Counter Cards</h2>
+<p class="text-sm text-muted mb-sm">Cards with keywords that help against this enemy's patterns.</p>
+<div class="grid grid-3">
+{% for card in counter_cards %}
+<a href="/cards/{{ card.id }}" class="card card-link">
+  <h3><span class="char-{{ card.character|lower }}">{{ card.name }}</span> <span class="tag tag-cost">{{ card.cost }}</span></h3>
+  <p><span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span> <span class="char-{{ card.character|lower }} text-xs">{{ card.character }}</span></p>
+  <p class="text-sm">{{ card.description[:80] }}{% if card.description|length > 80 %}...{% endif %}</p>
+</a>
+{% endfor %}
+</div>
+{% endif %}
+
 {% if encounter_stats %}
 <h2>Your Stats vs {{ enemy.name }}</h2>
 <table>

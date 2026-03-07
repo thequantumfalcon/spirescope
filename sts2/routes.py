@@ -72,12 +72,15 @@ async def index(request: Request):
     a = _app()
     progress = a._get_progress()
     runs = a._get_runs()
+    undiscovered = []
+    if progress and progress.discovered_cards:
+        undiscovered = a.kb.get_undiscovered_cards(progress.discovered_cards)[:12]
     return a.templates.TemplateResponse(request, "index.html", {
         "characters": CHARACTERS, "progress": progress, "recent_runs": runs[:5],
         "kb": a.kb, "total_cards": len(a.kb.cards), "total_relics": len(a.kb.relics),
         "total_potions": len(a.kb.potions), "total_enemies": len(a.kb.enemies),
         "last_updated": get_last_updated(), "data_status": a.kb.get_data_status(),
-        "update_info": get_update_info(),
+        "update_info": get_update_info(), "undiscovered_cards": undiscovered,
     })
 
 
@@ -98,22 +101,35 @@ _CARDS_PER_PAGE = 30
 async def cards(request: Request, character: str = None,
                 type: str = Query(None, alias="type"),
                 rarity: str = None, cost: str = None, keyword: str = None,
-                page: int = Query(1, ge=1)):
+                sort: str = None, page: int = Query(1, ge=1)):
     a = _app()
     card_type = type
     card_list = a.kb.get_cards(character=character, card_type=card_type,
                                rarity=rarity, cost=cost, keyword=keyword)
+    progress = a._get_progress()
+    card_stats = progress.card_stats if progress else {}
+
+    # Sort options
+    if sort == "winrate":
+        analytics = a._get_analytics()
+        wr_lookup = {cr["id"]: cr["win_rate"] for cr in analytics.get("card_rankings", [])}
+        card_list = sorted(card_list, key=lambda c: wr_lookup.get(c.id, -1), reverse=True)
+    elif sort == "pickrate":
+        card_list = sorted(card_list, key=lambda c: (
+            card_stats.get(c.id, {}).get("picked", 0) /
+            max(1, card_stats.get(c.id, {}).get("picked", 0) + card_stats.get(c.id, {}).get("skipped", 0))
+        ), reverse=True)
+
     total_cards = len(card_list)
     total_pages = max(1, math.ceil(total_cards / _CARDS_PER_PAGE))
     page = min(page, total_pages)
     start = (page - 1) * _CARDS_PER_PAGE
     paged_cards = card_list[start:start + _CARDS_PER_PAGE]
-    progress = a._get_progress()
-    card_stats = progress.card_stats if progress else {}
     return a.templates.TemplateResponse(request, "cards.html", {
         "cards": paged_cards, "total_cards": total_cards, "characters": CHARACTERS,
         "selected_character": character, "selected_type": card_type,
         "selected_rarity": rarity, "selected_cost": cost, "selected_keyword": keyword,
+        "selected_sort": sort,
         "page": page, "total_pages": total_pages, "card_stats": card_stats,
     })
 
@@ -134,11 +150,23 @@ async def card_detail(request: Request, card_id: str):
     card_run_wins = sum(1 for r in runs_with_card if r.win)
     card_run_total = len(runs_with_card)
     community_tips = a.kb.get_community_tips(card.name)
+    # Enemies faced in runs containing this card
+    enemies_faced: dict[str, dict] = {}
+    for run in runs_with_card:
+        for floor in run.floors:
+            if floor.encounter and floor.damage_taken > 0:
+                enc = floor.encounter
+                if enc not in enemies_faced:
+                    enemies_faced[enc] = {"fights": 0, "total_damage": 0}
+                enemies_faced[enc]["fights"] += 1
+                enemies_faced[enc]["total_damage"] += floor.damage_taken
+    top_enemies = sorted(enemies_faced.items(),
+                         key=lambda x: -x[1]["fights"])[:6]
     return a.templates.TemplateResponse(request, "card_detail.html", {
         "card": card, "synergies": synergies, "strategy": strategy,
         "card_stats": card_stats,
         "card_run_wins": card_run_wins, "card_run_total": card_run_total,
-        "community_tips": community_tips,
+        "community_tips": community_tips, "top_enemies": top_enemies, "kb": a.kb,
     })
 
 
@@ -162,8 +190,21 @@ async def relic_detail(request: Request, relic_id: str):
         }, status_code=404)
     relic_runs = [r for r in a._get_runs() if relic_id in r.relics]
     community_tips = a.kb.get_community_tips(relic.name)
+    # Relic synergy — other relics commonly found in winning runs with this one
+    relic_synergies = []
+    analytics = a._get_analytics()
+    for edge in analytics.get("relic_synergy_edges", []):
+        if edge["source"] == relic_id:
+            relic_synergies.append({"id": edge["target"], "weight": edge["weight"]})
+        elif edge["target"] == relic_id:
+            relic_synergies.append({"id": edge["source"], "weight": edge["weight"]})
+    relic_synergies.sort(key=lambda x: -x["weight"])
+    # Archetypes mentioning this relic
+    relic_archetypes = a.kb.find_relic_archetypes(relic.name)
     return a.templates.TemplateResponse(request, "relic_detail.html", {
         "relic": relic, "relic_runs": relic_runs, "community_tips": community_tips,
+        "relic_synergies": relic_synergies[:6], "relic_archetypes": relic_archetypes,
+        "kb": a.kb,
     })
 
 
@@ -171,9 +212,11 @@ async def relic_detail(request: Request, relic_id: str):
 async def potions(request: Request, rarity: str = None):
     a = _app()
     potion_list = a.kb.get_potions(rarity=rarity)
+    analytics = a._get_analytics()
+    potion_stats = analytics.get("potion_stats", {})
     return a.templates.TemplateResponse(request, "potions.html", {
         "potions": potion_list, "selected_rarity": rarity,
-        "total_potions": len(a.kb.potions),
+        "total_potions": len(a.kb.potions), "potion_stats": potion_stats,
     })
 
 
@@ -207,9 +250,10 @@ async def enemy_detail(request: Request, enemy_id: str):
         if not encounter_stats:
             encounter_stats = enemy_fight_stats
     community_tips = a.kb.get_community_tips(enemy.name)
+    counter_cards = a.kb.get_counter_cards(enemy)
     return a.templates.TemplateResponse(request, "enemy_detail.html", {
         "enemy": enemy, "encounter_stats": encounter_stats, "kb": a.kb,
-        "community_tips": community_tips,
+        "community_tips": community_tips, "counter_cards": counter_cards,
     })
 
 
@@ -260,14 +304,16 @@ async def runs(request: Request, character: str = None, result: str = None):
 
 @router.get("/runs/{run_id}", response_class=HTMLResponse)
 async def run_detail(request: Request, run_id: str):
+    from sts2.analytics import analyze_run
     a = _app()
     run = a._get_run_by_id(run_id)
     if not run:
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Run '{run_id}' not found.",
         }, status_code=404)
+    run_analysis = analyze_run(run)
     return a.templates.TemplateResponse(request, "run_detail.html", {
-        "run": run, "kb": a.kb,
+        "run": run, "kb": a.kb, "run_analysis": run_analysis,
     })
 
 
@@ -304,11 +350,46 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
     a = _app()
     run = get_current_run(player_index=player)
     analysis = None
+    pick_suggestions = []
     if run.active and run.deck:
         analysis = a.kb.analyze_deck(run.deck)
+        # Generate pick suggestions: cards that would complete archetypes or fill gaps
+        if analysis and analysis.get("detected_archetypes"):
+            for arch in analysis["detected_archetypes"][:1]:
+                for missing_name in arch.get("missing_key_cards", [])[:4]:
+                    pick_suggestions.append({
+                        "name": missing_name,
+                        "reason": f"Completes {arch['name']} archetype",
+                    })
+        # Add suggestions from weaknesses
+        deck_keywords = set()
+        for card_id in run.deck:
+            card = a.kb.get_card_by_id(card_id)
+            if card:
+                deck_keywords.update(card.keywords)
+        if "Block" not in deck_keywords and "Dexterity" not in deck_keywords:
+            pick_suggestions.append({
+                "name": "Any Block card",
+                "reason": "No Block generation — vulnerable to damage",
+            })
+        # Add analytics-based suggestions
+        analytics = a._get_analytics()
+        top_cards = analytics.get("card_rankings", [])[:10]
+        deck_set = set(run.deck)
+        for cr in top_cards:
+            if cr["id"] not in deck_set and cr["win_rate"] >= 60:
+                card = a.kb.get_card_by_id(cr["id"])
+                if card and card.character in (run.character, "Colorless"):
+                    pick_suggestions.append({
+                        "name": card.name,
+                        "reason": f"{cr['win_rate']}% win rate across your runs",
+                    })
+                    if len(pick_suggestions) >= 6:
+                        break
     return a.templates.TemplateResponse(request, "live.html", {
         "run": run, "analysis": analysis, "kb": a.kb,
         "selected_player": player, "total_players": run.total_players,
+        "pick_suggestions": pick_suggestions[:6],
     })
 
 

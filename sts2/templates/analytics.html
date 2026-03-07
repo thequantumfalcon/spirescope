@@ -19,6 +19,22 @@
   <div class="stat-box"><div class="num">{{ stats.overview.avg_floors }}</div><div class="label">Avg Floors</div></div>
 </div>
 
+{% if stats.win_trend and stats.win_trend|length > 2 %}
+<h2>Win Rate Trend</h2>
+<p class="text-sm text-muted mb-sm">Rolling win rate over your runs — are you improving?</p>
+<div class="bar-chart bar-chart--tall">
+{% set max_wr = 100 %}
+{% for pt in stats.win_trend %}
+{% if loop.index0 % ((stats.win_trend|length // 20) + 1) == 0 or loop.last %}
+<div class="bar-col">
+  <div class="bar" style="height:{{ pt.win_rate }}px;background:{% if pt.win_rate >= 60 %}var(--green){% elif pt.win_rate >= 40 %}var(--yellow){% else %}var(--red){% endif %}" title="{{ pt.win_rate }}%"></div>
+  <span class="text-xs text-muted mt-xs">{{ pt.run }}</span>
+</div>
+{% endif %}
+{% endfor %}
+</div>
+{% endif %}
+
 {% if stats.character_breakdown %}
 <h2>Character Performance</h2>
 <table>

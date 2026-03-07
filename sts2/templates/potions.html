@@ -16,6 +16,13 @@
   <h3>{{ potion.name }}</h3>
   <p><span class="tag tag-{{ potion.rarity|lower }}">{{ potion.rarity }}</span></p>
   <p>{{ potion.description }}</p>
+  {% if potion_stats and potion_stats[potion.id] %}
+  {% set ps = potion_stats[potion.id] %}
+  <p class="text-xs text-muted mt-xs">
+    Used {{ ps.times_used }}x in {{ ps.runs_used_in }} runs
+    &bull; {{ ps.win_rate }}% win rate
+  </p>
+  {% endif %}
 </div>
 {% endfor %}
 </div>

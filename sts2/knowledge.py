@@ -387,15 +387,34 @@ class KnowledgeBase:
         # Weaknesses
         weaknesses = []
         if len(attacks) < len(cards) * 0.3:
-            weaknesses.append("Low attack count - may struggle to kill enemies quickly")
+            weaknesses.append("Low attack count — may struggle to kill enemies quickly")
         if len(skills) < len(cards) * 0.2:
-            weaknesses.append("Few skills - limited defensive options")
+            weaknesses.append("Few skills — limited defensive options")
         if not any(kw in keyword_freq for kw in ("Block", "Dexterity")):
-            weaknesses.append("No Block generation - vulnerable to damage")
+            weaknesses.append("No Block generation — vulnerable to damage")
         if len(cards) > 30:
-            weaknesses.append("Deck is bloated (>30 cards) - key cards drawn less often")
+            weaknesses.append("Deck is bloated (>30 cards) — key cards drawn less often")
         if len(cards) < 15:
-            weaknesses.append("Deck is very thin (<15 cards) - may cycle too fast")
+            weaknesses.append("Deck is very thin (<15 cards) — may cycle too fast")
+
+        # Mana curve warnings
+        high_cost = sum(v for k, v in cost_curve.items() if k.isdigit() and int(k) >= 3)
+        zero_cost = cost_curve.get("0", 0)
+        if high_cost > len(cards) * 0.4:
+            weaknesses.append(f"Heavy mana curve — {high_cost}/{len(cards)} cards cost 3+. Add cheap cards or energy relics.")
+        if len(powers) >= 4 and zero_cost < 2:
+            weaknesses.append(f"{len(powers)} Powers but only {zero_cost} zero-cost cards — setup turns will be slow.")
+        if zero_cost > len(cards) * 0.5:
+            weaknesses.append(f"Over half your deck is 0-cost — may lack impactful plays.")
+
+        # Strengths
+        strengths = []
+        if 18 <= len(cards) <= 25:
+            strengths.append("Good deck size — consistent draws without bloat")
+        if any(kw in keyword_freq for kw in ("Block", "Dexterity")) and any(kw in keyword_freq for kw in ("Strength", "Poison", "Lightning")):
+            strengths.append("Balanced offense and defense — both scaling and Block present")
+        if detected_archetypes:
+            strengths.append(f"Clear archetype: {detected_archetypes[0]['name']}")
 
         return {
             "character": character,
@@ -407,6 +426,7 @@ class KnowledgeBase:
             "top_keywords": top_keywords[:8],
             "detected_archetypes": detected_archetypes,
             "weaknesses": weaknesses,
+            "strengths": strengths,
             "suggestions": [a.get("strategy", "") for a in detected_archetypes[:1]],
         }
 
@@ -423,6 +443,105 @@ class KnowledgeBase:
             "save_connected": save_exists,
             "last_updated": get_last_updated(),
         }
+
+    def get_counter_cards(self, enemy: "Enemy", limit: int = 8) -> list[Card]:
+        """Find cards that counter an enemy based on keyword heuristics.
+
+        Analyzes enemy tips/patterns for damage, scaling, multi-attack hints,
+        then returns cards with matching defensive/offensive keywords.
+        """
+        if not enemy:
+            return []
+
+        enemy_text = " ".join(enemy.tips + enemy.patterns).lower()
+
+        # Determine what the enemy does → what counters it
+        need_keywords: dict[str, float] = {}  # keyword → weight
+
+        # High damage enemies → need Block
+        if any(w in enemy_text for w in ("high damage", "heavy damage", "hits hard",
+                                          "large attack", "massive")):
+            need_keywords["Block"] = 2.0
+            need_keywords["Dexterity"] = 1.5
+
+        # Multi-attack enemies → need Block per hit (Dexterity)
+        if any(w in enemy_text for w in ("multi", "multiple", "hits", "times",
+                                          "each turn", "x times")):
+            need_keywords["Dexterity"] = 2.0
+            need_keywords["Block"] = 1.5
+
+        # Scaling enemies → need burst damage
+        if any(w in enemy_text for w in ("strength", "scaling", "grows", "stronger",
+                                          "buff", "enrage")):
+            need_keywords["Strength"] = 1.5
+            need_keywords["Weak"] = 1.5
+            need_keywords["Poison"] = 1.0
+
+        # Enemies with artifact → need multi-debuff
+        if "artifact" in enemy_text:
+            need_keywords["Weak"] = 0.5  # reduced since artifact blocks it
+            need_keywords["Poison"] = 1.5
+
+        # Boss-type → value Weak and sustained damage
+        if enemy.type == "boss":
+            need_keywords["Weak"] = need_keywords.get("Weak", 0) + 1.0
+            need_keywords["Strength"] = need_keywords.get("Strength", 0) + 0.5
+            need_keywords["Block"] = need_keywords.get("Block", 0) + 0.5
+
+        # Elite-type → value burst and Block
+        if enemy.type == "elite":
+            need_keywords["Block"] = need_keywords.get("Block", 0) + 0.5
+
+        if not need_keywords:
+            # Generic fallback: recommend Block + damage
+            need_keywords = {"Block": 1.0, "Strength": 0.5}
+
+        # Score each card
+        scored: list[tuple[float, Card]] = []
+        for card in self.cards:
+            if card.character in ("Status", "Curse"):
+                continue
+            if not card.keywords:
+                continue
+            score = sum(need_keywords.get(kw, 0) for kw in card.keywords)
+            if score > 0:
+                # Bonus for uncommon/rare (more impactful)
+                if card.rarity in ("Uncommon", "Rare"):
+                    score *= 1.2
+                scored.append((score, card))
+
+        scored.sort(key=lambda x: -x[0])
+        # Deduplicate by name (different characters may share keyword patterns)
+        seen_names: set[str] = set()
+        result = []
+        for _, card in scored:
+            if card.name not in seen_names:
+                seen_names.add(card.name)
+                result.append(card)
+                if len(result) >= limit:
+                    break
+        return result
+
+    def get_undiscovered_cards(self, discovered_ids: list[str]) -> list[Card]:
+        """Return cards that exist in the KB but haven't been discovered yet."""
+        discovered = set(discovered_ids)
+        return [c for c in self.cards
+                if c.id not in discovered
+                and c.character not in ("Status", "Curse", "Unknown")]
+
+    def find_relic_archetypes(self, relic_name: str) -> list[dict]:
+        """Find strategy archetypes that mention this relic."""
+        results = []
+        name_lower = relic_name.lower()
+        for strat in self.strategies:
+            for arch in strat.archetypes:
+                if any(name_lower == kr.lower() for kr in arch.key_relics):
+                    results.append({
+                        "character": strat.character,
+                        "archetype": arch.name,
+                        "strategy": arch.strategy,
+                    })
+        return results
 
     def id_to_name(self, entity_id: str) -> str:
         """Convert a game ID like CARD.BASH to a display name."""

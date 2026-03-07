@@ -130,6 +130,13 @@
 </div>
 {% endif %}
 
+{% if analysis.strengths %}
+<h3 class="text-green">Strengths</h3>
+{% for s in analysis.strengths %}
+<div class="card card-win mb-sm"><p>{{ s }}</p></div>
+{% endfor %}
+{% endif %}
+
 {% if analysis.weaknesses %}
 <h3 class="text-yellow">Weaknesses</h3>
 {% for w in analysis.weaknesses %}

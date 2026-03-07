@@ -13,6 +13,37 @@
 
 <div class="detail-desc">{{ relic.description }}</div>
 
+{% if relic_runs %}
+<h2>Your Stats</h2>
+{% set relic_wins = relic_runs|selectattr('win')|list|length %}
+<div class="stat-grid">
+  <div class="stat-box"><div class="num">{{ relic_runs|length }}</div><div class="label">Runs</div></div>
+  <div class="stat-box"><div class="num win">{{ relic_wins }}</div><div class="label">Wins</div></div>
+  <div class="stat-box"><div class="num loss">{{ relic_runs|length - relic_wins }}</div><div class="label">Losses</div></div>
+  <div class="stat-box"><div class="num">{{ ((relic_wins / relic_runs|length) * 100)|round|int }}%</div><div class="label">Win Rate</div></div>
+</div>
+{% endif %}
+
+{% if relic_synergies %}
+<h2>Often Found With</h2>
+<p class="text-sm text-muted mb-sm">Relics commonly paired with {{ relic.name }} in winning runs.</p>
+<div class="flex flex-wrap gap-sm">
+{% for rs in relic_synergies %}
+<a href="/relics/{{ rs.id }}" class="tag tag-keyword card-link">{{ kb.id_to_name(rs.id) }} ({{ rs.weight }}x)</a>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if relic_archetypes %}
+<h2>Used in Archetypes</h2>
+{% for ra in relic_archetypes %}
+<div class="card card-tip">
+  <p><strong class="char-{{ ra.character|lower }}">{{ ra.character }}</strong> — {{ ra.archetype }}</p>
+  <p class="text-sm mt-xs">{{ ra.strategy }}</p>
+</div>
+{% endfor %}
+{% endif %}
+
 {% if community_tips %}
 <h2>Community Tips</h2>
 <div class="community-tips">
