@@ -1,11 +1,12 @@
 """Route handlers for Spirescope."""
 import asyncio
+import hashlib
 import json
 import math
 import secrets
 import time
 from xml.sax.saxutils import escape as xml_escape
-from fastapi import APIRouter, Request, Query
+from fastapi import APIRouter, Path, Request, Query
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from starlette.responses import StreamingResponse
 
@@ -138,7 +139,7 @@ async def cards(request: Request, character: str = Query(None, max_length=50),
 
 
 @router.get("/cards/{card_id}", response_class=HTMLResponse)
-async def card_detail(request: Request, card_id: str):
+async def card_detail(request: Request, card_id: str = Path(max_length=200)):
     a = _app()
     card = a.kb.get_card_by_id(card_id)
     if not card:
@@ -185,7 +186,7 @@ async def relics(request: Request, character: str = Query(None, max_length=50),
 
 
 @router.get("/relics/{relic_id}", response_class=HTMLResponse)
-async def relic_detail(request: Request, relic_id: str):
+async def relic_detail(request: Request, relic_id: str = Path(max_length=200)):
     a = _app()
     relic = a.kb.get_relic_by_id(relic_id)
     if not relic:
@@ -236,7 +237,7 @@ async def enemies(request: Request, act: str = Query(None, max_length=50),
 
 
 @router.get("/enemies/{enemy_id}", response_class=HTMLResponse)
-async def enemy_detail(request: Request, enemy_id: str):
+async def enemy_detail(request: Request, enemy_id: str = Path(max_length=200)):
     a = _app()
     enemy = a.kb.get_enemy_by_id(enemy_id)
     if not enemy:
@@ -273,7 +274,7 @@ async def events(request: Request, act: str = Query(None, max_length=50)):
 
 
 @router.get("/strategy/{character}", response_class=HTMLResponse)
-async def strategy(request: Request, character: str):
+async def strategy(request: Request, character: str = Path(max_length=50)):
     a = _app()
     strat = a.kb.get_strategy(character)
     if not strat:
@@ -307,7 +308,7 @@ async def runs(request: Request, character: str = Query(None, max_length=50), re
 
 
 @router.get("/runs/{run_id}", response_class=HTMLResponse)
-async def run_detail(request: Request, run_id: str):
+async def run_detail(request: Request, run_id: str = Path(max_length=200)):
     from sts2.analytics import analyze_run
     a = _app()
     run = a._get_run_by_id(run_id)
@@ -469,7 +470,7 @@ async def live_stream(player: int = Query(0, ge=0, le=3)):
                 run = await asyncio.to_thread(get_current_run, player_index=player)
                 data = run.model_dump()
                 data_json = json.dumps(data, sort_keys=True)
-                current_hash = str(hash(data_json))
+                current_hash = hashlib.sha1(data_json.encode(), usedforsecurity=False).hexdigest()
                 if current_hash != last_hash:
                     last_hash = current_hash
                     idle_since = time.monotonic()
@@ -500,7 +501,7 @@ async def reload_data(request: Request):
 
 
 @router.get("/api/cards/{card_id}")
-async def api_card(card_id: str):
+async def api_card(card_id: str = Path(max_length=200)):
     a = _app()
     card = a.kb.get_card_by_id(card_id)
     if not card:
@@ -511,7 +512,8 @@ async def api_card(card_id: str):
 
 
 @router.get("/api/runs")
-async def api_runs(character: str = Query(None, max_length=50), result: str = Query(None, max_length=10)):
+async def api_runs(character: str = Query(None, max_length=50), result: str = Query(None, max_length=10),
+                   limit: int = Query(50, ge=1, le=200)):
     a = _app()
     run_list = a._get_runs()
     filtered = run_list
@@ -521,7 +523,7 @@ async def api_runs(character: str = Query(None, max_length=50), result: str = Qu
         filtered = [r for r in filtered if r.win]
     elif result == "loss":
         filtered = [r for r in filtered if not r.win]
-    return [r.model_dump() for r in filtered]
+    return [r.model_dump() for r in filtered[:limit]]
 
 
 @router.get("/api/search")

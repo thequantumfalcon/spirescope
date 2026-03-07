@@ -35,6 +35,7 @@ _CSS_HASH = hashlib.md5(_css_path.read_bytes()).hexdigest()[:8] if _css_path.exi
 async def _lifespan(application):
     from sts2.updater import check_for_update
     check_for_update(templates.env.globals.get("version", "0.0.0"))
+    await _prewarm_caches()
     _watcher_task = asyncio.create_task(_watch_saves())  # noqa: F841
     yield
 
@@ -58,10 +59,10 @@ _CSRF_MAX_AGE = 14400  # 4 hours
 
 def generate_csrf_token() -> str:
     """Generate an HMAC-signed CSRF token with embedded timestamp."""
-    ts = int(time.time())
-    msg = struct.pack(">I", ts)
+    ts = max(0, int(time.time()))
+    msg = struct.pack(">Q", ts)
     sig = hmac.new(_CSRF_SECRET, msg, hashlib.sha256).hexdigest()
-    return f"{ts:08x}.{sig}"
+    return f"{ts:x}.{sig}"
 
 
 def validate_csrf_token(token: str) -> bool:
@@ -73,7 +74,7 @@ def validate_csrf_token(token: str) -> bool:
         return False
     if abs(time.time() - ts) > _CSRF_MAX_AGE:
         return False
-    msg = struct.pack(">I", ts)
+    msg = struct.pack(">Q", ts)
     expected = hmac.new(_CSRF_SECRET, msg, hashlib.sha256).hexdigest()
     return hmac.compare_digest(sig, expected)
 
@@ -239,6 +240,20 @@ async def global_error_handler(request: Request, exc: Exception):
 _save_watcher_last_mtime: float = 0
 
 
+async def _prewarm_caches():
+    """Pre-warm caches at startup so first requests don't block the event loop."""
+    global _progress_cache, _progress_cache_time
+    global _run_cache, _run_cache_by_id, _run_cache_time
+    try:
+        _progress_cache = await asyncio.to_thread(get_progress)
+        _progress_cache_time = time.monotonic()
+        _run_cache = await asyncio.to_thread(get_run_history)
+        _run_cache_by_id = {r.id: r for r in _run_cache}
+        _run_cache_time = time.monotonic()
+    except Exception:
+        log.debug("Cache pre-warm failed", exc_info=True)
+
+
 async def _watch_saves():
     global kb, _save_watcher_last_mtime, _progress_cache, _progress_cache_time
     global _run_cache, _run_cache_by_id, _run_cache_time, _analytics_cache, _analytics_cache_time
@@ -254,17 +269,25 @@ async def _watch_saves():
             history_dir = SAVE_DIR / "history"
             if history_dir.exists():
                 mtime = max(mtime, history_dir.stat().st_mtime)
+                for run_file in history_dir.glob("*.run"):
+                    try:
+                        mtime = max(mtime, run_file.stat().st_mtime)
+                    except OSError:
+                        pass
             if mtime > _save_watcher_last_mtime and _save_watcher_last_mtime > 0:
                 log.info("Save files changed, refreshing data")
                 _analytics_cache = {}
                 _analytics_cache_time = 0
                 new_kb = await asyncio.to_thread(KnowledgeBase)
+                new_progress = await asyncio.to_thread(get_progress)
+                new_runs = await asyncio.to_thread(get_run_history)
+                now = time.monotonic()
                 kb = new_kb
-                _progress_cache = await asyncio.to_thread(get_progress)
-                _progress_cache_time = time.monotonic()
-                _run_cache = await asyncio.to_thread(get_run_history)
-                _run_cache_by_id = {r.id: r for r in _run_cache}
-                _run_cache_time = time.monotonic()
+                _progress_cache = new_progress
+                _progress_cache_time = now
+                _run_cache = new_runs
+                _run_cache_by_id = {r.id: r for r in new_runs}
+                _run_cache_time = now
             _save_watcher_last_mtime = mtime
         except Exception:
             log.debug("Save watcher error", exc_info=True)
