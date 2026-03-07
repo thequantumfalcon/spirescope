@@ -10,6 +10,7 @@ import secrets
 import sys
 import time
 from fastapi import FastAPI, Request, Query
+from fastapi.exceptions import StarletteHTTPException
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -121,6 +122,19 @@ async def security_headers(request: Request, call_next):
 _LOG_SANITIZE_RE = re.compile(r"[\x00-\x1f\x7f]")
 
 
+@app.exception_handler(StarletteHTTPException)
+async def http_error_handler(request: Request, exc: StarletteHTTPException):
+    messages = {
+        404: "Page not found.",
+        405: "Method not allowed.",
+        422: "Invalid request parameters.",
+    }
+    return templates.TemplateResponse(request, "error.html", {
+        "error_code": exc.status_code,
+        "error_message": messages.get(exc.status_code, exc.detail),
+    }, status_code=exc.status_code)
+
+
 @app.exception_handler(Exception)
 async def global_error_handler(request: Request, exc: Exception):
     safe_path = _LOG_SANITIZE_RE.sub("", str(request.url.path))[:200]
@@ -172,10 +186,12 @@ _CARDS_PER_PAGE = 30
 
 
 @app.get("/cards", response_class=HTMLResponse)
-async def cards(request: Request, character: str = None, type: str = None,
+async def cards(request: Request, character: str = None,
+                type: str = Query(None, alias="type"),
                 rarity: str = None, cost: str = None, keyword: str = None,
                 page: int = Query(1, ge=1)):
-    card_list = kb.get_cards(character=character, card_type=type, rarity=rarity, cost=cost, keyword=keyword)
+    card_type = type  # avoid shadowing builtin in function body
+    card_list = kb.get_cards(character=character, card_type=card_type, rarity=rarity, cost=cost, keyword=keyword)
     total_cards = len(card_list)
     total_pages = max(1, math.ceil(total_cards / _CARDS_PER_PAGE))
     page = min(page, total_pages)
@@ -183,7 +199,7 @@ async def cards(request: Request, character: str = None, type: str = None,
     paged_cards = card_list[start:start + _CARDS_PER_PAGE]
     return templates.TemplateResponse(request, "cards.html", {
         "cards": paged_cards, "total_cards": total_cards, "characters": CHARACTERS,
-        "selected_character": character, "selected_type": type,
+        "selected_character": character, "selected_type": card_type,
         "selected_rarity": rarity, "selected_cost": cost, "selected_keyword": keyword,
         "page": page, "total_pages": total_pages,
     })
@@ -220,11 +236,13 @@ async def potions(request: Request):
 
 
 @app.get("/enemies", response_class=HTMLResponse)
-async def enemies(request: Request, act: str = None, type: str = None):
-    enemy_list = kb.get_enemies(act=act, enemy_type=type)
+async def enemies(request: Request, act: str = None,
+                  type: str = Query(None, alias="type")):
+    enemy_type = type
+    enemy_list = kb.get_enemies(act=act, enemy_type=enemy_type)
     return templates.TemplateResponse(request, "enemies.html", {
         "enemies": enemy_list,
-        "selected_act": act, "selected_type": type,
+        "selected_act": act, "selected_type": enemy_type,
     })
 
 
