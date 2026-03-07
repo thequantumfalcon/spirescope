@@ -5,6 +5,7 @@
 <p style="color:var(--text2);margin-bottom:1rem">Select the cards in your deck to get archetype detection, synergy analysis, and improvement suggestions.</p>
 
 <form method="post" action="/deck/analyze">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
   <h2>Select Cards</h2>
   {% set chars = {} %}
   {% for card in cards %}

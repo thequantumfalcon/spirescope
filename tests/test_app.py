@@ -2,7 +2,7 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 
-from sts2.app import app
+from sts2.app import app, _CSRF_TOKEN
 
 
 @pytest.fixture
@@ -118,9 +118,16 @@ async def test_deck_analyzer_page(client):
 @pytest.mark.asyncio
 async def test_deck_analyze_empty(client):
     async with client as c:
-        resp = await c.post("/deck/analyze", data={})
+        resp = await c.post("/deck/analyze", data={"csrf_token": _CSRF_TOKEN})
     assert resp.status_code == 200
     assert "No cards selected" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_deck_analyze_rejects_bad_csrf(client):
+    async with client as c:
+        resp = await c.post("/deck/analyze", data={"csrf_token": "bad_token"})
+    assert resp.status_code == 403
 
 
 @pytest.mark.asyncio
@@ -191,3 +198,43 @@ async def test_search_suggestions_shown(client):
     assert resp.status_code == 200
     # Should show "Did you mean" or "No results"
     assert "No results" in resp.text or "Did you mean" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_card_detail_404(client):
+    async with client as c:
+        resp = await c.get("/cards/CARD.NONEXISTENT")
+    assert resp.status_code == 404
+    assert "not found" in resp.text.lower()
+
+
+@pytest.mark.asyncio
+async def test_enemy_detail_404(client):
+    async with client as c:
+        resp = await c.get("/enemies/ENEMY.NONEXISTENT")
+    assert resp.status_code == 404
+    assert "not found" in resp.text.lower()
+
+
+@pytest.mark.asyncio
+async def test_run_detail_404(client):
+    async with client as c:
+        resp = await c.get("/runs/fake_run_id")
+    assert resp.status_code == 404
+    assert "not found" in resp.text.lower()
+
+
+@pytest.mark.asyncio
+async def test_strategy_404(client):
+    async with client as c:
+        resp = await c.get("/strategy/FakeCharacter")
+    assert resp.status_code == 404
+    assert "404" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_deck_page_has_csrf_token(client):
+    async with client as c:
+        resp = await c.get("/deck")
+    assert resp.status_code == 200
+    assert "csrf_token" in resp.text

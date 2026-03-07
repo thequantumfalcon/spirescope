@@ -1,6 +1,7 @@
 """FastAPI web dashboard for Spirescope."""
 import collections
 import logging
+import secrets
 import time
 from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse, PlainTextResponse
@@ -14,15 +15,20 @@ from sts2.saves import get_progress, get_run_history, get_current_run
 log = logging.getLogger(__name__)
 
 app = FastAPI(title="Spirescope")
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR), html=False), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 kb = KnowledgeBase()
+
+# CSRF token (regenerated per server start, validated on POST)
+_CSRF_TOKEN = secrets.token_hex(32)
 
 # Simple in-memory rate limiter: IP -> deque of request timestamps
 _rate_limit_store: dict[str, collections.deque] = {}
 _RATE_LIMIT_MAX = 60  # max requests per window
 _RATE_LIMIT_WINDOW = 60.0  # seconds
+_RATE_LIMIT_CLEANUP_INTERVAL = 300.0  # purge stale IPs every 5 min
+_rate_limit_last_cleanup: float = 0
 
 # Run history cache (refreshes every 30s)
 _run_cache: list = []
@@ -50,9 +56,18 @@ def _get_run_by_id(run_id: str):
 
 @app.middleware("http")
 async def rate_limit(request: Request, call_next):
-    """Simple per-IP rate limiting (60 requests/minute)."""
+    """Simple per-IP rate limiting (60 requests/minute) with periodic cleanup."""
+    global _rate_limit_last_cleanup
     ip = request.client.host if request.client else "unknown"
     now = time.monotonic()
+
+    # Periodic cleanup: remove IPs with no recent requests
+    if now - _rate_limit_last_cleanup > _RATE_LIMIT_CLEANUP_INTERVAL:
+        stale = [k for k, v in _rate_limit_store.items()
+                 if not v or v[-1] < now - _RATE_LIMIT_WINDOW]
+        for k in stale:
+            del _rate_limit_store[k]
+        _rate_limit_last_cleanup = now
 
     if ip not in _rate_limit_store:
         _rate_limit_store[ip] = collections.deque()
@@ -74,6 +89,9 @@ async def security_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
+    # Cache static assets for 1 hour
+    if request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "public, max-age=3600"
     return response
 
 
@@ -126,8 +144,12 @@ async def cards(request: Request, character: str = None, type: str = None,
 @app.get("/cards/{card_id}", response_class=HTMLResponse)
 async def card_detail(request: Request, card_id: str):
     card = kb.get_card_by_id(card_id)
-    synergies = kb.find_synergies(card_id) if card else []
-    strategy = kb.get_strategy(card.character) if card else None
+    if not card:
+        return templates.TemplateResponse(request, "error.html", {
+            "error_code": 404, "error_message": f"Card '{card_id}' not found.",
+        }, status_code=404)
+    synergies = kb.find_synergies(card_id)
+    strategy = kb.get_strategy(card.character)
     return templates.TemplateResponse(request, "card_detail.html", {
         "card": card, "synergies": synergies, "strategy": strategy,
     })
@@ -161,6 +183,10 @@ async def enemies(request: Request, act: str = None, type: str = None):
 @app.get("/enemies/{enemy_id}", response_class=HTMLResponse)
 async def enemy_detail(request: Request, enemy_id: str):
     enemy = kb.get_enemy_by_id(enemy_id)
+    if not enemy:
+        return templates.TemplateResponse(request, "error.html", {
+            "error_code": 404, "error_message": f"Enemy '{enemy_id}' not found.",
+        }, status_code=404)
     progress = get_progress()
     encounter_stats = {}
     if progress:
@@ -183,6 +209,10 @@ async def events(request: Request):
 @app.get("/strategy/{character}", response_class=HTMLResponse)
 async def strategy(request: Request, character: str):
     strat = kb.get_strategy(character)
+    if not strat:
+        return templates.TemplateResponse(request, "error.html", {
+            "error_code": 404, "error_message": f"No strategy found for '{character}'.",
+        }, status_code=404)
     cards = kb.get_cards(character=character)
     return templates.TemplateResponse(request, "strategy.html", {
         "strategy": strat, "cards": cards, "characters": CHARACTERS,
@@ -200,6 +230,10 @@ async def runs(request: Request):
 @app.get("/runs/{run_id}", response_class=HTMLResponse)
 async def run_detail(request: Request, run_id: str):
     run = _get_run_by_id(run_id)
+    if not run:
+        return templates.TemplateResponse(request, "error.html", {
+            "error_code": 404, "error_message": f"Run '{run_id}' not found.",
+        }, status_code=404)
     return templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "kb": kb,
     })
@@ -226,21 +260,28 @@ async def api_live_run(player: int = 0):
 @app.get("/deck", response_class=HTMLResponse)
 async def deck_analyzer(request: Request):
     return templates.TemplateResponse(request, "deck.html", {
-        "cards": kb.cards, "analysis": None,
+        "cards": kb.cards, "analysis": None, "csrf_token": _CSRF_TOKEN,
     })
 
 
 @app.post("/deck/analyze", response_class=HTMLResponse)
 async def analyze_deck(request: Request):
     form = await request.form()
+    token = form.get("csrf_token", "")
+    if not secrets.compare_digest(token, _CSRF_TOKEN):
+        return templates.TemplateResponse(request, "error.html", {
+            "error_code": 403, "error_message": "Invalid form submission. Please go back and try again.",
+        }, status_code=403)
     card_ids = form.getlist("card_ids")
     if not card_ids:
         return templates.TemplateResponse(request, "deck.html", {
             "cards": kb.cards, "analysis": {"error": "No cards selected"}, "selected_ids": [],
+            "csrf_token": _CSRF_TOKEN,
         })
     analysis = kb.analyze_deck(card_ids)
     return templates.TemplateResponse(request, "deck.html", {
         "cards": kb.cards, "analysis": analysis, "selected_ids": card_ids, "kb": kb,
+        "csrf_token": _CSRF_TOKEN,
     })
 
 
