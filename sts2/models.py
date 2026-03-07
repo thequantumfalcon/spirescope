@@ -128,6 +128,7 @@ class PlayerProgress(BaseModel):
     character_stats: dict = {}
     card_stats: dict = {}
     encounter_stats: dict = {}
+    enemy_stats: dict = {}
     discovered_cards: list[str] = []
     discovered_relics: list[str] = []
     discovered_potions: list[str] = []

@@ -1,6 +1,7 @@
 """FastAPI web dashboard for Spirescope."""
 import asyncio
 import collections
+import contextlib
 import hashlib
 import json
 import logging
@@ -17,7 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.responses import StreamingResponse
 
-from sts2.config import TEMPLATES_DIR, STATIC_DIR, CHARACTERS
+from sts2.config import TEMPLATES_DIR, STATIC_DIR, CHARACTERS, SAVE_DIR
 from sts2.knowledge import KnowledgeBase, get_last_updated
 from sts2.saves import get_progress, get_run_history, get_current_run
 
@@ -27,7 +28,14 @@ log = logging.getLogger(__name__)
 _css_path = STATIC_DIR / "style.css"
 _CSS_HASH = hashlib.md5(_css_path.read_bytes()).hexdigest()[:8] if _css_path.exists() else "0"
 
-app = FastAPI(title="Spirescope")
+@contextlib.asynccontextmanager
+async def _lifespan(application):
+    """Start background save watcher on startup."""
+    asyncio.create_task(_watch_saves())
+    yield
+
+
+app = FastAPI(title="Spirescope", lifespan=_lifespan)
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR), html=False), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 templates.env.globals["css_hash"] = _CSS_HASH
@@ -50,11 +58,26 @@ _RATE_LIMIT_WINDOW = 60.0  # seconds
 _RATE_LIMIT_CLEANUP_INTERVAL = 300.0  # purge stale IPs every 5 min
 _rate_limit_last_cleanup: float = 0
 
+# Progress cache (refreshes every 30s)
+_progress_cache: object = None
+_progress_cache_time: float = 0
+_PROGRESS_CACHE_TTL = 30.0
+
 # Run history cache (refreshes every 30s)
 _run_cache: list = []
 _run_cache_by_id: dict = {}
 _run_cache_time: float = 0
 _RUN_CACHE_TTL = 30.0
+
+
+def _get_progress():
+    """Return cached player progress, refreshing if stale."""
+    global _progress_cache, _progress_cache_time
+    now = time.monotonic()
+    if _progress_cache is None or (now - _progress_cache_time) > _PROGRESS_CACHE_TTL:
+        _progress_cache = get_progress()
+        _progress_cache_time = now
+    return _progress_cache
 
 
 def _get_runs():
@@ -151,6 +174,42 @@ async def global_error_handler(request: Request, exc: Exception):
     }, status_code=500)
 
 
+# Background save file watcher: detect new runs and auto-reload KB
+_save_watcher_last_mtime: float = 0
+
+
+async def _watch_saves():
+    """Background task: watch save dir for changes, rebuild KB when new data appears."""
+    global kb, _save_watcher_last_mtime, _progress_cache, _progress_cache_time
+    global _run_cache, _run_cache_time
+    while True:
+        await asyncio.sleep(10)
+        try:
+            if not SAVE_DIR.exists():
+                continue
+            # Check if progress.save or history dir changed
+            mtime = 0.0
+            progress_path = SAVE_DIR / "progress.save"
+            if progress_path.exists():
+                mtime = max(mtime, progress_path.stat().st_mtime)
+            history_dir = SAVE_DIR / "history"
+            if history_dir.exists():
+                mtime = max(mtime, history_dir.stat().st_mtime)
+            if mtime > _save_watcher_last_mtime and _save_watcher_last_mtime > 0:
+                log.info("Save files changed, refreshing data")
+                # Invalidate caches so next request gets fresh data
+                _progress_cache = None
+                _progress_cache_time = 0
+                _run_cache_time = 0
+                # Rebuild KB to pick up newly discovered enemies/events
+                new_kb = KnowledgeBase()
+                kb = new_kb
+            _save_watcher_last_mtime = mtime
+        except Exception:
+            pass  # never crash the watcher
+
+
+
 @app.get("/health")
 async def health():
     """Health check for uptime monitors and load balancers."""
@@ -164,7 +223,7 @@ async def robots_txt():
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    progress = get_progress()
+    progress = _get_progress()
     runs = _get_runs()
     return templates.TemplateResponse(request, "index.html", {
         "characters": CHARACTERS,
@@ -220,8 +279,11 @@ async def card_detail(request: Request, card_id: str):
         }, status_code=404)
     synergies = kb.find_synergies(card_id)
     strategy = kb.get_strategy(card.character)
+    progress = _get_progress()
+    card_stats = progress.card_stats.get(card_id, {}) if progress else {}
     return templates.TemplateResponse(request, "card_detail.html", {
         "card": card, "synergies": synergies, "strategy": strategy,
+        "card_stats": card_stats,
     })
 
 
@@ -259,13 +321,19 @@ async def enemy_detail(request: Request, enemy_id: str):
         return templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Enemy '{enemy_id}' not found.",
         }, status_code=404)
-    progress = get_progress()
+    progress = _get_progress()
     encounter_stats = {}
+    enemy_fight_stats = {}
     if progress:
+        # Check encounter_stats (by encounter ID)
         for enc_id, stats in progress.encounter_stats.items():
             if enemy_id.split(".")[-1].lower() in enc_id.lower():
                 encounter_stats = stats
                 break
+        # Check enemy_stats (by monster ID) — more granular per-enemy data
+        enemy_fight_stats = progress.enemy_stats.get(enemy_id, {})
+        if not encounter_stats:
+            encounter_stats = enemy_fight_stats
     return templates.TemplateResponse(request, "enemy_detail.html", {
         "enemy": enemy, "encounter_stats": encounter_stats, "kb": kb,
     })

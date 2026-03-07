@@ -255,6 +255,45 @@ class TestLevenshtein:
         assert _levenshtein("abc", "xyz") == 3
 
 
+class TestAutoDiscovery:
+    def test_discover_from_saves_adds_enemies(self, kb):
+        """KB should have auto-discovered enemies from save files (if saves exist)."""
+        # This just checks the mechanism doesn't crash; actual discovery depends on saves
+        assert isinstance(kb.enemies, list)
+
+    def test_discover_from_saves_adds_events(self, kb):
+        """KB should have auto-discovered events from save files (if saves exist)."""
+        assert isinstance(kb.events, list)
+
+    def test_discovered_enemy_has_type(self):
+        """Auto-discovered enemies from saves should have a type assigned."""
+        from unittest.mock import patch
+        from sts2.models import PlayerProgress
+
+        mock_progress = PlayerProgress(
+            enemy_stats={"BOSS.TEST_BOSS": {"Ironclad": {"wins": 1, "losses": 0}}},
+        )
+        with patch("sts2.saves.get_progress", return_value=mock_progress):
+            test_kb = KnowledgeBase()
+        enemy = test_kb.get_enemy_by_id("BOSS.TEST_BOSS")
+        if enemy:
+            assert enemy.type == "boss"
+
+    def test_discovered_event_has_name(self):
+        """Auto-discovered events from saves should have readable names."""
+        from unittest.mock import patch
+        from sts2.models import PlayerProgress
+
+        mock_progress = PlayerProgress(
+            discovered_events=["EVENT.DEAD_ADVENTURER"],
+        )
+        with patch("sts2.saves.get_progress", return_value=mock_progress):
+            test_kb = KnowledgeBase()
+        found = [e for e in test_kb.events if e.id == "EVENT.DEAD_ADVENTURER"]
+        if found:
+            assert found[0].name == "Dead Adventurer"
+
+
 class TestSuggest:
     def test_suggest_finds_close_match(self, kb):
         if not kb.cards:

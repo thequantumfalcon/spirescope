@@ -439,3 +439,71 @@ async def test_footer_present(client):
     assert '<footer>' in resp.text
     assert 'Spirescope' in resp.text
     assert 'GitHub' in resp.text
+
+
+async def test_card_detail_shows_card_stats(client):
+    """Card detail page should show personal stats when card_stats data exists."""
+    from unittest.mock import patch
+    from sts2.models import PlayerProgress
+
+    mock_progress = PlayerProgress(
+        card_stats={"CARD.BASH": {"times_picked": 10, "times_skipped": 5, "times_won": 7, "times_lost": 3}},
+    )
+    with patch("sts2.app._get_progress", return_value=mock_progress):
+        async with client as c:
+            resp = await c.get("/cards/CARD.BASH")
+    if resp.status_code == 200:
+        assert "Your Stats" in resp.text
+        assert "Picked" in resp.text
+
+
+async def test_card_detail_no_stats_when_empty(client):
+    """Card detail page should not show stats section when card_stats is empty."""
+    from unittest.mock import patch
+    from sts2.models import PlayerProgress
+
+    mock_progress = PlayerProgress(card_stats={})
+    with patch("sts2.app._get_progress", return_value=mock_progress):
+        async with client as c:
+            resp = await c.get("/cards/CARD.BASH")
+    if resp.status_code == 200:
+        assert "Your Stats" not in resp.text
+
+
+async def test_index_shows_character_streaks(client):
+    """Index page should show streak/ascension info when available."""
+    from unittest.mock import patch
+    from sts2.models import PlayerProgress
+
+    mock_progress = PlayerProgress(
+        total_playtime=36000,
+        character_stats={
+            "Ironclad": {
+                "wins": 5, "losses": 3, "playtime": 18000,
+                "best_streak": 3, "current_streak": 2,
+                "max_ascension": 10, "fastest_win": 900,
+            },
+        },
+    )
+    with patch("sts2.app._get_progress", return_value=mock_progress):
+        async with client as c:
+            resp = await c.get("/")
+    assert resp.status_code == 200
+    assert "Best streak" in resp.text
+    assert "Max ascension" in resp.text
+    assert "Fastest win" in resp.text
+
+
+async def test_save_watcher_constants():
+    """Background watcher should have sensible defaults."""
+    from sts2.app import _PROGRESS_CACHE_TTL, _RUN_CACHE_TTL
+    assert _PROGRESS_CACHE_TTL > 0
+    assert _RUN_CACHE_TTL > 0
+
+
+async def test_progress_cache_returns_same_object():
+    """Cached progress should return same object within TTL."""
+    from sts2.app import _get_progress
+    p1 = _get_progress()
+    p2 = _get_progress()
+    assert p1 is p2

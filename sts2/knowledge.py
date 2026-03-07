@@ -55,6 +55,7 @@ class KnowledgeBase:
         self._all_names: list[str] = []
 
         self._load_all()
+        self._discover_from_saves()
         self._build_indexes()
 
     def _load_json(self, filename: str) -> list[dict]:
@@ -88,6 +89,38 @@ class KnowledgeBase:
             if "archetypes" in strat_data:
                 strat_data["archetypes"] = [SynergyGroup(**a) for a in strat_data["archetypes"]]
             self.strategies.append(CharacterStrategy(**strat_data))
+
+    def _discover_from_saves(self):
+        """Auto-discover enemies and events from save files on startup."""
+        try:
+            from sts2.saves import get_progress
+            progress = get_progress()
+            if not progress:
+                return
+
+            existing_enemy_ids = {e.id for e in self.enemies}
+            existing_event_ids = {e.id for e in self.events}
+
+            # Discover enemies from enemy_stats and encounter_stats
+            for enemy_id in list(progress.enemy_stats.keys()) + list(progress.encounter_stats.keys()):
+                if enemy_id in existing_enemy_ids:
+                    continue
+                existing_enemy_ids.add(enemy_id)
+                name = enemy_id.split(".", 1)[-1].replace("_", " ").title() if "." in enemy_id else enemy_id
+                etype = "boss" if "BOSS" in enemy_id.upper() else "elite" if "ELITE" in enemy_id.upper() else "normal"
+                self.enemies.append(Enemy(id=enemy_id, name=name, type=etype,
+                                         tips=["Auto-discovered from your save data"]))
+
+            # Discover events
+            for event_id in progress.discovered_events:
+                if event_id in existing_event_ids:
+                    continue
+                existing_event_ids.add(event_id)
+                name = event_id.split(".", 1)[-1].replace("_", " ").title() if "." in event_id else event_id
+                self.events.append(Event(id=event_id, name=name,
+                                         description="Auto-discovered from your save data"))
+        except Exception:
+            pass  # save files may not exist (e.g., CI)
 
     def _build_indexes(self):
         """Build O(1) lookup dicts and pre-tokenized search index."""

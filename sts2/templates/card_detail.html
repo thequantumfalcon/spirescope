@@ -13,6 +13,16 @@
 
 <div class="detail-desc">{{ card.description }}</div>
 
+{% if card_stats and (card_stats.times_picked or card_stats.times_skipped or card_stats.times_won or card_stats.times_lost) %}
+<h2>Your Stats</h2>
+<div class="stat-grid">
+  {% if card_stats.times_picked is defined %}<div class="stat-box"><div class="num">{{ card_stats.times_picked }}</div><div class="label">Picked</div></div>{% endif %}
+  {% if card_stats.times_skipped is defined %}<div class="stat-box"><div class="num">{{ card_stats.times_skipped }}</div><div class="label">Skipped</div></div>{% endif %}
+  {% if card_stats.times_won is defined %}<div class="stat-box"><div class="num">{{ card_stats.times_won }}</div><div class="label">Wins</div></div>{% endif %}
+  {% if card_stats.times_lost is defined %}<div class="stat-box"><div class="num">{{ card_stats.times_lost }}</div><div class="label">Losses</div></div>{% endif %}
+</div>
+{% endif %}
+
 {% if card.keywords %}
 <h2>Keywords</h2>
 <p>{% for kw in card.keywords %}<span class="tag tag-keyword">{{ kw }}</span>{% endfor %}</p>

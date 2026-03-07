@@ -122,6 +122,8 @@ def get_progress() -> PlayerProgress | None:
             "playtime": cs.get("playtime", 0),
             "max_ascension": cs.get("max_ascension", 0),
             "best_streak": cs.get("best_win_streak", 0),
+            "current_streak": cs.get("current_streak", 0),
+            "fastest_win": cs.get("fastest_win_time", -1),
         }
 
     card_stats = {}
@@ -144,11 +146,24 @@ def get_progress() -> PlayerProgress | None:
                 "losses": fs.get("losses", 0),
             }
 
+    # Enemy stats (per-monster win/loss by character)
+    enemy_stats = {}
+    for es in data.get("enemy_stats", []):
+        enemy_id = es.get("enemy_id", "")
+        enemy_stats[enemy_id] = {}
+        for fs in es.get("fight_stats", []):
+            char_name = CHARACTER_IDS.get(fs.get("character", ""), fs.get("character", ""))
+            enemy_stats[enemy_id][char_name] = {
+                "wins": fs.get("wins", 0),
+                "losses": fs.get("losses", 0),
+            }
+
     return PlayerProgress(
         total_playtime=data.get("total_playtime", 0),
         character_stats=char_stats,
         card_stats=card_stats,
         encounter_stats=encounter_stats,
+        enemy_stats=enemy_stats,
         discovered_cards=data.get("discovered_cards", []),
         discovered_relics=data.get("discovered_relics", []),
         discovered_potions=data.get("discovered_potions", []),

@@ -58,6 +58,8 @@ MOCK_PROGRESS = {
             "playtime": 18000,
             "max_ascension": 10,
             "best_win_streak": 3,
+            "current_streak": 2,
+            "fastest_win_time": 900,
         },
     ],
     "card_stats": [
@@ -68,6 +70,14 @@ MOCK_PROGRESS = {
             "encounter_id": "BOSS.HEXAGHOST",
             "fight_stats": [
                 {"character": "CHARACTER.IRONCLAD", "wins": 3, "losses": 1},
+            ],
+        },
+    ],
+    "enemy_stats": [
+        {
+            "enemy_id": "MONSTER.JAW_WORM",
+            "fight_stats": [
+                {"character": "CHARACTER.IRONCLAD", "wins": 8, "losses": 0},
             ],
         },
     ],
@@ -287,6 +297,30 @@ class TestGetProgress:
 
         assert "BOSS.HEXAGHOST" in progress.encounter_stats
         assert "Ironclad" in progress.encounter_stats["BOSS.HEXAGHOST"]
+
+    def test_character_stats_enhanced_fields(self, tmp_path):
+        save_file = tmp_path / "progress.save"
+        save_file.write_text(json.dumps(MOCK_PROGRESS))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path):
+            progress = get_progress()
+
+        cs = progress.character_stats["Ironclad"]
+        assert cs["current_streak"] == 2
+        assert cs["fastest_win"] == 900
+
+    def test_enemy_stats(self, tmp_path):
+        save_file = tmp_path / "progress.save"
+        save_file.write_text(json.dumps(MOCK_PROGRESS))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path):
+            progress = get_progress()
+
+        assert "MONSTER.JAW_WORM" in progress.enemy_stats
+        jaw_worm = progress.enemy_stats["MONSTER.JAW_WORM"]
+        assert "Ironclad" in jaw_worm
+        assert jaw_worm["Ironclad"]["wins"] == 8
+        assert jaw_worm["Ironclad"]["losses"] == 0
 
 
 class TestGetRunHistory:

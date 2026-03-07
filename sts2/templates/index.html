@@ -23,8 +23,11 @@
   <a href="/strategy/{{ char }}" class="card" style="text-decoration:none">
     <h3 class="char-{{ char|lower }}">{{ char }}</h3>
     {% if progress and progress.character_stats.get(char) %}
-    <p>{{ progress.character_stats[char].wins }}W / {{ progress.character_stats[char].losses }}L
-    &bull; {{ (progress.character_stats[char].playtime / 60)|int }}m played</p>
+    {% set cs = progress.character_stats[char] %}
+    <p>{{ cs.wins }}W / {{ cs.losses }}L &bull; {{ (cs.playtime / 60)|int }}m played</p>
+    {% if cs.best_streak %}<p style="font-size:0.8rem;color:var(--text2)">Best streak: {{ cs.best_streak }}{% if cs.current_streak %} (current: {{ cs.current_streak }}){% endif %}</p>{% endif %}
+    {% if cs.max_ascension %}<p style="font-size:0.8rem;color:var(--text2)">Max ascension: {{ cs.max_ascension }}</p>{% endif %}
+    {% if cs.fastest_win and cs.fastest_win > 0 %}<p style="font-size:0.8rem;color:var(--text2)">Fastest win: {{ (cs.fastest_win / 60)|int }}m</p>{% endif %}
     {% else %}
     <p>Not yet played</p>
     {% endif %}
