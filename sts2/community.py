@@ -62,7 +62,10 @@ def _fetch_reddit_json(url: str, retries: int = 2) -> dict:
                 return json.loads(resp.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
             if e.code == 429:
-                wait = min(int(e.headers.get("Retry-After", 10)), 60)
+                try:
+                    wait = min(int(e.headers.get("Retry-After", 10)), 60)
+                except (ValueError, TypeError):
+                    wait = 10
                 log.warning("Reddit 429 rate limited, waiting %ds (attempt %d/%d)", wait, attempt + 1, retries + 1)
                 if attempt < retries:
                     time.sleep(wait)
@@ -290,11 +293,9 @@ def scrape_community_data(existing_names: set[str] = None) -> dict:
 
     # Compute consensus tiers
     card_tiers = {}
-    relic_tiers = {}
     for name_lower, votes in tier_votes.items():
         consensus = _compute_consensus_tier(votes)
         if consensus:
-            # We don't distinguish card vs relic here — let the caller do that
             card_tiers[name_lower] = consensus
 
     # Deduplicate tips (keep unique, max 5 per entity)
@@ -332,8 +333,10 @@ def scrape_community_data(existing_names: set[str] = None) -> dict:
 def save_community_data(data: dict) -> None:
     """Save community data to disk."""
     path = DATA_DIR / "community.json"
-    with open(path, "w", encoding="utf-8") as f:
+    tmp_path = path.with_suffix(".tmp")
+    with open(tmp_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
+    tmp_path.replace(path)
     print(f"\n  Saved community data to {path}")
 
 
@@ -348,7 +351,6 @@ def apply_community_tiers(community_data: dict) -> None:
         return
 
     updated_cards = 0
-    updated_relics = 0
 
     # Update cards
     cards_path = DATA_DIR / "cards.json"
@@ -359,10 +361,12 @@ def apply_community_tiers(community_data: dict) -> None:
             if name_lower in tiers and not card.get("tier"):
                 card["tier"] = tiers[name_lower]
                 updated_cards += 1
-        with open(cards_path, "w", encoding="utf-8") as f:
+        tmp_path = cards_path.with_suffix(".tmp")
+        with open(tmp_path, "w", encoding="utf-8") as f:
             json.dump(cards, f, indent=2, ensure_ascii=False)
+        tmp_path.replace(cards_path)
 
-    print(f"  Applied tiers to {updated_cards} cards, {updated_relics} relics")
+    print(f"  Applied tiers to {updated_cards} cards")
 
 
 def _load_cached_community_data() -> dict | None:

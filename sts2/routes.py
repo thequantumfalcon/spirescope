@@ -80,7 +80,8 @@ async def index(request: Request):
         "characters": CHARACTERS, "progress": progress, "recent_runs": runs[:5],
         "kb": a.kb, "total_cards": len(a.kb.cards), "total_relics": len(a.kb.relics),
         "total_potions": len(a.kb.potions), "total_enemies": len(a.kb.enemies),
-        "last_updated": await asyncio.to_thread(get_last_updated), "data_status": a.kb.get_data_status(),
+        "last_updated": await asyncio.to_thread(get_last_updated),
+        "data_status": a.kb.get_data_status(skip_last_updated=True),
         "update_info": get_update_info(), "undiscovered_cards": undiscovered,
     })
 
@@ -142,7 +143,7 @@ async def card_detail(request: Request, card_id: str):
     card = a.kb.get_card_by_id(card_id)
     if not card:
         return a.templates.TemplateResponse(request, "error.html", {
-            "error_code": 404, "error_message": f"Card '{card_id}' not found.",
+            "error_code": 404, "error_message": f"Card '{card_id[:100]}' not found.",
         }, status_code=404)
     synergies = a.kb.find_synergies(card_id)
     strategy = a.kb.get_strategy(card.character)
@@ -183,13 +184,13 @@ async def relics(request: Request, character: str = Query(None, max_length=50),
     })
 
 
-@router.get("/relics/{relic_id:path}", response_class=HTMLResponse)
+@router.get("/relics/{relic_id}", response_class=HTMLResponse)
 async def relic_detail(request: Request, relic_id: str):
     a = _app()
     relic = a.kb.get_relic_by_id(relic_id)
     if not relic:
         return a.templates.TemplateResponse(request, "error.html", {
-            "error_code": 404, "error_message": f"Relic '{relic_id}' not found.",
+            "error_code": 404, "error_message": f"Relic '{relic_id[:100]}' not found.",
         }, status_code=404)
     relic_runs = [r for r in a._get_runs() if relic_id in r.relics]
     community_tips = a.kb.get_community_tips(relic.name)
@@ -240,7 +241,7 @@ async def enemy_detail(request: Request, enemy_id: str):
     enemy = a.kb.get_enemy_by_id(enemy_id)
     if not enemy:
         return a.templates.TemplateResponse(request, "error.html", {
-            "error_code": 404, "error_message": f"Enemy '{enemy_id}' not found.",
+            "error_code": 404, "error_message": f"Enemy '{enemy_id[:100]}' not found.",
         }, status_code=404)
     progress = a._get_progress()
     encounter_stats = {}
@@ -277,7 +278,7 @@ async def strategy(request: Request, character: str):
     strat = a.kb.get_strategy(character)
     if not strat:
         return a.templates.TemplateResponse(request, "error.html", {
-            "error_code": 404, "error_message": f"No strategy found for '{character}'.",
+            "error_code": 404, "error_message": f"No strategy found for '{character[:100]}'.",
         }, status_code=404)
     cards_list = a.kb.get_cards(character=character)
     return a.templates.TemplateResponse(request, "strategy.html", {
@@ -312,7 +313,7 @@ async def run_detail(request: Request, run_id: str):
     run = a._get_run_by_id(run_id)
     if not run:
         return a.templates.TemplateResponse(request, "error.html", {
-            "error_code": 404, "error_message": f"Run '{run_id}' not found.",
+            "error_code": 404, "error_message": f"Run '{run_id[:100]}' not found.",
         }, status_code=404)
     run_analysis = analyze_run(run)
     return a.templates.TemplateResponse(request, "run_detail.html", {

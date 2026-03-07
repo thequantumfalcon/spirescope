@@ -35,7 +35,7 @@ _CSS_HASH = hashlib.md5(_css_path.read_bytes()).hexdigest()[:8] if _css_path.exi
 async def _lifespan(application):
     from sts2.updater import check_for_update
     check_for_update(templates.env.globals.get("version", "0.0.0"))
-    asyncio.create_task(_watch_saves())
+    _watcher_task = asyncio.create_task(_watch_saves())  # noqa: F841
     yield
 
 
@@ -156,6 +156,8 @@ app.include_router(router)
 
 @app.middleware("http")
 async def rate_limit(request: Request, call_next):
+    if request.url.path.startswith("/static/"):
+        return await call_next(request)
     global _rate_limit_last_cleanup
     ip = request.client.host if request.client else "unknown"
     now = time.monotonic()
@@ -254,15 +256,15 @@ async def _watch_saves():
                 mtime = max(mtime, history_dir.stat().st_mtime)
             if mtime > _save_watcher_last_mtime and _save_watcher_last_mtime > 0:
                 log.info("Save files changed, refreshing data")
-                _progress_cache = None
-                _progress_cache_time = 0
-                _run_cache = []
-                _run_cache_by_id = {}
-                _run_cache_time = 0
                 _analytics_cache = {}
                 _analytics_cache_time = 0
                 new_kb = await asyncio.to_thread(KnowledgeBase)
                 kb = new_kb
+                _progress_cache = await asyncio.to_thread(get_progress)
+                _progress_cache_time = time.monotonic()
+                _run_cache = await asyncio.to_thread(get_run_history)
+                _run_cache_by_id = {r.id: r for r in _run_cache}
+                _run_cache_time = time.monotonic()
             _save_watcher_last_mtime = mtime
         except Exception:
             log.debug("Save watcher error", exc_info=True)

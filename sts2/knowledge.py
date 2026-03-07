@@ -238,11 +238,11 @@ class KnowledgeBase:
                 seen_names.add(name.lower())
                 self._all_names.append(name)
 
-    def _score_match(self, query: str, text: str) -> float:
+    def _score_match(self, query: str, text: str, boundary_re=None) -> float:
         """Fast scoring: exact substring > word boundary > token overlap."""
         if query in text:
             # Boost for matching at word boundary or being a large portion of the name
-            if re.search(r'(?:^|\s|_|\.)' + re.escape(query), text):
+            if boundary_re and boundary_re.search(text):
                 return 1.0
             return 0.9
         # Normalized query with underscores
@@ -282,9 +282,10 @@ class KnowledgeBase:
         if not q:
             return results
 
+        boundary_re = re.compile(r'(?:^|\s|_|\.)' + re.escape(q))
         scored: list[tuple[float, str, object]] = []
         for text, category, obj in self._search_index:
-            score = self._score_match(q, text)
+            score = self._score_match(q, text, boundary_re)
             if score > 0.3:
                 scored.append((score, category, obj))
 
@@ -461,19 +462,21 @@ class KnowledgeBase:
             "suggestions": [a.get("strategy", "") for a in detected_archetypes[:1]],
         }
 
-    def get_data_status(self) -> dict:
+    def get_data_status(self, skip_last_updated: bool = False) -> dict:
         """Return data source status for the home page."""
         from sts2.config import SAVE_DIR
         save_exists = SAVE_DIR.exists() and (SAVE_DIR / "progress.save").exists()
-        return {
+        status = {
             "cards": len(self.cards),
             "relics": len(self.relics),
             "potions": len(self.potions),
             "enemies": len(self.enemies),
             "events": len(self.events),
             "save_connected": save_exists,
-            "last_updated": get_last_updated(),
         }
+        if not skip_last_updated:
+            status["last_updated"] = get_last_updated()
+        return status
 
     def get_counter_cards(self, enemy: "Enemy", limit: int = 8) -> list[Card]:
         """Find cards that counter an enemy based on keyword heuristics.

@@ -294,8 +294,10 @@ def _extract_keywords(description: str) -> list[str]:
 def _save_json(filename: str, data: list[dict]) -> int:
     """Write data to a JSON file, return count of items."""
     path = DATA_DIR / filename
-    with open(path, "w", encoding="utf-8") as f:
+    tmp_path = path.with_suffix(".tmp")
+    with open(tmp_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
+    tmp_path.replace(path)
     return len(data)
 
 

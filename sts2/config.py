@@ -77,7 +77,20 @@ GAME_INSTALL_DIR = _find_game_dir()
 
 # Server
 HOST = os.environ.get("STS2_HOST", "127.0.0.1")
-PORT = int(os.environ.get("STS2_PORT", "8000"))
+
+
+def _parse_port() -> int:
+    raw = os.environ.get("STS2_PORT", "8000")
+    try:
+        port = int(raw)
+    except ValueError:
+        port = 8000
+    if not (1 <= port <= 65535):
+        port = 8000
+    return port
+
+
+PORT = _parse_port()
 
 # Characters
 CHARACTERS = ["Ironclad", "Silent", "Defect", "Necrobinder", "Regent"]
