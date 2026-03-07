@@ -18,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.responses import StreamingResponse
 
+from sts2.analytics import compute_analytics
 from sts2.config import TEMPLATES_DIR, STATIC_DIR, CHARACTERS, SAVE_DIR
 from sts2.knowledge import KnowledgeBase, get_last_updated
 from sts2.saves import get_progress, get_run_history, get_current_run
@@ -224,7 +225,7 @@ async def robots_txt():
 async def sitemap_xml(request: Request):
     """Dynamic sitemap for SEO — lists all detail pages."""
     base = str(request.base_url).rstrip("/")
-    urls = ["/", "/cards", "/relics", "/potions", "/enemies", "/events", "/deck", "/live", "/runs"]
+    urls = ["/", "/cards", "/relics", "/potions", "/enemies", "/events", "/deck", "/live", "/runs", "/analytics"]
     for card in kb.cards:
         urls.append(f"/cards/{card.id}")
     for relic in kb.relics:
@@ -304,10 +305,12 @@ async def card_detail(request: Request, card_id: str):
     runs_with_card = [r for r in _get_runs() if card_id in r.deck]
     card_run_wins = sum(1 for r in runs_with_card if r.win)
     card_run_total = len(runs_with_card)
+    community_tips = kb.get_community_tips(card.name)
     return templates.TemplateResponse(request, "card_detail.html", {
         "card": card, "synergies": synergies, "strategy": strategy,
         "card_stats": card_stats,
         "card_run_wins": card_run_wins, "card_run_total": card_run_total,
+        "community_tips": community_tips,
     })
 
 
@@ -329,8 +332,9 @@ async def relic_detail(request: Request, relic_id: str):
         }, status_code=404)
     # Find runs where this relic was used
     relic_runs = [r for r in _get_runs() if relic_id in r.relics]
+    community_tips = kb.get_community_tips(relic.name)
     return templates.TemplateResponse(request, "relic_detail.html", {
-        "relic": relic, "relic_runs": relic_runs,
+        "relic": relic, "relic_runs": relic_runs, "community_tips": community_tips,
     })
 
 
@@ -431,6 +435,25 @@ async def run_detail(request: Request, run_id: str):
     return templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "kb": kb,
     })
+
+
+@app.get("/analytics", response_class=HTMLResponse)
+async def analytics(request: Request):
+    runs = _get_runs()
+    progress = _get_progress()
+    card_stats = progress.card_stats if progress else {}
+    stats = compute_analytics(runs, card_stats)
+    return templates.TemplateResponse(request, "analytics.html", {
+        "stats": stats, "kb": kb,
+    })
+
+
+@app.get("/api/analytics")
+async def api_analytics():
+    runs = _get_runs()
+    progress = _get_progress()
+    card_stats = progress.card_stats if progress else {}
+    return compute_analytics(runs, card_stats)
 
 
 @app.get("/live", response_class=HTMLResponse)

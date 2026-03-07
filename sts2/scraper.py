@@ -124,6 +124,8 @@ def _scrape_cards(html: str) -> list[dict]:
                      "Status": "Status", "Curse": "Curse"}
         card_type = type_map.get(card_type, card_type)
 
+        desc_upgraded = _clean_description(obj.get("upgradedDescription", ""))
+
         cards.append({
             "id": game_id,
             "name": obj.get("name", ""),
@@ -132,6 +134,7 @@ def _scrape_cards(html: str) -> list[dict]:
             "type": card_type,
             "rarity": obj.get("rarity", "Common"),
             "description": desc,
+            "description_upgraded": desc_upgraded,
             "keywords": keywords,
         })
 

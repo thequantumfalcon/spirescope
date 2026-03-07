@@ -13,6 +13,16 @@
 
 <div class="detail-desc">{{ relic.description }}</div>
 
+{% if community_tips %}
+<h2>Community Tips</h2>
+<div style="border-left:3px solid var(--accent2);padding-left:1rem;margin-bottom:1.5rem">
+{% for tip in community_tips %}
+<p style="color:var(--text2);font-size:0.9rem;margin-bottom:0.5rem">"{{ tip }}"</p>
+{% endfor %}
+<p style="font-size:0.75rem;color:var(--text2)">Source: Reddit community</p>
+</div>
+{% endif %}
+
 {% if relic_runs %}
 <h2>Runs with {{ relic.name }} ({{ relic_runs|length }})</h2>
 <div style="margin-bottom:1rem">

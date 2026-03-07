@@ -9,6 +9,11 @@ def main():
         run_scraper()
         return
 
+    if len(sys.argv) > 1 and sys.argv[1] == "community":
+        from sts2.community import run_community_scraper
+        run_community_scraper()
+        return
+
     from sts2.config import HOST, PORT
     import uvicorn
 

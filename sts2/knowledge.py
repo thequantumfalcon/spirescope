@@ -42,6 +42,10 @@ class KnowledgeBase:
         self.events: list[Event] = []
         self.strategies: list[CharacterStrategy] = []
 
+        # Community data from Reddit
+        self.community_tips: dict[str, list[str]] = {}  # name_lower -> tips
+        self.meta_posts: list[dict] = []
+
         # O(1) lookup indexes
         self._cards_by_id: dict[str, Card] = {}
         self._enemies_by_id: dict[str, Enemy] = {}
@@ -55,6 +59,7 @@ class KnowledgeBase:
         self._all_names: list[str] = []
 
         self._load_all()
+        self._load_community_data()
         self._discover_from_saves()
         self._build_indexes()
 
@@ -89,6 +94,22 @@ class KnowledgeBase:
             if "archetypes" in strat_data:
                 strat_data["archetypes"] = [SynergyGroup(**a) for a in strat_data["archetypes"]]
             self.strategies.append(CharacterStrategy(**strat_data))
+
+    def _load_community_data(self):
+        """Load community tips and meta posts from community.json."""
+        path = DATA_DIR / "community.json"
+        if not path.exists():
+            return
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            self.community_tips = data.get("community_tips", {})
+            self.meta_posts = data.get("meta_posts", [])
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    def get_community_tips(self, entity_name: str) -> list[str]:
+        """Get community tips for an entity by name."""
+        return self.community_tips.get(entity_name.lower().strip(), [])
 
     def _discover_from_saves(self):
         """Auto-discover enemies and events from save files on startup."""

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block og_title %}Analytics — Spirescope{% endblock %}
+{% block content %}
+<h1>Analytics</h1>
+
+{% if stats.overview.total == 0 %}
+<p style="color:var(--text2);margin:2rem 0">No run data yet. Complete some runs in Slay the Spire 2 and your stats will appear here.</p>
+{% else %}
+
+<h2>Overview</h2>
+<div class="stat-grid">
+  <div class="stat-box"><div class="num">{{ stats.overview.total }}</div><div class="label">Total Runs</div></div>
+  <div class="stat-box"><div class="num win">{{ stats.overview.wins }}</div><div class="label">Wins</div></div>
+  <div class="stat-box"><div class="num loss">{{ stats.overview.losses }}</div><div class="label">Losses</div></div>
+  <div class="stat-box"><div class="num">{{ stats.overview.win_rate }}%</div><div class="label">Win Rate</div></div>
+  <div class="stat-box"><div class="num">{{ stats.overview.avg_time_min }}m</div><div class="label">Avg Run Time</div></div>
+  <div class="stat-box"><div class="num">{{ stats.overview.avg_deck_size }}</div><div class="label">Avg Deck Size</div></div>
+  <div class="stat-box"><div class="num">{{ stats.overview.avg_floors }}</div><div class="label">Avg Floors</div></div>
+</div>
+
+{% if stats.character_breakdown %}
+<h2>Character Performance</h2>
+<table>
+<tr><th>Character</th><th>Runs</th><th>Wins</th><th>Losses</th><th>Win Rate</th><th>Avg Deck</th><th>Avg Floors</th></tr>
+{% for char, cb in stats.character_breakdown.items() %}
+<tr>
+  <td class="char-{{ char|lower }}">{{ char }}</td>
+  <td>{{ cb.total }}</td>
+  <td class="win">{{ cb.wins }}</td>
+  <td class="loss">{{ cb.losses }}</td>
+  <td><strong>{{ cb.win_rate }}%</strong></td>
+  <td>{{ cb.avg_deck_size }}</td>
+  <td>{{ cb.avg_floors }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if stats.winning_deck_traits and stats.winning_deck_traits.wins %}
+<h2>Winning vs Losing Runs</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+  <div class="card" style="border-left:3px solid var(--green)">
+    <h3 class="win">Winning Runs</h3>
+    <p>Avg deck size: <strong>{{ stats.winning_deck_traits.wins.avg_deck_size }}</strong></p>
+    <p>Avg relics: <strong>{{ stats.winning_deck_traits.wins.avg_relics }}</strong></p>
+    <p>Avg floors: <strong>{{ stats.winning_deck_traits.wins.avg_floors }}</strong></p>
+    <p>Avg time: <strong>{{ stats.winning_deck_traits.wins.avg_time_min }}m</strong></p>
+  </div>
+  <div class="card" style="border-left:3px solid var(--red)">
+    <h3 class="loss">Losing Runs</h3>
+    {% if stats.winning_deck_traits.losses %}
+    <p>Avg deck size: <strong>{{ stats.winning_deck_traits.losses.avg_deck_size }}</strong></p>
+    <p>Avg relics: <strong>{{ stats.winning_deck_traits.losses.avg_relics }}</strong></p>
+    <p>Avg floors: <strong>{{ stats.winning_deck_traits.losses.avg_floors }}</strong></p>
+    <p>Avg time: <strong>{{ stats.winning_deck_traits.losses.avg_time_min }}m</strong></p>
+    {% else %}
+    <p>No losses yet!</p>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% if stats.card_rankings %}
+<h2>Best Cards by Win Rate</h2>
+<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">Cards appearing in 2+ runs, sorted by win rate when in final deck</p>
+<table>
+<tr><th>Card</th><th>Win Rate</th><th>Wins</th><th>Appearances</th></tr>
+{% for cr in stats.card_rankings[:15] %}
+<tr>
+  <td><a href="/cards/{{ cr.id }}">{{ kb.id_to_name(cr.id) }}</a></td>
+  <td><strong style="color:{% if cr.win_rate >= 60 %}var(--green){% elif cr.win_rate >= 40 %}var(--yellow){% else %}var(--red){% endif %}">{{ cr.win_rate }}%</strong></td>
+  <td>{{ cr.wins }}</td>
+  <td>{{ cr.appearances }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if stats.relic_rankings %}
+<h2>Best Relics by Win Rate</h2>
+<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">Relics appearing in 2+ runs, sorted by win rate</p>
+<table>
+<tr><th>Relic</th><th>Win Rate</th><th>Wins</th><th>Appearances</th></tr>
+{% for rr in stats.relic_rankings[:15] %}
+<tr>
+  <td><a href="/relics/{{ rr.id }}">{{ kb.id_to_name(rr.id) }}</a></td>
+  <td><strong style="color:{% if rr.win_rate >= 60 %}var(--green){% elif rr.win_rate >= 40 %}var(--yellow){% else %}var(--red){% endif %}">{{ rr.win_rate }}%</strong></td>
+  <td>{{ rr.wins }}</td>
+  <td>{{ rr.appearances }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if stats.card_pick_rates %}
+<h2>Most Picked Cards</h2>
+<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">How often you pick each card when offered (from floor rewards)</p>
+<table>
+<tr><th>Card</th><th>Pick Rate</th><th>Picked</th><th>Offered</th></tr>
+{% for cp in stats.card_pick_rates[:15] %}
+<tr>
+  <td><a href="/cards/{{ cp.id }}">{{ kb.id_to_name(cp.id) }}</a></td>
+  <td><strong>{{ cp.pick_rate }}%</strong></td>
+  <td>{{ cp.picked }}</td>
+  <td>{{ cp.offered }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if stats.damage_by_act %}
+<h2>Damage Taken by Act</h2>
+<div class="stat-grid">
+{% for act, dmg in stats.damage_by_act.items() %}
+<div class="stat-box">
+  <div class="num" style="color:{% if dmg.avg_per_floor > 10 %}var(--red){% elif dmg.avg_per_floor > 5 %}var(--yellow){% else %}var(--green){% endif %}">{{ dmg.avg_per_floor }}</div>
+  <div class="label">{{ act }} Avg Dmg/Floor</div>
+  <p style="font-size:0.75rem;color:var(--text2);margin-top:0.25rem">Max hit: {{ dmg.max_hit }} &bull; {{ dmg.total_floors }} combat floors</p>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if stats.deadly_encounters %}
+<h2>Deadliest Encounters</h2>
+<table>
+<tr><th>Encounter</th><th>Avg Damage</th><th>Fights</th><th>Deaths</th></tr>
+{% for de in stats.deadly_encounters[:10] %}
+<tr>
+  <td><a href="/enemies/{{ de.id }}">{{ kb.id_to_name(de.id) }}</a></td>
+  <td style="color:var(--red)"><strong>{{ de.avg_damage }}</strong></td>
+  <td>{{ de.fights }}</td>
+  <td class="loss">{{ de.deaths }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if stats.floor_survival %}
+<h2>How Far Do You Get?</h2>
+<div style="display:flex;gap:0.5rem;align-items:flex-end;margin:1rem 0;height:120px">
+{% set max_runs = stats.floor_survival|map(attribute='runs')|max %}
+{% for fs in stats.floor_survival %}
+<div style="display:flex;flex-direction:column;align-items:center;flex:1">
+  <div style="background:var(--accent2);width:100%;border-radius:4px 4px 0 0;height:{{ (fs.runs / max_runs * 100)|int }}px;min-height:4px" title="{{ fs.runs }} runs"></div>
+  <span style="font-size:0.7rem;color:var(--text2);margin-top:0.25rem">{{ fs.floors }}</span>
+  <span style="font-size:0.7rem;color:var(--text)">{{ fs.runs }}</span>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if stats.synergy_edges %}
+<h2>Card Synergy Network</h2>
+<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">Cards that co-appear most often in winning decks (thicker = more co-occurrences)</p>
+<div class="grid grid-3">
+{% for edge in stats.synergy_edges[:20] %}
+<div class="card" style="border-left:3px solid var(--green)">
+  <p>
+    <a href="/cards/{{ edge.source }}">{{ kb.id_to_name(edge.source) }}</a>
+    <span style="color:var(--text2);margin:0 0.5rem">&harr;</span>
+    <a href="/cards/{{ edge.target }}">{{ kb.id_to_name(edge.target) }}</a>
+  </p>
+  <p style="font-size:0.8rem;color:var(--text2)">{{ edge.weight }} winning runs together</p>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% endif %}
+{% endblock %}

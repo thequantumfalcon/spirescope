@@ -748,3 +748,256 @@ async def test_card_detail_og_title(client):
     if resp.status_code == 200:
         assert "og:title" in resp.text
         assert "Spirescope" in resp.text
+
+
+# --- Analytics tests ---
+
+async def test_analytics_page(client):
+    """Analytics page should render."""
+    async with client as c:
+        resp = await c.get("/analytics")
+    assert resp.status_code == 200
+    assert "Analytics" in resp.text
+
+
+async def test_analytics_page_empty_runs(client):
+    """Analytics page with no runs should show empty state."""
+    from unittest.mock import patch
+    with patch("sts2.app._get_runs", return_value=[]):
+        async with client as c:
+            resp = await c.get("/analytics")
+    assert resp.status_code == 200
+    assert "No run data yet" in resp.text
+
+
+async def test_api_analytics(client):
+    """API analytics endpoint should return JSON."""
+    async with client as c:
+        resp = await c.get("/api/analytics")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "overview" in data
+    assert "total" in data["overview"]
+
+
+async def test_analytics_with_mock_runs(client):
+    """Analytics with run data should compute stats."""
+    from unittest.mock import patch
+    from sts2.models import RunHistory
+
+    mock_runs = [
+        RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH", "CARD.STRIKE"],
+                   relics=["RELIC.BURNING_BLOOD"], run_time=1200),
+        RunHistory(id="r2", character="Ironclad", win=False, deck=["CARD.BASH", "CARD.DEFEND"],
+                   relics=["RELIC.BURNING_BLOOD"], run_time=900),
+        RunHistory(id="r3", character="Silent", win=True, deck=["CARD.NEUTRALIZE", "CARD.STRIKE"],
+                   relics=["RELIC.RING_OF_THE_SNAKE"], run_time=1500),
+    ]
+    with patch("sts2.app._get_runs", return_value=mock_runs):
+        async with client as c:
+            resp = await c.get("/api/analytics")
+    data = resp.json()
+    assert data["overview"]["total"] == 3
+    assert data["overview"]["wins"] == 2
+    assert data["overview"]["losses"] == 1
+
+
+async def test_analytics_card_rankings(client):
+    """Analytics should compute card win rates."""
+    from unittest.mock import patch
+    from sts2.models import RunHistory
+
+    mock_runs = [
+        RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"]),
+        RunHistory(id="r2", character="Ironclad", win=True, deck=["CARD.BASH"]),
+        RunHistory(id="r3", character="Ironclad", win=False, deck=["CARD.BASH"]),
+    ]
+    with patch("sts2.app._get_runs", return_value=mock_runs):
+        async with client as c:
+            resp = await c.get("/api/analytics")
+    data = resp.json()
+    assert len(data["card_rankings"]) > 0
+    bash_ranking = [cr for cr in data["card_rankings"] if cr["id"] == "CARD.BASH"]
+    assert len(bash_ranking) == 1
+    assert bash_ranking[0]["win_rate"] == 66.7
+    assert bash_ranking[0]["appearances"] == 3
+
+
+async def test_analytics_character_breakdown(client):
+    """Analytics should break down stats by character."""
+    from unittest.mock import patch
+    from sts2.models import RunHistory
+
+    mock_runs = [
+        RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"]),
+        RunHistory(id="r2", character="Silent", win=False, deck=["CARD.NEUTRALIZE"]),
+    ]
+    with patch("sts2.app._get_runs", return_value=mock_runs):
+        async with client as c:
+            resp = await c.get("/api/analytics")
+    data = resp.json()
+    assert "Ironclad" in data["character_breakdown"]
+    assert "Silent" in data["character_breakdown"]
+    assert data["character_breakdown"]["Ironclad"]["wins"] == 1
+
+
+async def test_analytics_synergy_edges(client):
+    """Analytics should compute card co-occurrence in winning decks."""
+    from unittest.mock import patch
+    from sts2.models import RunHistory
+
+    mock_runs = [
+        RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.A", "CARD.B"]),
+        RunHistory(id="r2", character="Ironclad", win=True, deck=["CARD.A", "CARD.B"]),
+        RunHistory(id="r3", character="Ironclad", win=False, deck=["CARD.A", "CARD.C"]),
+    ]
+    with patch("sts2.app._get_runs", return_value=mock_runs):
+        async with client as c:
+            resp = await c.get("/api/analytics")
+    data = resp.json()
+    assert len(data["synergy_edges"]) > 0
+    ab_edge = [e for e in data["synergy_edges"] if "CARD.A" in (e["source"], e["target"]) and "CARD.B" in (e["source"], e["target"])]
+    assert len(ab_edge) == 1
+    assert ab_edge[0]["weight"] == 2
+
+
+async def test_analytics_page_shows_overview(client):
+    """Analytics HTML page should show overview stats."""
+    from unittest.mock import patch
+    from sts2.models import RunHistory
+
+    mock_runs = [
+        RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], run_time=600),
+    ]
+    with patch("sts2.app._get_runs", return_value=mock_runs):
+        async with client as c:
+            resp = await c.get("/analytics")
+    assert resp.status_code == 200
+    assert "Total Runs" in resp.text
+    assert "Win Rate" in resp.text
+
+
+async def test_sitemap_includes_analytics(client):
+    """Sitemap should include the analytics page."""
+    async with client as c:
+        resp = await c.get("/sitemap.xml")
+    assert resp.status_code == 200
+    assert "/analytics" in resp.text
+
+
+# --- Community data tests ---
+
+async def test_compute_analytics_empty():
+    """compute_analytics with empty runs should return zero overview."""
+    from sts2.analytics import compute_analytics
+    result = compute_analytics([])
+    assert result["overview"]["total"] == 0
+
+
+async def test_compute_analytics_floor_survival():
+    """compute_analytics should compute floor survival distribution."""
+    from sts2.analytics import compute_analytics
+    from sts2.models import RunHistory, RunFloor
+
+    floors = [RunFloor(floor=i) for i in range(1, 12)]
+    runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], floors=floors)]
+    result = compute_analytics(runs)
+    assert len(result["floor_survival"]) > 0
+
+
+async def test_compute_analytics_damage_by_act():
+    """compute_analytics should compute damage by act."""
+    from sts2.analytics import compute_analytics
+    from sts2.models import RunHistory, RunFloor
+
+    floors = [RunFloor(floor=i, damage_taken=5) for i in range(1, 6)]
+    runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], floors=floors)]
+    result = compute_analytics(runs)
+    assert "Act 1" in result["damage_by_act"]
+    assert result["damage_by_act"]["Act 1"]["avg_per_floor"] == 5.0
+
+
+async def test_community_consensus_tier():
+    """Consensus tier should average votes correctly."""
+    from sts2.community import _compute_consensus_tier
+    assert _compute_consensus_tier(["S", "S", "A"]) == "S"
+    assert _compute_consensus_tier(["A", "B", "C"]) == "B"
+    assert _compute_consensus_tier(["D", "F"]) == "F"  # avg 0.5 rounds to 0 -> F
+    assert _compute_consensus_tier([]) == ""
+
+
+async def test_community_extract_tier_ratings():
+    """Should extract tier ratings from formatted text."""
+    from sts2.community import _extract_tier_ratings
+    text = "S: Bash, Strike\nA: Defend\nB: Neutralize"
+    names = {"bash", "strike", "defend", "neutralize"}
+    ratings = _extract_tier_ratings(text, names)
+    assert "bash" in ratings
+    assert ratings["bash"] == ["S"]
+    assert "defend" in ratings
+    assert ratings["defend"] == ["A"]
+
+
+async def test_community_is_sts2_post():
+    """STS2 post detection should work for both subreddits."""
+    from sts2.community import _is_sts2_post
+    assert _is_sts2_post({"subreddit": "slaythespire2", "title": "any", "selftext": "", "flair": ""})
+    assert _is_sts2_post({"subreddit": "slaythespire", "title": "STS2 tier list", "selftext": "", "flair": ""})
+    assert not _is_sts2_post({"subreddit": "slaythespire", "title": "best ironclad cards", "selftext": "", "flair": ""})
+
+
+async def test_community_extract_tips():
+    """Should extract tips mentioning known entities."""
+    from sts2.community import _extract_tips
+    text = "Bash is really strong in act 1 because it applies Vulnerable. Defend is a solid pick early on for survival."
+    names = {"bash", "defend"}
+    tips = _extract_tips(text, names)
+    assert "bash" in tips
+    assert len(tips["bash"]) >= 1
+
+
+async def test_knowledge_base_community_tips():
+    """KnowledgeBase should load and serve community tips."""
+    from sts2.app import kb as _kb
+    # get_community_tips should return empty list for unknown entity
+    tips = _kb.get_community_tips("NONEXISTENT_ENTITY_XYZ")
+    assert tips == []
+
+
+async def test_card_detail_passes_community_tips(client):
+    """Card detail should include community_tips in template context."""
+    from unittest.mock import patch
+    from sts2.app import kb as _kb
+    if not _kb.cards:
+        return
+    card = _kb.cards[0]
+    mock_tips = ["This card is amazing in act 1 for dealing damage."]
+    with patch.object(_kb, "get_community_tips", return_value=mock_tips):
+        async with client as c:
+            resp = await c.get(f"/cards/{card.id}")
+    if resp.status_code == 200:
+        assert "Community Tips" in resp.text
+        assert "Reddit" in resp.text
+
+
+async def test_relic_detail_passes_community_tips(client):
+    """Relic detail should include community_tips in template context."""
+    from unittest.mock import patch
+    from sts2.app import kb as _kb
+    if not _kb.relics:
+        return
+    relic = _kb.relics[0]
+    mock_tips = ["This relic synergizes well with strength builds."]
+    with patch.object(_kb, "get_community_tips", return_value=mock_tips):
+        async with client as c:
+            resp = await c.get(f"/relics/{relic.id}")
+    if resp.status_code == 200:
+        assert "Community Tips" in resp.text
+
+
+async def test_community_cli_entry():
+    """Community CLI command should be registered."""
+    from sts2.__main__ import main
+    # Just verify the import path works
+    from sts2.community import run_community_scraper
+    assert callable(run_community_scraper)
