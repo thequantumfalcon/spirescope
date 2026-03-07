@@ -26,8 +26,58 @@
   </div>
   {% endfor %}
 
-  <button type="submit" style="margin-top:1rem;padding:0.5rem 2rem;background:var(--accent2);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:1rem">Analyze Deck</button>
+  <div style="display:flex;gap:0.75rem;align-items:center;margin-top:1rem;flex-wrap:wrap">
+    <button type="submit" style="padding:0.5rem 2rem;background:var(--accent2);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:1rem">Analyze Deck</button>
+    <button type="button" id="save-deck" style="padding:0.5rem 1.25rem;background:var(--bg3);color:var(--green);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9rem">Save Deck</button>
+    <select id="load-deck" style="padding:0.4rem 0.75rem;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:0.9rem">
+      <option value="">Load saved deck...</option>
+    </select>
+    <button type="button" id="delete-deck" style="padding:0.4rem 0.75rem;background:var(--bg3);color:var(--red);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.85rem">Delete</button>
+  </div>
 </form>
+
+<script>
+(function() {
+  var KEY = 'spirescope_decks';
+  function getDecks() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) { return {}; } }
+  function saveDecks(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+  function refreshSelect() {
+    var sel = document.getElementById('load-deck');
+    var decks = getDecks();
+    sel.innerHTML = '<option value="">Load saved deck...</option>';
+    Object.keys(decks).sort().forEach(function(name) {
+      var o = document.createElement('option'); o.value = name; o.textContent = name + ' (' + decks[name].length + ' cards)';
+      sel.appendChild(o);
+    });
+  }
+  function getChecked() {
+    return Array.from(document.querySelectorAll('input[name="card_ids"]:checked')).map(function(cb) { return cb.value; });
+  }
+  function setChecked(ids) {
+    document.querySelectorAll('input[name="card_ids"]').forEach(function(cb) { cb.checked = ids.indexOf(cb.value) !== -1; });
+  }
+  document.getElementById('save-deck').addEventListener('click', function() {
+    var ids = getChecked();
+    if (!ids.length) { alert('Select cards first.'); return; }
+    var name = prompt('Deck name:');
+    if (!name) return;
+    var decks = getDecks(); decks[name] = ids; saveDecks(decks);
+    refreshSelect();
+  });
+  document.getElementById('load-deck').addEventListener('change', function() {
+    var name = this.value; if (!name) return;
+    var decks = getDecks();
+    if (decks[name]) setChecked(decks[name]);
+  });
+  document.getElementById('delete-deck').addEventListener('click', function() {
+    var name = document.getElementById('load-deck').value;
+    if (!name) { alert('Select a deck to delete.'); return; }
+    var decks = getDecks(); delete decks[name]; saveDecks(decks);
+    refreshSelect();
+  });
+  refreshSelect();
+})();
+</script>
 
 {% if analysis %}
 <hr style="border-color:var(--border);margin:2rem 0">

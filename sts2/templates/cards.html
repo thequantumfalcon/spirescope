@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Cards{% endblock %}
 {% block content %}
-<h1>Cards ({{ cards|length }})</h1>
+<h1>Cards ({{ total_cards }})</h1>
 
 <div class="filters">
   <a href="/cards" {% if not selected_character %}class="active"{% endif %}>All</a>
@@ -44,4 +44,18 @@
 </a>
 {% endfor %}
 </div>
+
+{% if total_pages > 1 %}
+<div class="pagination">
+  {% set qs %}{% if selected_character %}character={{ selected_character }}&{% endif %}{% if selected_type %}type={{ selected_type }}&{% endif %}{% if selected_rarity %}rarity={{ selected_rarity }}&{% endif %}{% if selected_cost %}cost={{ selected_cost }}&{% endif %}{% if selected_keyword %}keyword={{ selected_keyword }}&{% endif %}{% endset %}
+  {% if page > 1 %}<a href="/cards?{{ qs }}page={{ page - 1 }}">&laquo; Prev</a>{% endif %}
+  {% for p in range(1, total_pages + 1) %}
+    {% if p == page %}<span class="active">{{ p }}</span>
+    {% elif p <= 3 or p > total_pages - 2 or (p >= page - 1 and p <= page + 1) %}<a href="/cards?{{ qs }}page={{ p }}">{{ p }}</a>
+    {% elif p == 4 or p == total_pages - 2 %}<span style="color:var(--text2)">...</span>
+    {% endif %}
+  {% endfor %}
+  {% if page < total_pages %}<a href="/cards?{{ qs }}page={{ page + 1 }}">Next &raquo;</a>{% endif %}
+</div>
+{% endif %}
 {% endblock %}

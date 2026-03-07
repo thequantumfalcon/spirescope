@@ -109,6 +109,12 @@ tr:hover { background: var(--bg3); }
 .detail-header h1 { display: flex; align-items: center; gap: 0.75rem; }
 .detail-desc { font-size: 1.1rem; line-height: 1.6; color: var(--text); margin: 1rem 0; padding: 1rem; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); }
 
+/* Pagination */
+.pagination { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.pagination a, .pagination span.active { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; height: 36px; padding: 0 0.5rem; border-radius: 6px; font-size: 0.9rem; border: 1px solid var(--border); }
+.pagination a { background: var(--bg2); color: var(--text2); } .pagination a:hover { background: var(--accent2); color: #fff; border-color: var(--accent2); text-decoration: none; }
+.pagination span.active { background: var(--accent2); color: #fff; border-color: var(--accent2); font-weight: 700; }
+
 /* Responsive */
 @media (max-width: 768px) {
   nav { padding: 0.5rem 1rem; } .container { padding: 1rem; }

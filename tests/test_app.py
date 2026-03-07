@@ -238,3 +238,74 @@ async def test_deck_page_has_csrf_token(client):
         resp = await c.get("/deck")
     assert resp.status_code == 200
     assert "csrf_token" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_cards_pagination_default(client):
+    async with client as c:
+        resp = await c.get("/cards")
+    assert resp.status_code == 200
+    assert "Cards (" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_cards_pagination_page2(client):
+    async with client as c:
+        resp = await c.get("/cards?page=2")
+    assert resp.status_code == 200
+    # Page 2 should still render cards (unless fewer than 30 total)
+    assert "Cards (" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_cards_pagination_with_filter(client):
+    async with client as c:
+        resp = await c.get("/cards?character=Ironclad&page=1")
+    assert resp.status_code == 200
+    assert 'class="active">Ironclad' in resp.text
+
+
+@pytest.mark.asyncio
+async def test_cards_pagination_out_of_range(client):
+    async with client as c:
+        resp = await c.get("/cards?page=9999")
+    assert resp.status_code == 200
+    # Should clamp to last page, not error
+
+
+@pytest.mark.asyncio
+async def test_api_reload(client):
+    async with client as c:
+        resp = await c.post("/api/reload")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["status"] == "ok"
+    assert "cards" in data
+    assert data["cards"] > 0
+
+
+@pytest.mark.asyncio
+async def test_live_page_has_sse_script(client):
+    async with client as c:
+        resp = await c.get("/live")
+    assert resp.status_code == 200
+    assert "EventSource" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_live_stream_endpoint_exists(client):
+    """SSE endpoint is registered (streaming tested via integration)."""
+    from starlette.routing import Route
+    from sts2.app import app as _app
+    sse_routes = [r for r in _app.routes if isinstance(r, Route) and r.path == "/api/live/stream"]
+    assert len(sse_routes) == 1
+
+
+@pytest.mark.asyncio
+async def test_deck_page_has_save_load_ui(client):
+    async with client as c:
+        resp = await c.get("/deck")
+    assert resp.status_code == 200
+    assert "save-deck" in resp.text
+    assert "load-deck" in resp.text
+    assert "spirescope_decks" in resp.text

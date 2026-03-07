@@ -8,23 +8,23 @@
     <span class="char-{{ run.character|lower }}">{{ run.character }}</span> Run
   </h1>
   <div style="color:var(--text2);font-size:0.85rem">
-    Auto-refreshes every 5s &bull; {{ (run.run_time / 60)|int }}m elapsed
+    Live updates via SSE &bull; {{ (run.run_time / 60)|int }}m elapsed
   </div>
 </div>
 
 <div class="stat-grid">
   <div class="stat-box">
-    <div class="num" style="color:{% if run.current_hp < run.max_hp * 0.3 %}var(--red){% elif run.current_hp < run.max_hp * 0.6 %}var(--yellow){% else %}var(--green){% endif %}">{{ run.current_hp }}/{{ run.max_hp }}</div>
+    <div class="num live-hp" style="color:{% if run.current_hp < run.max_hp * 0.3 %}var(--red){% elif run.current_hp < run.max_hp * 0.6 %}var(--yellow){% else %}var(--green){% endif %}">{{ run.current_hp }}/{{ run.max_hp }}</div>
     <div class="label">HP</div>
     <div class="hp-bar" style="margin-top:0.5rem">
       <div class="hp-bg" style="width:100%"><div class="hp-fill" style="width:{{ (run.current_hp / run.max_hp * 100) if run.max_hp > 0 else 0 }}%"></div></div>
     </div>
   </div>
-  <div class="stat-box"><div class="num" style="color:var(--yellow)">{{ run.gold }}</div><div class="label">Gold</div></div>
-  <div class="stat-box"><div class="num">Act {{ run.act }}</div><div class="label">Floor {{ run.floor }}</div></div>
-  <div class="stat-box"><div class="num">{{ run.deck|length }}</div><div class="label">Cards</div></div>
-  <div class="stat-box"><div class="num">{{ run.relics|length }}</div><div class="label">Relics</div></div>
-  <div class="stat-box"><div class="num">{{ run.potions|length }}</div><div class="label">Potions</div></div>
+  <div class="stat-box"><div class="num live-gold" style="color:var(--yellow)">{{ run.gold }}</div><div class="label">Gold</div></div>
+  <div class="stat-box"><div class="num live-act">Act {{ run.act }}</div><div class="label live-floor">Floor {{ run.floor }}</div></div>
+  <div class="stat-box"><div class="num live-cards">{{ run.deck|length }}</div><div class="label">Cards</div></div>
+  <div class="stat-box"><div class="num live-relics">{{ run.relics|length }}</div><div class="label">Relics</div></div>
+  <div class="stat-box"><div class="num live-potions">{{ run.potions|length }}</div><div class="label">Potions</div></div>
 </div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
@@ -124,15 +124,60 @@
 {% endif %}
 
 <script>
-setTimeout(function() { location.reload(); }, 5000);
+(function() {
+  var player = {{ selected_player }};
+  var es = new EventSource('/api/live/stream?player=' + player);
+  var lastJson = '';
+  es.onmessage = function(e) {
+    if (e.data !== lastJson) {
+      lastJson = e.data;
+      var d = JSON.parse(e.data);
+      // Update stat values without full reload
+      var hp = document.querySelector('.live-hp');
+      if (hp) hp.textContent = d.current_hp + '/' + d.max_hp;
+      var gold = document.querySelector('.live-gold');
+      if (gold) gold.textContent = d.gold;
+      var act = document.querySelector('.live-act');
+      if (act) act.textContent = 'Act ' + d.act;
+      var floor = document.querySelector('.live-floor');
+      if (floor) floor.textContent = 'Floor ' + d.floor;
+      var cards = document.querySelector('.live-cards');
+      if (cards) cards.textContent = d.deck.length;
+      var relics = document.querySelector('.live-relics');
+      if (relics) relics.textContent = d.relics.length;
+      var potions = document.querySelector('.live-potions');
+      if (potions) potions.textContent = d.potions.length;
+      // Update HP bar width
+      var fill = document.querySelector('.hp-fill');
+      if (fill && d.max_hp > 0) fill.style.width = (d.current_hp / d.max_hp * 100) + '%';
+      // If run ended or started, reload for full re-render
+      var wasActive = {{ 'true' if run.active else 'false' }};
+      if (d.active !== wasActive) location.reload();
+    }
+  };
+  es.onerror = function() {
+    // Fallback: reconnect handled by browser, but also do full reload after 10s
+    setTimeout(function() { location.reload(); }, 10000);
+  };
+})();
 </script>
 
 {% else %}
 <h1>No Active Run</h1>
 <p style="color:var(--text2);margin:1rem 0">Start a run in Slay the Spire 2 and this page will automatically show your live progress.</p>
-<p style="color:var(--text2)">This page checks every 5 seconds for an active run.</p>
+<p style="color:var(--text2)">Checking for an active run...</p>
 <script>
-setTimeout(function() { location.reload(); }, 5000);
+(function() {
+  var player = {{ selected_player }};
+  var es = new EventSource('/api/live/stream?player=' + player);
+  es.onmessage = function(e) {
+    var d = JSON.parse(e.data);
+    if (d.active) location.reload();
+  };
+  es.onerror = function() {
+    setTimeout(function() { location.reload(); }, 10000);
+  };
+})();
 </script>
 {% endif %}
 {% endblock %}

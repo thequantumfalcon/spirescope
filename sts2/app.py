@@ -1,12 +1,16 @@
 """FastAPI web dashboard for Spirescope."""
+import asyncio
 import collections
+import json
 import logging
+import math
 import secrets
 import time
 from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.responses import StreamingResponse
 
 from sts2.config import TEMPLATES_DIR, STATIC_DIR, CHARACTERS
 from sts2.knowledge import KnowledgeBase, get_last_updated
@@ -130,14 +134,24 @@ async def search(request: Request, q: str = Query("", max_length=200)):
     })
 
 
+_CARDS_PER_PAGE = 30
+
+
 @app.get("/cards", response_class=HTMLResponse)
 async def cards(request: Request, character: str = None, type: str = None,
-                rarity: str = None, cost: str = None, keyword: str = None):
+                rarity: str = None, cost: str = None, keyword: str = None,
+                page: int = Query(1, ge=1)):
     card_list = kb.get_cards(character=character, card_type=type, rarity=rarity, cost=cost, keyword=keyword)
+    total_cards = len(card_list)
+    total_pages = max(1, math.ceil(total_cards / _CARDS_PER_PAGE))
+    page = min(page, total_pages)
+    start = (page - 1) * _CARDS_PER_PAGE
+    paged_cards = card_list[start:start + _CARDS_PER_PAGE]
     return templates.TemplateResponse(request, "cards.html", {
-        "cards": card_list, "characters": CHARACTERS,
+        "cards": paged_cards, "total_cards": total_cards, "characters": CHARACTERS,
         "selected_character": character, "selected_type": type,
         "selected_rarity": rarity, "selected_cost": cost, "selected_keyword": keyword,
+        "page": page, "total_pages": total_pages,
     })
 
 
@@ -255,6 +269,34 @@ async def live_run(request: Request, player: int = 0):
 async def api_live_run(player: int = 0):
     run = get_current_run(player_index=player)
     return run.model_dump()
+
+
+@app.get("/api/live/stream")
+async def live_stream(player: int = 0):
+    """SSE stream that pushes live run state every 3 seconds."""
+    async def event_generator():
+        last_hash = ""
+        while True:
+            run = get_current_run(player_index=player)
+            data = run.model_dump()
+            # Only send when data actually changes
+            data_json = json.dumps(data, sort_keys=True)
+            current_hash = str(hash(data_json))
+            if current_hash != last_hash:
+                last_hash = current_hash
+                yield f"data: {data_json}\n\n"
+            await asyncio.sleep(3)
+    return StreamingResponse(event_generator(), media_type="text/event-stream",
+                             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+@app.post("/api/reload")
+async def reload_data():
+    """Reload the knowledge base from disk (call after scraper updates)."""
+    global kb
+    kb = KnowledgeBase()
+    return {"status": "ok", "cards": len(kb.cards), "relics": len(kb.relics),
+            "potions": len(kb.potions), "enemies": len(kb.enemies)}
 
 
 @app.get("/deck", response_class=HTMLResponse)
