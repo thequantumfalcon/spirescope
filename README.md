@@ -4,7 +4,7 @@ A web dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analy
 
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-150%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-154%20passing-brightgreen)
 
 ## Features
 

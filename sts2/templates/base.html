@@ -14,7 +14,8 @@
   <link rel="stylesheet" href="/static/style.css?v={{ css_hash }}">
 </head>
 <body>
-  <nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav aria-label="Main navigation">
     <a class="logo" href="/">Spirescope</a>
     <a href="/cards">Cards</a>
     <a href="/relics">Relics</a>
@@ -29,8 +30,12 @@
       <button type="submit">Search</button>
     </form>
   </nav>
-  <div class="container">
+  <main id="main" class="container">
     {% block content %}{% endblock %}
-  </div>
+  </main>
+  <footer>
+    <span>Spirescope v1.0</span> &middot;
+    <a href="https://github.com/thequantumfalcon/Spirescope">GitHub</a>
+  </footer>
 </body>
 </html>

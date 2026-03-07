@@ -22,7 +22,7 @@ async def test_index(client):
     # Should render character links
     assert "Ironclad" in resp.text
     # Should have navigation
-    assert '<nav>' in resp.text
+    assert '<nav' in resp.text
 
 
 async def test_cards_page(client):
@@ -403,3 +403,39 @@ async def test_favicon_ico_serves(client):
     async with client as c:
         resp = await c.get("/static/favicon.ico")
     assert resp.status_code == 200
+
+
+async def test_skip_to_content_link(client):
+    """Should have a skip-to-content link for accessibility."""
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert 'skip-link' in resp.text
+    assert 'href="#main"' in resp.text
+
+
+async def test_nav_has_aria_label(client):
+    """Nav should have aria-label for screen readers."""
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert 'aria-label=' in resp.text
+
+
+async def test_main_landmark(client):
+    """Content should be in a <main> element."""
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert '<main' in resp.text
+    assert 'id="main"' in resp.text
+
+
+async def test_footer_present(client):
+    """Should have a footer with version and GitHub link."""
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert '<footer>' in resp.text
+    assert 'Spirescope' in resp.text
+    assert 'GitHub' in resp.text

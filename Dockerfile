@@ -1,13 +1,11 @@
-FROM python:3.12-slim AS base
+FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install dependencies only (cached layer)
+# Copy project files and install
 COPY pyproject.toml .
-RUN pip install --no-cache-dir .
-
-# Copy application code
 COPY sts2/ sts2/
+RUN pip install --no-cache-dir .
 
 # Non-root user for security
 RUN useradd --create-home appuser

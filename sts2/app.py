@@ -1,6 +1,7 @@
 """FastAPI web dashboard for Spirescope."""
 import asyncio
 import collections
+import hashlib
 import json
 import logging
 import math
@@ -15,8 +16,6 @@ from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.responses import StreamingResponse
-
-import hashlib
 
 from sts2.config import TEMPLATES_DIR, STATIC_DIR, CHARACTERS
 from sts2.knowledge import KnowledgeBase, get_last_updated
