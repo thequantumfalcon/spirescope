@@ -172,6 +172,91 @@ class TestGetCurrentRun:
             assert run.active is True
             assert run.character == "Unknown"
 
+    def test_solo_run_total_players(self, tmp_path):
+        save_file = tmp_path / "current_run.save"
+        save_file.write_text(json.dumps(MOCK_CURRENT_RUN))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path):
+            run = get_current_run()
+            assert run.total_players == 1
+            assert run.player_index == 0
+
+
+MOCK_COOP_RUN = {
+    "players": [
+        {
+            "id": 1,
+            "character_id": "CHARACTER.IRONCLAD",
+            "current_hp": 65,
+            "max_hp": 80,
+            "gold": 150,
+            "deck": [{"id": "CARD.STRIKE", "upgrade_count": 0}],
+            "relics": [{"id": "RELIC.BURNING_BLOOD"}],
+            "potions": [],
+        },
+        {
+            "id": 2,
+            "character_id": "CHARACTER.SILENT",
+            "current_hp": 55,
+            "max_hp": 70,
+            "gold": 120,
+            "deck": [{"id": "CARD.NEUTRALIZE", "upgrade_count": 0}],
+            "relics": [{"id": "RELIC.RING_OF_THE_SNAKE"}],
+            "potions": [],
+        },
+    ],
+    "current_act_index": 0,
+    "run_time": 300,
+    "events_seen": [],
+    "map_point_history": [],
+}
+
+
+class TestCoopSupport:
+    def test_coop_player_0(self, tmp_path):
+        save_file = tmp_path / "current_run.save"
+        save_file.write_text(json.dumps(MOCK_COOP_RUN))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path):
+            run = get_current_run(player_index=0)
+
+        assert run.character == "Ironclad"
+        assert run.current_hp == 65
+        assert run.total_players == 2
+        assert run.player_index == 0
+
+    def test_coop_player_1(self, tmp_path):
+        save_file = tmp_path / "current_run.save"
+        save_file.write_text(json.dumps(MOCK_COOP_RUN))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path):
+            run = get_current_run(player_index=1)
+
+        assert run.character == "Silent"
+        assert run.current_hp == 55
+        assert run.total_players == 2
+        assert run.player_index == 1
+        assert "CARD.NEUTRALIZE" in run.deck
+
+    def test_coop_invalid_index_falls_back(self, tmp_path):
+        save_file = tmp_path / "current_run.save"
+        save_file.write_text(json.dumps(MOCK_COOP_RUN))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path):
+            run = get_current_run(player_index=99)
+
+        assert run.character == "Ironclad"  # falls back to player 0
+
+    def test_mp_save_file(self, tmp_path):
+        save_file = tmp_path / "current_run_mp.save"
+        save_file.write_text(json.dumps(MOCK_COOP_RUN))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path):
+            run = get_current_run(player_index=1)
+
+        assert run.character == "Silent"
+        assert run.total_players == 2
+
 
 class TestGetProgress:
     def test_no_progress_file(self, tmp_path):

@@ -60,8 +60,7 @@ async def global_error_handler(request: Request, exc: Exception):
 async def index(request: Request):
     progress = get_progress()
     runs = _get_runs()
-    return templates.TemplateResponse("index.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "index.html", {
         "characters": CHARACTERS,
         "progress": progress,
         "recent_runs": runs[:5],
@@ -77,8 +76,8 @@ async def index(request: Request):
 async def search(request: Request, q: str = Query("", max_length=200)):
     results = kb.search(q)
     total = sum(len(v) for v in results.values())
-    return templates.TemplateResponse("search.html", {
-        "request": request, "query": q, "results": results, "total": total, "kb": kb,
+    return templates.TemplateResponse(request, "search.html", {
+        "query": q, "results": results, "total": total, "kb": kb,
     })
 
 
@@ -86,8 +85,8 @@ async def search(request: Request, q: str = Query("", max_length=200)):
 async def cards(request: Request, character: str = None, type: str = None,
                 rarity: str = None, cost: str = None, keyword: str = None):
     card_list = kb.get_cards(character=character, card_type=type, rarity=rarity, cost=cost, keyword=keyword)
-    return templates.TemplateResponse("cards.html", {
-        "request": request, "cards": card_list, "characters": CHARACTERS,
+    return templates.TemplateResponse(request, "cards.html", {
+        "cards": card_list, "characters": CHARACTERS,
         "selected_character": character, "selected_type": type,
         "selected_rarity": rarity, "selected_cost": cost, "selected_keyword": keyword,
     })
@@ -98,32 +97,32 @@ async def card_detail(request: Request, card_id: str):
     card = kb.get_card_by_id(card_id)
     synergies = kb.find_synergies(card_id) if card else []
     strategy = kb.get_strategy(card.character) if card else None
-    return templates.TemplateResponse("card_detail.html", {
-        "request": request, "card": card, "synergies": synergies, "strategy": strategy,
+    return templates.TemplateResponse(request, "card_detail.html", {
+        "card": card, "synergies": synergies, "strategy": strategy,
     })
 
 
 @app.get("/relics", response_class=HTMLResponse)
 async def relics(request: Request, character: str = None, rarity: str = None):
     relic_list = kb.get_relics(character=character, rarity=rarity)
-    return templates.TemplateResponse("relics.html", {
-        "request": request, "relics": relic_list, "characters": CHARACTERS,
+    return templates.TemplateResponse(request, "relics.html", {
+        "relics": relic_list, "characters": CHARACTERS,
         "selected_character": character, "selected_rarity": rarity,
     })
 
 
 @app.get("/potions", response_class=HTMLResponse)
 async def potions(request: Request):
-    return templates.TemplateResponse("potions.html", {
-        "request": request, "potions": kb.potions,
+    return templates.TemplateResponse(request, "potions.html", {
+        "potions": kb.potions,
     })
 
 
 @app.get("/enemies", response_class=HTMLResponse)
 async def enemies(request: Request, act: str = None, type: str = None):
     enemy_list = kb.get_enemies(act=act, enemy_type=type)
-    return templates.TemplateResponse("enemies.html", {
-        "request": request, "enemies": enemy_list,
+    return templates.TemplateResponse(request, "enemies.html", {
+        "enemies": enemy_list,
         "selected_act": act, "selected_type": type,
     })
 
@@ -138,15 +137,15 @@ async def enemy_detail(request: Request, enemy_id: str):
             if enemy_id.split(".")[-1].lower() in enc_id.lower():
                 encounter_stats = stats
                 break
-    return templates.TemplateResponse("enemy_detail.html", {
-        "request": request, "enemy": enemy, "encounter_stats": encounter_stats, "kb": kb,
+    return templates.TemplateResponse(request, "enemy_detail.html", {
+        "enemy": enemy, "encounter_stats": encounter_stats, "kb": kb,
     })
 
 
 @app.get("/events", response_class=HTMLResponse)
 async def events(request: Request):
-    return templates.TemplateResponse("events.html", {
-        "request": request, "events": kb.events,
+    return templates.TemplateResponse(request, "events.html", {
+        "events": kb.events,
     })
 
 
@@ -154,48 +153,49 @@ async def events(request: Request):
 async def strategy(request: Request, character: str):
     strat = kb.get_strategy(character)
     cards = kb.get_cards(character=character)
-    return templates.TemplateResponse("strategy.html", {
-        "request": request, "strategy": strat, "cards": cards, "characters": CHARACTERS,
+    return templates.TemplateResponse(request, "strategy.html", {
+        "strategy": strat, "cards": cards, "characters": CHARACTERS,
     })
 
 
 @app.get("/runs", response_class=HTMLResponse)
 async def runs(request: Request):
     run_list = _get_runs()
-    return templates.TemplateResponse("runs.html", {
-        "request": request, "runs": run_list, "kb": kb,
+    return templates.TemplateResponse(request, "runs.html", {
+        "runs": run_list, "kb": kb,
     })
 
 
 @app.get("/runs/{run_id}", response_class=HTMLResponse)
 async def run_detail(request: Request, run_id: str):
     run = _get_run_by_id(run_id)
-    return templates.TemplateResponse("run_detail.html", {
-        "request": request, "run": run, "kb": kb,
+    return templates.TemplateResponse(request, "run_detail.html", {
+        "run": run, "kb": kb,
     })
 
 
 @app.get("/live", response_class=HTMLResponse)
-async def live_run(request: Request):
-    run = get_current_run()
+async def live_run(request: Request, player: int = 0):
+    run = get_current_run(player_index=player)
     analysis = None
     if run.active and run.deck:
         analysis = kb.analyze_deck(run.deck)
-    return templates.TemplateResponse("live.html", {
-        "request": request, "run": run, "analysis": analysis, "kb": kb,
+    return templates.TemplateResponse(request, "live.html", {
+        "run": run, "analysis": analysis, "kb": kb,
+        "selected_player": player, "total_players": run.total_players,
     })
 
 
 @app.get("/api/live")
-async def api_live_run():
-    run = get_current_run()
+async def api_live_run(player: int = 0):
+    run = get_current_run(player_index=player)
     return run.model_dump()
 
 
 @app.get("/deck", response_class=HTMLResponse)
 async def deck_analyzer(request: Request):
-    return templates.TemplateResponse("deck.html", {
-        "request": request, "cards": kb.cards, "analysis": None,
+    return templates.TemplateResponse(request, "deck.html", {
+        "cards": kb.cards, "analysis": None,
     })
 
 
@@ -204,12 +204,12 @@ async def analyze_deck(request: Request):
     form = await request.form()
     card_ids = form.getlist("card_ids")
     if not card_ids:
-        return templates.TemplateResponse("deck.html", {
-            "request": request, "cards": kb.cards, "analysis": {"error": "No cards selected"}, "selected_ids": [],
+        return templates.TemplateResponse(request, "deck.html", {
+            "cards": kb.cards, "analysis": {"error": "No cards selected"}, "selected_ids": [],
         })
     analysis = kb.analyze_deck(card_ids)
-    return templates.TemplateResponse("deck.html", {
-        "request": request, "cards": kb.cards, "analysis": analysis, "selected_ids": card_ids, "kb": kb,
+    return templates.TemplateResponse(request, "deck.html", {
+        "cards": kb.cards, "analysis": analysis, "selected_ids": card_ids, "kb": kb,
     })
 
 

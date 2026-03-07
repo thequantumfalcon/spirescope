@@ -121,6 +121,24 @@ async def test_api_live(client):
     assert resp.status_code == 200
     data = resp.json()
     assert "active" in data
+    assert "total_players" in data
+    assert "player_index" in data
+
+
+@pytest.mark.asyncio
+async def test_live_with_player_param(client):
+    async with client as c:
+        resp = await c.get("/live?player=0")
+    assert resp.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_api_live_with_player_param(client):
+    async with client as c:
+        resp = await c.get("/api/live?player=0")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["player_index"] == 0
 
 
 @pytest.mark.asyncio

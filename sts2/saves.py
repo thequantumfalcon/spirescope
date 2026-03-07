@@ -19,9 +19,13 @@ def _read_json(path: Path) -> dict | None:
     return None
 
 
-def _get_player(players: list[dict]) -> dict:
-    """Get the first player from the player list (works for solo and co-op)."""
-    return players[0] if players else {}
+def _get_player(players: list[dict], index: int = 0) -> dict:
+    """Get a player by index from the player list. Falls back to first player."""
+    if not players:
+        return {}
+    if 0 <= index < len(players):
+        return players[index]
+    return players[0]
 
 
 def _get_player_stats(player_stats: list[dict], player: dict) -> dict:
@@ -33,8 +37,8 @@ def _get_player_stats(player_stats: list[dict], player: dict) -> dict:
     return player_stats[0] if player_stats else {}
 
 
-def get_current_run() -> CurrentRun:
-    """Read the current active run, if any."""
+def get_current_run(player_index: int = 0) -> CurrentRun:
+    """Read the current active run, if any. Use player_index for co-op."""
     for fname in ("current_run.save", "current_run_mp.save"):
         data = _read_json(SAVE_DIR / fname)
         if data:
@@ -43,7 +47,8 @@ def get_current_run() -> CurrentRun:
         return CurrentRun(active=False)
 
     players = data.get("players", [])
-    player = _get_player(players)
+    total_players = len(players)
+    player = _get_player(players, player_index)
     character = CHARACTER_IDS.get(
         player.get("character_id", player.get("character", "")),
         player.get("character_id", "Unknown"),
@@ -97,6 +102,8 @@ def get_current_run() -> CurrentRun:
         potions=potions,
         events_seen=data.get("events_seen", []),
         floors=floors,
+        player_index=player_index,
+        total_players=total_players,
     )
 
 

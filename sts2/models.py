@@ -119,6 +119,8 @@ class CurrentRun(BaseModel):
     potions: list[str] = []
     events_seen: list[str] = []
     floors: list[RunFloor] = []
+    player_index: int = 0
+    total_players: int = 1
 
 
 class PlayerProgress(BaseModel):

@@ -1,11 +1,16 @@
 """Tests for the scraper module."""
+import json
 import pytest
+from unittest.mock import patch
 from sts2.scraper import (
     _clean_description,
     _extract_json_objects,
     _extract_keywords,
     _wiki_id_to_game_id,
+    _load_existing_name_index,
     _merge_with_existing,
+    _discover_enemies_from_saves,
+    _discover_events_from_saves,
 )
 
 
@@ -64,6 +69,39 @@ class TestWikiIdToGameId:
     def test_no_character_suffix(self):
         assert _wiki_id_to_game_id("finesse", "CARD") == "CARD.FINESSE"
 
+    def test_silent_suffix(self):
+        assert _wiki_id_to_game_id("after-image-silent", "CARD") == "CARD.AFTER_IMAGE"
+
+    def test_defect_suffix(self):
+        assert _wiki_id_to_game_id("ball-lightning-defect", "CARD") == "CARD.BALL_LIGHTNING"
+
+    def test_necrobinder_suffix(self):
+        assert _wiki_id_to_game_id("bone-lance-necrobinder", "CARD") == "CARD.BONE_LANCE"
+
+    def test_colorless_suffix(self):
+        assert _wiki_id_to_game_id("finesse-colorless", "CARD") == "CARD.FINESSE"
+
+    def test_the_regent_suffix(self):
+        assert _wiki_id_to_game_id("royal-decree-the-regent", "CARD") == "CARD.ROYAL_DECREE"
+
+    def test_relic_id(self):
+        assert _wiki_id_to_game_id("burning-blood", "RELIC") == "RELIC.BURNING_BLOOD"
+
+
+class TestLoadExistingNameIndex:
+    def test_builds_index(self, tmp_path):
+        data = [{"id": "CARD.BASH", "name": "Bash"}, {"id": "CARD.STRIKE", "name": "Strike"}]
+        (tmp_path / "cards.json").write_text(json.dumps(data))
+        with patch("sts2.scraper.DATA_DIR", tmp_path):
+            index = _load_existing_name_index("cards.json", "CARD")
+        assert index["bash"] == "CARD.BASH"
+        assert index["strike"] == "CARD.STRIKE"
+
+    def test_missing_file(self, tmp_path):
+        with patch("sts2.scraper.DATA_DIR", tmp_path):
+            index = _load_existing_name_index("nope.json", "CARD")
+        assert index == {}
+
 
 class TestExtractKeywords:
     def test_block(self):
@@ -98,8 +136,116 @@ class TestMergeWithExisting:
         assert merged_by_id["C"]["val"] == 3   # new
 
     def test_merge_no_existing_file(self, tmp_path):
-        from unittest.mock import patch
         new = [{"id": "A", "val": 1}]
         with patch("sts2.scraper.DATA_DIR", tmp_path):
             result = _merge_with_existing("missing.json", new)
         assert result == new
+
+
+class TestDiscoverEnemiesFromSaves:
+    def test_discovers_from_progress(self, tmp_path):
+        save_dir = tmp_path / "saves"
+        save_dir.mkdir()
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "enemies.json").write_text("[]")
+        progress = {"encounter_stats": [{"encounter_id": "BOSS.HEXAGHOST", "fight_stats": []}]}
+        (save_dir / "progress.save").write_text(json.dumps(progress))
+
+        with patch("sts2.scraper.DATA_DIR", data_dir), \
+             patch("sts2.config.SAVE_DIR", save_dir):
+            enemies = _discover_enemies_from_saves()
+
+        assert len(enemies) == 1
+        assert enemies[0]["id"] == "BOSS.HEXAGHOST"
+        assert enemies[0]["type"] == "boss"
+
+    def test_discovers_from_run_history(self, tmp_path):
+        save_dir = tmp_path / "saves"
+        save_dir.mkdir()
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "enemies.json").write_text("[]")
+        history = save_dir / "history"
+        history.mkdir()
+        run = {
+            "players": [{"id": 1}],
+            "map_point_history": [[{
+                "map_point_type": "elite",
+                "rooms": [{"monster_ids": ["GREMLIN_NOB"], "room_type": "elite"}],
+                "player_stats": [],
+            }]],
+        }
+        (history / "run_001.run").write_text(json.dumps(run))
+
+        with patch("sts2.scraper.DATA_DIR", data_dir), \
+             patch("sts2.config.SAVE_DIR", save_dir):
+            enemies = _discover_enemies_from_saves()
+
+        assert len(enemies) == 1
+        assert enemies[0]["id"] == "MONSTER.GREMLIN_NOB"
+        assert enemies[0]["type"] == "elite"
+        assert "Act 1" in enemies[0]["act"]
+
+    def test_skips_existing_enemies(self, tmp_path):
+        save_dir = tmp_path / "saves"
+        save_dir.mkdir()
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "enemies.json").write_text(json.dumps([{"id": "BOSS.HEXAGHOST", "name": "Hexaghost"}]))
+        progress = {"encounter_stats": [{"encounter_id": "BOSS.HEXAGHOST", "fight_stats": []}]}
+        (save_dir / "progress.save").write_text(json.dumps(progress))
+
+        with patch("sts2.scraper.DATA_DIR", data_dir), \
+             patch("sts2.config.SAVE_DIR", save_dir):
+            enemies = _discover_enemies_from_saves()
+
+        assert len(enemies) == 0
+
+    def test_no_saves(self, tmp_path):
+        save_dir = tmp_path / "saves"
+        save_dir.mkdir()
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "enemies.json").write_text("[]")
+
+        with patch("sts2.scraper.DATA_DIR", data_dir), \
+             patch("sts2.config.SAVE_DIR", save_dir):
+            enemies = _discover_enemies_from_saves()
+
+        assert enemies == []
+
+
+class TestDiscoverEventsFromSaves:
+    def test_discovers_from_progress(self, tmp_path):
+        save_dir = tmp_path / "saves"
+        save_dir.mkdir()
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "events.json").write_text("[]")
+        progress = {"discovered_events": ["EVENT.BONFIRE", "EVENT.DEAD_ADVENTURER"]}
+        (save_dir / "progress.save").write_text(json.dumps(progress))
+
+        with patch("sts2.scraper.DATA_DIR", data_dir), \
+             patch("sts2.config.SAVE_DIR", save_dir):
+            events = _discover_events_from_saves()
+
+        assert len(events) == 2
+        ids = {e["id"] for e in events}
+        assert "EVENT.BONFIRE" in ids
+        assert "EVENT.DEAD_ADVENTURER" in ids
+
+    def test_skips_existing_events(self, tmp_path):
+        save_dir = tmp_path / "saves"
+        save_dir.mkdir()
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "events.json").write_text(json.dumps([{"id": "EVENT.BONFIRE", "name": "Bonfire"}]))
+        progress = {"discovered_events": ["EVENT.BONFIRE"]}
+        (save_dir / "progress.save").write_text(json.dumps(progress))
+
+        with patch("sts2.scraper.DATA_DIR", data_dir), \
+             patch("sts2.config.SAVE_DIR", save_dir):
+            events = _discover_events_from_saves()
+
+        assert len(events) == 0
