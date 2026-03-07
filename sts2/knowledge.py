@@ -112,15 +112,43 @@ class KnowledgeBase:
         return self.community_tips.get(entity_name.lower().strip(), [])
 
     def _discover_from_saves(self):
-        """Auto-discover enemies and events from save files on startup."""
+        """Auto-discover cards, relics, potions, enemies, and events from save files."""
         try:
             from sts2.saves import get_progress
             progress = get_progress()
             if not progress:
                 return
 
+            existing_card_ids = {c.id for c in self.cards}
+            existing_relic_ids = {r.id for r in self.relics}
+            existing_potion_ids = {p.id for p in self.potions}
             existing_enemy_ids = {e.id for e in self.enemies}
             existing_event_ids = {e.id for e in self.events}
+
+            # Discover cards from discovered_cards
+            for card_id in progress.discovered_cards:
+                if card_id in existing_card_ids:
+                    continue
+                existing_card_ids.add(card_id)
+                name = card_id.split(".", 1)[-1].replace("_", " ").title() if "." in card_id else card_id
+                self.cards.append(Card(id=card_id, name=name, character="Unknown",
+                                       cost="?", type="Unknown", rarity="Unknown"))
+
+            # Discover relics from discovered_relics
+            for relic_id in progress.discovered_relics:
+                if relic_id in existing_relic_ids:
+                    continue
+                existing_relic_ids.add(relic_id)
+                name = relic_id.split(".", 1)[-1].replace("_", " ").title() if "." in relic_id else relic_id
+                self.relics.append(Relic(id=relic_id, name=name))
+
+            # Discover potions from discovered_potions
+            for potion_id in progress.discovered_potions:
+                if potion_id in existing_potion_ids:
+                    continue
+                existing_potion_ids.add(potion_id)
+                name = potion_id.split(".", 1)[-1].replace("_", " ").title() if "." in potion_id else potion_id
+                self.potions.append(Potion(id=potion_id, name=name))
 
             # Discover enemies from enemy_stats and encounter_stats
             for enemy_id in list(progress.enemy_stats.keys()) + list(progress.encounter_stats.keys()):
@@ -380,6 +408,20 @@ class KnowledgeBase:
             "detected_archetypes": detected_archetypes,
             "weaknesses": weaknesses,
             "suggestions": [a.get("strategy", "") for a in detected_archetypes[:1]],
+        }
+
+    def get_data_status(self) -> dict:
+        """Return data source status for the home page."""
+        from sts2.config import SAVE_DIR
+        save_exists = SAVE_DIR.exists() and (SAVE_DIR / "progress.save").exists()
+        return {
+            "cards": len(self.cards),
+            "relics": len(self.relics),
+            "potions": len(self.potions),
+            "enemies": len(self.enemies),
+            "events": len(self.events),
+            "save_connected": save_exists,
+            "last_updated": get_last_updated(),
         }
 
     def id_to_name(self, entity_id: str) -> str:

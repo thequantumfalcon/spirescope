@@ -20,10 +20,10 @@
 
 <div class="grid grid-3">
 {% for relic in relics %}
-<a href="/relics/{{ relic.id }}" class="card" style="text-decoration:none">
+<a href="/relics/{{ relic.id }}" class="card card-link">
   <h3>{{ relic.name }}</h3>
   <p><span class="tag tag-{{ relic.rarity|lower }}">{{ relic.rarity }}</span>
-     <span class="char-{{ relic.character|lower }}" style="font-size:0.75rem">{{ relic.character }}</span></p>
+     <span class="char-{{ relic.character|lower }} text-xs">{{ relic.character }}</span></p>
   <p>{{ relic.description }}</p>
 </a>
 {% endfor %}

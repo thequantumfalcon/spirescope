@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Guide{% endblock %}
+{% block content %}
+<h1>Spirescope Guide</h1>
+<p class="subtitle">Everything you need to get started with your STS2 companion dashboard.</p>
+
+<div id="toc" class="card mb-lg">
+  <h3>Contents</h3>
+  <ul>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#save-files">Save File Setup</a></li>
+    <li><a href="#updating-data">Updating Data</a></li>
+    <li><a href="#pages">Page Tour</a></li>
+    <li><a href="#live">Live Run Tracking</a></li>
+    <li><a href="#deck">Deck Analyzer</a></li>
+    <li><a href="#analytics">Analytics</a></li>
+    <li><a href="#community">Community Data</a></li>
+    <li><a href="#config">Configuration</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+  </ul>
+</div>
+
+<h2 id="getting-started">Getting Started</h2>
+<div class="card mb-md">
+  <p>Install Spirescope and start the dashboard:</p>
+  <pre><code>pip install -e .
+spirescope</code></pre>
+  <p class="text-sm text-muted mt-sm">Or run directly with <code>python -m sts2</code>. Your browser will open automatically at <code>http://127.0.0.1:8000</code>.</p>
+</div>
+
+<h2 id="save-files">Save File Setup</h2>
+<div class="card mb-md">
+  <p>Spirescope auto-detects your STS2 save directory. If it can't find it, set the <code>STS2_SAVE_DIR</code> environment variable:</p>
+  <pre><code># Windows
+set STS2_SAVE_DIR=%APPDATA%\SlayTheSpire2\steam\YOUR_ID\profile1\saves
+
+# macOS / Linux
+export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</code></pre>
+  <p class="text-sm text-muted mt-sm">Replace <code>YOUR_ID</code> with your Steam ID. Check the home page's "Data Sources" section to verify the connection.</p>
+</div>
+
+<h2 id="updating-data">Updating Data</h2>
+<div class="card mb-md">
+  <p>Spirescope ships with baked-in game data. To fetch the latest cards, relics, and potions from the wiki:</p>
+  <pre><code>spirescope update</code></pre>
+  <p class="mt-sm">If you don't have internet access or just want to discover new entities from your save files:</p>
+  <pre><code>spirescope update --save-only</code></pre>
+  <p class="text-sm text-muted mt-sm">You can also hot-reload data without restarting by calling <code>POST /api/reload?token=YOUR_ADMIN_TOKEN</code>. The admin token is printed to stderr on startup.</p>
+</div>
+
+<h2 id="pages">Page Tour</h2>
+<div class="card mb-md">
+  <p><strong>Cards</strong> &mdash; Browse all cards with filters by character, type, rarity, cost, and keyword. Click any card for synergies, stats, and community tips.</p>
+  <p><strong>Relics</strong> &mdash; Filter by character and rarity. Detail pages show runs where each relic appeared.</p>
+  <p><strong>Potions</strong> &mdash; All potions filterable by rarity.</p>
+  <p><strong>Enemies</strong> &mdash; Filter by act and type (normal/elite/boss). Detail pages show attack patterns, strategy tips, and your personal win/loss stats.</p>
+  <p><strong>Events</strong> &mdash; Every event with optimal choices and outcomes, filterable by act.</p>
+  <p><strong>Strategy Guides</strong> &mdash; Per-character archetypes, key cards, key relics, and general tips. Access from character cards on the home page.</p>
+  <p><strong>Run History</strong> &mdash; All completed runs with floor-by-floor breakdown, HP tracking, card picks, and damage taken.</p>
+  <p><strong>Analytics</strong> &mdash; Aggregate statistics across all your runs: win rates, character performance, card pick rates, and more.</p>
+  <p><strong>Community</strong> &mdash; Community tier lists and meta discussion from Reddit.</p>
+</div>
+
+<h2 id="live">Live Run Tracking</h2>
+<div class="card mb-md">
+  <p>The <strong>Live Run</strong> page updates in real time via Server-Sent Events (SSE) &mdash; no page reloads needed. It shows your current deck, relics, potions, HP, floor history, and a live deck analysis.</p>
+  <p class="mt-sm">For <strong>co-op</strong>, use the player selector or add <code>?player=1</code> to track a different player in the same run.</p>
+  <p class="text-sm text-muted mt-sm">The SSE stream checks for changes every 3 seconds and auto-disconnects after 5 minutes of inactivity.</p>
+</div>
+
+<h2 id="deck">Deck Analyzer</h2>
+<div class="card mb-md">
+  <p>Select cards from the full card pool to simulate a deck. The analyzer provides:</p>
+  <ul>
+    <li>Archetype detection (matches against known strategy archetypes)</li>
+    <li>Type breakdown (attacks, skills, powers)</li>
+    <li>Cost curve visualization</li>
+    <li>Keyword frequency analysis</li>
+    <li>Weakness identification and suggestions</li>
+  </ul>
+  <p class="mt-sm">Decks are saved to your browser's localStorage so you can return to them later.</p>
+</div>
+
+<h2 id="analytics">Analytics</h2>
+<div class="card mb-md">
+  <p>The analytics page aggregates data across all your completed runs:</p>
+  <ul>
+    <li>Overall and per-character win rates</li>
+    <li>Floor survival curves</li>
+    <li>Most picked and highest win-rate cards</li>
+    <li>Common causes of death</li>
+  </ul>
+  <p class="text-sm text-muted mt-sm">Analytics are cached for 60 seconds and recompute automatically when new runs are detected.</p>
+</div>
+
+<h2 id="community">Community Data</h2>
+<div class="card mb-md">
+  <p>Scrape community tips and meta posts from Reddit:</p>
+  <pre><code>spirescope community</code></pre>
+  <p class="text-sm text-muted mt-sm">Community tips appear on card, relic, and enemy detail pages. Meta posts appear on the Community page.</p>
+</div>
+
+<h2 id="config">Configuration</h2>
+<div class="card mb-md">
+  <table>
+    <tr><th>Variable</th><th>Description</th><th>Default</th></tr>
+    <tr><td><code>STS2_SAVE_DIR</code></td><td>Path to your STS2 save directory</td><td>Auto-detected</td></tr>
+    <tr><td><code>STS2_GAME_DIR</code></td><td>Path to STS2 game install</td><td>Auto-detected</td></tr>
+    <tr><td><code>STS2_HOST</code></td><td>Server bind address</td><td><code>127.0.0.1</code></td></tr>
+    <tr><td><code>STS2_PORT</code></td><td>Server port</td><td><code>8000</code></td></tr>
+    <tr><td><code>SPIRESCOPE_ADMIN_TOKEN</code></td><td>Token for <code>/api/reload</code></td><td>Auto-generated</td></tr>
+  </table>
+</div>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+<div class="card mb-md">
+  <p><strong>"No save files found"</strong> &mdash; Set <code>STS2_SAVE_DIR</code> to point to your saves directory. Make sure you've launched STS2 at least once.</p>
+  <p class="mt-sm"><strong>Empty card/relic lists</strong> &mdash; Run <code>spirescope update</code> to fetch data from the wiki.</p>
+  <p class="mt-sm"><strong>Live run not updating</strong> &mdash; The game must be running with an active run. Check that your save directory is correct.</p>
+  <p class="mt-sm"><strong>Port already in use</strong> &mdash; Set <code>STS2_PORT=8001</code> (or any free port) before starting.</p>
+  <p class="mt-sm"><strong>Rate limited (429)</strong> &mdash; The server limits to 60 requests per minute per IP. Wait a moment and try again.</p>
+</div>
+{% endblock %}

@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Search: {{ query }}{% endblock %}
 {% block content %}
-<h1>Search: "{{ query }}" <span style="color:var(--text2);font-size:1rem">({{ total }} results)</span></h1>
+<h1>Search: "{{ query }}" <span class="text-muted text-base">({{ total }} results)</span></h1>
 
 {% if results.cards %}
 <h2>Cards ({{ results.cards|length }})</h2>
 <div class="grid grid-3">
 {% for card in results.cards %}
-<a href="/cards/{{ card.id }}" class="card" style="text-decoration:none">
+<a href="/cards/{{ card.id }}" class="card card-link">
   <h3><span class="char-{{ card.character|lower }}">{{ card.name }}</span> <span class="tag tag-cost">{{ card.cost }}</span></h3>
   <p>
     <span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span>
     <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span>
-    <span class="char-{{ card.character|lower }}" style="font-size:0.75rem">{{ card.character }}</span>
+    <span class="char-{{ card.character|lower }} text-xs">{{ card.character }}</span>
   </p>
   <p>{{ card.description }}</p>
 </a>
@@ -24,10 +24,10 @@
 <h2>Relics ({{ results.relics|length }})</h2>
 <div class="grid grid-3">
 {% for relic in results.relics %}
-<a href="/relics/{{ relic.id }}" class="card" style="text-decoration:none">
+<a href="/relics/{{ relic.id }}" class="card card-link">
   <h3>{{ relic.name }}</h3>
   <p><span class="tag tag-{{ relic.rarity|lower }}">{{ relic.rarity }}</span>
-     <span class="char-{{ relic.character|lower }}" style="font-size:0.75rem">{{ relic.character }}</span></p>
+     <span class="char-{{ relic.character|lower }} text-xs">{{ relic.character }}</span></p>
   <p>{{ relic.description }}</p>
 </a>
 {% endfor %}
@@ -47,7 +47,7 @@
 <h2>Enemies ({{ results.enemies|length }})</h2>
 <div class="grid grid-3">
 {% for enemy in results.enemies %}
-<a href="/enemies/{{ enemy.id }}" class="card" style="text-decoration:none">
+<a href="/enemies/{{ enemy.id }}" class="card card-link">
   <h3>{{ enemy.name }} <span class="tag tag-{{ enemy.type }}">{{ enemy.type }}</span></h3>
   <p>{{ enemy.act|join(', ') }} &bull; HP: {{ enemy.hp_range }}</p>
 </a>
@@ -65,15 +65,15 @@
 {% endif %}
 
 {% if total == 0 %}
-<p style="color:var(--text2);margin-top:2rem">No results found for "{{ query }}".</p>
+<p class="text-muted mt-lg">No results found for "{{ query }}".</p>
 {% if results.suggestions %}
-<p style="margin-top:0.5rem">Did you mean:
+<p class="mt-sm">Did you mean:
 {% for suggestion in results.suggestions %}
-  <a href="/search?q={{ suggestion }}" style="color:var(--accent)">{{ suggestion }}</a>{% if not loop.last %}, {% endif %}
+  <a href="/search?q={{ suggestion }}">{{ suggestion }}</a>{% if not loop.last %}, {% endif %}
 {% endfor %}
 ?</p>
 {% else %}
-<p style="color:var(--text2)">Try a different search term.</p>
+<p class="text-muted">Try a different search term.</p>
 {% endif %}
 {% endif %}
 {% endblock %}

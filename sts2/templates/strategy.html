@@ -3,9 +3,9 @@
 {% block content %}
 {% if strategy %}
 <h1 class="char-{{ strategy.character|lower }}">{{ strategy.character }} Strategy Guide</h1>
-<p style="font-size:1.1rem;margin-bottom:1rem">{{ strategy.description }}</p>
+<p class="text-lg mb-md">{{ strategy.description }}</p>
 
-<div class="card" style="margin-bottom:1.5rem">
+<div class="card mb-lg">
   <h3>Starting Relic: {{ strategy.starting_relic }}</h3>
   <p>{{ strategy.starting_relic_effect }}</p>
 </div>
@@ -15,25 +15,25 @@
 <div class="archetype">
   <h3>{{ arch.name }}</h3>
   <p>{{ arch.description }}</p>
-  <h4 style="margin-top:0.75rem;color:var(--text2);font-size:0.85rem">Key Cards</h4>
+  <h4 class="text-sm text-muted mt-sm">Key Cards</h4>
   <div class="key-cards">{% for kc in arch.key_cards %}<span class="tag tag-keyword">{{ kc }}</span>{% endfor %}</div>
-  {% if arch.key_relics %}<h4 style="margin-top:0.5rem;color:var(--text2);font-size:0.85rem">Key Relics</h4>
+  {% if arch.key_relics %}<h4 class="text-sm text-muted mt-sm">Key Relics</h4>
   <div class="key-cards">{% for kr in arch.key_relics %}<span class="tag tag-keyword">{{ kr }}</span>{% endfor %}</div>{% endif %}
-  <p style="margin-top:0.75rem;padding:0.75rem;background:var(--bg3);border-radius:6px">{{ arch.strategy }}</p>
+  <p class="strategy-box">{{ arch.strategy }}</p>
 </div>
 {% endfor %}
 
 {% if strategy.general_tips %}
 <h2>General Tips</h2>
 {% for tip in strategy.general_tips %}
-<div class="card" style="margin-bottom:0.5rem;border-left:3px solid var(--green)"><p>{{ tip }}</p></div>
+<div class="card card-tip"><p>{{ tip }}</p></div>
 {% endfor %}
 {% endif %}
 
 <h2>{{ strategy.character }} Cards ({{ cards|length }})</h2>
 <div class="grid grid-3">
 {% for card in cards %}
-<a href="/cards/{{ card.id }}" class="card" style="text-decoration:none">
+<a href="/cards/{{ card.id }}" class="card card-link">
   <h3>{{ card.name }} <span class="tag tag-cost">{{ card.cost }}</span></h3>
   <p><span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span> <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span></p>
   <p>{{ card.description }}</p>

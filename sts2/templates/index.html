@@ -2,8 +2,8 @@
 {% block title %}Spirescope{% endblock %}
 {% block content %}
 <h1>Spirescope</h1>
-<p style="color:var(--text2);margin-top:-0.5rem">Your Slay the Spire 2 companion
-{% if last_updated %}<span style="font-size:0.75rem;margin-left:1rem" title="{{ last_updated }}">Data updated: {{ last_updated[:10] }}</span>{% endif %}
+<p class="subtitle">Your Slay the Spire 2 companion
+{% if last_updated %}<span class="data-updated" title="{{ last_updated }}">Data updated: {{ last_updated[:10] }}</span>{% endif %}
 </p>
 
 <div class="stat-grid">
@@ -20,14 +20,14 @@
 <h2>Characters</h2>
 <div class="grid grid-5">
   {% for char in characters %}
-  <a href="/strategy/{{ char }}" class="card" style="text-decoration:none">
+  <a href="/strategy/{{ char }}" class="card card-link">
     <h3 class="char-{{ char|lower }}">{{ char }}</h3>
     {% if progress and progress.character_stats.get(char) %}
     {% set cs = progress.character_stats[char] %}
     <p>{{ cs.wins }}W / {{ cs.losses }}L &bull; {{ (cs.playtime / 60)|int }}m played</p>
-    {% if cs.best_streak %}<p style="font-size:0.8rem;color:var(--text2)">Best streak: {{ cs.best_streak }}{% if cs.current_streak %} (current: {{ cs.current_streak }}){% endif %}</p>{% endif %}
-    {% if cs.max_ascension %}<p style="font-size:0.8rem;color:var(--text2)">Max ascension: {{ cs.max_ascension }}</p>{% endif %}
-    {% if cs.fastest_win and cs.fastest_win > 0 %}<p style="font-size:0.8rem;color:var(--text2)">Fastest win: {{ (cs.fastest_win / 60)|int }}m</p>{% endif %}
+    {% if cs.best_streak %}<p class="text-sm text-muted">Best streak: {{ cs.best_streak }}{% if cs.current_streak %} (current: {{ cs.current_streak }}){% endif %}</p>{% endif %}
+    {% if cs.max_ascension %}<p class="text-sm text-muted">Max ascension: {{ cs.max_ascension }}</p>{% endif %}
+    {% if cs.fastest_win and cs.fastest_win > 0 %}<p class="text-sm text-muted">Fastest win: {{ (cs.fastest_win / 60)|int }}m</p>{% endif %}
     {% else %}
     <p>Not yet played</p>
     {% endif %}
@@ -38,22 +38,32 @@
 {% if recent_runs %}
 <h2>Recent Runs</h2>
 {% for run in recent_runs %}
-<a href="/runs/{{ run.id }}" class="run-item" style="text-decoration:none">
+<a href="/runs/{{ run.id }}" class="run-item">
   <span class="result {{ 'win' if run.win else 'loss' }}">{{ 'WIN' if run.win else 'LOSS' }}</span>
   <span class="char-{{ run.character|lower }}">{{ run.character }}</span>
-  <span style="color:var(--text2)">{{ run.floors|length }} floors &bull; {{ (run.run_time / 60)|int }}m</span>
-  {% if run.killed_by %}<span style="color:var(--red)">Killed by {{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
+  <span class="text-muted">{{ run.floors|length }} floors &bull; {{ (run.run_time / 60)|int }}m</span>
+  {% if run.killed_by %}<span class="text-red">Killed by {{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
 </a>
 {% endfor %}
 {% endif %}
 
+{% if data_status %}
+<div class="card mb-md">
+  <h3>Data Sources</h3>
+  <p class="text-sm">
+    {% if data_status.save_connected %}<span class="text-green">Save files connected</span>{% else %}<span class="text-muted">No save files found</span>{% endif %}
+    {% if data_status.last_updated %}&bull; Wiki data: {{ data_status.last_updated[:10] }}{% endif %}
+  </p>
+</div>
+{% endif %}
+
 <h2>Quick Links</h2>
 <div class="grid grid-3">
-  <a href="/cards?character=Ironclad" class="card" style="text-decoration:none"><h3 class="char-ironclad">Ironclad Cards</h3><p>Strength, Exhaust, Block</p></a>
-  <a href="/cards?character=Silent" class="card" style="text-decoration:none"><h3 class="char-silent">Silent Cards</h3><p>Poison, Shivs, Discard</p></a>
-  <a href="/cards?character=Defect" class="card" style="text-decoration:none"><h3 class="char-defect">Defect Cards</h3><p>Orbs, Focus, Lightning</p></a>
-  <a href="/cards?character=Necrobinder" class="card" style="text-decoration:none"><h3 class="char-necrobinder">Necrobinder Cards</h3><p>Summon, Doom, Souls</p></a>
-  <a href="/cards?character=Regent" class="card" style="text-decoration:none"><h3 class="char-regent">Regent Cards</h3><p>Stars, Forge, Minions</p></a>
-  <a href="/enemies?type=boss" class="card" style="text-decoration:none"><h3>Boss Guides</h3><p>Patterns & strategies</p></a>
+  <a href="/cards?character=Ironclad" class="card card-link"><h3 class="char-ironclad">Ironclad Cards</h3><p>Strength, Exhaust, Block</p></a>
+  <a href="/cards?character=Silent" class="card card-link"><h3 class="char-silent">Silent Cards</h3><p>Poison, Shivs, Discard</p></a>
+  <a href="/cards?character=Defect" class="card card-link"><h3 class="char-defect">Defect Cards</h3><p>Orbs, Focus, Lightning</p></a>
+  <a href="/cards?character=Necrobinder" class="card card-link"><h3 class="char-necrobinder">Necrobinder Cards</h3><p>Summon, Doom, Souls</p></a>
+  <a href="/cards?character=Regent" class="card card-link"><h3 class="char-regent">Regent Cards</h3><p>Stars, Forge, Minions</p></a>
+  <a href="/enemies?type=boss" class="card card-link"><h3>Boss Guides</h3><p>Patterns & strategies</p></a>
 </div>
 {% endblock %}

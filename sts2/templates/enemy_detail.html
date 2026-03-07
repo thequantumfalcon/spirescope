@@ -3,35 +3,35 @@
 {% block og_title %}{{ enemy.name if enemy else 'Enemy Not Found' }} — Spirescope{% endblock %}
 {% block content %}
 {% if enemy %}
-<p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.5rem"><a href="/enemies">Enemies</a> &rsaquo; {{ enemy.name }}</p>
+<p class="breadcrumb"><a href="/enemies">Enemies</a> &rsaquo; {{ enemy.name }}</p>
 <div class="detail-header">
   <h1>{{ enemy.name }}
     <span class="tag {% if enemy.type == 'boss' %}tag-attack{% elif enemy.type == 'elite' %}tag-power{% else %}tag-skill{% endif %}">{{ enemy.type }}</span>
   </h1>
-  <p style="color:var(--text2)">{{ enemy.act|join(', ') }} &bull; HP: {{ enemy.hp_range }}</p>
+  <p class="text-muted">{{ enemy.act|join(', ') }} &bull; HP: {{ enemy.hp_range }}</p>
 </div>
 
 {% if enemy.patterns %}
 <h2>Attack Patterns</h2>
 {% for p in enemy.patterns %}
-<div class="card" style="margin-bottom:0.5rem"><p>{{ p }}</p></div>
+<div class="card mb-sm"><p>{{ p }}</p></div>
 {% endfor %}
 {% endif %}
 
 {% if enemy.tips %}
 <h2>Strategy Tips</h2>
 {% for tip in enemy.tips %}
-<div class="card" style="margin-bottom:0.5rem;border-left:3px solid var(--green)"><p>{{ tip }}</p></div>
+<div class="card card-tip"><p>{{ tip }}</p></div>
 {% endfor %}
 {% endif %}
 
 {% if community_tips %}
 <h2>Community Tips</h2>
-<div style="border-left:3px solid var(--accent2);padding-left:1rem;margin-bottom:1.5rem">
+<div class="community-tips">
 {% for tip in community_tips %}
-<p style="color:var(--text2);font-size:0.9rem;margin-bottom:0.5rem">"{{ tip }}"</p>
+<p>"{{ tip }}"</p>
 {% endfor %}
-<p style="font-size:0.75rem;color:var(--text2)">Source: Reddit community</p>
+<p class="source">Source: Reddit community</p>
 </div>
 {% endif %}
 

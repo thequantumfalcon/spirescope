@@ -20,12 +20,12 @@
 
 <div class="grid grid-2">
 {% for enemy in enemies %}
-<a href="/enemies/{{ enemy.id }}" class="card" style="text-decoration:none">
+<a href="/enemies/{{ enemy.id }}" class="card card-link">
   <h3>{{ enemy.name }}
     <span class="tag {% if enemy.type == 'boss' %}tag-attack{% elif enemy.type == 'elite' %}tag-power{% else %}tag-skill{% endif %}">{{ enemy.type }}</span>
   </h3>
   <p>{{ enemy.act|join(', ') }} &bull; HP: {{ enemy.hp_range }}</p>
-  {% if enemy.tips %}<p style="color:var(--green);font-size:0.85rem">{{ enemy.tips[0] }}</p>{% endif %}
+  {% if enemy.tips %}<p class="text-sm text-green">{{ enemy.tips[0] }}</p>{% endif %}
 </a>
 {% endfor %}
 </div>

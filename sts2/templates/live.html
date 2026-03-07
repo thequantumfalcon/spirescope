@@ -2,12 +2,12 @@
 {% block title %}Live Run{% endblock %}
 {% block content %}
 {% if run.active %}
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+<div class="live-header">
   <h1>
-    <span style="color:var(--green);font-size:0.8em">LIVE</span>
+    <span class="live-badge">LIVE</span>
     <span class="char-{{ run.character|lower }}">{{ run.character }}</span> Run
   </h1>
-  <div style="color:var(--text2);font-size:0.85rem">
+  <div class="text-sm text-muted">
     Live updates via SSE &bull; {{ (run.run_time / 60)|int }}m elapsed
   </div>
 </div>
@@ -16,38 +16,38 @@
   <div class="stat-box">
     <div class="num live-hp" style="color:{% if run.current_hp < run.max_hp * 0.3 %}var(--red){% elif run.current_hp < run.max_hp * 0.6 %}var(--yellow){% else %}var(--green){% endif %}">{{ run.current_hp }}/{{ run.max_hp }}</div>
     <div class="label">HP</div>
-    <div class="hp-bar" style="margin-top:0.5rem">
+    <div class="hp-bar mt-sm">
       <div class="hp-bg" style="width:100%"><div class="hp-fill" style="width:{{ (run.current_hp / run.max_hp * 100) if run.max_hp > 0 else 0 }}%"></div></div>
     </div>
   </div>
-  <div class="stat-box"><div class="num live-gold" style="color:var(--yellow)">{{ run.gold }}</div><div class="label">Gold</div></div>
+  <div class="stat-box"><div class="num live-gold text-yellow">{{ run.gold }}</div><div class="label">Gold</div></div>
   <div class="stat-box"><div class="num live-act">Act {{ run.act }}</div><div class="label live-floor">Floor {{ run.floor }}</div></div>
   <div class="stat-box"><div class="num live-cards">{{ run.deck|length }}</div><div class="label">Cards</div></div>
   <div class="stat-box"><div class="num live-relics">{{ run.relics|length }}</div><div class="label">Relics</div></div>
   <div class="stat-box"><div class="num live-potions">{{ run.potions|length }}</div><div class="label">Potions</div></div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+<div class="two-col">
   <div>
     <h2>Current Deck ({{ run.deck|length }})</h2>
-    <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:1.5rem">
+    <div class="flex flex-wrap gap-xs mb-lg">
     {% for card_id in run.deck %}
-    <a href="/cards/{{ card_id }}" class="tag tag-keyword" style="text-decoration:none">
-      {{ kb.id_to_name(card_id) }}{% if run.deck_upgrades[loop.index0] %}<span style="color:var(--green)">+</span>{% endif %}
+    <a href="/cards/{{ card_id }}" class="tag tag-keyword card-link">
+      {{ kb.id_to_name(card_id) }}{% if run.deck_upgrades[loop.index0] %}<span class="text-green">+</span>{% endif %}
     </a>
     {% endfor %}
     </div>
 
     <h2>Relics</h2>
-    <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:1.5rem">
+    <div class="flex flex-wrap gap-xs mb-lg">
     {% for relic_id in run.relics %}
-    <a href="/relics/{{ relic_id }}" class="tag tag-power" style="text-decoration:none">{{ kb.id_to_name(relic_id) }}</a>
+    <a href="/relics/{{ relic_id }}" class="tag tag-power card-link">{{ kb.id_to_name(relic_id) }}</a>
     {% endfor %}
     </div>
 
     {% if run.potions %}
     <h2>Potions</h2>
-    <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:1.5rem">
+    <div class="flex flex-wrap gap-xs mb-lg">
     {% for potion_id in run.potions %}
     <span class="tag tag-skill">{{ kb.id_to_name(potion_id) }}</span>
     {% endfor %}
@@ -59,35 +59,35 @@
     {% if analysis %}
     <h2>Deck Analysis</h2>
     <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="stat-box"><div class="num" style="color:var(--red)">{{ analysis.attacks }}</div><div class="label">Attacks</div></div>
-      <div class="stat-box"><div class="num" style="color:var(--accent)">{{ analysis.skills }}</div><div class="label">Skills</div></div>
-      <div class="stat-box"><div class="num" style="color:var(--yellow)">{{ analysis.powers }}</div><div class="label">Powers</div></div>
+      <div class="stat-box"><div class="num text-red">{{ analysis.attacks }}</div><div class="label">Attacks</div></div>
+      <div class="stat-box"><div class="num text-accent">{{ analysis.skills }}</div><div class="label">Skills</div></div>
+      <div class="stat-box"><div class="num text-yellow">{{ analysis.powers }}</div><div class="label">Powers</div></div>
     </div>
 
     {% if analysis.detected_archetypes %}
-    <h3 style="margin-top:1rem">Detected Archetypes</h3>
+    <h3 class="mt-md">Detected Archetypes</h3>
     {% for arch in analysis.detected_archetypes %}
     <div class="archetype">
       <h3>{{ arch.name }}</h3>
-      <p style="color:var(--text2);font-size:0.85rem">Matched: {{ arch.matched_cards|join(', ') }}</p>
+      <p class="text-sm text-muted">Matched: {{ arch.matched_cards|join(', ') }}</p>
       {% if arch.missing_key_cards %}
-      <p style="color:var(--yellow);font-size:0.85rem;margin-top:0.25rem">Missing: {{ arch.missing_key_cards|join(', ') }}</p>
+      <p class="text-sm text-yellow mt-xs">Missing: {{ arch.missing_key_cards|join(', ') }}</p>
       {% endif %}
-      <p style="margin-top:0.5rem">{{ arch.strategy }}</p>
+      <p class="mt-sm">{{ arch.strategy }}</p>
     </div>
     {% endfor %}
     {% endif %}
 
     {% if analysis.weaknesses %}
-    <h3 style="margin-top:1rem">Weaknesses</h3>
+    <h3 class="mt-md">Weaknesses</h3>
     {% for w in analysis.weaknesses %}
-    <div class="card" style="margin-bottom:0.5rem;border-left:3px solid var(--red)"><p>{{ w }}</p></div>
+    <div class="card card-loss mb-sm"><p>{{ w }}</p></div>
     {% endfor %}
     {% endif %}
 
     {% if analysis.top_keywords %}
-    <h3 style="margin-top:1rem">Keywords</h3>
-    <div style="display:flex;flex-wrap:wrap;gap:0.25rem">
+    <h3 class="mt-md">Keywords</h3>
+    <div class="flex flex-wrap gap-xs">
     {% for kw, count in analysis.top_keywords %}
     <span class="tag tag-keyword">{{ kw }} ({{ count }})</span>
     {% endfor %}
@@ -98,24 +98,24 @@
 </div>
 
 {% if run.floors %}
-<h2 style="margin-top:1.5rem">Floor History</h2>
+<h2 class="mt-lg">Floor History</h2>
 <div class="floor-timeline">
 {% for floor in run.floors %}
 <div class="floor-item {{ floor.type }}">
-  <div style="min-width:30px;font-weight:700;color:var(--text2)">F{{ floor.floor }}</div>
-  <div style="min-width:60px">
+  <div class="floor-num">F{{ floor.floor }}</div>
+  <div class="floor-type-col">
     <span class="tag {% if floor.type == 'boss' %}tag-attack{% elif floor.type == 'elite' %}tag-power{% elif floor.type == 'event' or floor.type == 'unknown' %}tag-curse{% else %}tag-skill{% endif %}">{{ floor.type }}</span>
   </div>
-  <div style="flex:1">
+  <div class="floor-detail">
     {% if floor.encounter %}<strong>{{ kb.id_to_name(floor.encounter) }}</strong>{% endif %}
-    {% if floor.card_picked %}<br><span style="color:var(--green)">+ {{ kb.id_to_name(floor.card_picked) }}</span>{% endif %}
+    {% if floor.card_picked %}<br><span class="text-green">+ {{ kb.id_to_name(floor.card_picked) }}</span>{% endif %}
   </div>
-  <div style="min-width:120px;text-align:right">
+  <div class="floor-hp-col">
     {% if floor.damage_taken %}<span class="loss">-{{ floor.damage_taken }} HP</span>{% endif %}
     {% if floor.hp_healed %}<span class="win">+{{ floor.hp_healed }} HP</span>{% endif %}
     <div class="hp-bar">
       <div class="hp-bg"><div class="hp-fill" style="width:{{ (floor.current_hp / floor.max_hp * 100) if floor.max_hp > 0 else 0 }}%"></div></div>
-      <span style="font-size:0.75rem;color:var(--text2)">{{ floor.current_hp }}/{{ floor.max_hp }}</span>
+      <span class="text-xs text-muted">{{ floor.current_hp }}/{{ floor.max_hp }}</span>
     </div>
   </div>
 </div>
@@ -132,7 +132,6 @@
     if (e.data !== lastJson) {
       lastJson = e.data;
       var d = JSON.parse(e.data);
-      // Update stat values without full reload
       var hp = document.querySelector('.live-hp');
       if (hp) hp.textContent = d.current_hp + '/' + d.max_hp;
       var gold = document.querySelector('.live-gold');
@@ -147,16 +146,13 @@
       if (relics) relics.textContent = d.relics.length;
       var potions = document.querySelector('.live-potions');
       if (potions) potions.textContent = d.potions.length;
-      // Update HP bar width
       var fill = document.querySelector('.hp-fill');
       if (fill && d.max_hp > 0) fill.style.width = (d.current_hp / d.max_hp * 100) + '%';
-      // If run ended or started, reload for full re-render
       var wasActive = {{ 'true' if run.active else 'false' }};
       if (d.active !== wasActive) location.reload();
     }
   };
   es.onerror = function() {
-    // Fallback: reconnect handled by browser, but also do full reload after 10s
     setTimeout(function() { location.reload(); }, 10000);
   };
 })();
@@ -164,8 +160,8 @@
 
 {% else %}
 <h1>No Active Run</h1>
-<p style="color:var(--text2);margin:1rem 0">Start a run in Slay the Spire 2 and this page will automatically show your live progress.</p>
-<p style="color:var(--text2)">Checking for an active run...</p>
+<p class="text-muted mb-md">Start a run in Slay the Spire 2 and this page will automatically show your live progress.</p>
+<p class="text-muted">Checking for an active run...</p>
 <script>
 (function() {
   var player = {{ selected_player }};

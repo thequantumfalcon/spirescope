@@ -11,6 +11,9 @@ from sts2.scraper import (
     _merge_with_existing,
     _discover_enemies_from_saves,
     _discover_events_from_saves,
+    _scrape_cards,
+    _scrape_relics,
+    _existing_count,
 )
 
 
@@ -249,3 +252,64 @@ class TestDiscoverEventsFromSaves:
             events = _discover_events_from_saves()
 
         assert len(events) == 0
+
+
+class TestScrapeCards:
+    def test_parses_card_from_html(self, tmp_path):
+        card_json = json.dumps({
+            "id": "bash-ironclad", "category": "CARD", "name": "Bash",
+            "character": "Ironclad", "energy": 2, "cardType": "Attack",
+            "rarity": "Starter", "description": "Deal 8 damage. Apply 2 Vulnerable.",
+            "upgradedDescription": "Deal 10 damage. Apply 3 Vulnerable.",
+        })
+        html = f'<html><body>prefix {card_json} suffix</body></html>'
+        with patch("sts2.scraper.DATA_DIR", tmp_path):
+            cards = _scrape_cards(html)
+        assert len(cards) == 1
+        assert cards[0]["name"] == "Bash"
+        assert cards[0]["type"] == "Attack"
+        assert cards[0]["cost"] == "2"
+        assert "Vulnerable" in cards[0]["keywords"]
+
+    def test_deduplicates_same_wiki_id(self, tmp_path):
+        card_json = json.dumps({
+            "id": "bash-ironclad", "category": "CARD", "name": "Bash",
+            "character": "Ironclad", "energy": 2, "cardType": "Attack",
+            "rarity": "Starter", "description": "Deal 8 damage.",
+        })
+        html = f'{card_json} {card_json}'
+        with patch("sts2.scraper.DATA_DIR", tmp_path):
+            cards = _scrape_cards(html)
+        assert len(cards) == 1
+
+
+class TestScrapeRelics:
+    def test_parses_relic_from_html(self, tmp_path):
+        relic_json = json.dumps({
+            "id": "burning-blood", "category": "RELIC", "name": "Burning Blood",
+            "relicPools": ["Ironclad"], "rarity": "Starter",
+            "description": "At the end of combat, heal 6 HP.",
+        })
+        html = f'<html>{relic_json}</html>'
+        with patch("sts2.scraper.DATA_DIR", tmp_path):
+            relics = _scrape_relics(html)
+        assert len(relics) == 1
+        assert relics[0]["name"] == "Burning Blood"
+        assert relics[0]["character"] == "Ironclad"
+
+
+class TestExistingCount:
+    def test_counts_items(self, tmp_path):
+        data = [{"id": "A"}, {"id": "B"}, {"id": "C"}]
+        (tmp_path / "test.json").write_text(json.dumps(data))
+        with patch("sts2.scraper.DATA_DIR", tmp_path):
+            assert _existing_count("test.json") == 3
+
+    def test_missing_file(self, tmp_path):
+        with patch("sts2.scraper.DATA_DIR", tmp_path):
+            assert _existing_count("nope.json") == 0
+
+    def test_corrupt_file(self, tmp_path):
+        (tmp_path / "bad.json").write_text("not json")
+        with patch("sts2.scraper.DATA_DIR", tmp_path):
+            assert _existing_count("bad.json") == 0

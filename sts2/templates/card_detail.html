@@ -3,20 +3,20 @@
 {% block og_title %}{{ card.name if card else 'Card Not Found' }} — Spirescope{% endblock %}
 {% block content %}
 {% if card %}
-<p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.5rem"><a href="/cards">Cards</a> &rsaquo; <a href="/cards?character={{ card.character }}">{{ card.character }}</a> &rsaquo; {{ card.name }}</p>
+<p class="breadcrumb"><a href="/cards">Cards</a> &rsaquo; <a href="/cards?character={{ card.character }}">{{ card.character }}</a> &rsaquo; {{ card.name }}</p>
 <div class="detail-header">
   <h1><span class="char-{{ card.character|lower }}">{{ card.name }}</span>
-    <span class="tag tag-cost" style="font-size:1rem">{{ card.cost }}</span>
+    <span class="tag tag-cost text-base">{{ card.cost }}</span>
     <span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span>
     <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span>
     {% if card.tier %}<span class="tag" style="background:var(--bg3);color:var(--yellow);border:1px solid var(--border);font-size:1rem">{{ card.tier }}-Tier</span>{% endif %}
   </h1>
-  <p style="color:var(--text2)">{{ card.character }} &bull; {{ card.id }}</p>
+  <p class="text-muted">{{ card.character }} &bull; {{ card.id }}</p>
 </div>
 
 <div class="detail-desc">{{ card.description }}</div>
 {% if card.description_upgraded %}
-<div class="detail-desc" style="border-left:3px solid var(--green)"><strong style="color:var(--green)">Upgraded:</strong> {{ card.description_upgraded }}</div>
+<div class="detail-desc card-win"><strong class="text-green">Upgraded:</strong> {{ card.description_upgraded }}</div>
 {% endif %}
 
 {% if card_stats and (card_stats.picked or card_stats.skipped or card_stats.won or card_stats.lost) %}
@@ -47,7 +47,7 @@
 <h2>Synergies ({{ synergies|length }} cards)</h2>
 <div class="grid grid-3">
 {% for s in synergies %}
-<a href="/cards/{{ s.id }}" class="card" style="text-decoration:none">
+<a href="/cards/{{ s.id }}" class="card card-link">
   <h3><span class="char-{{ s.character|lower }}">{{ s.name }}</span> <span class="tag tag-cost">{{ s.cost }}</span></h3>
   <p><span class="tag tag-{{ s.type|lower }}">{{ s.type }}</span></p>
   <p>{{ s.description }}</p>
@@ -58,11 +58,11 @@
 
 {% if community_tips %}
 <h2>Community Tips</h2>
-<div style="border-left:3px solid var(--accent2);padding-left:1rem;margin-bottom:1.5rem">
+<div class="community-tips">
 {% for tip in community_tips %}
-<p style="color:var(--text2);font-size:0.9rem;margin-bottom:0.5rem">"{{ tip }}"</p>
+<p>"{{ tip }}"</p>
 {% endfor %}
-<p style="font-size:0.75rem;color:var(--text2)">Source: Reddit community</p>
+<p class="source">Source: Reddit community</p>
 </div>
 {% endif %}
 
@@ -74,7 +74,7 @@
   <h3>{{ arch.name }}</h3>
   <p>{{ arch.description }}</p>
   <div class="key-cards">{% for kc in arch.key_cards %}<span class="tag tag-keyword">{{ kc }}</span>{% endfor %}</div>
-  <p style="margin-top:0.5rem">{{ arch.strategy }}</p>
+  <p class="mt-sm">{{ arch.strategy }}</p>
 </div>
 {% endif %}
 {% endfor %}

@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Cards ({{ total_cards }})</h1>
 {% if total_pages > 1 %}
-<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">Showing {{ (page - 1) * 30 + 1 }}&ndash;{{ [page * 30, total_cards]|min }} of {{ total_cards }}</p>
+<p class="text-sm text-muted mb-sm">Showing {{ (page - 1) * 30 + 1 }}&ndash;{{ [page * 30, total_cards]|min }} of {{ total_cards }}</p>
 {% endif %}
 
 <div class="filters">
@@ -30,7 +30,7 @@
 
 <div class="grid grid-3">
 {% for card in cards %}
-<a href="/cards/{{ card.id }}" class="card" style="text-decoration:none">
+<a href="/cards/{{ card.id }}" class="card card-link">
   <h3>
     <span class="char-{{ card.character|lower }}">{{ card.name }}</span>
     <span class="tag tag-cost">{{ card.cost }}</span>
@@ -38,7 +38,7 @@
   <p>
     <span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span>
     <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span>
-    <span class="char-{{ card.character|lower }}" style="font-size:0.75rem">{{ card.character }}</span>
+    <span class="char-{{ card.character|lower }} text-xs">{{ card.character }}</span>
   </p>
   <p>{{ card.description }}</p>
   {% if card.keywords %}
@@ -47,7 +47,7 @@
   {% if card_stats and card_stats[card.id] %}
   {% set cs = card_stats[card.id] %}
   {% if cs.picked or cs.skipped %}
-  <p style="font-size:0.75rem;color:var(--text2);margin-top:0.25rem">Picked {{ cs.picked }}/{{ cs.picked + cs.skipped }} ({{ ((cs.picked / (cs.picked + cs.skipped)) * 100)|round|int }}%)</p>
+  <p class="text-xs text-muted mt-xs">Picked {{ cs.picked }}/{{ cs.picked + cs.skipped }} ({{ ((cs.picked / (cs.picked + cs.skipped)) * 100)|round|int }}%)</p>
   {% endif %}
   {% endif %}
 </a>
@@ -61,7 +61,7 @@
   {% for p in range(1, total_pages + 1) %}
     {% if p == page %}<span class="active">{{ p }}</span>
     {% elif p <= 3 or p > total_pages - 2 or (p >= page - 1 and p <= page + 1) %}<a href="/cards?{{ qs }}page={{ p }}">{{ p }}</a>
-    {% elif p == 4 or p == total_pages - 2 %}<span style="color:var(--text2)">...</span>
+    {% elif p == 4 or p == total_pages - 2 %}<span class="ellipsis">...</span>
     {% endif %}
   {% endfor %}
   {% if page < total_pages %}<a href="/cards?{{ qs }}page={{ page + 1 }}">Next &raquo;</a>{% endif %}

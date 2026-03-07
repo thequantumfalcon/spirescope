@@ -11,8 +11,8 @@
 </div>
 
 {% for event in events %}
-<div class="card" style="margin-bottom:1rem">
-  <h3>{{ event.name }} <span style="color:var(--text2);font-size:0.8rem">{{ event.act|join(', ') }}</span></h3>
+<div class="card mb-md">
+  <h3>{{ event.name }} <span class="text-sm text-muted">{{ event.act|join(', ') }}</span></h3>
   <p>{{ event.description }}</p>
   {% for choice in event.choices %}
   <div class="choice">
@@ -21,7 +21,7 @@
     {% if choice.recommendation %}<div class="rec">{{ choice.recommendation }}</div>{% endif %}
   </div>
   {% endfor %}
-  {% if event.notes %}<p style="color:var(--text2);font-size:0.85rem;margin-top:0.5rem">{{ event.notes }}</p>{% endif %}
+  {% if event.notes %}<p class="text-sm text-muted mt-sm">{{ event.notes }}</p>{% endif %}
 </div>
 {% endfor %}
 {% endblock %}

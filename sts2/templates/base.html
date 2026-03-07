@@ -17,27 +17,40 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <nav aria-label="Main navigation">
     {% set p = request.url.path %}
-    <a class="logo" href="/">Spirescope</a>
-    <a href="/cards" {% if p.startswith('/cards') %}style="color:var(--text)"{% endif %}>Cards</a>
-    <a href="/relics" {% if p.startswith('/relics') %}style="color:var(--text)"{% endif %}>Relics</a>
-    <a href="/potions" {% if p == '/potions' %}style="color:var(--text)"{% endif %}>Potions</a>
-    <a href="/enemies" {% if p.startswith('/enemies') %}style="color:var(--text)"{% endif %}>Enemies</a>
-    <a href="/events" {% if p == '/events' %}style="color:var(--text)"{% endif %}>Events</a>
-    <a href="/deck" {% if p.startswith('/deck') %}style="color:var(--text)"{% endif %}>Deck Analyzer</a>
-    <a href="/live" style="color:{% if p == '/live' %}#fff{% else %}var(--green){% endif %}">Live Run</a>
-    <a href="/runs" {% if p.startswith('/runs') %}style="color:var(--text)"{% endif %}>Run History</a>
-    <a href="/analytics" {% if p == '/analytics' %}style="color:var(--text)"{% endif %}>Analytics</a>
-    <a href="/community" {% if p == '/community' %}style="color:var(--text)"{% endif %}>Community</a>
-    <form class="search-form" action="/search" method="get">
-      <input type="search" name="q" placeholder="Search cards, relics, enemies..." value="{{ query|default('') }}" maxlength="200">
-      <button type="submit">Search</button>
-    </form>
+    <a class="logo" href="/">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M14 2L8 26h12L14 2z" fill="#1f6feb" opacity="0.7"/>
+        <path d="M14 2L10 26h8L14 2z" fill="#58a6ff"/>
+        <circle cx="14" cy="10" r="4" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+        <circle cx="14" cy="10" r="2" fill="#58a6ff"/>
+        <path d="M10 10L4 7M18 10l6-3" stroke="#58a6ff" stroke-width="1" opacity="0.5"/>
+      </svg>
+      Spirescope
+    </a>
+    <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.nextElementSibling.classList.toggle('open')">&#9776;</button>
+    <div class="nav-links">
+      <a href="/cards" {% if p.startswith('/cards') %}aria-current="page"{% endif %}>Cards</a>
+      <a href="/relics" {% if p.startswith('/relics') %}aria-current="page"{% endif %}>Relics</a>
+      <a href="/potions" {% if p == '/potions' %}aria-current="page"{% endif %}>Potions</a>
+      <a href="/enemies" {% if p.startswith('/enemies') %}aria-current="page"{% endif %}>Enemies</a>
+      <a href="/events" {% if p == '/events' %}aria-current="page"{% endif %}>Events</a>
+      <a href="/deck" {% if p.startswith('/deck') %}aria-current="page"{% endif %}>Deck Analyzer</a>
+      <a href="/live" class="live-link" {% if p == '/live' %}aria-current="page"{% endif %}>Live Run</a>
+      <a href="/runs" {% if p.startswith('/runs') %}aria-current="page"{% endif %}>Run History</a>
+      <a href="/analytics" {% if p == '/analytics' %}aria-current="page"{% endif %}>Analytics</a>
+      <a href="/community" {% if p == '/community' %}aria-current="page"{% endif %}>Community</a>
+      <a href="/guide" {% if p == '/guide' %}aria-current="page"{% endif %}>Guide</a>
+      <form class="search-form" action="/search" method="get">
+        <input type="search" name="q" placeholder="Search cards, relics, enemies..." value="{{ query|default('') }}" maxlength="200">
+        <button type="submit">Search</button>
+      </form>
+    </div>
   </nav>
   <main id="main" class="container">
     {% block content %}{% endblock %}
   </main>
   <footer>
-    <span>Spirescope v1.0</span> &middot;
+    <span>Spirescope v{{ version }}</span> &middot;
     <a href="https://github.com/thequantumfalcon/Spirescope">GitHub</a>
   </footer>
 </body>

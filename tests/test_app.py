@@ -1098,3 +1098,109 @@ async def test_community_page_shows_tier_cards(client):
         assert "Test S" in resp.text
     finally:
         _kb.cards = original_cards
+
+
+# --- Phase 4: Guide, CLI, scraper, analytics edge cases ---
+
+async def test_guide_page(client):
+    """Guide page should render."""
+    async with client as c:
+        resp = await c.get("/guide")
+    assert resp.status_code == 200
+    assert "Guide" in resp.text
+    assert "Getting Started" in resp.text
+    assert "Troubleshooting" in resp.text
+
+
+async def test_guide_in_sitemap(client):
+    """Sitemap should include the guide page."""
+    async with client as c:
+        resp = await c.get("/sitemap.xml")
+    assert resp.status_code == 200
+    assert "/guide" in resp.text
+
+
+async def test_guide_nav_link(client):
+    """Nav should include Guide link."""
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert 'href="/guide"' in resp.text
+
+
+async def test_index_data_status(client):
+    """Index should show data sources section."""
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert "Data Sources" in resp.text
+
+
+async def test_cli_help():
+    """CLI --help should print usage."""
+    import subprocess
+    result = subprocess.run(
+        ["python", "-m", "sts2", "--help"],
+        capture_output=True, text=True, timeout=10,
+    )
+    assert result.returncode == 0
+    assert "Usage:" in result.stdout
+    assert "serve" in result.stdout
+    assert "update" in result.stdout
+
+
+async def test_cli_version():
+    """CLI --version should print version."""
+    import subprocess
+    result = subprocess.run(
+        ["python", "-m", "sts2", "--version"],
+        capture_output=True, text=True, timeout=10,
+    )
+    assert result.returncode == 0
+    assert "Spirescope" in result.stdout
+
+
+async def test_cli_unknown_command():
+    """CLI unknown command should exit with error."""
+    import subprocess
+    result = subprocess.run(
+        ["python", "-m", "sts2", "foobar"],
+        capture_output=True, text=True, timeout=10,
+    )
+    assert result.returncode != 0
+    assert "Unknown command" in result.stdout
+
+
+async def test_analytics_single_run():
+    """Analytics with a single run should not crash."""
+    from sts2.analytics import compute_analytics
+    from sts2.models import RunHistory
+    runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"])]
+    result = compute_analytics(runs)
+    assert result["overview"]["total"] == 1
+    assert result["overview"]["wins"] == 1
+    assert result["overview"]["win_rate"] == 100.0
+
+
+async def test_analytics_all_wins():
+    """Analytics with all wins (0 losses) should not divide by zero."""
+    from sts2.analytics import compute_analytics
+    from sts2.models import RunHistory
+    runs = [
+        RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"]),
+        RunHistory(id="r2", character="Ironclad", win=True, deck=["CARD.BASH"]),
+    ]
+    result = compute_analytics(runs)
+    assert result["overview"]["losses"] == 0
+    assert result["overview"]["win_rate"] == 100.0
+
+
+async def test_knowledge_base_data_status():
+    """KnowledgeBase.get_data_status should return expected keys."""
+    from sts2.app import kb as _kb
+    status = _kb.get_data_status()
+    assert "cards" in status
+    assert "relics" in status
+    assert "save_connected" in status
+    assert "last_updated" in status
+    assert isinstance(status["cards"], int)

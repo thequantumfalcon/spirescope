@@ -4,7 +4,7 @@
 <h1>Run History</h1>
 
 {% if total_runs %}
-<div class="stat-grid" style="margin-bottom:1rem">
+<div class="stat-grid mb-md">
   <div class="stat-box"><div class="num">{{ total_runs }}</div><div class="label">Total Runs</div></div>
   <div class="stat-box"><div class="num win">{{ total_wins }}</div><div class="label">Wins</div></div>
   <div class="stat-box"><div class="num loss">{{ total_runs - total_wins }}</div><div class="label">Losses</div></div>
@@ -17,27 +17,27 @@
   {% for char in characters %}
   <a href="/runs?character={{ char }}{% if selected_result %}&result={{ selected_result }}{% endif %}" {% if selected_character == char %}class="active"{% endif %}>{{ char }}</a>
   {% endfor %}
-  <span style="border-left:1px solid var(--border);margin:0 0.25rem"></span>
+  <span class="filter-divider"></span>
   <a href="/runs?result=win{% if selected_character %}&character={{ selected_character }}{% endif %}" {% if selected_result == 'win' %}class="active"{% endif %}>Wins</a>
   <a href="/runs?result=loss{% if selected_character %}&character={{ selected_character }}{% endif %}" {% if selected_result == 'loss' %}class="active"{% endif %}>Losses</a>
 </div>
 
-<p style="color:var(--text2);margin-bottom:0.75rem">Showing {{ runs|length }} run{{ 's' if runs|length != 1 else '' }}</p>
+<p class="text-muted mb-sm">Showing {{ runs|length }} run{{ 's' if runs|length != 1 else '' }}</p>
 
 {% if runs %}
 {% for run in runs %}
-<a href="/runs/{{ run.id }}" class="run-item" style="text-decoration:none">
-  <span class="result {{ 'win' if run.win else 'loss' }}" style="min-width:40px">{{ 'WIN' if run.win else 'LOSS' }}</span>
-  <span class="char-{{ run.character|lower }}" style="min-width:100px">{{ run.character }}</span>
-  <span style="color:var(--text2)">A{{ run.ascension }}</span>
-  <span style="color:var(--text2)">{{ run.floors|length }} floors</span>
-  <span style="color:var(--text2)">{{ (run.run_time / 60)|int }}m</span>
-  <span style="color:var(--text2)">{{ run.deck|length }} cards</span>
-  {% if run.killed_by %}<span style="color:var(--red)">{{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
-  <span style="color:var(--text2);margin-left:auto;font-size:0.8rem">{{ run.build_id }}</span>
+<a href="/runs/{{ run.id }}" class="run-item">
+  <span class="result {{ 'win' if run.win else 'loss' }} run-result-min-w">{{ 'WIN' if run.win else 'LOSS' }}</span>
+  <span class="char-{{ run.character|lower }} run-char-min-w">{{ run.character }}</span>
+  <span class="text-muted">A{{ run.ascension }}</span>
+  <span class="text-muted">{{ run.floors|length }} floors</span>
+  <span class="text-muted">{{ (run.run_time / 60)|int }}m</span>
+  <span class="text-muted">{{ run.deck|length }} cards</span>
+  {% if run.killed_by %}<span class="text-red">{{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
+  <span class="text-muted ml-auto text-sm">{{ run.build_id }}</span>
 </a>
 {% endfor %}
 {% else %}
-<p style="color:var(--text2)">No run history found. Complete some runs to see them here!</p>
+<p class="text-muted">No run history found. Complete some runs to see them here!</p>
 {% endif %}
 {% endblock %}

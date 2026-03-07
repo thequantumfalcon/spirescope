@@ -40,6 +40,11 @@ app = FastAPI(title="Spirescope", lifespan=_lifespan)
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR), html=False), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 templates.env.globals["css_hash"] = _CSS_HASH
+try:
+    from importlib.metadata import version as _get_version
+    templates.env.globals["version"] = _get_version("spirescope")
+except Exception:
+    templates.env.globals["version"] = "1.0.0"
 
 kb = KnowledgeBase()
 
@@ -245,7 +250,7 @@ async def robots_txt():
 async def sitemap_xml(request: Request):
     """Dynamic sitemap for SEO — lists all detail pages."""
     base = str(request.base_url).rstrip("/")
-    urls = ["/", "/cards", "/relics", "/potions", "/enemies", "/events", "/deck", "/live", "/runs", "/analytics", "/community"]
+    urls = ["/", "/cards", "/relics", "/potions", "/enemies", "/events", "/deck", "/live", "/runs", "/analytics", "/community", "/guide"]
     for card in kb.cards:
         urls.append(f"/cards/{card.id}")
     for relic in kb.relics:
@@ -273,6 +278,7 @@ async def index(request: Request):
         "total_potions": len(kb.potions),
         "total_enemies": len(kb.enemies),
         "last_updated": get_last_updated(),
+        "data_status": kb.get_data_status(),
     })
 
 
@@ -483,6 +489,11 @@ async def community(request: Request):
     return templates.TemplateResponse(request, "community.html", {
         "meta_posts": meta_posts, "tier_cards": tier_cards,
     })
+
+
+@app.get("/guide", response_class=HTMLResponse)
+async def guide(request: Request):
+    return templates.TemplateResponse(request, "guide.html", {})
 
 
 @app.get("/live", response_class=HTMLResponse)

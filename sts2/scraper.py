@@ -360,40 +360,74 @@ def _discover_events_from_saves() -> list[dict]:
     return list(discovered.values())
 
 
-def run_scraper():
-    """Scrape game data from slaythespire2.gg and update local JSON files."""
+def _fetch_with_retry(path: str, retries: int = 1) -> str:
+    """Fetch a wiki page with retry on network error."""
+    for attempt in range(retries + 1):
+        try:
+            return _fetch_page(path)
+        except urllib.error.URLError:
+            if attempt < retries:
+                time.sleep(2)
+            else:
+                raise
+
+
+def _existing_count(filename: str) -> int:
+    """Return the number of items in an existing data file."""
+    path = DATA_DIR / filename
+    if not path.exists():
+        return 0
+    try:
+        return len(json.loads(path.read_text(encoding="utf-8")))
+    except (json.JSONDecodeError, OSError):
+        return 0
+
+
+def run_scraper(save_only: bool = False):
+    """Scrape game data and update local JSON files.
+
+    Args:
+        save_only: If True, skip wiki fetching and only discover from saves.
+    """
     print("\n  Spirescope Data Updater")
     print("  ======================\n")
 
-    scrapers = {
-        "cards.json": ("cards", "/cards", _scrape_cards),
-        "relics.json": ("relics", "/relics", _scrape_relics),
-        "potions.json": ("potions", "/potions", _scrape_potions),
-    }
+    if not save_only:
+        scrapers = {
+            "cards.json": ("cards", "/cards", _scrape_cards),
+            "relics.json": ("relics", "/relics", _scrape_relics),
+            "potions.json": ("potions", "/potions", _scrape_potions),
+        }
 
-    first = True
-    for filename, (label, path, scraper_fn) in scrapers.items():
-        if not first:
-            time.sleep(_SCRAPE_DELAY)
-        first = False
-        print(f"  Fetching {label} from {WIKI_BASE}{path} ...")
-        try:
-            html = _fetch_page(path)
-            new_data = scraper_fn(html)
-            if not new_data:
-                print(f"    Warning: no {label} found, keeping existing data")
-                continue
-            merged = _merge_with_existing(filename, new_data)
-            count = _save_json(filename, merged)
-            print(f"    Saved {count} {label} ({len(new_data)} from wiki)")
-        except urllib.error.URLError as e:
-            print(f"    Error fetching {label}: {e}")
-        except Exception as e:
-            log.exception("Scraper error for %s", label)
-            print(f"    Error processing {label}: {e}")
+        first = True
+        for filename, (label, path, scraper_fn) in scrapers.items():
+            if not first:
+                time.sleep(_SCRAPE_DELAY)
+            first = False
+            print(f"  Fetching {label} from {WIKI_BASE}{path} ...")
+            try:
+                html = _fetch_with_retry(path)
+                new_data = scraper_fn(html)
+                if not new_data:
+                    print(f"    Warning: no {label} found, keeping existing data")
+                    continue
+                # Guard: don't overwrite large dataset with empty/tiny wiki result
+                existing = _existing_count(filename)
+                if existing > 20 and len(new_data) < existing * 0.1:
+                    print(f"    Warning: wiki returned only {len(new_data)} {label} vs {existing} existing, skipping overwrite")
+                    continue
+                merged = _merge_with_existing(filename, new_data)
+                count = _save_json(filename, merged)
+                print(f"    Saved {count} {label} ({len(new_data)} from wiki)")
+            except urllib.error.URLError as e:
+                print(f"    Error fetching {label}: {e}")
+            except Exception as e:
+                log.exception("Scraper error for %s", label)
+                print(f"    Error processing {label}: {e}")
+    else:
+        print("  Save-only mode: skipping wiki fetch\n")
 
     # Discover enemies and events from save files
-    print()
     print("  Scanning save files for new enemies/events ...")
     new_enemies = _discover_enemies_from_saves()
     if new_enemies:

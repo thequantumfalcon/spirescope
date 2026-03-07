@@ -3,34 +3,34 @@
 {% block og_title %}{{ relic.name if relic else 'Relic Not Found' }} — Spirescope{% endblock %}
 {% block content %}
 {% if relic %}
-<p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.5rem"><a href="/relics">Relics</a> &rsaquo; {{ relic.name }}</p>
+<p class="breadcrumb"><a href="/relics">Relics</a> &rsaquo; {{ relic.name }}</p>
 <div class="detail-header">
   <h1>{{ relic.name }}
     <span class="tag tag-{{ relic.rarity|lower }}">{{ relic.rarity }}</span>
   </h1>
-  <p style="color:var(--text2)">{{ relic.character }}</p>
+  <p class="text-muted">{{ relic.character }}</p>
 </div>
 
 <div class="detail-desc">{{ relic.description }}</div>
 
 {% if community_tips %}
 <h2>Community Tips</h2>
-<div style="border-left:3px solid var(--accent2);padding-left:1rem;margin-bottom:1.5rem">
+<div class="community-tips">
 {% for tip in community_tips %}
-<p style="color:var(--text2);font-size:0.9rem;margin-bottom:0.5rem">"{{ tip }}"</p>
+<p>"{{ tip }}"</p>
 {% endfor %}
-<p style="font-size:0.75rem;color:var(--text2)">Source: Reddit community</p>
+<p class="source">Source: Reddit community</p>
 </div>
 {% endif %}
 
 {% if relic_runs %}
 <h2>Runs with {{ relic.name }} ({{ relic_runs|length }})</h2>
-<div style="margin-bottom:1rem">
+<div class="mb-md">
 {% for run in relic_runs[:10] %}
-<a href="/runs/{{ run.id }}" class="run-item" style="text-decoration:none">
+<a href="/runs/{{ run.id }}" class="run-item">
   <span class="result {% if run.win %}win{% else %}loss{% endif %}">{% if run.win %}Victory{% else %}Defeat{% endif %}</span>
   <span class="char-{{ run.character|lower }}">{{ run.character }}</span>
-  {% if run.killed_by %}<span style="color:var(--text2);font-size:0.85rem">Killed by {{ run.killed_by }}</span>{% endif %}
+  {% if run.killed_by %}<span class="text-sm text-muted">Killed by {{ run.killed_by }}</span>{% endif %}
 </a>
 {% endfor %}
 </div>

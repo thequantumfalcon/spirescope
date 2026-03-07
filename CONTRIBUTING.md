@@ -23,6 +23,8 @@ pytest -q
 ```
 sts2/
   app.py          # FastAPI routes + middleware
+  analytics.py    # Run analytics computation
+  community.py    # Reddit community data scraper
   config.py       # Auto-detected paths and settings
   knowledge.py    # Search, filter, and deck analysis engine
   models.py       # Pydantic models
@@ -33,6 +35,21 @@ sts2/
   static/         # CSS
 tests/            # pytest test suite
 ```
+
+## CSS Conventions
+
+- **No inline styles** — use CSS utility classes from `style.css` instead
+- Utilities: `.text-sm`, `.text-muted`, `.text-red`, `.mb-md`, `.flex`, `.gap-sm`, etc.
+- Component classes: `.card-link`, `.card-win`, `.card-loss`, `.card-tip`, `.breadcrumb`, `.community-tips`
+- Only use inline `style=` for data-driven values (bar widths, chart heights)
+- Mobile-first: test at 768px and 480px breakpoints
+
+## Testing Conventions
+
+- pytest with pytest-asyncio in auto mode
+- Async test functions: use `async def test_*` (not `asyncio.get_event_loop()`)
+- Mock external dependencies (save files, network) — never hit real endpoints in tests
+- All 233+ tests must pass before merge
 
 ## Guidelines
 

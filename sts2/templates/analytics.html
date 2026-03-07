@@ -5,7 +5,7 @@
 <h1>Analytics</h1>
 
 {% if stats.overview.total == 0 %}
-<p style="color:var(--text2);margin:2rem 0">No run data yet. Complete some runs in Slay the Spire 2 and your stats will appear here.</p>
+<p class="text-muted mb-xl mt-lg">No run data yet. Complete some runs in Slay the Spire 2 and your stats will appear here.</p>
 {% else %}
 
 <h2>Overview</h2>
@@ -39,15 +39,15 @@
 
 {% if stats.winning_deck_traits and stats.winning_deck_traits.wins %}
 <h2>Winning vs Losing Runs</h2>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-  <div class="card" style="border-left:3px solid var(--green)">
+<div class="two-col">
+  <div class="card card-win">
     <h3 class="win">Winning Runs</h3>
     <p>Avg deck size: <strong>{{ stats.winning_deck_traits.wins.avg_deck_size }}</strong></p>
     <p>Avg relics: <strong>{{ stats.winning_deck_traits.wins.avg_relics }}</strong></p>
     <p>Avg floors: <strong>{{ stats.winning_deck_traits.wins.avg_floors }}</strong></p>
     <p>Avg time: <strong>{{ stats.winning_deck_traits.wins.avg_time_min }}m</strong></p>
   </div>
-  <div class="card" style="border-left:3px solid var(--red)">
+  <div class="card card-loss">
     <h3 class="loss">Losing Runs</h3>
     {% if stats.winning_deck_traits.losses %}
     <p>Avg deck size: <strong>{{ stats.winning_deck_traits.losses.avg_deck_size }}</strong></p>
@@ -63,7 +63,7 @@
 
 {% if stats.card_rankings %}
 <h2>Best Cards by Win Rate</h2>
-<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">Cards appearing in 2+ runs, sorted by win rate when in final deck</p>
+<p class="text-sm text-muted mb-sm">Cards appearing in 2+ runs, sorted by win rate when in final deck</p>
 <table>
 <tr><th>Card</th><th>Win Rate</th><th>Wins</th><th>Appearances</th></tr>
 {% for cr in stats.card_rankings[:15] %}
@@ -79,7 +79,7 @@
 
 {% if stats.relic_rankings %}
 <h2>Best Relics by Win Rate</h2>
-<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">Relics appearing in 2+ runs, sorted by win rate</p>
+<p class="text-sm text-muted mb-sm">Relics appearing in 2+ runs, sorted by win rate</p>
 <table>
 <tr><th>Relic</th><th>Win Rate</th><th>Wins</th><th>Appearances</th></tr>
 {% for rr in stats.relic_rankings[:15] %}
@@ -95,7 +95,7 @@
 
 {% if stats.card_pick_rates %}
 <h2>Most Picked Cards</h2>
-<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">How often you pick each card when offered (from floor rewards)</p>
+<p class="text-sm text-muted mb-sm">How often you pick each card when offered (from floor rewards)</p>
 <table>
 <tr><th>Card</th><th>Pick Rate</th><th>Picked</th><th>Offered</th></tr>
 {% for cp in stats.card_pick_rates[:15] %}
@@ -116,7 +116,7 @@
 <div class="stat-box">
   <div class="num" style="color:{% if dmg.avg_per_floor > 10 %}var(--red){% elif dmg.avg_per_floor > 5 %}var(--yellow){% else %}var(--green){% endif %}">{{ dmg.avg_per_floor }}</div>
   <div class="label">{{ act }} Avg Dmg/Floor</div>
-  <p style="font-size:0.75rem;color:var(--text2);margin-top:0.25rem">Max hit: {{ dmg.max_hit }} &bull; {{ dmg.total_floors }} combat floors</p>
+  <p class="text-xs text-muted mt-xs">Max hit: {{ dmg.max_hit }} &bull; {{ dmg.total_floors }} combat floors</p>
 </div>
 {% endfor %}
 </div>
@@ -129,7 +129,7 @@
 {% for de in stats.deadly_encounters[:10] %}
 <tr>
   <td><a href="/enemies/{{ de.id }}">{{ kb.id_to_name(de.id) }}</a></td>
-  <td style="color:var(--red)"><strong>{{ de.avg_damage }}</strong></td>
+  <td class="text-red"><strong>{{ de.avg_damage }}</strong></td>
   <td>{{ de.fights }}</td>
   <td class="loss">{{ de.deaths }}</td>
 </tr>
@@ -139,13 +139,13 @@
 
 {% if stats.floor_survival %}
 <h2>How Far Do You Get?</h2>
-<div style="display:flex;gap:0.5rem;align-items:flex-end;margin:1rem 0;height:120px">
+<div class="bar-chart bar-chart--tall">
 {% set max_runs = stats.floor_survival|map(attribute='runs')|max %}
 {% for fs in stats.floor_survival %}
-<div style="display:flex;flex-direction:column;align-items:center;flex:1">
-  <div style="background:var(--accent2);width:100%;border-radius:4px 4px 0 0;height:{{ (fs.runs / max_runs * 100)|int }}px;min-height:4px" title="{{ fs.runs }} runs"></div>
-  <span style="font-size:0.7rem;color:var(--text2);margin-top:0.25rem">{{ fs.floors }}</span>
-  <span style="font-size:0.7rem;color:var(--text)">{{ fs.runs }}</span>
+<div class="bar-col">
+  <div class="bar" style="height:{{ (fs.runs / max_runs * 100)|int }}px" title="{{ fs.runs }} runs"></div>
+  <span class="text-xs text-muted mt-xs">{{ fs.floors }}</span>
+  <span class="text-xs">{{ fs.runs }}</span>
 </div>
 {% endfor %}
 </div>
@@ -153,16 +153,16 @@
 
 {% if stats.synergy_edges %}
 <h2>Card Synergy Network</h2>
-<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">Cards that co-appear most often in winning decks (thicker = more co-occurrences)</p>
+<p class="text-sm text-muted mb-sm">Cards that co-appear most often in winning decks (thicker = more co-occurrences)</p>
 <div class="grid grid-3">
 {% for edge in stats.synergy_edges[:20] %}
-<div class="card" style="border-left:3px solid var(--green)">
+<div class="card card-win">
   <p>
     <a href="/cards/{{ edge.source }}">{{ kb.id_to_name(edge.source) }}</a>
-    <span style="color:var(--text2);margin:0 0.5rem">&harr;</span>
+    <span class="text-muted">&harr;</span>
     <a href="/cards/{{ edge.target }}">{{ kb.id_to_name(edge.target) }}</a>
   </p>
-  <p style="font-size:0.8rem;color:var(--text2)">{{ edge.weight }} winning runs together</p>
+  <p class="text-sm text-muted">{{ edge.weight }} winning runs together</p>
 </div>
 {% endfor %}
 </div>
