@@ -136,8 +136,9 @@ def _load_existing_name_index(filename: str, prefix: str) -> dict[str, str]:
     index = {}
     for item in data:
         name = item.get("name", "").lower().strip()
-        if name:
-            index[name] = item["id"]
+        item_id = item.get("id", "")
+        if name and item_id:
+            index[name] = item_id
     return index
 
 

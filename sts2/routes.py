@@ -261,7 +261,7 @@ async def enemy_detail(request: Request, enemy_id: str):
 
 
 @router.get("/events", response_class=HTMLResponse)
-async def events(request: Request, act: str = None):
+async def events(request: Request, act: str = Query(None, max_length=50)):
     a = _app()
     event_list = a.kb.events
     if act:
@@ -351,7 +351,7 @@ async def guide(request: Request):
 @router.get("/live", response_class=HTMLResponse)
 async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
     a = _app()
-    run = get_current_run(player_index=player)
+    run = await asyncio.to_thread(get_current_run, player_index=player)
     analysis = None
     pick_suggestions = []
     if run.active and run.deck:
@@ -441,7 +441,7 @@ async def api_analytics():
 
 @router.get("/api/live")
 async def api_live_run(player: int = Query(0, ge=0, le=3)):
-    run = get_current_run(player_index=player)
+    run = await asyncio.to_thread(get_current_run, player_index=player)
     return run.model_dump()
 
 
@@ -457,10 +457,10 @@ async def live_stream(player: int = Query(0, ge=0, le=3)):
     if _sse_active >= _SSE_MAX_CONNECTIONS:
         return PlainTextResponse("Too many live connections. Close another tab.",
                                  status_code=429)
-    _sse_active += 1
 
     async def event_generator():
         global _sse_active
+        _sse_active += 1
         try:
             last_hash = ""
             idle_since = time.monotonic()
@@ -492,7 +492,7 @@ async def reload_data(request: Request):
     if not token or not secrets.compare_digest(token, a._ADMIN_TOKEN):
         return PlainTextResponse("Unauthorized.", status_code=403)
     from sts2.knowledge import KnowledgeBase
-    new_kb = KnowledgeBase()
+    new_kb = await asyncio.to_thread(KnowledgeBase)
     a.kb = new_kb
     return {"status": "ok", "cards": len(a.kb.cards), "relics": len(a.kb.relics),
             "potions": len(a.kb.potions), "enemies": len(a.kb.enemies)}
