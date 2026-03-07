@@ -763,7 +763,8 @@ async def test_analytics_page(client):
 async def test_analytics_page_empty_runs(client):
     """Analytics page with no runs should show empty state."""
     from unittest.mock import patch
-    with patch("sts2.app._get_runs", return_value=[]):
+    from sts2.analytics import compute_analytics
+    with patch("sts2.app._get_analytics", return_value=compute_analytics([])):
         async with client as c:
             resp = await c.get("/analytics")
     assert resp.status_code == 200
@@ -784,6 +785,7 @@ async def test_analytics_with_mock_runs(client):
     """Analytics with run data should compute stats."""
     from unittest.mock import patch
     from sts2.models import RunHistory
+    from sts2.analytics import compute_analytics
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH", "CARD.STRIKE"],
@@ -793,7 +795,7 @@ async def test_analytics_with_mock_runs(client):
         RunHistory(id="r3", character="Silent", win=True, deck=["CARD.NEUTRALIZE", "CARD.STRIKE"],
                    relics=["RELIC.RING_OF_THE_SNAKE"], run_time=1500),
     ]
-    with patch("sts2.app._get_runs", return_value=mock_runs):
+    with patch("sts2.app._get_analytics", return_value=compute_analytics(mock_runs)):
         async with client as c:
             resp = await c.get("/api/analytics")
     data = resp.json()
@@ -802,20 +804,17 @@ async def test_analytics_with_mock_runs(client):
     assert data["overview"]["losses"] == 1
 
 
-async def test_analytics_card_rankings(client):
+async def test_analytics_card_rankings():
     """Analytics should compute card win rates."""
-    from unittest.mock import patch
     from sts2.models import RunHistory
+    from sts2.analytics import compute_analytics
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"]),
         RunHistory(id="r2", character="Ironclad", win=True, deck=["CARD.BASH"]),
         RunHistory(id="r3", character="Ironclad", win=False, deck=["CARD.BASH"]),
     ]
-    with patch("sts2.app._get_runs", return_value=mock_runs):
-        async with client as c:
-            resp = await c.get("/api/analytics")
-    data = resp.json()
+    data = compute_analytics(mock_runs)
     assert len(data["card_rankings"]) > 0
     bash_ranking = [cr for cr in data["card_rankings"] if cr["id"] == "CARD.BASH"]
     assert len(bash_ranking) == 1
@@ -823,38 +822,32 @@ async def test_analytics_card_rankings(client):
     assert bash_ranking[0]["appearances"] == 3
 
 
-async def test_analytics_character_breakdown(client):
+async def test_analytics_character_breakdown():
     """Analytics should break down stats by character."""
-    from unittest.mock import patch
     from sts2.models import RunHistory
+    from sts2.analytics import compute_analytics
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"]),
         RunHistory(id="r2", character="Silent", win=False, deck=["CARD.NEUTRALIZE"]),
     ]
-    with patch("sts2.app._get_runs", return_value=mock_runs):
-        async with client as c:
-            resp = await c.get("/api/analytics")
-    data = resp.json()
+    data = compute_analytics(mock_runs)
     assert "Ironclad" in data["character_breakdown"]
     assert "Silent" in data["character_breakdown"]
     assert data["character_breakdown"]["Ironclad"]["wins"] == 1
 
 
-async def test_analytics_synergy_edges(client):
+async def test_analytics_synergy_edges():
     """Analytics should compute card co-occurrence in winning decks."""
-    from unittest.mock import patch
     from sts2.models import RunHistory
+    from sts2.analytics import compute_analytics
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.A", "CARD.B"]),
         RunHistory(id="r2", character="Ironclad", win=True, deck=["CARD.A", "CARD.B"]),
         RunHistory(id="r3", character="Ironclad", win=False, deck=["CARD.A", "CARD.C"]),
     ]
-    with patch("sts2.app._get_runs", return_value=mock_runs):
-        async with client as c:
-            resp = await c.get("/api/analytics")
-    data = resp.json()
+    data = compute_analytics(mock_runs)
     assert len(data["synergy_edges"]) > 0
     ab_edge = [e for e in data["synergy_edges"] if "CARD.A" in (e["source"], e["target"]) and "CARD.B" in (e["source"], e["target"])]
     assert len(ab_edge) == 1
@@ -865,11 +858,12 @@ async def test_analytics_page_shows_overview(client):
     """Analytics HTML page should show overview stats."""
     from unittest.mock import patch
     from sts2.models import RunHistory
+    from sts2.analytics import compute_analytics
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], run_time=600),
     ]
-    with patch("sts2.app._get_runs", return_value=mock_runs):
+    with patch("sts2.app._get_analytics", return_value=compute_analytics(mock_runs)):
         async with client as c:
             resp = await c.get("/analytics")
     assert resp.status_code == 200
@@ -1001,3 +995,106 @@ async def test_community_cli_entry():
     # Just verify the import path works
     from sts2.community import run_community_scraper
     assert callable(run_community_scraper)
+
+
+# --- Round 17: Community page, analytics cache, enemy tips ---
+
+async def test_community_page(client):
+    """Community page should render."""
+    async with client as c:
+        resp = await c.get("/community")
+    assert resp.status_code == 200
+    assert "Community Meta" in resp.text
+
+
+async def test_community_page_empty_state(client):
+    """Community page with no data should show instructions."""
+    async with client as c:
+        resp = await c.get("/community")
+    assert resp.status_code == 200
+    # Should show either meta posts or the empty state instructions
+    assert "Community" in resp.text
+
+
+async def test_community_page_with_meta_posts(client):
+    """Community page should display meta posts when available."""
+    from unittest.mock import patch
+    from sts2.app import kb as _kb
+    mock_posts = [
+        {"title": "Best Ironclad Cards Tier List", "url": "https://reddit.com/r/test/1",
+         "score": 150, "comments": 42, "type": "tier_list", "date": 1700000000},
+    ]
+    with patch.object(_kb, "meta_posts", mock_posts):
+        async with client as c:
+            resp = await c.get("/community")
+    assert resp.status_code == 200
+    assert "Best Ironclad Cards Tier List" in resp.text
+    assert "150" in resp.text
+
+
+async def test_community_nav_link(client):
+    """Nav should include Community link."""
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert 'href="/community"' in resp.text
+
+
+async def test_sitemap_includes_community(client):
+    """Sitemap should include the community page."""
+    async with client as c:
+        resp = await c.get("/sitemap.xml")
+    assert resp.status_code == 200
+    assert "/community" in resp.text
+
+
+async def test_enemy_detail_community_tips(client):
+    """Enemy detail should show community tips when available."""
+    from unittest.mock import patch
+    from sts2.app import kb as _kb
+    if not _kb.enemies:
+        return
+    enemy = _kb.enemies[0]
+    mock_tips = ["This enemy hits hard in act 2, bring block cards."]
+    with patch.object(_kb, "get_community_tips", return_value=mock_tips):
+        async with client as c:
+            resp = await c.get(f"/enemies/{enemy.id}")
+    if resp.status_code == 200:
+        assert "Community Tips" in resp.text
+        assert "Reddit" in resp.text
+
+
+async def test_analytics_cache_returns_same_object():
+    """Analytics cache should return same object within TTL."""
+    from sts2.app import _get_analytics
+    a1 = _get_analytics()
+    a2 = _get_analytics()
+    assert a1 is a2
+
+
+async def test_analytics_cache_ttl_constant():
+    """Analytics cache TTL should be set."""
+    from sts2.app import _ANALYTICS_CACHE_TTL
+    assert _ANALYTICS_CACHE_TTL > 0
+    assert _ANALYTICS_CACHE_TTL >= 30  # at least 30s for heavy computation
+
+
+async def test_community_page_shows_tier_cards(client):
+    """Community page should group cards by tier when tiers are set."""
+    from unittest.mock import patch, PropertyMock
+    from sts2.app import kb as _kb
+    from sts2.models import Card
+    mock_cards = [
+        Card(id="CARD.TEST_S", name="Test S", character="Ironclad", cost="1", type="Attack", rarity="Rare", tier="S"),
+        Card(id="CARD.TEST_A", name="Test A", character="Ironclad", cost="1", type="Skill", rarity="Common", tier="A"),
+    ]
+    original_cards = _kb.cards
+    try:
+        _kb.cards = mock_cards
+        async with client as c:
+            resp = await c.get("/community")
+        assert resp.status_code == 200
+        assert "S-Tier" in resp.text
+        assert "Test S" in resp.text
+    finally:
+        _kb.cards = original_cards

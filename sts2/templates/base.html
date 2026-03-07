@@ -27,6 +27,7 @@
     <a href="/live" style="color:{% if p == '/live' %}#fff{% else %}var(--green){% endif %}">Live Run</a>
     <a href="/runs" {% if p.startswith('/runs') %}style="color:var(--text)"{% endif %}>Run History</a>
     <a href="/analytics" {% if p == '/analytics' %}style="color:var(--text)"{% endif %}>Analytics</a>
+    <a href="/community" {% if p == '/community' %}style="color:var(--text)"{% endif %}>Community</a>
     <form class="search-form" action="/search" method="get">
       <input type="search" name="q" placeholder="Search cards, relics, enemies..." value="{{ query|default('') }}" maxlength="200">
       <button type="submit">Search</button>

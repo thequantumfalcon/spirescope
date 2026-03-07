@@ -70,6 +70,11 @@ _run_cache_by_id: dict = {}
 _run_cache_time: float = 0
 _RUN_CACHE_TTL = 30.0
 
+# Analytics cache (refreshes every 60s — heavier computation)
+_analytics_cache: dict = {}
+_analytics_cache_time: float = 0
+_ANALYTICS_CACHE_TTL = 60.0
+
 
 def _get_progress():
     """Return cached player progress, refreshing if stale."""
@@ -96,6 +101,19 @@ def _get_run_by_id(run_id: str):
     """O(1) run lookup from cache."""
     _get_runs()  # ensure cache is fresh
     return _run_cache_by_id.get(run_id)
+
+
+def _get_analytics():
+    """Return cached analytics, recomputing if stale."""
+    global _analytics_cache, _analytics_cache_time
+    now = time.monotonic()
+    if not _analytics_cache or (now - _analytics_cache_time) > _ANALYTICS_CACHE_TTL:
+        runs = _get_runs()
+        progress = _get_progress()
+        card_stats = progress.card_stats if progress else {}
+        _analytics_cache = compute_analytics(runs, card_stats)
+        _analytics_cache_time = now
+    return _analytics_cache
 
 
 @app.middleware("http")
@@ -182,7 +200,7 @@ _save_watcher_last_mtime: float = 0
 async def _watch_saves():
     """Background task: watch save dir for changes, rebuild KB when new data appears."""
     global kb, _save_watcher_last_mtime, _progress_cache, _progress_cache_time
-    global _run_cache, _run_cache_time
+    global _run_cache, _run_cache_time, _analytics_cache, _analytics_cache_time
     while True:
         await asyncio.sleep(10)
         try:
@@ -202,6 +220,8 @@ async def _watch_saves():
                 _progress_cache = None
                 _progress_cache_time = 0
                 _run_cache_time = 0
+                _analytics_cache.clear()
+                _analytics_cache_time = 0
                 # Rebuild KB to pick up newly discovered enemies/events
                 new_kb = KnowledgeBase()
                 kb = new_kb
@@ -225,7 +245,7 @@ async def robots_txt():
 async def sitemap_xml(request: Request):
     """Dynamic sitemap for SEO — lists all detail pages."""
     base = str(request.base_url).rstrip("/")
-    urls = ["/", "/cards", "/relics", "/potions", "/enemies", "/events", "/deck", "/live", "/runs", "/analytics"]
+    urls = ["/", "/cards", "/relics", "/potions", "/enemies", "/events", "/deck", "/live", "/runs", "/analytics", "/community"]
     for card in kb.cards:
         urls.append(f"/cards/{card.id}")
     for relic in kb.relics:
@@ -378,8 +398,10 @@ async def enemy_detail(request: Request, enemy_id: str):
         enemy_fight_stats = progress.enemy_stats.get(enemy_id, {})
         if not encounter_stats:
             encounter_stats = enemy_fight_stats
+    community_tips = kb.get_community_tips(enemy.name)
     return templates.TemplateResponse(request, "enemy_detail.html", {
         "enemy": enemy, "encounter_stats": encounter_stats, "kb": kb,
+        "community_tips": community_tips,
     })
 
 
@@ -439,10 +461,7 @@ async def run_detail(request: Request, run_id: str):
 
 @app.get("/analytics", response_class=HTMLResponse)
 async def analytics(request: Request):
-    runs = _get_runs()
-    progress = _get_progress()
-    card_stats = progress.card_stats if progress else {}
-    stats = compute_analytics(runs, card_stats)
+    stats = _get_analytics()
     return templates.TemplateResponse(request, "analytics.html", {
         "stats": stats, "kb": kb,
     })
@@ -450,10 +469,20 @@ async def analytics(request: Request):
 
 @app.get("/api/analytics")
 async def api_analytics():
-    runs = _get_runs()
-    progress = _get_progress()
-    card_stats = progress.card_stats if progress else {}
-    return compute_analytics(runs, card_stats)
+    return _get_analytics()
+
+
+@app.get("/community", response_class=HTMLResponse)
+async def community(request: Request):
+    meta_posts = kb.meta_posts
+    # Group cards by their community tier for display
+    tier_cards: dict[str, list] = {}
+    for card in kb.cards:
+        if card.tier and card.tier in ("S", "A", "B", "C", "D", "F"):
+            tier_cards.setdefault(card.tier, []).append(card)
+    return templates.TemplateResponse(request, "community.html", {
+        "meta_posts": meta_posts, "tier_cards": tier_cards,
+    })
 
 
 @app.get("/live", response_class=HTMLResponse)

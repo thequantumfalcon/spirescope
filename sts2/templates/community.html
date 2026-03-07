@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Community Meta{% endblock %}
+{% block og_title %}Community Meta — Spirescope{% endblock %}
+{% block content %}
+<h1>Community Meta</h1>
+<p style="color:var(--text2);margin-bottom:1.5rem">Strategy posts and tier lists from the Reddit community (r/slaythespire, r/slaythespire2). Run <code>python -m sts2 community</code> to refresh.</p>
+
+{% if meta_posts %}
+<h2>Top Strategy Posts</h2>
+<div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:2rem">
+{% for post in meta_posts %}
+<div class="card" style="border-left:3px solid {% if post.type == 'tier_list' %}var(--yellow){% else %}var(--accent2){% endif %}">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <a href="{{ post.url }}" target="_blank" rel="noopener" style="font-weight:700;font-size:1rem">{{ post.title }}</a>
+      <p style="font-size:0.8rem;color:var(--text2);margin-top:0.25rem">
+        <span class="tag {% if post.type == 'tier_list' %}tag-power{% else %}tag-skill{% endif %}">{{ post.type|replace('_', ' ')|title }}</span>
+        &bull; {{ post.comments }} comments
+      </p>
+    </div>
+    <div style="text-align:right;min-width:60px">
+      <div style="font-size:1.2rem;font-weight:700;color:var(--yellow)">{{ post.score }}</div>
+      <div style="font-size:0.7rem;color:var(--text2)">upvotes</div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if tier_cards %}
+<h2>Community Card Tiers</h2>
+<p style="color:var(--text2);font-size:0.85rem;margin-bottom:0.5rem">Consensus tiers from Reddit tier list posts</p>
+{% for tier_label in ["S", "A", "B", "C", "D", "F"] %}
+{% set tier_group = tier_cards.get(tier_label, []) %}
+{% if tier_group %}
+<div style="margin-bottom:1rem">
+  <h3 style="color:{% if tier_label == 'S' %}var(--yellow){% elif tier_label == 'A' %}var(--green){% elif tier_label == 'B' %}var(--accent){% elif tier_label == 'C' %}var(--text){% else %}var(--red){% endif %}">{{ tier_label }}-Tier</h3>
+  <div style="display:flex;flex-wrap:wrap;gap:0.25rem">
+  {% for card in tier_group %}
+  <a href="/cards/{{ card.id }}" class="tag tag-keyword" style="text-decoration:none">{{ card.name }}</a>
+  {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if not meta_posts and not tier_cards %}
+<div style="color:var(--text2);margin:2rem 0">
+  <p>No community data yet. Run <code>python -m sts2 community</code> to scrape Reddit for tier lists and strategy posts.</p>
+</div>
+{% endif %}
+{% endblock %}
