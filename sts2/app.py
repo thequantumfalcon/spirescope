@@ -1,5 +1,6 @@
 """FastAPI web dashboard for Spirescope."""
 import logging
+import time
 from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
@@ -16,6 +17,29 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 kb = KnowledgeBase()
+
+# Run history cache (refreshes every 30s)
+_run_cache: list = []
+_run_cache_by_id: dict = {}
+_run_cache_time: float = 0
+_RUN_CACHE_TTL = 30.0
+
+
+def _get_runs():
+    """Return cached run history, refreshing if stale."""
+    global _run_cache, _run_cache_by_id, _run_cache_time
+    now = time.monotonic()
+    if not _run_cache or (now - _run_cache_time) > _RUN_CACHE_TTL:
+        _run_cache = get_run_history()
+        _run_cache_by_id = {r.id: r for r in _run_cache}
+        _run_cache_time = now
+    return _run_cache
+
+
+def _get_run_by_id(run_id: str):
+    """O(1) run lookup from cache."""
+    _get_runs()  # ensure cache is fresh
+    return _run_cache_by_id.get(run_id)
 
 
 @app.middleware("http")
@@ -35,7 +59,7 @@ async def global_error_handler(request: Request, exc: Exception):
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     progress = get_progress()
-    runs = get_run_history()
+    runs = _get_runs()
     return templates.TemplateResponse("index.html", {
         "request": request,
         "characters": CHARACTERS,
@@ -137,7 +161,7 @@ async def strategy(request: Request, character: str):
 
 @app.get("/runs", response_class=HTMLResponse)
 async def runs(request: Request):
-    run_list = get_run_history()
+    run_list = _get_runs()
     return templates.TemplateResponse("runs.html", {
         "request": request, "runs": run_list, "kb": kb,
     })
@@ -145,8 +169,7 @@ async def runs(request: Request):
 
 @app.get("/runs/{run_id}", response_class=HTMLResponse)
 async def run_detail(request: Request, run_id: str):
-    run_list = get_run_history()
-    run = next((r for r in run_list if r.id == run_id), None)
+    run = _get_run_by_id(run_id)
     return templates.TemplateResponse("run_detail.html", {
         "request": request, "run": run, "kb": kb,
     })
@@ -180,6 +203,10 @@ async def deck_analyzer(request: Request):
 async def analyze_deck(request: Request):
     form = await request.form()
     card_ids = form.getlist("card_ids")
+    if not card_ids:
+        return templates.TemplateResponse("deck.html", {
+            "request": request, "cards": kb.cards, "analysis": {"error": "No cards selected"}, "selected_ids": [],
+        })
     analysis = kb.analyze_deck(card_ids)
     return templates.TemplateResponse("deck.html", {
         "request": request, "cards": kb.cards, "analysis": analysis, "selected_ids": card_ids, "kb": kb,

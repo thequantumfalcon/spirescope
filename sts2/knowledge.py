@@ -1,7 +1,6 @@
 """Knowledge base engine: load, search, filter, and synergy analysis."""
 import json
-from difflib import SequenceMatcher
-from pathlib import Path
+import re
 
 from sts2.config import DATA_DIR
 from sts2.models import Card, Relic, Potion, Enemy, Event, EventChoice, CharacterStrategy, SynergyGroup
@@ -15,7 +14,19 @@ class KnowledgeBase:
         self.enemies: list[Enemy] = []
         self.events: list[Event] = []
         self.strategies: list[CharacterStrategy] = []
+
+        # O(1) lookup indexes
+        self._cards_by_id: dict[str, Card] = {}
+        self._enemies_by_id: dict[str, Enemy] = {}
+        self._relics_by_id: dict[str, Relic] = {}
+        self._potions_by_id: dict[str, Potion] = {}
+        self._strategies_by_char: dict[str, CharacterStrategy] = {}
+
+        # Pre-built search index: list of (searchable_text, type, obj)
+        self._search_index: list[tuple[str, str, object]] = []
+
         self._load_all()
+        self._build_indexes()
 
     def _load_json(self, filename: str) -> list[dict]:
         path = DATA_DIR / filename
@@ -49,70 +60,76 @@ class KnowledgeBase:
                 strat_data["archetypes"] = [SynergyGroup(**a) for a in strat_data["archetypes"]]
             self.strategies.append(CharacterStrategy(**strat_data))
 
-    def _fuzzy_match(self, query: str, text: str) -> float:
-        query = query.lower().strip()
-        text = text.lower().strip()
+    def _build_indexes(self):
+        """Build O(1) lookup dicts and pre-tokenized search index."""
+        for c in self.cards:
+            self._cards_by_id[c.id] = c
+        for e in self.enemies:
+            self._enemies_by_id[e.id] = e
+        for r in self.relics:
+            self._relics_by_id[r.id] = r
+        for p in self.potions:
+            self._potions_by_id[p.id] = p
+        for s in self.strategies:
+            self._strategies_by_char[s.character.lower()] = s
+
+        # Build search index with pre-lowered text for fast substring/token matching
+        for card in self.cards:
+            text = f"{card.name} {card.id} {card.description} {' '.join(card.keywords)}".lower()
+            self._search_index.append((text, "cards", card))
+        for relic in self.relics:
+            text = f"{relic.name} {relic.id} {relic.description}".lower()
+            self._search_index.append((text, "relics", relic))
+        for potion in self.potions:
+            text = f"{potion.name} {potion.id} {potion.description}".lower()
+            self._search_index.append((text, "potions", potion))
+        for enemy in self.enemies:
+            text = f"{enemy.name} {enemy.id}".lower()
+            self._search_index.append((text, "enemies", enemy))
+        for event in self.events:
+            text = f"{event.name} {event.id} {event.description}".lower()
+            self._search_index.append((text, "events", event))
+
+    def _score_match(self, query: str, text: str) -> float:
+        """Fast scoring: exact substring > word boundary > token overlap."""
         if query in text:
-            return 1.0
-        if query.replace(" ", "_") in text.replace(" ", "_"):
-            return 0.95
-        return SequenceMatcher(None, query, text).ratio()
+            # Boost for matching at word boundary or being a large portion of the name
+            if re.search(r'(?:^|\s|_|\.)' + re.escape(query), text):
+                return 1.0
+            return 0.9
+        # Normalized query with underscores
+        q_norm = query.replace(" ", "_")
+        if q_norm in text.replace(" ", "_"):
+            return 0.85
+        # Token overlap: split both into words, check overlap ratio
+        q_tokens = set(query.split())
+        t_tokens = set(text.split())
+        if q_tokens and q_tokens <= t_tokens:
+            return 0.8
+        overlap = q_tokens & t_tokens
+        if overlap:
+            return 0.5 * len(overlap) / len(q_tokens)
+        return 0.0
 
     def search(self, query: str, limit: int = 20) -> dict:
         """Search across all entity types. Returns dict of categorized results."""
-        results = {"cards": [], "relics": [], "potions": [], "enemies": [], "events": []}
+        results: dict[str, list] = {"cards": [], "relics": [], "potions": [], "enemies": [], "events": []}
         q = query.lower().strip()
         if not q:
             return results
 
-        for card in self.cards:
-            score = max(
-                self._fuzzy_match(q, card.name),
-                self._fuzzy_match(q, card.id),
-                self._fuzzy_match(q, card.description) * 0.7,
-                max((self._fuzzy_match(q, kw) for kw in card.keywords), default=0) * 0.8,
-            )
-            if score > 0.4:
-                results["cards"].append((score, card))
+        scored: list[tuple[float, str, object]] = []
+        for text, category, obj in self._search_index:
+            score = self._score_match(q, text)
+            if score > 0.3:
+                scored.append((score, category, obj))
 
-        for relic in self.relics:
-            score = max(
-                self._fuzzy_match(q, relic.name),
-                self._fuzzy_match(q, relic.id),
-                self._fuzzy_match(q, relic.description) * 0.7,
-            )
-            if score > 0.4:
-                results["relics"].append((score, relic))
-
-        for potion in self.potions:
-            score = max(
-                self._fuzzy_match(q, potion.name),
-                self._fuzzy_match(q, potion.id),
-                self._fuzzy_match(q, potion.description) * 0.7,
-            )
-            if score > 0.4:
-                results["potions"].append((score, potion))
-
-        for enemy in self.enemies:
-            score = max(
-                self._fuzzy_match(q, enemy.name),
-                self._fuzzy_match(q, enemy.id),
-            )
-            if score > 0.4:
-                results["enemies"].append((score, enemy))
-
-        for event in self.events:
-            score = max(
-                self._fuzzy_match(q, event.name),
-                self._fuzzy_match(q, event.id),
-                self._fuzzy_match(q, event.description) * 0.7,
-            )
-            if score > 0.4:
-                results["events"].append((score, event))
-
-        # Sort by score descending, keep only items
-        for key in results:
-            results[key] = [item for _, item in sorted(results[key], key=lambda x: -x[0])][:limit]
+        scored.sort(key=lambda x: -x[0])
+        counts: dict[str, int] = {k: 0 for k in results}
+        for score, category, obj in scored:
+            if counts[category] < limit:
+                results[category].append(obj)
+                counts[category] += 1
 
         return results
 
@@ -134,10 +151,7 @@ class KnowledgeBase:
         return result
 
     def get_card_by_id(self, card_id: str) -> Card | None:
-        for c in self.cards:
-            if c.id == card_id:
-                return c
-        return None
+        return self._cards_by_id.get(card_id)
 
     def get_relics(self, character: str = None, rarity: str = None) -> list[Relic]:
         result = self.relics
@@ -148,10 +162,7 @@ class KnowledgeBase:
         return result
 
     def get_enemy_by_id(self, enemy_id: str) -> Enemy | None:
-        for e in self.enemies:
-            if e.id == enemy_id:
-                return e
-        return None
+        return self._enemies_by_id.get(enemy_id)
 
     def get_enemies(self, act: str = None, enemy_type: str = None) -> list[Enemy]:
         result = self.enemies
@@ -162,10 +173,7 @@ class KnowledgeBase:
         return result
 
     def get_strategy(self, character: str) -> CharacterStrategy | None:
-        for s in self.strategies:
-            if s.character.lower() == character.lower():
-                return s
-        return None
+        return self._strategies_by_char.get(character.lower())
 
     def find_synergies(self, card_id: str) -> list[Card]:
         """Find cards that synergize with the given card based on shared keywords."""
@@ -257,18 +265,18 @@ class KnowledgeBase:
 
     def id_to_name(self, entity_id: str) -> str:
         """Convert a game ID like CARD.BASH to a display name."""
-        for c in self.cards:
-            if c.id == entity_id:
-                return f"{c.name} ({c.character})"
-        for r in self.relics:
-            if r.id == entity_id:
-                return r.name
-        for p in self.potions:
-            if p.id == entity_id:
-                return p.name
-        for e in self.enemies:
-            if e.id == entity_id:
-                return e.name
+        card = self._cards_by_id.get(entity_id)
+        if card:
+            return f"{card.name} ({card.character})"
+        relic = self._relics_by_id.get(entity_id)
+        if relic:
+            return relic.name
+        potion = self._potions_by_id.get(entity_id)
+        if potion:
+            return potion.name
+        enemy = self._enemies_by_id.get(entity_id)
+        if enemy:
+            return enemy.name
         # Fallback: strip prefix and format
         if "." in entity_id:
             return entity_id.split(".", 1)[1].replace("_", " ").title()
