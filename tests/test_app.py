@@ -348,3 +348,72 @@ async def test_sse_connection_limit_registered(client):
     """SSE max connections constant is set."""
     from sts2.app import _SSE_MAX_CONNECTIONS
     assert _SSE_MAX_CONNECTIONS > 0
+
+
+@pytest.mark.asyncio
+async def test_health_endpoint(client):
+    async with client as c:
+        resp = await c.get("/health")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["status"] == "ok"
+    assert data["cards"] > 0
+
+
+@pytest.mark.asyncio
+async def test_robots_txt(client):
+    async with client as c:
+        resp = await c.get("/robots.txt")
+    assert resp.status_code == 200
+    assert "User-agent" in resp.text
+    assert "Disallow: /api/" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_meta_description_in_html(client):
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert 'meta name="description"' in resp.text
+    assert 'meta name="theme-color"' in resp.text
+
+
+@pytest.mark.asyncio
+async def test_player_param_validation(client):
+    """Player param > 3 should be rejected."""
+    async with client as c:
+        resp = await c.get("/api/live?player=99")
+    assert resp.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_deck_analyze_caps_card_count(client):
+    """Submitting more than MAX_DECK_SIZE cards should not crash."""
+    from sts2.app import _MAX_DECK_SIZE
+    card_ids = [f"CARD.FAKE_{i}" for i in range(_MAX_DECK_SIZE + 50)]
+    async with client as c:
+        resp = await c.post("/deck/analyze", data={
+            "csrf_token": _CSRF_TOKEN,
+            "card_ids": card_ids,
+        })
+    assert resp.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_admin_token_not_in_logs(client):
+    """Admin token should not be exposed via any public endpoint."""
+    async with client as c:
+        resp = await c.get("/")
+    assert _ADMIN_TOKEN not in resp.text
+
+
+@pytest.mark.asyncio
+async def test_csp_blocks_external_scripts(client):
+    """CSP should not allow external script sources."""
+    async with client as c:
+        resp = await c.get("/")
+    csp = resp.headers.get("Content-Security-Policy", "")
+    assert "script-src" in csp
+    # Should not contain 'unsafe-eval' or wildcard
+    assert "'unsafe-eval'" not in csp
+    assert "script-src *" not in csp

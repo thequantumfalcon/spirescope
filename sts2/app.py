@@ -4,7 +4,10 @@ import collections
 import json
 import logging
 import math
+import os
+import re
 import secrets
+import sys
 import time
 from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse, PlainTextResponse
@@ -28,8 +31,10 @@ kb = KnowledgeBase()
 _CSRF_TOKEN = secrets.token_hex(32)
 
 # Admin token for protected endpoints (reload)
-_ADMIN_TOKEN = secrets.token_hex(32)
-log.info("Admin token for /api/reload: %s", _ADMIN_TOKEN)
+# Use env var if set, otherwise generate. Print to stderr once (never to log files).
+_ADMIN_TOKEN = os.environ.get("SPIRESCOPE_ADMIN_TOKEN", secrets.token_hex(32))
+if "SPIRESCOPE_ADMIN_TOKEN" not in os.environ:
+    print(f"[Spirescope] Admin token: {_ADMIN_TOKEN}", file=sys.stderr)
 
 # Simple in-memory rate limiter: IP -> deque of request timestamps
 _rate_limit_store: dict[str, collections.deque] = {}
@@ -112,13 +117,29 @@ async def security_headers(request: Request, call_next):
     return response
 
 
+# Sanitize user input before logging (prevent log injection via newlines/control chars)
+_LOG_SANITIZE_RE = re.compile(r"[\x00-\x1f\x7f]")
+
+
 @app.exception_handler(Exception)
 async def global_error_handler(request: Request, exc: Exception):
-    log.exception("Unhandled error on %s", request.url.path)
+    safe_path = _LOG_SANITIZE_RE.sub("", str(request.url.path))[:200]
+    log.exception("Unhandled error on %s", safe_path)
     return templates.TemplateResponse(request, "error.html", {
         "error_code": 500,
         "error_message": "Something went wrong. Please try again.",
     }, status_code=500)
+
+
+@app.get("/health")
+async def health():
+    """Health check for uptime monitors and load balancers."""
+    return {"status": "ok", "cards": len(kb.cards)}
+
+
+@app.get("/robots.txt", response_class=PlainTextResponse)
+async def robots_txt():
+    return "User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /deck/analyze\n"
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -267,7 +288,7 @@ async def run_detail(request: Request, run_id: str):
 
 
 @app.get("/live", response_class=HTMLResponse)
-async def live_run(request: Request, player: int = 0):
+async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
     run = get_current_run(player_index=player)
     analysis = None
     if run.active and run.deck:
@@ -279,7 +300,7 @@ async def live_run(request: Request, player: int = 0):
 
 
 @app.get("/api/live")
-async def api_live_run(player: int = 0):
+async def api_live_run(player: int = Query(0, ge=0, le=3)):
     run = get_current_run(player_index=player)
     return run.model_dump()
 
@@ -291,7 +312,7 @@ _SSE_IDLE_TIMEOUT = 300.0  # close after 5 min of no state changes
 
 
 @app.get("/api/live/stream")
-async def live_stream(player: int = 0):
+async def live_stream(player: int = Query(0, ge=0, le=3)):
     """SSE stream that pushes live run state every 3 seconds."""
     global _sse_connections
     if _sse_connections >= _SSE_MAX_CONNECTIONS:
@@ -342,6 +363,9 @@ async def deck_analyzer(request: Request):
     })
 
 
+_MAX_DECK_SIZE = 100  # max cards in a deck analysis request
+
+
 @app.post("/deck/analyze", response_class=HTMLResponse)
 async def analyze_deck(request: Request):
     form = await request.form()
@@ -350,7 +374,7 @@ async def analyze_deck(request: Request):
         return templates.TemplateResponse(request, "error.html", {
             "error_code": 403, "error_message": "Invalid form submission. Please go back and try again.",
         }, status_code=403)
-    card_ids = form.getlist("card_ids")
+    card_ids = form.getlist("card_ids")[:_MAX_DECK_SIZE]
     if not card_ids:
         return templates.TemplateResponse(request, "deck.html", {
             "cards": kb.cards, "analysis": {"error": "No cards selected"}, "selected_ids": [],
