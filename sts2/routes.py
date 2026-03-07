@@ -15,7 +15,13 @@ router = APIRouter()
 
 
 def _app():
-    """Lazy import to avoid circular import at module level."""
+    """Lazy import to access app.py shared state (kb, templates, caches).
+
+    Routes import app → app imports routes, so we break the cycle by deferring.
+    Each route calls a = _app() then uses a.kb, a.templates, a._get_progress(), etc.
+    This also lets tests mock app-level functions (e.g. patch("sts2.app._get_progress"))
+    because routes always do a live lookup rather than capturing a reference at import.
+    """
     import sts2.app as _a
     return _a
 

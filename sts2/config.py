@@ -3,6 +3,11 @@ import os
 import sys
 from pathlib import Path
 
+# Single source of truth for the version fallback (used when importlib.metadata
+# can't find the package, e.g. in PyInstaller bundles). Keep in sync with
+# pyproject.toml [project] version.
+VERSION = "1.1.0"
+
 # Project paths
 PROJECT_ROOT = Path(__file__).parent
 DATA_DIR = PROJECT_ROOT / "data"

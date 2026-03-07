@@ -39,10 +39,17 @@ def _fetch_page(path: str) -> str:
 
 
 def _extract_json_objects(html: str, category: str) -> list[dict]:
-    """Extract JSON objects with the given category from RSC payloads in HTML."""
+    """Extract JSON objects with the given category from RSC payloads in HTML.
+
+    Uses two extraction strategies:
+      1. Flat regex — matches single-level JSON objects with "category":"<cat>"
+      2. Nested regex — matches multi-level JSON (handles wiki redesigns that nest data)
+    Falls back to strategy 2 only if strategy 1 finds nothing.
+    """
     results = []
-    # Match JSON objects containing "category":"<category>" in script tags / RSC stream
-    # The data appears as serialized JSON within the page source
+    seen_ids = set()
+
+    # Strategy 1: flat JSON objects (current wiki format)
     pattern = re.compile(
         r'\{[^{}]*"category"\s*:\s*"' + re.escape(category) + r'"[^{}]*\}'
     )
@@ -50,12 +57,65 @@ def _extract_json_objects(html: str, category: str) -> list[dict]:
         try:
             obj = json.loads(match.group())
             if obj.get("category") == category:
-                results.append(obj)
+                obj_id = obj.get("id", "")
+                if obj_id and obj_id not in seen_ids:
+                    seen_ids.add(obj_id)
+                    results.append(obj)
         except (json.JSONDecodeError, ValueError):
             continue
+
+    if results:
+        return results
+
+    # Strategy 2: nested JSON — find larger blocks containing the category,
+    # then extract individual items from parsed structures
+    log.info("Flat extraction found 0 for %s, trying nested extraction", category)
+    nested_pattern = re.compile(
+        r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*"category"\s*:\s*"' + re.escape(category) + r'"'
+        r'[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'
+    )
+    for match in nested_pattern.finditer(html):
+        try:
+            obj = json.loads(match.group())
+            if obj.get("category") == category:
+                obj_id = obj.get("id", "")
+                if obj_id and obj_id not in seen_ids:
+                    seen_ids.add(obj_id)
+                    results.append(obj)
+        except (json.JSONDecodeError, ValueError):
+            continue
+
+    # Strategy 3: scan __NEXT_DATA__ script tag if present
     if not results:
-        log.warning("JSON extraction found 0 objects for category=%s (HTML length=%d)", category, len(html))
+        next_data_match = re.search(r'<script[^>]*id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.DOTALL)
+        if next_data_match:
+            try:
+                next_data = json.loads(next_data_match.group(1))
+                _walk_json_for_category(next_data, category, results, seen_ids)
+            except (json.JSONDecodeError, ValueError):
+                pass
+
+    if not results:
+        log.warning("All extraction strategies found 0 objects for category=%s (HTML length=%d)", category, len(html))
     return results
+
+
+def _walk_json_for_category(data, category: str, results: list, seen_ids: set, depth: int = 0):
+    """Recursively walk a JSON structure looking for objects with matching category."""
+    if depth > 20:
+        return
+    if isinstance(data, dict):
+        if data.get("category") == category:
+            obj_id = data.get("id", "")
+            if obj_id and obj_id not in seen_ids:
+                seen_ids.add(obj_id)
+                results.append(data)
+        else:
+            for v in data.values():
+                _walk_json_for_category(v, category, results, seen_ids, depth + 1)
+    elif isinstance(data, list):
+        for item in data:
+            _walk_json_for_category(item, category, results, seen_ids, depth + 1)
 
 
 _CHARACTER_SUFFIXES = {

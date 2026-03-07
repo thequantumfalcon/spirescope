@@ -25,7 +25,8 @@ def _get_version() -> str:
         from importlib.metadata import version
         return version("spirescope")
     except Exception:
-        return "1.1.0"
+        from sts2.config import VERSION
+        return VERSION
 
 
 def main():

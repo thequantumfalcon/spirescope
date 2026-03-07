@@ -364,6 +364,17 @@ def apply_community_tiers(community_data: dict) -> None:
     print(f"  Applied tiers to {updated_cards} cards, {updated_relics} relics")
 
 
+def _load_cached_community_data() -> dict | None:
+    """Load previously saved community data as fallback."""
+    path = DATA_DIR / "community.json"
+    if path.exists():
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            return None
+    return None
+
+
 def run_community_scraper():
     """Main entry point: scrape, save, and apply community data."""
     # Build name set from existing data
@@ -377,6 +388,15 @@ def run_community_scraper():
                     existing_names.add(name)
 
     data = scrape_community_data(existing_names)
+
+    # If scrape returned nothing useful, fall back to cached data
+    if not data.get("sources") and not data.get("card_tiers"):
+        cached = _load_cached_community_data()
+        if cached:
+            print("\n  Reddit unavailable — using cached community data.")
+            print("  Restart Spirescope to see existing tiers.\n")
+            return
+
     save_community_data(data)
     apply_community_tiers(data)
 
