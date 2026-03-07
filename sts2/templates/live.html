@@ -33,7 +33,7 @@
     <div class="flex flex-wrap gap-xs mb-lg">
     {% for card_id in run.deck %}
     <a href="/cards/{{ card_id }}" class="tag tag-keyword card-link">
-      {{ kb.id_to_name(card_id) }}{% if run.deck_upgrades[loop.index0] %}<span class="text-green">+</span>{% endif %}
+      {{ kb.id_to_name(card_id) }}{% if loop.index0 < run.deck_upgrades|length and run.deck_upgrades[loop.index0] %}<span class="text-green">+</span>{% endif %}
     </a>
     {% endfor %}
     </div>

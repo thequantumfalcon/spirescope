@@ -232,14 +232,13 @@ async def _watch_saves():
                 log.info("Save files changed, refreshing data")
                 _progress_cache = None
                 _progress_cache_time = 0
+                _run_cache = []
+                _run_cache_by_id = {}
                 _run_cache_time = 0
                 _analytics_cache.clear()
                 _analytics_cache_time = 0
                 new_kb = KnowledgeBase()
                 kb = new_kb
-                # Update routes module reference
-                from sts2 import routes
-                routes.kb = kb
             _save_watcher_last_mtime = mtime
         except Exception:
             log.debug("Save watcher error", exc_info=True)

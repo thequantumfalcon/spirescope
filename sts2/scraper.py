@@ -312,8 +312,12 @@ def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "i
     if not existing_path.exists():
         return new_data
 
-    with open(existing_path, "r", encoding="utf-8") as f:
-        existing = json.load(f)
+    try:
+        with open(existing_path, "r", encoding="utf-8") as f:
+            existing = json.load(f)
+    except (json.JSONDecodeError, OSError) as exc:
+        log.warning("Existing %s is corrupted (%s), overwriting with new data", filename, exc)
+        return new_data
 
     existing_by_id = {item[id_field]: item for item in existing}
     new_by_id = {item[id_field]: item for item in new_data}
@@ -524,8 +528,12 @@ def run_scraper(save_only: bool = False):
     print()
     print("  Data summary:")
     for f in sorted(DATA_DIR.glob("*.json")):
-        data = json.loads(f.read_text(encoding="utf-8"))
-        print(f"    {f.name}: {len(data)} entries")
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            count = len(data) if isinstance(data, list) else f"dict ({len(data)} keys)"
+            print(f"    {f.name}: {count} entries")
+        except (json.JSONDecodeError, OSError) as exc:
+            print(f"    {f.name}: ERROR reading ({exc})")
 
     _save_update_timestamp()
 

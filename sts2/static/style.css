@@ -25,7 +25,7 @@ body {
     radial-gradient(ellipse at 20% 0%, rgba(0,229,255,0.06) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 0%, rgba(255,45,120,0.04) 0%, transparent 50%),
     radial-gradient(ellipse at 50% 100%, rgba(168,85,247,0.05) 0%, transparent 50%);
-  background-attachment: fixed;
+  background-attachment: scroll;
 }
 a { color: var(--cyan); text-decoration: none; transition: color 0.15s; } a:hover { text-decoration: underline; color: #66f0ff; }
 

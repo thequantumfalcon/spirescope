@@ -1,9 +1,12 @@
 """Knowledge base engine: load, search, filter, and synergy analysis."""
 import json
+import logging
 import re
 
 from sts2.config import DATA_DIR
 from sts2.models import Card, Relic, Potion, Enemy, Event, EventChoice, CharacterStrategy, SynergyGroup
+
+log = logging.getLogger(__name__)
 
 
 def get_last_updated() -> str:
@@ -65,35 +68,61 @@ class KnowledgeBase:
 
     def _load_json(self, filename: str) -> list[dict]:
         path = DATA_DIR / filename
-        if path.exists():
+        if not path.exists():
+            return []
+        try:
             with open(path, "r", encoding="utf-8") as f:
-                return json.load(f)
-        return []
+                data = json.load(f)
+            if not isinstance(data, list):
+                log.warning("%s is not a list, skipping", filename)
+                return []
+            return data
+        except (json.JSONDecodeError, OSError) as exc:
+            log.error("Failed to load %s: %s", filename, exc)
+            return []
 
     def _load_all(self):
         for d in self._load_json("cards.json"):
-            self.cards.append(Card(**d))
+            try:
+                self.cards.append(Card(**d))
+            except Exception as exc:
+                log.warning("Skipping malformed card %s: %s", d.get("id", "?"), exc)
 
         for d in self._load_json("relics.json"):
-            self.relics.append(Relic(**d))
+            try:
+                self.relics.append(Relic(**d))
+            except Exception as exc:
+                log.warning("Skipping malformed relic %s: %s", d.get("id", "?"), exc)
 
         for d in self._load_json("potions.json"):
-            self.potions.append(Potion(**d))
+            try:
+                self.potions.append(Potion(**d))
+            except Exception as exc:
+                log.warning("Skipping malformed potion %s: %s", d.get("id", "?"), exc)
 
         for d in self._load_json("enemies.json"):
-            self.enemies.append(Enemy(**d))
+            try:
+                self.enemies.append(Enemy(**d))
+            except Exception as exc:
+                log.warning("Skipping malformed enemy %s: %s", d.get("id", "?"), exc)
 
         for d in self._load_json("events.json"):
-            evt_data = dict(d)
-            if "choices" in evt_data:
-                evt_data["choices"] = [EventChoice(**c) for c in evt_data["choices"]]
-            self.events.append(Event(**evt_data))
+            try:
+                evt_data = dict(d)
+                if "choices" in evt_data:
+                    evt_data["choices"] = [EventChoice(**c) for c in evt_data["choices"]]
+                self.events.append(Event(**evt_data))
+            except Exception as exc:
+                log.warning("Skipping malformed event %s: %s", d.get("id", "?"), exc)
 
         for d in self._load_json("strategy.json"):
-            strat_data = dict(d)
-            if "archetypes" in strat_data:
-                strat_data["archetypes"] = [SynergyGroup(**a) for a in strat_data["archetypes"]]
-            self.strategies.append(CharacterStrategy(**strat_data))
+            try:
+                strat_data = dict(d)
+                if "archetypes" in strat_data:
+                    strat_data["archetypes"] = [SynergyGroup(**a) for a in strat_data["archetypes"]]
+                self.strategies.append(CharacterStrategy(**strat_data))
+            except Exception as exc:
+                log.warning("Skipping malformed strategy %s: %s", d.get("character", "?"), exc)
 
     def _load_community_data(self):
         """Load community tips and meta posts from community.json."""
@@ -238,6 +267,8 @@ class KnowledgeBase:
         max_dist = max(2, len(q) // 3)  # allow more tolerance for longer queries
         candidates: list[tuple[int, str]] = []
         for name in self._all_names:
+            if abs(len(name) - len(q)) > max_dist:
+                continue  # length difference alone exceeds max_dist
             dist = _levenshtein(q, name.lower())
             if dist <= max_dist:
                 candidates.append((dist, name))

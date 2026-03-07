@@ -4,6 +4,7 @@ import json
 import math
 import secrets
 import time
+from xml.sax.saxutils import escape as xml_escape
 from fastapi import APIRouter, Request, Query
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from starlette.responses import StreamingResponse
@@ -56,7 +57,7 @@ async def sitemap_xml(request: Request):
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for url in urls:
-        lines.append(f"  <url><loc>{base}{url}</loc></url>")
+        lines.append(f"  <url><loc>{xml_escape(base)}{xml_escape(url)}</loc></url>")
     lines.append("</urlset>")
     return PlainTextResponse("\n".join(lines), media_type="application/xml")
 
@@ -98,10 +99,11 @@ _CARDS_PER_PAGE = 30
 
 
 @router.get("/cards", response_class=HTMLResponse)
-async def cards(request: Request, character: str = None,
-                type: str = Query(None, alias="type"),
-                rarity: str = None, cost: str = None, keyword: str = None,
-                sort: str = None, page: int = Query(1, ge=1)):
+async def cards(request: Request, character: str = Query(None, max_length=50),
+                type: str = Query(None, alias="type", max_length=50),
+                rarity: str = Query(None, max_length=50), cost: str = Query(None, max_length=10),
+                keyword: str = Query(None, max_length=100),
+                sort: str = Query(None, max_length=20), page: int = Query(1, ge=1)):
     a = _app()
     card_type = type
     card_list = a.kb.get_cards(character=character, card_type=card_type,
@@ -171,7 +173,8 @@ async def card_detail(request: Request, card_id: str):
 
 
 @router.get("/relics", response_class=HTMLResponse)
-async def relics(request: Request, character: str = None, rarity: str = None):
+async def relics(request: Request, character: str = Query(None, max_length=50),
+                 rarity: str = Query(None, max_length=50)):
     a = _app()
     relic_list = a.kb.get_relics(character=character, rarity=rarity)
     return a.templates.TemplateResponse(request, "relics.html", {
@@ -209,7 +212,7 @@ async def relic_detail(request: Request, relic_id: str):
 
 
 @router.get("/potions", response_class=HTMLResponse)
-async def potions(request: Request, rarity: str = None):
+async def potions(request: Request, rarity: str = Query(None, max_length=50)):
     a = _app()
     potion_list = a.kb.get_potions(rarity=rarity)
     analytics = a._get_analytics()
@@ -221,8 +224,8 @@ async def potions(request: Request, rarity: str = None):
 
 
 @router.get("/enemies", response_class=HTMLResponse)
-async def enemies(request: Request, act: str = None,
-                  type: str = Query(None, alias="type")):
+async def enemies(request: Request, act: str = Query(None, max_length=50),
+                  type: str = Query(None, alias="type", max_length=50)):
     a = _app()
     enemy_type = type
     enemy_list = a.kb.get_enemies(act=act, enemy_type=enemy_type)
@@ -442,23 +445,20 @@ async def api_live_run(player: int = Query(0, ge=0, le=3)):
     return run.model_dump()
 
 
-# SSE connection tracking
-_sse_connections: int = 0
+# SSE connection tracking — semaphore prevents TOCTOU race on connection cap
 _SSE_MAX_CONNECTIONS = 10
 _SSE_IDLE_TIMEOUT = 300.0
+_sse_semaphore = asyncio.Semaphore(_SSE_MAX_CONNECTIONS)
 
 
 @router.get("/api/live/stream")
 async def live_stream(player: int = Query(0, ge=0, le=3)):
-    global _sse_connections
-    if _sse_connections >= _SSE_MAX_CONNECTIONS:
+    if _sse_semaphore.locked():
         return PlainTextResponse("Too many live connections. Close another tab.",
                                  status_code=429)
 
     async def event_generator():
-        global _sse_connections
-        _sse_connections += 1
-        try:
+        async with _sse_semaphore:
             last_hash = ""
             idle_since = time.monotonic()
             while True:
@@ -474,8 +474,6 @@ async def live_stream(player: int = Query(0, ge=0, le=3)):
                     yield f"event: timeout\ndata: {{}}\n\n"
                     return
                 await asyncio.sleep(3)
-        finally:
-            _sse_connections -= 1
 
     return StreamingResponse(event_generator(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache",
