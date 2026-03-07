@@ -11,7 +11,6 @@ def client():
     return AsyncClient(transport=transport, base_url="http://test")
 
 
-@pytest.mark.asyncio
 async def test_index(client):
     async with client as c:
         resp = await c.get("/")
@@ -26,7 +25,6 @@ async def test_index(client):
     assert '<nav>' in resp.text
 
 
-@pytest.mark.asyncio
 async def test_cards_page(client):
     async with client as c:
         resp = await c.get("/cards")
@@ -36,7 +34,6 @@ async def test_cards_page(client):
     assert '<div class="grid grid-3">' in resp.text
 
 
-@pytest.mark.asyncio
 async def test_cards_filter(client):
     async with client as c:
         resp = await c.get("/cards?character=Ironclad&type=Attack")
@@ -47,7 +44,6 @@ async def test_cards_filter(client):
     assert "char-silent" not in resp.text or "char-ironclad" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_relics_page(client):
     async with client as c:
         resp = await c.get("/relics")
@@ -56,7 +52,6 @@ async def test_relics_page(client):
     assert '<div class="grid grid-3">' in resp.text
 
 
-@pytest.mark.asyncio
 async def test_potions_page(client):
     async with client as c:
         resp = await c.get("/potions")
@@ -64,7 +59,6 @@ async def test_potions_page(client):
     assert "<h1>" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_enemies_page(client):
     async with client as c:
         resp = await c.get("/enemies")
@@ -73,7 +67,6 @@ async def test_enemies_page(client):
     assert "All Acts" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_events_page(client):
     async with client as c:
         resp = await c.get("/events")
@@ -81,7 +74,6 @@ async def test_events_page(client):
     assert "<h1>" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_search_empty(client):
     async with client as c:
         resp = await c.get("/search?q=")
@@ -89,7 +81,6 @@ async def test_search_empty(client):
     assert "(0 results)" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_search_with_query(client):
     async with client as c:
         resp = await c.get("/search?q=bash")
@@ -97,7 +88,6 @@ async def test_search_with_query(client):
     assert "bash" in resp.text.lower()
 
 
-@pytest.mark.asyncio
 async def test_api_search(client):
     async with client as c:
         resp = await c.get("/api/search?q=bash")
@@ -107,7 +97,6 @@ async def test_api_search(client):
     assert "relics" in data
 
 
-@pytest.mark.asyncio
 async def test_deck_analyzer_page(client):
     async with client as c:
         resp = await c.get("/deck")
@@ -115,7 +104,6 @@ async def test_deck_analyzer_page(client):
     assert "Deck" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_deck_analyze_empty(client):
     async with client as c:
         resp = await c.post("/deck/analyze", data={"csrf_token": _CSRF_TOKEN})
@@ -123,14 +111,12 @@ async def test_deck_analyze_empty(client):
     assert "No cards selected" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_deck_analyze_rejects_bad_csrf(client):
     async with client as c:
         resp = await c.post("/deck/analyze", data={"csrf_token": "bad_token"})
     assert resp.status_code == 403
 
 
-@pytest.mark.asyncio
 async def test_runs_page(client):
     async with client as c:
         resp = await c.get("/runs")
@@ -138,7 +124,6 @@ async def test_runs_page(client):
     assert "<h1>" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_live_page(client):
     async with client as c:
         resp = await c.get("/live")
@@ -147,7 +132,6 @@ async def test_live_page(client):
     assert "Run" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_api_live(client):
     async with client as c:
         resp = await c.get("/api/live")
@@ -158,14 +142,12 @@ async def test_api_live(client):
     assert "player_index" in data
 
 
-@pytest.mark.asyncio
 async def test_live_with_player_param(client):
     async with client as c:
         resp = await c.get("/live?player=0")
     assert resp.status_code == 200
 
 
-@pytest.mark.asyncio
 async def test_api_live_with_player_param(client):
     async with client as c:
         resp = await c.get("/api/live?player=0")
@@ -174,7 +156,6 @@ async def test_api_live_with_player_param(client):
     assert data["player_index"] == 0
 
 
-@pytest.mark.asyncio
 async def test_security_headers(client):
     async with client as c:
         resp = await c.get("/")
@@ -187,7 +168,6 @@ async def test_security_headers(client):
     assert "connect-src 'self'" in csp
 
 
-@pytest.mark.asyncio
 async def test_api_search_includes_suggestions(client):
     async with client as c:
         resp = await c.get("/api/search?q=xyznonexistent")
@@ -196,7 +176,6 @@ async def test_api_search_includes_suggestions(client):
     assert "suggestions" in data
 
 
-@pytest.mark.asyncio
 async def test_search_suggestions_shown(client):
     async with client as c:
         resp = await c.get("/search?q=ironclsd")
@@ -205,7 +184,6 @@ async def test_search_suggestions_shown(client):
     assert "No results" in resp.text or "Did you mean" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_card_detail_404(client):
     async with client as c:
         resp = await c.get("/cards/CARD.NONEXISTENT")
@@ -213,7 +191,6 @@ async def test_card_detail_404(client):
     assert "not found" in resp.text.lower()
 
 
-@pytest.mark.asyncio
 async def test_enemy_detail_404(client):
     async with client as c:
         resp = await c.get("/enemies/ENEMY.NONEXISTENT")
@@ -221,7 +198,6 @@ async def test_enemy_detail_404(client):
     assert "not found" in resp.text.lower()
 
 
-@pytest.mark.asyncio
 async def test_run_detail_404(client):
     async with client as c:
         resp = await c.get("/runs/fake_run_id")
@@ -229,7 +205,6 @@ async def test_run_detail_404(client):
     assert "not found" in resp.text.lower()
 
 
-@pytest.mark.asyncio
 async def test_strategy_404(client):
     async with client as c:
         resp = await c.get("/strategy/FakeCharacter")
@@ -237,7 +212,6 @@ async def test_strategy_404(client):
     assert "404" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_deck_page_has_csrf_token(client):
     async with client as c:
         resp = await c.get("/deck")
@@ -245,7 +219,6 @@ async def test_deck_page_has_csrf_token(client):
     assert "csrf_token" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_cards_pagination_default(client):
     async with client as c:
         resp = await c.get("/cards")
@@ -253,7 +226,6 @@ async def test_cards_pagination_default(client):
     assert "Cards (" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_cards_pagination_page2(client):
     async with client as c:
         resp = await c.get("/cards?page=2")
@@ -262,7 +234,6 @@ async def test_cards_pagination_page2(client):
     assert "Cards (" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_cards_pagination_with_filter(client):
     async with client as c:
         resp = await c.get("/cards?character=Ironclad&page=1")
@@ -270,7 +241,6 @@ async def test_cards_pagination_with_filter(client):
     assert 'class="active">Ironclad' in resp.text
 
 
-@pytest.mark.asyncio
 async def test_cards_pagination_out_of_range(client):
     async with client as c:
         resp = await c.get("/cards?page=9999")
@@ -278,7 +248,6 @@ async def test_cards_pagination_out_of_range(client):
     # Should clamp to last page, not error
 
 
-@pytest.mark.asyncio
 async def test_api_reload_with_valid_token(client):
     async with client as c:
         resp = await c.post(f"/api/reload?token={_ADMIN_TOKEN}")
@@ -289,21 +258,18 @@ async def test_api_reload_with_valid_token(client):
     assert data["cards"] > 0
 
 
-@pytest.mark.asyncio
 async def test_api_reload_rejects_bad_token(client):
     async with client as c:
         resp = await c.post("/api/reload?token=bad_token")
     assert resp.status_code == 403
 
 
-@pytest.mark.asyncio
 async def test_api_reload_rejects_missing_token(client):
     async with client as c:
         resp = await c.post("/api/reload")
     assert resp.status_code == 422  # missing required query param
 
 
-@pytest.mark.asyncio
 async def test_live_page_has_sse_script(client):
     async with client as c:
         resp = await c.get("/live")
@@ -311,7 +277,6 @@ async def test_live_page_has_sse_script(client):
     assert "EventSource" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_live_stream_endpoint_exists(client):
     """SSE endpoint is registered (streaming tested via integration)."""
     from starlette.routing import Route
@@ -320,7 +285,6 @@ async def test_live_stream_endpoint_exists(client):
     assert len(sse_routes) == 1
 
 
-@pytest.mark.asyncio
 async def test_deck_page_has_save_load_ui(client):
     async with client as c:
         resp = await c.get("/deck")
@@ -332,7 +296,6 @@ async def test_deck_page_has_save_load_ui(client):
     assert "detectCharacter" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_cards_pagination_shows_range(client):
     """When paginated, shows 'Showing X-Y of Z' indicator."""
     async with client as c:
@@ -343,14 +306,12 @@ async def test_cards_pagination_shows_range(client):
         assert "Showing" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_sse_connection_limit_registered(client):
     """SSE max connections constant is set."""
     from sts2.app import _SSE_MAX_CONNECTIONS
     assert _SSE_MAX_CONNECTIONS > 0
 
 
-@pytest.mark.asyncio
 async def test_health_endpoint(client):
     async with client as c:
         resp = await c.get("/health")
@@ -360,7 +321,6 @@ async def test_health_endpoint(client):
     assert data["cards"] > 0
 
 
-@pytest.mark.asyncio
 async def test_robots_txt(client):
     async with client as c:
         resp = await c.get("/robots.txt")
@@ -369,7 +329,6 @@ async def test_robots_txt(client):
     assert "Disallow: /api/" in resp.text
 
 
-@pytest.mark.asyncio
 async def test_meta_description_in_html(client):
     async with client as c:
         resp = await c.get("/")
@@ -378,7 +337,6 @@ async def test_meta_description_in_html(client):
     assert 'meta name="theme-color"' in resp.text
 
 
-@pytest.mark.asyncio
 async def test_player_param_validation(client):
     """Player param > 3 should be rejected."""
     async with client as c:
@@ -386,7 +344,6 @@ async def test_player_param_validation(client):
     assert resp.status_code == 422
 
 
-@pytest.mark.asyncio
 async def test_deck_analyze_caps_card_count(client):
     """Submitting more than MAX_DECK_SIZE cards should not crash."""
     from sts2.app import _MAX_DECK_SIZE
@@ -399,7 +356,6 @@ async def test_deck_analyze_caps_card_count(client):
     assert resp.status_code == 200
 
 
-@pytest.mark.asyncio
 async def test_admin_token_not_in_logs(client):
     """Admin token should not be exposed via any public endpoint."""
     async with client as c:
@@ -407,7 +363,6 @@ async def test_admin_token_not_in_logs(client):
     assert _ADMIN_TOKEN not in resp.text
 
 
-@pytest.mark.asyncio
 async def test_csp_blocks_external_scripts(client):
     """CSP should not allow external script sources."""
     async with client as c:
@@ -417,3 +372,34 @@ async def test_csp_blocks_external_scripts(client):
     # Should not contain 'unsafe-eval' or wildcard
     assert "'unsafe-eval'" not in csp
     assert "script-src *" not in csp
+
+
+async def test_css_cache_busting(client):
+    """CSS link should include a version hash query parameter."""
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert "style.css?v=" in resp.text
+
+
+async def test_favicon_ico_link(client):
+    """Should include a .ico favicon link for older browsers."""
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert "favicon.ico" in resp.text
+
+
+async def test_search_input_has_maxlength(client):
+    """Search input should have maxlength attribute matching server-side limit."""
+    async with client as c:
+        resp = await c.get("/")
+    assert resp.status_code == 200
+    assert 'maxlength="200"' in resp.text
+
+
+async def test_favicon_ico_serves(client):
+    """The favicon.ico file should be served from /static/."""
+    async with client as c:
+        resp = await c.get("/static/favicon.ico")
+    assert resp.status_code == 200

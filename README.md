@@ -4,7 +4,7 @@ A web dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analy
 
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-146%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-150%20passing-brightgreen)
 
 ## Features
 
@@ -34,6 +34,13 @@ python -m sts2
 ```
 
 Opens your browser at [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+### Docker
+
+```bash
+docker build -t spirescope .
+docker run -p 8000:8000 spirescope
+```
 
 ## Updating Game Data
 

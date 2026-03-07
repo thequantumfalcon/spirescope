@@ -17,11 +17,21 @@ env/
 .idea/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Environment / secrets
+.env
+*.local
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Project
 *.log

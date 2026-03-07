@@ -31,3 +31,4 @@ include = ["sts2*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_mode = "auto"

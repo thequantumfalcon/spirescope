@@ -16,15 +16,22 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.responses import StreamingResponse
 
+import hashlib
+
 from sts2.config import TEMPLATES_DIR, STATIC_DIR, CHARACTERS
 from sts2.knowledge import KnowledgeBase, get_last_updated
 from sts2.saves import get_progress, get_run_history, get_current_run
 
 log = logging.getLogger(__name__)
 
+# CSS cache buster: hash of style.css content at startup
+_css_path = STATIC_DIR / "style.css"
+_CSS_HASH = hashlib.md5(_css_path.read_bytes()).hexdigest()[:8] if _css_path.exists() else "0"
+
 app = FastAPI(title="Spirescope")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR), html=False), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+templates.env.globals["css_hash"] = _CSS_HASH
 
 kb = KnowledgeBase()
 
