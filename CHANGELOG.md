@@ -3,6 +3,7 @@
 ## v1.1.0
 
 ### Added
+- **Standalone executable** — PyInstaller build produces a click-to-run exe (no Python required). Run `python build.py` to create `dist/Spirescope/`
 - **Analytics page** — aggregate stats: per-character win rates, floor survival, card pick rates, causes of death
 - **Community page** — Reddit-sourced tier lists, meta posts, and community tips on detail pages
 - **User guide** — in-app guide covering setup, features, configuration, and troubleshooting

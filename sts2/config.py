@@ -19,7 +19,7 @@ def _find_save_dir() -> Path:
 
     # Platform-specific AppData location
     if sys.platform == "win32":
-        base = Path(os.environ.get("APPDATA", ""))
+        base = Path(os.environ.get("APPDATA") or Path.home() / "AppData" / "Roaming")
     elif sys.platform == "darwin":
         base = Path.home() / "Library" / "Application Support"
     else:

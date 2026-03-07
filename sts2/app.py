@@ -44,7 +44,7 @@ try:
     from importlib.metadata import version as _get_version
     templates.env.globals["version"] = _get_version("spirescope")
 except Exception:
-    templates.env.globals["version"] = "1.0.0"
+    templates.env.globals["version"] = "1.1.0"
 
 kb = KnowledgeBase()
 

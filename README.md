@@ -38,6 +38,15 @@ python -m sts2
 
 Opens your browser at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
+### Standalone Executable (No Python Required)
+
+```bash
+pip install -e ".[dev]"
+python build.py
+```
+
+Output: `dist/Spirescope/Spirescope.exe` — zip the entire `dist/Spirescope/` folder and share it. Recipients just double-click `Spirescope.exe`.
+
 ### Docker
 
 ```bash

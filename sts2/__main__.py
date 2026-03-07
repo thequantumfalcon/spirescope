@@ -25,7 +25,7 @@ def _get_version() -> str:
         from importlib.metadata import version
         return version("spirescope")
     except Exception:
-        return "1.0.0"
+        return "1.1.0"
 
 
 def main():
@@ -59,7 +59,8 @@ def main():
         url = f"http://{HOST}:{PORT}"
         threading.Timer(1.5, lambda: webbrowser.open(url)).start()
         print(f"\n  Spirescope {_get_version()} starting at {url}\n")
-        uvicorn.run("sts2.app:app", host=HOST, port=PORT, log_level="warning")
+        from sts2.app import app
+        uvicorn.run(app, host=HOST, port=PORT, log_level="warning")
         return
 
     print(f"Unknown command: {command}\n")
