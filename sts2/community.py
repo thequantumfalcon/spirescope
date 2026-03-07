@@ -67,6 +67,7 @@ def _fetch_reddit_json(url: str, retries: int = 2) -> dict:
                 if attempt < retries:
                     time.sleep(wait)
                     continue
+                raise
             if attempt < retries:
                 log.warning("Reddit HTTP %d (attempt %d/%d): %s", e.code, attempt + 1, retries + 1, e)
                 time.sleep(2 * (attempt + 1))

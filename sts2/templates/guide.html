@@ -45,7 +45,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
   <pre><code>spirescope update</code></pre>
   <p class="mt-sm">If you don't have internet access or just want to discover new entities from your save files:</p>
   <pre><code>spirescope update --save-only</code></pre>
-  <p class="text-sm text-muted mt-sm">You can also hot-reload data without restarting by calling <code>POST /api/reload?token=YOUR_ADMIN_TOKEN</code>. The admin token is printed to stderr on startup.</p>
+  <p class="text-sm text-muted mt-sm">You can also hot-reload data without restarting by calling <code>POST /api/reload</code> with header <code>X-Admin-Token: YOUR_TOKEN</code>. Set <code>SPIRESCOPE_ADMIN_TOKEN</code> env var or enable debug logging to see the auto-generated token.</p>
 </div>
 
 <h2 id="pages">Page Tour</h2>

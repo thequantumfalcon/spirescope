@@ -445,24 +445,27 @@ async def api_live_run(player: int = Query(0, ge=0, le=3)):
     return run.model_dump()
 
 
-# SSE connection tracking — semaphore prevents TOCTOU race on connection cap
+# SSE connection tracking — atomic counter (safe in single-threaded asyncio)
 _SSE_MAX_CONNECTIONS = 10
 _SSE_IDLE_TIMEOUT = 300.0
-_sse_semaphore = asyncio.Semaphore(_SSE_MAX_CONNECTIONS)
+_sse_active = 0
 
 
 @router.get("/api/live/stream")
 async def live_stream(player: int = Query(0, ge=0, le=3)):
-    if _sse_semaphore.locked():
+    global _sse_active
+    if _sse_active >= _SSE_MAX_CONNECTIONS:
         return PlainTextResponse("Too many live connections. Close another tab.",
                                  status_code=429)
 
     async def event_generator():
-        async with _sse_semaphore:
+        global _sse_active
+        _sse_active += 1
+        try:
             last_hash = ""
             idle_since = time.monotonic()
             while True:
-                run = get_current_run(player_index=player)
+                run = await asyncio.to_thread(get_current_run, player_index=player)
                 data = run.model_dump()
                 data_json = json.dumps(data, sort_keys=True)
                 current_hash = str(hash(data_json))
@@ -474,6 +477,8 @@ async def live_stream(player: int = Query(0, ge=0, le=3)):
                     yield f"event: timeout\ndata: {{}}\n\n"
                     return
                 await asyncio.sleep(3)
+        finally:
+            _sse_active -= 1
 
     return StreamingResponse(event_generator(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache",
@@ -481,9 +486,10 @@ async def live_stream(player: int = Query(0, ge=0, le=3)):
 
 
 @router.post("/api/reload")
-async def reload_data(request: Request, token: str = Query(...)):
+async def reload_data(request: Request):
     a = _app()
-    if not secrets.compare_digest(token, a._ADMIN_TOKEN):
+    token = request.headers.get("X-Admin-Token", "")
+    if not token or not secrets.compare_digest(token, a._ADMIN_TOKEN):
         return PlainTextResponse("Unauthorized.", status_code=403)
     from sts2.knowledge import KnowledgeBase
     new_kb = KnowledgeBase()

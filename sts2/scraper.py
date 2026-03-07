@@ -129,7 +129,10 @@ def _load_existing_name_index(filename: str, prefix: str) -> dict[str, str]:
     path = DATA_DIR / filename
     if not path.exists():
         return {}
-    data = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
     index = {}
     for item in data:
         name = item.get("name", "").lower().strip()
@@ -334,8 +337,11 @@ def _discover_enemies_from_saves() -> list[dict]:
     existing_path = DATA_DIR / "enemies.json"
     existing_ids = set()
     if existing_path.exists():
-        for item in json.loads(existing_path.read_text(encoding="utf-8")):
-            existing_ids.add(item["id"])
+        try:
+            for item in json.loads(existing_path.read_text(encoding="utf-8")):
+                existing_ids.add(item["id"])
+        except (json.JSONDecodeError, OSError):
+            pass
 
     discovered = {}  # id -> {id, name, act, type}
 
@@ -407,8 +413,11 @@ def _discover_events_from_saves() -> list[dict]:
     existing_path = DATA_DIR / "events.json"
     existing_ids = set()
     if existing_path.exists():
-        for item in json.loads(existing_path.read_text(encoding="utf-8")):
-            existing_ids.add(item["id"])
+        try:
+            for item in json.loads(existing_path.read_text(encoding="utf-8")):
+                existing_ids.add(item["id"])
+        except (json.JSONDecodeError, OSError):
+            pass
 
     discovered = {}
 

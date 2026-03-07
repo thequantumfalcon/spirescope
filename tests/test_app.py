@@ -251,7 +251,7 @@ async def test_cards_pagination_out_of_range(client):
 
 async def test_api_reload_with_valid_token(client):
     async with client as c:
-        resp = await c.post(f"/api/reload?token={_ADMIN_TOKEN}")
+        resp = await c.post("/api/reload", headers={"X-Admin-Token": _ADMIN_TOKEN})
     assert resp.status_code == 200
     data = resp.json()
     assert data["status"] == "ok"
@@ -261,14 +261,14 @@ async def test_api_reload_with_valid_token(client):
 
 async def test_api_reload_rejects_bad_token(client):
     async with client as c:
-        resp = await c.post("/api/reload?token=bad_token")
+        resp = await c.post("/api/reload", headers={"X-Admin-Token": "bad_token"})
     assert resp.status_code == 403
 
 
 async def test_api_reload_rejects_missing_token(client):
     async with client as c:
         resp = await c.post("/api/reload")
-    assert resp.status_code == 422  # missing required query param
+    assert resp.status_code == 403
 
 
 async def test_live_page_has_sse_script(client):
