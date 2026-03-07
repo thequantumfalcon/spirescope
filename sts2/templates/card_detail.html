@@ -2,16 +2,21 @@
 {% block title %}{{ card.name if card else 'Card Not Found' }}{% endblock %}
 {% block content %}
 {% if card %}
+<p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.5rem"><a href="/cards">Cards</a> &rsaquo; <a href="/cards?character={{ card.character }}">{{ card.character }}</a> &rsaquo; {{ card.name }}</p>
 <div class="detail-header">
   <h1><span class="char-{{ card.character|lower }}">{{ card.name }}</span>
     <span class="tag tag-cost" style="font-size:1rem">{{ card.cost }}</span>
     <span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span>
     <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span>
+    {% if card.tier %}<span class="tag" style="background:var(--bg3);color:var(--yellow);border:1px solid var(--border);font-size:1rem">{{ card.tier }}-Tier</span>{% endif %}
   </h1>
   <p style="color:var(--text2)">{{ card.character }} &bull; {{ card.id }}</p>
 </div>
 
 <div class="detail-desc">{{ card.description }}</div>
+{% if card.description_upgraded %}
+<div class="detail-desc" style="border-left:3px solid var(--green)"><strong style="color:var(--green)">Upgraded:</strong> {{ card.description_upgraded }}</div>
+{% endif %}
 
 {% if card_stats and (card_stats.picked or card_stats.skipped or card_stats.won or card_stats.lost) %}
 <h2>Your Stats</h2>

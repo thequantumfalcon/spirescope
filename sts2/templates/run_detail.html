@@ -2,6 +2,7 @@
 {% block title %}Run {{ run.id if run else 'Not Found' }}{% endblock %}
 {% block content %}
 {% if run %}
+<p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.5rem"><a href="/runs">Run History</a> &rsaquo; {{ run.id }}</p>
 <h1>
   <span class="result {{ 'win' if run.win else 'loss' }}">{{ 'VICTORY' if run.win else 'DEFEAT' }}</span>
   &mdash; <span class="char-{{ run.character|lower }}">{{ run.character }}</span>

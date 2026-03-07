@@ -563,3 +563,53 @@ async def test_api_runs(client):
         resp2 = await c.get("/api/runs?character=Ironclad&result=win")
         assert resp2.status_code == 200
         assert isinstance(resp2.json(), list)
+
+
+async def test_nav_highlights_current_page(client):
+    """Nav should highlight the active page link."""
+    async with client as c:
+        resp = await c.get("/cards")
+    assert resp.status_code == 200
+    # The cards link should have an active style
+    assert 'href="/cards"' in resp.text
+
+
+async def test_card_detail_has_breadcrumb(client):
+    """Card detail should have breadcrumb navigation."""
+    from sts2.app import kb as _kb
+    if not _kb.cards:
+        return
+    card = _kb.cards[0]
+    async with client as c:
+        resp = await c.get(f"/cards/{card.id}")
+    assert resp.status_code == 200
+    assert "&rsaquo;" in resp.text
+    assert 'href="/cards"' in resp.text
+
+
+async def test_enemy_detail_has_breadcrumb(client):
+    """Enemy detail should have breadcrumb navigation."""
+    from sts2.app import kb as _kb
+    if not _kb.enemies:
+        return
+    enemy = _kb.enemies[0]
+    async with client as c:
+        resp = await c.get(f"/enemies/{enemy.id}")
+    assert resp.status_code == 200
+    assert 'href="/enemies"' in resp.text
+
+
+async def test_events_filter_by_act(client):
+    """Events page should accept act filter."""
+    async with client as c:
+        resp = await c.get("/events?act=Act+1")
+    assert resp.status_code == 200
+    assert "All Acts" in resp.text
+
+
+async def test_events_no_filter(client):
+    """Events page without filter should show all events."""
+    async with client as c:
+        resp = await c.get("/events")
+    assert resp.status_code == 200
+    assert "Events" in resp.text

@@ -16,15 +16,16 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <nav aria-label="Main navigation">
+    {% set p = request.url.path %}
     <a class="logo" href="/">Spirescope</a>
-    <a href="/cards">Cards</a>
-    <a href="/relics">Relics</a>
-    <a href="/potions">Potions</a>
-    <a href="/enemies">Enemies</a>
-    <a href="/events">Events</a>
-    <a href="/deck">Deck Analyzer</a>
-    <a href="/live" style="color:var(--green)">Live Run</a>
-    <a href="/runs">Run History</a>
+    <a href="/cards" {% if p.startswith('/cards') %}style="color:var(--text)"{% endif %}>Cards</a>
+    <a href="/relics" {% if p.startswith('/relics') %}style="color:var(--text)"{% endif %}>Relics</a>
+    <a href="/potions" {% if p == '/potions' %}style="color:var(--text)"{% endif %}>Potions</a>
+    <a href="/enemies" {% if p.startswith('/enemies') %}style="color:var(--text)"{% endif %}>Enemies</a>
+    <a href="/events" {% if p == '/events' %}style="color:var(--text)"{% endif %}>Events</a>
+    <a href="/deck" {% if p.startswith('/deck') %}style="color:var(--text)"{% endif %}>Deck Analyzer</a>
+    <a href="/live" style="color:{% if p == '/live' %}#fff{% else %}var(--green){% endif %}">Live Run</a>
+    <a href="/runs" {% if p.startswith('/runs') %}style="color:var(--text)"{% endif %}>Run History</a>
     <form class="search-form" action="/search" method="get">
       <input type="search" name="q" placeholder="Search cards, relics, enemies..." value="{{ query|default('') }}" maxlength="200">
       <button type="submit">Search</button>

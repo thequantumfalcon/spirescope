@@ -2,6 +2,7 @@
 {% block title %}{{ enemy.name if enemy else 'Enemy Not Found' }}{% endblock %}
 {% block content %}
 {% if enemy %}
+<p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.5rem"><a href="/enemies">Enemies</a> &rsaquo; {{ enemy.name }}</p>
 <div class="detail-header">
   <h1>{{ enemy.name }}
     <span class="tag {% if enemy.type == 'boss' %}tag-attack{% elif enemy.type == 'elite' %}tag-power{% else %}tag-skill{% endif %}">{{ enemy.type }}</span>

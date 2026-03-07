@@ -339,9 +339,12 @@ async def enemy_detail(request: Request, enemy_id: str):
 
 
 @app.get("/events", response_class=HTMLResponse)
-async def events(request: Request):
+async def events(request: Request, act: str = None):
+    event_list = kb.events
+    if act:
+        event_list = [e for e in event_list if act in e.act]
     return templates.TemplateResponse(request, "events.html", {
-        "events": kb.events,
+        "events": event_list, "selected_act": act, "total_events": len(kb.events),
     })
 
 

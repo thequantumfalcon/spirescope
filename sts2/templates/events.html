@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Events{% endblock %}
 {% block content %}
-<h1>Events ({{ events|length }})</h1>
+<h1>Events ({{ events|length }}{% if total_events and events|length != total_events %} of {{ total_events }}{% endif %})</h1>
+
+<div class="filters">
+  <a href="/events" {% if not selected_act %}class="active"{% endif %}>All Acts</a>
+  {% for a in ['Act 1', 'Act 2', 'Act 3'] %}
+  <a href="/events?act={{ a }}" {% if selected_act == a %}class="active"{% endif %}>{{ a }}</a>
+  {% endfor %}
+</div>
+
 {% for event in events %}
 <div class="card" style="margin-bottom:1rem">
   <h3>{{ event.name }} <span style="color:var(--text2);font-size:0.8rem">{{ event.act|join(', ') }}</span></h3>
