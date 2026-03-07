@@ -2,6 +2,7 @@
 import json
 import logging
 import re
+import time
 import urllib.request
 import urllib.error
 
@@ -10,6 +11,7 @@ from sts2.config import DATA_DIR
 log = logging.getLogger(__name__)
 
 WIKI_BASE = "https://slaythespire2.gg"
+_SCRAPE_DELAY = 1.0  # seconds between wiki requests to avoid hammering
 
 # Markup tags used in wiki descriptions: [gold]...[/gold], [blue], [red], etc.
 _MARKUP_RE = re.compile(r"\[/?(?:gold|blue|red|green|energy:\d+|star:\d+)\]")
@@ -220,6 +222,13 @@ def _save_json(filename: str, data: list[dict]) -> int:
     return len(data)
 
 
+def _save_update_timestamp():
+    """Write a timestamp file recording when data was last updated."""
+    import datetime
+    path = DATA_DIR / "last_updated.txt"
+    path.write_text(datetime.datetime.now(datetime.timezone.utc).isoformat(), encoding="utf-8")
+
+
 def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "id") -> list[dict]:
     """Merge new scraped data with existing data, preserving manual additions.
 
@@ -359,7 +368,11 @@ def run_scraper():
         "potions.json": ("potions", "/potions", _scrape_potions),
     }
 
+    first = True
     for filename, (label, path, scraper_fn) in scrapers.items():
+        if not first:
+            time.sleep(_SCRAPE_DELAY)
+        first = False
         print(f"  Fetching {label} from {WIKI_BASE}{path} ...")
         try:
             html = _fetch_page(path)
@@ -401,6 +414,8 @@ def run_scraper():
     for f in sorted(DATA_DIR.glob("*.json")):
         data = json.loads(f.read_text(encoding="utf-8"))
         print(f"    {f.name}: {len(data)} entries")
+
+    _save_update_timestamp()
 
     print()
     print("  Done! Restart Spirescope to use updated data.")

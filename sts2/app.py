@@ -1,4 +1,5 @@
 """FastAPI web dashboard for Spirescope."""
+import collections
 import logging
 import time
 from fastapi import FastAPI, Request, Query
@@ -7,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from sts2.config import TEMPLATES_DIR, STATIC_DIR, CHARACTERS
-from sts2.knowledge import KnowledgeBase
+from sts2.knowledge import KnowledgeBase, get_last_updated
 from sts2.saves import get_progress, get_run_history, get_current_run
 
 log = logging.getLogger(__name__)
@@ -17,6 +18,11 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 kb = KnowledgeBase()
+
+# Simple in-memory rate limiter: IP -> deque of request timestamps
+_rate_limit_store: dict[str, collections.deque] = {}
+_RATE_LIMIT_MAX = 60  # max requests per window
+_RATE_LIMIT_WINDOW = 60.0  # seconds
 
 # Run history cache (refreshes every 30s)
 _run_cache: list = []
@@ -43,6 +49,27 @@ def _get_run_by_id(run_id: str):
 
 
 @app.middleware("http")
+async def rate_limit(request: Request, call_next):
+    """Simple per-IP rate limiting (60 requests/minute)."""
+    ip = request.client.host if request.client else "unknown"
+    now = time.monotonic()
+
+    if ip not in _rate_limit_store:
+        _rate_limit_store[ip] = collections.deque()
+
+    timestamps = _rate_limit_store[ip]
+    # Purge old entries outside the window
+    while timestamps and timestamps[0] < now - _RATE_LIMIT_WINDOW:
+        timestamps.popleft()
+
+    if len(timestamps) >= _RATE_LIMIT_MAX:
+        return PlainTextResponse("Rate limit exceeded. Try again later.", status_code=429)
+
+    timestamps.append(now)
+    return await call_next(request)
+
+
+@app.middleware("http")
 async def security_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -53,7 +80,10 @@ async def security_headers(request: Request, call_next):
 @app.exception_handler(Exception)
 async def global_error_handler(request: Request, exc: Exception):
     log.exception("Unhandled error on %s", request.url.path)
-    return PlainTextResponse("Internal server error", status_code=500)
+    return templates.TemplateResponse(request, "error.html", {
+        "error_code": 500,
+        "error_message": "Something went wrong. Please try again.",
+    }, status_code=500)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -69,13 +99,14 @@ async def index(request: Request):
         "total_relics": len(kb.relics),
         "total_potions": len(kb.potions),
         "total_enemies": len(kb.enemies),
+        "last_updated": get_last_updated(),
     })
 
 
 @app.get("/search", response_class=HTMLResponse)
 async def search(request: Request, q: str = Query("", max_length=200)):
     results = kb.search(q)
-    total = sum(len(v) for v in results.values())
+    total = sum(len(v) for k, v in results.items() if k != "suggestions")
     return templates.TemplateResponse(request, "search.html", {
         "query": q, "results": results, "total": total, "kb": kb,
     })
@@ -223,4 +254,5 @@ async def api_search(q: str = Query("", max_length=200)):
         "potions": [p.model_dump() for p in results["potions"]],
         "enemies": [e.model_dump() for e in results["enemies"]],
         "events": [e.model_dump() for e in results["events"]],
+        "suggestions": results.get("suggestions", []),
     }

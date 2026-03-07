@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Error {{ error_code }}{% endblock %}
+{% block content %}
+<div style="text-align:center;margin-top:4rem">
+  <h1 style="font-size:4rem;margin-bottom:0.5rem;color:var(--red)">{{ error_code }}</h1>
+  <p style="font-size:1.2rem;color:var(--text2);margin-bottom:2rem">{{ error_message }}</p>
+  <a href="/" style="color:var(--accent);text-decoration:none;font-size:1.1rem">Back to Spirescope</a>
+</div>
+{% endblock %}

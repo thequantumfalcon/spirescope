@@ -60,6 +60,15 @@
 {% endif %}
 
 {% if total == 0 %}
-<p style="color:var(--text2);margin-top:2rem">No results found for "{{ query }}". Try a different search term.</p>
+<p style="color:var(--text2);margin-top:2rem">No results found for "{{ query }}".</p>
+{% if results.suggestions %}
+<p style="margin-top:0.5rem">Did you mean:
+{% for suggestion in results.suggestions %}
+  <a href="/search?q={{ suggestion }}" style="color:var(--accent)">{{ suggestion }}</a>{% if not loop.last %}, {% endif %}
+{% endfor %}
+?</p>
+{% else %}
+<p style="color:var(--text2)">Try a different search term.</p>
+{% endif %}
 {% endif %}
 {% endblock %}

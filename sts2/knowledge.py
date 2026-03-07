@@ -6,6 +6,33 @@ from sts2.config import DATA_DIR
 from sts2.models import Card, Relic, Potion, Enemy, Event, EventChoice, CharacterStrategy, SynergyGroup
 
 
+def get_last_updated() -> str:
+    """Return the last data update timestamp, or empty string if unknown."""
+    path = DATA_DIR / "last_updated.txt"
+    if path.exists():
+        return path.read_text(encoding="utf-8").strip()
+    return ""
+
+
+def _levenshtein(a: str, b: str) -> int:
+    """Compute Levenshtein edit distance between two strings."""
+    if len(a) < len(b):
+        return _levenshtein(b, a)
+    if not b:
+        return len(a)
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a):
+        curr = [i + 1]
+        for j, cb in enumerate(b):
+            curr.append(min(
+                prev[j + 1] + 1,      # deletion
+                curr[j] + 1,           # insertion
+                prev[j] + (ca != cb),  # substitution
+            ))
+        prev = curr
+    return prev[-1]
+
+
 class KnowledgeBase:
     def __init__(self):
         self.cards: list[Card] = []
@@ -24,6 +51,8 @@ class KnowledgeBase:
 
         # Pre-built search index: list of (searchable_text, type, obj)
         self._search_index: list[tuple[str, str, object]] = []
+        # All unique entity names for fuzzy suggestions
+        self._all_names: list[str] = []
 
         self._load_all()
         self._build_indexes()
@@ -90,6 +119,14 @@ class KnowledgeBase:
             text = f"{event.name} {event.id} {event.description}".lower()
             self._search_index.append((text, "events", event))
 
+        # Collect all unique names for fuzzy suggestions
+        seen_names: set[str] = set()
+        for entry in self._search_index:
+            name = getattr(entry[2], "name", "")
+            if name and name.lower() not in seen_names:
+                seen_names.add(name.lower())
+                self._all_names.append(name)
+
     def _score_match(self, query: str, text: str) -> float:
         """Fast scoring: exact substring > word boundary > token overlap."""
         if query in text:
@@ -111,9 +148,23 @@ class KnowledgeBase:
             return 0.5 * len(overlap) / len(q_tokens)
         return 0.0
 
+    def suggest(self, query: str, max_suggestions: int = 3) -> list[str]:
+        """Find closest entity names to a misspelled query using edit distance."""
+        q = query.lower().strip()
+        if not q:
+            return []
+        max_dist = max(2, len(q) // 3)  # allow more tolerance for longer queries
+        candidates: list[tuple[int, str]] = []
+        for name in self._all_names:
+            dist = _levenshtein(q, name.lower())
+            if dist <= max_dist:
+                candidates.append((dist, name))
+        candidates.sort(key=lambda x: x[0])
+        return [name for _, name in candidates[:max_suggestions]]
+
     def search(self, query: str, limit: int = 20) -> dict:
-        """Search across all entity types. Returns dict of categorized results."""
-        results: dict[str, list] = {"cards": [], "relics": [], "potions": [], "enemies": [], "events": []}
+        """Search across all entity types. Returns dict with results and suggestions."""
+        results: dict[str, list] = {"cards": [], "relics": [], "potions": [], "enemies": [], "events": [], "suggestions": []}
         q = query.lower().strip()
         if not q:
             return results
@@ -125,11 +176,16 @@ class KnowledgeBase:
                 scored.append((score, category, obj))
 
         scored.sort(key=lambda x: -x[0])
-        counts: dict[str, int] = {k: 0 for k in results}
+        counts: dict[str, int] = {k: 0 for k in results if k != "suggestions"}
         for score, category, obj in scored:
             if counts[category] < limit:
                 results[category].append(obj)
                 counts[category] += 1
+
+        # If no results found, suggest similar names
+        total = sum(len(v) for k, v in results.items() if k != "suggestions")
+        if total == 0:
+            results["suggestions"] = self.suggest(q)
 
         return results
 

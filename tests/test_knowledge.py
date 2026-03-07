@@ -1,6 +1,6 @@
 """Tests for the KnowledgeBase engine."""
 import pytest
-from sts2.knowledge import KnowledgeBase
+from sts2.knowledge import KnowledgeBase, _levenshtein
 
 
 @pytest.fixture(scope="module")
@@ -106,12 +106,29 @@ class TestSearch:
 
     def test_search_result_categories(self, kb):
         results = kb.search("test")
-        assert set(results.keys()) == {"cards", "relics", "potions", "enemies", "events"}
+        assert set(results.keys()) == {"cards", "relics", "potions", "enemies", "events", "suggestions"}
 
     def test_search_respects_limit(self, kb):
         results = kb.search("a", limit=3)
-        for v in results.values():
-            assert len(v) <= 3
+        for k, v in results.items():
+            if k != "suggestions":
+                assert len(v) <= 3
+
+    def test_search_suggestions_on_no_results(self, kb):
+        if not kb.cards:
+            pytest.skip("No cards loaded")
+        card = kb.cards[0]
+        # Mangle name to miss exact match but stay close for suggestions
+        mangled = card.name[:-1] + "z"
+        results = kb.search(mangled)
+        total = sum(len(v) for k, v in results.items() if k != "suggestions")
+        if total == 0:
+            assert len(results["suggestions"]) > 0
+
+    def test_search_no_suggestions_when_results_found(self, kb):
+        card = kb.cards[0]
+        results = kb.search(card.name)
+        assert results["suggestions"] == []
 
 
 class TestFilters:
@@ -212,3 +229,48 @@ class TestDeckAnalysis:
             pytest.skip("Not enough characters")
         result = kb.analyze_deck(ids)
         assert result["character"] == "Mixed"
+
+
+class TestLevenshtein:
+    def test_identical(self):
+        assert _levenshtein("bash", "bash") == 0
+
+    def test_one_char_diff(self):
+        assert _levenshtein("bash", "bask") == 1
+
+    def test_insertion(self):
+        assert _levenshtein("bas", "bash") == 1
+
+    def test_deletion(self):
+        assert _levenshtein("bash", "bas") == 1
+
+    def test_empty(self):
+        assert _levenshtein("", "abc") == 3
+        assert _levenshtein("abc", "") == 3
+
+    def test_both_empty(self):
+        assert _levenshtein("", "") == 0
+
+    def test_completely_different(self):
+        assert _levenshtein("abc", "xyz") == 3
+
+
+class TestSuggest:
+    def test_suggest_finds_close_match(self, kb):
+        if not kb.cards:
+            pytest.skip("No cards loaded")
+        card = kb.cards[0]
+        # Mangle the name slightly
+        mangled = card.name[:-1] + "z"
+        suggestions = kb.suggest(mangled)
+        assert len(suggestions) > 0
+
+    def test_suggest_empty_query(self, kb):
+        assert kb.suggest("") == []
+
+    def test_suggest_exact_match_returns(self, kb):
+        if not kb.cards:
+            pytest.skip("No cards loaded")
+        card = kb.cards[0]
+        suggestions = kb.suggest(card.name)
+        assert card.name in suggestions
