@@ -16,7 +16,7 @@
       tb.textContent = next === 'light' ? '\u2600' : '\u263E';
       tb.setAttribute('aria-label', next === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
       var mc = document.querySelector('meta[name="theme-color"]');
-      if (mc) mc.setAttribute('content', next === 'light' ? '#f8f9fa' : '#0d1117');
+      if (mc) mc.setAttribute('content', next === 'light' ? '#f5f0e8' : '#0c0a0e');
     });
     var cur = document.documentElement.getAttribute('data-theme');
     tb.textContent = cur === 'light' ? '\u2600' : '\u263E';

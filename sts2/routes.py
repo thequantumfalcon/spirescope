@@ -14,8 +14,30 @@ from starlette.responses import StreamingResponse
 
 from sts2.config import CHARACTERS
 from sts2.saves import get_current_run
+from sts2.models import CurrentRun
 
 router = APIRouter()
+
+
+async def _get_live_run(player: int = 0) -> CurrentRun:
+    """Get the best available live run data.
+
+    Priority: save file (has HP) > log parser (has deck/floor/gold).
+    Merges log data into save data when both are available.
+    """
+    run = await asyncio.to_thread(get_current_run, player_index=player)
+    if run.active:
+        return run  # Save file has full data including HP
+
+    # No save file — check the log parser for live state
+    a = _app()
+    log_state = getattr(a, '_log_run_state', None) if hasattr(a, '_log_run_state') else None
+    # Access the module-level variable from app
+    from sts2.app import _log_run_state
+    if _log_run_state and _log_run_state.get("active"):
+        return CurrentRun(**_log_run_state)
+
+    return run  # No active run from either source
 
 
 def _app():
@@ -485,7 +507,7 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
     import logging
     _log = logging.getLogger(__name__)
     a = _app()
-    run = await asyncio.to_thread(get_current_run, player_index=player)
+    run = await _get_live_run(player)
     analysis = None
     pick_suggestions = []
     danger_level = None
@@ -644,7 +666,7 @@ async def api_analytics():
 
 @router.get("/api/live")
 async def api_live_run(player: int = Query(0, ge=0, le=3)):
-    run = await asyncio.to_thread(get_current_run, player_index=player)
+    run = await _get_live_run(player)
     return run.model_dump()
 
 
@@ -668,7 +690,7 @@ async def live_stream(player: int = Query(0, ge=0, le=3)):
             last_hash = ""
             idle_since = time.monotonic()
             while True:
-                run = await asyncio.to_thread(get_current_run, player_index=player)
+                run = await _get_live_run(player)
                 data = run.model_dump()
                 data_json = json.dumps(data, sort_keys=True)
                 current_hash = hashlib.sha1(data_json.encode(), usedforsecurity=False).hexdigest()

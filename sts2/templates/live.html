@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block page_id %}live{% endblock %}
 {% block title %}Live Run{% endblock %}
 {% block content %}
 {% if run.active %}
@@ -8,7 +9,7 @@
     <span class="char-{{ run.character|lower }}">{{ run.character }}</span> Run
   </h1>
   <div class="text-sm text-muted">
-    Live updates via SSE &bull; {{ (run.run_time / 60)|int }}m elapsed
+    {{ (run.run_time / 60)|int }}m elapsed &bull; Updates when the game saves (floor transitions, rest sites, etc.)
   </div>
 </div>
 

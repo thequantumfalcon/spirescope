@@ -7,14 +7,14 @@
   {% if update_info.url %}<a href="{{ update_info.url }}" target="_blank" rel="noopener">Download update</a>{% endif %}
 </div>
 {% endif %}
-<div class="hero">
-  <img src="/static/logo.jpg" alt="SpireScope logo" class="hero-logo">
-  <div class="hero-text">
-    <h1 class="hero-title">SpireScope</h1>
-    <p class="hero-sub">Your Slay the Spire 2 companion
+
+<div class="home-hero">
+  <img src="/static/logo.jpg?v={{ logo_hash }}" alt="SpireScope logo" class="hero-logo">
+  <h1 class="hero-title">SpireScope</h1>
+  <p class="hero-sub">Your Slay the Spire 2 companion
     {% if last_updated %}<span class="data-updated" title="{{ last_updated }}">Data updated: {{ last_updated[:10] }}</span>{% endif %}
-    </p>
-  </div>
+  </p>
+  <p class="hero-tagline">Browse &middot; Track &middot; Analyze &middot; Master</p>
 </div>
 
 <div class="stat-grid">
@@ -26,6 +26,18 @@
   <div class="stat-box"><div class="num">{{ (progress.total_playtime / 60)|int }}m</div><div class="label">Playtime</div></div>
   <div class="stat-box"><div class="num">{{ progress.discovered_cards|length }}</div><div class="label">Cards Seen</div></div>
   {% endif %}
+</div>
+
+<h2>Explore</h2>
+<div class="quick-nav">
+  <a href="/live"><span class="nav-icon">&#9889;</span><span class="nav-label">Live Run</span></a>
+  <a href="/cards"><span class="nav-icon">&#9827;</span><span class="nav-label">Cards</span></a>
+  <a href="/relics"><span class="nav-icon">&#9830;</span><span class="nav-label">Relics</span></a>
+  <a href="/potions"><span class="nav-icon">&#9878;</span><span class="nav-label">Potions</span></a>
+  <a href="/enemies"><span class="nav-icon">&#9876;</span><span class="nav-label">Enemies</span></a>
+  <a href="/events"><span class="nav-icon">&#10070;</span><span class="nav-label">Events</span></a>
+  <a href="/deck"><span class="nav-icon">&#9881;</span><span class="nav-label">Deck Analyzer</span></a>
+  <a href="/analytics"><span class="nav-icon">&#9636;</span><span class="nav-label">Analytics</span></a>
 </div>
 
 <h2>Characters</h2>

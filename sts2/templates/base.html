@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="SpireScope — Slay the Spire 2 companion dashboard. Browse cards, relics, enemies, track live runs, and analyze decks.">
-  <meta name="theme-color" content="#0d1117">
+  <meta name="theme-color" content="#0c0a0e">
   <meta property="og:title" content="{% block og_title %}SpireScope{% endblock %}">
   <meta property="og:description" content="Slay the Spire 2 companion — cards, relics, enemies, live run tracking, and deck analysis.">
   <meta property="og:type" content="website">
-  <link rel="icon" type="image/jpeg" href="/static/logo.jpg">
+  <link rel="icon" type="image/jpeg" href="/static/logo.jpg?v={{ logo_hash }}">
   <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
   <title>{% block title %}SpireScope{% endblock %}</title>
   <script src="/static/theme-init.js?v={{ theme_init_hash }}"></script>
@@ -19,7 +19,7 @@
   <nav aria-label="Main navigation">
     {% set p = request.url.path %}
     <a class="logo" href="/">
-      <img src="/static/logo.jpg" alt="SpireScope" width="32" height="32" class="logo-img">
+      <img src="/static/logo.jpg?v={{ logo_hash }}" alt="SpireScope" width="32" height="32" class="logo-img">
       SpireScope
     </a>
     <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
@@ -43,7 +43,7 @@
     </div>
     <button class="theme-toggle" aria-label="Switch to light mode">&#9790;</button>
   </nav>
-  <main id="main" class="container">
+  <main id="main" class="container" data-page="{% block page_id %}home{% endblock %}">
     {% block content %}{% endblock %}
   </main>
   <footer>

@@ -32,6 +32,8 @@ _css_path = STATIC_DIR / "style.css"
 _CSS_HASH = hashlib.md5(_css_path.read_bytes()).hexdigest()[:8] if _css_path.exists() else "0"
 _theme_init_path = STATIC_DIR / "theme-init.js"
 _THEME_INIT_HASH = hashlib.md5(_theme_init_path.read_bytes()).hexdigest()[:8] if _theme_init_path.exists() else "0"
+_logo_path = STATIC_DIR / "logo.jpg"
+_LOGO_HASH = hashlib.md5(_logo_path.read_bytes()).hexdigest()[:8] if _logo_path.exists() else "0"
 
 
 @contextlib.asynccontextmanager
@@ -40,6 +42,7 @@ async def _lifespan(application):
     check_for_update(templates.env.globals.get("version", "0.0.0"))
     await _prewarm_caches()
     _watcher_task = asyncio.create_task(_watch_saves())  # noqa: F841
+    _log_task = asyncio.create_task(_poll_game_log())  # noqa: F841
     yield
 
 
@@ -48,6 +51,7 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR), html=False), name="s
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 templates.env.globals["css_hash"] = _CSS_HASH
 templates.env.globals["theme_init_hash"] = _THEME_INIT_HASH
+templates.env.globals["logo_hash"] = _LOGO_HASH
 try:
     from importlib.metadata import version as _get_version
     templates.env.globals["version"] = _get_version("spirescope")
@@ -220,6 +224,7 @@ async def security_headers(request: Request, call_next):
             "default-src 'self'; "
             "script-src 'self' https://cdn.jsdelivr.net; "
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "font-src 'self'; "
             "img-src 'self' data:; "
             "connect-src 'self'; "
             "frame-ancestors 'none'"
@@ -229,6 +234,7 @@ async def security_headers(request: Request, call_next):
             "default-src 'self'; "
             "script-src 'self'; "
             "style-src 'self' 'unsafe-inline'; "
+            "font-src 'self'; "
             "img-src 'self' data:; "
             "connect-src 'self'; "
             "frame-ancestors 'none'"
@@ -363,3 +369,32 @@ async def _watch_saves():
                 _save_changed_event.clear()
         except Exception:
             log.debug("Save watcher error", exc_info=True)
+
+
+# ---------------------------------------------------------------------------
+# Game log tailer — builds live run state from godot.log
+# ---------------------------------------------------------------------------
+
+_log_tailer = None  # type: ignore[assignment]
+_log_run_state: dict | None = None
+
+
+async def _poll_game_log():
+    """Poll the game log every 3 seconds for new events."""
+    global _log_tailer, _log_run_state
+    from sts2.logparser import LogTailer
+    _log_tailer = LogTailer()
+    while True:
+        try:
+            result = await asyncio.to_thread(_log_tailer.poll)
+            if result is not None:
+                _log_run_state = result
+                # Wake SSE consumers
+                _save_changed_event.set()
+                await asyncio.sleep(0)
+                _save_changed_event.clear()
+            elif _log_tailer.state and not _log_tailer.state.active:
+                _log_run_state = None
+        except Exception:
+            log.debug("Log tailer error", exc_info=True)
+        await asyncio.sleep(3)

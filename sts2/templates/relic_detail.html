@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block page_id %}relics{% endblock %}
 {% block title %}{{ relic.name if relic else 'Relic Not Found' }}{% endblock %}
 {% block og_title %}{{ relic.name if relic else 'Relic Not Found' }} — SpireScope{% endblock %}
 {% block content %}

@@ -39,11 +39,36 @@ def _get_player_stats(player_stats: list[dict], player: dict) -> dict:
 
 def get_current_run(player_index: int = 0) -> CurrentRun:
     """Read the current active run, if any. Use player_index for co-op."""
+    # Prefer live save files; fall back to backups (picking most recent)
+    data = None
     for fname in ("current_run.save", "current_run_mp.save"):
         data = _read_json(SAVE_DIR / fname)
         if data:
             break
-    else:
+
+    if not data:
+        # No live file — check backups, pick the most recently saved.
+        # Only use a backup if the run hasn't already finished (i.e. its
+        # start_time doesn't appear as a history file).
+        history_dir = SAVE_DIR / "history"
+        history_starts: set[str] = set()
+        if history_dir.exists():
+            history_starts = {p.stem for p in history_dir.iterdir() if p.suffix == ".run"}
+        best, best_time = None, 0
+        for fname in ("current_run.save.backup", "current_run_mp.save.backup"):
+            candidate = _read_json(SAVE_DIR / fname)
+            if not candidate:
+                continue
+            start = str(candidate.get("start_time", ""))
+            if start in history_starts:
+                continue  # This run already finished
+            if candidate.get("save_time", 0) > best_time:
+                best = candidate
+                best_time = candidate.get("save_time", 0)
+        if best:
+            data = best
+
+    if not data:
         return CurrentRun(active=False)
 
     players = data.get("players", [])

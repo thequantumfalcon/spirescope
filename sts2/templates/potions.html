@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block page_id %}potions{% endblock %}
 {% block title %}Potions{% endblock %}
 {% block content %}
 <h1>Potions ({{ potions|length }}{% if total_potions and potions|length != total_potions %} of {{ total_potions }}{% endif %})</h1>

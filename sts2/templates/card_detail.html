@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block page_id %}cards{% endblock %}
 {% block title %}{{ card.name if card else 'Card Not Found' }}{% endblock %}
 {% block og_title %}{{ card.name if card else 'Card Not Found' }} — SpireScope{% endblock %}
 {% block content %}

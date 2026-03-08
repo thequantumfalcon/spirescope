@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block page_id %}runs{% endblock %}
 {% block title %}Run {{ run.id if run else 'Not Found' }}{% endblock %}
 {% block content %}
 {% if run %}

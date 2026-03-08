@@ -567,8 +567,8 @@ class TestTheme:
         css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
         assert '[data-theme="light"]' in css
         # Check critical overrides
-        assert "--regent: #8b6914" in css  # WCAG-safe regent color
-        assert "--silent: #178344" in css   # WCAG-safe silent color
+        assert "--regent: #7f6012" in css  # WCAG-safe regent color
+        assert "--silent: #15753c" in css   # WCAG-safe silent color
         assert "--ironclad: #c0392b" in css # WCAG-safe ironclad color
 
     def test_css_card_bg_not_circular(self):
@@ -877,17 +877,17 @@ def _contrast_ratio(fg: str, bg: str) -> float:
 class TestWCAGContrast:
     """Verify light theme color pairs meet WCAG AA (4.5:1 for normal text)."""
 
-    LIGHT_BG = "#f8f9fa"
+    LIGHT_BG = "#f5f0e8"
     # All text/accent colors from [data-theme="light"] CSS block
     WCAG_AA_PAIRS = [
-        ("--text", "#1a1a2e"),
-        ("--text2", "#495057"),
-        ("--cyan", "#0e7490"),
+        ("--text", "#2a1f14"),
+        ("--text2", "#6b5d4f"),
+        ("--gold", "#7a5c1a"),
         ("--ironclad", "#c0392b"),
-        ("--silent", "#178344"),
-        ("--regent", "#8b6914"),
-        ("--red", "#dc2626"),
-        ("--green", "#15803d"),
+        ("--silent", "#15753c"),
+        ("--regent", "#7f6012"),
+        ("--red", "#b91c1c"),
+        ("--green", "#14753a"),
     ]
 
     def test_all_text_colors_pass_wcag_aa(self):

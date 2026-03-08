@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block page_id %}events{% endblock %}
 {% block title %}Events{% endblock %}
 {% block content %}
 <h1>Events ({{ events|length }}{% if total_events and events|length != total_events %} of {{ total_events }}{% endif %})</h1>

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block page_id %}search{% endblock %}
 {% block title %}Search: {{ query }}{% endblock %}
 {% block content %}
 <h1>Search: "{{ query }}" <span class="text-muted text-base">({{ total }} results)</span></h1>

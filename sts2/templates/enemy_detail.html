@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block page_id %}enemies{% endblock %}
 {% block title %}{{ enemy.name if enemy else 'Enemy Not Found' }}{% endblock %}
 {% block og_title %}{{ enemy.name if enemy else 'Enemy Not Found' }} — SpireScope{% endblock %}
 {% block content %}
