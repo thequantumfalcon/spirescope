@@ -34,6 +34,8 @@ _theme_init_path = STATIC_DIR / "theme-init.js"
 _THEME_INIT_HASH = hashlib.md5(_theme_init_path.read_bytes()).hexdigest()[:8] if _theme_init_path.exists() else "0"
 _logo_path = STATIC_DIR / "logo.jpg"
 _LOGO_HASH = hashlib.md5(_logo_path.read_bytes()).hexdigest()[:8] if _logo_path.exists() else "0"
+_hero_bg_path = STATIC_DIR / "hero-bg.jpg"
+_HERO_BG_HASH = hashlib.md5(_hero_bg_path.read_bytes()).hexdigest()[:8] if _hero_bg_path.exists() else "0"
 
 
 @contextlib.asynccontextmanager
@@ -52,6 +54,7 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 templates.env.globals["css_hash"] = _CSS_HASH
 templates.env.globals["theme_init_hash"] = _THEME_INIT_HASH
 templates.env.globals["logo_hash"] = _LOGO_HASH
+templates.env.globals["hero_bg_hash"] = _HERO_BG_HASH
 try:
     from importlib.metadata import version as _get_version
     templates.env.globals["version"] = _get_version("spirescope")

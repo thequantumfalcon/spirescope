@@ -4,7 +4,7 @@
 {% block og_title %}Community Meta — SpireScope{% endblock %}
 {% block content %}
 <h1>Community Meta</h1>
-<p class="text-muted mb-lg">Strategy posts and tier lists from the Reddit community (r/slaythespire, r/slaythespire2). Run <code>python -m sts2 community</code> to refresh.</p>
+<p class="text-muted mb-lg">Tier lists, strategy discussions, and community wisdom gathered from Reddit and Steam.</p>
 
 {% if meta_posts %}
 <h2>Top Strategy Posts</h2>
@@ -16,6 +16,7 @@
       <a href="{{ post.url }}" target="_blank" rel="noopener" class="font-bold text-base">{{ post.title }}</a>
       <p class="text-sm text-muted mt-xs">
         <span class="tag {% if post.type == 'tier_list' %}tag-power{% else %}tag-skill{% endif %}">{{ post.type|replace('_', ' ')|title }}</span>
+        {% if post.source is defined %}<span class="tag tag-{{ 'reddit' if post.source == 'reddit' else 'steam' }}">{{ post.source|replace('_', ' ')|title }}</span>{% endif %}
         &bull; {{ post.comments }} comments
       </p>
     </div>
@@ -31,7 +32,7 @@
 
 {% if tier_cards %}
 <h2>Community Card Tiers</h2>
-<p class="text-sm text-muted mb-sm">Consensus tiers from Reddit tier list posts</p>
+<p class="text-sm text-muted mb-sm">Consensus tiers from Reddit and Steam community</p>
 {% for tier_label in ["S", "A", "B", "C", "D", "F"] %}
 {% set tier_group = tier_cards.get(tier_label, []) %}
 {% if tier_group %}
@@ -88,7 +89,7 @@
 
 {% if not meta_posts and not tier_cards and (not aggregate or not aggregate.run_count or aggregate.run_count < 10) %}
 <div class="text-muted mt-lg mb-lg">
-  <p>No community data yet. Run <code>python -m sts2 community</code> to scrape Reddit for tier lists and strategy posts.</p>
+  <p>Nothing here yet — run <code>python -m sts2 community</code> to pull in the latest tier lists and strategy posts from Reddit and Steam.</p>
 </div>
 {% endif %}
 {% endblock %}

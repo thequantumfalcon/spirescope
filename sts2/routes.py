@@ -30,9 +30,6 @@ async def _get_live_run(player: int = 0) -> CurrentRun:
         return run  # Save file has full data including HP
 
     # No save file — check the log parser for live state
-    a = _app()
-    log_state = getattr(a, '_log_run_state', None) if hasattr(a, '_log_run_state') else None
-    # Access the module-level variable from app
     from sts2.app import _log_run_state
     if _log_run_state and _log_run_state.get("active"):
         return CurrentRun(**_log_run_state)
