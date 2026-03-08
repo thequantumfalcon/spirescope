@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Guide{% endblock %}
 {% block content %}
-<h1>Spirescope Guide</h1>
+<h1>SpireScope Guide</h1>
 <p class="subtitle">Everything you need to get started with your STS2 companion dashboard.</p>
 
 <div id="toc" class="card mb-lg">
@@ -23,7 +23,7 @@
 
 <h2 id="getting-started">Getting Started</h2>
 <div class="card mb-md">
-  <p>Install Spirescope and start the dashboard:</p>
+  <p>Install SpireScope and start the dashboard:</p>
   <pre><code>pip install -e .
 spirescope</code></pre>
   <p class="text-sm text-muted mt-sm">Or run directly with <code>python -m sts2</code>. Your browser will open automatically at <code>http://127.0.0.1:8000</code>.</p>
@@ -31,7 +31,7 @@ spirescope</code></pre>
 
 <h2 id="save-files">Save File Setup</h2>
 <div class="card mb-md">
-  <p>Spirescope auto-detects your STS2 save directory. If it can't find it, set the <code>STS2_SAVE_DIR</code> environment variable:</p>
+  <p>SpireScope auto-detects your STS2 save directory. If it can't find it, set the <code>STS2_SAVE_DIR</code> environment variable:</p>
   <pre><code># Windows
 set STS2_SAVE_DIR=%APPDATA%\SlayTheSpire2\steam\YOUR_ID\profile1\saves
 
@@ -42,7 +42,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <h2 id="updating-data">Updating Data</h2>
 <div class="card mb-md">
-  <p>Spirescope ships with baked-in game data. To fetch the latest cards, relics, and potions from the wiki:</p>
+  <p>SpireScope ships with baked-in game data. To fetch the latest cards, relics, and potions from the wiki:</p>
   <pre><code>spirescope update</code></pre>
   <p class="mt-sm">If you don't have internet access or just want to discover new entities from your save files:</p>
   <pre><code>spirescope update --save-only</code></pre>
@@ -103,7 +103,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <h2 id="mods">Mod Support</h2>
 <div class="card mb-md">
-  <p>Spirescope can load custom mod data (cards, relics, enemies) from JSON files. Place <code>.json</code> files in the mods directory:</p>
+  <p>SpireScope can load custom mod data (cards, relics, enemies) from JSON files. Place <code>.json</code> files in the mods directory:</p>
   <pre><code># Exe distribution: mods/ folder next to spirescope.exe
 # Development: sts2/data/mods/</code></pre>
   <p class="mt-sm">You can also set <code>STS2_MODS_DIR</code> to a custom path. Each JSON file should follow this format:</p>

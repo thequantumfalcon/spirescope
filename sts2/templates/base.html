@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Spirescope — Slay the Spire 2 companion dashboard. Browse cards, relics, enemies, track live runs, and analyze decks.">
+  <meta name="description" content="SpireScope — Slay the Spire 2 companion dashboard. Browse cards, relics, enemies, track live runs, and analyze decks.">
   <meta name="theme-color" content="#0d1117">
-  <meta property="og:title" content="{% block og_title %}Spirescope{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}SpireScope{% endblock %}">
   <meta property="og:description" content="Slay the Spire 2 companion — cards, relics, enemies, live run tracking, and deck analysis.">
   <meta property="og:type" content="website">
   <link rel="icon" type="image/jpeg" href="/static/logo.jpg">
   <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-  <title>{% block title %}Spirescope{% endblock %}</title>
+  <title>{% block title %}SpireScope{% endblock %}</title>
   <script src="/static/theme-init.js?v={{ theme_init_hash }}"></script>
   <link rel="stylesheet" href="/static/style.css?v={{ css_hash }}">
 </head>
@@ -19,18 +19,18 @@
   <nav aria-label="Main navigation">
     {% set p = request.url.path %}
     <a class="logo" href="/">
-      <img src="/static/logo.jpg" alt="Spirescope" width="32" height="32" class="logo-img">
-      Spirescope
+      <img src="/static/logo.jpg" alt="SpireScope" width="32" height="32" class="logo-img">
+      SpireScope
     </a>
     <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
     <div class="nav-links">
+      <a href="/live" class="live-link" {% if p == '/live' %}aria-current="page"{% endif %}>Live Run</a>
       <a href="/cards" {% if p.startswith('/cards') %}aria-current="page"{% endif %}>Cards</a>
       <a href="/relics" {% if p.startswith('/relics') %}aria-current="page"{% endif %}>Relics</a>
       <a href="/potions" {% if p == '/potions' %}aria-current="page"{% endif %}>Potions</a>
       <a href="/enemies" {% if p.startswith('/enemies') %}aria-current="page"{% endif %}>Enemies</a>
       <a href="/events" {% if p == '/events' %}aria-current="page"{% endif %}>Events</a>
       <a href="/deck" {% if p.startswith('/deck') %}aria-current="page"{% endif %}>Deck Analyzer</a>
-      <a href="/live" class="live-link" {% if p == '/live' %}aria-current="page"{% endif %}>Live Run</a>
       <a href="/runs" {% if p.startswith('/runs') %}aria-current="page"{% endif %}>Run History</a>
       <a href="/analytics" {% if p == '/analytics' %}aria-current="page"{% endif %}>Analytics</a>
       <a href="/collections" {% if p == '/collections' %}aria-current="page"{% endif %}>Collections</a>
@@ -47,7 +47,7 @@
     {% block content %}{% endblock %}
   </main>
   <footer>
-    <span>Spirescope v{{ version }}</span> &middot;
+    <span>SpireScope v{{ version }}</span> &middot;
     <a href="https://github.com/thequantumfalcon/Spirescope">GitHub</a>
   </footer>
   <script src="/static/nav.js"></script>

@@ -7,7 +7,7 @@ from sts2.app import generate_csrf_token, _ADMIN_TOKEN, _rate_limit_store
 async def test_index(client):
     resp = await client.get("/")
     assert resp.status_code == 200
-    assert "Spirescope" in resp.text
+    assert "SpireScope" in resp.text
     # Should render stat boxes with counts
     assert "Cards" in resp.text
     assert "Relics" in resp.text
@@ -377,7 +377,7 @@ async def test_footer_present(client):
     resp = await client.get("/")
     assert resp.status_code == 200
     assert '<footer>' in resp.text
-    assert 'Spirescope' in resp.text
+    assert 'SpireScope' in resp.text
     assert 'GitHub' in resp.text
 
 
@@ -665,7 +665,7 @@ async def test_card_detail_og_title(client):
     resp = await client.get(f"/cards/{card.id}")
     if resp.status_code == 200:
         assert "og:title" in resp.text
-        assert "Spirescope" in resp.text
+        assert "SpireScope" in resp.text
 
 
 # --- Analytics tests ---
