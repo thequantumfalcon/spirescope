@@ -1103,3 +1103,99 @@ async def test_knowledge_base_data_status():
     assert "save_connected" in status
     assert "last_updated" in status
     assert isinstance(status["cards"], int)
+
+
+# --- Collections page ---
+
+async def test_collections_page(client):
+    """Collections page should render without save data."""
+    resp = await client.get("/collections")
+    assert resp.status_code == 200
+    assert "Collections" in resp.text
+
+
+async def test_collections_no_progress(client):
+    """Collections page without progress should show empty state."""
+    from unittest.mock import AsyncMock, patch
+    with patch("sts2.app._get_progress", new=AsyncMock(return_value=None)):
+        resp = await client.get("/collections")
+    assert resp.status_code == 200
+    assert "No save data found" in resp.text
+
+
+async def test_collections_with_progress(client):
+    """Collections page with progress should show discovery counts."""
+    from unittest.mock import AsyncMock, patch
+    from sts2.models import PlayerProgress
+    from sts2.app import kb as _kb
+
+    # Use real card IDs from the knowledge base
+    card_ids = [c.id for c in _kb.cards[:5]]
+    relic_ids = [r.id for r in _kb.relics[:3]]
+    progress = PlayerProgress(
+        discovered_cards=card_ids,
+        discovered_relics=relic_ids,
+        discovered_potions=[],
+        discovered_events=[],
+        character_stats={"Ironclad": {"wins": 2, "losses": 1, "max_ascension": 5, "best_streak": 2}},
+    )
+    with patch("sts2.app._get_progress", new=AsyncMock(return_value=progress)):
+        resp = await client.get("/collections")
+    assert resp.status_code == 200
+    assert "Overall" in resp.text
+    assert "Cards" in resp.text
+    assert "Relics" in resp.text
+    assert "undiscovered" in resp.text
+    assert "Character Progress" in resp.text
+
+
+async def test_collections_nav_link(client):
+    """Nav should include Collections link."""
+    resp = await client.get("/")
+    assert resp.status_code == 200
+    assert 'href="/collections"' in resp.text
+
+
+async def test_collections_in_sitemap(client):
+    """Sitemap should include the collections page."""
+    resp = await client.get("/sitemap.xml")
+    assert resp.status_code == 200
+    assert "/collections" in resp.text
+
+
+# --- Ascension filtering ---
+
+async def test_runs_filter_by_ascension(client):
+    """Runs page should accept ascension filter."""
+    resp = await client.get("/runs?ascension=0")
+    assert resp.status_code == 200
+    assert "Showing" in resp.text
+
+
+async def test_runs_filter_combined(client):
+    """Runs page should combine character, result, and ascension filters."""
+    resp = await client.get("/runs?character=Ironclad&result=win&ascension=0")
+    assert resp.status_code == 200
+    assert "Showing" in resp.text
+
+
+async def test_runs_ascension_filter_with_mock_data(client):
+    """Ascension filter should correctly filter runs by level."""
+    from unittest.mock import AsyncMock, patch
+    from sts2.models import RunHistory
+
+    mock_runs = [
+        RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], ascension=5),
+        RunHistory(id="r2", character="Ironclad", win=False, deck=["CARD.BASH"], ascension=0),
+        RunHistory(id="r3", character="Silent", win=True, deck=["CARD.NEUTRALIZE"], ascension=5),
+    ]
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=mock_runs)):
+        resp = await client.get("/runs?ascension=5")
+    assert resp.status_code == 200
+    assert "Showing 2 run" in resp.text
+
+
+async def test_runs_ascension_invalid(client):
+    """Ascension filter with invalid value should return 422."""
+    resp = await client.get("/runs?ascension=99")
+    assert resp.status_code == 422

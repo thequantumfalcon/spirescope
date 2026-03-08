@@ -391,6 +391,13 @@ tr:hover { background: rgba(0,229,255,0.03); }
 .bar--loss { background: var(--red); box-shadow: 0 0 6px rgba(248,81,73,0.2); }
 .dual-bar { display: flex; gap: 2px; align-items: flex-end; height: 100%; }
 
+/* ── Collection progress ── */
+.collection-bar { position: relative; height: 1.5rem; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.collection-bar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--neon-purple)); border-radius: var(--radius) 0 0 var(--radius); transition: width 0.5s ease; }
+.collection-bar-label { position: absolute; top: 50%; right: 0.75rem; transform: translateY(-50%); font-size: 0.75rem; font-weight: 600; color: var(--text); }
+.collection-discovered { opacity: 0.7; }
+.collection-undiscovered { opacity: 1; border-style: dashed !important; }
+
 /* ── Error page ── */
 /* Update banner */
 .update-banner { background: linear-gradient(135deg, var(--accent2), var(--neon-purple)); color: var(--text); padding: 0.5rem 1rem; border-radius: var(--radius); margin-bottom: 1rem; text-align: center; font-size: 0.9rem; }

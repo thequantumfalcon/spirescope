@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Collections{% endblock %}
+{% block og_title %}Collections — Spirescope{% endblock %}
+{% block content %}
+<h1>Collections</h1>
+<p class="text-muted mb-lg">Track your discovery progress across cards, relics, potions, and events.</p>
+
+{% if not progress %}
+<p class="text-muted mt-lg mb-lg">No save data found. Play some Slay the Spire 2 and your discovery progress will appear here.</p>
+{% else %}
+
+<div class="stat-grid mb-xl">
+  <div class="stat-box">
+    <div class="num">{{ discovered_cards }}/{{ total_cards }}</div>
+    <div class="label">Cards</div>
+  </div>
+  <div class="stat-box">
+    <div class="num">{{ discovered_relics }}/{{ total_relics }}</div>
+    <div class="label">Relics</div>
+  </div>
+  <div class="stat-box">
+    <div class="num">{{ discovered_potions }}/{{ total_potions }}</div>
+    <div class="label">Potions</div>
+  </div>
+  <div class="stat-box">
+    <div class="num">{{ discovered_events }}/{{ total_events }}</div>
+    <div class="label">Events</div>
+  </div>
+  <div class="stat-box">
+    <div class="num">{{ overall_pct }}%</div>
+    <div class="label">Overall</div>
+  </div>
+</div>
+
+<h2>Cards — {{ discovered_cards }}/{{ total_cards }}</h2>
+{% set card_pct = ((discovered_cards / total_cards) * 100)|round(0)|int if total_cards > 0 else 0 %}
+<div class="collection-bar mb-sm">
+  <div class="collection-bar-fill" style="width:{{ card_pct }}%"></div>
+  <span class="collection-bar-label">{{ card_pct }}%</span>
+</div>
+{% if undiscovered_cards %}
+<details class="mb-md">
+  <summary class="text-sm text-muted">{{ undiscovered_cards|length }} undiscovered</summary>
+  <div class="flex flex-wrap gap-xs mt-sm">
+  {% for card in undiscovered_cards %}
+    <a href="/cards/{{ card.id }}" class="tag tag-keyword card-link collection-undiscovered">{{ card.name }}</a>
+  {% endfor %}
+  </div>
+</details>
+{% endif %}
+{% if discovered_card_objs %}
+<div class="flex flex-wrap gap-xs mb-xl">
+{% for card in discovered_card_objs %}
+  <a href="/cards/{{ card.id }}" class="tag tag-keyword card-link collection-discovered">{{ card.name }}</a>
+{% endfor %}
+</div>
+{% endif %}
+
+<h2>Relics — {{ discovered_relics }}/{{ total_relics }}</h2>
+{% set relic_pct = ((discovered_relics / total_relics) * 100)|round(0)|int if total_relics > 0 else 0 %}
+<div class="collection-bar mb-sm">
+  <div class="collection-bar-fill" style="width:{{ relic_pct }}%"></div>
+  <span class="collection-bar-label">{{ relic_pct }}%</span>
+</div>
+{% if undiscovered_relic_objs %}
+<details class="mb-md">
+  <summary class="text-sm text-muted">{{ undiscovered_relic_objs|length }} undiscovered</summary>
+  <div class="flex flex-wrap gap-xs mt-sm">
+  {% for relic in undiscovered_relic_objs %}
+    <a href="/relics/{{ relic.id }}" class="tag tag-keyword card-link collection-undiscovered">{{ relic.name }}</a>
+  {% endfor %}
+  </div>
+</details>
+{% endif %}
+{% if discovered_relic_objs %}
+<div class="flex flex-wrap gap-xs mb-xl">
+{% for relic in discovered_relic_objs %}
+  <a href="/relics/{{ relic.id }}" class="tag tag-keyword card-link collection-discovered">{{ relic.name }}</a>
+{% endfor %}
+</div>
+{% endif %}
+
+<h2>Potions — {{ discovered_potions }}/{{ total_potions }}</h2>
+{% set potion_pct = ((discovered_potions / total_potions) * 100)|round(0)|int if total_potions > 0 else 0 %}
+<div class="collection-bar mb-sm">
+  <div class="collection-bar-fill" style="width:{{ potion_pct }}%"></div>
+  <span class="collection-bar-label">{{ potion_pct }}%</span>
+</div>
+{% if undiscovered_potion_objs %}
+<details class="mb-md">
+  <summary class="text-sm text-muted">{{ undiscovered_potion_objs|length }} undiscovered</summary>
+  <div class="flex flex-wrap gap-xs mt-sm">
+  {% for potion in undiscovered_potion_objs %}
+    <span class="tag tag-keyword collection-undiscovered">{{ potion.name }}</span>
+  {% endfor %}
+  </div>
+</details>
+{% endif %}
+{% if discovered_potion_objs %}
+<div class="flex flex-wrap gap-xs mb-xl">
+{% for potion in discovered_potion_objs %}
+  <span class="tag tag-keyword collection-discovered">{{ potion.name }}</span>
+{% endfor %}
+</div>
+{% endif %}
+
+<h2>Events — {{ discovered_events }}/{{ total_events }}</h2>
+{% set evt_pct = ((discovered_events / total_events) * 100)|round(0)|int if total_events > 0 else 0 %}
+<div class="collection-bar mb-sm">
+  <div class="collection-bar-fill" style="width:{{ evt_pct }}%"></div>
+  <span class="collection-bar-label">{{ evt_pct }}%</span>
+</div>
+{% if undiscovered_event_objs %}
+<details class="mb-md">
+  <summary class="text-sm text-muted">{{ undiscovered_event_objs|length }} undiscovered</summary>
+  <div class="flex flex-wrap gap-xs mt-sm">
+  {% for evt in undiscovered_event_objs %}
+    <span class="tag tag-keyword collection-undiscovered">{{ evt.name }}</span>
+  {% endfor %}
+  </div>
+</details>
+{% endif %}
+{% if discovered_event_objs %}
+<div class="flex flex-wrap gap-xs mb-xl">
+{% for evt in discovered_event_objs %}
+  <span class="tag tag-keyword collection-discovered">{{ evt.name }}</span>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if progress.character_stats %}
+<h2>Character Progress</h2>
+<table>
+<tr><th>Character</th><th>Wins</th><th>Losses</th><th>Max Ascension</th><th>Best Streak</th></tr>
+{% for char in characters %}
+{% set cs = progress.character_stats.get(char, {}) %}
+{% if cs %}
+<tr>
+  <td class="char-{{ char|lower }}"><a href="/strategy/{{ char }}">{{ char }}</a></td>
+  <td class="win">{{ cs.get("wins", 0) }}</td>
+  <td class="loss">{{ cs.get("losses", 0) }}</td>
+  <td>{{ cs.get("max_ascension", 0) }}</td>
+  <td>{{ cs.get("best_streak", 0) }}</td>
+</tr>
+{% endif %}
+{% endfor %}
+</table>
+{% endif %}
+
+{% endif %}
+{% endblock %}

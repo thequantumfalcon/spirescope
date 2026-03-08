@@ -50,7 +50,7 @@ async def sitemap_xml(request: Request):
     a = _app()
     base = str(request.base_url).rstrip("/")
     urls = ["/", "/cards", "/relics", "/potions", "/enemies", "/events",
-            "/deck", "/live", "/runs", "/analytics", "/community", "/guide"]
+            "/deck", "/live", "/runs", "/analytics", "/collections", "/community", "/guide"]
     for card in a.kb.cards:
         urls.append(f"/cards/{card.id}")
     for relic in a.kb.relics:
@@ -290,7 +290,9 @@ async def strategy(request: Request, character: str = Path(max_length=50)):
 
 
 @router.get("/runs", response_class=HTMLResponse)
-async def runs(request: Request, character: str = Query(None, max_length=50), result: str = Query(None, max_length=10)):
+async def runs(request: Request, character: str = Query(None, max_length=50),
+               result: str = Query(None, max_length=10),
+               ascension: int = Query(None, ge=0, le=20)):
     a = _app()
     run_list = await a._get_runs()
     filtered = run_list
@@ -300,11 +302,16 @@ async def runs(request: Request, character: str = Query(None, max_length=50), re
         filtered = [r for r in filtered if r.win]
     elif result == "loss":
         filtered = [r for r in filtered if not r.win]
+    if ascension is not None:
+        filtered = [r for r in filtered if r.ascension == ascension]
     total = len(run_list)
     wins = sum(1 for r in run_list if r.win)
+    # Collect ascension levels present in runs for the filter dropdown
+    ascension_levels = sorted({r.ascension for r in run_list})
     return a.templates.TemplateResponse(request, "runs.html", {
         "runs": filtered, "kb": a.kb, "characters": CHARACTERS,
         "selected_character": character, "selected_result": result,
+        "selected_ascension": ascension, "ascension_levels": ascension_levels,
         "total_runs": total, "total_wins": wins, "csrf_token": a.generate_csrf_token(),
     })
 
@@ -402,6 +409,68 @@ async def community(request: Request):
     return a.templates.TemplateResponse(request, "community.html", {
         "meta_posts": meta_posts, "tier_cards": tier_cards,
         "aggregate": aggregate, "kb": a.kb,
+    })
+
+
+@router.get("/collections", response_class=HTMLResponse)
+async def collections(request: Request):
+    a = _app()
+    progress = await a._get_progress()
+
+    # Totals from knowledge base (exclude Status/Curse cards)
+    all_cards = [c for c in a.kb.cards if c.character not in ("Status", "Curse")]
+    total_cards = len(all_cards)
+    total_relics = len(a.kb.relics)
+    total_potions = len(a.kb.potions)
+    total_events = len(a.kb.events)
+
+    if progress:
+        card_ids = set(progress.discovered_cards)
+        relic_ids = set(progress.discovered_relics)
+        potion_ids = set(progress.discovered_potions)
+        event_ids = set(progress.discovered_events)
+
+        disc_cards = len(card_ids & {c.id for c in all_cards})
+        disc_relics = len(relic_ids & {r.id for r in a.kb.relics})
+        disc_potions = len(potion_ids & {p.id for p in a.kb.potions})
+        disc_events = len(event_ids & {e.id for e in a.kb.events})
+
+        total_all = total_cards + total_relics + total_potions + total_events
+        disc_all = disc_cards + disc_relics + disc_potions + disc_events
+        overall_pct = round((disc_all / total_all) * 100) if total_all > 0 else 0
+
+        # Build discovered/undiscovered object lists
+        discovered_card_objs = [c for c in all_cards if c.id in card_ids]
+        undiscovered_cards = [c for c in all_cards if c.id not in card_ids]
+        discovered_relic_objs = [r for r in a.kb.relics if r.id in relic_ids]
+        undiscovered_relic_objs = [r for r in a.kb.relics if r.id not in relic_ids]
+        discovered_potion_objs = [p for p in a.kb.potions if p.id in potion_ids]
+        undiscovered_potion_objs = [p for p in a.kb.potions if p.id not in potion_ids]
+        discovered_event_objs = [e for e in a.kb.events if e.id in event_ids]
+        undiscovered_event_objs = [e for e in a.kb.events if e.id not in event_ids]
+    else:
+        card_ids = relic_ids = potion_ids = event_ids = set()
+        disc_cards = disc_relics = disc_potions = disc_events = 0
+        overall_pct = 0
+        discovered_card_objs = undiscovered_cards = []
+        discovered_relic_objs = undiscovered_relic_objs = []
+        discovered_potion_objs = undiscovered_potion_objs = []
+        discovered_event_objs = undiscovered_event_objs = []
+
+    return a.templates.TemplateResponse(request, "collections.html", {
+        "progress": progress, "characters": CHARACTERS,
+        "discovered_cards": disc_cards, "total_cards": total_cards,
+        "discovered_relics": disc_relics, "total_relics": total_relics,
+        "discovered_potions": disc_potions, "total_potions": total_potions,
+        "discovered_events": disc_events, "total_events": total_events,
+        "overall_pct": overall_pct,
+        "all_cards": all_cards, "all_events": a.kb.events,
+        "card_ids": card_ids, "relic_ids": relic_ids,
+        "potion_ids": potion_ids, "event_ids": event_ids,
+        "discovered_card_objs": discovered_card_objs, "undiscovered_cards": undiscovered_cards,
+        "discovered_relic_objs": discovered_relic_objs, "undiscovered_relic_objs": undiscovered_relic_objs,
+        "discovered_potion_objs": discovered_potion_objs, "undiscovered_potion_objs": undiscovered_potion_objs,
+        "discovered_event_objs": discovered_event_objs, "undiscovered_event_objs": undiscovered_event_objs,
     })
 
 
