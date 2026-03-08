@@ -273,6 +273,7 @@ async def global_error_handler(request: Request, exc: Exception):
 # ---------------------------------------------------------------------------
 
 _save_watcher_last_mtime: float = 0
+_save_changed_event = asyncio.Event()
 
 
 async def _prewarm_caches():
@@ -289,40 +290,76 @@ async def _prewarm_caches():
         log.debug("Cache pre-warm failed", exc_info=True)
 
 
+async def _refresh_data():
+    """Reload KnowledgeBase, progress, and run caches from disk."""
+    global kb, _progress_cache, _progress_cache_time
+    global _run_cache, _run_cache_by_id, _run_cache_time
+    global _analytics_cache, _analytics_cache_time
+    log.info("Save files changed, refreshing data")
+    _analytics_cache = {}
+    _analytics_cache_time = 0
+    new_kb = await asyncio.to_thread(KnowledgeBase)
+    new_progress = await asyncio.to_thread(get_progress)
+    new_runs = await asyncio.to_thread(get_run_history)
+    now = time.monotonic()
+    kb = new_kb
+    _progress_cache = new_progress
+    _progress_cache_time = now
+    _run_cache = new_runs
+    _run_cache_by_id = {r.id: r for r in new_runs}
+    _run_cache_time = now
+
+
+def _check_mtime() -> float:
+    """Return the latest modification time across save files."""
+    mtime = 0.0
+    progress_path = SAVE_DIR / "progress.save"
+    if progress_path.exists():
+        mtime = max(mtime, progress_path.stat().st_mtime)
+    history_dir = SAVE_DIR / "history"
+    if history_dir.exists():
+        mtime = max(mtime, history_dir.stat().st_mtime)
+        for run_file in history_dir.glob("*.run"):
+            try:
+                mtime = max(mtime, run_file.stat().st_mtime)
+            except OSError:
+                pass
+    return mtime
+
+
 async def _watch_saves():
-    global kb, _save_watcher_last_mtime, _progress_cache, _progress_cache_time
-    global _run_cache, _run_cache_by_id, _run_cache_time, _analytics_cache, _analytics_cache_time
+    global _save_watcher_last_mtime
+
+    # Try watchdog for instant file-change detection
+    from sts2.watcher import start_observer
+    loop = asyncio.get_running_loop()
+    observer = start_observer(SAVE_DIR, loop, _save_changed_event) if SAVE_DIR.exists() else None
+    use_polling = observer is None
+
     while True:
-        await asyncio.sleep(10)
         try:
-            if not SAVE_DIR.exists():
-                continue
-            mtime = 0.0
-            progress_path = SAVE_DIR / "progress.save"
-            if progress_path.exists():
-                mtime = max(mtime, progress_path.stat().st_mtime)
-            history_dir = SAVE_DIR / "history"
-            if history_dir.exists():
-                mtime = max(mtime, history_dir.stat().st_mtime)
-                for run_file in history_dir.glob("*.run"):
-                    try:
-                        mtime = max(mtime, run_file.stat().st_mtime)
-                    except OSError:
-                        pass
-            if mtime > _save_watcher_last_mtime and _save_watcher_last_mtime > 0:
-                log.info("Save files changed, refreshing data")
-                _analytics_cache = {}
-                _analytics_cache_time = 0
-                new_kb = await asyncio.to_thread(KnowledgeBase)
-                new_progress = await asyncio.to_thread(get_progress)
-                new_runs = await asyncio.to_thread(get_run_history)
-                now = time.monotonic()
-                kb = new_kb
-                _progress_cache = new_progress
-                _progress_cache_time = now
-                _run_cache = new_runs
-                _run_cache_by_id = {r.id: r for r in new_runs}
-                _run_cache_time = now
-            _save_watcher_last_mtime = mtime
+            if use_polling:
+                await asyncio.sleep(10)
+                if not SAVE_DIR.exists():
+                    continue
+                mtime = _check_mtime()
+                changed = mtime > _save_watcher_last_mtime and _save_watcher_last_mtime > 0
+                _save_watcher_last_mtime = mtime
+            else:
+                # Wait for watchdog signal or poll every 30s as a safety net
+                try:
+                    await asyncio.wait_for(_save_changed_event.wait(), timeout=30.0)
+                    _save_changed_event.clear()
+                    changed = True
+                except asyncio.TimeoutError:
+                    changed = False
+
+            if changed:
+                await _refresh_data()
+                # Signal SSE consumers that fresh data is available.
+                # They use wait_for with timeout, so a brief set/clear is enough.
+                _save_changed_event.set()
+                await asyncio.sleep(0)  # Let SSE coroutines wake
+                _save_changed_event.clear()
         except Exception:
             log.debug("Save watcher error", exc_info=True)

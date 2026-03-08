@@ -610,7 +610,12 @@ async def live_stream(player: int = Query(0, ge=0, le=3)):
                 elif time.monotonic() - idle_since > _SSE_IDLE_TIMEOUT:
                     yield f"event: timeout\ndata: {{}}\n\n"
                     return
-                await asyncio.sleep(3)
+                # Wake instantly on file change, or poll every 3s as fallback
+                try:
+                    a = _app()
+                    await asyncio.wait_for(a._save_changed_event.wait(), timeout=3.0)
+                except asyncio.TimeoutError:
+                    pass
         finally:
             _sse_active -= 1
 

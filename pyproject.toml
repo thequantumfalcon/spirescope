@@ -11,6 +11,7 @@ dependencies = [
     "jinja2>=3.1.0",
     "pydantic>=2.0.0",
     "python-multipart>=0.0.5",
+    "watchdog>=3.0.0",
 ]
 
 [project.scripts]
@@ -22,6 +23,10 @@ dev = [
     "pytest-asyncio>=0.21.0",
     "httpx>=0.24.0",
     "pyinstaller>=6.0",
+]
+browser = [
+    "pytest-playwright>=0.4.0",
+    "playwright>=1.40.0",
 ]
 
 [build-system]
@@ -35,3 +40,5 @@ include = ["sts2*"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "module"
+markers = ["browser: Playwright browser tests (requires installed browsers)"]
+addopts = "-m 'not browser'"

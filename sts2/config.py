@@ -103,6 +103,10 @@ def _parse_port() -> int:
 
 PORT = _parse_port()
 
+# Aggregate sync (opt-in, empty = disabled)
+SYNC_URL = os.environ.get("STS2_SYNC_URL", "")
+SYNC_API_KEY = os.environ.get("STS2_SYNC_KEY", "")
+
 # Characters
 CHARACTERS = ["Ironclad", "Silent", "Defect", "Necrobinder", "Regent"]
 CHARACTER_IDS = {

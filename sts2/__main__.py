@@ -14,12 +14,18 @@ Commands:
   community     Scrape community tips from Reddit
   export        Export aggregate stats to JSON file
   reset-stats   Delete aggregate stats file
+  sync-up       Upload local aggregate stats to sync service
+  sync-down     Download and merge community stats from sync service
 
 Options:
   --save-only   With 'update': skip wiki, only discover from save files
   --no-browser  With 'serve': don't open browser automatically
   --help, -h    Show this help message
   --version, -V Show version
+
+Environment:
+  STS2_SYNC_URL   Sync service URL (required for sync-up/sync-down)
+  STS2_SYNC_KEY   Optional API key for sync service authentication
 """
 
 
@@ -73,6 +79,38 @@ def main():
             print("Aggregate stats file deleted.")
         else:
             print("No aggregate stats file found.")
+        return
+
+    if command == "sync-up":
+        from sts2.sync import upload_stats, SyncError
+        from sts2.aggregate import compute_aggregate_stats
+        from sts2.saves import get_run_history
+        print("Computing local stats...")
+        runs = get_run_history()
+        stats = compute_aggregate_stats(runs)
+        print(f"Uploading stats from {stats.get('run_count', 0)} runs...")
+        try:
+            result = upload_stats(stats)
+            print(f"Upload complete. Server now has {result.get('run_count', '?')} total runs.")
+        except SyncError as e:
+            print(f"Sync failed: {e}")
+            sys.exit(1)
+        return
+
+    if command == "sync-down":
+        from sts2.sync import download_stats, SyncError
+        from sts2.aggregate import load_aggregate, merge_aggregate, save_aggregate
+        print("Downloading community stats...")
+        try:
+            remote = download_stats()
+            print(f"Downloaded stats from {remote.get('run_count', 0)} runs.")
+            existing = load_aggregate()
+            merged = merge_aggregate(existing, remote)
+            save_aggregate(merged)
+            print(f"Merged. Local aggregate now has {merged.get('run_count', 0)} runs.")
+        except SyncError as e:
+            print(f"Sync failed: {e}")
+            sys.exit(1)
         return
 
     if command == "serve":
