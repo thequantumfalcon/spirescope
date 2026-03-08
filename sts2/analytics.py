@@ -19,7 +19,8 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None) -> dict:
     - winning_deck_traits: what winning decks have in common
     """
     if not runs:
-        return {"overview": {"total": 0}}
+        return {"overview": {"total": 0}, "hp_tracking": [], "death_floors": [],
+                "ascension_curve": [], "card_quality": [], "damage_percentiles": []}
 
     total = len(runs)
     wins = [r for r in runs if r.win]
@@ -270,6 +271,74 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None) -> dict:
             "win_rate": round(potion_used_in_wins.get(p_id, 0) / used_in * 100, 1) if used_in else 0,
         }
 
+    # --- HP Tracking by Floor (wins vs losses) ---
+    hp_by_floor_win: dict[int, list[float]] = defaultdict(list)
+    hp_by_floor_loss: dict[int, list[float]] = defaultdict(list)
+    for run in runs:
+        target = hp_by_floor_win if run.win else hp_by_floor_loss
+        for floor in run.floors:
+            if floor.max_hp > 0 and floor.floor <= 60:
+                target[floor.floor].append(floor.current_hp / floor.max_hp * 100)
+
+    all_floor_nums = sorted(set(hp_by_floor_win.keys()) | set(hp_by_floor_loss.keys()))
+    hp_tracking = []
+    for fn in all_floor_nums:
+        win_vals = hp_by_floor_win.get(fn, [])
+        loss_vals = hp_by_floor_loss.get(fn, [])
+        hp_tracking.append({
+            "floor": fn,
+            "win_avg_pct": round(sum(win_vals) / len(win_vals), 1) if win_vals else 0,
+            "loss_avg_pct": round(sum(loss_vals) / len(loss_vals), 1) if loss_vals else 0,
+        })
+
+    # --- Death Floor Distribution ---
+    death_floor_counts: Counter = Counter()
+    for run in losses:
+        if run.floors:
+            death_floor_counts[len(run.floors)] += 1
+    death_floors = [{"floor": f, "deaths": d} for f, d in sorted(death_floor_counts.items())]
+
+    # --- Ascension Curve ---
+    asc_wins: Counter = Counter()
+    asc_total: Counter = Counter()
+    for run in runs:
+        asc_total[run.ascension] += 1
+        if run.win:
+            asc_wins[run.ascension] += 1
+    ascension_curve = []
+    for asc in sorted(asc_total.keys()):
+        t = asc_total[asc]
+        w = asc_wins[asc]
+        ascension_curve.append({
+            "ascension": asc,
+            "total": t,
+            "wins": w,
+            "win_rate": round(w / t * 100, 1) if t else 0,
+        })
+
+    # --- Card Pick Quality (cross-reference pick rates with win rates) ---
+    win_rate_by_id = {c["id"]: c["win_rate"] for c in card_rankings}
+    card_quality = [{**c, "win_rate": win_rate_by_id[c["id"]]}
+                    for c in card_pick_rates if c["id"] in win_rate_by_id]
+    card_quality.sort(key=lambda x: (-x["win_rate"], -x["pick_rate"]))
+
+    # --- Damage Percentiles (enrich deadly encounters) ---
+    damage_percentiles = []
+    for enc_id, dmg_list in encounter_damage.items():
+        if len(dmg_list) < 3:
+            continue
+        s = sorted(dmg_list)
+        n = len(s)
+        damage_percentiles.append({
+            "id": enc_id,
+            "fights": n,
+            "p25": s[n // 4],
+            "median": s[n // 2],
+            "p75": s[3 * n // 4],
+            "deaths": encounter_deaths.get(enc_id, 0),
+        })
+    damage_percentiles.sort(key=lambda x: -x["median"])
+
     return {
         "overview": overview,
         "card_rankings": card_rankings[:30],
@@ -284,6 +353,11 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None) -> dict:
         "relic_synergy_edges": relic_synergy_edges,
         "potion_stats": potion_stats,
         "win_trend": win_trend,
+        "hp_tracking": hp_tracking,
+        "death_floors": death_floors,
+        "ascension_curve": ascension_curve,
+        "card_quality": card_quality[:30],
+        "damage_percentiles": damage_percentiles[:15],
     }
 
 

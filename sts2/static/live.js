@@ -5,6 +5,7 @@
   var wasActive = el.dataset.wasActive === 'true';
   var es = new EventSource('/api/live/stream?player=' + player);
   var lastJson = '';
+  var lastFloor = null;
   es.onmessage = function(e) {
     if (e.data !== lastJson) {
       lastJson = e.data;
@@ -26,6 +27,8 @@
       var fill = document.querySelector('.hp-fill');
       if (fill && d.max_hp > 0) fill.style.width = (d.current_hp / d.max_hp * 100) + '%';
       if (d.active !== wasActive) location.reload();
+      if (lastFloor !== null && d.floor !== lastFloor) location.reload();
+      lastFloor = d.floor;
     }
   };
   es.onerror = function() {

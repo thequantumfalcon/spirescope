@@ -153,6 +153,103 @@
 </table>
 {% endif %}
 
+{% if stats.hp_tracking %}
+<h2>HP Tracking: Wins vs Losses</h2>
+<p class="text-sm text-muted mb-sm">Average HP% by floor — green for winning runs, red for losing runs</p>
+<div class="bar-chart bar-chart--tall">
+{% for hp in stats.hp_tracking %}
+{% if loop.index0 % ((stats.hp_tracking|length // 30) + 1) == 0 or loop.last %}
+<div class="bar-col">
+  <div class="dual-bar">
+    <div class="bar bar--win" style="height:{{ (hp.win_avg_pct * 0.8)|int }}px" title="Win: {{ hp.win_avg_pct }}%"></div>
+    <div class="bar bar--loss" style="height:{{ (hp.loss_avg_pct * 0.8)|int }}px" title="Loss: {{ hp.loss_avg_pct }}%"></div>
+  </div>
+  <span class="text-xs text-muted mt-xs">F{{ hp.floor }}</span>
+</div>
+{% endif %}
+{% endfor %}
+</div>
+{% else %}
+<h2>HP Tracking</h2>
+<p class="text-muted">Not enough data</p>
+{% endif %}
+
+{% if stats.death_floors %}
+<h2>Death Floor Distribution</h2>
+<p class="text-sm text-muted mb-sm">Which floors end your runs?</p>
+<div class="bar-chart bar-chart--tall">
+{% set max_deaths = stats.death_floors|map(attribute='deaths')|max %}
+{% for df in stats.death_floors %}
+<div class="bar-col">
+  <div class="bar" style="height:{{ (df.deaths / max_deaths * 100)|int }}px;background:var(--red)" title="{{ df.deaths }} deaths"></div>
+  <span class="text-xs text-muted mt-xs">F{{ df.floor }}</span>
+  <span class="text-xs">{{ df.deaths }}</span>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<h2>Death Floor Distribution</h2>
+<p class="text-muted">Not enough data</p>
+{% endif %}
+
+{% if stats.ascension_curve %}
+<h2>Ascension Curve</h2>
+<p class="text-sm text-muted mb-sm">Win rate by ascension level</p>
+<div class="bar-chart bar-chart--tall">
+{% for ac in stats.ascension_curve %}
+<div class="bar-col">
+  <div class="bar" style="height:{{ ac.win_rate|int }}px;background:{% if ac.win_rate >= 60 %}var(--green){% elif ac.win_rate >= 40 %}var(--yellow){% else %}var(--red){% endif %}" title="{{ ac.win_rate }}% ({{ ac.wins }}/{{ ac.total }})"></div>
+  <span class="text-xs text-muted mt-xs">A{{ ac.ascension }}</span>
+  <span class="text-xs">{{ ac.win_rate }}%</span>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<h2>Ascension Curve</h2>
+<p class="text-muted">Not enough data</p>
+{% endif %}
+
+{% if stats.card_quality %}
+<h2>Card Pick Quality</h2>
+<p class="text-sm text-muted mb-sm">How often you pick each card vs how often it wins — are you picking the right cards?</p>
+<table>
+<tr><th>Card</th><th>Pick Rate</th><th>Win Rate</th><th>Picked</th><th>Offered</th></tr>
+{% for cq in stats.card_quality[:15] %}
+<tr>
+  <td><a href="/cards/{{ cq.id }}">{{ kb.id_to_name(cq.id) }}</a></td>
+  <td><strong>{{ cq.pick_rate }}%</strong></td>
+  <td><strong style="color:{% if cq.win_rate >= 60 %}var(--green){% elif cq.win_rate >= 40 %}var(--yellow){% else %}var(--red){% endif %}">{{ cq.win_rate }}%</strong></td>
+  <td>{{ cq.picked }}</td>
+  <td>{{ cq.offered }}</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<h2>Card Pick Quality</h2>
+<p class="text-muted">Not enough data</p>
+{% endif %}
+
+{% if stats.damage_percentiles %}
+<h2>Damage Breakdown by Encounter</h2>
+<p class="text-sm text-muted mb-sm">25th percentile, median, and 75th percentile damage per encounter</p>
+<table>
+<tr><th>Encounter</th><th>P25</th><th>Median</th><th>P75</th><th>Fights</th><th>Deaths</th></tr>
+{% for dp in stats.damage_percentiles[:10] %}
+<tr>
+  <td><a href="/enemies/{{ dp.id }}">{{ kb.id_to_name(dp.id) }}</a></td>
+  <td>{{ dp.p25 }}</td>
+  <td class="text-yellow"><strong>{{ dp.median }}</strong></td>
+  <td class="text-red">{{ dp.p75 }}</td>
+  <td>{{ dp.fights }}</td>
+  <td class="loss">{{ dp.deaths }}</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<h2>Damage Breakdown</h2>
+<p class="text-muted">Not enough data</p>
+{% endif %}
+
 {% if stats.floor_survival %}
 <h2>How Far Do You Get?</h2>
 <div class="bar-chart bar-chart--tall">

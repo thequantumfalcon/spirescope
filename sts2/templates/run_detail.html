@@ -2,6 +2,7 @@
 {% block title %}Run {{ run.id if run else 'Not Found' }}{% endblock %}
 {% block content %}
 {% if run %}
+{% if imported %}<div class="card card-caution mb-md"><p>This is an imported run — it is not saved locally.</p></div>{% endif %}
 <p class="breadcrumb"><a href="/runs">Run History</a> &rsaquo; {{ run.id }}</p>
 <h1>
   <span class="result {{ 'win' if run.win else 'loss' }}">{{ 'VICTORY' if run.win else 'DEFEAT' }}</span>
@@ -10,6 +11,7 @@
 <p class="text-muted">
   Ascension {{ run.ascension }} &bull; Seed: {{ run.seed }} &bull; {{ (run.run_time / 60)|int }} minutes &bull; {{ run.build_id }}
   {% if run.killed_by %} &bull; <span class="loss">Killed by {{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
+  {% if not imported %}&bull; <a href="/runs/{{ run.id }}/export" class="btn btn-sm btn-secondary">Export</a>{% endif %}
 </p>
 
 <div class="stat-grid mt-md">

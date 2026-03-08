@@ -44,6 +44,7 @@
   <p>
     <span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span>
     <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span>
+    {% if card.source == 'mod' %}<span class="tag tag-mod">Mod</span>{% elif card.source == 'discovered' %}<span class="tag tag-discovered">Discovered</span>{% endif %}
     <span class="char-{{ card.character|lower }} text-xs">{{ card.character }}</span>
   </p>
   <p>{{ card.description }}</p>

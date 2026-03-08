@@ -13,6 +13,7 @@ class Card(BaseModel):
     description_upgraded: str = ""
     keywords: list[str] = []
     tier: str = ""  # S, A, B, C, D
+    source: str = "base"  # base, mod, discovered
 
 
 class Relic(BaseModel):
@@ -21,6 +22,7 @@ class Relic(BaseModel):
     character: str = "Shared"  # Character-specific or Shared
     rarity: str = ""  # Starter, Common, Uncommon, Rare, Boss, Event, Shop
     description: str = ""
+    source: str = "base"
 
 
 class Potion(BaseModel):
@@ -28,6 +30,7 @@ class Potion(BaseModel):
     name: str
     rarity: str = ""  # Common, Uncommon, Rare
     description: str = ""
+    source: str = "base"
 
 
 class Enemy(BaseModel):
@@ -38,6 +41,7 @@ class Enemy(BaseModel):
     hp_range: str = ""  # e.g. "40-44" or "250"
     patterns: list[str] = []  # Description of attack patterns
     tips: list[str] = []  # Strategy tips
+    source: str = "base"
 
 
 class EventChoice(BaseModel):
@@ -53,6 +57,7 @@ class Event(BaseModel):
     description: str = ""
     choices: list[EventChoice] = []
     notes: str = ""
+    source: str = "base"
 
 
 class SynergyGroup(BaseModel):

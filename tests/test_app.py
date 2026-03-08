@@ -556,11 +556,16 @@ async def test_api_runs(client):
         resp = await c.get("/api/runs")
         assert resp.status_code == 200
         data = resp.json()
-        assert isinstance(data, list)
+        assert isinstance(data, dict)
+        assert "runs" in data
+        assert "total" in data
+        assert isinstance(data["runs"], list)
         # Also test with filters in same session
         resp2 = await c.get("/api/runs?character=Ironclad&result=win")
         assert resp2.status_code == 200
-        assert isinstance(resp2.json(), list)
+        data2 = resp2.json()
+        assert isinstance(data2, dict)
+        assert isinstance(data2["runs"], list)
 
 
 async def test_nav_highlights_current_page(client):

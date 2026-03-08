@@ -22,7 +22,14 @@
   <a href="/runs?result=loss{% if selected_character %}&character={{ selected_character }}{% endif %}" {% if selected_result == 'loss' %}class="active"{% endif %}>Losses</a>
 </div>
 
-<p class="text-muted mb-sm">Showing {{ runs|length }} run{{ 's' if runs|length != 1 else '' }}</p>
+<div class="flex items-center justify-between mb-sm">
+  <p class="text-muted">Showing {{ runs|length }} run{{ 's' if runs|length != 1 else '' }}</p>
+  <form action="/runs/import" method="post" enctype="multipart/form-data" class="flex items-center gap-sm">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label for="import-file" class="btn btn-sm btn-secondary" style="cursor:pointer">Import Run</label>
+    <input type="file" id="import-file" name="file" accept=".json" style="display:none" onchange="this.form.submit()">
+  </form>
+</div>
 
 {% if runs %}
 {% for run in runs %}

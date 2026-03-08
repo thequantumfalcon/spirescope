@@ -3,7 +3,7 @@ import json
 import logging
 import re
 
-from sts2.config import DATA_DIR
+from sts2.config import DATA_DIR, MODS_DIR
 from sts2.models import Card, Relic, Potion, Enemy, Event, EventChoice, CharacterStrategy, SynergyGroup
 
 log = logging.getLogger(__name__)
@@ -62,6 +62,7 @@ class KnowledgeBase:
         self._all_names: list[str] = []
 
         self._load_all()
+        self._load_mods()
         self._load_community_data()
         self._discover_from_saves()
         self._build_indexes()
@@ -124,6 +125,61 @@ class KnowledgeBase:
             except Exception as exc:
                 log.warning("Skipping malformed strategy %s: %s", d.get("character", "?"), exc)
 
+    def _load_mods(self):
+        """Load mod data from JSON files in the mods directory."""
+        if not MODS_DIR.exists():
+            return
+        existing_card_ids = {c.id for c in self.cards}
+        existing_relic_ids = {r.id for r in self.relics}
+        existing_potion_ids = {p.id for p in self.potions}
+        existing_enemy_ids = {e.id for e in self.enemies}
+        for mod_file in sorted(MODS_DIR.glob("*.json")):
+            try:
+                data = json.loads(mod_file.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError) as exc:
+                log.warning("Skipping malformed mod file %s: %s", mod_file.name, exc)
+                continue
+            mod_name = data.get("mod_name", mod_file.stem)
+            for d in data.get("cards", []):
+                try:
+                    card = Card(**d, source="mod")
+                    if card.id in existing_card_ids:
+                        log.warning("Mod %s: card %s conflicts with base, skipped", mod_name, card.id)
+                        continue
+                    existing_card_ids.add(card.id)
+                    self.cards.append(card)
+                except Exception as exc:
+                    log.warning("Mod %s: skipping malformed card: %s", mod_name, exc)
+            for d in data.get("relics", []):
+                try:
+                    relic = Relic(**d, source="mod")
+                    if relic.id in existing_relic_ids:
+                        log.warning("Mod %s: relic %s conflicts with base, skipped", mod_name, relic.id)
+                        continue
+                    existing_relic_ids.add(relic.id)
+                    self.relics.append(relic)
+                except Exception as exc:
+                    log.warning("Mod %s: skipping malformed relic: %s", mod_name, exc)
+            for d in data.get("potions", []):
+                try:
+                    potion = Potion(**d, source="mod")
+                    if potion.id in existing_potion_ids:
+                        continue
+                    existing_potion_ids.add(potion.id)
+                    self.potions.append(potion)
+                except Exception as exc:
+                    log.warning("Mod %s: skipping malformed potion: %s", mod_name, exc)
+            for d in data.get("enemies", []):
+                try:
+                    enemy = Enemy(**d, source="mod")
+                    if enemy.id in existing_enemy_ids:
+                        continue
+                    existing_enemy_ids.add(enemy.id)
+                    self.enemies.append(enemy)
+                except Exception as exc:
+                    log.warning("Mod %s: skipping malformed enemy: %s", mod_name, exc)
+            log.info("Loaded mod: %s", mod_name)
+
     def _load_community_data(self):
         """Load community tips and meta posts from community.json."""
         path = DATA_DIR / "community.json"
@@ -161,7 +217,7 @@ class KnowledgeBase:
                 existing_card_ids.add(card_id)
                 name = card_id.split(".", 1)[-1].replace("_", " ").title() if "." in card_id else card_id
                 self.cards.append(Card(id=card_id, name=name, character="Unknown",
-                                       cost="?", type="Unknown", rarity="Unknown"))
+                                       cost="?", type="Unknown", rarity="Unknown", source="discovered"))
 
             # Discover relics from discovered_relics
             for relic_id in progress.discovered_relics:
@@ -169,7 +225,7 @@ class KnowledgeBase:
                     continue
                 existing_relic_ids.add(relic_id)
                 name = relic_id.split(".", 1)[-1].replace("_", " ").title() if "." in relic_id else relic_id
-                self.relics.append(Relic(id=relic_id, name=name))
+                self.relics.append(Relic(id=relic_id, name=name, source="discovered"))
 
             # Discover potions from discovered_potions
             for potion_id in progress.discovered_potions:
@@ -177,7 +233,7 @@ class KnowledgeBase:
                     continue
                 existing_potion_ids.add(potion_id)
                 name = potion_id.split(".", 1)[-1].replace("_", " ").title() if "." in potion_id else potion_id
-                self.potions.append(Potion(id=potion_id, name=name))
+                self.potions.append(Potion(id=potion_id, name=name, source="discovered"))
 
             # Discover enemies from enemy_stats and encounter_stats
             for enemy_id in list(progress.enemy_stats.keys()) + list(progress.encounter_stats.keys()):
@@ -187,7 +243,7 @@ class KnowledgeBase:
                 name = enemy_id.split(".", 1)[-1].replace("_", " ").title() if "." in enemy_id else enemy_id
                 etype = "boss" if "BOSS" in enemy_id.upper() else "elite" if "ELITE" in enemy_id.upper() else "normal"
                 self.enemies.append(Enemy(id=enemy_id, name=name, type=etype,
-                                         tips=["Auto-discovered from your save data"]))
+                                         tips=["Auto-discovered from your save data"], source="discovered"))
 
             # Discover events
             for event_id in progress.discovered_events:
@@ -196,7 +252,8 @@ class KnowledgeBase:
                 existing_event_ids.add(event_id)
                 name = event_id.split(".", 1)[-1].replace("_", " ").title() if "." in event_id else event_id
                 self.events.append(Event(id=event_id, name=name,
-                                         description="Auto-discovered from your save data"))
+                                         description="Auto-discovered from your save data",
+                                         source="discovered"))
         except Exception:
             pass  # save files may not exist (e.g., CI)
 
@@ -383,6 +440,9 @@ class KnowledgeBase:
         chars = set(c.character for c in cards if c.character not in ("Colorless", "Status"))
         character = chars.pop() if len(chars) == 1 else "Mixed"
 
+        # Filter out discovered/unknown-type cards for ratio checks
+        typed_cards = [c for c in cards if c.type != "Unknown"]
+
         # Count types
         attacks = [c for c in cards if c.type == "Attack"]
         skills = [c for c in cards if c.type == "Skill"]
@@ -418,30 +478,35 @@ class KnowledgeBase:
 
         # Weaknesses
         weaknesses = []
-        if len(attacks) < len(cards) * 0.3:
+        tc = len(typed_cards) or 1  # avoid division by zero
+        if len(attacks) < tc * 0.3:
             weaknesses.append("Low attack count — may struggle to kill enemies quickly")
-        if len(skills) < len(cards) * 0.2:
+        if len(skills) < tc * 0.2:
             weaknesses.append("Few skills — limited defensive options")
         if not any(kw in keyword_freq for kw in ("Block", "Dexterity")):
             weaknesses.append("No Block generation — vulnerable to damage")
-        if len(cards) > 30:
+        if "AoE" not in keyword_freq:
+            weaknesses.append("No AoE — vulnerable to multi-enemy fights")
+        if "Draw" not in keyword_freq:
+            weaknesses.append("No card draw — may stall in longer fights")
+        if tc > 30:
             weaknesses.append("Deck is bloated (>30 cards) — key cards drawn less often")
-        if len(cards) < 15:
+        if tc < 15:
             weaknesses.append("Deck is very thin (<15 cards) — may cycle too fast")
 
         # Mana curve warnings
         high_cost = sum(v for k, v in cost_curve.items() if k.isdigit() and int(k) >= 3)
         zero_cost = cost_curve.get("0", 0)
-        if high_cost > len(cards) * 0.4:
-            weaknesses.append(f"Heavy mana curve — {high_cost}/{len(cards)} cards cost 3+. Add cheap cards or energy relics.")
+        if high_cost > tc * 0.4:
+            weaknesses.append(f"Heavy mana curve — {high_cost}/{tc} cards cost 3+. Add cheap cards or energy relics.")
         if len(powers) >= 4 and zero_cost < 2:
             weaknesses.append(f"{len(powers)} Powers but only {zero_cost} zero-cost cards — setup turns will be slow.")
-        if zero_cost > len(cards) * 0.5:
+        if zero_cost > tc * 0.5:
             weaknesses.append(f"Over half your deck is 0-cost — may lack impactful plays.")
 
         # Strengths
         strengths = []
-        if 18 <= len(cards) <= 25:
+        if 18 <= tc <= 25:
             strengths.append("Good deck size — consistent draws without bloat")
         if any(kw in keyword_freq for kw in ("Block", "Dexterity")) and any(kw in keyword_freq for kw in ("Strength", "Poison", "Lightning")):
             strengths.append("Balanced offense and defense — both scaling and Block present")

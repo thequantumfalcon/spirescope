@@ -6,7 +6,7 @@ from pathlib import Path
 # Single source of truth for the version fallback (used when importlib.metadata
 # can't find the package, e.g. in PyInstaller bundles). Keep in sync with
 # pyproject.toml [project] version.
-VERSION = "1.1.0"
+VERSION = "2.0.0"
 
 # Project paths
 PROJECT_ROOT = Path(__file__).parent
@@ -47,6 +47,16 @@ def _find_save_dir() -> Path:
     return sts2_dir / "saves"
 
 
+def _find_mods_dir() -> Path:
+    """Writable mods directory, external to frozen bundles."""
+    env = os.environ.get("STS2_MODS_DIR")
+    if env:
+        return Path(env)
+    if getattr(sys, 'frozen', False):
+        return Path(sys.executable).parent / "mods"
+    return DATA_DIR / "mods"
+
+
 def _find_game_dir() -> Path:
     """Auto-detect the STS2 game install directory."""
     env_dir = os.environ.get("STS2_GAME_DIR")
@@ -74,6 +84,7 @@ def _find_game_dir() -> Path:
 # Game paths (auto-detected)
 SAVE_DIR = _find_save_dir()
 GAME_INSTALL_DIR = _find_game_dir()
+MODS_DIR = _find_mods_dir()
 
 # Server
 HOST = os.environ.get("STS2_HOST", "127.0.0.1")

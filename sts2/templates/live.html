@@ -12,6 +12,12 @@
   </div>
 </div>
 
+{% if danger_level %}
+<div class="danger-banner danger-{{ danger_level }}" role="alert">
+  {% if danger_level == 'critical' %}CRITICAL: {{ danger_pct }}% HP — find healing immediately!{% else %}WARNING: {{ danger_pct }}% HP — consider resting or using potions{% endif %}
+</div>
+{% endif %}
+
 <div class="stat-grid">
   <div class="stat-box">
     <div class="num live-hp" style="color:{% if run.current_hp < run.max_hp * 0.3 %}var(--red){% elif run.current_hp < run.max_hp * 0.6 %}var(--yellow){% else %}var(--green){% endif %}">{{ run.current_hp }}/{{ run.max_hp }}</div>
@@ -101,6 +107,27 @@
     <div class="card card-tip mb-sm">
       <p><strong>{{ ps.name }}</strong></p>
       <p class="text-xs text-muted">{{ ps.reason }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if counter_cards %}
+    <h3 class="mt-md text-accent">Counter Cards</h3>
+    <p class="text-sm text-muted mb-sm">Cards that counter enemies like {{ last_enemy_name }}</p>
+    {% for cc in counter_cards %}
+    <div class="card card-highlight mb-sm">
+      <p><strong><a href="/cards/{{ cc.id }}">{{ cc.name }}</a></strong> <span class="tag tag-{{ cc.type|lower }}">{{ cc.type }}</span></p>
+      <p class="text-xs text-muted">{{ cc.description }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if synergy_hints %}
+    <h3 class="mt-md text-yellow">Synergy Hints</h3>
+    {% for sh in synergy_hints %}
+    <div class="card card-tip mb-sm">
+      <p><strong>{{ sh.card_name }}</strong></p>
+      <p class="text-xs text-muted">Synergizes with {{ sh.picked_name }}</p>
     </div>
     {% endfor %}
     {% endif %}

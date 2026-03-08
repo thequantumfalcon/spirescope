@@ -12,6 +12,8 @@ Commands:
   serve         Start the web dashboard (default)
   update        Fetch latest game data from the wiki
   community     Scrape community tips from Reddit
+  export        Export aggregate stats to JSON file
+  reset-stats   Delete aggregate stats file
 
 Options:
   --save-only   With 'update': skip wiki, only discover from save files
@@ -51,6 +53,25 @@ def main():
     if command == "community":
         from sts2.community import run_community_scraper
         run_community_scraper()
+        return
+
+    if command == "export":
+        from sts2.aggregate import compute_aggregate_stats, save_aggregate
+        from sts2.saves import get_run_history
+        print("Loading run history...")
+        runs = get_run_history()
+        print(f"Found {len(runs)} runs, computing stats...")
+        stats = compute_aggregate_stats(runs)
+        save_aggregate(stats)
+        print(f"Exported aggregate stats from {stats.get('run_count', 0)} runs.")
+        return
+
+    if command == "reset-stats":
+        from sts2.aggregate import reset_aggregate
+        if reset_aggregate():
+            print("Aggregate stats file deleted.")
+        else:
+            print("No aggregate stats file found.")
         return
 
     if command == "serve":

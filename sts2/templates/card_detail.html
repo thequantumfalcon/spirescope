@@ -10,6 +10,7 @@
     <span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span>
     <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span>
     {% if card.tier %}<span class="tag" style="background:var(--bg3);color:var(--yellow);border:1px solid var(--border);font-size:1rem">{{ card.tier }}-Tier</span>{% endif %}
+    {% if card.source == 'mod' %}<span class="tag tag-mod">Mod</span>{% elif card.source == 'discovered' %}<span class="tag tag-discovered">Discovered</span>{% endif %}
   </h1>
   <p class="text-muted">{{ card.character }} &bull; {{ card.id }}</p>
 </div>

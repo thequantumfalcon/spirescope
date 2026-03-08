@@ -16,6 +16,7 @@ from fastapi.responses import PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from fastapi.middleware.cors import CORSMiddleware
 from sts2.analytics import compute_analytics
 from sts2.config import TEMPLATES_DIR, STATIC_DIR, SAVE_DIR
 from sts2.knowledge import KnowledgeBase
@@ -29,6 +30,8 @@ log = logging.getLogger(__name__)
 
 _css_path = STATIC_DIR / "style.css"
 _CSS_HASH = hashlib.md5(_css_path.read_bytes()).hexdigest()[:8] if _css_path.exists() else "0"
+_theme_init_path = STATIC_DIR / "theme-init.js"
+_THEME_INIT_HASH = hashlib.md5(_theme_init_path.read_bytes()).hexdigest()[:8] if _theme_init_path.exists() else "0"
 
 
 @contextlib.asynccontextmanager
@@ -44,6 +47,7 @@ app = FastAPI(title="Spirescope", lifespan=_lifespan)
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR), html=False), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 templates.env.globals["css_hash"] = _CSS_HASH
+templates.env.globals["theme_init_hash"] = _THEME_INIT_HASH
 try:
     from importlib.metadata import version as _get_version
     templates.env.globals["version"] = _get_version("spirescope")
@@ -150,6 +154,16 @@ from sts2.routes import router  # noqa: E402
 
 app.include_router(router)
 
+# CORS
+from sts2.config import PORT  # noqa: E402
+_cors_env = os.environ.get("STS2_CORS_ORIGINS", "")
+_cors_origins = [o.strip() for o in _cors_env.split(",") if o.strip()] if _cors_env else [
+    f"http://127.0.0.1:{PORT}", f"http://localhost:{PORT}",
+]
+app.add_middleware(CORSMiddleware, allow_origins=_cors_origins,
+                   allow_methods=["GET", "POST"], allow_headers=["*"],
+                   allow_credentials=False)
+
 # ---------------------------------------------------------------------------
 # Middleware
 # ---------------------------------------------------------------------------
@@ -157,8 +171,12 @@ app.include_router(router)
 
 @app.middleware("http")
 async def rate_limit(request: Request, call_next):
-    if request.url.path.startswith("/static/"):
+    # Exempt static files, SSE stream, and CORS preflight
+    if request.url.path.startswith("/static/") or request.url.path == "/api/live/stream":
         return await call_next(request)
+    if request.method == "OPTIONS":
+        return await call_next(request)
+
     global _rate_limit_last_cleanup
     ip = request.client.host if request.client else "unknown"
     now = time.monotonic()
@@ -169,6 +187,13 @@ async def rate_limit(request: Request, call_next):
         for k in stale:
             del _rate_limit_store[k]
         _rate_limit_last_cleanup = now
+
+    # API key bypass (after cleanup, before sliding window)
+    _api_key = os.environ.get("SPIRESCOPE_API_KEY")
+    if _api_key:
+        provided = request.headers.get("x-api-key", "")
+        if provided and secrets.compare_digest(provided, _api_key):
+            return await call_next(request)
 
     if ip not in _rate_limit_store:
         _rate_limit_store[ip] = collections.deque()
@@ -190,14 +215,24 @@ async def security_headers(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["Content-Security-Policy"] = (
-        "default-src 'self'; "
-        "script-src 'self'; "
-        "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data:; "
-        "connect-src 'self'; "
-        "frame-ancestors 'none'"
-    )
+    if request.url.path in {"/docs", "/redoc", "/openapi.json"}:
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "img-src 'self' data:; "
+            "connect-src 'self'; "
+            "frame-ancestors 'none'"
+        )
+    else:
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self'; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data:; "
+            "connect-src 'self'; "
+            "frame-ancestors 'none'"
+        )
     if request.url.path.startswith("/static/"):
         response.headers["Cache-Control"] = "public, max-age=3600"
     return response

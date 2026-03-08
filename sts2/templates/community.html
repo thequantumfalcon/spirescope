@@ -46,7 +46,46 @@
 {% endfor %}
 {% endif %}
 
-{% if not meta_posts and not tier_cards %}
+{% if aggregate and aggregate.run_count is defined and aggregate.run_count >= 10 %}
+<h2>Player Stats ({{ aggregate.run_count }} contributed runs)</h2>
+<p class="text-sm text-muted mb-sm">Aggregate data from contributed player runs</p>
+
+{% if aggregate.character_stats %}
+<h3>Character Win Rates</h3>
+<table>
+<tr><th>Character</th><th>Runs</th><th>Wins</th><th>Win Rate</th></tr>
+{% for char, cs in aggregate.character_stats.items() %}
+<tr>
+  <td class="char-{{ char|lower }}">{{ char }}</td>
+  <td>{{ cs.total }}</td>
+  <td class="win">{{ cs.wins }}</td>
+  <td><strong>{{ ((cs.wins / cs.total) * 100)|round(1) }}%</strong></td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if aggregate.card_win_rates %}
+<h3 class="mt-md">Top Cards by Win Rate</h3>
+<table>
+<tr><th>Card</th><th>Win Rate</th><th>Appearances</th></tr>
+{% set sorted_cards = aggregate.card_win_rates|dictsort(by='value', reverse=true) %}
+{% for card_id, cw in sorted_cards[:10] %}
+{% if cw.total >= 5 %}
+<tr>
+  <td><a href="/cards/{{ card_id }}">{{ kb.id_to_name(card_id) }}</a></td>
+  <td><strong>{{ ((cw.wins / cw.total) * 100)|round(1) }}%</strong></td>
+  <td>{{ cw.total }}</td>
+</tr>
+{% endif %}
+{% endfor %}
+</table>
+{% endif %}
+
+<p class="text-sm text-muted mt-md">Export your stats: <code>GET /api/export/stats</code> &bull; Import others: <code>POST /api/import/stats</code></p>
+{% endif %}
+
+{% if not meta_posts and not tier_cards and (not aggregate or not aggregate.run_count or aggregate.run_count < 10) %}
 <div class="text-muted mt-lg mb-lg">
   <p>No community data yet. Run <code>python -m sts2 community</code> to scrape Reddit for tier lists and strategy posts.</p>
 </div>

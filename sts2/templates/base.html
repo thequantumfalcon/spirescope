@@ -11,6 +11,7 @@
   <link rel="icon" type="image/jpeg" href="/static/logo.jpg">
   <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
   <title>{% block title %}Spirescope{% endblock %}</title>
+  <script src="/static/theme-init.js?v={{ theme_init_hash }}"></script>
   <link rel="stylesheet" href="/static/style.css?v={{ css_hash }}">
 </head>
 <body>
@@ -39,6 +40,7 @@
         <button type="submit">Search</button>
       </form>
     </div>
+    <button class="theme-toggle" aria-label="Switch to light mode">&#9790;</button>
   </nav>
   <main id="main" class="container">
     {% block content %}{% endblock %}

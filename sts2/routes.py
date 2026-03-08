@@ -3,11 +3,13 @@ import asyncio
 import hashlib
 import json
 import math
+import re
 import secrets
 import time
 from xml.sax.saxutils import escape as xml_escape
-from fastapi import APIRouter, Path, Request, Query
+from fastapi import APIRouter, File, Form, Path, Request, Query, UploadFile
 from fastapi.responses import HTMLResponse, PlainTextResponse
+from pydantic import ValidationError
 from starlette.responses import StreamingResponse
 
 from sts2.config import CHARACTERS
@@ -303,7 +305,7 @@ async def runs(request: Request, character: str = Query(None, max_length=50), re
     return a.templates.TemplateResponse(request, "runs.html", {
         "runs": filtered, "kb": a.kb, "characters": CHARACTERS,
         "selected_character": character, "selected_result": result,
-        "total_runs": total, "total_wins": wins,
+        "total_runs": total, "total_wins": wins, "csrf_token": a.generate_csrf_token(),
     })
 
 
@@ -322,6 +324,62 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
     })
 
 
+@router.get("/runs/{run_id}/export")
+async def export_run(run_id: str = Path(max_length=200)):
+    a = _app()
+    run = await a._get_run_by_id(run_id)
+    if not run:
+        return PlainTextResponse("Run not found.", status_code=404)
+    from sts2.config import VERSION
+    export_data = json.dumps({"spirescope_version": VERSION, "format_version": 1,
+                              "run": run.model_dump()}, indent=2)
+    safe_id = re.sub(r'[^\w\-.]', '_', run.id)
+    return PlainTextResponse(
+        export_data, media_type="application/json",
+        headers={"Content-Disposition": f'attachment; filename="spirescope_{safe_id}.json"'})
+
+
+@router.post("/runs/import", response_class=HTMLResponse)
+async def import_run(request: Request, file: UploadFile = File(...),
+                     csrf_token: str = Form("")):
+    from sts2.analytics import analyze_run
+    from sts2.models import RunHistory
+    a = _app()
+    if not a.validate_csrf_token(csrf_token):
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 403,
+            "error_message": "Invalid form submission. Please go back and try again.",
+        }, status_code=403)
+    contents = await file.read(1_048_577)
+    if len(contents) > 1_048_576:
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 413,
+            "error_message": "File too large (max 1 MB).",
+        }, status_code=413)
+    try:
+        data = json.loads(contents)
+        if data.get("format_version") != 1:
+            return a.templates.TemplateResponse(request, "error.html", {
+                "error_code": 400,
+                "error_message": "Unsupported format version. Expected format_version: 1.",
+            }, status_code=400)
+        if "run" not in data:
+            return a.templates.TemplateResponse(request, "error.html", {
+                "error_code": 400,
+                "error_message": "Invalid file: missing 'run' key.",
+            }, status_code=400)
+        run = RunHistory(**data["run"])
+    except (json.JSONDecodeError, ValidationError, KeyError, RecursionError) as exc:
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 400,
+            "error_message": f"Invalid run file: {str(exc)[:200]}",
+        }, status_code=400)
+    run_analysis = analyze_run(run)
+    return a.templates.TemplateResponse(request, "run_detail.html", {
+        "run": run, "run_analysis": run_analysis, "kb": a.kb, "imported": True,
+    })
+
+
 @router.get("/analytics", response_class=HTMLResponse)
 async def analytics(request: Request):
     a = _app()
@@ -333,14 +391,17 @@ async def analytics(request: Request):
 
 @router.get("/community", response_class=HTMLResponse)
 async def community(request: Request):
+    from sts2.aggregate import load_aggregate
     a = _app()
     meta_posts = a.kb.meta_posts
     tier_cards: dict[str, list] = {}
     for card in a.kb.cards:
         if card.tier and card.tier in ("S", "A", "B", "C", "D", "F"):
             tier_cards.setdefault(card.tier, []).append(card)
+    aggregate = load_aggregate()
     return a.templates.TemplateResponse(request, "community.html", {
         "meta_posts": meta_posts, "tier_cards": tier_cards,
+        "aggregate": aggregate, "kb": a.kb,
     })
 
 
@@ -352,49 +413,120 @@ async def guide(request: Request):
 
 @router.get("/live", response_class=HTMLResponse)
 async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
+    import logging
+    _log = logging.getLogger(__name__)
     a = _app()
     run = await asyncio.to_thread(get_current_run, player_index=player)
     analysis = None
     pick_suggestions = []
+    danger_level = None
+    danger_pct = 0
+    counter_cards = []
+    last_enemy_name = ""
+    synergy_hints = []
+
     if run.active and run.deck:
-        analysis = a.kb.analyze_deck(run.deck)
-        # Generate pick suggestions: cards that would complete archetypes or fill gaps
-        if analysis and analysis.get("detected_archetypes"):
-            for arch in analysis["detected_archetypes"][:1]:
-                for missing_name in arch.get("missing_key_cards", [])[:4]:
-                    pick_suggestions.append({
-                        "name": missing_name,
-                        "reason": f"Completes {arch['name']} archetype",
-                    })
-        # Add suggestions from weaknesses
-        deck_keywords = set()
-        for card_id in run.deck:
-            card = a.kb.get_card_by_id(card_id)
-            if card:
-                deck_keywords.update(card.keywords)
-        if "Block" not in deck_keywords and "Dexterity" not in deck_keywords:
-            pick_suggestions.append({
-                "name": "Any Block card",
-                "reason": "No Block generation — vulnerable to damage",
-            })
-        # Add analytics-based suggestions
-        analytics = await a._get_analytics()
-        top_cards = analytics.get("card_rankings", [])[:10]
-        deck_set = set(run.deck)
-        for cr in top_cards:
-            if cr["id"] not in deck_set and cr["win_rate"] >= 60:
-                card = a.kb.get_card_by_id(cr["id"])
-                if card and card.character in (run.character, "Colorless"):
-                    pick_suggestions.append({
-                        "name": card.name,
-                        "reason": f"{cr['win_rate']}% win rate across your runs",
-                    })
-                    if len(pick_suggestions) >= 6:
+        try:
+            analysis = a.kb.analyze_deck(run.deck)
+        except Exception:
+            _log.debug("Coaching: analyze_deck failed", exc_info=True)
+
+        # Pick suggestions from archetypes
+        try:
+            if analysis and analysis.get("detected_archetypes"):
+                for arch in analysis["detected_archetypes"][:1]:
+                    for missing_name in arch.get("missing_key_cards", [])[:4]:
+                        pick_suggestions.append({
+                            "name": missing_name,
+                            "reason": f"Completes {arch['name']} archetype",
+                        })
+        except Exception:
+            _log.debug("Coaching: archetype suggestions failed", exc_info=True)
+
+        # Pick suggestions from weakness keywords
+        try:
+            deck_keywords = set()
+            for card_id in run.deck:
+                card = a.kb.get_card_by_id(card_id)
+                if card:
+                    deck_keywords.update(card.keywords)
+            if "Block" not in deck_keywords and "Dexterity" not in deck_keywords:
+                pick_suggestions.append({
+                    "name": "Any Block card",
+                    "reason": "No Block generation — vulnerable to damage",
+                })
+        except Exception:
+            _log.debug("Coaching: weakness suggestions failed", exc_info=True)
+
+        # Analytics-based suggestions
+        try:
+            live_analytics = await a._get_analytics()
+            top_cards = live_analytics.get("card_rankings", [])[:10]
+            deck_set = set(run.deck)
+            for cr in top_cards:
+                if cr["id"] not in deck_set and cr["win_rate"] >= 60:
+                    card = a.kb.get_card_by_id(cr["id"])
+                    if card and card.character in (run.character, "Colorless"):
+                        pick_suggestions.append({
+                            "name": card.name,
+                            "reason": f"{cr['win_rate']}% win rate across your runs",
+                        })
+                        if len(pick_suggestions) >= 6:
+                            break
+        except Exception:
+            _log.debug("Coaching: analytics suggestions failed", exc_info=True)
+
+        # Danger zone alerts
+        try:
+            if run.max_hp > 0:
+                hp_pct = run.current_hp / run.max_hp
+                danger_pct = int(hp_pct * 100)
+                if hp_pct < 0.2:
+                    danger_level = "critical"
+                elif hp_pct < 0.4:
+                    danger_level = "warning"
+        except Exception:
+            _log.debug("Coaching: danger zone failed", exc_info=True)
+
+        # Counter-card suggestions (based on last combat encounter)
+        try:
+            if run.floors:
+                deck_set = set(run.deck)
+                for floor in reversed(run.floors):
+                    enemy = a.kb.get_enemy_by_id(floor.encounter) if floor.encounter else None
+                    if enemy:
+                        raw_counters = a.kb.get_counter_cards(enemy, limit=8)
+                        filtered = [c for c in raw_counters
+                                    if c.character in (run.character, "Colorless")
+                                    and c.id not in deck_set]
+                        counter_cards = filtered[:4]
+                        last_enemy_name = enemy.name
                         break
+        except Exception:
+            _log.debug("Coaching: counter-cards failed", exc_info=True)
+
+        # Synergy hints (based on last card picked)
+        try:
+            if run.floors:
+                deck_set = set(run.deck)
+                for floor in reversed(run.floors):
+                    if floor.card_picked:
+                        synergy_list = a.kb.find_synergies(floor.card_picked)
+                        picked_card = a.kb.get_card_by_id(floor.card_picked)
+                        picked_name = picked_card.name if picked_card else floor.card_picked
+                        synergy_hints = [{"card_name": s.name, "picked_name": picked_name}
+                                         for s in synergy_list if s.id not in deck_set][:4]
+                        break
+        except Exception:
+            _log.debug("Coaching: synergy hints failed", exc_info=True)
+
     return a.templates.TemplateResponse(request, "live.html", {
         "run": run, "analysis": analysis, "kb": a.kb,
         "selected_player": player, "total_players": run.total_players,
         "pick_suggestions": pick_suggestions[:6],
+        "danger_level": danger_level, "danger_pct": danger_pct,
+        "counter_cards": counter_cards, "last_enemy_name": last_enemy_name,
+        "synergy_hints": synergy_hints,
     })
 
 
@@ -511,9 +643,16 @@ async def api_card(card_id: str = Path(max_length=200)):
     return {**card.model_dump(), "stats": card_stats}
 
 
+def _csv_safe(v: str) -> str:
+    """Escape CSV injection characters."""
+    if v and v[0] in "=+-@\t\r":
+        return "'" + v
+    return v
+
+
 @router.get("/api/runs")
 async def api_runs(character: str = Query(None, max_length=50), result: str = Query(None, max_length=10),
-                   limit: int = Query(50, ge=1, le=200)):
+                   limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)):
     a = _app()
     run_list = await a._get_runs()
     filtered = run_list
@@ -523,7 +662,41 @@ async def api_runs(character: str = Query(None, max_length=50), result: str = Qu
         filtered = [r for r in filtered if r.win]
     elif result == "loss":
         filtered = [r for r in filtered if not r.win]
-    return [r.model_dump() for r in filtered[:limit]]
+    total = len(filtered)
+    page = filtered[offset:offset + limit]
+    return {"total": total, "offset": offset, "limit": limit,
+            "runs": [r.model_dump() for r in page]}
+
+
+@router.get("/api/export/runs")
+async def api_export_runs_csv(character: str = Query(None, max_length=50),
+                               result: str = Query(None, max_length=10)):
+    a = _app()
+    run_list = await a._get_runs()
+    filtered = run_list
+    if character:
+        filtered = [r for r in filtered if r.character == character]
+    if result == "win":
+        filtered = [r for r in filtered if r.win]
+    elif result == "loss":
+        filtered = [r for r in filtered if not r.win]
+
+    import csv
+    import io
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["id", "character", "win", "ascension", "seed", "killed_by",
+                      "deck_size", "relic_count", "floor_count", "run_time"])
+    for r in filtered:
+        writer.writerow([
+            _csv_safe(r.id), _csv_safe(r.character), r.win, r.ascension,
+            _csv_safe(r.seed), _csv_safe(r.killed_by),
+            len(r.deck), len(r.relics), len(r.floors), r.run_time,
+        ])
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="spirescope_runs.csv"'})
 
 
 @router.get("/api/search")
@@ -539,3 +712,45 @@ async def api_search(q: str = Query("", max_length=200)):
         "events": [e.model_dump() for e in results["events"]],
         "suggestions": results.get("suggestions", []),
     }
+
+
+@router.get("/api/export/stats")
+async def api_export_stats():
+    from sts2.aggregate import compute_aggregate_stats
+    a = _app()
+    runs = await a._get_runs()
+    stats = compute_aggregate_stats(runs)
+    return stats
+
+
+@router.post("/api/reset/stats")
+async def api_reset_stats(request: Request):
+    a = _app()
+    token = request.headers.get("X-Admin-Token", "")
+    if not token or not secrets.compare_digest(token, a._ADMIN_TOKEN):
+        return PlainTextResponse("Unauthorized.", status_code=403)
+    from sts2.aggregate import reset_aggregate
+    deleted = reset_aggregate()
+    return {"status": "ok", "deleted": deleted}
+
+
+@router.post("/api/import/stats")
+async def api_import_stats(request: Request, file: UploadFile = File(...),
+                           csrf_token: str = Form("")):
+    from sts2.aggregate import load_aggregate, merge_aggregate, save_aggregate
+    a = _app()
+    if not a.validate_csrf_token(csrf_token):
+        return PlainTextResponse("Invalid CSRF token.", status_code=403)
+    contents = await file.read(512_001)
+    if len(contents) > 512_000:
+        return PlainTextResponse("File too large (max 500 KB).", status_code=413)
+    try:
+        imported = json.loads(contents)
+        if not isinstance(imported, dict) or "run_count" not in imported:
+            return PlainTextResponse("Invalid aggregate file.", status_code=400)
+    except (json.JSONDecodeError, RecursionError):
+        return PlainTextResponse("Invalid JSON.", status_code=400)
+    existing = load_aggregate()
+    merged = merge_aggregate(existing, imported)
+    save_aggregate(merged)
+    return {"status": "ok", "run_count": merged.get("run_count", 0)}

@@ -15,6 +15,7 @@
     <li><a href="#deck">Deck Analyzer</a></li>
     <li><a href="#analytics">Analytics</a></li>
     <li><a href="#community">Community Data</a></li>
+    <li><a href="#mods">Mod Support</a></li>
     <li><a href="#config">Configuration</a></li>
     <li><a href="#troubleshooting">Troubleshooting</a></li>
   </ul>
@@ -100,12 +101,37 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
   <p class="text-sm text-muted mt-sm">Community tips appear on card, relic, and enemy detail pages. Meta posts appear on the Community page.</p>
 </div>
 
+<h2 id="mods">Mod Support</h2>
+<div class="card mb-md">
+  <p>Spirescope can load custom mod data (cards, relics, enemies) from JSON files. Place <code>.json</code> files in the mods directory:</p>
+  <pre><code># Exe distribution: mods/ folder next to spirescope.exe
+# Development: sts2/data/mods/</code></pre>
+  <p class="mt-sm">You can also set <code>STS2_MODS_DIR</code> to a custom path. Each JSON file should follow this format:</p>
+  <pre><code>{
+  "mod_name": "My Mod",
+  "cards": [
+    {"id": "MOD.CARD_NAME", "name": "Card Name", "character": "Ironclad",
+     "cost": "1", "type": "Attack", "rarity": "Common", "keywords": ["Block"]}
+  ],
+  "relics": [
+    {"id": "MOD.RELIC_NAME", "name": "Relic Name", "rarity": "Common",
+     "description": "Does something cool."}
+  ],
+  "enemies": [
+    {"id": "MOD.ENEMY_NAME", "name": "Enemy Name", "act": ["1"],
+     "type": "normal", "hp_range": "40-50", "patterns": [], "tips": []}
+  ]
+}</code></pre>
+  <p class="text-sm text-muted mt-sm">All entity types are optional per file. Base game data always takes priority — if a mod ID conflicts with a base card, the mod entry is skipped. Mod entities are tagged with a <span class="tag tag-mod">Mod</span> badge. After adding mod files, use <code>POST /api/reload</code> or restart to load them.</p>
+</div>
+
 <h2 id="config">Configuration</h2>
 <div class="card mb-md">
   <table>
     <tr><th>Variable</th><th>Description</th><th>Default</th></tr>
     <tr><td><code>STS2_SAVE_DIR</code></td><td>Path to your STS2 save directory</td><td>Auto-detected</td></tr>
     <tr><td><code>STS2_GAME_DIR</code></td><td>Path to STS2 game install</td><td>Auto-detected</td></tr>
+    <tr><td><code>STS2_MODS_DIR</code></td><td>Path to mod JSON files</td><td><code>sts2/data/mods/</code></td></tr>
     <tr><td><code>STS2_HOST</code></td><td>Server bind address</td><td><code>127.0.0.1</code></td></tr>
     <tr><td><code>STS2_PORT</code></td><td>Server port</td><td><code>8000</code></td></tr>
     <tr><td><code>SPIRESCOPE_ADMIN_TOKEN</code></td><td>Token for <code>/api/reload</code></td><td>Auto-generated</td></tr>
