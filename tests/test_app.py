@@ -1,20 +1,11 @@
 """Tests for the FastAPI routes."""
 import pytest
-from httpx import AsyncClient, ASGITransport
 
-from sts2.app import app, generate_csrf_token, _ADMIN_TOKEN, _rate_limit_store
-
-
-@pytest.fixture
-def client():
-    _rate_limit_store.clear()
-    transport = ASGITransport(app=app)
-    return AsyncClient(transport=transport, base_url="http://test")
+from sts2.app import generate_csrf_token, _ADMIN_TOKEN, _rate_limit_store
 
 
 async def test_index(client):
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert "Spirescope" in resp.text
     # Should render stat boxes with counts
@@ -27,8 +18,7 @@ async def test_index(client):
 
 
 async def test_cards_page(client):
-    async with client as c:
-        resp = await c.get("/cards")
+    resp = await client.get("/cards")
     assert resp.status_code == 200
     assert "Cards (" in resp.text
     # Should render actual card names from the data
@@ -36,8 +26,7 @@ async def test_cards_page(client):
 
 
 async def test_cards_filter(client):
-    async with client as c:
-        resp = await c.get("/cards?character=Ironclad&type=Attack")
+    resp = await client.get("/cards?character=Ironclad&type=Attack")
     assert resp.status_code == 200
     # Ironclad filter should be active
     assert 'class="active">Ironclad' in resp.text
@@ -46,52 +35,45 @@ async def test_cards_filter(client):
 
 
 async def test_relics_page(client):
-    async with client as c:
-        resp = await c.get("/relics")
+    resp = await client.get("/relics")
     assert resp.status_code == 200
     assert "Relics (" in resp.text
     assert '<div class="grid grid-3">' in resp.text
 
 
 async def test_potions_page(client):
-    async with client as c:
-        resp = await c.get("/potions")
+    resp = await client.get("/potions")
     assert resp.status_code == 200
     assert "<h1>" in resp.text
 
 
 async def test_enemies_page(client):
-    async with client as c:
-        resp = await c.get("/enemies")
+    resp = await client.get("/enemies")
     assert resp.status_code == 200
     assert "Enemies" in resp.text
     assert "All Acts" in resp.text
 
 
 async def test_events_page(client):
-    async with client as c:
-        resp = await c.get("/events")
+    resp = await client.get("/events")
     assert resp.status_code == 200
     assert "<h1>" in resp.text
 
 
 async def test_search_empty(client):
-    async with client as c:
-        resp = await c.get("/search?q=")
+    resp = await client.get("/search?q=")
     assert resp.status_code == 200
     assert "(0 results)" in resp.text
 
 
 async def test_search_with_query(client):
-    async with client as c:
-        resp = await c.get("/search?q=bash")
+    resp = await client.get("/search?q=bash")
     assert resp.status_code == 200
     assert "bash" in resp.text.lower()
 
 
 async def test_api_search(client):
-    async with client as c:
-        resp = await c.get("/api/search?q=bash")
+    resp = await client.get("/api/search?q=bash")
     assert resp.status_code == 200
     data = resp.json()
     assert "cards" in data
@@ -99,43 +81,37 @@ async def test_api_search(client):
 
 
 async def test_deck_analyzer_page(client):
-    async with client as c:
-        resp = await c.get("/deck")
+    resp = await client.get("/deck")
     assert resp.status_code == 200
     assert "Deck" in resp.text
 
 
 async def test_deck_analyze_empty(client):
-    async with client as c:
-        resp = await c.post("/deck/analyze", data={"csrf_token": generate_csrf_token()})
+    resp = await client.post("/deck/analyze", data={"csrf_token": generate_csrf_token()})
     assert resp.status_code == 200
     assert "No cards selected" in resp.text
 
 
 async def test_deck_analyze_rejects_bad_csrf(client):
-    async with client as c:
-        resp = await c.post("/deck/analyze", data={"csrf_token": "bad_token"})
+    resp = await client.post("/deck/analyze", data={"csrf_token": "bad_token"})
     assert resp.status_code == 403
 
 
 async def test_runs_page(client):
-    async with client as c:
-        resp = await c.get("/runs")
+    resp = await client.get("/runs")
     assert resp.status_code == 200
     assert "<h1>" in resp.text
 
 
 async def test_live_page(client):
-    async with client as c:
-        resp = await c.get("/live")
+    resp = await client.get("/live")
     assert resp.status_code == 200
     # Either shows live run or "No Active Run"
     assert "Run" in resp.text
 
 
 async def test_api_live(client):
-    async with client as c:
-        resp = await c.get("/api/live")
+    resp = await client.get("/api/live")
     assert resp.status_code == 200
     data = resp.json()
     assert "active" in data
@@ -144,22 +120,19 @@ async def test_api_live(client):
 
 
 async def test_live_with_player_param(client):
-    async with client as c:
-        resp = await c.get("/live?player=0")
+    resp = await client.get("/live?player=0")
     assert resp.status_code == 200
 
 
 async def test_api_live_with_player_param(client):
-    async with client as c:
-        resp = await c.get("/api/live?player=0")
+    resp = await client.get("/api/live?player=0")
     assert resp.status_code == 200
     data = resp.json()
     assert data["player_index"] == 0
 
 
 async def test_security_headers(client):
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.headers.get("X-Content-Type-Options") == "nosniff"
     assert resp.headers.get("X-Frame-Options") == "DENY"
     assert resp.headers.get("Referrer-Policy") == "strict-origin-when-cross-origin"
@@ -170,88 +143,76 @@ async def test_security_headers(client):
 
 
 async def test_api_search_includes_suggestions(client):
-    async with client as c:
-        resp = await c.get("/api/search?q=xyznonexistent")
+    resp = await client.get("/api/search?q=xyznonexistent")
     assert resp.status_code == 200
     data = resp.json()
     assert "suggestions" in data
 
 
 async def test_search_suggestions_shown(client):
-    async with client as c:
-        resp = await c.get("/search?q=ironclsd")
+    resp = await client.get("/search?q=ironclsd")
     assert resp.status_code == 200
     # Should show "Did you mean" or "No results"
     assert "No results" in resp.text or "Did you mean" in resp.text
 
 
 async def test_card_detail_404(client):
-    async with client as c:
-        resp = await c.get("/cards/CARD.NONEXISTENT")
+    resp = await client.get("/cards/CARD.NONEXISTENT")
     assert resp.status_code == 404
     assert "not found" in resp.text.lower()
 
 
 async def test_enemy_detail_404(client):
-    async with client as c:
-        resp = await c.get("/enemies/ENEMY.NONEXISTENT")
+    resp = await client.get("/enemies/ENEMY.NONEXISTENT")
     assert resp.status_code == 404
     assert "not found" in resp.text.lower()
 
 
 async def test_run_detail_404(client):
-    async with client as c:
-        resp = await c.get("/runs/fake_run_id")
+    resp = await client.get("/runs/fake_run_id")
     assert resp.status_code == 404
     assert "not found" in resp.text.lower()
 
 
 async def test_strategy_404(client):
-    async with client as c:
-        resp = await c.get("/strategy/FakeCharacter")
+    resp = await client.get("/strategy/FakeCharacter")
     assert resp.status_code == 404
     assert "404" in resp.text
 
 
 async def test_deck_page_has_csrf_token(client):
-    async with client as c:
-        resp = await c.get("/deck")
+    resp = await client.get("/deck")
     assert resp.status_code == 200
     assert "csrf_token" in resp.text
 
 
 async def test_cards_pagination_default(client):
-    async with client as c:
-        resp = await c.get("/cards")
+    resp = await client.get("/cards")
     assert resp.status_code == 200
     assert "Cards (" in resp.text
 
 
 async def test_cards_pagination_page2(client):
-    async with client as c:
-        resp = await c.get("/cards?page=2")
+    resp = await client.get("/cards?page=2")
     assert resp.status_code == 200
     # Page 2 should still render cards (unless fewer than 30 total)
     assert "Cards (" in resp.text
 
 
 async def test_cards_pagination_with_filter(client):
-    async with client as c:
-        resp = await c.get("/cards?character=Ironclad&page=1")
+    resp = await client.get("/cards?character=Ironclad&page=1")
     assert resp.status_code == 200
     assert 'class="active">Ironclad' in resp.text
 
 
 async def test_cards_pagination_out_of_range(client):
-    async with client as c:
-        resp = await c.get("/cards?page=9999")
+    resp = await client.get("/cards?page=9999")
     assert resp.status_code == 200
     # Should clamp to last page, not error
 
 
 async def test_api_reload_with_valid_token(client):
-    async with client as c:
-        resp = await c.post("/api/reload", headers={"X-Admin-Token": _ADMIN_TOKEN})
+    resp = await client.post("/api/reload", headers={"X-Admin-Token": _ADMIN_TOKEN})
     assert resp.status_code == 200
     data = resp.json()
     assert data["status"] == "ok"
@@ -260,20 +221,17 @@ async def test_api_reload_with_valid_token(client):
 
 
 async def test_api_reload_rejects_bad_token(client):
-    async with client as c:
-        resp = await c.post("/api/reload", headers={"X-Admin-Token": "bad_token"})
+    resp = await client.post("/api/reload", headers={"X-Admin-Token": "bad_token"})
     assert resp.status_code == 403
 
 
 async def test_api_reload_rejects_missing_token(client):
-    async with client as c:
-        resp = await c.post("/api/reload")
+    resp = await client.post("/api/reload")
     assert resp.status_code == 403
 
 
 async def test_live_page_has_sse_script(client):
-    async with client as c:
-        resp = await c.get("/live")
+    resp = await client.get("/live")
     assert resp.status_code == 200
     assert "live.js" in resp.text
 
@@ -287,8 +245,7 @@ async def test_live_stream_endpoint_exists(client):
 
 
 async def test_deck_page_has_save_load_ui(client):
-    async with client as c:
-        resp = await c.get("/deck")
+    resp = await client.get("/deck")
     assert resp.status_code == 200
     assert "save-deck" in resp.text
     assert "load-deck" in resp.text
@@ -297,8 +254,7 @@ async def test_deck_page_has_save_load_ui(client):
 
 async def test_cards_pagination_shows_range(client):
     """When paginated, shows 'Showing X-Y of Z' indicator."""
-    async with client as c:
-        resp = await c.get("/cards?page=1")
+    resp = await client.get("/cards?page=1")
     assert resp.status_code == 200
     # If more than one page exists, should show range indicator
     if "page=2" in resp.text or "Next" in resp.text:
@@ -312,8 +268,7 @@ async def test_sse_connection_limit_registered(client):
 
 
 async def test_health_endpoint(client):
-    async with client as c:
-        resp = await c.get("/health")
+    resp = await client.get("/health")
     assert resp.status_code == 200
     data = resp.json()
     assert data["status"] == "ok"
@@ -321,16 +276,14 @@ async def test_health_endpoint(client):
 
 
 async def test_robots_txt(client):
-    async with client as c:
-        resp = await c.get("/robots.txt")
+    resp = await client.get("/robots.txt")
     assert resp.status_code == 200
     assert "User-agent" in resp.text
     assert "Disallow: /api/" in resp.text
 
 
 async def test_meta_description_in_html(client):
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert 'meta name="description"' in resp.text
     assert 'meta name="theme-color"' in resp.text
@@ -338,8 +291,7 @@ async def test_meta_description_in_html(client):
 
 async def test_player_param_validation(client):
     """Player param > 3 should be rejected."""
-    async with client as c:
-        resp = await c.get("/api/live?player=99")
+    resp = await client.get("/api/live?player=99")
     assert resp.status_code == 422
 
 
@@ -347,25 +299,22 @@ async def test_deck_analyze_caps_card_count(client):
     """Submitting more than MAX_DECK_SIZE cards should not crash."""
     from sts2.routes import _MAX_DECK_SIZE
     card_ids = [f"CARD.FAKE_{i}" for i in range(_MAX_DECK_SIZE + 50)]
-    async with client as c:
-        resp = await c.post("/deck/analyze", data={
-            "csrf_token": generate_csrf_token(),
-            "card_ids": card_ids,
-        })
+    resp = await client.post("/deck/analyze", data={
+        "csrf_token": generate_csrf_token(),
+        "card_ids": card_ids,
+    })
     assert resp.status_code == 200
 
 
 async def test_admin_token_not_in_logs(client):
     """Admin token should not be exposed via any public endpoint."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert _ADMIN_TOKEN not in resp.text
 
 
 async def test_csp_blocks_external_scripts(client):
     """CSP should not allow external script sources."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     csp = resp.headers.get("Content-Security-Policy", "")
     assert "script-src" in csp
     # Should not contain 'unsafe-eval' or wildcard
@@ -375,39 +324,34 @@ async def test_csp_blocks_external_scripts(client):
 
 async def test_css_cache_busting(client):
     """CSS link should include a version hash query parameter."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert "style.css?v=" in resp.text
 
 
 async def test_favicon_ico_link(client):
     """Should include a .ico favicon link for older browsers."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert "favicon.ico" in resp.text
 
 
 async def test_search_input_has_maxlength(client):
     """Search input should have maxlength attribute matching server-side limit."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert 'maxlength="200"' in resp.text
 
 
 async def test_favicon_ico_serves(client):
     """The favicon.ico file should be served from /static/."""
-    async with client as c:
-        resp = await c.get("/static/favicon.ico")
+    resp = await client.get("/static/favicon.ico")
     assert resp.status_code == 200
 
 
 async def test_skip_to_content_link(client):
     """Should have a skip-to-content link for accessibility."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert 'skip-link' in resp.text
     assert 'href="#main"' in resp.text
@@ -415,16 +359,14 @@ async def test_skip_to_content_link(client):
 
 async def test_nav_has_aria_label(client):
     """Nav should have aria-label for screen readers."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert 'aria-label=' in resp.text
 
 
 async def test_main_landmark(client):
     """Content should be in a <main> element."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert '<main' in resp.text
     assert 'id="main"' in resp.text
@@ -432,8 +374,7 @@ async def test_main_landmark(client):
 
 async def test_footer_present(client):
     """Should have a footer with version and GitHub link."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert '<footer>' in resp.text
     assert 'Spirescope' in resp.text
@@ -449,8 +390,7 @@ async def test_card_detail_shows_card_stats(client):
         card_stats={"CARD.BASH": {"picked": 10, "skipped": 5, "won": 7, "lost": 3}},
     )
     with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
-        async with client as c:
-            resp = await c.get("/cards/CARD.BASH")
+        resp = await client.get("/cards/CARD.BASH")
     if resp.status_code == 200:
         assert "Your Stats" in resp.text
         assert "Picked" in resp.text
@@ -463,8 +403,7 @@ async def test_card_detail_no_stats_when_empty(client):
 
     mock_progress = PlayerProgress(card_stats={})
     with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
-        async with client as c:
-            resp = await c.get("/cards/CARD.BASH")
+        resp = await client.get("/cards/CARD.BASH")
     if resp.status_code == 200:
         assert "Your Stats" not in resp.text
 
@@ -485,8 +424,7 @@ async def test_index_shows_character_streaks(client):
         },
     )
     with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
-        async with client as c:
-            resp = await c.get("/")
+        resp = await client.get("/")
     assert resp.status_code == 200
     assert "Best streak" in resp.text
     assert "Max ascension" in resp.text
@@ -510,8 +448,7 @@ async def test_progress_cache_returns_same_object():
 
 async def test_runs_page_has_filters(client):
     """Runs page should have character filter links."""
-    async with client as c:
-        resp = await c.get("/runs")
+    resp = await client.get("/runs")
     assert resp.status_code == 200
     assert "Ironclad" in resp.text
     assert "Total Runs" in resp.text or "Showing" in resp.text
@@ -519,24 +456,21 @@ async def test_runs_page_has_filters(client):
 
 async def test_runs_filter_by_character(client):
     """Runs page should accept character filter."""
-    async with client as c:
-        resp = await c.get("/runs?character=Ironclad")
+    resp = await client.get("/runs?character=Ironclad")
     assert resp.status_code == 200
     assert "Showing" in resp.text
 
 
 async def test_runs_filter_by_result(client):
     """Runs page should accept win/loss filter."""
-    async with client as c:
-        resp = await c.get("/runs?result=win")
+    resp = await client.get("/runs?result=win")
     assert resp.status_code == 200
     assert "Showing" in resp.text
 
 
 async def test_api_card_detail(client):
     """API should return card JSON with stats."""
-    async with client as c:
-        resp = await c.get("/api/cards/CARD.BASH")
+    resp = await client.get("/api/cards/CARD.BASH")
     if resp.status_code == 200:
         data = resp.json()
         assert "name" in data
@@ -545,33 +479,30 @@ async def test_api_card_detail(client):
 
 async def test_api_card_detail_404(client):
     """API should return 404 for unknown card."""
-    async with client as c:
-        resp = await c.get("/api/cards/CARD.NONEXISTENT")
+    resp = await client.get("/api/cards/CARD.NONEXISTENT")
     assert resp.status_code == 404
 
 
 async def test_api_runs(client):
     """API should return runs list and accept filters."""
-    async with client as c:
-        resp = await c.get("/api/runs")
-        assert resp.status_code == 200
-        data = resp.json()
-        assert isinstance(data, dict)
-        assert "runs" in data
-        assert "total" in data
-        assert isinstance(data["runs"], list)
-        # Also test with filters in same session
-        resp2 = await c.get("/api/runs?character=Ironclad&result=win")
-        assert resp2.status_code == 200
-        data2 = resp2.json()
-        assert isinstance(data2, dict)
-        assert isinstance(data2["runs"], list)
+    resp = await client.get("/api/runs")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert isinstance(data, dict)
+    assert "runs" in data
+    assert "total" in data
+    assert isinstance(data["runs"], list)
+    # Also test with filters in same session
+    resp2 = await client.get("/api/runs?character=Ironclad&result=win")
+    assert resp2.status_code == 200
+    data2 = resp2.json()
+    assert isinstance(data2, dict)
+    assert isinstance(data2["runs"], list)
 
 
 async def test_nav_highlights_current_page(client):
     """Nav should highlight the active page link."""
-    async with client as c:
-        resp = await c.get("/cards")
+    resp = await client.get("/cards")
     assert resp.status_code == 200
     # The cards link should have an active style
     assert 'href="/cards"' in resp.text
@@ -583,8 +514,7 @@ async def test_card_detail_has_breadcrumb(client):
     if not _kb.cards:
         return
     card = _kb.cards[0]
-    async with client as c:
-        resp = await c.get(f"/cards/{card.id}")
+    resp = await client.get(f"/cards/{card.id}")
     assert resp.status_code == 200
     assert "&rsaquo;" in resp.text
     assert 'href="/cards"' in resp.text
@@ -596,24 +526,21 @@ async def test_enemy_detail_has_breadcrumb(client):
     if not _kb.enemies:
         return
     enemy = _kb.enemies[0]
-    async with client as c:
-        resp = await c.get(f"/enemies/{enemy.id}")
+    resp = await client.get(f"/enemies/{enemy.id}")
     assert resp.status_code == 200
     assert 'href="/enemies"' in resp.text
 
 
 async def test_events_filter_by_act(client):
     """Events page should accept act filter."""
-    async with client as c:
-        resp = await c.get("/events?act=Act+1")
+    resp = await client.get("/events?act=Act+1")
     assert resp.status_code == 200
     assert "All Acts" in resp.text
 
 
 async def test_events_no_filter(client):
     """Events page without filter should show all events."""
-    async with client as c:
-        resp = await c.get("/events")
+    resp = await client.get("/events")
     assert resp.status_code == 200
     assert "Events" in resp.text
 
@@ -624,8 +551,7 @@ async def test_relic_detail_page(client):
     if not _kb.relics:
         return
     relic = _kb.relics[0]
-    async with client as c:
-        resp = await c.get(f"/relics/{relic.id}")
+    resp = await client.get(f"/relics/{relic.id}")
     assert resp.status_code == 200
     assert relic.name in resp.text
     assert 'href="/relics"' in resp.text
@@ -633,8 +559,7 @@ async def test_relic_detail_page(client):
 
 async def test_relic_detail_404(client):
     """Relic detail page should return 404 for unknown relic."""
-    async with client as c:
-        resp = await c.get("/relics/RELIC.NONEXISTENT")
+    resp = await client.get("/relics/RELIC.NONEXISTENT")
     assert resp.status_code == 404
     assert "not found" in resp.text.lower()
 
@@ -644,32 +569,28 @@ async def test_relics_page_links_to_detail(client):
     from sts2.app import kb as _kb
     if not _kb.relics:
         return
-    async with client as c:
-        resp = await c.get("/relics")
+    resp = await client.get("/relics")
     assert resp.status_code == 200
     assert f'href="/relics/{_kb.relics[0].id}"' in resp.text
 
 
 async def test_potions_filter_by_rarity(client):
     """Potions page should accept rarity filter."""
-    async with client as c:
-        resp = await c.get("/potions?rarity=Common")
+    resp = await client.get("/potions?rarity=Common")
     assert resp.status_code == 200
     assert "All Rarities" in resp.text
 
 
 async def test_potions_no_filter(client):
     """Potions page without filter should show all potions."""
-    async with client as c:
-        resp = await c.get("/potions")
+    resp = await client.get("/potions")
     assert resp.status_code == 200
     assert "Potions" in resp.text
 
 
 async def test_sitemap_xml(client):
     """Sitemap should list all pages as XML."""
-    async with client as c:
-        resp = await c.get("/sitemap.xml")
+    resp = await client.get("/sitemap.xml")
     assert resp.status_code == 200
     assert "<urlset" in resp.text
     assert "<url>" in resp.text
@@ -680,8 +601,7 @@ async def test_sitemap_xml(client):
 
 async def test_robots_txt_references_sitemap(client):
     """robots.txt should reference sitemap.xml."""
-    async with client as c:
-        resp = await c.get("/robots.txt")
+    resp = await client.get("/robots.txt")
     assert resp.status_code == 200
     assert "sitemap.xml" in resp.text.lower()
 
@@ -695,8 +615,7 @@ async def test_cards_page_shows_pick_rate(client):
         card_stats={"CARD.BASH": {"picked": 8, "skipped": 2, "won": 5, "lost": 3}},
     )
     with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
-        async with client as c:
-            resp = await c.get("/cards")
+        resp = await client.get("/cards")
     if resp.status_code == 200 and ("CARD.BASH" in resp.text or "Bash" in resp.text):
         assert "Picked" in resp.text or "80%" in resp.text
 
@@ -707,16 +626,14 @@ async def test_search_results_link_to_relic_detail(client):
     if not _kb.relics:
         return
     relic = _kb.relics[0]
-    async with client as c:
-        resp = await c.get(f"/search?q={relic.name}")
+    resp = await client.get(f"/search?q={relic.name}")
     if resp.status_code == 200 and relic.name in resp.text:
         assert f'href="/relics/{relic.id}"' in resp.text
 
 
 async def test_run_detail_links_relics(client):
     """Run detail page should link relics to detail pages."""
-    async with client as c:
-        resp = await c.get("/runs")
+    resp = await client.get("/runs")
     # Just verify the template renders without error
     assert resp.status_code == 200
 
@@ -732,8 +649,7 @@ async def test_card_detail_shows_run_win_rate(client):
         RunHistory(id="run3", character="Ironclad", win=True, deck=["CARD.BASH"]),
     ]
     with patch("sts2.app._get_runs", new=AsyncMock(return_value=mock_runs)):
-        async with client as c:
-            resp = await c.get("/cards/CARD.BASH")
+        resp = await client.get("/cards/CARD.BASH")
     if resp.status_code == 200:
         assert "Run History with" in resp.text
         assert "Win Rate" in resp.text
@@ -746,8 +662,7 @@ async def test_card_detail_og_title(client):
     if not _kb.cards:
         return
     card = _kb.cards[0]
-    async with client as c:
-        resp = await c.get(f"/cards/{card.id}")
+    resp = await client.get(f"/cards/{card.id}")
     if resp.status_code == 200:
         assert "og:title" in resp.text
         assert "Spirescope" in resp.text
@@ -757,8 +672,7 @@ async def test_card_detail_og_title(client):
 
 async def test_analytics_page(client):
     """Analytics page should render."""
-    async with client as c:
-        resp = await c.get("/analytics")
+    resp = await client.get("/analytics")
     assert resp.status_code == 200
     assert "Analytics" in resp.text
 
@@ -768,16 +682,14 @@ async def test_analytics_page_empty_runs(client):
     from unittest.mock import AsyncMock, patch
     from sts2.analytics import compute_analytics
     with patch("sts2.app._get_analytics", new=AsyncMock(return_value=compute_analytics([]))):
-        async with client as c:
-            resp = await c.get("/analytics")
+        resp = await client.get("/analytics")
     assert resp.status_code == 200
     assert "No run data yet" in resp.text
 
 
 async def test_api_analytics(client):
     """API analytics endpoint should return JSON."""
-    async with client as c:
-        resp = await c.get("/api/analytics")
+    resp = await client.get("/api/analytics")
     assert resp.status_code == 200
     data = resp.json()
     assert "overview" in data
@@ -799,8 +711,7 @@ async def test_analytics_with_mock_runs(client):
                    relics=["RELIC.RING_OF_THE_SNAKE"], run_time=1500),
     ]
     with patch("sts2.app._get_analytics", new=AsyncMock(return_value=compute_analytics(mock_runs))):
-        async with client as c:
-            resp = await c.get("/api/analytics")
+        resp = await client.get("/api/analytics")
     data = resp.json()
     assert data["overview"]["total"] == 3
     assert data["overview"]["wins"] == 2
@@ -867,8 +778,7 @@ async def test_analytics_page_shows_overview(client):
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], run_time=600),
     ]
     with patch("sts2.app._get_analytics", new=AsyncMock(return_value=compute_analytics(mock_runs))):
-        async with client as c:
-            resp = await c.get("/analytics")
+        resp = await client.get("/analytics")
     assert resp.status_code == 200
     assert "Total Runs" in resp.text
     assert "Win Rate" in resp.text
@@ -876,8 +786,7 @@ async def test_analytics_page_shows_overview(client):
 
 async def test_sitemap_includes_analytics(client):
     """Sitemap should include the analytics page."""
-    async with client as c:
-        resp = await c.get("/sitemap.xml")
+    resp = await client.get("/sitemap.xml")
     assert resp.status_code == 200
     assert "/analytics" in resp.text
 
@@ -970,8 +879,7 @@ async def test_card_detail_passes_community_tips(client):
     card = _kb.cards[0]
     mock_tips = ["This card is amazing in act 1 for dealing damage."]
     with patch.object(_kb, "get_community_tips", return_value=mock_tips):
-        async with client as c:
-            resp = await c.get(f"/cards/{card.id}")
+        resp = await client.get(f"/cards/{card.id}")
     if resp.status_code == 200:
         assert "Community Tips" in resp.text
         assert "Reddit" in resp.text
@@ -986,8 +894,7 @@ async def test_relic_detail_passes_community_tips(client):
     relic = _kb.relics[0]
     mock_tips = ["This relic synergizes well with strength builds."]
     with patch.object(_kb, "get_community_tips", return_value=mock_tips):
-        async with client as c:
-            resp = await c.get(f"/relics/{relic.id}")
+        resp = await client.get(f"/relics/{relic.id}")
     if resp.status_code == 200:
         assert "Community Tips" in resp.text
 
@@ -1004,16 +911,14 @@ async def test_community_cli_entry():
 
 async def test_community_page(client):
     """Community page should render."""
-    async with client as c:
-        resp = await c.get("/community")
+    resp = await client.get("/community")
     assert resp.status_code == 200
     assert "Community Meta" in resp.text
 
 
 async def test_community_page_empty_state(client):
     """Community page with no data should show instructions."""
-    async with client as c:
-        resp = await c.get("/community")
+    resp = await client.get("/community")
     assert resp.status_code == 200
     # Should show either meta posts or the empty state instructions
     assert "Community" in resp.text
@@ -1028,8 +933,7 @@ async def test_community_page_with_meta_posts(client):
          "score": 150, "comments": 42, "type": "tier_list", "date": 1700000000},
     ]
     with patch.object(_kb, "meta_posts", mock_posts):
-        async with client as c:
-            resp = await c.get("/community")
+        resp = await client.get("/community")
     assert resp.status_code == 200
     assert "Best Ironclad Cards Tier List" in resp.text
     assert "150" in resp.text
@@ -1037,16 +941,14 @@ async def test_community_page_with_meta_posts(client):
 
 async def test_community_nav_link(client):
     """Nav should include Community link."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert 'href="/community"' in resp.text
 
 
 async def test_sitemap_includes_community(client):
     """Sitemap should include the community page."""
-    async with client as c:
-        resp = await c.get("/sitemap.xml")
+    resp = await client.get("/sitemap.xml")
     assert resp.status_code == 200
     assert "/community" in resp.text
 
@@ -1060,8 +962,7 @@ async def test_enemy_detail_community_tips(client):
     enemy = _kb.enemies[0]
     mock_tips = ["This enemy hits hard in act 2, bring block cards."]
     with patch.object(_kb, "get_community_tips", return_value=mock_tips):
-        async with client as c:
-            resp = await c.get(f"/enemies/{enemy.id}")
+        resp = await client.get(f"/enemies/{enemy.id}")
     if resp.status_code == 200:
         assert "Community Tips" in resp.text
         assert "Reddit" in resp.text
@@ -1094,8 +995,7 @@ async def test_community_page_shows_tier_cards(client):
     original_cards = _kb.cards
     try:
         _kb.cards = mock_cards
-        async with client as c:
-            resp = await c.get("/community")
+        resp = await client.get("/community")
         assert resp.status_code == 200
         assert "S-Tier" in resp.text
         assert "Test S" in resp.text
@@ -1107,8 +1007,7 @@ async def test_community_page_shows_tier_cards(client):
 
 async def test_guide_page(client):
     """Guide page should render."""
-    async with client as c:
-        resp = await c.get("/guide")
+    resp = await client.get("/guide")
     assert resp.status_code == 200
     assert "Guide" in resp.text
     assert "Getting Started" in resp.text
@@ -1117,24 +1016,21 @@ async def test_guide_page(client):
 
 async def test_guide_in_sitemap(client):
     """Sitemap should include the guide page."""
-    async with client as c:
-        resp = await c.get("/sitemap.xml")
+    resp = await client.get("/sitemap.xml")
     assert resp.status_code == 200
     assert "/guide" in resp.text
 
 
 async def test_guide_nav_link(client):
     """Nav should include Guide link."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert 'href="/guide"' in resp.text
 
 
 async def test_index_data_status(client):
     """Index should show data sources section."""
-    async with client as c:
-        resp = await c.get("/")
+    resp = await client.get("/")
     assert resp.status_code == 200
     assert "Data Sources" in resp.text
 

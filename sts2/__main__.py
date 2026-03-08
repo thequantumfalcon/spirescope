@@ -17,6 +17,7 @@ Commands:
 
 Options:
   --save-only   With 'update': skip wiki, only discover from save files
+  --no-browser  With 'serve': don't open browser automatically
   --help, -h    Show this help message
   --version, -V Show version
 """
@@ -79,7 +80,8 @@ def main():
         import uvicorn
 
         url = f"http://{HOST}:{PORT}"
-        threading.Timer(1.5, lambda: webbrowser.open(url)).start()
+        if "--no-browser" not in args:
+            threading.Timer(1.5, lambda: webbrowser.open(url)).start()
         print(f"\n  Spirescope {_get_version()} starting at {url}")
         if HOST not in ("127.0.0.1", "localhost", "::1"):
             print("  WARNING: Spirescope is designed for single-user local use.")

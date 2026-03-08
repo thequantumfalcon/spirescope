@@ -21,10 +21,10 @@
 [data-theme="light"] {
   --bg: #f8f9fa; --bg2: #ffffff; --bg3: #e9ecef;
   --border: #ced4da; --text: #1a1a2e; --text2: #495057;
-  --cyan: #0891b2; --magenta: #e91e63; --purple: #7c3aed; --neon-purple: #7c3aed;
-  --accent: #0891b2; --accent2: #0891b2;
-  --red: #dc2626; --green: #16a34a; --yellow: #ca8a04; --orange: #c2410c;
-  --ironclad: #c0392b; --silent: #178344; --defect: #2563eb; --necrobinder: #7e22ce; --regent: #b8860b;
+  --cyan: #0e7490; --magenta: #e91e63; --purple: #7c3aed; --neon-purple: #7c3aed;
+  --accent: #0e7490; --accent2: #0e7490;
+  --red: #dc2626; --green: #15803d; --yellow: #ca8a04; --orange: #c2410c;
+  --ironclad: #c0392b; --silent: #178344; --defect: #2563eb; --necrobinder: #7e22ce; --regent: #8b6914;
   --card-bg: rgba(0,0,0,0.04);
   --nav-bg: rgba(255,255,255,0.9);
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);

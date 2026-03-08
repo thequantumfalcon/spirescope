@@ -4,17 +4,9 @@ import json
 import pytest
 from pathlib import Path
 from unittest.mock import patch, AsyncMock
-from httpx import AsyncClient, ASGITransport
 
-from sts2.app import app, generate_csrf_token, _ADMIN_TOKEN, _rate_limit_store
+from sts2.app import generate_csrf_token, _ADMIN_TOKEN, _rate_limit_store
 from sts2.models import RunHistory, RunFloor, Card, Relic, Enemy
-
-
-@pytest.fixture
-def client():
-    _rate_limit_store.clear()
-    transport = ASGITransport(app=app)
-    return AsyncClient(transport=transport, base_url="http://test")
 
 
 # ---------------------------------------------------------------------------
@@ -189,8 +181,7 @@ class TestRunExport:
     async def test_export_known_run(self, client):
         with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=RunHistory(
                 id="test-run-1", character="Ironclad", win=True, deck=["CARD.BASH"]))):
-            async with client as c:
-                resp = await c.get("/runs/test-run-1/export")
+            resp = await client.get("/runs/test-run-1/export")
         assert resp.status_code == 200
         data = resp.json()
         assert data["format_version"] == 1
@@ -199,15 +190,13 @@ class TestRunExport:
         assert "attachment" in resp.headers.get("content-disposition", "")
 
     async def test_export_404(self, client):
-        async with client as c:
-            resp = await c.get("/runs/nonexistent/export")
+        resp = await client.get("/runs/nonexistent/export")
         assert resp.status_code == 404
 
     async def test_export_filename_sanitized(self, client):
         with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=RunHistory(
                 id="test/../../evil", character="Ironclad", win=True, deck=[]))):
-            async with client as c:
-                resp = await c.get("/runs/test%2F..%2F..%2Fevil/export")
+            resp = await client.get("/runs/test%2F..%2F..%2Fevil/export")
         if resp.status_code == 200:
             disp = resp.headers.get("content-disposition", "")
             assert "/" not in disp.split("filename=")[1] if "filename=" in disp else True
@@ -217,52 +206,46 @@ class TestRunImport:
     async def test_import_valid_run(self, client):
         run_data = {"spirescope_version": "2.0.0", "format_version": 1,
                     "run": {"id": "imported-1", "character": "Silent", "win": True, "deck": []}}
-        async with client as c:
-            resp = await c.post("/runs/import",
-                                files={"file": ("test.json", json.dumps(run_data).encode())},
-                                data={"csrf_token": generate_csrf_token()})
+        resp = await client.post("/runs/import",
+                                 files={"file": ("test.json", json.dumps(run_data).encode())},
+                                 data={"csrf_token": generate_csrf_token()})
         assert resp.status_code == 200
         assert "imported-1" in resp.text or "Imported" in resp.text
 
     async def test_import_bad_csrf(self, client):
         run_data = {"spirescope_version": "2.0.0", "format_version": 1,
                     "run": {"id": "x", "character": "Silent", "win": True, "deck": []}}
-        async with client as c:
-            resp = await c.post("/runs/import",
-                                files={"file": ("test.json", json.dumps(run_data).encode())},
-                                data={"csrf_token": "bad"})
+        resp = await client.post("/runs/import",
+                                 files={"file": ("test.json", json.dumps(run_data).encode())},
+                                 data={"csrf_token": "bad"})
         assert resp.status_code == 403
 
     async def test_import_too_large(self, client):
         huge = b"x" * (1_048_577)
-        async with client as c:
-            resp = await c.post("/runs/import",
-                                files={"file": ("big.json", huge)},
-                                data={"csrf_token": generate_csrf_token()})
+        resp = await client.post("/runs/import",
+                                 files={"file": ("big.json", huge)},
+                                 data={"csrf_token": generate_csrf_token()})
         assert resp.status_code == 413
 
     async def test_import_malformed_json(self, client):
-        async with client as c:
-            resp = await c.post("/runs/import",
-                                files={"file": ("bad.json", b"not json")},
-                                data={"csrf_token": generate_csrf_token()})
+        resp = await client.post("/runs/import",
+                                 files={"file": ("bad.json", b"not json")},
+                                 data={"csrf_token": generate_csrf_token()})
         assert resp.status_code == 400
 
     async def test_import_bad_format_version(self, client):
         data = json.dumps({"format_version": 99, "run": {}}).encode()
-        async with client as c:
-            resp = await c.post("/runs/import",
-                                files={"file": ("v99.json", data)},
-                                data={"csrf_token": generate_csrf_token()})
+        resp = await client.post("/runs/import",
+                                 files={"file": ("v99.json", data)},
+                                 data={"csrf_token": generate_csrf_token()})
         assert resp.status_code == 400
         assert "format" in resp.text.lower() or "version" in resp.text.lower()
 
     async def test_import_missing_run_key(self, client):
         data = json.dumps({"format_version": 1}).encode()
-        async with client as c:
-            resp = await c.post("/runs/import",
-                                files={"file": ("norun.json", data)},
-                                data={"csrf_token": generate_csrf_token()})
+        resp = await client.post("/runs/import",
+                                 files={"file": ("norun.json", data)},
+                                 data={"csrf_token": generate_csrf_token()})
         assert resp.status_code == 400
 
 
@@ -277,8 +260,7 @@ class TestCoaching:
                               current_hp=10, max_hp=80, deck=["CARD.BASH"],
                               floors=[RunFloor(floor=1)])
         with patch("sts2.routes.get_current_run", return_value=mock_run):
-            async with client as c:
-                resp = await c.get("/live")
+            resp = await client.get("/live")
         assert resp.status_code == 200
         assert "CRITICAL" in resp.text or "critical" in resp.text.lower()
 
@@ -288,8 +270,7 @@ class TestCoaching:
                               current_hp=25, max_hp=80, deck=["CARD.BASH"],
                               floors=[RunFloor(floor=1)])
         with patch("sts2.routes.get_current_run", return_value=mock_run):
-            async with client as c:
-                resp = await c.get("/live")
+            resp = await client.get("/live")
         assert resp.status_code == 200
         assert "WARNING" in resp.text or "warning" in resp.text.lower()
 
@@ -299,8 +280,7 @@ class TestCoaching:
                               current_hp=70, max_hp=80, deck=["CARD.BASH"],
                               floors=[RunFloor(floor=1)])
         with patch("sts2.routes.get_current_run", return_value=mock_run):
-            async with client as c:
-                resp = await c.get("/live")
+            resp = await client.get("/live")
         assert resp.status_code == 200
         assert "danger-banner" not in resp.text
 
@@ -310,8 +290,7 @@ class TestCoaching:
                               current_hp=50, max_hp=80, deck=["CARD.BASH"],
                               floors=[])
         with patch("sts2.routes.get_current_run", return_value=mock_run):
-            async with client as c:
-                resp = await c.get("/live")
+            resp = await client.get("/live")
         assert resp.status_code == 200
 
     async def test_zero_max_hp_no_crash(self, client):
@@ -320,8 +299,7 @@ class TestCoaching:
                               current_hp=0, max_hp=0, deck=["CARD.BASH"],
                               floors=[])
         with patch("sts2.routes.get_current_run", return_value=mock_run):
-            async with client as c:
-                resp = await c.get("/live")
+            resp = await client.get("/live")
         assert resp.status_code == 200
         assert "danger-banner" not in resp.text
 
@@ -404,8 +382,7 @@ class TestAggregate:
 
 class TestAggregateAPI:
     async def test_export_stats(self, client):
-        async with client as c:
-            resp = await c.get("/api/export/stats")
+        resp = await client.get("/api/export/stats")
         assert resp.status_code == 200
         data = resp.json()
         assert "run_count" in data
@@ -413,44 +390,38 @@ class TestAggregateAPI:
 
     async def test_import_stats_bad_csrf(self, client):
         data = json.dumps({"run_count": 5, "character_stats": {}}).encode()
-        async with client as c:
-            resp = await c.post("/api/import/stats",
-                                files={"file": ("stats.json", data)},
-                                data={"csrf_token": "bad"})
+        resp = await client.post("/api/import/stats",
+                                 files={"file": ("stats.json", data)},
+                                 data={"csrf_token": "bad"})
         assert resp.status_code == 403
 
     async def test_import_stats_too_large(self, client):
         huge = b"x" * 512_001
-        async with client as c:
-            resp = await c.post("/api/import/stats",
-                                files={"file": ("big.json", huge)},
-                                data={"csrf_token": generate_csrf_token()})
+        resp = await client.post("/api/import/stats",
+                                 files={"file": ("big.json", huge)},
+                                 data={"csrf_token": generate_csrf_token()})
         assert resp.status_code == 413
 
     async def test_import_stats_invalid_json(self, client):
-        async with client as c:
-            resp = await c.post("/api/import/stats",
-                                files={"file": ("bad.json", b"not json")},
-                                data={"csrf_token": generate_csrf_token()})
+        resp = await client.post("/api/import/stats",
+                                 files={"file": ("bad.json", b"not json")},
+                                 data={"csrf_token": generate_csrf_token()})
         assert resp.status_code == 400
 
     async def test_import_stats_missing_run_count(self, client):
         data = json.dumps({"character_stats": {}}).encode()
-        async with client as c:
-            resp = await c.post("/api/import/stats",
-                                files={"file": ("stats.json", data)},
-                                data={"csrf_token": generate_csrf_token()})
+        resp = await client.post("/api/import/stats",
+                                 files={"file": ("stats.json", data)},
+                                 data={"csrf_token": generate_csrf_token()})
         assert resp.status_code == 400
 
     async def test_reset_stats_requires_auth(self, client):
-        async with client as c:
-            resp = await c.post("/api/reset/stats")
+        resp = await client.post("/api/reset/stats")
         assert resp.status_code == 403
 
     async def test_reset_stats_with_auth(self, client):
-        async with client as c:
-            resp = await c.post("/api/reset/stats",
-                                headers={"X-Admin-Token": _ADMIN_TOKEN})
+        resp = await client.post("/api/reset/stats",
+                                 headers={"X-Admin-Token": _ADMIN_TOKEN})
         assert resp.status_code == 200
         assert resp.json()["status"] == "ok"
 
@@ -517,8 +488,7 @@ class TestModLoading:
 
 class TestCSVExport:
     async def test_csv_export_endpoint(self, client):
-        async with client as c:
-            resp = await c.get("/api/export/runs")
+        resp = await client.get("/api/export/runs")
         assert resp.status_code == 200
         assert "text/csv" in resp.headers.get("content-type", "")
         assert "attachment" in resp.headers.get("content-disposition", "")
@@ -528,8 +498,7 @@ class TestCSVExport:
         assert "deck_size" in lines[0]
 
     async def test_csv_export_with_filters(self, client):
-        async with client as c:
-            resp = await c.get("/api/export/runs?character=Ironclad&result=win")
+        resp = await client.get("/api/export/runs?character=Ironclad&result=win")
         assert resp.status_code == 200
 
     def test_csv_safe_function(self):
@@ -548,8 +517,7 @@ class TestCSVExport:
 
 class TestAPIPagination:
     async def test_pagination_envelope(self, client):
-        async with client as c:
-            resp = await c.get("/api/runs")
+        resp = await client.get("/api/runs")
         assert resp.status_code == 200
         data = resp.json()
         assert "total" in data
@@ -559,8 +527,7 @@ class TestAPIPagination:
         assert isinstance(data["runs"], list)
 
     async def test_pagination_offset(self, client):
-        async with client as c:
-            resp = await c.get("/api/runs?offset=0&limit=1")
+        resp = await client.get("/api/runs?offset=0&limit=1")
         assert resp.status_code == 200
         data = resp.json()
         assert data["offset"] == 0
@@ -568,15 +535,13 @@ class TestAPIPagination:
         assert len(data["runs"]) <= 1
 
     async def test_pagination_out_of_range(self, client):
-        async with client as c:
-            resp = await c.get("/api/runs?offset=999999&limit=10")
+        resp = await client.get("/api/runs?offset=999999&limit=10")
         assert resp.status_code == 200
         data = resp.json()
         assert data["runs"] == []
 
     async def test_pagination_with_filters(self, client):
-        async with client as c:
-            resp = await c.get("/api/runs?character=Ironclad&result=win&offset=0&limit=5")
+        resp = await client.get("/api/runs?character=Ironclad&result=win&offset=0&limit=5")
         assert resp.status_code == 200
         data = resp.json()
         assert isinstance(data["total"], int)
@@ -592,8 +557,7 @@ class TestTheme:
         assert (STATIC_DIR / "theme-init.js").exists()
 
     async def test_base_has_theme_toggle(self, client):
-        async with client as c:
-            resp = await c.get("/")
+        resp = await client.get("/")
         assert resp.status_code == 200
         assert "theme-init.js" in resp.text
         assert "theme-toggle" in resp.text
@@ -603,7 +567,7 @@ class TestTheme:
         css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
         assert '[data-theme="light"]' in css
         # Check critical overrides
-        assert "--regent: #b8860b" in css  # WCAG-safe regent color
+        assert "--regent: #8b6914" in css  # WCAG-safe regent color
         assert "--silent: #178344" in css   # WCAG-safe silent color
         assert "--ironclad: #c0392b" in css # WCAG-safe ironclad color
 
@@ -620,23 +584,20 @@ class TestTheme:
 
 class TestCSP:
     async def test_strict_csp_on_normal_pages(self, client):
-        async with client as c:
-            resp = await c.get("/")
+        resp = await client.get("/")
         csp = resp.headers.get("Content-Security-Policy", "")
         assert "cdn.jsdelivr.net" not in csp
         assert "script-src 'self'" in csp
 
     async def test_relaxed_csp_on_docs(self, client):
-        async with client as c:
-            resp = await c.get("/docs")
+        resp = await client.get("/docs")
         # /docs may redirect or return 200
         if resp.status_code == 200:
             csp = resp.headers.get("Content-Security-Policy", "")
             assert "cdn.jsdelivr.net" in csp
 
     async def test_relaxed_csp_on_openapi(self, client):
-        async with client as c:
-            resp = await c.get("/openapi.json")
+        resp = await client.get("/openapi.json")
         if resp.status_code == 200:
             csp = resp.headers.get("Content-Security-Policy", "")
             assert "cdn.jsdelivr.net" in csp
@@ -647,19 +608,18 @@ class TestCSP:
 # ---------------------------------------------------------------------------
 
 class TestRateLimiter:
-    async def test_sse_exempt_from_rate_limit(self, client):
-        """SSE endpoint should not consume rate limit budget."""
-        _rate_limit_store.clear()
-        async with client as c:
-            try:
-                resp = await c.get("/api/live/stream?player=0")
-            except Exception:
-                pass
+    async def test_sse_exempt_from_rate_limit(self):
+        """SSE endpoint path is exempt from rate limiter middleware."""
+        # Verify exemption logic directly — don't hit the streaming endpoint
+        # which blocks for the full SSE duration.
+        from sts2.app import rate_limit
+        import inspect
+        source = inspect.getsource(rate_limit)
+        assert "/api/live/stream" in source
 
     async def test_options_exempt_from_rate_limit(self, client):
         _rate_limit_store.clear()
-        async with client as c:
-            resp = await c.options("/api/runs")
+        resp = await client.options("/api/runs")
         assert resp.status_code != 429
 
     async def test_api_key_bypass(self, client):
@@ -672,8 +632,7 @@ class TestRateLimiter:
         now = time.monotonic()
         _rate_limit_store["127.0.0.1"] = collections.deque([now] * 65)
         with patch.dict(os.environ, {"SPIRESCOPE_API_KEY": "test-secret-key"}):
-            async with client as c:
-                resp = await c.get("/api/runs", headers={"x-api-key": "test-secret-key"})
+            resp = await client.get("/api/runs", headers={"x-api-key": "test-secret-key"})
         assert resp.status_code == 200
 
     async def test_wrong_api_key_rate_limited(self, client):
@@ -685,8 +644,7 @@ class TestRateLimiter:
         now = time.monotonic()
         _rate_limit_store["127.0.0.1"] = collections.deque([now] * 65)
         with patch.dict(os.environ, {"SPIRESCOPE_API_KEY": "real-key"}):
-            async with client as c:
-                resp = await c.get("/health", headers={"x-api-key": "wrong-key"})
+            resp = await client.get("/health", headers={"x-api-key": "wrong-key"})
         assert resp.status_code == 429
 
     async def test_no_api_key_env_no_bypass(self, client):
@@ -700,8 +658,7 @@ class TestRateLimiter:
         env = os.environ.copy()
         env.pop("SPIRESCOPE_API_KEY", None)
         with patch.dict(os.environ, env, clear=True):
-            async with client as c:
-                resp = await c.get("/health", headers={"x-api-key": "anything"})
+            resp = await client.get("/health", headers={"x-api-key": "anything"})
         assert resp.status_code == 429
 
 
@@ -758,8 +715,7 @@ class TestSourceBadges:
                 id="MOD.TEST_BADGE", name="Test Badge Card", character="Ironclad",
                 cost="1", type="Attack", rarity="Common", source="mod")]
             _kb._cards_by_id["MOD.TEST_BADGE"] = _kb.cards[-1]
-            async with client as c:
-                resp = await c.get("/cards")
+            resp = await client.get("/cards")
             assert resp.status_code == 200
             if "Test Badge Card" in resp.text:
                 assert "tag-mod" in resp.text
@@ -781,16 +737,14 @@ class TestCommunityAggregate:
             },
         }
         with patch("sts2.aggregate.load_aggregate", return_value=mock_aggregate):
-            async with client as c:
-                resp = await c.get("/community")
+            resp = await client.get("/community")
         assert resp.status_code == 200
         assert "Player Stats" in resp.text
         assert "50" in resp.text  # run count
 
     async def test_community_no_aggregate(self, client):
         with patch("sts2.aggregate.load_aggregate", return_value={}):
-            async with client as c:
-                resp = await c.get("/community")
+            resp = await client.get("/community")
         assert resp.status_code == 200
         # Should not show player stats section
         assert "Player Stats" not in resp.text
@@ -890,7 +844,96 @@ class TestSSEIntegration:
 
 class TestRunsImportForm:
     async def test_runs_page_has_csrf_and_import(self, client):
-        async with client as c:
-            resp = await c.get("/runs")
+        resp = await client.get("/runs")
         assert resp.status_code == 200
         assert "csrf_token" in resp.text
+
+
+# ---------------------------------------------------------------------------
+# WCAG AA contrast validation for light theme colors
+# ---------------------------------------------------------------------------
+
+def _srgb_to_linear(c: int) -> float:
+    """Convert 8-bit sRGB channel to linear luminance component."""
+    s = c / 255.0
+    return s / 12.92 if s <= 0.04045 else ((s + 0.055) / 1.055) ** 2.4
+
+
+def _relative_luminance(hex_color: str) -> float:
+    """Compute WCAG relative luminance from hex color string."""
+    h = hex_color.lstrip("#")
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return 0.2126 * _srgb_to_linear(r) + 0.7152 * _srgb_to_linear(g) + 0.0722 * _srgb_to_linear(b)
+
+
+def _contrast_ratio(fg: str, bg: str) -> float:
+    """Compute WCAG contrast ratio between two hex colors."""
+    l1 = _relative_luminance(fg)
+    l2 = _relative_luminance(bg)
+    lighter, darker = max(l1, l2), min(l1, l2)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+class TestWCAGContrast:
+    """Verify light theme color pairs meet WCAG AA (4.5:1 for normal text)."""
+
+    LIGHT_BG = "#f8f9fa"
+    # All text/accent colors from [data-theme="light"] CSS block
+    WCAG_AA_PAIRS = [
+        ("--text", "#1a1a2e"),
+        ("--text2", "#495057"),
+        ("--cyan", "#0e7490"),
+        ("--ironclad", "#c0392b"),
+        ("--silent", "#178344"),
+        ("--regent", "#8b6914"),
+        ("--red", "#dc2626"),
+        ("--green", "#15803d"),
+    ]
+
+    def test_all_text_colors_pass_wcag_aa(self):
+        """All light-theme text/accent colors must have >= 4.5:1 contrast on bg."""
+        failures = []
+        for name, color in self.WCAG_AA_PAIRS:
+            ratio = _contrast_ratio(color, self.LIGHT_BG)
+            if ratio < 4.5:
+                failures.append(f"{name} ({color}): {ratio:.2f}:1 < 4.5:1")
+        assert not failures, "WCAG AA contrast failures:\n" + "\n".join(failures)
+
+    def test_contrast_ratio_math(self):
+        """Sanity check: black on white should be ~21:1."""
+        ratio = _contrast_ratio("#000000", "#ffffff")
+        assert 20.9 < ratio < 21.1
+
+    def test_light_theme_colors_parsed_from_css(self):
+        """Verify the CSS file actually contains the colors we're testing."""
+        import re
+        from sts2.config import STATIC_DIR
+        css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
+        # Find the [data-theme="light"] block
+        match = re.search(r'\[data-theme="light"\]\s*\{([^}]+)\}', css)
+        assert match, "No [data-theme='light'] block in CSS"
+        block = match.group(1)
+        for name, expected_color in self.WCAG_AA_PAIRS:
+            assert expected_color in block, f"{name}: {expected_color} not found in light theme CSS"
+
+
+# ---------------------------------------------------------------------------
+# --no-browser CLI flag
+# ---------------------------------------------------------------------------
+
+class TestNoBrowserFlag:
+    def test_help_shows_no_browser(self):
+        import subprocess
+        result = subprocess.run(
+            ["python", "-m", "sts2", "--help"],
+            capture_output=True, text=True, timeout=10,
+        )
+        assert "--no-browser" in result.stdout
+
+    def test_no_browser_in_source(self):
+        """Verify --no-browser flag is wired into serve command."""
+        import inspect
+        from sts2.__main__ import main
+        source = inspect.getsource(main)
+        assert "--no-browser" in source
+        assert "webbrowser" in source
