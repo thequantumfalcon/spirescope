@@ -61,6 +61,7 @@ exe = EXE(
     strip=False,
     upx=True,
     console=True,
+    icon='sts2/static/favicon.ico',
 )
 
 coll = COLLECT(
