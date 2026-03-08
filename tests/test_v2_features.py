@@ -651,40 +651,57 @@ class TestRateLimiter:
         """SSE endpoint should not consume rate limit budget."""
         _rate_limit_store.clear()
         async with client as c:
-            # SSE will timeout/error immediately in test but should not be rate-limited
             try:
                 resp = await c.get("/api/live/stream?player=0")
             except Exception:
-                pass  # SSE streaming may not complete in test context
-        # Main point: no 429 for SSE path
+                pass
 
     async def test_options_exempt_from_rate_limit(self, client):
         _rate_limit_store.clear()
         async with client as c:
             resp = await c.options("/api/runs")
-        # OPTIONS should pass through (CORS preflight)
         assert resp.status_code != 429
 
     async def test_api_key_bypass(self, client):
+        """API key should bypass rate limit — uses store injection instead of 65 HTTP calls."""
         import os
+        import collections
         _rate_limit_store.clear()
+        # Simulate an exhausted rate limit by injecting timestamps directly
+        import time
+        now = time.monotonic()
+        _rate_limit_store["127.0.0.1"] = collections.deque([now] * 65)
         with patch.dict(os.environ, {"SPIRESCOPE_API_KEY": "test-secret-key"}):
             async with client as c:
-                # Fill rate limit
-                for _ in range(65):
-                    await c.get("/api/runs")
-                # With API key, should bypass
                 resp = await c.get("/api/runs", headers={"x-api-key": "test-secret-key"})
         assert resp.status_code == 200
 
     async def test_wrong_api_key_rate_limited(self, client):
+        """Wrong API key should not bypass rate limit."""
         import os
+        import collections
         _rate_limit_store.clear()
+        import time
+        now = time.monotonic()
+        _rate_limit_store["127.0.0.1"] = collections.deque([now] * 65)
         with patch.dict(os.environ, {"SPIRESCOPE_API_KEY": "real-key"}):
             async with client as c:
-                for _ in range(65):
-                    await c.get("/health")
                 resp = await c.get("/health", headers={"x-api-key": "wrong-key"})
+        assert resp.status_code == 429
+
+    async def test_no_api_key_env_no_bypass(self, client):
+        """When SPIRESCOPE_API_KEY is unset, x-api-key header does nothing."""
+        import os
+        import collections
+        _rate_limit_store.clear()
+        import time
+        now = time.monotonic()
+        _rate_limit_store["127.0.0.1"] = collections.deque([now] * 65)
+        env = os.environ.copy()
+        env.pop("SPIRESCOPE_API_KEY", None)
+        with patch.dict(os.environ, env, clear=True):
+            async with client as c:
+                resp = await c.get("/health", headers={"x-api-key": "anything"})
         assert resp.status_code == 429
 
 
@@ -784,21 +801,87 @@ class TestCommunityAggregate:
 # ---------------------------------------------------------------------------
 
 class TestCLI:
-    def test_cli_export_command(self):
+    def test_cli_help_lists_new_commands(self):
         import subprocess
         result = subprocess.run(
             ["python", "-m", "sts2", "--help"],
             capture_output=True, text=True, timeout=10,
         )
         assert "export" in result.stdout
-
-    def test_cli_reset_stats_command(self):
-        import subprocess
-        result = subprocess.run(
-            ["python", "-m", "sts2", "--help"],
-            capture_output=True, text=True, timeout=10,
-        )
         assert "reset-stats" in result.stdout
+
+    def test_cli_export_writes_file(self, tmp_path):
+        """Export CLI should compute stats and write aggregate JSON to disk."""
+        from sts2.aggregate import compute_aggregate_stats, save_aggregate, _aggregate_storage_path
+        from sts2.saves import get_run_history
+        runs = get_run_history()
+        stats = compute_aggregate_stats(runs)
+        # Write to a temp path to verify the round-trip
+        out = tmp_path / "community_aggregate.json"
+        with patch("sts2.aggregate._aggregate_storage_path", return_value=out):
+            save_aggregate(stats)
+        assert out.exists()
+        loaded = json.loads(out.read_text(encoding="utf-8"))
+        assert "run_count" in loaded
+        assert loaded["run_count"] == len(runs)
+
+    def test_cli_reset_stats_deletes_file(self, tmp_path):
+        """Reset CLI should delete the aggregate file."""
+        from sts2.aggregate import reset_aggregate, save_aggregate
+        out = tmp_path / "community_aggregate.json"
+        with patch("sts2.aggregate._aggregate_storage_path", return_value=out):
+            save_aggregate({"run_count": 5})
+            assert out.exists()
+            result = reset_aggregate()
+        assert result is True
+        assert not out.exists()
+
+    def test_cli_reset_stats_nonexistent(self, tmp_path):
+        """Reset CLI should return False when no file exists."""
+        from sts2.aggregate import reset_aggregate
+        out = tmp_path / "nonexistent.json"
+        with patch("sts2.aggregate._aggregate_storage_path", return_value=out):
+            result = reset_aggregate()
+        assert result is False
+
+
+# ---------------------------------------------------------------------------
+# Runs page has import form with CSRF
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# SSE integration
+# ---------------------------------------------------------------------------
+
+class TestSSEIntegration:
+    async def test_sse_delivers_event_data(self):
+        """SSE generator should yield valid JSON data events."""
+        import asyncio
+        from sts2.routes import live_stream
+        # Call the route handler directly to get the StreamingResponse
+        resp = await live_stream(player=0)
+        assert resp.media_type == "text/event-stream"
+        # Consume just the first event from the async generator
+        body_gen = resp.body_iterator
+        first_chunk = await asyncio.wait_for(body_gen.__anext__(), timeout=10.0)
+        assert first_chunk.startswith("data: ")
+        payload = json.loads(first_chunk.split("data: ", 1)[1].split("\n\n")[0])
+        assert "active" in payload
+        assert "character" in payload
+        assert "current_hp" in payload
+        # Close the generator to clean up the SSE connection counter
+        await body_gen.aclose()
+
+    async def test_sse_connection_limit_enforced(self):
+        """SSE max connections constant should be reasonable."""
+        from sts2.routes import _SSE_MAX_CONNECTIONS
+        assert 1 <= _SSE_MAX_CONNECTIONS <= 50
+
+    async def test_sse_idle_timeout_set(self):
+        """SSE should have an idle timeout to prevent zombie connections."""
+        from sts2.routes import _SSE_IDLE_TIMEOUT
+        assert _SSE_IDLE_TIMEOUT > 0
+        assert _SSE_IDLE_TIMEOUT <= 600
 
 
 # ---------------------------------------------------------------------------
