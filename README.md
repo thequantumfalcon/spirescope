@@ -160,6 +160,10 @@ tests/               # 387 tests (pytest + pytest-asyncio)
 - Python 3.11+
 - Slay the Spire 2 (for save file features)
 
+## Disclaimer
+
+SpireScope is a fan-made project and is not affiliated with, endorsed by, or associated with [Mega Crit Games](https://www.megacrit.com/). Slay the Spire and Slay the Spire 2 are trademarks of Mega Crit Games. All game content and materials referenced within this tool are the property of their respective owners.
+
 ## License
 
 MIT
