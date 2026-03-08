@@ -3,7 +3,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Copy project files and install
-COPY pyproject.toml .
+COPY pyproject.toml README.md ./
 COPY sts2/ sts2/
 RUN pip install --no-cache-dir .
 
@@ -15,5 +15,8 @@ EXPOSE 8000
 
 ENV STS2_HOST=0.0.0.0
 ENV STS2_PORT=8000
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
 
 CMD ["python", "-m", "sts2"]

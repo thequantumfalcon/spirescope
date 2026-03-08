@@ -14,6 +14,11 @@ dependencies = [
     "watchdog>=3.0.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/thequantumfalcon/Spirescope"
+Repository = "https://github.com/thequantumfalcon/Spirescope"
+Issues = "https://github.com/thequantumfalcon/Spirescope/issues"
+
 [project.scripts]
 spirescope = "sts2.__main__:main"
 

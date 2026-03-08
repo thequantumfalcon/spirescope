@@ -16,24 +16,35 @@ pytest -q
 - **Python 3.11+** required
 - Run `python -m sts2` to start the dev server at http://127.0.0.1:8000
 - Run `python -m sts2 update` to scrape fresh game data
+- Run `python -m sts2 community` to pull community data from Reddit and Steam
 - Run `pytest -q --tb=short` before submitting changes
 
 ## Project Layout
 
 ```
 sts2/
-  app.py          # FastAPI routes + middleware
-  analytics.py    # Run analytics computation
-  community.py    # Reddit community data scraper
-  config.py       # Auto-detected paths and settings
-  knowledge.py    # Search, filter, and deck analysis engine
-  models.py       # Pydantic models
-  saves.py        # Save file parser
-  scraper.py      # Data scraper
-  data/           # JSON game data
-  templates/      # Jinja2 HTML templates
-  static/         # CSS
-tests/            # pytest test suite
+  __main__.py        # CLI entry point
+  app.py             # FastAPI app, middleware, security headers
+  routes.py          # All route handlers
+  analytics.py       # Run analytics computation
+  aggregate.py       # Aggregate stats computation and merging
+  community/         # Multi-source community scraper (Reddit + Steam)
+    __init__.py      # Orchestrator + re-exports
+    _types.py        # Shared types, extraction functions
+    _merge.py        # Weighted merge logic
+    reddit.py        # Reddit scraper (public JSON API)
+    steam.py         # Steam scraper (reviews, guides, discussions)
+  config.py          # Auto-detected paths and settings
+  knowledge.py       # Search, filter, synergy, and deck analysis engine
+  models.py          # Pydantic models for all game entities
+  saves.py           # Save file parser (progress + run history + co-op)
+  scraper.py         # Data scraper (wiki + save file discovery)
+  sync.py            # Aggregate sync client (upload/download)
+  watcher.py         # File watcher with debounce + polling fallback
+  data/              # JSON game data + mods
+  templates/         # Jinja2 HTML templates
+  static/            # CSS, fonts, images, JS
+tests/               # 387 tests (pytest + pytest-asyncio)
 ```
 
 ## CSS Conventions
@@ -43,13 +54,14 @@ tests/            # pytest test suite
 - Component classes: `.card-link`, `.card-win`, `.card-loss`, `.card-tip`, `.breadcrumb`, `.community-tips`
 - Only use inline `style=` for data-driven values (bar widths, chart heights)
 - Mobile-first: test at 768px and 480px breakpoints
+- Dark/light theme: use CSS custom properties (`var(--bg)`, `var(--text)`, etc.)
 
 ## Testing Conventions
 
 - pytest with pytest-asyncio in auto mode
 - Async test functions: use `async def test_*` (not `asyncio.get_event_loop()`)
 - Mock external dependencies (save files, network) — never hit real endpoints in tests
-- All 233+ tests must pass before merge
+- All 387+ tests must pass before merge
 
 ## Guidelines
 

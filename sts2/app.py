@@ -90,8 +90,6 @@ def validate_csrf_token(token: str) -> bool:
     return hmac.compare_digest(sig, expected)
 
 _ADMIN_TOKEN = os.environ.get("SPIRESCOPE_ADMIN_TOKEN", secrets.token_hex(32))
-if "SPIRESCOPE_ADMIN_TOKEN" not in os.environ:
-    log.debug("Admin token: %s", _ADMIN_TOKEN)
 
 # ---------------------------------------------------------------------------
 # Caches

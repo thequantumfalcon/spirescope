@@ -1,10 +1,14 @@
-# SpireScope
+<p align="center">
+  <img src="docs/banner.png" alt="SpireScope" width="100%">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
+  <img src="https://img.shields.io/badge/tests-387%20passing-brightgreen" alt="Tests">
+</p>
 
 A companion dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides.
-
-![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
-![License: MIT](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-387%20passing-brightgreen)
 
 ## Features
 

@@ -3,8 +3,6 @@
 
 import os
 
-block_cipher = None
-
 a = Analysis(
     ['sts2/__main__.py'],
     pathex=[],
@@ -47,12 +45,10 @@ a = Analysis(
         'sphinx', 'babel', 'docutils', 'lxml', 'cryptography', 'zmq',
         'myst_parser', 'rich', 'Cython', 'psutil', 'dateutil',
     ],
-    win_no_prefer_redirects=False,
-    cipher=block_cipher,
     noarchive=False,
 )
 
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+pyz = PYZ(a.pure, a.zipped_data)
 
 exe = EXE(
     pyz,

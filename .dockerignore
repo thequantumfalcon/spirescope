@@ -10,6 +10,7 @@ __pycache__/
 dist/
 build/
 .venv/
+.venv_build/
 venv/
 tests/
 *.md
