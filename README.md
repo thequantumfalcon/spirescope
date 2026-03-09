@@ -110,7 +110,9 @@ spirescope --version    # Show version
 | `STS2_COMMUNITY_SOURCES` | Community sources: `all`, `reddit`, `steam` | `all` |
 | `STS2_SYNC_URL` | Sync service URL (opt-in) | Disabled |
 | `STS2_SYNC_KEY` | API key for sync service | None |
-| `SPIRESCOPE_ADMIN_TOKEN` | Token for `/api/reload` | Auto-generated |
+| `SPIRESCOPE_API_KEY` | Optional API key for rate limit bypass | None |
+| `SPIRESCOPE_ADMIN_TOKEN` | Token for `/api/reload` and `/api/reset/stats` | Auto-generated |
+| `STS2_CORS_ORIGINS` | Comma-separated CORS allowed origins | Localhost only |
 
 ### Save File Location
 
@@ -129,8 +131,10 @@ spirescope --version    # Show version
 | `/api/live?player=0` | GET | Current run state (JSON) |
 | `/api/live/stream?player=0` | GET | SSE stream of live run updates |
 | `/api/export/stats` | GET | Export aggregate player stats (JSON) |
+| `/api/export/runs` | GET | Export run history (CSV) |
 | `/api/import/stats` | POST | Import/merge aggregate stats |
-| `/api/reload?token=` | POST | Hot-reload knowledge base (requires admin token) |
+| `/api/reload` | POST | Hot-reload knowledge base (requires `X-Admin-Token` header) |
+| `/api/reset/stats` | POST | Reset aggregate stats (requires `X-Admin-Token` header) |
 | `/health` | GET | Health check for monitors |
 | `/docs` | GET | Interactive API documentation (Swagger UI) |
 
