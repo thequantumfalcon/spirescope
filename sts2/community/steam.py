@@ -238,8 +238,10 @@ class _DiscussionListParser(HTMLParser):
         attr_dict = dict(attrs)
         # Discussion topic links
         if tag == "a" and "forum_topic_overlay" in attr_dict.get("class", ""):
-            self._current = {"url": attr_dict.get("href", ""), "title": ""}
-            self._in_title = True
+            href = attr_dict.get("href", "")
+            if href.startswith("https://"):
+                self._current = {"url": href, "title": ""}
+                self._in_title = True
 
     def handle_data(self, data: str) -> None:
         if self._in_title:

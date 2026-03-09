@@ -40,7 +40,8 @@ def check_for_update(current_version: str) -> None:
             tag = data.get("tag_name", "")
             if tag and _parse_version(tag) > _parse_version(current_version):
                 _latest_version = tag.lstrip("vV")
-                _update_url = data.get("html_url", "")
+                _raw_url = data.get("html_url", "")
+                _update_url = _raw_url if _raw_url.startswith("https://github.com/") else ""
                 log.info("Update available: %s (current: %s)", _latest_version, current_version)
         except Exception:
             pass  # Network errors are fine — this is best-effort

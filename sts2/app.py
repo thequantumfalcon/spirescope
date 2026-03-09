@@ -250,13 +250,17 @@ _LOG_SANITIZE_RE = re.compile(r"[\x00-\x1f\x7f]")
 @app.exception_handler(StarletteHTTPException)
 async def http_error_handler(request: Request, exc: StarletteHTTPException):
     messages = {
+        400: "Bad request.",
+        403: "Forbidden.",
         404: "Page not found.",
         405: "Method not allowed.",
+        413: "Request too large.",
         422: "Invalid request parameters.",
+        429: "Too many requests.",
     }
     return templates.TemplateResponse(request, "error.html", {
         "error_code": exc.status_code,
-        "error_message": messages.get(exc.status_code, exc.detail),
+        "error_message": messages.get(exc.status_code, "Something went wrong."),
     }, status_code=exc.status_code)
 
 
