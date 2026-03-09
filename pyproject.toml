@@ -5,6 +5,17 @@ description = "Spirescope — a local web dashboard for Slay the Spire 2. Card/r
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"
+authors = [{name = "Thomas"}]
+keywords = ["slay-the-spire", "slay-the-spire-2", "dashboard", "deck-analysis", "live-tracking", "companion-app"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Topic :: Games/Entertainment",
+]
 dependencies = [
     "fastapi>=0.100.0",
     "uvicorn[standard]>=0.20.0",
