@@ -55,7 +55,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Download (No Python Required)
 
-**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.0.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.1.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
 
 ### From Source
 
