@@ -11,15 +11,13 @@
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
 
-<!-- Screenshots — drop images in docs/ and uncomment
 <p align="center">
   <img src="docs/screenshot-dashboard.png" alt="Dashboard" width="80%">
 </p>
+
 <p align="center">
-  <img src="docs/screenshot-analytics.png" alt="Analytics" width="45%">
-  <img src="docs/screenshot-live.png" alt="Live Tracker" width="45%">
+  <img src="docs/screenshot-live.png" alt="Live Run Tracking" width="80%">
 </p>
--->
 
 ## Features
 
