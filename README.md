@@ -3,9 +3,10 @@
 </p>
 
 <p align="center">
+  <img src="https://github.com/thequantumfalcon/spirescope/actions/workflows/ci.yml/badge.svg" alt="CI">
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
-  <img src="https://img.shields.io/badge/tests-475%20passing-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/thequantumfalcon/spirescope/badges/tests.json" alt="Tests">
   <img src="https://img.shields.io/badge/coverage-84%25-yellowgreen" alt="Coverage: 84%">
 </p>
 
