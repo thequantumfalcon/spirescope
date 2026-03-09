@@ -398,7 +398,7 @@ async def import_run(request: Request, file: UploadFile = File(...),
     except (json.JSONDecodeError, ValidationError, KeyError, RecursionError) as exc:
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400,
-            "error_message": f"Invalid run file: {str(exc)[:200]}",
+            "error_message": "Invalid run file format.",
         }, status_code=400)
     run_analysis = analyze_run(run)
     return a.templates.TemplateResponse(request, "run_detail.html", {
