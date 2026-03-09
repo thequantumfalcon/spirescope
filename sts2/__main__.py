@@ -30,12 +30,8 @@ Environment:
 
 
 def _get_version() -> str:
-    try:
-        from importlib.metadata import version
-        return version("spirescope")
-    except Exception:
-        from sts2.config import VERSION
-        return VERSION
+    from sts2.config import VERSION
+    return VERSION
 
 
 def main():

@@ -18,7 +18,7 @@ from fastapi.templating import Jinja2Templates
 
 from fastapi.middleware.cors import CORSMiddleware
 from sts2.analytics import compute_analytics
-from sts2.config import TEMPLATES_DIR, STATIC_DIR, SAVE_DIR
+from sts2.config import TEMPLATES_DIR, STATIC_DIR, SAVE_DIR, VERSION
 from sts2.knowledge import KnowledgeBase
 from sts2.saves import get_progress, get_run_history
 
@@ -55,12 +55,7 @@ templates.env.globals["css_hash"] = _CSS_HASH
 templates.env.globals["theme_init_hash"] = _THEME_INIT_HASH
 templates.env.globals["logo_hash"] = _LOGO_HASH
 templates.env.globals["hero_bg_hash"] = _HERO_BG_HASH
-try:
-    from importlib.metadata import version as _get_version
-    templates.env.globals["version"] = _get_version("spirescope")
-except Exception:
-    from sts2.config import VERSION
-    templates.env.globals["version"] = VERSION
+templates.env.globals["version"] = VERSION
 
 kb = KnowledgeBase()
 

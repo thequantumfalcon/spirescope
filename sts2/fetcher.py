@@ -23,11 +23,8 @@ def _clean_description(desc: str) -> str:
 
 
 def _get_user_agent() -> str:
-    try:
-        from importlib.metadata import version
-        return f"Spirescope/{version('spirescope')}"
-    except Exception:
-        return "Spirescope/1.0"
+    from sts2.config import VERSION
+    return f"Spirescope/{VERSION}"
 
 
 def _fetch_page(path: str) -> str:

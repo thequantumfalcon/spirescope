@@ -1,3 +1,1 @@
-from importlib.metadata import version as _v
-
-__version__ = _v("spirescope")
+from sts2.config import VERSION as __version__  # noqa: F401
