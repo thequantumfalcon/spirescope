@@ -46,7 +46,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates
   static/            # CSS, fonts, images, JS
-tests/               # 475 tests (pytest + pytest-asyncio)
+tests/               # 494 tests (pytest + pytest-asyncio)
 ```
 
 ## CSS Conventions

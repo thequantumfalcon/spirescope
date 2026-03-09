@@ -252,6 +252,172 @@ async def test_deck_page_has_save_load_ui(client):
     assert "deck.js" in resp.text
 
 
+async def test_deck_page_has_card_info_buttons(client):
+    """Deck page should render info buttons with data attributes."""
+    resp = await client.get("/deck")
+    assert resp.status_code == 200
+    assert "card-info-btn" in resp.text
+    assert "data-card-id" in resp.text
+
+
+async def test_deck_page_card_data_attributes(client):
+    """Card info buttons should embed description and tier data."""
+    resp = await client.get("/deck")
+    assert resp.status_code == 200
+    assert "data-card-desc" in resp.text
+    assert "data-card-tier" in resp.text
+    assert "data-card-keywords" in resp.text
+
+
+async def test_api_card_includes_synergies(client):
+    """API card endpoint should include synergies list."""
+    resp = await client.get("/api/cards/CARD.BASH")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "synergies" in data
+    assert isinstance(data["synergies"], list)
+    assert len(data["synergies"]) > 0
+    assert "id" in data["synergies"][0]
+    assert "name" in data["synergies"][0]
+    assert len(data["synergies"]) <= 10
+
+
+async def test_api_card_synergies_empty_for_keywordless(client):
+    """Card with no keywords should return empty synergies."""
+    resp = await client.get("/api/cards/CARD.BYRDONIS_EGG")
+    if resp.status_code == 200:
+        data = resp.json()
+        assert "synergies" in data
+        assert data["synergies"] == []
+
+
+async def test_deck_page_has_search_input(client):
+    """Deck page should have a search input for filtering cards."""
+    resp = await client.get("/deck")
+    assert resp.status_code == 200
+    assert "deck-search" in resp.text
+
+
+async def test_deck_page_has_collapsible_sections(client):
+    """Deck page should organize cards into collapsible sections."""
+    resp = await client.get("/deck")
+    assert resp.status_code == 200
+    assert "deck-section" in resp.text
+    assert "deck-section-header" in resp.text
+
+
+async def test_deck_page_has_type_filter_buttons(client):
+    """Deck page should have type filter buttons."""
+    resp = await client.get("/deck")
+    assert resp.status_code == 200
+    assert "deck-filters" in resp.text
+    assert 'data-filter-type="Attack"' in resp.text
+
+
+async def test_deck_page_has_selected_counter(client):
+    """Deck page should have a selected card counter."""
+    resp = await client.get("/deck")
+    assert resp.status_code == 200
+    assert "deck-count" in resp.text
+
+
+async def test_deck_page_cards_have_type_data(client):
+    """Deck card chips should have data-card-type attributes for filtering."""
+    resp = await client.get("/deck")
+    assert resp.status_code == 200
+    assert "data-card-type=" in resp.text
+
+
+async def test_collections_stat_boxes_render(client):
+    """Collections page should render stat boxes."""
+    resp = await client.get("/collections")
+    assert resp.status_code == 200
+    assert "stat-box" in resp.text
+
+
+async def test_collections_has_character_sections(client):
+    """Collections discovered cards should be grouped by character."""
+    resp = await client.get("/collections")
+    assert resp.status_code == 200
+    assert "deck-section" in resp.text
+
+
+async def test_deck_page_has_qty_buttons(client):
+    """Deck page should have quantity +/- buttons instead of checkboxes."""
+    resp = await client.get("/deck")
+    assert resp.status_code == 200
+    assert "qty-btn" in resp.text
+    assert "qty-count" in resp.text
+    assert "qty-minus" in resp.text
+    assert "qty-plus" in resp.text
+
+
+async def test_deck_js_cache_busted(client):
+    """Deck page script tag should include cache-busting hash."""
+    resp = await client.get("/deck")
+    assert resp.status_code == 200
+    assert "deck.js?v=" in resp.text
+
+
+async def test_collections_js_cache_busted(client):
+    """Collections page script tag should include cache-busting hash."""
+    resp = await client.get("/collections")
+    assert resp.status_code == 200
+    assert "collections.js?v=" in resp.text
+
+
+async def test_deck_page_has_cost_curve_styles(client):
+    """CSS should include cost curve stacked bar styles."""
+    resp = await client.get("/static/style.css")
+    assert resp.status_code == 200
+    assert "cost-stack" in resp.text
+    assert "bar--attack" in resp.text
+
+
+async def test_deck_from_run_with_invalid_id(client):
+    """GET /deck?from_run=nonexistent should render empty analyzer."""
+    resp = await client.get("/deck?from_run=nonexistent_run_id")
+    assert resp.status_code == 200
+    assert "Deck Analyzer" in resp.text
+    assert "Deck loaded from" not in resp.text
+
+
+async def test_deck_from_run_with_mock_data(client):
+    """GET /deck?from_run=<id> should pre-select cards."""
+    from unittest.mock import AsyncMock, patch
+    from sts2.models import RunHistory
+
+    mock_run = RunHistory(
+        id="test_run_abc", character="Ironclad", win=True,
+        deck=["CARD.IRONCLAD.BASH", "CARD.IRONCLAD.STRIKE",
+              "CARD.IRONCLAD.STRIKE"],
+    )
+    with patch("sts2.app._get_run_by_id", new_callable=AsyncMock,
+               return_value=mock_run):
+        resp = await client.get("/deck?from_run=test_run_abc")
+    assert resp.status_code == 200
+    assert "Deck loaded from" in resp.text
+    assert "test_run_abc" in resp.text
+    assert "deck-init-data" in resp.text
+
+
+async def test_run_detail_has_analyze_button(client):
+    """Run detail page should have an Analyze Deck link."""
+    from unittest.mock import AsyncMock, patch
+    from sts2.models import RunHistory
+
+    mock_run = RunHistory(
+        id="test_run_xyz", character="Ironclad", win=True,
+        deck=["CARD.IRONCLAD.BASH"],
+    )
+    with patch("sts2.app._get_run_by_id", new_callable=AsyncMock,
+               return_value=mock_run):
+        resp = await client.get("/runs/test_run_xyz")
+    assert resp.status_code == 200
+    assert "/deck?from_run=test_run_xyz" in resp.text
+    assert "Analyze Deck" in resp.text
+
+
 async def test_cards_pagination_shows_range(client):
     """When paginated, shows 'Showing X-Y of Z' indicator."""
     resp = await client.get("/cards?page=1")

@@ -23,11 +23,13 @@
 </div>
 
 <h2>Final Deck</h2>
-<div class="flex flex-wrap gap-xs mb-lg">
+<div class="flex flex-wrap gap-xs mb-sm">
 {% for card_id in run.deck %}
 <a href="/cards/{{ card_id }}" class="tag tag-keyword card-link">{{ kb.id_to_name(card_id) }}</a>
 {% endfor %}
 </div>
+<a href="/deck?from_run={{ run.id }}" class="btn btn-sm btn-secondary">Analyze Deck</a>
+<div class="mb-lg"></div>
 
 <h2>Relics</h2>
 <div class="flex flex-wrap gap-xs mb-lg">

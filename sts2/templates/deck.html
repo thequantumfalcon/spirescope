@@ -5,8 +5,25 @@
 <h1>Deck Analyzer</h1>
 <p class="text-muted mb-md">Select the cards in your deck to get archetype detection, synergy analysis, and improvement suggestions.</p>
 
+{% if from_run_id %}
+<div class="card card-win mb-md">
+  {% if from_run_id == 'live' %}
+  <p>Deck loaded from your <a href="/live">current run</a>. Adjust cards and click Analyze Deck.</p>
+  {% else %}
+  <p>Deck loaded from <a href="/runs/{{ from_run_id }}">run {{ from_run_id }}</a>. Adjust cards and click Analyze Deck.</p>
+  {% endif %}
+</div>
+{% endif %}
+
 <form method="post" action="/deck/analyze">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  {% if selected_counts %}
+  {% for card_id, count in selected_counts.items() %}
+  {% for _ in range(count) %}
+  <input type="hidden" name="card_ids" value="{{ card_id }}">
+  {% endfor %}
+  {% endfor %}
+  {% endif %}
   <h2>Select Cards</h2>
   {% set chars = {} %}
   {% for card in cards %}
@@ -15,15 +32,105 @@
     {% endif %}
   {% endfor %}
 
+  <div class="deck-toolbar">
+    <div class="deck-search-wrap">
+      <input type="text" id="deck-search" placeholder="Search cards..." maxlength="200" autocomplete="off">
+      <button type="button" id="deck-search-clear" class="deck-search-clear" aria-label="Clear search">&times;</button>
+    </div>
+    <div class="deck-filters">
+      <button type="button" class="active" data-filter-type="">All Types</button>
+      <button type="button" data-filter-type="Attack">Attack</button>
+      <button type="button" data-filter-type="Skill">Skill</button>
+      <button type="button" data-filter-type="Power">Power</button>
+    </div>
+    <span id="deck-count" class="deck-count">0 selected</span>
+    <button type="button" id="deck-toggle-all" class="deck-toggle-all">Expand All</button>
+  </div>
+  <p id="deck-no-results" class="text-muted" style="display:none">No cards match your search.</p>
+
   {% for char_name, char_cards in chars.items() %}
-  <h3 class="char-{{ char_name|lower }} mt-md">{{ char_name }}</h3>
-  <div class="deck-form">
-    {% for card in char_cards %}
-    <label>
-      <input type="checkbox" name="card_ids" value="{{ card.id }}" {% if selected_ids is defined and card.id in selected_ids %}checked{% endif %}>
-      <span>{{ card.name }} ({{ card.cost }})</span>
-    </label>
-    {% endfor %}
+  {% set has_selected = selected_counts and char_cards|selectattr('id', 'in', selected_counts)|list|length > 0 %}
+  <div class="deck-section{% if not loop.first and not has_selected %} collapsed{% endif %}" data-character="{{ char_name }}">
+    <h3 class="deck-section-header char-{{ char_name|lower }} mt-md"
+        role="button" tabindex="0" aria-expanded="{{ 'true' if loop.first or has_selected else 'false' }}">
+      <span class="deck-section-arrow">&#9662;</span>
+      {{ char_name }}
+      <span class="deck-section-count text-muted">({{ char_cards|length }})</span>
+      <span class="deck-section-checked"></span>
+    </h3>
+    <div class="deck-section-body">
+      {% set has_known_types = char_cards|selectattr('type', 'in', ['Attack','Skill','Power'])|list|length > 0 %}
+      {% if has_known_types %}
+        {% set type_groups = {'Attack': [], 'Skill': [], 'Power': []} %}
+        {% for card in char_cards %}
+          {% if card.type in type_groups %}
+            {% if type_groups.update({card.type: type_groups[card.type] + [card]}) %}{% endif %}
+          {% endif %}
+        {% endfor %}
+        {% for type_name in ['Attack', 'Skill', 'Power'] %}
+          {% if type_groups[type_name] %}
+          <div class="deck-type-group" data-card-type="{{ type_name }}">
+            <h4 class="deck-type-header {% if type_name == 'Attack' %}text-red{% elif type_name == 'Skill' %}text-accent{% else %}text-yellow{% endif %}">
+              {{ type_name }}s ({{ type_groups[type_name]|length }})
+            </h4>
+            <div class="deck-form">
+              {% for card in type_groups[type_name] %}
+              {% set qty = selected_counts.get(card.id, 0) if selected_counts else 0 %}
+              <div class="deck-card deck-card--{{ card.type|lower }}{% if qty > 0 %} deck-card--selected{% endif %}"
+                   data-card-type="{{ card.type }}" data-card-name="{{ card.name|lower }}" data-card-id="{{ card.id }}">
+                <div class="card-qty">
+                  <button type="button" class="qty-btn qty-minus" aria-label="Remove one {{ card.name }}">−</button>
+                  <span class="qty-count">{{ qty }}</span>
+                  <button type="button" class="qty-btn qty-plus" aria-label="Add one {{ card.name }}">+</button>
+                </div>
+                <span class="card-label">{{ card.name }} <span class="rarity-dot rarity-{{ card.rarity|lower }}" title="{{ card.rarity }}"></span> ({{ card.cost }})</span>
+                <button type="button" class="card-info-btn"
+                  aria-label="Info about {{ card.name }}"
+                  data-card-id="{{ card.id }}"
+                  data-card-name="{{ card.name }}"
+                  data-card-desc="{{ card.description }}"
+                  data-card-desc-up="{{ card.description_upgraded }}"
+                  data-card-type="{{ card.type }}"
+                  data-card-rarity="{{ card.rarity }}"
+                  data-card-tier="{{ card.tier }}"
+                  data-card-cost="{{ card.cost }}"
+                  data-card-keywords="{{ card.keywords|join(',') }}"
+                >i</button>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <div class="deck-form">
+          {% for card in char_cards %}
+          {% set qty = selected_counts.get(card.id, 0) if selected_counts else 0 %}
+          <div class="deck-card deck-card--unknown{% if qty > 0 %} deck-card--selected{% endif %}"
+               data-card-type="{{ card.type }}" data-card-name="{{ card.name|lower }}" data-card-id="{{ card.id }}">
+            <div class="card-qty">
+              <button type="button" class="qty-btn qty-minus" aria-label="Remove one {{ card.name }}">−</button>
+              <span class="qty-count">{{ qty }}</span>
+              <button type="button" class="qty-btn qty-plus" aria-label="Add one {{ card.name }}">+</button>
+            </div>
+            <span class="card-label">{{ card.name }} <span class="rarity-dot rarity-{{ card.rarity|lower }}" title="{{ card.rarity }}"></span> ({{ card.cost }})</span>
+            <button type="button" class="card-info-btn"
+              aria-label="Info about {{ card.name }}"
+              data-card-id="{{ card.id }}"
+              data-card-name="{{ card.name }}"
+              data-card-desc="{{ card.description }}"
+              data-card-desc-up="{{ card.description_upgraded }}"
+              data-card-type="{{ card.type }}"
+              data-card-rarity="{{ card.rarity }}"
+              data-card-tier="{{ card.tier }}"
+              data-card-cost="{{ card.cost }}"
+              data-card-keywords="{{ card.keywords|join(',') }}"
+            >i</button>
+          </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
   </div>
   {% endfor %}
 
@@ -37,7 +144,10 @@
   </div>
 </form>
 
-<script src="/static/deck.js"></script>
+{% if selected_ids is defined and selected_ids %}
+<div id="deck-init-data" data-selected='{{ selected_ids | tojson }}' hidden></div>
+{% endif %}
+<script src="/static/deck.js?v={{ deck_js_hash }}"></script>
 
 {% if analysis %}
 <hr class="divider">
@@ -90,15 +200,54 @@
 {% endif %}
 
 <h3>Cost Curve</h3>
-<div class="bar-chart">
+<div class="cost-curve-summary">
+  <span class="cost-stat">Avg Cost: <strong>{{ analysis.avg_cost }}</strong></span>
+  <span class="cost-stat">Energy/Hand: <strong class="{% if analysis.energy_per_hand <= 15 %}text-green{% elif analysis.energy_per_hand <= 20 %}text-yellow{% else %}text-red{% endif %}">{{ analysis.energy_per_hand }}</strong> / 15</span>
+</div>
+{% set max_count = analysis.cost_curve.values()|max if analysis.cost_curve else 1 %}
+<div class="bar-chart bar-chart--tall">
 {% for cost, count in analysis.cost_curve.items() %}
+{% set bar_h = ((count / max_count) * 120)|round(0)|int %}
+{% set by_type = analysis.cost_curve_by_type.get(cost, {}) %}
 <div class="bar-col">
-  <div class="bar bar--wide" style="height:{{ count * 30 }}px"></div>
-  <span class="text-sm text-muted mt-xs">{{ cost }}</span>
   <span class="text-xs text-muted">{{ count }}</span>
+  {% if not cost.isdigit() %}
+  <div class="bar bar--wide bar--special" style="height:{{ bar_h }}px"></div>
+  {% else %}
+  <div class="cost-stack" style="height:{{ bar_h }}px">
+    {% if by_type.get('Attack', 0) > 0 %}
+    <div class="bar bar--attack" style="flex:{{ by_type.Attack }}" title="{{ by_type.Attack }} Attack{{ 's' if by_type.Attack != 1 }}"></div>
+    {% endif %}
+    {% if by_type.get('Skill', 0) > 0 %}
+    <div class="bar bar--skill" style="flex:{{ by_type.Skill }}" title="{{ by_type.Skill }} Skill{{ 's' if by_type.Skill != 1 }}"></div>
+    {% endif %}
+    {% if by_type.get('Power', 0) > 0 %}
+    <div class="bar bar--power" style="flex:{{ by_type.Power }}" title="{{ by_type.Power }} Power{{ 's' if by_type.Power != 1 }}"></div>
+    {% endif %}
+    {% set other = count - by_type.get('Attack', 0) - by_type.get('Skill', 0) - by_type.get('Power', 0) %}
+    {% if other > 0 %}
+    <div class="bar bar--other" style="flex:{{ other }}" title="{{ other }} other"></div>
+    {% endif %}
+  </div>
+  {% endif %}
+  <span class="text-sm text-muted mt-xs">{{ cost }}</span>
 </div>
 {% endfor %}
 </div>
+<div class="cost-curve-legend">
+  <span class="legend-item"><span class="legend-swatch legend-swatch--attack"></span> Attack</span>
+  <span class="legend-item"><span class="legend-swatch legend-swatch--skill"></span> Skill</span>
+  <span class="legend-item"><span class="legend-swatch legend-swatch--power"></span> Power</span>
+</div>
+{% if analysis.avg_cost <= 1.2 %}
+<p class="text-sm text-muted mt-sm">Low curve — you'll play most of your hand every turn. Watch for low-impact plays.</p>
+{% elif analysis.avg_cost <= 1.8 %}
+<p class="text-sm text-green mt-sm">Balanced curve — efficient energy usage with room for impactful plays.</p>
+{% elif analysis.avg_cost <= 2.5 %}
+<p class="text-sm text-yellow mt-sm">Top-heavy curve — consider energy relics or cheap cards to smooth out turns.</p>
+{% else %}
+<p class="text-sm text-red mt-sm">Very expensive — you'll frequently have unplayable cards. Prioritize energy generation.</p>
+{% endif %}
 {% endif %}
 {% endif %}
 {% endblock %}

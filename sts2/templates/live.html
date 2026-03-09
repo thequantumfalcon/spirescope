@@ -37,13 +37,14 @@
 <div class="two-col">
   <div>
     <h2>Current Deck ({{ run.deck|length }})</h2>
-    <div class="flex flex-wrap gap-xs mb-lg">
+    <div class="flex flex-wrap gap-xs mb-sm">
     {% for card_id in run.deck %}
     <a href="/cards/{{ card_id }}" class="tag tag-keyword card-link">
       {{ kb.id_to_name(card_id) }}{% if loop.index0 < run.deck_upgrades|length and run.deck_upgrades[loop.index0] %}<span class="text-green">+</span>{% endif %}
     </a>
     {% endfor %}
     </div>
+    <a href="/deck?from_run=live" class="btn btn-sm btn-secondary mb-lg">Analyze Deck</a>
 
     <h2>Relics</h2>
     <div class="flex flex-wrap gap-xs mb-lg">

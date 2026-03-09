@@ -209,6 +209,21 @@ class TestDeckAnalysis:
         assert "top_keywords" in result
         assert isinstance(result["weaknesses"], list)
 
+    def test_analyze_deck_cost_metrics(self, kb):
+        """analyze_deck returns avg_cost, energy_per_hand, and cost_curve_by_type."""
+        ids = [c.id for c in kb.cards[:10]]
+        result = kb.analyze_deck(ids)
+        assert isinstance(result["avg_cost"], float)
+        assert result["avg_cost"] >= 0
+        assert isinstance(result["energy_per_hand"], float)
+        assert result["energy_per_hand"] >= 0
+        assert isinstance(result["cost_curve_by_type"], dict)
+        for cost, by_type in result["cost_curve_by_type"].items():
+            assert isinstance(by_type, dict)
+            for card_type, count in by_type.items():
+                assert isinstance(count, int)
+                assert count > 0
+
     def test_analyze_deck_character_detection(self, kb):
         ironclad = [c.id for c in kb.cards if c.character == "Ironclad"][:5]
         if not ironclad:

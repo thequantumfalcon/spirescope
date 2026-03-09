@@ -473,8 +473,17 @@ class KnowledgeBase:
 
         # Cost curve
         cost_curve: dict[str, int] = {}
+        cost_curve_by_type: dict[str, dict[str, int]] = {}
+        numeric_costs: list[int] = []
         for c in cards:
             cost_curve[c.cost] = cost_curve.get(c.cost, 0) + 1
+            by_type = cost_curve_by_type.setdefault(c.cost, {})
+            by_type[c.type] = by_type.get(c.type, 0) + 1
+            if c.cost.isdigit():
+                numeric_costs.append(int(c.cost))
+
+        avg_cost = round(sum(numeric_costs) / len(numeric_costs), 1) if numeric_costs else 0.0
+        energy_per_hand = round(avg_cost * 5, 1)
 
         # Weaknesses
         weaknesses = []
@@ -519,7 +528,10 @@ class KnowledgeBase:
             "attacks": len(attacks),
             "skills": len(skills),
             "powers": len(powers),
-            "cost_curve": dict(sorted(cost_curve.items())),
+            "cost_curve": dict(sorted(cost_curve.items(), key=lambda kv: (0, int(kv[0])) if kv[0].isdigit() else (1, kv[0]))),
+            "cost_curve_by_type": dict(sorted(cost_curve_by_type.items(), key=lambda kv: (0, int(kv[0])) if kv[0].isdigit() else (1, kv[0]))),
+            "avg_cost": avg_cost,
+            "energy_per_hand": energy_per_hand,
             "top_keywords": top_keywords[:8],
             "detected_archetypes": detected_archetypes,
             "weaknesses": weaknesses,

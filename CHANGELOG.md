@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.1.0
+
+### Added
+- **Deck analyzer qty steppers** — replace checkboxes with +/- quantity controls (1-5 per card), save/load decks in new format
+- **Enriched cost curve** — stacked type bars (Attack/Skill/Power), average cost, energy-per-hand stat, playability notes
+- **Run-to-analyzer linking** — "Analyze Deck" buttons on run detail and live pages pre-load decks into the analyzer
+- **Server-side deck pre-selection** — decks from run history render as pre-selected in the analyzer HTML (no JS dependency)
+- **Card info popovers** — inline card details with synergy lookup on the deck analyzer page
+- **Collections page search** — search and filter on the collections page
+
+### Changed
+- Deck analyzer card selection uses quantity model instead of checkboxes
+- Static JS files use content-hash cache busting (`?v=` MD5 suffix)
+- Inline scripts replaced with data attributes for CSP compliance
+
 ## v2.0.0
 
 ### Added

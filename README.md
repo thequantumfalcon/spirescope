@@ -185,7 +185,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (21 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 475 tests (pytest + pytest-asyncio)
+tests/               # 494 tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements

@@ -458,15 +458,15 @@ async def collections(request: Request):
         disc_all = disc_cards + disc_relics + disc_potions + disc_events
         overall_pct = round((disc_all / total_all) * 100) if total_all > 0 else 0
 
-        # Build discovered/undiscovered object lists
-        discovered_card_objs = [c for c in all_cards if c.id in card_ids]
-        undiscovered_cards = [c for c in all_cards if c.id not in card_ids]
-        discovered_relic_objs = [r for r in a.kb.relics if r.id in relic_ids]
-        undiscovered_relic_objs = [r for r in a.kb.relics if r.id not in relic_ids]
-        discovered_potion_objs = [p for p in a.kb.potions if p.id in potion_ids]
-        undiscovered_potion_objs = [p for p in a.kb.potions if p.id not in potion_ids]
-        discovered_event_objs = [e for e in a.kb.events if e.id in event_ids]
-        undiscovered_event_objs = [e for e in a.kb.events if e.id not in event_ids]
+        # Build discovered/undiscovered object lists (sorted alphabetically)
+        discovered_card_objs = sorted([c for c in all_cards if c.id in card_ids], key=lambda c: c.name)
+        undiscovered_cards = sorted([c for c in all_cards if c.id not in card_ids], key=lambda c: c.name)
+        discovered_relic_objs = sorted([r for r in a.kb.relics if r.id in relic_ids], key=lambda r: r.name)
+        undiscovered_relic_objs = sorted([r for r in a.kb.relics if r.id not in relic_ids], key=lambda r: r.name)
+        discovered_potion_objs = sorted([p for p in a.kb.potions if p.id in potion_ids], key=lambda p: p.name)
+        undiscovered_potion_objs = sorted([p for p in a.kb.potions if p.id not in potion_ids], key=lambda p: p.name)
+        discovered_event_objs = sorted([e for e in a.kb.events if e.id in event_ids], key=lambda e: e.name)
+        undiscovered_event_objs = sorted([e for e in a.kb.events if e.id not in event_ids], key=lambda e: e.name)
     else:
         card_ids = relic_ids = potion_ids = event_ids = set()
         disc_cards = disc_relics = disc_potions = disc_events = 0
@@ -619,10 +619,29 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
 
 
 @router.get("/deck", response_class=HTMLResponse)
-async def deck_analyzer(request: Request):
+async def deck_analyzer(request: Request,
+                        from_run: str = Query(None, max_length=200)):
     a = _app()
+    selected_ids: list[str] = []
+    from_run_id = None
+    if from_run:
+        if from_run == "live":
+            live_run = await _get_live_run(0)
+            if live_run.active and live_run.deck:
+                selected_ids = live_run.deck[:_MAX_DECK_SIZE]
+                from_run_id = "live"
+        else:
+            run = await a._get_run_by_id(from_run)
+            if run:
+                selected_ids = run.deck[:_MAX_DECK_SIZE]
+                from_run_id = run.id
+    selected_counts: dict[str, int] = {}
+    for cid in selected_ids:
+        selected_counts[cid] = selected_counts.get(cid, 0) + 1
     return a.templates.TemplateResponse(request, "deck.html", {
-        "cards": a.kb.cards, "analysis": None, "csrf_token": a.generate_csrf_token(),
+        "cards": a.kb.cards, "analysis": None, "selected_ids": selected_ids,
+        "selected_counts": selected_counts,
+        "from_run_id": from_run_id, "csrf_token": a.generate_csrf_token(),
     })
 
 
@@ -643,11 +662,16 @@ async def analyze_deck(request: Request):
     if not card_ids:
         return a.templates.TemplateResponse(request, "deck.html", {
             "cards": a.kb.cards, "analysis": {"error": "No cards selected"},
-            "selected_ids": [], "csrf_token": a.generate_csrf_token(),
+            "selected_ids": [], "selected_counts": {},
+            "csrf_token": a.generate_csrf_token(),
         })
     analysis = a.kb.analyze_deck(card_ids)
+    selected_counts: dict[str, int] = {}
+    for cid in card_ids:
+        selected_counts[cid] = selected_counts.get(cid, 0) + 1
     return a.templates.TemplateResponse(request, "deck.html", {
         "cards": a.kb.cards, "analysis": analysis, "selected_ids": card_ids,
+        "selected_counts": selected_counts,
         "kb": a.kb, "csrf_token": a.generate_csrf_token(),
     })
 
@@ -733,7 +757,12 @@ async def api_card(card_id: str = Path(max_length=200)):
         return PlainTextResponse("Card not found.", status_code=404)
     progress = await a._get_progress()
     card_stats = progress.card_stats.get(card_id, {}) if progress else {}
-    return {**card.model_dump(), "stats": card_stats}
+    synergies = a.kb.find_synergies(card_id)
+    return {
+        **card.model_dump(),
+        "stats": card_stats,
+        "synergies": [{"id": s.id, "name": s.name} for s in synergies[:10]],
+    }
 
 
 def _csv_safe(v: str) -> str:

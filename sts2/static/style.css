@@ -327,11 +327,11 @@ h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; font-weight: 600; }
 .filter-divider { border-left: 1px solid var(--border); margin: 0 0.25rem; }
 
 /* ── Stats ── */
-.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem; margin-bottom: 2rem; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.75rem; margin-bottom: 2rem; }
 .stat-box {
   background: linear-gradient(145deg, var(--bg2), var(--card-bg));
   border: 2px solid var(--gold);
-  border-radius: var(--radius); padding: 1.25rem; text-align: center;
+  border-radius: var(--radius); padding: 1rem; text-align: center;
   transition: border-color 0.2s, box-shadow 0.2s;
   position: relative;
   box-shadow:
@@ -360,9 +360,10 @@ h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; font-weight: 600; }
 }
 .stat-box .num {
   font-size: 2.2rem; font-weight: 700; line-height: 1.1;
+  word-break: break-word; overflow-wrap: anywhere;
   background: linear-gradient(135deg, var(--gold), var(--copper));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background-clip: text; color: var(--gold);
 }
 .stat-box .label { font-size: 0.75rem; color: var(--text2); margin-top: 0.35rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
 
@@ -432,12 +433,140 @@ tr:hover { background: rgba(201,165,92,0.03); }
 .archetype .key-cards { display: flex; flex-wrap: wrap; gap: 0.25rem; margin: 0.5rem 0; }
 
 /* ── Deck analyzer ── */
-.deck-form { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
-.deck-form label { display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; padding: 0.25rem 0.5rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: border-color 0.15s; }
-.deck-form label:hover { border-color: var(--gold); }
-.deck-form input:checked + span { color: var(--gold); font-weight: 600; }
-.deck-form input { accent-color: var(--gold); }
+.deck-form { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; overflow: visible; }
+.deck-card { display: inline-flex; align-items: center; gap: 0; font-size: 0.85rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; transition: border-color 0.15s; position: relative; }
+.deck-card:hover { border-color: var(--gold); }
+/* Quantity stepper */
+.card-qty { display: flex; align-items: center; gap: 0; border-right: 1px solid var(--border); }
+.qty-btn { width: 22px; align-self: stretch; border: none; background: transparent; color: var(--text2); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; font-family: inherit; padding: 0; }
+.qty-btn:hover { background: rgba(201,165,92,0.15); color: var(--gold); }
+.qty-count { min-width: 1.2em; text-align: center; font-size: 0.8rem; color: var(--text2); font-weight: 600; padding: 0 0.1rem; }
+.card-label { padding: 0.25rem 0.4rem; font-size: 0.85rem; }
+/* Selected state (qty > 0) */
+.deck-card--selected { border-color: var(--gold); background: rgba(201,165,92,0.08); }
+.deck-card--selected .qty-count { color: var(--gold); }
+.deck-card--selected .card-label { color: var(--gold); font-weight: 600; }
 .deck-actions { display: flex; gap: 0.75rem; align-items: center; margin-top: 1rem; flex-wrap: wrap; }
+
+/* ── Card info button ── */
+.card-info-btn { width: 22px; align-self: stretch; border: none; border-left: 1px solid var(--border); background: transparent; color: var(--text2); font-family: 'Cinzel', serif; font-style: italic; font-size: 0.72rem; line-height: 1; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; flex-shrink: 0; border-radius: 0 3px 3px 0; }
+.card-info-btn:hover, .deck-card--popover-open .card-info-btn { background: rgba(201,165,92,0.15); color: var(--gold); }
+.deck-card:hover .card-info-btn { color: var(--bronze); }
+
+/* ── Card popover ── */
+.card-popover { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); width: 280px; max-width: 90vw; background: var(--bg2); border: 2px solid var(--gold); border-radius: var(--radius); padding: 0.75rem; z-index: 80; box-shadow: 0 0 15px rgba(201,165,92,0.12), 0 4px 12px rgba(0,0,0,0.4); }
+.card-popover::before { content: ''; position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%); border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 7px solid var(--gold); }
+.card-popover--below { bottom: auto; top: calc(100% + 8px); }
+.card-popover--below::before { bottom: auto; top: -7px; border-top: none; border-bottom: 7px solid var(--gold); }
+.popover-title { font-family: 'Cinzel', serif; color: var(--gold); font-size: 0.95rem; margin-bottom: 0.4rem; }
+.popover-desc { font-size: 0.82rem; color: var(--text); line-height: 1.5; margin-bottom: 0.4rem; }
+.popover-meta { display: flex; flex-wrap: wrap; gap: 0.2rem; margin-bottom: 0.4rem; }
+.popover-synergies { font-size: 0.78rem; color: var(--text2); margin-bottom: 0.4rem; }
+.popover-synergies a { color: var(--gold); text-decoration: none; }
+.popover-synergies a:hover { text-decoration: underline; }
+.popover-link { display: block; text-align: right; font-size: 0.78rem; }
+.popover-link a { color: var(--gold); text-decoration: none; }
+.popover-link a:hover { text-decoration: underline; }
+.card-popover-backdrop { display: none; }
+
+@media (max-width: 640px) {
+  .card-popover { position: fixed; bottom: 0; left: 0; top: auto; right: 0; transform: none; width: 100%; max-width: 100%; max-height: 50vh; overflow-y: auto; border-radius: var(--radius) var(--radius) 0 0; z-index: 80; }
+  .card-popover::before { display: none; }
+  .card-popover--below { top: auto; bottom: 0; }
+  .card-popover-backdrop { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 79; }
+}
+
+/* ── Deck toolbar ── */
+.deck-toolbar {
+  display: flex; gap: 0.75rem; align-items: center;
+  flex-wrap: wrap; margin-bottom: 1rem;
+}
+.deck-search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 400px; }
+.deck-search-wrap input[type="text"] {
+  width: 100%; padding: 0.5rem 2rem 0.5rem 0.75rem; border-radius: 20px;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text); font-size: 0.85rem; font-family: inherit;
+  transition: border-color 0.15s;
+}
+.deck-search-wrap input[type="text"]:focus {
+  outline: none; border-color: var(--gold);
+  box-shadow: 0 0 8px rgba(201,165,92,0.2);
+}
+.deck-search-wrap input[type="text"]::placeholder { color: var(--text2); }
+.deck-search-clear {
+  position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--text2); cursor: pointer;
+  font-size: 1.1rem; padding: 0.25rem; line-height: 1; display: none;
+}
+.deck-search-wrap input:not(:placeholder-shown) + .deck-search-clear { display: block; }
+
+/* ── Deck filter buttons ── */
+.deck-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.deck-filters button {
+  padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.82rem;
+  background: var(--bg3); color: var(--text2);
+  border: 1px solid var(--border); cursor: pointer;
+  transition: all 0.15s; font-weight: 500; font-family: inherit;
+}
+.deck-filters button:hover { color: var(--text); border-color: var(--gold); }
+.deck-filters button.active {
+  background: rgba(201,165,92,0.2); color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* ── Selected count + expand/collapse ── */
+.deck-count {
+  font-size: 0.85rem; color: var(--gold); font-weight: 600;
+  margin-left: auto; white-space: nowrap;
+}
+.deck-toggle-all {
+  font-size: 0.78rem; color: var(--text2); background: none;
+  border: 1px solid var(--border); border-radius: 4px;
+  padding: 0.25rem 0.6rem; cursor: pointer; font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+.deck-toggle-all:hover { color: var(--gold); border-color: var(--gold); }
+
+/* ── Collapsible sections ── */
+.deck-section { margin-bottom: 0.25rem; }
+.deck-section-header {
+  cursor: pointer; user-select: none;
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0; margin-top: 0.5rem;
+  transition: color 0.15s;
+}
+.deck-section-header:hover { color: var(--gold); }
+.deck-section-arrow {
+  display: inline-block; transition: transform 0.2s;
+  font-size: 0.7rem; color: var(--text2); width: 1em; text-align: center;
+}
+.deck-section.collapsed .deck-section-arrow { transform: rotate(-90deg); }
+.deck-section.collapsed .deck-section-body { display: none; }
+.deck-section-count { font-size: 0.75rem; font-weight: 400; }
+.deck-section-checked { font-size: 0.75rem; margin-left: auto; color: var(--gold); }
+
+/* ── Type sub-groups ── */
+.deck-type-header {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+  font-weight: 600; margin: 0.5rem 0 0.25rem; padding-left: 0.25rem;
+}
+
+/* ── Type-coded card chips ── */
+.deck-card--attack { border-left: 3px solid var(--red); }
+.deck-card--skill { border-left: 3px solid var(--gold); }
+.deck-card--power { border-left: 3px solid var(--yellow); }
+.deck-card--unknown { border-left: 3px solid var(--text2); }
+
+/* ── Hidden by filter/search ── */
+.deck-card--hidden { display: none; }
+.deck-type-group--hidden { display: none; }
+
+/* ── Rarity dots ── */
+.rarity-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; vertical-align: middle; margin-left: 2px; }
+.rarity-common { background: var(--text2); }
+.rarity-uncommon { background: var(--text); }
+.rarity-rare { background: var(--yellow); }
+.rarity-starter { background: var(--green); }
 
 /* ── Detail page ── */
 .detail-header { margin-bottom: 1.5rem; }
@@ -471,13 +600,34 @@ tr:hover { background: rgba(201,165,92,0.03); }
 
 /* ── Bar chart ── */
 .bar-chart { display: flex; gap: 0.5rem; align-items: flex-end; margin: 1rem 0; }
-.bar-chart--tall { height: 120px; }
+.bar-chart--tall .bar-col { justify-content: flex-end; }
 .bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; }
 .bar { background: linear-gradient(180deg, var(--gold), var(--copper)); width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s ease; box-shadow: 0 0 8px rgba(201,165,92,0.2); }
 .bar--wide { width: 40px; }
+.bar--special { background: linear-gradient(180deg, var(--accent), var(--copper)); opacity: 0.75; }
 .bar--win { background: var(--green); box-shadow: 0 0 6px rgba(74,158,92,0.2); }
 .bar--loss { background: var(--red); box-shadow: 0 0 6px rgba(212,77,63,0.2); }
 .dual-bar { display: flex; gap: 2px; align-items: flex-end; height: 100%; }
+
+/* Cost curve stacked bars */
+.cost-stack { display: flex; flex-direction: column; width: 40px; border-radius: 4px 4px 0 0; overflow: hidden; }
+.cost-stack .bar { border-radius: 0; min-height: 2px; box-shadow: none; width: 100%; }
+.cost-stack .bar:first-child { border-radius: 4px 4px 0 0; }
+.bar--attack { background: var(--red); }
+.bar--skill { background: var(--accent); }
+.bar--power { background: var(--yellow); }
+.bar--other { background: var(--text2); opacity: 0.4; }
+
+/* Cost curve summary + legend */
+.cost-curve-summary { display: flex; gap: 1.5rem; margin-bottom: 0.75rem; }
+.cost-stat { font-size: 0.9rem; color: var(--text2); }
+.cost-stat strong { color: var(--gold); }
+.cost-curve-legend { display: flex; gap: 1rem; margin-top: 0.5rem; }
+.legend-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; color: var(--text2); }
+.legend-swatch { width: 10px; height: 10px; border-radius: 2px; }
+.legend-swatch--attack { background: var(--red); }
+.legend-swatch--skill { background: var(--accent); }
+.legend-swatch--power { background: var(--yellow); }
 
 /* ── Collection progress ── */
 .collection-bar { position: relative; height: 1.5rem; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
