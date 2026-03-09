@@ -46,7 +46,7 @@
 - **Card hover animations** — subtle lift + shadow on card hover
 - **Live badge pulse** — CSS animation on the live run indicator
 - **CSS cache busting** — MD5 hash appended to stylesheet URL
-- **Scraper resilience** — retry on network error, zero-result guard prevents overwriting good data
+- **Fetcher resilience** — retry on network error, zero-result guard prevents overwriting good data
 - **Dynamic version** — footer shows version from package metadata
 
 ### Changed
@@ -55,7 +55,7 @@
 - CONTRIBUTING updated with CSS and testing conventions
 
 ### Fixed
-- Scraper no longer overwrites large existing datasets when wiki returns empty/tiny results
+- Fetcher no longer overwrites large existing datasets when wiki returns empty/tiny results
 
 ## v1.0.0
 

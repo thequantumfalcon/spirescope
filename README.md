@@ -89,7 +89,7 @@ spirescope serve        # Same as above
 spirescope serve --no-browser  # Start without opening browser
 spirescope update       # Fetch latest data from the wiki + saves
 spirescope update --save-only  # Discover from saves only (no network)
-spirescope community    # Scrape community data from Reddit and Steam
+spirescope community    # Fetch community data from Reddit and Steam
 spirescope export       # Export aggregate stats to JSON file
 spirescope reset-stats  # Delete aggregate stats file
 spirescope sync-up      # Upload local aggregate stats to sync service
