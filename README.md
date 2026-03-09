@@ -53,6 +53,12 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ## Quick Start
 
+### Download (No Python Required)
+
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.0.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
+
+### From Source
+
 ```bash
 pip install -e .
 spirescope
@@ -66,14 +72,14 @@ python -m sts2
 
 Opens your browser at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-### Standalone Executable (No Python Required)
+### Build Executable
 
 ```bash
 pip install -e ".[dev]"
 python build.py
 ```
 
-Output: `dist/Spirescope/Spirescope.exe` — zip the entire `dist/Spirescope/` folder and share it. Recipients just double-click `Spirescope.exe`.
+Output: `dist/Spirescope/Spirescope.exe` — zip the entire `dist/Spirescope/` folder and share it.
 
 ### Docker
 
