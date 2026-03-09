@@ -15,7 +15,7 @@ pytest -q
 
 - **Python 3.11+** required
 - Run `python -m sts2` to start the dev server at http://127.0.0.1:8000
-- Run `python -m sts2 update` to scrape fresh game data
+- Run `python -m sts2 update` to fetch fresh game data
 - Run `python -m sts2 community` to pull community data from Reddit and Steam
 - Run `pytest -q --tb=short` before submitting changes
 
@@ -28,23 +28,25 @@ sts2/
   routes.py          # All route handlers
   analytics.py       # Run analytics computation
   aggregate.py       # Aggregate stats computation and merging
-  community/         # Multi-source community scraper (Reddit + Steam)
+  community/         # Multi-source community data (Reddit + Steam)
     __init__.py      # Orchestrator + re-exports
     _types.py        # Shared types, extraction functions
     _merge.py        # Weighted merge logic
-    reddit.py        # Reddit scraper (public JSON API)
-    steam.py         # Steam scraper (reviews, guides, discussions)
+    reddit.py        # Reddit data fetcher (public JSON API)
+    steam.py         # Steam data fetcher (reviews, guides, discussions)
   config.py          # Auto-detected paths and settings
+  fetcher.py         # Data fetcher (wiki + save file discovery)
   knowledge.py       # Search, filter, synergy, and deck analysis engine
+  logparser.py       # Game log tailer for live run tracking
   models.py          # Pydantic models for all game entities
   saves.py           # Save file parser (progress + run history + co-op)
-  scraper.py         # Data scraper (wiki + save file discovery)
   sync.py            # Aggregate sync client (upload/download)
+  updater.py         # Auto-update checker
   watcher.py         # File watcher with debounce + polling fallback
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates
   static/            # CSS, fonts, images, JS
-tests/               # 387 tests (pytest + pytest-asyncio)
+tests/               # 475 tests (pytest + pytest-asyncio)
 ```
 
 ## CSS Conventions
@@ -61,7 +63,7 @@ tests/               # 387 tests (pytest + pytest-asyncio)
 - pytest with pytest-asyncio in auto mode
 - Async test functions: use `async def test_*` (not `asyncio.get_event_loop()`)
 - Mock external dependencies (save files, network) — never hit real endpoints in tests
-- All 387+ tests must pass before merge
+- All 475+ tests must pass before merge
 
 ## Guidelines
 

@@ -1,8 +1,8 @@
-"""Tests for the scraper module."""
+"""Tests for the fetcher module."""
 import json
 import pytest
 from unittest.mock import patch
-from sts2.scraper import (
+from sts2.fetcher import (
     _clean_description,
     _extract_json_objects,
     _extract_keywords,
@@ -95,13 +95,13 @@ class TestLoadExistingNameIndex:
     def test_builds_index(self, tmp_path):
         data = [{"id": "CARD.BASH", "name": "Bash"}, {"id": "CARD.STRIKE", "name": "Strike"}]
         (tmp_path / "cards.json").write_text(json.dumps(data))
-        with patch("sts2.scraper.DATA_DIR", tmp_path):
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
             index = _load_existing_name_index("cards.json", "CARD")
         assert index["bash"] == "CARD.BASH"
         assert index["strike"] == "CARD.STRIKE"
 
     def test_missing_file(self, tmp_path):
-        with patch("sts2.scraper.DATA_DIR", tmp_path):
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
             index = _load_existing_name_index("nope.json", "CARD")
         assert index == {}
 
@@ -130,7 +130,7 @@ class TestMergeWithExisting:
         data_dir = tmp_path
         (data_dir / "test.json").write_text(json.dumps(existing))
 
-        with patch("sts2.scraper.DATA_DIR", data_dir):
+        with patch("sts2.fetcher.DATA_DIR", data_dir):
             merged = _merge_with_existing("test.json", new)
 
         merged_by_id = {m["id"]: m for m in merged}
@@ -140,7 +140,7 @@ class TestMergeWithExisting:
 
     def test_merge_no_existing_file(self, tmp_path):
         new = [{"id": "A", "val": 1}]
-        with patch("sts2.scraper.DATA_DIR", tmp_path):
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
             result = _merge_with_existing("missing.json", new)
         assert result == new
 
@@ -155,7 +155,7 @@ class TestDiscoverEnemiesFromSaves:
         progress = {"encounter_stats": [{"encounter_id": "BOSS.HEXAGHOST", "fight_stats": []}]}
         (save_dir / "progress.save").write_text(json.dumps(progress))
 
-        with patch("sts2.scraper.DATA_DIR", data_dir), \
+        with patch("sts2.fetcher.DATA_DIR", data_dir), \
              patch("sts2.config.SAVE_DIR", save_dir):
             enemies = _discover_enemies_from_saves()
 
@@ -181,7 +181,7 @@ class TestDiscoverEnemiesFromSaves:
         }
         (history / "run_001.run").write_text(json.dumps(run))
 
-        with patch("sts2.scraper.DATA_DIR", data_dir), \
+        with patch("sts2.fetcher.DATA_DIR", data_dir), \
              patch("sts2.config.SAVE_DIR", save_dir):
             enemies = _discover_enemies_from_saves()
 
@@ -199,7 +199,7 @@ class TestDiscoverEnemiesFromSaves:
         progress = {"encounter_stats": [{"encounter_id": "BOSS.HEXAGHOST", "fight_stats": []}]}
         (save_dir / "progress.save").write_text(json.dumps(progress))
 
-        with patch("sts2.scraper.DATA_DIR", data_dir), \
+        with patch("sts2.fetcher.DATA_DIR", data_dir), \
              patch("sts2.config.SAVE_DIR", save_dir):
             enemies = _discover_enemies_from_saves()
 
@@ -212,7 +212,7 @@ class TestDiscoverEnemiesFromSaves:
         data_dir.mkdir()
         (data_dir / "enemies.json").write_text("[]")
 
-        with patch("sts2.scraper.DATA_DIR", data_dir), \
+        with patch("sts2.fetcher.DATA_DIR", data_dir), \
              patch("sts2.config.SAVE_DIR", save_dir):
             enemies = _discover_enemies_from_saves()
 
@@ -229,7 +229,7 @@ class TestDiscoverEventsFromSaves:
         progress = {"discovered_events": ["EVENT.BONFIRE", "EVENT.DEAD_ADVENTURER"]}
         (save_dir / "progress.save").write_text(json.dumps(progress))
 
-        with patch("sts2.scraper.DATA_DIR", data_dir), \
+        with patch("sts2.fetcher.DATA_DIR", data_dir), \
              patch("sts2.config.SAVE_DIR", save_dir):
             events = _discover_events_from_saves()
 
@@ -247,7 +247,7 @@ class TestDiscoverEventsFromSaves:
         progress = {"discovered_events": ["EVENT.BONFIRE"]}
         (save_dir / "progress.save").write_text(json.dumps(progress))
 
-        with patch("sts2.scraper.DATA_DIR", data_dir), \
+        with patch("sts2.fetcher.DATA_DIR", data_dir), \
              patch("sts2.config.SAVE_DIR", save_dir):
             events = _discover_events_from_saves()
 
@@ -263,7 +263,7 @@ class TestScrapeCards:
             "upgradedDescription": "Deal 10 damage. Apply 3 Vulnerable.",
         })
         html = f'<html><body>prefix {card_json} suffix</body></html>'
-        with patch("sts2.scraper.DATA_DIR", tmp_path):
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
             cards = _scrape_cards(html)
         assert len(cards) == 1
         assert cards[0]["name"] == "Bash"
@@ -278,7 +278,7 @@ class TestScrapeCards:
             "rarity": "Starter", "description": "Deal 8 damage.",
         })
         html = f'{card_json} {card_json}'
-        with patch("sts2.scraper.DATA_DIR", tmp_path):
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
             cards = _scrape_cards(html)
         assert len(cards) == 1
 
@@ -291,7 +291,7 @@ class TestScrapeRelics:
             "description": "At the end of combat, heal 6 HP.",
         })
         html = f'<html>{relic_json}</html>'
-        with patch("sts2.scraper.DATA_DIR", tmp_path):
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
             relics = _scrape_relics(html)
         assert len(relics) == 1
         assert relics[0]["name"] == "Burning Blood"
@@ -302,14 +302,14 @@ class TestExistingCount:
     def test_counts_items(self, tmp_path):
         data = [{"id": "A"}, {"id": "B"}, {"id": "C"}]
         (tmp_path / "test.json").write_text(json.dumps(data))
-        with patch("sts2.scraper.DATA_DIR", tmp_path):
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
             assert _existing_count("test.json") == 3
 
     def test_missing_file(self, tmp_path):
-        with patch("sts2.scraper.DATA_DIR", tmp_path):
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
             assert _existing_count("nope.json") == 0
 
     def test_corrupt_file(self, tmp_path):
         (tmp_path / "bad.json").write_text("not json")
-        with patch("sts2.scraper.DATA_DIR", tmp_path):
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
             assert _existing_count("bad.json") == 0

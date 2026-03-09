@@ -52,9 +52,9 @@ def main():
     command = args[0] if args else "serve"
 
     if command == "update":
-        from sts2.scraper import run_scraper
+        from sts2.fetcher import run_fetcher
         save_only = "--save-only" in args
-        run_scraper(save_only=save_only)
+        run_fetcher(save_only=save_only)
         return
 
     if command == "community":

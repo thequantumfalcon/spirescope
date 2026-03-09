@@ -5,30 +5,52 @@
 <p align="center">
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
-  <img src="https://img.shields.io/badge/tests-387%20passing-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/tests-475%20passing-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/coverage-84%25-yellowgreen" alt="Coverage: 84%">
 </p>
 
-A companion dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides.
+A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
+
+<!-- Screenshots — drop images in docs/ and uncomment
+<p align="center">
+  <img src="docs/screenshot-dashboard.png" alt="Dashboard" width="80%">
+</p>
+<p align="center">
+  <img src="docs/screenshot-analytics.png" alt="Analytics" width="45%">
+  <img src="docs/screenshot-live.png" alt="Live Tracker" width="45%">
+</p>
+-->
 
 ## Features
+
+### Browse & Research
 
 - **Card Browser** — All cards across 5 characters with filters by character, type, rarity, cost, and keyword. Paginated (30 per page).
 - **Relic & Potion Browser** — Browse and filter all relics and potions
 - **Enemy Guides** — Boss patterns, elite strategies, and encounter tips
 - **Event Guide** — Optimal choices for every event
 - **Strategy Guides** — Per-character archetypes, key cards, key relics, and general tips
-- **Deck Analyzer** — Select cards to get archetype detection, synergy analysis, weakness identification, and suggestions. Save/load decks to localStorage.
+
+### Play & Track
+
 - **Live Run Tracker** — Real-time dashboard via Server-Sent Events (SSE) — no page reloads. Shows deck, relics, potions, HP, floor history, counter-cards, synergy hints, and danger alerts.
+- **Deck Analyzer** — Select cards to get archetype detection, synergy analysis, weakness identification, and suggestions. Save/load decks to localStorage.
 - **Run History** — Floor-by-floor breakdown of completed runs with HP tracking, card picks, and damage taken. Import/export runs in `.spirescope.json` format.
-- **Analytics** — Aggregate stats: per-character win rates, floor survival, card pick rates, HP curves, death floor heatmaps, and causes of death
 - **Collections** — Track card/relic discovery progress with ascension filtering
+- **Co-op Support** — Track any player in a multiplayer run via `?player=N`
+
+### Analyze & Compete
+
+- **Analytics** — Aggregate stats: per-character win rates, floor survival, card pick rates, HP curves, death floor heatmaps, and causes of death
 - **Community Meta** — Tier lists and strategy posts from Reddit and Steam, community-voted card tiers, aggregate player stats with import/export
 - **Global Search** — Fuzzy search with "Did you mean?" suggestions across all entities
-- **User Guide** — In-app guide covering setup, features, and troubleshooting
-- **Co-op Support** — Track any player in a multiplayer run via `?player=N`
-- **Mod Support** — Load custom cards, relics, and enemies from JSON files in a mods directory
+
+### Customize & Extend
+
 - **Dark/Light Theme** — Dark gothic fantasy aesthetic (Cinzel serif font, warm gold/crimson palette) with a warm parchment light mode toggle
+- **Mod Support** — Load custom cards, relics, and enemies from JSON files in a mods directory
 - **Content Creator API** — Paginated JSON endpoints with CSV export and optional API key bypass
+- **User Guide** — In-app guide covering setup, features, and troubleshooting
 
 ## Quick Start
 
@@ -135,24 +157,26 @@ sts2/
   app.py             # FastAPI app, middleware, security headers
   routes.py          # All route handlers
   analytics.py       # Run analytics computation
-  community/         # Multi-source community scraper (Reddit + Steam)
+  community/         # Multi-source community data (Reddit + Steam)
     __init__.py      # Orchestrator + re-exports
     _types.py        # Shared types, extraction functions
     _merge.py        # Weighted merge logic
-    reddit.py        # Reddit scraper (public JSON API)
-    steam.py         # Steam scraper (reviews, guides, discussions)
+    reddit.py        # Reddit data fetcher (public JSON API)
+    steam.py         # Steam data fetcher (reviews, guides, discussions)
   aggregate.py       # Aggregate stats computation and merging
-  sync.py            # Aggregate sync client (upload/download)
   config.py          # Auto-detected paths and settings
+  fetcher.py         # Data fetcher (wiki + save file discovery)
   knowledge.py       # Search, filter, synergy, and deck analysis engine
+  logparser.py       # Game log tailer for live run tracking
   models.py          # Pydantic models for all game entities
   saves.py           # Save file parser (progress + run history + co-op)
-  scraper.py         # Data scraper (wiki + save file discovery)
+  sync.py            # Aggregate sync client (upload/download)
+  updater.py         # Auto-update checker
   watcher.py         # File watcher with debounce + polling fallback
   data/              # JSON game data + mods
-  templates/         # Jinja2 HTML templates (21 pages)
+  templates/         # Jinja2 HTML templates (21 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 387 tests (pytest + pytest-asyncio)
+tests/               # 475 tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements

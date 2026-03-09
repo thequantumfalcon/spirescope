@@ -10,13 +10,13 @@
 - **Live run coaching** — counter-cards, synergy hints, danger alerts, AoE/Draw weakness detection
 - **Content creator API** — paginated JSON endpoints with CSV export and optional API key bypass
 - **Community aggregation** — aggregate stats from contributed runs with anti-manipulation caps, CLI export/reset
-- **Multi-source community scraper** — Steam reviews, guides, and discussions alongside Reddit; weighted tier consensus, source badges on community page
+- **Multi-source community data** — Steam reviews, guides, and discussions alongside Reddit; weighted tier consensus, source badges on community page
 - **Collections page** — track card/relic discovery progress with ascension filtering
 - **Sync commands** — `sync-up` / `sync-down` for aggregate stats via optional sync service
 - **`--no-browser` flag** — start server without auto-opening browser
 
 ### Changed
-- Community scraper refactored from single module to package (`sts2/community/`) with pluggable source architecture
+- Community module refactored from single file to package (`sts2/community/`) with pluggable source architecture
 - Routes extracted from `app.py` into dedicated `routes.py`
 - Hero background changed to gothic eye-in-spire concept art with cache-busting
 - All theme colors verified WCAG AA contrast (4.5:1 ratio)

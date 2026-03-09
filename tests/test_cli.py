@@ -66,19 +66,19 @@ def test_cli_unknown_command(capsys):
 
 
 def test_cli_update():
-    mock_scraper = MagicMock()
+    mock_fetcher = MagicMock()
     with patch.object(sys, "argv", ["sts2", "update"]), \
-         patch.dict("sys.modules", {"sts2.scraper": mock_scraper}), \
-         patch("sts2.__main__.run_scraper", create=True) as mock_run:
+         patch.dict("sys.modules", {"sts2.fetcher": mock_fetcher}), \
+         patch("sts2.__main__.run_fetcher", create=True) as mock_run:
         # Need to patch the actual import inside main()
-        with patch("sts2.scraper.run_scraper") as mock_run:
+        with patch("sts2.fetcher.run_fetcher") as mock_run:
             main()
             mock_run.assert_called_once_with(save_only=False)
 
 
 def test_cli_update_save_only():
     with patch.object(sys, "argv", ["sts2", "update", "--save-only"]), \
-         patch("sts2.scraper.run_scraper") as mock_run:
+         patch("sts2.fetcher.run_fetcher") as mock_run:
         main()
         mock_run.assert_called_once_with(save_only=True)
 

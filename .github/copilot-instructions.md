@@ -17,7 +17,7 @@ Before making meaningful changes, read:
 
 - Prefer existing FastAPI + Jinja server-rendered patterns.
 - Preserve security headers, CSRF protection, rate limiting, SSE constraints, and input validation.
-- Keep scraper and save-file behavior testable and mock-friendly.
+- Keep data fetcher and save-file behavior testable and mock-friendly.
 - Avoid unnecessary framework or frontend complexity.
 
 ## Review priorities

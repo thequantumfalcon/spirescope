@@ -471,7 +471,7 @@ def _existing_count(filename: str) -> int:
         return 0
 
 
-def run_scraper(save_only: bool = False):
+def run_fetcher(save_only: bool = False):
     """Scrape game data and update local JSON files.
 
     Args:
