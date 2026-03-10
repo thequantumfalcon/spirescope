@@ -5,6 +5,16 @@
 {% block content %}
 <h1>Analytics</h1>
 
+{% if ascension_levels is defined and ascension_levels|length > 1 %}
+<div class="filters mb-md">
+  <a href="/analytics" {% if selected_ascension is none %}class="active"{% endif %}>All Ascensions</a>
+  <span class="filter-divider"></span>
+  {% for asc in ascension_levels %}
+  <a href="/analytics?ascension={{ asc }}" {% if selected_ascension == asc %}class="active"{% endif %}>A{{ asc }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+
 {% if stats.overview.total == 0 %}
 <p class="text-muted mb-xl mt-lg">No run data yet. Complete some runs in Slay the Spire 2 and your stats will appear here.</p>
 {% else %}

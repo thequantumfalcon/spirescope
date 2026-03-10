@@ -115,8 +115,8 @@ _run_cache_by_id: dict = {}
 _run_cache_time: float = 0
 _RUN_CACHE_TTL = 30.0
 
-_analytics_cache: dict = {}
-_analytics_cache_time: float = 0
+_analytics_cache: dict = {}        # {None: {...}, 5: {...}, ...}
+_analytics_cache_time: dict = {}   # {None: float, 5: float, ...}
 _ANALYTICS_CACHE_TTL = 60.0
 
 
@@ -144,16 +144,19 @@ async def _get_run_by_id(run_id: str):
     return _run_cache_by_id.get(run_id)
 
 
-async def _get_analytics():
+async def _get_analytics(ascension=None):
     global _analytics_cache, _analytics_cache_time
     now = time.monotonic()
-    if _analytics_cache_time == 0 or (now - _analytics_cache_time) > _ANALYTICS_CACHE_TTL:
+    cache_time = _analytics_cache_time.get(ascension, 0)
+    if cache_time == 0 or (now - cache_time) > _ANALYTICS_CACHE_TTL:
         runs = await _get_runs()
+        if ascension is not None:
+            runs = [r for r in runs if r.ascension == ascension]
         progress = await _get_progress()
         card_stats = progress.card_stats if progress else {}
-        _analytics_cache = await asyncio.to_thread(compute_analytics, runs, card_stats)
-        _analytics_cache_time = now
-    return _analytics_cache
+        _analytics_cache[ascension] = await asyncio.to_thread(compute_analytics, runs, card_stats)
+        _analytics_cache_time[ascension] = now
+    return _analytics_cache[ascension]
 
 
 # ---------------------------------------------------------------------------
@@ -314,7 +317,7 @@ async def _refresh_data():
     global _analytics_cache, _analytics_cache_time
     log.info("Save files changed, refreshing data")
     _analytics_cache = {}
-    _analytics_cache_time = 0
+    _analytics_cache_time = {}
     new_kb = await asyncio.to_thread(KnowledgeBase)
     new_progress = await asyncio.to_thread(get_progress)
     new_runs = await asyncio.to_thread(get_run_history)

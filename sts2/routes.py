@@ -7,14 +7,15 @@ import re
 import secrets
 import time
 from xml.sax.saxutils import escape as xml_escape
-from fastapi import APIRouter, File, Form, Path, Request, Query, UploadFile
+
+from fastapi import APIRouter, File, Form, Path, Query, Request, UploadFile
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from pydantic import ValidationError
 from starlette.responses import StreamingResponse
 
 from sts2.config import CHARACTERS
-from sts2.saves import get_current_run
 from sts2.models import CurrentRun
+from sts2.saves import get_current_run
 
 router = APIRouter()
 
@@ -395,7 +396,7 @@ async def import_run(request: Request, file: UploadFile = File(...),
                 "error_message": "Invalid file: missing 'run' key.",
             }, status_code=400)
         run = RunHistory(**data["run"])
-    except (json.JSONDecodeError, ValidationError, KeyError, RecursionError) as exc:
+    except (json.JSONDecodeError, ValidationError, KeyError, RecursionError):
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400,
             "error_message": "Invalid run file format.",
@@ -407,11 +408,15 @@ async def import_run(request: Request, file: UploadFile = File(...),
 
 
 @router.get("/analytics", response_class=HTMLResponse)
-async def analytics(request: Request):
+async def analytics(request: Request,
+                    ascension: int = Query(None, ge=0, le=20)):
     a = _app()
-    stats = await a._get_analytics()
+    runs = await a._get_runs()
+    ascension_levels = sorted({r.ascension for r in runs})
+    stats = await a._get_analytics(ascension=ascension)
     return a.templates.TemplateResponse(request, "analytics.html", {
         "stats": stats, "kb": a.kb,
+        "selected_ascension": ascension, "ascension_levels": ascension_levels,
     })
 
 
@@ -720,7 +725,7 @@ async def live_stream(player: int = Query(0, ge=0, le=3)):
                     idle_since = time.monotonic()
                     yield f"data: {data_json}\n\n"
                 elif time.monotonic() - idle_since > _SSE_IDLE_TIMEOUT:
-                    yield f"event: timeout\ndata: {{}}\n\n"
+                    yield "event: timeout\ndata: {}\n\n"
                     return
                 # Wake instantly on file change, or poll every 3s as fallback
                 try:

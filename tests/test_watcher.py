@@ -2,7 +2,7 @@
 import asyncio
 import time
 from types import SimpleNamespace
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -141,4 +141,4 @@ class TestSaveChangedEvent:
 
         mock_kb.assert_called_once()
         assert app_mod._analytics_cache == {}
-        assert app_mod._analytics_cache_time == 0
+        assert app_mod._analytics_cache_time == {}

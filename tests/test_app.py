@@ -1519,3 +1519,31 @@ async def test_shortcuts_hash_not_zero():
     """shortcuts.js hash should be computed (file exists)."""
     from sts2.app import _SHORTCUTS_JS_HASH
     assert _SHORTCUTS_JS_HASH != "0"
+
+
+# ── Ascension Filtering (Feature 3) ──
+
+
+async def test_analytics_no_filter(client):
+    """Analytics page loads without ascension filter."""
+    resp = await client.get("/analytics")
+    assert resp.status_code == 200
+    assert "Analytics" in resp.text
+
+
+async def test_analytics_with_ascension(client):
+    """Analytics page accepts ascension query parameter."""
+    resp = await client.get("/analytics?ascension=0")
+    assert resp.status_code == 200
+
+
+async def test_analytics_invalid_ascension(client):
+    """Analytics page rejects out-of-range ascension."""
+    resp = await client.get("/analytics?ascension=25")
+    assert resp.status_code == 422
+
+
+async def test_analytics_cache_keyed_by_ascension():
+    """Filtered and unfiltered analytics use separate cache entries."""
+    from sts2.app import _analytics_cache_time
+    assert isinstance(_analytics_cache_time, dict)
