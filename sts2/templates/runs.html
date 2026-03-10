@@ -34,24 +34,31 @@
   <form action="/runs/import" method="post" enctype="multipart/form-data" class="flex items-center gap-sm">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <label for="import-file" class="btn btn-sm btn-secondary" style="cursor:pointer">Import Run</label>
-    <input type="file" id="import-file" name="file" accept=".json" style="display:none" onchange="this.form.submit()">
+    <input type="file" id="import-file" name="file" accept=".json" style="display:none" data-auto-submit>
   </form>
 </div>
 
 {% if runs %}
+<div class="flex items-center gap-sm mb-sm">
+  <button id="compare-btn" class="btn btn-sm" disabled>Compare Selected</button>
+</div>
 {% for run in runs %}
-<a href="/runs/{{ run.id }}" class="run-item">
-  <span class="result {{ 'win' if run.win else 'loss' }} run-result-min-w">{{ 'WIN' if run.win else 'LOSS' }}</span>
-  <span class="char-{{ run.character|lower }} run-char-min-w">{{ run.character }}</span>
-  <span class="text-muted">A{{ run.ascension }}</span>
-  <span class="text-muted">{{ run.floors|length }} floors</span>
-  <span class="text-muted">{{ (run.run_time / 60)|int }}m</span>
-  <span class="text-muted">{{ run.deck|length }} cards</span>
-  {% if run.killed_by %}<span class="text-red">{{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
-  <span class="text-muted ml-auto text-sm">{{ run.build_id }}</span>
-</a>
+<div class="run-item-row flex items-center gap-sm">
+  <input type="checkbox" class="compare-check" data-run-id="{{ run.id }}" aria-label="Select {{ run.id }} for comparison">
+  <a href="/runs/{{ run.id }}" class="run-item" style="flex:1">
+    <span class="result {{ 'win' if run.win else 'loss' }} run-result-min-w">{{ 'WIN' if run.win else 'LOSS' }}</span>
+    <span class="char-{{ run.character|lower }} run-char-min-w">{{ run.character }}</span>
+    <span class="text-muted">A{{ run.ascension }}</span>
+    <span class="text-muted">{{ run.floors|length }} floors</span>
+    <span class="text-muted">{{ (run.run_time / 60)|int }}m</span>
+    <span class="text-muted">{{ run.deck|length }} cards</span>
+    {% if run.killed_by %}<span class="text-red">{{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
+    <span class="text-muted ml-auto text-sm">{{ run.build_id }}</span>
+  </a>
+</div>
 {% endfor %}
 {% else %}
 <p class="text-muted">No run history found. Complete some runs to see them here!</p>
 {% endif %}
+<script src="/static/compare.js?v={{ compare_js_hash }}"></script>
 {% endblock %}

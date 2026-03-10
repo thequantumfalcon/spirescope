@@ -336,6 +336,49 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
     })
 
 
+@router.get("/runs/compare", response_class=HTMLResponse)
+async def compare_runs(request: Request,
+                       a_id: str = Query("", alias="a", max_length=200),
+                       b_id: str = Query("", alias="b", max_length=200)):
+    from collections import Counter
+
+    from sts2.analytics import analyze_run
+    a = _app()
+    if not a_id or not b_id:
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 400, "error_message": "Select two runs to compare.",
+        }, status_code=400)
+    run_a = await a._get_run_by_id(a_id)
+    run_b = await a._get_run_by_id(b_id)
+    if not run_a or not run_b:
+        missing = a_id if not run_a else b_id
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 404, "error_message": f"Run '{missing[:100]}' not found.",
+        }, status_code=404)
+    deck_a, deck_b = Counter(run_a.deck), Counter(run_b.deck)
+    all_cards = sorted(set(deck_a) | set(deck_b))
+    deck_diff = [{"id": c, "name": a.kb.id_to_name(c),
+                  "qty_a": deck_a[c], "qty_b": deck_b[c]} for c in all_cards]
+    relics_a, relics_b = set(run_a.relics), set(run_b.relics)
+    relic_diff = {
+        "shared": sorted(relics_a & relics_b),
+        "only_a": sorted(relics_a - relics_b),
+        "only_b": sorted(relics_b - relics_a),
+    }
+
+    def run_stats(r):
+        return {"floors": len(r.floors), "deck_size": len(r.deck),
+                "relics": len(r.relics),
+                "total_damage": sum(f.damage_taken for f in r.floors)}
+
+    return a.templates.TemplateResponse(request, "compare.html", {
+        "run_a": run_a, "run_b": run_b, "kb": a.kb,
+        "analysis_a": analyze_run(run_a), "analysis_b": analyze_run(run_b),
+        "deck_diff": deck_diff, "relic_diff": relic_diff,
+        "stats_a": run_stats(run_a), "stats_b": run_stats(run_b),
+    })
+
+
 @router.get("/runs/{run_id}", response_class=HTMLResponse)
 async def run_detail(request: Request, run_id: str = Path(max_length=200)):
     from sts2.analytics import analyze_run

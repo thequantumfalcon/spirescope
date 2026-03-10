@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block page_id %}runs{% endblock %}
+{% block title %}Compare Runs{% endblock %}
+{% block og_title %}Compare Runs — SpireScope{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/runs">Run History</a> &rsaquo; Compare</p>
+<h1>Run Comparison</h1>
+
+<div class="compare-header">
+  <div class="compare-run">
+    <h2>
+      <span class="result {{ 'win' if run_a.win else 'loss' }}">{{ 'WIN' if run_a.win else 'LOSS' }}</span>
+      <span class="char-{{ run_a.character|lower }}">{{ run_a.character }}</span>
+    </h2>
+    <p class="text-muted">A{{ run_a.ascension }} &bull; Seed: {{ run_a.seed }} &bull; {{ (run_a.run_time / 60)|int }}m</p>
+  </div>
+  <div class="compare-run">
+    <h2>
+      <span class="result {{ 'win' if run_b.win else 'loss' }}">{{ 'WIN' if run_b.win else 'LOSS' }}</span>
+      <span class="char-{{ run_b.character|lower }}">{{ run_b.character }}</span>
+    </h2>
+    <p class="text-muted">A{{ run_b.ascension }} &bull; Seed: {{ run_b.seed }} &bull; {{ (run_b.run_time / 60)|int }}m</p>
+  </div>
+</div>
+
+<h2>Stats</h2>
+<div class="two-col mb-lg">
+  <div class="stat-grid">
+    <div class="stat-box"><div class="num">{{ stats_a.floors }}</div><div class="label">Floors</div></div>
+    <div class="stat-box"><div class="num">{{ stats_a.deck_size }}</div><div class="label">Cards</div></div>
+    <div class="stat-box"><div class="num">{{ stats_a.relics }}</div><div class="label">Relics</div></div>
+    <div class="stat-box"><div class="num">{{ stats_a.total_damage }}</div><div class="label">Damage Taken</div></div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-box"><div class="num">{{ stats_b.floors }}</div><div class="label">Floors</div></div>
+    <div class="stat-box"><div class="num">{{ stats_b.deck_size }}</div><div class="label">Cards</div></div>
+    <div class="stat-box"><div class="num">{{ stats_b.relics }}</div><div class="label">Relics</div></div>
+    <div class="stat-box"><div class="num">{{ stats_b.total_damage }}</div><div class="label">Damage Taken</div></div>
+  </div>
+</div>
+
+<h2>Deck Difference</h2>
+<table class="table mb-lg">
+  <thead><tr><th>Card</th><th>Run A</th><th>Run B</th></tr></thead>
+  <tbody>
+  {% for d in deck_diff %}
+  <tr>
+    <td>{{ d.name }}</td>
+    <td class="{% if d.qty_a > d.qty_b %}diff-more{% elif d.qty_a < d.qty_b %}diff-less{% else %}diff-same{% endif %}">{{ d.qty_a }}</td>
+    <td class="{% if d.qty_b > d.qty_a %}diff-more{% elif d.qty_b < d.qty_a %}diff-less{% else %}diff-same{% endif %}">{{ d.qty_b }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>Relics</h2>
+<div class="two-col mb-lg">
+  <div>
+    <h3 class="text-sm text-muted mb-xs">Shared</h3>
+    <div class="flex flex-wrap gap-xs mb-sm">
+    {% for r in relic_diff.shared %}
+    <span class="tag tag-power">{{ kb.id_to_name(r) }}</span>
+    {% endfor %}
+    {% if not relic_diff.shared %}<span class="text-muted">None</span>{% endif %}
+    </div>
+    <h3 class="text-sm text-muted mb-xs">Only in Run A</h3>
+    <div class="flex flex-wrap gap-xs mb-sm">
+    {% for r in relic_diff.only_a %}
+    <span class="tag tag-power diff-more">{{ kb.id_to_name(r) }}</span>
+    {% endfor %}
+    {% if not relic_diff.only_a %}<span class="text-muted">None</span>{% endif %}
+    </div>
+  </div>
+  <div>
+    <h3 class="text-sm text-muted mb-xs">Only in Run B</h3>
+    <div class="flex flex-wrap gap-xs mb-sm">
+    {% for r in relic_diff.only_b %}
+    <span class="tag tag-power diff-more">{{ kb.id_to_name(r) }}</span>
+    {% endfor %}
+    {% if not relic_diff.only_b %}<span class="text-muted">None</span>{% endif %}
+    </div>
+  </div>
+</div>
+
+{% if analysis_a and analysis_b %}
+<h2>Analysis</h2>
+<div class="two-col mb-lg">
+  <div>
+    {% if analysis_a.insights %}
+    {% for insight in analysis_a.insights %}
+    <div class="card {% if insight.type == 'warning' %}card-caution{% elif insight.type == 'good' %}card-win{% else %}card-loss{% endif %} mb-sm">
+      <p>{{ insight.text }}</p>
+    </div>
+    {% endfor %}
+    {% else %}<p class="text-muted">No insights.</p>{% endif %}
+  </div>
+  <div>
+    {% if analysis_b.insights %}
+    {% for insight in analysis_b.insights %}
+    <div class="card {% if insight.type == 'warning' %}card-caution{% elif insight.type == 'good' %}card-win{% else %}card-loss{% endif %} mb-sm">
+      <p>{{ insight.text }}</p>
+    </div>
+    {% endfor %}
+    {% else %}<p class="text-muted">No insights.</p>{% endif %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

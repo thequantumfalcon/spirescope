@@ -848,3 +848,15 @@ kbd {
   border-radius: 4px; padding: 0.15rem 0.5rem; min-width: 1.5rem;
   text-align: center; font-family: monospace; font-size: 0.85rem; color: var(--text);
 }
+
+/* ── Run Comparison ── */
+.compare-header { display: flex; gap: 2rem; margin-bottom: 1.5rem; }
+.compare-run { flex: 1; }
+.diff-more { color: var(--green); font-weight: 600; }
+.diff-less { color: var(--red); font-weight: 600; }
+.diff-same { color: var(--text2); }
+.compare-check { accent-color: var(--gold); width: 1rem; height: 1rem; cursor: pointer; }
+.run-item-row { display: flex; align-items: center; }
+@media (max-width: 600px) {
+  .compare-header { flex-direction: column; gap: 1rem; }
+}

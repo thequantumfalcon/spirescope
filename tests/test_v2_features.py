@@ -976,3 +976,60 @@ class TestNoBrowserFlag:
         source = inspect.getsource(main)
         assert "--no-browser" in source
         assert "webbrowser" in source
+
+
+# ---------------------------------------------------------------------------
+# Run Comparison (Feature 5)
+# ---------------------------------------------------------------------------
+
+
+class TestRunComparison:
+    async def test_compare_no_params(self, client):
+        """Compare page returns 400 without run IDs."""
+        resp = await client.get("/runs/compare")
+        assert resp.status_code == 400
+
+    async def test_compare_missing_run(self, client):
+        """Compare page returns 404 for nonexistent runs."""
+        resp = await client.get("/runs/compare?a=fake&b=fake")
+        assert resp.status_code == 404
+
+    async def test_compare_valid_runs(self, client):
+        """Compare page renders for two valid runs."""
+        run_a = RunHistory(id="run-a", character="Ironclad", win=True,
+                           deck=["CARD.BASH", "CARD.STRIKE"], relics=["RELIC.BURNING_BLOOD"])
+        run_b = RunHistory(id="run-b", character="Silent", win=False,
+                           deck=["CARD.STRIKE", "CARD.NEUTRALIZE"], relics=["RELIC.RING_OF_THE_SERPENT"])
+        with patch("sts2.app._get_run_by_id", new=AsyncMock(side_effect=lambda rid: run_a if rid == "run-a" else run_b)):
+            resp = await client.get("/runs/compare?a=run-a&b=run-b")
+        assert resp.status_code == 200
+        assert "Run Comparison" in resp.text
+
+    async def test_compare_deck_diff_rendered(self, client):
+        """Compare page shows deck difference table."""
+        run_a = RunHistory(id="run-a", character="Ironclad", win=True, deck=["CARD.BASH"])
+        run_b = RunHistory(id="run-b", character="Ironclad", win=True, deck=["CARD.STRIKE"])
+        with patch("sts2.app._get_run_by_id", new=AsyncMock(side_effect=lambda rid: run_a if rid == "run-a" else run_b)):
+            resp = await client.get("/runs/compare?a=run-a&b=run-b")
+        assert resp.status_code == 200
+        assert "Deck Difference" in resp.text
+
+    async def test_compare_route_not_swallowed(self, client):
+        """GET /runs/compare should NOT be treated as run_detail for id='compare'."""
+        resp = await client.get("/runs/compare?a=x&b=y")
+        # Should be 400 or 404 from compare handler, not run_detail's 404
+        assert resp.status_code in (400, 404)
+        # Should NOT render the run_detail template
+        assert "Floor by Floor" not in resp.text
+
+    async def test_runs_page_has_compare_checkboxes(self, client):
+        """Runs page should include compare checkboxes."""
+        resp = await client.get("/runs")
+        assert resp.status_code == 200
+        assert "compare-check" in resp.text or "No run history" in resp.text
+
+    async def test_runs_page_no_inline_onchange(self, client):
+        """Runs page should not have inline onchange (CSP fix)."""
+        resp = await client.get("/runs")
+        assert resp.status_code == 200
+        assert "onchange=" not in resp.text

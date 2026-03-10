@@ -43,6 +43,8 @@ _collections_js_path = STATIC_DIR / "collections.js"
 _COLLECTIONS_JS_HASH = hashlib.md5(_collections_js_path.read_bytes()).hexdigest()[:8] if _collections_js_path.exists() else "0"
 _shortcuts_js_path = STATIC_DIR / "shortcuts.js"
 _SHORTCUTS_JS_HASH = hashlib.md5(_shortcuts_js_path.read_bytes()).hexdigest()[:8] if _shortcuts_js_path.exists() else "0"
+_compare_js_path = STATIC_DIR / "compare.js"
+_COMPARE_JS_HASH = hashlib.md5(_compare_js_path.read_bytes()).hexdigest()[:8] if _compare_js_path.exists() else "0"
 
 
 @contextlib.asynccontextmanager
@@ -66,6 +68,7 @@ templates.env.globals["version"] = VERSION
 templates.env.globals["deck_js_hash"] = _DECK_JS_HASH
 templates.env.globals["collections_js_hash"] = _COLLECTIONS_JS_HASH
 templates.env.globals["shortcuts_js_hash"] = _SHORTCUTS_JS_HASH
+templates.env.globals["compare_js_hash"] = _COMPARE_JS_HASH
 
 kb = KnowledgeBase()
 
