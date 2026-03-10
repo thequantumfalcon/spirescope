@@ -1,5 +1,25 @@
 # Changelog
 
+## v2.2.0
+
+### Added
+
+- **Keyboard shortcuts** — Press `?` for help overlay, `h/c/r/a/d/l` to navigate pages, `/` to focus search, `Esc` to close
+- **Ascension filtering on analytics** — Filter analytics by ascension level with clickable filter bar
+- **HTML export for runs** — Export any run as a self-contained HTML file with inlined CSS for offline viewing
+- **Run comparison** — Side-by-side comparison of two runs with deck diff, relic diff, stat comparison, and analysis insights
+- **ruff linter in CI** — Automated code quality checks on every push and PR
+
+### Changed
+
+- Run history page now includes compare checkboxes for selecting two runs
+- Export button on run detail split into "Export JSON" and "Export HTML"
+- Analytics cache keyed by ascension level for filtered results
+
+### Fixed
+
+- CSP violation in runs page: replaced inline `onchange` handler with external JS
+
 ## v2.1.0
 
 ### Added

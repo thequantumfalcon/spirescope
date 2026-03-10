@@ -34,18 +34,20 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 - **Live Run Tracker** — Real-time dashboard via Server-Sent Events (SSE) — no page reloads. Shows deck, relics, potions, HP, floor history, counter-cards, synergy hints, and danger alerts.
 - **Deck Analyzer** — Select cards to get archetype detection, synergy analysis, weakness identification, and suggestions. Save/load decks to localStorage.
-- **Run History** — Floor-by-floor breakdown of completed runs with HP tracking, card picks, and damage taken. Import/export runs in `.spirescope.json` format.
+- **Run History** — Floor-by-floor breakdown of completed runs with HP tracking, card picks, and damage taken. Import/export runs as JSON or standalone HTML.
+- **Run Comparison** — Side-by-side comparison of two runs with deck diff, relic diff, and stat comparison
 - **Collections** — Track card/relic discovery progress with ascension filtering
 - **Co-op Support** — Track any player in a multiplayer run via `?player=N`
 
 ### Analyze & Compete
 
-- **Analytics** — Aggregate stats: per-character win rates, floor survival, card pick rates, HP curves, death floor heatmaps, and causes of death
+- **Analytics** — Aggregate stats: per-character win rates, floor survival, card pick rates, HP curves, death floor heatmaps, and causes of death. Filter by ascension level.
 - **Community Meta** — Tier lists and strategy posts from Reddit and Steam, community-voted card tiers, aggregate player stats with import/export
 - **Global Search** — Fuzzy search with "Did you mean?" suggestions across all entities
 
 ### Customize & Extend
 
+- **Keyboard Shortcuts** — Press `?` for shortcut help, navigate pages with single keys, `/` to search
 - **Dark/Light Theme** — Dark gothic fantasy aesthetic (Cinzel serif font, warm gold/crimson palette) with a warm parchment light mode toggle
 - **Mod Support** — Load custom cards, relics, and enemies from JSON files in a mods directory
 - **Content Creator API** — Paginated JSON endpoints with CSV export and optional API key bypass
@@ -55,7 +57,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Download (No Python Required)
 
-**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.1.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.2.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
 
 ### From Source
 

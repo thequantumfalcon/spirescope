@@ -1,6 +1,6 @@
 [project]
 name = "spirescope"
-version = "2.1.0"
+version = "2.2.0"
 description = "Spirescope — a local web dashboard for Slay the Spire 2. Card/relic/enemy lookup, deck analysis, live run tracking, and strategy guides."
 readme = "README.md"
 license = {text = "MIT"}
@@ -38,6 +38,7 @@ dev = [
     "pytest>=7.0",
     "pytest-asyncio>=0.21.0",
     "httpx>=0.24.0",
+    "ruff>=0.4.0",
     "pyinstaller>=6.0",
 ]
 browser = [
@@ -58,3 +59,11 @@ asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "module"
 markers = ["browser: Playwright browser tests (requires installed browsers)"]
 addopts = "-m 'not browser'"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E402", "E501"]

@@ -46,7 +46,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates
   static/            # CSS, fonts, images, JS
-tests/               # 494 tests (pytest + pytest-asyncio)
+tests/               # 514 tests (pytest + pytest-asyncio)
 ```
 
 ## CSS Conventions
@@ -63,14 +63,14 @@ tests/               # 494 tests (pytest + pytest-asyncio)
 - pytest with pytest-asyncio in auto mode
 - Async test functions: use `async def test_*` (not `asyncio.get_event_loop()`)
 - Mock external dependencies (save files, network) — never hit real endpoints in tests
-- All 494 tests must pass before merge
+- All 514 tests must pass before merge
 
 ## Guidelines
 
 - Keep changes focused — one feature or fix per PR
 - Add tests for new routes or logic
 - Don't commit game data changes (sts2/data/*.json) unless adding new fields
-- Follow existing code style (no linter config — just match what's there)
+- Run `ruff check sts2/ tests/` to lint before submitting
 - All tests must pass before merge
 
 ## Reporting Issues

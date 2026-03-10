@@ -17,6 +17,7 @@
     <li><a href="#analytics">Analytics</a></li>
     <li><a href="#community">Community Data</a></li>
     <li><a href="#mods">Mod Support</a></li>
+    <li><a href="#shortcuts">Keyboard Shortcuts</a></li>
     <li><a href="#config">Configuration</a></li>
     <li><a href="#troubleshooting">Troubleshooting</a></li>
   </ul>
@@ -58,8 +59,8 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
   <p><strong>Enemies</strong> &mdash; Filter by act and type (normal/elite/boss). Detail pages show attack patterns, strategy tips, and your personal win/loss stats.</p>
   <p><strong>Events</strong> &mdash; Every event with optimal choices and outcomes, filterable by act.</p>
   <p><strong>Strategy Guides</strong> &mdash; Per-character archetypes, key cards, key relics, and general tips. Access from character cards on the home page.</p>
-  <p><strong>Run History</strong> &mdash; All completed runs with floor-by-floor breakdown, HP tracking, card picks, and damage taken.</p>
-  <p><strong>Analytics</strong> &mdash; Aggregate statistics across all your runs: win rates, character performance, card pick rates, and more.</p>
+  <p><strong>Run History</strong> &mdash; All completed runs with floor-by-floor breakdown, HP tracking, card picks, and damage taken. Export as JSON or standalone HTML. Select two runs to compare side-by-side.</p>
+  <p><strong>Analytics</strong> &mdash; Aggregate statistics across all your runs: win rates, character performance, card pick rates, and more. Filter by ascension level.</p>
   <p><strong>Community</strong> &mdash; Community tier lists and meta discussion from Reddit.</p>
 </div>
 
@@ -92,6 +93,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
     <li>Most picked and highest win-rate cards</li>
     <li>Common causes of death</li>
   </ul>
+  <p class="mt-sm">Use the ascension filter bar at the top to focus on a specific ascension level.</p>
   <p class="text-sm text-muted mt-sm">Analytics are cached for 60 seconds and recompute automatically when new runs are detected.</p>
 </div>
 
@@ -124,6 +126,22 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
   ]
 }</code></pre>
   <p class="text-sm text-muted mt-sm">All entity types are optional per file. Base game data always takes priority — if a mod ID conflicts with a base card, the mod entry is skipped. Mod entities are tagged with a <span class="tag tag-mod">Mod</span> badge. After adding mod files, use <code>POST /api/reload</code> or restart to load them.</p>
+</div>
+
+<h2 id="shortcuts">Keyboard Shortcuts</h2>
+<div class="card mb-md">
+  <p>Press <kbd>?</kbd> anywhere to see the shortcut overlay. Available shortcuts:</p>
+  <ul>
+    <li><kbd>/</kbd> &mdash; Focus search (or deck search on the Deck Analyzer page)</li>
+    <li><kbd>h</kbd> &mdash; Home</li>
+    <li><kbd>c</kbd> &mdash; Cards</li>
+    <li><kbd>r</kbd> &mdash; Relics</li>
+    <li><kbd>a</kbd> &mdash; Analytics</li>
+    <li><kbd>d</kbd> &mdash; Deck Analyzer</li>
+    <li><kbd>l</kbd> &mdash; Live Run</li>
+    <li><kbd>Esc</kbd> &mdash; Close overlay</li>
+  </ul>
+  <p class="text-sm text-muted mt-sm">Shortcuts are disabled when typing in input fields.</p>
 </div>
 
 <h2 id="config">Configuration</h2>
