@@ -1,13 +1,11 @@
 """Tests for Spirescope v2.0 features: analytics, import/export, coaching,
 aggregation, mod loading, CSV export, API pagination, theme, CSP, rate limiter."""
 import json
-import pytest
 from pathlib import Path
-from unittest.mock import patch, AsyncMock
+from unittest.mock import AsyncMock, patch
 
-from sts2.app import generate_csrf_token, _ADMIN_TOKEN, _rate_limit_store
-from sts2.models import RunHistory, RunFloor, Card, Relic, Enemy
-
+from sts2.app import _ADMIN_TOKEN, _rate_limit_store, generate_csrf_token
+from sts2.models import Card, RunFloor, RunHistory
 
 # ---------------------------------------------------------------------------
 # Analytics: 5 new computations
@@ -200,6 +198,43 @@ class TestRunExport:
         if resp.status_code == 200:
             disp = resp.headers.get("content-disposition", "")
             assert "/" not in disp.split("filename=")[1] if "filename=" in disp else True
+
+
+class TestRunExportHTML:
+    async def test_export_html_valid_run(self, client):
+        with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=RunHistory(
+                id="test-run-1", character="Ironclad", win=True, deck=["CARD.BASH"]))):
+            resp = await client.get("/runs/test-run-1/export/html")
+        assert resp.status_code == 200
+        assert "attachment" in resp.headers.get("content-disposition", "")
+        assert ".html" in resp.headers.get("content-disposition", "")
+
+    async def test_export_html_has_inlined_css(self, client):
+        with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=RunHistory(
+                id="test-run-1", character="Ironclad", win=True, deck=[]))):
+            resp = await client.get("/runs/test-run-1/export/html")
+        assert resp.status_code == 200
+        assert "<style>" in resp.text
+
+    async def test_export_html_no_nav(self, client):
+        with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=RunHistory(
+                id="test-run-1", character="Ironclad", win=True, deck=[]))):
+            resp = await client.get("/runs/test-run-1/export/html")
+        assert resp.status_code == 200
+        assert "<nav" not in resp.text
+
+    async def test_export_html_not_found(self, client):
+        resp = await client.get("/runs/nonexistent/export/html")
+        assert resp.status_code == 404
+
+    async def test_export_html_standalone(self, client):
+        """Exported HTML should be a complete document, not extending base.html."""
+        with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=RunHistory(
+                id="test-run-1", character="Ironclad", win=False, deck=["CARD.STRIKE"]))):
+            resp = await client.get("/runs/test-run-1/export/html")
+        assert resp.status_code == 200
+        assert "<!DOCTYPE html>" in resp.text
+        assert "SpireScope Run Export" in resp.text
 
 
 class TestRunImport:
@@ -612,8 +647,9 @@ class TestRateLimiter:
         """SSE endpoint path is exempt from rate limiter middleware."""
         # Verify exemption logic directly — don't hit the streaming endpoint
         # which blocks for the full SSE duration.
-        from sts2.app import rate_limit
         import inspect
+
+        from sts2.app import rate_limit
         source = inspect.getsource(rate_limit)
         assert "/api/live/stream" in source
 
@@ -624,8 +660,8 @@ class TestRateLimiter:
 
     async def test_api_key_bypass(self, client):
         """API key should bypass rate limit — uses store injection instead of 65 HTTP calls."""
-        import os
         import collections
+        import os
         _rate_limit_store.clear()
         # Simulate an exhausted rate limit by injecting timestamps directly
         import time
@@ -637,8 +673,8 @@ class TestRateLimiter:
 
     async def test_wrong_api_key_rate_limited(self, client):
         """Wrong API key should not bypass rate limit."""
-        import os
         import collections
+        import os
         _rate_limit_store.clear()
         import time
         now = time.monotonic()
@@ -649,8 +685,8 @@ class TestRateLimiter:
 
     async def test_no_api_key_env_no_bypass(self, client):
         """When SPIRESCOPE_API_KEY is unset, x-api-key header does nothing."""
-        import os
         import collections
+        import os
         _rate_limit_store.clear()
         import time
         now = time.monotonic()
@@ -766,7 +802,7 @@ class TestCLI:
 
     def test_cli_export_writes_file(self, tmp_path):
         """Export CLI should compute stats and write aggregate JSON to disk."""
-        from sts2.aggregate import compute_aggregate_stats, save_aggregate, _aggregate_storage_path
+        from sts2.aggregate import compute_aggregate_stats, save_aggregate
         from sts2.saves import get_run_history
         runs = get_run_history()
         stats = compute_aggregate_stats(runs)
@@ -811,6 +847,7 @@ class TestSSEIntegration:
     async def test_sse_delivers_event_data(self):
         """SSE generator should yield valid JSON data events."""
         import asyncio
+
         from sts2.routes import live_stream
         # Call the route handler directly to get the StreamingResponse
         resp = await live_stream(player=0)
@@ -907,6 +944,7 @@ class TestWCAGContrast:
     def test_light_theme_colors_parsed_from_css(self):
         """Verify the CSS file actually contains the colors we're testing."""
         import re
+
         from sts2.config import STATIC_DIR
         css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
         # Find the [data-theme="light"] block
@@ -933,6 +971,7 @@ class TestNoBrowserFlag:
     def test_no_browser_in_source(self):
         """Verify --no-browser flag is wired into serve command."""
         import inspect
+
         from sts2.__main__ import main
         source = inspect.getsource(main)
         assert "--no-browser" in source

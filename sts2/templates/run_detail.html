@@ -12,7 +12,7 @@
 <p class="text-muted">
   Ascension {{ run.ascension }} &bull; Seed: {{ run.seed }} &bull; {{ (run.run_time / 60)|int }} minutes &bull; {{ run.build_id }}
   {% if run.killed_by %} &bull; <span class="loss">Killed by {{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
-  {% if not imported %}&bull; <a href="/runs/{{ run.id }}/export" class="btn btn-sm btn-secondary">Export</a>{% endif %}
+  {% if not imported %}&bull; <a href="/runs/{{ run.id }}/export" class="btn btn-sm btn-secondary">Export JSON</a> <a href="/runs/{{ run.id }}/export/html" class="btn btn-sm btn-secondary">Export HTML</a>{% endif %}
 </p>
 
 <div class="stat-grid mt-md">

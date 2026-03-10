@@ -366,6 +366,28 @@ async def export_run(run_id: str = Path(max_length=200)):
         headers={"Content-Disposition": f'attachment; filename="spirescope_{safe_id}.json"'})
 
 
+@router.get("/runs/{run_id}/export/html")
+async def export_run_html(run_id: str = Path(max_length=200)):
+    from sts2.analytics import analyze_run
+    from sts2.config import STATIC_DIR, VERSION
+    a = _app()
+    run = await a._get_run_by_id(run_id)
+    if not run:
+        return PlainTextResponse("Run not found.", status_code=404)
+    run_analysis = analyze_run(run)
+    css_path = STATIC_DIR / "style.css"
+    css_content = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
+    html = a.templates.env.get_template("run_export.html").render(
+        run=run, kb=a.kb, run_analysis=run_analysis,
+        css_content=css_content, version=VERSION,
+    )
+    safe_id = re.sub(r'[^\w\-.]', '_', run.id)
+    return HTMLResponse(
+        content=html,
+        headers={"Content-Disposition": f'attachment; filename="spirescope_{safe_id}.html"'},
+    )
+
+
 @router.post("/runs/import", response_class=HTMLResponse)
 async def import_run(request: Request, file: UploadFile = File(...),
                      csrf_token: str = Form("")):
