@@ -10,15 +10,16 @@ import re
 import secrets
 import struct
 import time
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import StarletteHTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from fastapi.middleware.cors import CORSMiddleware
 from sts2.analytics import compute_analytics
-from sts2.config import TEMPLATES_DIR, STATIC_DIR, SAVE_DIR, VERSION
+from sts2.config import SAVE_DIR, STATIC_DIR, TEMPLATES_DIR, VERSION
 from sts2.knowledge import KnowledgeBase
 from sts2.saves import get_progress, get_run_history
 
@@ -40,6 +41,8 @@ _deck_js_path = STATIC_DIR / "deck.js"
 _DECK_JS_HASH = hashlib.md5(_deck_js_path.read_bytes()).hexdigest()[:8] if _deck_js_path.exists() else "0"
 _collections_js_path = STATIC_DIR / "collections.js"
 _COLLECTIONS_JS_HASH = hashlib.md5(_collections_js_path.read_bytes()).hexdigest()[:8] if _collections_js_path.exists() else "0"
+_shortcuts_js_path = STATIC_DIR / "shortcuts.js"
+_SHORTCUTS_JS_HASH = hashlib.md5(_shortcuts_js_path.read_bytes()).hexdigest()[:8] if _shortcuts_js_path.exists() else "0"
 
 
 @contextlib.asynccontextmanager
@@ -62,6 +65,7 @@ templates.env.globals["hero_bg_hash"] = _HERO_BG_HASH
 templates.env.globals["version"] = VERSION
 templates.env.globals["deck_js_hash"] = _DECK_JS_HASH
 templates.env.globals["collections_js_hash"] = _COLLECTIONS_JS_HASH
+templates.env.globals["shortcuts_js_hash"] = _SHORTCUTS_JS_HASH
 
 kb = KnowledgeBase()
 
@@ -162,6 +166,7 @@ app.include_router(router)
 
 # CORS
 from sts2.config import PORT  # noqa: E402
+
 _cors_env = os.environ.get("STS2_CORS_ORIGINS", "")
 _cors_origins = [o.strip() for o in _cors_env.split(",") if o.strip()] if _cors_env else [
     f"http://127.0.0.1:{PORT}", f"http://localhost:{PORT}",

@@ -825,3 +825,26 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; 
   .stat-box::before, .stat-box::after,
   .card::before, .card::after { width: 10px; height: 10px; }
 }
+
+/* ── Keyboard Shortcut Overlay ── */
+.shortcut-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
+}
+.shortcut-overlay[hidden] { display: none; }
+.shortcut-overlay-content {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 1.5rem 2rem; max-width: 400px; width: 90%;
+}
+.shortcut-overlay-content h3 {
+  margin: 0 0 1rem; color: var(--gold); font-family: 'Cinzel', serif;
+}
+.shortcut-table { width: 100%; border-collapse: collapse; }
+.shortcut-table td { padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--border); }
+.shortcut-table td:first-child { text-align: center; width: 3rem; }
+kbd {
+  display: inline-block; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 4px; padding: 0.15rem 0.5rem; min-width: 1.5rem;
+  text-align: center; font-family: monospace; font-size: 0.85rem; color: var(--text);
+}

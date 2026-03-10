@@ -1,7 +1,6 @@
 """Tests for the FastAPI routes."""
-import pytest
 
-from sts2.app import generate_csrf_token, _ADMIN_TOKEN, _rate_limit_store
+from sts2.app import _ADMIN_TOKEN, _rate_limit_store, generate_csrf_token
 
 
 async def test_index(client):
@@ -239,6 +238,7 @@ async def test_live_page_has_sse_script(client):
 async def test_live_stream_endpoint_exists(client):
     """SSE endpoint is registered (streaming tested via integration)."""
     from starlette.routing import Route
+
     from sts2.app import app as _app
     sse_routes = [r for r in _app.routes if isinstance(r, Route) and r.path == "/api/live/stream"]
     assert len(sse_routes) == 1
@@ -385,6 +385,7 @@ async def test_deck_from_run_with_invalid_id(client):
 async def test_deck_from_run_with_mock_data(client):
     """GET /deck?from_run=<id> should pre-select cards."""
     from unittest.mock import AsyncMock, patch
+
     from sts2.models import RunHistory
 
     mock_run = RunHistory(
@@ -404,6 +405,7 @@ async def test_deck_from_run_with_mock_data(client):
 async def test_run_detail_has_analyze_button(client):
     """Run detail page should have an Analyze Deck link."""
     from unittest.mock import AsyncMock, patch
+
     from sts2.models import RunHistory
 
     mock_run = RunHistory(
@@ -550,6 +552,7 @@ async def test_footer_present(client):
 async def test_card_detail_shows_card_stats(client):
     """Card detail page should show personal stats when card_stats data exists."""
     from unittest.mock import AsyncMock, patch
+
     from sts2.models import PlayerProgress
 
     mock_progress = PlayerProgress(
@@ -565,6 +568,7 @@ async def test_card_detail_shows_card_stats(client):
 async def test_card_detail_no_stats_when_empty(client):
     """Card detail page should not show stats section when card_stats is empty."""
     from unittest.mock import AsyncMock, patch
+
     from sts2.models import PlayerProgress
 
     mock_progress = PlayerProgress(card_stats={})
@@ -577,6 +581,7 @@ async def test_card_detail_no_stats_when_empty(client):
 async def test_index_shows_character_streaks(client):
     """Index page should show streak/ascension info when available."""
     from unittest.mock import AsyncMock, patch
+
     from sts2.models import PlayerProgress
 
     mock_progress = PlayerProgress(
@@ -775,6 +780,7 @@ async def test_robots_txt_references_sitemap(client):
 async def test_cards_page_shows_pick_rate(client):
     """Cards list should show pick rate when card_stats data exists."""
     from unittest.mock import AsyncMock, patch
+
     from sts2.models import PlayerProgress
 
     mock_progress = PlayerProgress(
@@ -807,6 +813,7 @@ async def test_run_detail_links_relics(client):
 async def test_card_detail_shows_run_win_rate(client):
     """Card detail should show win rate from run history."""
     from unittest.mock import AsyncMock, patch
+
     from sts2.models import RunHistory
 
     mock_runs = [
@@ -846,6 +853,7 @@ async def test_analytics_page(client):
 async def test_analytics_page_empty_runs(client):
     """Analytics page with no runs should show empty state."""
     from unittest.mock import AsyncMock, patch
+
     from sts2.analytics import compute_analytics
     with patch("sts2.app._get_analytics", new=AsyncMock(return_value=compute_analytics([]))):
         resp = await client.get("/analytics")
@@ -865,8 +873,9 @@ async def test_api_analytics(client):
 async def test_analytics_with_mock_runs(client):
     """Analytics with run data should compute stats."""
     from unittest.mock import AsyncMock, patch
-    from sts2.models import RunHistory
+
     from sts2.analytics import compute_analytics
+    from sts2.models import RunHistory
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH", "CARD.STRIKE"],
@@ -886,8 +895,8 @@ async def test_analytics_with_mock_runs(client):
 
 async def test_analytics_card_rankings():
     """Analytics should compute card win rates."""
-    from sts2.models import RunHistory
     from sts2.analytics import compute_analytics
+    from sts2.models import RunHistory
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"]),
@@ -904,8 +913,8 @@ async def test_analytics_card_rankings():
 
 async def test_analytics_character_breakdown():
     """Analytics should break down stats by character."""
-    from sts2.models import RunHistory
     from sts2.analytics import compute_analytics
+    from sts2.models import RunHistory
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"]),
@@ -919,8 +928,8 @@ async def test_analytics_character_breakdown():
 
 async def test_analytics_synergy_edges():
     """Analytics should compute card co-occurrence in winning decks."""
-    from sts2.models import RunHistory
     from sts2.analytics import compute_analytics
+    from sts2.models import RunHistory
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.A", "CARD.B"]),
@@ -937,8 +946,9 @@ async def test_analytics_synergy_edges():
 async def test_analytics_page_shows_overview(client):
     """Analytics HTML page should show overview stats."""
     from unittest.mock import AsyncMock, patch
-    from sts2.models import RunHistory
+
     from sts2.analytics import compute_analytics
+    from sts2.models import RunHistory
 
     mock_runs = [
         RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], run_time=600),
@@ -969,7 +979,7 @@ async def test_compute_analytics_empty():
 async def test_compute_analytics_floor_survival():
     """compute_analytics should compute floor survival distribution."""
     from sts2.analytics import compute_analytics
-    from sts2.models import RunHistory, RunFloor
+    from sts2.models import RunFloor, RunHistory
 
     floors = [RunFloor(floor=i) for i in range(1, 12)]
     runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], floors=floors)]
@@ -980,7 +990,7 @@ async def test_compute_analytics_floor_survival():
 async def test_compute_analytics_damage_by_act():
     """compute_analytics should compute damage by act."""
     from sts2.analytics import compute_analytics
-    from sts2.models import RunHistory, RunFloor
+    from sts2.models import RunFloor, RunHistory
 
     floors = [RunFloor(floor=i, damage_taken=5) for i in range(1, 6)]
     runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], floors=floors)]
@@ -1038,7 +1048,8 @@ async def test_knowledge_base_community_tips():
 
 async def test_card_detail_passes_community_tips(client):
     """Card detail should include community_tips in template context."""
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import patch
+
     from sts2.app import kb as _kb
     if not _kb.cards:
         return
@@ -1053,7 +1064,8 @@ async def test_card_detail_passes_community_tips(client):
 
 async def test_relic_detail_passes_community_tips(client):
     """Relic detail should include community_tips in template context."""
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import patch
+
     from sts2.app import kb as _kb
     if not _kb.relics:
         return
@@ -1067,7 +1079,6 @@ async def test_relic_detail_passes_community_tips(client):
 
 async def test_community_cli_entry():
     """Community CLI command should be registered."""
-    from sts2.__main__ import main
     # Just verify the import path works
     from sts2.community import run_community_scraper
     assert callable(run_community_scraper)
@@ -1092,7 +1103,8 @@ async def test_community_page_empty_state(client):
 
 async def test_community_page_with_meta_posts(client):
     """Community page should display meta posts when available."""
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import patch
+
     from sts2.app import kb as _kb
     mock_posts = [
         {"title": "Best Ironclad Cards Tier List", "url": "https://reddit.com/r/test/1",
@@ -1121,7 +1133,8 @@ async def test_sitemap_includes_community(client):
 
 async def test_enemy_detail_community_tips(client):
     """Enemy detail should show community tips when available."""
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import patch
+
     from sts2.app import kb as _kb
     if not _kb.enemies:
         return
@@ -1151,7 +1164,6 @@ async def test_analytics_cache_ttl_constant():
 
 async def test_community_page_shows_tier_cards(client):
     """Community page should group cards by tier when tiers are set."""
-    from unittest.mock import AsyncMock, patch, PropertyMock
     from sts2.app import kb as _kb
     from sts2.models import Card
     mock_cards = [
@@ -1292,8 +1304,9 @@ async def test_collections_no_progress(client):
 async def test_collections_with_progress(client):
     """Collections page with progress should show discovery counts."""
     from unittest.mock import AsyncMock, patch
-    from sts2.models import PlayerProgress
+
     from sts2.app import kb as _kb
+    from sts2.models import PlayerProgress
 
     # Use real card IDs from the knowledge base
     card_ids = [c.id for c in _kb.cards[:5]]
@@ -1348,6 +1361,7 @@ async def test_runs_filter_combined(client):
 async def test_runs_ascension_filter_with_mock_data(client):
     """Ascension filter should correctly filter runs by level."""
     from unittest.mock import AsyncMock, patch
+
     from sts2.models import RunHistory
 
     mock_runs = [
@@ -1386,9 +1400,9 @@ async def test_static_cache_control(client):
 
 async def test_rate_limit_cleanup():
     """Stale entries in rate limit store should be cleaned up."""
-    import time
-    from sts2.app import _rate_limit_store, _RATE_LIMIT_WINDOW
     import collections
+    import time
+
 
     _rate_limit_store.clear()
     # Add a stale entry (timestamp in the distant past)
@@ -1407,11 +1421,10 @@ async def test_rate_limit_cleanup():
 
 async def test_rate_limit_api_key_bypass(client):
     """Requests with valid API key should bypass rate limiting."""
-    import os
-    from unittest.mock import patch
-    from sts2.app import _rate_limit_store
     import collections
+    import os
     import time
+    from unittest.mock import patch
 
     _rate_limit_store.clear()
     test_key = "test-api-key-12345"
@@ -1446,6 +1459,7 @@ async def test_csrf_token_validation():
 async def test_run_cache_by_id():
     """_get_run_by_id should return the correct run."""
     from unittest.mock import AsyncMock, patch
+
     from sts2.app import _get_run_by_id
     from sts2.models import RunHistory
 
@@ -1476,3 +1490,32 @@ async def test_api_runs_pagination(client):
     assert resp.status_code == 200
     data = resp.json()
     assert "runs" in data
+
+
+# ── Keyboard Shortcuts (Feature 2) ──
+
+
+async def test_shortcuts_js_loaded(client):
+    """Home page should include shortcuts.js script tag."""
+    resp = await client.get("/")
+    assert resp.status_code == 200
+    assert "shortcuts.js" in resp.text
+
+
+async def test_shortcut_overlay_exists(client):
+    """Home page should contain the shortcut overlay div."""
+    resp = await client.get("/")
+    assert "shortcut-overlay" in resp.text
+
+
+async def test_shortcut_overlay_has_keys(client):
+    """Overlay should list all shortcut keys."""
+    resp = await client.get("/")
+    for key in ["h", "c", "r", "a", "d", "l", "/", "?", "Esc"]:
+        assert f"<kbd>{key}</kbd>" in resp.text
+
+
+async def test_shortcuts_hash_not_zero():
+    """shortcuts.js hash should be computed (file exists)."""
+    from sts2.app import _SHORTCUTS_JS_HASH
+    assert _SHORTCUTS_JS_HASH != "0"

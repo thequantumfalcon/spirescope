@@ -51,6 +51,23 @@
     <span>SpireScope v{{ version }}</span> &middot;
     <a href="https://github.com/thequantumfalcon/Spirescope">GitHub</a>
   </footer>
+  <div id="shortcut-overlay" class="shortcut-overlay" hidden>
+    <div class="shortcut-overlay-content">
+      <h3>Keyboard Shortcuts</h3>
+      <table class="shortcut-table">
+        <tr><td><kbd>/</kbd></td><td>Search</td></tr>
+        <tr><td><kbd>h</kbd></td><td>Home</td></tr>
+        <tr><td><kbd>c</kbd></td><td>Cards</td></tr>
+        <tr><td><kbd>r</kbd></td><td>Relics</td></tr>
+        <tr><td><kbd>a</kbd></td><td>Analytics</td></tr>
+        <tr><td><kbd>d</kbd></td><td>Deck Analyzer</td></tr>
+        <tr><td><kbd>l</kbd></td><td>Live Run</td></tr>
+        <tr><td><kbd>?</kbd></td><td>This help</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Close</td></tr>
+      </table>
+    </div>
+  </div>
   <script src="/static/nav.js"></script>
+  <script src="/static/shortcuts.js?v={{ shortcuts_js_hash }}"></script>
 </body>
 </html>
