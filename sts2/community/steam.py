@@ -1,15 +1,19 @@
 """Steam community scraper for STS2 reviews, guides, and discussions."""
 import json
 import logging
-import re
 import time
 import urllib.error
 import urllib.request
 from html.parser import HTMLParser
 
 from ._types import (
-    STRATEGY_KEYWORDS, TIER_KEYWORDS, SourceResult,
-    USER_AGENT, REQUEST_DELAY, extract_tier_ratings, extract_tips,
+    REQUEST_DELAY,
+    STRATEGY_KEYWORDS,
+    TIER_KEYWORDS,
+    USER_AGENT,
+    SourceResult,
+    extract_tier_ratings,
+    extract_tips,
 )
 
 log = logging.getLogger(__name__)
@@ -51,7 +55,7 @@ def _scrape_reviews(existing_names: set[str], result: SourceResult) -> None:
         data = _fetch_json(_REVIEWS_URL)
     except (urllib.error.URLError, json.JSONDecodeError, OSError) as e:
         result.errors.append(f"Steam reviews: {e}")
-        print(f"    Reviews: network error, skipping")
+        print("    Reviews: network error, skipping")
         return
 
     reviews = data.get("reviews", [])
@@ -160,7 +164,7 @@ def _scrape_guides(existing_names: set[str], result: SourceResult) -> None:
         html = _fetch_url(_GUIDES_URL)
     except (urllib.error.URLError, OSError) as e:
         result.errors.append(f"Steam guides: {e}")
-        print(f"    Guides: network error, skipping")
+        print("    Guides: network error, skipping")
         return
 
     parser = _GuideListParser()
@@ -168,7 +172,7 @@ def _scrape_guides(existing_names: set[str], result: SourceResult) -> None:
         parser.feed(html)
     except Exception as e:
         result.errors.append(f"Steam guides parse: {e}")
-        print(f"    Guides: parse error, skipping")
+        print("    Guides: parse error, skipping")
         return
 
     # Filter guides with strategy/tier keywords in title
@@ -261,7 +265,7 @@ def _scrape_discussions(existing_names: set[str], result: SourceResult) -> None:
         html = _fetch_url(_DISCUSSIONS_URL)
     except (urllib.error.URLError, OSError) as e:
         result.errors.append(f"Steam discussions: {e}")
-        print(f"    Discussions: network error, skipping")
+        print("    Discussions: network error, skipping")
         return
 
     parser = _DiscussionListParser()
@@ -269,7 +273,7 @@ def _scrape_discussions(existing_names: set[str], result: SourceResult) -> None:
         parser.feed(html)
     except Exception as e:
         result.errors.append(f"Steam discussions parse: {e}")
-        print(f"    Discussions: parse error, skipping")
+        print("    Discussions: parse error, skipping")
         return
 
     matching = []

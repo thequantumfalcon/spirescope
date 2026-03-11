@@ -1,7 +1,7 @@
 """Entry point for Spirescope: python -m sts2"""
 import sys
-import webbrowser
 import threading
+import webbrowser
 
 USAGE = """\
 Spirescope - Slay the Spire 2 companion dashboard
@@ -78,9 +78,9 @@ def main():
         return
 
     if command == "sync-up":
-        from sts2.sync import upload_stats, SyncError
         from sts2.aggregate import compute_aggregate_stats
         from sts2.saves import get_run_history
+        from sts2.sync import SyncError, upload_stats
         print("Computing local stats...")
         runs = get_run_history()
         stats = compute_aggregate_stats(runs)
@@ -94,8 +94,8 @@ def main():
         return
 
     if command == "sync-down":
-        from sts2.sync import download_stats, SyncError
         from sts2.aggregate import load_aggregate, merge_aggregate, save_aggregate
+        from sts2.sync import SyncError, download_stats
         print("Downloading community stats...")
         try:
             remote = download_stats()
@@ -110,8 +110,9 @@ def main():
         return
 
     if command == "serve":
-        from sts2.config import HOST, PORT
         import uvicorn
+
+        from sts2.config import HOST, PORT
 
         url = f"http://{HOST}:{PORT}"
         if "--no-browser" not in args:

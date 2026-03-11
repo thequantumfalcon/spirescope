@@ -9,11 +9,19 @@ from sts2.config import COMMUNITY_SOURCES, DATA_DIR
 
 from ._merge import merge_results
 from ._types import (
-    SourceResult,
-    compute_consensus_tier as _compute_consensus_tier,
-    extract_tier_ratings as _extract_tier_ratings,
-    extract_tips as _extract_tips,
     STS2_INDICATORS,
+    SourceResult,
+)
+
+__all__ = ["STS2_INDICATORS", "SourceResult", "merge_results"]
+from ._types import (
+    compute_consensus_tier as _compute_consensus_tier,
+)
+from ._types import (
+    extract_tier_ratings as _extract_tier_ratings,
+)
+from ._types import (
+    extract_tips as _extract_tips,
 )
 from .reddit import _is_sts2_post
 
@@ -84,7 +92,7 @@ def scrape_community_data(existing_names: set[str] = None) -> dict:
     merged = merge_results(results)
 
     # Print summary
-    print(f"\n  Summary:")
+    print("\n  Summary:")
     print(f"    {merged['sources']} total items analyzed")
     print(f"    {len(merged['card_tiers'])} entity tier ratings")
     print(f"    {sum(len(v) for v in merged['community_tips'].values())} tips")

@@ -1,12 +1,11 @@
 """Tests for aggregate stats sync client."""
-import io
 import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError, URLError
 
 import pytest
 
-from sts2.sync import upload_stats, download_stats, SyncError
+from sts2.sync import SyncError, download_stats, upload_stats
 
 
 class TestUploadStats:

@@ -1,13 +1,13 @@
 """Tests for multi-source community scraper (Steam + merge logic)."""
 import json
-from collections import defaultdict
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-import pytest
-
-from sts2.community._types import SourceResult, extract_tier_ratings, extract_tips, compute_consensus_tier
 from sts2.community._merge import merge_results
-
+from sts2.community._types import (
+    SourceResult,
+    extract_tier_ratings,
+    extract_tips,
+)
 
 # ── SourceResult ─────────────────────────────────────────────────────────
 
@@ -53,8 +53,9 @@ def test_steam_reviews_parse():
 
 def test_steam_reviews_network_error():
     """Network error returns empty result, does not raise."""
-    from sts2.community.steam import _scrape_reviews
     import urllib.error
+
+    from sts2.community.steam import _scrape_reviews
 
     result = SourceResult(source_name="steam")
     with patch("sts2.community.steam._fetch_json", side_effect=urllib.error.URLError("timeout")):
@@ -253,14 +254,13 @@ def test_one_source_fails_others_continue():
 
 def test_backward_compat_imports():
     """All old imports from sts2.community still work."""
-    from sts2.community import _compute_consensus_tier
-    from sts2.community import _extract_tier_ratings
-    from sts2.community import _extract_tips
-    from sts2.community import _is_sts2_post
-    from sts2.community import run_community_scraper
-    from sts2.community import save_community_data
-    from sts2.community import apply_community_tiers
-    from sts2.community import _load_cached_community_data
+    from sts2.community import (
+        _compute_consensus_tier,
+        _extract_tier_ratings,
+        _extract_tips,
+        _is_sts2_post,
+        run_community_scraper,
+    )
 
     # Verify they're callable
     assert callable(_compute_consensus_tier)
@@ -381,8 +381,9 @@ def test_steam_scrape_guides_full_flow():
 
 def test_steam_scrape_guides_network_error():
     """Guide scrape handles network errors gracefully."""
-    from sts2.community.steam import _scrape_guides
     import urllib.error
+
+    from sts2.community.steam import _scrape_guides
 
     result = SourceResult(source_name="steam")
     with patch("sts2.community.steam._fetch_url", side_effect=urllib.error.URLError("timeout")):
@@ -409,8 +410,9 @@ def test_steam_scrape_discussions_full_flow():
 
 def test_steam_scrape_discussions_network_error():
     """Discussion scrape handles network errors gracefully."""
-    from sts2.community.steam import _scrape_discussions
     import urllib.error
+
+    from sts2.community.steam import _scrape_discussions
 
     result = SourceResult(source_name="steam")
     with patch("sts2.community.steam._fetch_url", side_effect=urllib.error.URLError("timeout")):
@@ -480,16 +482,18 @@ def test_reddit_fetch_post_comments_mocked():
 
 def test_reddit_fetch_post_comments_error():
     """_fetch_post_comments returns empty list on error."""
-    from sts2.community.reddit import _fetch_post_comments
     import urllib.error
+
+    from sts2.community.reddit import _fetch_post_comments
     with patch("sts2.community.reddit._fetch_reddit_json", side_effect=urllib.error.URLError("fail")):
         assert _fetch_post_comments("/r/test/abc") == []
 
 
 def test_reddit_fetch_subreddit_posts_error():
     """_fetch_subreddit_posts returns empty list on error."""
-    from sts2.community.reddit import _fetch_subreddit_posts
     import urllib.error
+
+    from sts2.community.reddit import _fetch_subreddit_posts
     with patch("sts2.community.reddit._fetch_reddit_json", side_effect=urllib.error.URLError("fail")):
         assert _fetch_subreddit_posts("slaythespire") == []
 

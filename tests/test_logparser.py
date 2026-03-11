@@ -1,12 +1,7 @@
 """Tests for the STS2 log parser (LogRunState + LogTailer)."""
-import os
-import tempfile
 from pathlib import Path
 
-import pytest
-
 from sts2.logparser import LogRunState, LogTailer
-
 
 # ── LogRunState ──────────────────────────────────────────────────────────
 

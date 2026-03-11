@@ -1,9 +1,10 @@
 """Tests for the updater module."""
 import json
 import urllib.error
-from unittest.mock import patch, MagicMock
-from sts2.updater import _parse_version, check_for_update, get_update_info
+from unittest.mock import MagicMock, patch
+
 import sts2.updater as updater
+from sts2.updater import _parse_version, check_for_update, get_update_info
 
 
 class TestParseVersion:

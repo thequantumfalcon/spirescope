@@ -1,11 +1,12 @@
 """Shared test configuration and fixtures."""
 import json
+from pathlib import Path
+
 import pytest
 import pytest_asyncio
-from pathlib import Path
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 
-from sts2.app import app, _rate_limit_store
+from sts2.app import _rate_limit_store, app
 
 DATA_DIR = Path(__file__).parent.parent / "sts2" / "data"
 

@@ -13,8 +13,8 @@ from pathlib import Path
 log = logging.getLogger(__name__)
 
 try:
-    from watchdog.observers import Observer
     from watchdog.events import FileSystemEventHandler
+    from watchdog.observers import Observer
 
     _HAS_WATCHDOG = True
 except ImportError:

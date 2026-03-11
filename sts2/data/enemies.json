@@ -2,397 +2,1898 @@
   {
     "id": "MONSTER.AXE_RUBY_RAIDER",
     "name": "Axe Ruby Raider",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "35-50",
-    "patterns": ["Melee attack pattern", "Appears with other Ruby Raiders"],
-    "tips": ["Part of a group fight — prioritize the most dangerous variant", "AoE damage is effective against Raider packs"]
+    "patterns": [
+      "Melee attack pattern",
+      "Appears with other Ruby Raiders"
+    ],
+    "tips": [
+      "Part of a group fight — prioritize the most dangerous variant",
+      "AoE damage is effective against Raider packs"
+    ]
   },
   {
     "id": "MONSTER.BRUTE_RUBY_RAIDER",
     "name": "Brute Ruby Raider",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "45-60",
-    "patterns": ["Heavy single-target attacks", "Highest damage of the Ruby Raider variants"],
-    "tips": ["Focus this one first — hits hardest", "Block heavily on its attack turns"]
+    "patterns": [
+      "Heavy single-target attacks",
+      "Highest damage of the Ruby Raider variants"
+    ],
+    "tips": [
+      "Focus this one first — hits hardest",
+      "Block heavily on its attack turns"
+    ]
   },
   {
     "id": "MONSTER.BYGONE_EFFIGY",
     "name": "Bygone Effigy",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "elite",
     "hp_range": "90-110",
-    "patterns": ["Powerful attacks", "May gain buffs over time"],
-    "tips": ["Bring scaling damage to keep up with its buffs", "Block-heavy approach helps survive big hits"]
+    "patterns": [
+      "Powerful attacks",
+      "May gain buffs over time"
+    ],
+    "tips": [
+      "Bring scaling damage to keep up with its buffs",
+      "Block-heavy approach helps survive big hits"
+    ]
   },
   {
     "id": "MONSTER.BYRDONIS",
     "name": "Byrdonis",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "elite",
     "hp_range": "100-120",
-    "patterns": ["Powerful multi-hit attacks", "Gains Strength over time", "Can one-shot if unprepared"],
-    "tips": ["One of the hardest Act 1 elites", "Need strong Block cards before attempting", "Weak helps reduce damage significantly", "Don't fight below 60% HP unless deck is strong", "Consider skipping if deck isn't ready"]
+    "patterns": [
+      "Powerful multi-hit attacks",
+      "Gains Strength over time",
+      "Can one-shot if unprepared"
+    ],
+    "tips": [
+      "One of the hardest Act 1 elites",
+      "Need strong Block cards before attempting",
+      "Weak helps reduce damage significantly",
+      "Don't fight below 60% HP unless deck is strong",
+      "Consider skipping if deck isn't ready"
+    ]
   },
   {
     "id": "MONSTER.CEREMONIAL_BEAST",
     "name": "Ceremonial Beast",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "boss",
     "hp_range": "250+",
-    "patterns": ["Boss with rituals", "Gains power each turn", "Escalating damage pattern"],
-    "tips": ["Doom stacking is effective against it", "Need to outpace its scaling", "Front-load damage early before it ramps up"]
+    "patterns": [
+      "Boss with rituals",
+      "Gains power each turn",
+      "Escalating damage pattern"
+    ],
+    "tips": [
+      "Doom stacking is effective against it",
+      "Need to outpace its scaling",
+      "Front-load damage early before it ramps up"
+    ]
   },
   {
     "id": "MONSTER.CHOMPER",
     "name": "Chomper",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "50-70",
-    "patterns": ["Heavy damage attacks", "Can chomp for large single-hit damage"],
-    "tips": ["Block heavily on attack turns", "Use debuffs like Weak to reduce damage"]
+    "patterns": [
+      "Heavy damage attacks",
+      "Can chomp for large single-hit damage"
+    ],
+    "tips": [
+      "Block heavily on attack turns",
+      "Use debuffs like Weak to reduce damage"
+    ]
   },
   {
     "id": "MONSTER.CROSSBOW_RUBY_RAIDER",
     "name": "Crossbow Ruby Raider",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "30-45",
-    "patterns": ["Ranged multi-hit attacks", "Appears with other Ruby Raiders"],
-    "tips": ["Lower HP but hits multiple times", "Consider killing this first to reduce incoming hits"]
+    "patterns": [
+      "Ranged multi-hit attacks",
+      "Appears with other Ruby Raiders"
+    ],
+    "tips": [
+      "Lower HP but hits multiple times",
+      "Consider killing this first to reduce incoming hits"
+    ]
   },
   {
     "id": "MONSTER.CUBEX_CONSTRUCT",
     "name": "Cubex Construct",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "elite",
     "hp_range": "130-160",
-    "patterns": ["Alternates between attack and defense phases", "Can gain significant Block"],
-    "tips": ["Time your burst damage for when it's not blocking", "Vulnerability helps punch through its defenses"]
+    "patterns": [
+      "Alternates between attack and defense phases",
+      "Can gain significant Block"
+    ],
+    "tips": [
+      "Time your burst damage for when it's not blocking",
+      "Vulnerability helps punch through its defenses"
+    ]
   },
   {
     "id": "MONSTER.DOORMAKER",
     "name": "Doormaker",
-    "act": ["Act 3"],
+    "act": [
+      "Act 3"
+    ],
     "type": "boss",
     "hp_range": "350+",
-    "patterns": ["Complex multi-phase fight", "Summons portals or minions", "Ramps damage over time"],
-    "tips": ["Endgame boss — needs fully built deck", "All scaling synergies should be online", "Burst damage windows are critical"]
+    "patterns": [
+      "Complex multi-phase fight",
+      "Summons portals or minions",
+      "Ramps damage over time"
+    ],
+    "tips": [
+      "Endgame boss — needs fully built deck",
+      "All scaling synergies should be online",
+      "Burst damage windows are critical"
+    ]
   },
   {
     "id": "MONSTER.EXOSKELETON",
     "name": "Exoskeleton",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "40-60",
-    "patterns": ["High armor with Block", "Hard hitting attacks"],
-    "tips": ["Vulnerable helps cut through armor", "Can be very dangerous in groups"]
+    "patterns": [
+      "High armor with Block",
+      "Hard hitting attacks"
+    ],
+    "tips": [
+      "Vulnerable helps cut through armor",
+      "Can be very dangerous in groups"
+    ]
   },
   {
     "id": "MONSTER.FLYCONID",
     "name": "Flyconid",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "20-30",
-    "patterns": ["Flying enemy with multi-hit attacks", "Can buff itself"],
-    "tips": ["Watch for multi-attacks", "AoE effective when they appear in groups"]
+    "patterns": [
+      "Flying enemy with multi-hit attacks",
+      "Can buff itself"
+    ],
+    "tips": [
+      "Watch for multi-attacks",
+      "AoE effective when they appear in groups"
+    ]
   },
   {
     "id": "MONSTER.FOGMOG",
     "name": "Fogmog",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "35-45",
-    "patterns": ["Strong single attacks", "May apply debuffs"],
-    "tips": ["Block-heavy turns needed", "Straightforward fight if you have enough defense"]
+    "patterns": [
+      "Strong single attacks",
+      "May apply debuffs"
+    ],
+    "tips": [
+      "Block-heavy turns needed",
+      "Straightforward fight if you have enough defense"
+    ]
   },
   {
     "id": "MONSTER.FUZZY_WURM_CRAWLER",
     "name": "Fuzzy Wurm Crawler",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "25-35",
-    "patterns": ["Basic attack pattern", "Slow but steady damage"],
-    "tips": ["Standard fight — good for learning mechanics", "Use as an opportunity to set up powers"]
+    "patterns": [
+      "Basic attack pattern",
+      "Slow but steady damage"
+    ],
+    "tips": [
+      "Standard fight — good for learning mechanics",
+      "Use as an opportunity to set up powers"
+    ]
   },
   {
     "id": "MONSTER.INKLET",
     "name": "Inklet",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "15-20",
-    "patterns": ["Appears in groups of 3", "Each attacks independently"],
-    "tips": ["AoE is very effective", "Focus weakest first to reduce incoming damage"]
+    "patterns": [
+      "Appears in groups of 3",
+      "Each attacks independently"
+    ],
+    "tips": [
+      "AoE is very effective",
+      "Focus weakest first to reduce incoming damage"
+    ]
   },
   {
     "id": "MONSTER.KNOWLEDGE_DEMON",
     "name": "Knowledge Demon",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "boss",
     "hp_range": "300+",
-    "patterns": ["Applies Doom stacks to you", "Heals itself", "Ramps Strength over time"],
-    "tips": ["Requires offensive play — can't turtle", "Must outdamage its healing", "Dangerous Doom application can kill you if ignored"]
+    "patterns": [
+      "Applies Doom stacks to you",
+      "Heals itself",
+      "Ramps Strength over time"
+    ],
+    "tips": [
+      "Requires offensive play — can't turtle",
+      "Must outdamage its healing",
+      "Dangerous Doom application can kill you if ignored"
+    ]
   },
   {
     "id": "MONSTER.LEAF_SLIME_M",
     "name": "Leaf Slime (Medium)",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "20-28",
-    "patterns": ["Splits into smaller slimes on death"],
-    "tips": ["AoE damage is effective", "Plan for the split when timing kills"]
+    "patterns": [
+      "Splits into smaller slimes on death"
+    ],
+    "tips": [
+      "AoE damage is effective",
+      "Plan for the split when timing kills"
+    ]
   },
   {
     "id": "MONSTER.LEAF_SLIME_S",
     "name": "Leaf Slime (Small)",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "8-12",
-    "patterns": ["Attacks and can split further"],
-    "tips": ["Kill quickly before they multiply"]
+    "patterns": [
+      "Attacks and can split further"
+    ],
+    "tips": [
+      "Kill quickly before they multiply"
+    ]
   },
   {
     "id": "MONSTER.LOUSE_PROGENITOR",
     "name": "Louse Progenitor",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "40-55",
-    "patterns": ["Spawns smaller lice", "Buffs allies"],
-    "tips": ["Kill the progenitor first to stop spawning", "AoE helps manage the swarm"]
+    "patterns": [
+      "Spawns smaller lice",
+      "Buffs allies"
+    ],
+    "tips": [
+      "Kill the progenitor first to stop spawning",
+      "AoE helps manage the swarm"
+    ]
   },
   {
     "id": "MONSTER.NIBBIT",
     "name": "Nibbit",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "10-14",
-    "patterns": ["Simple attack pattern", "Low damage, appears in pairs"],
-    "tips": ["Easy early fight", "Good for learning mechanics"]
+    "patterns": [
+      "Simple attack pattern",
+      "Low damage, appears in pairs"
+    ],
+    "tips": [
+      "Easy early fight",
+      "Good for learning mechanics"
+    ]
   },
   {
     "id": "MONSTER.PHROG_PARASITE",
     "name": "Phrog Parasite",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "elite",
     "hp_range": "120-150",
-    "patterns": ["Debuffs player with parasitic effects", "Scales over time"],
-    "tips": ["Front-load damage if possible", "Doom stacking and Poison are effective", "Don't let the fight drag on"]
+    "patterns": [
+      "Debuffs player with parasitic effects",
+      "Scales over time"
+    ],
+    "tips": [
+      "Front-load damage if possible",
+      "Doom stacking and Poison are effective",
+      "Don't let the fight drag on"
+    ]
   },
   {
     "id": "MONSTER.SHRINKER_BEETLE",
     "name": "Shrinker Beetle",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "20-30",
-    "patterns": ["Attacks and applies debuffs", "Can reduce your Strength"],
-    "tips": ["Kill quickly to avoid Strength loss", "Block-heavy approach works"]
+    "patterns": [
+      "Attacks and applies debuffs",
+      "Can reduce your Strength"
+    ],
+    "tips": [
+      "Kill quickly to avoid Strength loss",
+      "Block-heavy approach works"
+    ]
   },
   {
     "id": "MONSTER.SOUL_FYSH",
     "name": "Soul Fysh",
-    "act": ["Act 3"],
+    "act": [
+      "Act 3"
+    ],
     "type": "boss",
     "hp_range": "300+",
-    "patterns": ["Uses Beckon (1-cost status card, -6 HP if discarded)", "Gains Intangible on turn 5 of pattern rotation", "Turn 4 of each pattern is optimal damage window"],
-    "tips": ["Don't discard Beckon cards — take the HP loss instead", "Burst damage on turn 4 of each cycle", "Intangible on turn 5 means you can't damage it"]
+    "patterns": [
+      "Uses Beckon (1-cost status card, -6 HP if discarded)",
+      "Gains Intangible on turn 5 of pattern rotation",
+      "Turn 4 of each pattern is optimal damage window"
+    ],
+    "tips": [
+      "Don't discard Beckon cards — take the HP loss instead",
+      "Burst damage on turn 4 of each cycle",
+      "Intangible on turn 5 means you can't damage it"
+    ]
   },
   {
     "id": "MONSTER.THIEVING_HOPPER",
     "name": "Thieving Hopper",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "30-40",
-    "patterns": ["Steals gold on attack", "Flees after stealing enough"],
-    "tips": ["Kill quickly to minimize gold loss", "Prioritize over other enemies in multi-fights"]
+    "patterns": [
+      "Steals gold on attack",
+      "Flees after stealing enough"
+    ],
+    "tips": [
+      "Kill quickly to minimize gold loss",
+      "Prioritize over other enemies in multi-fights"
+    ]
   },
   {
     "id": "MONSTER.TRACKER_RUBY_RAIDER",
     "name": "Tracker Ruby Raider",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "35-50",
-    "patterns": ["Ranged attacks with tracking", "Appears with other Ruby Raiders"],
-    "tips": ["Part of group fights — use AoE", "Medium threat level among Raiders"]
+    "patterns": [
+      "Ranged attacks with tracking",
+      "Appears with other Ruby Raiders"
+    ],
+    "tips": [
+      "Part of group fights — use AoE",
+      "Medium threat level among Raiders"
+    ]
   },
   {
     "id": "MONSTER.TWIG_SLIME_M",
     "name": "Twig Slime (Medium)",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "20-28",
-    "patterns": ["Stronger attacks than small variant", "May split on death"],
-    "tips": ["Watch for damage spikes", "AoE helps manage splits"]
+    "patterns": [
+      "Stronger attacks than small variant",
+      "May split on death"
+    ],
+    "tips": [
+      "Watch for damage spikes",
+      "AoE helps manage splits"
+    ]
   },
   {
     "id": "MONSTER.TWIG_SLIME_S",
     "name": "Twig Slime (Small)",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "8-12",
-    "patterns": ["Basic attacks", "Low HP"],
-    "tips": ["Simple enemy, focus on preserving HP"]
+    "patterns": [
+      "Basic attacks",
+      "Low HP"
+    ],
+    "tips": [
+      "Simple enemy, focus on preserving HP"
+    ]
   },
   {
     "id": "MONSTER.VANTOM",
     "name": "Vantom",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "boss",
     "hp_range": "250+",
-    "patterns": ["Multi-phase boss fight", "Ramps damage over time", "Has multiple attack patterns that cycle"],
-    "tips": ["Need strong scaling (Strength/Poison/Doom)", "Block cards essential for surviving big hits", "Plan your route to arrive with a good deck", "Rest before boss if possible"]
+    "patterns": [
+      "Multi-phase boss fight",
+      "Ramps damage over time",
+      "Has multiple attack patterns that cycle"
+    ],
+    "tips": [
+      "Need strong scaling (Strength/Poison/Doom)",
+      "Block cards essential for surviving big hits",
+      "Plan your route to arrive with a good deck",
+      "Rest before boss if possible"
+    ]
   },
   {
     "id": "MONSTER.VINE_SHAMBLER",
     "name": "Vine Shambler",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "30-40",
-    "patterns": ["Attacks and gains Block", "Can be tanky if not dealt with quickly"],
-    "tips": ["Apply Vulnerable to cut through Block", "Don't let it stack too much defense"]
+    "patterns": [
+      "Attacks and gains Block",
+      "Can be tanky if not dealt with quickly"
+    ],
+    "tips": [
+      "Apply Vulnerable to cut through Block",
+      "Don't let it stack too much defense"
+    ]
   },
   {
     "id": "MONSTER.WRIGGLER",
     "name": "Wriggler",
-    "act": ["Act 1", "Act 2"],
+    "act": [
+      "Act 1",
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "15-25",
-    "patterns": ["Appears in groups", "Low individual HP"],
-    "tips": ["AoE effective", "Easy fight unless you lack multi-target damage"]
+    "patterns": [
+      "Appears in groups",
+      "Low individual HP"
+    ],
+    "tips": [
+      "AoE effective",
+      "Easy fight unless you lack multi-target damage"
+    ]
   },
   {
     "id": "ENCOUNTER.RUBY_RAIDERS_NORMAL",
     "name": "Ruby Raiders",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Group of 2-3 Ruby Raider variants", "Mix of melee and ranged attacks"],
-    "tips": ["AoE damage is key", "Focus the Brute first for damage reduction", "Can be overwhelming without multi-target cards"]
+    "patterns": [
+      "Group of 2-3 Ruby Raider variants",
+      "Mix of melee and ranged attacks"
+    ],
+    "tips": [
+      "AoE damage is key",
+      "Focus the Brute first for damage reduction",
+      "Can be overwhelming without multi-target cards"
+    ]
   },
   {
     "id": "ENCOUNTER.CHOMPERS_NORMAL",
     "name": "Chompers",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Multiple Chompers attacking together"],
-    "tips": ["Heavy Block needed", "AoE helps thin the group"]
+    "patterns": [
+      "Multiple Chompers attacking together"
+    ],
+    "tips": [
+      "Heavy Block needed",
+      "AoE helps thin the group"
+    ]
   },
   {
     "id": "ENCOUNTER.EXOSKELETONS_NORMAL",
     "name": "Exoskeletons",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Multiple armored enemies", "High combined Block and damage"],
-    "tips": ["Vulnerable is crucial", "Can be a tough fight without armor-piercing"]
+    "patterns": [
+      "Multiple armored enemies",
+      "High combined Block and damage"
+    ],
+    "tips": [
+      "Vulnerable is crucial",
+      "Can be a tough fight without armor-piercing"
+    ]
   },
   {
     "id": "ENCOUNTER.INKLETS_NORMAL",
     "name": "Inklets",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Group of Inklets"],
-    "tips": ["AoE clears them efficiently"]
+    "patterns": [
+      "Group of Inklets"
+    ],
+    "tips": [
+      "AoE clears them efficiently"
+    ]
   },
   {
     "id": "ENCOUNTER.NIBBITS_NORMAL",
     "name": "Nibbits",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Pair of Nibbits"],
-    "tips": ["Easy early encounter"]
+    "patterns": [
+      "Pair of Nibbits"
+    ],
+    "tips": [
+      "Easy early encounter"
+    ]
   },
   {
     "id": "ENCOUNTER.OVERGROWTH_CRAWLERS",
     "name": "Overgrowth Crawlers",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Group of crawling enemies"],
-    "tips": ["Standard Act 1 fight", "AoE helps manage the group"]
+    "patterns": [
+      "Group of crawling enemies"
+    ],
+    "tips": [
+      "Standard Act 1 fight",
+      "AoE helps manage the group"
+    ]
   },
   {
     "id": "ENCOUNTER.DENSE_VEGETATION_EVENT_ENCOUNTER",
     "name": "Dense Vegetation",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Event-triggered combat encounter"],
-    "tips": ["Triggered from an event choice", "Be prepared before choosing to fight"]
+    "patterns": [
+      "Event-triggered combat encounter"
+    ],
+    "tips": [
+      "Triggered from an event choice",
+      "Be prepared before choosing to fight"
+    ]
   },
   {
     "id": "ENCOUNTER.SLIMES_WEAK",
     "name": "Slimes (Weak)",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Easy slime fight"],
-    "tips": ["One of the easiest encounters", "Good for preserving HP"]
+    "patterns": [
+      "Easy slime fight"
+    ],
+    "tips": [
+      "One of the easiest encounters",
+      "Good for preserving HP"
+    ]
   },
   {
     "id": "ENCOUNTER.NIBBITS_WEAK",
     "name": "Nibbits (Weak)",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Weaker Nibbit variant"],
-    "tips": ["Very easy fight"]
+    "patterns": [
+      "Weaker Nibbit variant"
+    ],
+    "tips": [
+      "Very easy fight"
+    ]
   },
   {
     "id": "ENCOUNTER.FUZZY_WURM_CRAWLER_WEAK",
     "name": "Fuzzy Wurm Crawler (Weak)",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Weaker crawler variant"],
-    "tips": ["Easy fight — take minimal damage"]
+    "patterns": [
+      "Weaker crawler variant"
+    ],
+    "tips": [
+      "Easy fight — take minimal damage"
+    ]
   },
   {
     "id": "ENCOUNTER.SHRINKER_BEETLE_WEAK",
     "name": "Shrinker Beetle (Weak)",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Weaker beetle variant"],
-    "tips": ["Still watch for Strength reduction debuff"]
+    "patterns": [
+      "Weaker beetle variant"
+    ],
+    "tips": [
+      "Still watch for Strength reduction debuff"
+    ]
   },
   {
     "id": "ENCOUNTER.EXOSKELETONS_WEAK",
     "name": "Exoskeletons (Weak)",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Weaker Exoskeleton variant"],
-    "tips": ["Easier than normal variant but still has armor"]
+    "patterns": [
+      "Weaker Exoskeleton variant"
+    ],
+    "tips": [
+      "Easier than normal variant but still has armor"
+    ]
   },
   {
     "id": "ENCOUNTER.THIEVING_HOPPER_WEAK",
     "name": "Thieving Hopper (Weak)",
-    "act": ["Act 2"],
+    "act": [
+      "Act 2"
+    ],
     "type": "normal",
     "hp_range": "varies",
-    "patterns": ["Weaker hopper variant"],
-    "tips": ["Still steals gold — kill fast"]
+    "patterns": [
+      "Weaker hopper variant"
+    ],
+    "tips": [
+      "Still steals gold — kill fast"
+    ]
   },
   {
     "id": "ENCOUNTER.CEREMONIAL_BEAST_BOSS",
     "name": "Ceremonial Beast (Boss Encounter)",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "boss",
     "hp_range": "250+",
-    "patterns": ["Full boss encounter with Ceremonial Beast"],
-    "tips": ["See Ceremonial Beast for detailed strategy"]
+    "patterns": [
+      "Full boss encounter with Ceremonial Beast"
+    ],
+    "tips": [
+      "See Ceremonial Beast for detailed strategy"
+    ]
   },
   {
     "id": "ENCOUNTER.VANTOM_BOSS",
     "name": "Vantom (Boss Encounter)",
-    "act": ["Act 1"],
+    "act": [
+      "Act 1"
+    ],
     "type": "boss",
     "hp_range": "250+",
-    "patterns": ["Full boss encounter with Vantom"],
-    "tips": ["See Vantom for detailed strategy"]
+    "patterns": [
+      "Full boss encounter with Vantom"
+    ],
+    "tips": [
+      "See Vantom for detailed strategy"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.BYRDONIS_ELITE",
+    "name": "Byrdonis Elite",
+    "act": [],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.VINE_SHAMBLER_NORMAL",
+    "name": "Vine Shambler Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.FLYCONID_NORMAL",
+    "name": "Flyconid Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.FOGMOG_NORMAL",
+    "name": "Fogmog Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.BYGONE_EFFIGY_ELITE",
+    "name": "Bygone Effigy Elite",
+    "act": [],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.PHROG_PARASITE_ELITE",
+    "name": "Phrog Parasite Elite",
+    "act": [],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.LOUSE_PROGENITOR_NORMAL",
+    "name": "Louse Progenitor Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.CUBEX_CONSTRUCT_NORMAL",
+    "name": "Cubex Construct Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.MAWLER_NORMAL",
+    "name": "Mawler Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.THE_KIN_BOSS",
+    "name": "The Kin Boss",
+    "act": [],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.SLIMES_NORMAL",
+    "name": "Slimes Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.BOWLBUGS_WEAK",
+    "name": "Bowlbugs Weak",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+    "name": "Mysterious Knight Event Encounter",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.MYTES_NORMAL",
+    "name": "Mytes Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.BOWLBUGS_NORMAL",
+    "name": "Bowlbugs Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.TUNNELER_NORMAL",
+    "name": "Tunneler Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.OVICOPTER_NORMAL",
+    "name": "Ovicopter Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.HUNTER_KILLER_NORMAL",
+    "name": "Hunter Killer Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.THE_INSATIABLE_BOSS",
+    "name": "The Insatiable Boss",
+    "act": [],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.TUNNELER_WEAK",
+    "name": "Tunneler Weak",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.SLUMBERING_BEETLE_NORMAL",
+    "name": "Slumbering Beetle Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.SEAPUNK_WEAK",
+    "name": "Seapunk Weak",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.CORPSE_SLUGS_WEAK",
+    "name": "Corpse Slugs Weak",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.TOADPOLES_WEAK",
+    "name": "Toadpoles Weak",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.PUNCH_CONSTRUCT_NORMAL",
+    "name": "Punch Construct Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.WATERFALL_GIANT_BOSS",
+    "name": "Waterfall Giant Boss",
+    "act": [],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.SPINY_TOAD_NORMAL",
+    "name": "Spiny Toad Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.ENTOMANCER_ELITE",
+    "name": "Entomancer Elite",
+    "act": [],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.KNOWLEDGE_DEMON_BOSS",
+    "name": "Knowledge Demon Boss",
+    "act": [],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.SLUDGE_SPINNER_WEAK",
+    "name": "Sludge Spinner Weak",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.GREMLIN_MERC_NORMAL",
+    "name": "Gremlin Merc Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.LIVING_FOG_NORMAL",
+    "name": "Living Fog Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.SOUL_FYSH_BOSS",
+    "name": "Soul Fysh Boss",
+    "act": [],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.TERROR_EEL_ELITE",
+    "name": "Terror Eel Elite",
+    "act": [],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.TOADPOLES_NORMAL",
+    "name": "Toadpoles Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.LAGAVULIN_MATRIARCH_BOSS",
+    "name": "Lagavulin Matriarch Boss",
+    "act": [],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.CULTISTS_NORMAL",
+    "name": "Cultists Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.INFESTED_PRISMS_ELITE",
+    "name": "Infested Prisms Elite",
+    "act": [],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.CORPSE_SLUGS_NORMAL",
+    "name": "Corpse Slugs Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.FOSSIL_STALKER_NORMAL",
+    "name": "Fossil Stalker Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.DECIMILLIPEDE_ELITE",
+    "name": "Decimillipede Elite",
+    "act": [],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.KAISER_CRAB_BOSS",
+    "name": "Kaiser Crab Boss",
+    "act": [],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.SNAPPING_JAXFRUIT_NORMAL",
+    "name": "Snapping Jaxfruit Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.TURRET_OPERATOR_WEAK",
+    "name": "Turret Operator Weak",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.SCROLLS_OF_BITING_WEAK",
+    "name": "Scrolls Of Biting Weak",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.FROG_KNIGHT_NORMAL",
+    "name": "Frog Knight Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.HAUNTED_SHIP_NORMAL",
+    "name": "Haunted Ship Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.SEWER_CLAM_NORMAL",
+    "name": "Sewer Clam Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER",
+    "name": "Punch Off Event Encounter",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.PHANTASMAL_GARDENERS_ELITE",
+    "name": "Phantasmal Gardeners Elite",
+    "act": [],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.SKULKING_COLONY_ELITE",
+    "name": "Skulking Colony Elite",
+    "act": [],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "ENCOUNTER.THE_OBSCURA_NORMAL",
+    "name": "The Obscura Normal",
+    "act": [],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.MAWLER",
+    "name": "Mawler",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.KIN_FOLLOWER",
+    "name": "Kin Follower",
+    "act": [
+      "Act 1"
+    ],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.KIN_PRIEST",
+    "name": "Kin Priest",
+    "act": [
+      "Act 1"
+    ],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.BOWLBUG_ROCK",
+    "name": "Bowlbug Rock",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.BOWLBUG_NECTAR",
+    "name": "Bowlbug Nectar",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.MYTE",
+    "name": "Myte",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.BOWLBUG_SILK",
+    "name": "Bowlbug Silk",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.BOWLBUG_EGG",
+    "name": "Bowlbug Egg",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.TUNNELER",
+    "name": "Tunneler",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.OVICOPTER",
+    "name": "Ovicopter",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.HUNTER_KILLER",
+    "name": "Hunter Killer",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.THE_INSATIABLE",
+    "name": "The Insatiable",
+    "act": [
+      "Act 2"
+    ],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.SLUMBERING_BEETLE",
+    "name": "Slumbering Beetle",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.SEAPUNK",
+    "name": "Seapunk",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.CORPSE_SLUG",
+    "name": "Corpse Slug",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.TOADPOLE",
+    "name": "Toadpole",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.PUNCH_CONSTRUCT",
+    "name": "Punch Construct",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.WATERFALL_GIANT",
+    "name": "Waterfall Giant",
+    "act": [
+      "Act 1"
+    ],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.SPINY_TOAD",
+    "name": "Spiny Toad",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.ENTOMANCER",
+    "name": "Entomancer",
+    "act": [
+      "Act 2"
+    ],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.SLUDGE_SPINNER",
+    "name": "Sludge Spinner",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.GREMLIN_MERC",
+    "name": "Gremlin Merc",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.LIVING_FOG",
+    "name": "Living Fog",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.TERROR_EEL",
+    "name": "Terror Eel",
+    "act": [
+      "Act 1"
+    ],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.CALCIFIED_CULTIST",
+    "name": "Calcified Cultist",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.LAGAVULIN_MATRIARCH",
+    "name": "Lagavulin Matriarch",
+    "act": [
+      "Act 1"
+    ],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.DAMP_CULTIST",
+    "name": "Damp Cultist",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.INFESTED_PRISM",
+    "name": "Infested Prism",
+    "act": [
+      "Act 2"
+    ],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.FOSSIL_STALKER",
+    "name": "Fossil Stalker",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+    "name": "Decimillipede Segment Front",
+    "act": [
+      "Act 2"
+    ],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+    "name": "Decimillipede Segment Middle",
+    "act": [
+      "Act 2"
+    ],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.DECIMILLIPEDE_SEGMENT_BACK",
+    "name": "Decimillipede Segment Back",
+    "act": [
+      "Act 2"
+    ],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.CRUSHER",
+    "name": "Crusher",
+    "act": [
+      "Act 2"
+    ],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.ROCKET",
+    "name": "Rocket",
+    "act": [
+      "Act 2"
+    ],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.ASSASSIN_RUBY_RAIDER",
+    "name": "Assassin Ruby Raider",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.SNAPPING_JAXFRUIT",
+    "name": "Snapping Jaxfruit",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.LIVING_SHIELD",
+    "name": "Living Shield",
+    "act": [
+      "Act 3"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.TURRET_OPERATOR",
+    "name": "Turret Operator",
+    "act": [
+      "Act 3"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.SCROLL_OF_BITING",
+    "name": "Scroll Of Biting",
+    "act": [
+      "Act 3"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.FROG_KNIGHT",
+    "name": "Frog Knight",
+    "act": [
+      "Act 3"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.HAUNTED_SHIP",
+    "name": "Haunted Ship",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.SEWER_CLAM",
+    "name": "Sewer Clam",
+    "act": [
+      "Act 1"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.PHANTASMAL_GARDENER",
+    "name": "Phantasmal Gardener",
+    "act": [
+      "Act 1"
+    ],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.SKULKING_COLONY",
+    "name": "Skulking Colony",
+    "act": [
+      "Act 1"
+    ],
+    "type": "elite",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
+  },
+  {
+    "id": "MONSTER.THE_OBSCURA",
+    "name": "The Obscura",
+    "act": [
+      "Act 2"
+    ],
+    "type": "normal",
+    "hp_range": "",
+    "patterns": [],
+    "tips": [
+      "Auto-discovered from save data"
+    ]
   }
 ]

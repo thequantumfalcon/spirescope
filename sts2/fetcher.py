@@ -3,8 +3,8 @@ import json
 import logging
 import re
 import time
-import urllib.request
 import urllib.error
+import urllib.request
 
 from sts2.config import DATA_DIR
 
@@ -14,12 +14,25 @@ WIKI_BASE = "https://slaythespire2.gg"
 _SCRAPE_DELAY = 1.0  # seconds between wiki requests to avoid hammering
 
 # Markup tags used in wiki descriptions: [gold]...[/gold], [blue], [red], etc.
-_MARKUP_RE = re.compile(r"\[/?(?:gold|blue|red|green|energy:\d+|star:\d+)\]")
+_COLOR_RE = re.compile(r"\[/?(?:gold|blue|red|green)\]")
+# When a digit precedes the tag (e.g. "6[star:1]"), the digit IS the value and
+# the tag is just an icon indicator.  When no digit precedes, use the tag number.
+_PREFIXED_ENERGY_RE = re.compile(r"(\d+)\[energy:\d+\]")
+_PREFIXED_STAR_RE = re.compile(r"(\d+)\[star:\d+\]")
+_ENERGY_RE = re.compile(r"\[energy:(\d+)\]")
+_STAR_RE = re.compile(r"\[star:(\d+)\]")
 
 
 def _clean_description(desc: str) -> str:
-    """Strip wiki markup tags from descriptions."""
-    return _MARKUP_RE.sub("", desc).strip()
+    """Strip wiki markup tags from descriptions, converting icons to text."""
+    # Handle "6[star:1]" -> "6 Star" (digit before tag takes precedence)
+    desc = _PREFIXED_ENERGY_RE.sub(lambda m: f"{m.group(1)} Energy", desc)
+    desc = _PREFIXED_STAR_RE.sub(lambda m: f"{m.group(1)} Star", desc)
+    # Handle "[energy:2]" -> "2 Energy" (no preceding digit)
+    desc = _ENERGY_RE.sub(lambda m: f"{m.group(1)} Energy", desc)
+    desc = _STAR_RE.sub(lambda m: f"{m.group(1)} Star", desc)
+    desc = _COLOR_RE.sub("", desc)
+    return desc.strip()
 
 
 def _get_user_agent() -> str:
@@ -92,6 +105,12 @@ def _extract_json_objects(html: str, category: str) -> list[dict]:
             except (json.JSONDecodeError, ValueError):
                 pass
 
+    # Strategy 4: RSC streaming payloads — Next.js 13+ embeds data in
+    # self.__next_f.push() calls with string-escaped JSON
+    if not results:
+        log.info("Trying RSC streaming extraction for %s", category)
+        _extract_from_rsc_payloads(html, category, results, seen_ids)
+
     if not results:
         log.warning("All extraction strategies found 0 objects for category=%s (HTML length=%d)", category, len(html))
     return results
@@ -113,6 +132,91 @@ def _walk_json_for_category(data, category: str, results: list, seen_ids: set, d
     elif isinstance(data, list):
         for item in data:
             _walk_json_for_category(item, category, results, seen_ids, depth + 1)
+
+
+def _extract_from_rsc_payloads(html: str, category: str, results: list, seen_ids: set):
+    """Extract JSON objects from Next.js RSC streaming payloads.
+
+    Next.js 13+ embeds data in self.__next_f.push() calls.  The string
+    arguments may contain JSON objects with escaped quotes.  We extract
+    all push() string content, unescape it, then scan for category matches.
+    """
+    # Find all self.__next_f.push() call arguments
+    push_pattern = re.compile(r'self\.__next_f\.push\(\s*\[(.*?)\]\s*\)', re.DOTALL)
+    # Collect all string content from push payloads
+    all_content = []
+    for m in push_pattern.finditer(html):
+        payload = m.group(1)
+        # Extract string literals from the array argument
+        str_pattern = re.compile(r'"((?:[^"\\]|\\.)*)"', re.DOTALL)
+        for sm in str_pattern.finditer(payload):
+            try:
+                decoded = sm.group(1).encode().decode("unicode_escape")
+            except (UnicodeDecodeError, ValueError):
+                decoded = sm.group(1)
+            all_content.append(decoded)
+
+    combined = "\n".join(all_content)
+    if not combined:
+        return
+
+    # Now search the decoded content for JSON objects with matching category.
+    # Try both flat and bracket-balanced extraction.
+    cat_escaped = re.escape(category)
+
+    # Attempt 1: find JSON objects using a greedy-but-bounded approach
+    obj_pattern = re.compile(
+        r'\{[^{}]*"category"\s*:\s*"' + cat_escaped + r'"[^{}]*\}'
+    )
+    for match in obj_pattern.finditer(combined):
+        try:
+            obj = json.loads(match.group())
+            if obj.get("category") == category:
+                obj_id = obj.get("id", "")
+                if obj_id and obj_id not in seen_ids:
+                    seen_ids.add(obj_id)
+                    results.append(obj)
+        except (json.JSONDecodeError, ValueError):
+            continue
+
+    if results:
+        return
+
+    # Attempt 2: bracket-balanced extraction for nested objects
+    # Find positions of category marker, then expand outward to find balanced {}
+    for m in re.finditer(r'"category"\s*:\s*"' + cat_escaped + r'"', combined):
+        start = m.start()
+        # Walk backward to find opening brace
+        depth = 0
+        obj_start = start
+        for i in range(start - 1, max(start - 5000, -1), -1):
+            if combined[i] == '}':
+                depth += 1
+            elif combined[i] == '{':
+                if depth == 0:
+                    obj_start = i
+                    break
+                depth -= 1
+        # Walk forward from obj_start to find balanced closing brace
+        depth = 0
+        obj_end = len(combined)
+        for i in range(obj_start, min(obj_start + 5000, len(combined))):
+            if combined[i] == '{':
+                depth += 1
+            elif combined[i] == '}':
+                depth -= 1
+                if depth == 0:
+                    obj_end = i + 1
+                    break
+        try:
+            obj = json.loads(combined[obj_start:obj_end])
+            if obj.get("category") == category:
+                obj_id = obj.get("id", "")
+                if obj_id and obj_id not in seen_ids:
+                    seen_ids.add(obj_id)
+                    results.append(obj)
+        except (json.JSONDecodeError, ValueError):
+            continue
 
 
 _CHARACTER_SUFFIXES = {
@@ -170,6 +274,9 @@ def _scrape_cards(html: str) -> list[dict]:
         seen.add(wiki_id)
 
         character = obj.get("character", "Colorless")
+        # Normalize wiki character name to match app convention
+        if character == "The Regent":
+            character = "Regent"
         name = obj.get("name", "")
         # Prefer matching by name against existing data to avoid ID mismatches
         game_id = name_index.get(name.lower().strip())
@@ -203,7 +310,7 @@ def _scrape_cards(html: str) -> list[dict]:
             "character": character,
             "cost": cost,
             "type": card_type,
-            "rarity": obj.get("rarity", "Common"),
+            "rarity": obj.get("rarity", ""),
             "description": desc,
             "description_upgraded": desc_upgraded,
             "keywords": keywords,
@@ -325,8 +432,22 @@ def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "i
     existing_by_id = {item[id_field]: item for item in existing}
     new_by_id = {item[id_field]: item for item in new_data}
 
-    # Update existing with new data
-    merged_by_id = {**existing_by_id, **new_by_id}
+    # Update existing with new data, but preserve non-empty existing fields
+    # when wiki provides empty values (avoids overwriting curated data)
+    merged_by_id = dict(existing_by_id)
+    for item_id, new_item in new_by_id.items():
+        if item_id in merged_by_id:
+            old = merged_by_id[item_id]
+            merged = dict(old)
+            for k, v in new_item.items():
+                old_v = old.get(k)
+                # Only preserve old value when new is empty/None and old has content
+                if v in (None, "") and old_v not in (None, ""):
+                    continue
+                merged[k] = v
+            merged_by_id[item_id] = merged
+        else:
+            merged_by_id[item_id] = new_item
     return list(merged_by_id.values())
 
 
@@ -496,7 +617,7 @@ def run_fetcher(save_only: bool = False):
                 if not new_data:
                     log.warning("No %s found from %s — wiki format may have changed", label, path)
                     print(f"    Warning: no {label} found — wiki format may have changed")
-                    print(f"    Keeping existing data. Try 'spirescope update --save-only' instead.")
+                    print("    Keeping existing data. Try 'spirescope update --save-only' instead.")
                     continue
                 # Guard: don't overwrite large dataset with empty/tiny wiki result
                 existing = _existing_count(filename)

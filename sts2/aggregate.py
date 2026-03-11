@@ -1,7 +1,6 @@
 """Aggregate stats: compute and merge player-sourced data."""
 import json
 import logging
-from collections import Counter
 from pathlib import Path
 
 from sts2.models import RunHistory
@@ -16,6 +15,7 @@ _MIN_IMPORT_CAP = 1000
 def _aggregate_storage_path() -> Path:
     """Resolve writable path for aggregate file."""
     import sys
+
     from sts2.config import DATA_DIR
     if getattr(sys, 'frozen', False):
         return Path(sys.executable).parent / "community_aggregate.json"

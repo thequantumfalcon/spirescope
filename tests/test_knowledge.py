@@ -1,5 +1,6 @@
 """Tests for the KnowledgeBase engine."""
 import pytest
+
 from sts2.knowledge import KnowledgeBase, _levenshtein
 
 
@@ -283,6 +284,7 @@ class TestAutoDiscovery:
     def test_discovered_enemy_has_type(self):
         """Auto-discovered enemies from saves should have a type assigned."""
         from unittest.mock import patch
+
         from sts2.models import PlayerProgress
 
         mock_progress = PlayerProgress(
@@ -297,6 +299,7 @@ class TestAutoDiscovery:
     def test_discovered_event_has_name(self):
         """Auto-discovered events from saves should have readable names."""
         from unittest.mock import patch
+
         from sts2.models import PlayerProgress
 
         mock_progress = PlayerProgress(

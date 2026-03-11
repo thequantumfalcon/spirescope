@@ -5,20 +5,20 @@
     "act": [
       "Act 1"
     ],
-    "description": "Find a Byrdonis nest with an egg inside.",
+    "description": "An abandoned egg after a beast chases off an injured Green Byrd.",
     "choices": [
       {
-        "option": "Take the egg",
-        "outcome": "Receive Byrdonis Egg quest card",
-        "recommendation": "RECOMMENDED - The egg is a quest card that provides value"
+        "option": "Take the Egg",
+        "outcome": "Add Byrdonis Egg quest card to Deck",
+        "recommendation": "RECOMMENDED — the quest card provides strong long-term value"
       },
       {
-        "option": "Eat the egg",
-        "outcome": "Gain +7 Max HP permanently",
-        "recommendation": "Good if you don't want quest card in deck"
+        "option": "Eat the Egg",
+        "outcome": "Gain 7 Max HP",
+        "recommendation": "Safe pick if you don't want to manage a quest card"
       }
     ],
-    "notes": "The quest card route can be very rewarding. The +7 Max HP is a safe pick."
+    "notes": "The quest card route can be very rewarding. The +7 Max HP is a reliable alternative."
   },
   {
     "id": "EVENT.DENSE_VEGETATION",
@@ -26,20 +26,20 @@
     "act": [
       "Act 1"
     ],
-    "description": "Thick vegetation blocks the path.",
+    "description": "Lost in thick jungle undergrowth; exhaustion and dread accompany the dense overgrowth.",
     "choices": [
       {
-        "option": "Fight through",
-        "outcome": "Combat encounter",
-        "recommendation": "Only if deck is strong enough"
+        "option": "Rest",
+        "outcome": "Heal variable HP; fight enemies",
+        "recommendation": "Take if your deck can handle a combat encounter"
       },
       {
-        "option": "Go around",
-        "outcome": "Avoid combat",
-        "recommendation": "Safe option if low on HP"
+        "option": "Trudge On",
+        "outcome": "Remove a card from Deck; lose 11 HP",
+        "recommendation": "Good for deck thinning if you can afford the HP"
       }
     ],
-    "notes": "Has a combat encounter option."
+    "notes": "Overgrowth event. Trade-off between healing (with combat risk) and card removal (with HP cost)."
   },
   {
     "id": "EVENT.INFESTED_AUTOMATON",
@@ -47,15 +47,20 @@
     "act": [
       "Act 2"
     ],
-    "description": "An automaton infested with something.",
+    "description": "A lone automaton with glowing core engulfed by organic growth in a chamber of dead robots.",
     "choices": [
       {
-        "option": "Investigate",
-        "outcome": "Risk/reward encounter",
-        "recommendation": "Depends on deck strength"
+        "option": "Study",
+        "outcome": "Obtain a random Power card",
+        "recommendation": "Good if you need scaling — Power cards provide lasting effects"
+      },
+      {
+        "option": "Touch the Core",
+        "outcome": "Obtain a random 0-cost card",
+        "recommendation": "Good for energy-efficient decks or combo strategies"
       }
     ],
-    "notes": "Act 2 event with combat potential."
+    "notes": "Act 2 event. Both options give a free card with no downside."
   },
   {
     "id": "EVENT.JUNGLE_MAZE_ADVENTURE",
@@ -63,15 +68,20 @@
     "act": [
       "Act 1"
     ],
-    "description": "A maze in the jungle.",
+    "description": "Ragtag adventurers offer partnership navigating a deadly maze with guardian traps.",
     "choices": [
       {
-        "option": "Navigate the maze",
-        "outcome": "Multiple outcomes possible",
-        "recommendation": "Explore for rewards"
+        "option": "Join Forces",
+        "outcome": "Gain 50 Gold",
+        "recommendation": "Safe option with guaranteed gold"
+      },
+      {
+        "option": "Solo Quest",
+        "outcome": "Gain 150 Gold; lose 18 HP",
+        "recommendation": "High reward if you can afford the HP — triple the gold"
       }
     ],
-    "notes": "Multi-step event with branching outcomes."
+    "notes": "Overgrowth event. Classic risk/reward — solo pays 3x but costs significant HP."
   },
   {
     "id": "EVENT.NEOW",
@@ -79,40 +89,58 @@
     "act": [
       "Act 1"
     ],
-    "description": "Starting event. Neow offers blessings at the start of each run.",
+    "description": "Starting event. Neow offers blessings at the start of each run based on your previous performance.",
     "choices": [
       {
         "option": "Various blessing options",
-        "outcome": "Depends on offering - may grant relic, cards, gold, or Max HP",
-        "recommendation": "Generally take the relic or Max HP option"
+        "outcome": "May grant relic, cards, gold, Max HP, card removal, or card transform",
+        "recommendation": "Boss relic swap and rare card options are generally strongest"
       }
     ],
-    "notes": "Always appears at the start. Choose based on your character and planned archetype."
+    "notes": "Always appears at the start. Options improve based on how far you reached in your previous run. Choose based on your character and planned archetype."
   },
   {
     "id": "EVENT.POTION_COURIER",
     "name": "Potion Courier",
     "act": [
-      "Act 1",
-      "Act 2"
+      "Act 2",
+      "Act 3"
     ],
-    "description": "A courier offers potions.",
+    "description": "A deceased courier with ransacked belongings and an unclaimed batch of Foul Potions.",
     "choices": [
       {
-        "option": "Buy potions",
-        "outcome": "Receive potions for gold",
-        "recommendation": "Good if you have gold and need potions"
+        "option": "Grab Potions",
+        "outcome": "Obtain 3 Foul Potions",
+        "recommendation": "Good if you have potion slots and want quantity"
+      },
+      {
+        "option": "Ransack",
+        "outcome": "Obtain 1 random Uncommon Potion",
+        "recommendation": "Better quality — 1 Uncommon potion is often more valuable than 3 Foul"
       }
     ],
-    "notes": "Stock up on potions for upcoming fights."
+    "notes": "Shared event in Acts 2-3. Quantity vs quality potion choice."
   },
   {
     "id": "EVENT.ROOM_FULL_OF_CHEESE",
     "name": "Room Full Of Cheese",
-    "act": [],
-    "description": "",
-    "choices": [],
-    "notes": ""
+    "act": [
+      "Act 1"
+    ],
+    "description": "A chamber entirely constructed of cheese — walls, furniture, candles, and even the door.",
+    "choices": [
+      {
+        "option": "Gorge",
+        "outcome": "Select 2 of 8 random Common cards for your Deck",
+        "recommendation": "Good for deck building early — pick cards that fit your archetype"
+      },
+      {
+        "option": "Search",
+        "outcome": "Lose 14 HP; obtain the Chosen Cheese relic",
+        "recommendation": "Take if you can afford the HP — the relic provides lasting value"
+      }
+    ],
+    "notes": "Overgrowth event. Gorge is safe card gain; Search costs HP but gives a relic."
   },
   {
     "id": "EVENT.SAPPHIRE_SEED",
@@ -120,23 +148,43 @@
     "act": [
       "Act 1"
     ],
-    "description": "A glowing sapphire seed.",
+    "description": "A rare, extinct blue seed offering health amplification or cultivation possibilities.",
     "choices": [
       {
-        "option": "Plant the seed",
-        "outcome": "Receive a benefit",
-        "recommendation": "Generally worth doing"
+        "option": "Consume",
+        "outcome": "Heal 9 HP; upgrade a card in your Deck",
+        "recommendation": "RECOMMENDED — healing plus a free upgrade is excellent value"
+      },
+      {
+        "option": "Plant and Nourish",
+        "outcome": "Enchant a card with Sown",
+        "recommendation": "Niche — only if the Sown enchantment fits your strategy"
       }
     ],
-    "notes": "Low risk event."
+    "notes": "Overgrowth event. Consume is usually the better choice for the heal + upgrade combo."
   },
   {
     "id": "EVENT.SLIPPERY_BRIDGE",
     "name": "Slippery Bridge",
-    "act": [],
-    "description": "",
-    "choices": [],
-    "notes": ""
+    "act": [
+      "Act 1",
+      "Act 2",
+      "Act 3"
+    ],
+    "description": "Massive gusts of wind buffet you on a rickety bridge, threatening to end your journey.",
+    "choices": [
+      {
+        "option": "Hold On",
+        "outcome": "Lose 3 HP; a random card is removed from Deck",
+        "recommendation": "Take if you're okay with random card loss — the HP cost is small"
+      },
+      {
+        "option": "Overcome",
+        "outcome": "Remove a random card from Deck",
+        "recommendation": "Free card removal — generally the better option"
+      }
+    ],
+    "notes": "Shared event across all acts. Forced card removal with no way to skip. Overcome is usually better since it costs no HP."
   },
   {
     "id": "EVENT.SPIRIT_GRAFTER",
@@ -145,31 +193,46 @@
       "Act 1",
       "Act 2"
     ],
-    "description": "A spirit grafter offers to modify your cards.",
+    "description": "A cocoon ignites, releasing a Spirit Grafter attempting to merge with your being.",
     "choices": [
       {
-        "option": "Graft a spirit",
-        "outcome": "Card modification",
-        "recommendation": "Good for upgrading key cards"
+        "option": "Let It In",
+        "outcome": "Heal 25 HP; add Metamorphosis to Deck",
+        "recommendation": "Great if you need healing — 25 HP is very significant"
+      },
+      {
+        "option": "Rejection",
+        "outcome": "Lose 9 HP; remove a card from Deck",
+        "recommendation": "Good for deck thinning if your HP can handle it"
       }
     ],
-    "notes": "Card enhancement event."
+    "notes": "Trade-off between large heal (with a card added) and card removal (with HP cost)."
   },
   {
     "id": "EVENT.TEA_MASTER",
     "name": "Tea Master",
     "act": [
-      "Act 1"
+      "Act 2"
     ],
-    "description": "Meet a tea master offering refreshments.",
+    "description": "A peaceful shack with premium-priced tea selections offering combat benefits.",
     "choices": [
       {
-        "option": "Accept tea",
-        "outcome": "Healing or buff",
-        "recommendation": "Usually worth accepting"
+        "option": "Bone Tea",
+        "outcome": "Pay 50 Gold; upgrade your starting hand next combat",
+        "recommendation": "Cheap option — good if you have key cards to upgrade"
+      },
+      {
+        "option": "Ember Tea",
+        "outcome": "Pay 150 Gold; gain 2 Strength at start of next 5 combats",
+        "recommendation": "Expensive but powerful — 2 Strength for 5 fights is excellent scaling"
+      },
+      {
+        "option": "Tea of Discourtesy",
+        "outcome": "Shuffle 2 Dazed into Draw Pile next combat",
+        "recommendation": "Negative option — only if you have Dazed synergies or no gold"
       }
     ],
-    "notes": "Generally beneficial event."
+    "notes": "Act 2 event. Ember Tea is very strong if you can afford it. Tea of Discourtesy is a trap for most builds."
   },
   {
     "id": "EVENT.TEZCATARA",
@@ -177,23 +240,42 @@
     "act": [
       "Act 1"
     ],
-    "description": "Ancient being offering a deal.",
+    "description": "Ancient being offering a deal — power at a price.",
     "choices": [
       {
         "option": "Accept the deal",
-        "outcome": "Power at a cost",
-        "recommendation": "Evaluate the trade-off carefully"
+        "outcome": "Gain a powerful effect at a cost (HP, gold, or curse)",
+        "recommendation": "Evaluate the specific trade-off carefully before accepting"
+      },
+      {
+        "option": "Decline",
+        "outcome": "Nothing happens",
+        "recommendation": "Safe if the cost is too steep for your current run"
       }
     ],
-    "notes": "Can provide powerful effects but may have drawbacks."
+    "notes": "Overgrowth event. The deal varies — weigh the benefit against the cost based on your run state."
   },
   {
     "id": "EVENT.THIS_OR_THAT",
     "name": "This Or That",
-    "act": [],
-    "description": "",
-    "choices": [],
-    "notes": ""
+    "act": [
+      "Act 1",
+      "Act 2"
+    ],
+    "description": "Arms emerge from a hole offering a bag of riches or a cursed relic.",
+    "choices": [
+      {
+        "option": "This",
+        "outcome": "Lose 6 HP; gain 41-68 Gold",
+        "recommendation": "Safe gold gain — good if you need money for shops"
+      },
+      {
+        "option": "That",
+        "outcome": "Add Clumsy curse to Deck; obtain a random Relic",
+        "recommendation": "Higher risk/reward — a relic is powerful but the curse hurts consistency"
+      }
+    ],
+    "notes": "Shared event. Gold vs Relic trade-off. The relic option is stronger but adds a curse card to your deck."
   },
   {
     "id": "EVENT.WHISPERING_HOLLOW",
@@ -201,22 +283,535 @@
     "act": [
       "Act 1"
     ],
-    "description": "A mysterious hollow that offers choices.",
+    "description": "Dead trees surround a bone-white tree with clay baubles, whispering transformation options.",
     "choices": [
       {
-        "option": "Enter the hollow",
-        "outcome": "Risk/reward scenario",
-        "recommendation": "Depends on current HP and deck state"
+        "option": "Exchange Gold",
+        "outcome": "Lose 50 Gold; obtain 2 random Potions",
+        "recommendation": "Take if you have gold to spare and need potions"
+      },
+      {
+        "option": "Hug the Tree",
+        "outcome": "Lose 9 HP; transform a card",
+        "recommendation": "Good for converting weak cards — transformation can upgrade your deck"
       }
     ],
-    "notes": "Evaluate based on your current run health."
+    "notes": "Overgrowth event. Both options have costs. Card transform can be very valuable for removing starter cards."
   },
   {
     "id": "EVENT.WOOD_CARVINGS",
     "name": "Wood Carvings",
-    "act": [],
-    "description": "",
-    "choices": [],
-    "notes": ""
+    "act": [
+      "Act 1"
+    ],
+    "description": "Three wood carvings (bird, snake, torus) discovered on a pedestal requiring placement.",
+    "choices": [
+      {
+        "option": "Bird",
+        "outcome": "Transform 1 starter card into Peck",
+        "recommendation": "Good if Peck fits your character's strategy"
+      },
+      {
+        "option": "Snake",
+        "outcome": "Enchant 1 card with Slither",
+        "recommendation": "Adds Slither enchantment to an existing card"
+      },
+      {
+        "option": "Torus",
+        "outcome": "Transform 1 starter card into Toric Toughness",
+        "recommendation": "Good for defensive builds"
+      }
+    ],
+    "notes": "Overgrowth event. All three options modify your deck — choose based on which transformed card best fits your archetype."
+  },
+  {
+    "id": "EVENT.TABLET_OF_TRUTH",
+    "name": "Tablet Of Truth",
+    "act": [
+      "Act 1"
+    ],
+    "description": "Defeat Guardian Kin to access a vault containing an inscribed tablet.",
+    "choices": [
+      {
+        "option": "Decipher",
+        "outcome": "Lose 3 Max HP; upgrade a random card",
+        "recommendation": "Worth it if you can spare the Max HP — free upgrade is strong"
+      },
+      {
+        "option": "Smash",
+        "outcome": "Heal 20 HP",
+        "recommendation": "Safe option if you need healing"
+      }
+    ],
+    "notes": "Overgrowth event. Trade Max HP for a card upgrade or take a big heal."
+  },
+  {
+    "id": "EVENT.SELF_HELP_BOOK",
+    "name": "Self Help Book",
+    "act": [
+      "Act 1",
+      "Act 2"
+    ],
+    "description": "A blood-stained tome on the ground: 'Top 3 Ways to Conquer the Spire.'",
+    "choices": [
+      {
+        "option": "Read Entire Book",
+        "outcome": "Enchant a Power with Swift 2",
+        "recommendation": "Best if you have a strong Power card to enchant"
+      },
+      {
+        "option": "Read Random Passage",
+        "outcome": "Enchant a Skill with Nimble 2",
+        "recommendation": "Good for defensive builds"
+      },
+      {
+        "option": "Read the Back",
+        "outcome": "Enchant an Attack with Sharp 2",
+        "recommendation": "Good for offensive builds"
+      }
+    ],
+    "notes": "Shared event. Free enchantment — choose based on which card type matters most to your deck."
+  },
+  {
+    "id": "EVENT.THE_FUTURE_OF_POTIONS",
+    "name": "The Future Of Potions",
+    "act": [
+      "Act 2",
+      "Act 3"
+    ],
+    "description": "A machine that converts liquids into compressed tablets — the future of potions.",
+    "choices": [
+      {
+        "option": "Insert a Potion",
+        "outcome": "Trade 1 potion for an upgraded version of that potion type",
+        "recommendation": "Great if you have a common potion worth upgrading"
+      }
+    ],
+    "notes": "Shared event in Acts 2-3. Only useful if you have a potion to sacrifice."
+  },
+  {
+    "id": "EVENT.SUNKEN_STATUE",
+    "name": "Sunken Statue",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A half-submerged statue with a stone sword; glittering objects visible below the water.",
+    "choices": [
+      {
+        "option": "Dive into Water",
+        "outcome": "Gain ~111 Gold; lose 7 HP",
+        "recommendation": "Great gold gain if you can afford the HP"
+      },
+      {
+        "option": "Grab the Sword",
+        "outcome": "Obtain the Sword of Stone relic",
+        "recommendation": "Take if the relic fits your build"
+      }
+    ],
+    "notes": "Overgrowth event. Gold vs relic choice — both options are solid."
+  },
+  {
+    "id": "EVENT.WELLSPRING",
+    "name": "Wellspring",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A tranquil emerald wellspring with glowing motes.",
+    "choices": [
+      {
+        "option": "Bathe",
+        "outcome": "Remove 1 card from deck; add 1 Guilty curse",
+        "recommendation": "Good for removing a bad card, but the curse offsets deck thinning"
+      },
+      {
+        "option": "Bottle",
+        "outcome": "Obtain 1 random potion",
+        "recommendation": "Safe option — free potion with no downside"
+      }
+    ],
+    "notes": "Overgrowth event. Bottle is safer; Bathe is only worth it if you desperately need to remove a card."
+  },
+  {
+    "id": "EVENT.OROBAS",
+    "name": "Orobas",
+    "act": [
+      "Act 2"
+    ],
+    "description": "Ancient being who offers powerful blessings at the start of an act.",
+    "choices": [
+      {
+        "option": "Choose a blessing",
+        "outcome": "Receive a unique Ancient relic or powerful effect",
+        "recommendation": "Evaluate each blessing based on your current build"
+      }
+    ],
+    "notes": "Ancient encounter — offers blessings similar to Neow but between acts. Not a standard '?' event."
+  },
+  {
+    "id": "EVENT.THE_LANTERN_KEY",
+    "name": "The Lantern Key",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A quest event involving a mysterious lantern and a key.",
+    "choices": [
+      {
+        "option": "Take the key",
+        "outcome": "Receive the Lantern Key quest item",
+        "recommendation": "Quest items can provide rewards later in the run"
+      }
+    ],
+    "notes": "Quest event. The Lantern Key may unlock something later."
+  },
+  {
+    "id": "EVENT.MORPHIC_GROVE",
+    "name": "Morphic Grove",
+    "act": [
+      "Act 1"
+    ],
+    "description": "Crystalline trees with excited Morphic creatures; one stands apart from the group.",
+    "choices": [
+      {
+        "option": "Group",
+        "outcome": "Lose 100 Gold; transform 2 cards",
+        "recommendation": "Expensive but powerful — 2 card transforms can reshape your deck"
+      },
+      {
+        "option": "Loner",
+        "outcome": "Gain 5 Max HP",
+        "recommendation": "Safe choice — free Max HP with no downside"
+      }
+    ],
+    "notes": "Overgrowth event. Group is high cost but high reward; Loner is free value."
+  },
+  {
+    "id": "EVENT.PAEL",
+    "name": "Pael",
+    "act": [
+      "Act 3"
+    ],
+    "description": "Ancient being who offers powerful blessings at the start of an act.",
+    "choices": [
+      {
+        "option": "Choose a blessing",
+        "outcome": "Receive a unique Ancient relic or powerful effect",
+        "recommendation": "Evaluate each blessing based on your current build"
+      }
+    ],
+    "notes": "Ancient encounter — offers blessings between acts. Not a standard '?' event."
+  },
+  {
+    "id": "EVENT.ENDLESS_CONVEYOR",
+    "name": "Endless Conveyor",
+    "act": [
+      "Act 2"
+    ],
+    "description": "A shack with a multi-armed chef: 'ENDLESS FEAST — PAY WHAT YOU HUNGER!' (35 Gold per item).",
+    "choices": [
+      {
+        "option": "Observe the Chef",
+        "outcome": "Upgrade 1 random card in your deck",
+        "recommendation": "Free upgrade — always worth taking"
+      }
+    ],
+    "notes": "Hive event. Free card upgrade with no downside."
+  },
+  {
+    "id": "EVENT.BRAIN_LEECH",
+    "name": "Brain Leech",
+    "act": [
+      "Act 1",
+      "Act 2"
+    ],
+    "description": "A sharp pain — a creature has latched on and demands knowledge-sharing.",
+    "choices": [
+      {
+        "option": "Rip the Leech Off",
+        "outcome": "Lose 5 HP; gain 1 Colorless card",
+        "recommendation": "Take if the HP cost is manageable — Colorless cards can be powerful"
+      },
+      {
+        "option": "Share Knowledge",
+        "outcome": "Choose 1 of 5 random cards to add to deck",
+        "recommendation": "Good selection pool — pick the best fit for your archetype"
+      }
+    ],
+    "notes": "Shared event. Both options give a card — choose based on whether you want Colorless or class cards."
+  },
+  {
+    "id": "EVENT.DOLL_ROOM",
+    "name": "Doll Room",
+    "act": [
+      "Act 2"
+    ],
+    "description": "A hidden room filled with unique dolls of varying expressions and ages.",
+    "choices": [
+      {
+        "option": "Examine Each",
+        "outcome": "Lose 15 HP; choose 1 of 3 Doll Relics",
+        "recommendation": "Best selection but highest cost — only if you can afford the HP"
+      },
+      {
+        "option": "Take Some Time",
+        "outcome": "Lose 5 HP; choose 1 of 2 Doll Relics",
+        "recommendation": "Middle ground — decent selection at moderate cost"
+      },
+      {
+        "option": "Pick at Random",
+        "outcome": "Obtain 1 random Doll Relic",
+        "recommendation": "Free relic but no choice — take if HP is low"
+      }
+    ],
+    "notes": "Hive event. More HP spent = more choice over which Doll Relic you get."
+  },
+  {
+    "id": "EVENT.BUGSLAYER",
+    "name": "Bugslayer",
+    "act": [
+      "Act 2"
+    ],
+    "description": "Encounter with a bug-hunting warrior in the Hive.",
+    "choices": [
+      {
+        "option": "Help the Bugslayer",
+        "outcome": "Combat encounter with a reward",
+        "recommendation": "Take if your deck can handle the fight"
+      }
+    ],
+    "notes": "Hive event. Details may vary — Early Access content."
+  },
+  {
+    "id": "EVENT.SUNKEN_TREASURY",
+    "name": "Sunken Treasury",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A vault with 2 chests but only 1 brittle key available.",
+    "choices": [
+      {
+        "option": "First Chest",
+        "outcome": "Gain ~60 Gold",
+        "recommendation": "Safe, guaranteed gold"
+      },
+      {
+        "option": "Second Chest",
+        "outcome": "Gain ~333 Gold; receive Greed curse",
+        "recommendation": "Massive gold but adds a curse — only if you can handle deck pollution"
+      }
+    ],
+    "notes": "Underdocks event. Classic risk/reward — the second chest is 5x the gold but adds a curse."
+  },
+  {
+    "id": "EVENT.DROWNING_BEACON",
+    "name": "Drowning Beacon",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A submerged beacon emitting a faint glow in the Underdocks.",
+    "choices": [
+      {
+        "option": "Investigate",
+        "outcome": "Risk/reward — potential relic or card gain",
+        "recommendation": "Evaluate based on current HP and deck state"
+      }
+    ],
+    "notes": "Underdocks event. Details may vary — Early Access content."
+  },
+  {
+    "id": "EVENT.LOST_WISP",
+    "name": "Lost Wisp",
+    "act": [
+      "Act 2"
+    ],
+    "description": "A glowing mote surrounded by deceased insects, emanating flames.",
+    "choices": [
+      {
+        "option": "Capture the Wisp",
+        "outcome": "Add Decay curse; obtain Lost Wisp relic",
+        "recommendation": "The relic can be powerful but the curse hurts deck consistency"
+      },
+      {
+        "option": "Search Nearby Area",
+        "outcome": "Gain 60 Gold",
+        "recommendation": "Safe option — solid gold with no downside"
+      }
+    ],
+    "notes": "Hive event. Relic + curse vs safe gold — evaluate the relic's value for your build."
+  },
+  {
+    "id": "EVENT.THE_LEGENDS_WERE_TRUE",
+    "name": "The Legends Were True",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A pitch-dark chamber suddenly illuminated, revealing a podium with a map.",
+    "choices": [
+      {
+        "option": "Nab the Map",
+        "outcome": "Receive Spoils Map quest item",
+        "recommendation": "RECOMMENDED — quest items provide rewards later in the run"
+      },
+      {
+        "option": "Slowly Find Exit",
+        "outcome": "Lose 8 HP; obtain 1 random potion",
+        "recommendation": "Only if you don't want the quest item"
+      }
+    ],
+    "notes": "Shared event in Act 1. The Spoils Map is generally the better pick."
+  },
+  {
+    "id": "EVENT.ABYSSAL_BATHS",
+    "name": "Abyssal Baths",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A secluded chamber with hypnotic colored pools, barnacled growths dripping fluid.",
+    "choices": [
+      {
+        "option": "Abstain",
+        "outcome": "Heal 10 HP",
+        "recommendation": "Safe healing with no risk"
+      },
+      {
+        "option": "Immerse",
+        "outcome": "Gain 2 Max HP; take 3 damage",
+        "recommendation": "Better long-term — 2 Max HP is permanent, 3 damage is minor"
+      }
+    ],
+    "notes": "Underdocks event. Immerse is usually better since Max HP is permanent."
+  },
+  {
+    "id": "EVENT.FIELD_OF_MAN_SIZED_HOLES",
+    "name": "Field Of Man Sized Holes",
+    "act": [
+      "Act 2"
+    ],
+    "description": "A massive field with body-shaped outlines; one matches your form perfectly.",
+    "choices": [
+      {
+        "option": "Enter Your Hole",
+        "outcome": "Enchant a card with Perfect Fit",
+        "recommendation": "Unique enchantment — worth taking if you have a good target card"
+      },
+      {
+        "option": "Resist",
+        "outcome": "Remove 2 cards; add Normality curse",
+        "recommendation": "Deck thinning but the Normality curse limits hand plays — risky"
+      }
+    ],
+    "notes": "Hive event. Enter Your Hole is generally safer; Resist gives card removal but a harsh curse."
+  },
+  {
+    "id": "EVENT.AROMA_OF_CHAOS",
+    "name": "Aroma Of Chaos",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A clearing with floral, decay, and unknown scents causing disorientation.",
+    "choices": [
+      {
+        "option": "Let Go",
+        "outcome": "Transform 1 card in your deck",
+        "recommendation": "Good for replacing a weak card — transformation is random but can upgrade"
+      },
+      {
+        "option": "Maintain Control",
+        "outcome": "Upgrade 1 card in your deck",
+        "recommendation": "Safer — guaranteed improvement to a card you choose"
+      }
+    ],
+    "notes": "Overgrowth event. Maintain Control is safer; Let Go is higher variance but can find strong cards."
+  },
+  {
+    "id": "EVENT.CRYSTAL_SPHERE",
+    "name": "Crystal Sphere",
+    "act": [
+      "Act 2",
+      "Act 3"
+    ],
+    "description": "A mystic hut with a fortune-teller: 'Your destiny has brought you here.'",
+    "choices": [
+      {
+        "option": "Payment Plan",
+        "outcome": "Gain Debt curse; Divine 6 times",
+        "recommendation": "More divinations but adds a curse — only if the extra info is worth it"
+      },
+      {
+        "option": "Uncover Future",
+        "outcome": "Pay 50 Gold; Divine 3 times",
+        "recommendation": "Safer option — gold cost only, no curse"
+      }
+    ],
+    "notes": "Shared event in Acts 2-3. Divination reveals upcoming map encounters."
+  },
+  {
+    "id": "EVENT.SYMBIOTE",
+    "name": "Symbiote",
+    "act": [
+      "Act 2",
+      "Act 3"
+    ],
+    "description": "A dark, ancient, amorphous polyp encountered during your travels.",
+    "choices": [
+      {
+        "option": "Approach",
+        "outcome": "Enchant an Attack with Corrupted",
+        "recommendation": "Corrupted enchantment can be powerful on the right Attack"
+      },
+      {
+        "option": "Kill with Fire",
+        "outcome": "Choose 1 card to transform",
+        "recommendation": "Good for replacing a weak card"
+      }
+    ],
+    "notes": "Shared event in Acts 2-3. Both options modify your deck — choose based on what you need."
+  },
+  {
+    "id": "EVENT.TANX",
+    "name": "Tanx",
+    "act": [
+      "Act 1"
+    ],
+    "description": "An encounter with a mysterious creature or challenge.",
+    "choices": [
+      {
+        "option": "Interact",
+        "outcome": "Outcome varies",
+        "recommendation": "Evaluate based on current run state"
+      }
+    ],
+    "notes": "Undocumented event — discovered from save data. Details pending wiki documentation."
+  },
+  {
+    "id": "EVENT.PUNCH_OFF",
+    "name": "Punch Off",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A physical challenge or confrontation.",
+    "choices": [
+      {
+        "option": "Participate",
+        "outcome": "Outcome varies",
+        "recommendation": "Evaluate based on current run state"
+      }
+    ],
+    "notes": "Undocumented event — discovered from save data. Details pending wiki documentation."
+  },
+  {
+    "id": "EVENT.SPIRALING_WHIRLPOOL",
+    "name": "Spiraling Whirlpool",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A dangerous whirlpool threatening to pull you under.",
+    "choices": [
+      {
+        "option": "Navigate through",
+        "outcome": "Outcome varies",
+        "recommendation": "Evaluate based on current run state"
+      }
+    ],
+    "notes": "Undocumented event — discovered from save data. Likely an Underdocks event. Details pending wiki documentation."
   }
 ]

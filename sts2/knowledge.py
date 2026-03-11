@@ -4,7 +4,16 @@ import logging
 import re
 
 from sts2.config import DATA_DIR, MODS_DIR
-from sts2.models import Card, Relic, Potion, Enemy, Event, EventChoice, CharacterStrategy, SynergyGroup
+from sts2.models import (
+    Card,
+    CharacterStrategy,
+    Enemy,
+    Event,
+    EventChoice,
+    Potion,
+    Relic,
+    SynergyGroup,
+)
 
 log = logging.getLogger(__name__)
 
@@ -511,7 +520,7 @@ class KnowledgeBase:
         if len(powers) >= 4 and zero_cost < 2:
             weaknesses.append(f"{len(powers)} Powers but only {zero_cost} zero-cost cards — setup turns will be slow.")
         if zero_cost > tc * 0.5:
-            weaknesses.append(f"Over half your deck is 0-cost — may lack impactful plays.")
+            weaknesses.append("Over half your deck is 0-cost — may lack impactful plays.")
 
         # Strengths
         strengths = []

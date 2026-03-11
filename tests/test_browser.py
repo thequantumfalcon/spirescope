@@ -57,8 +57,8 @@ def live_server(tmp_path_factory):
     thread = threading.Thread(target=server.run, daemon=True)
     thread.start()
 
-    import urllib.request
     import urllib.error
+    import urllib.request
     for _ in range(50):
         try:
             urllib.request.urlopen(f"{base_url}/health", timeout=1)
@@ -151,7 +151,6 @@ class TestPageNavigation:
     def test_card_detail_loads(self, page, live_server):
         page.goto(f"{live_server}/cards")
         first_card = page.locator(".card-link").first
-        card_name = first_card.inner_text()
         first_card.click()
         # Should navigate to detail page with the card name
         expect(page.locator("h1")).to_be_visible()

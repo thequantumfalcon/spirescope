@@ -1,65 +1,380 @@
 [
-  {"id": "POTION.FIRE_POTION", "name": "Fire Potion", "rarity": "Common", "description": "Deal 20 damage."},
-  {"id": "POTION.ATTACK_POTION", "name": "Attack Potion", "rarity": "Common", "description": "Choose 1 of 3 random Attack cards to add into your Hand. It's free to play this turn."},
-  {"id": "POTION.BLOCK_POTION", "name": "Block Potion", "rarity": "Common", "description": "Gain 12 Block."},
-  {"id": "POTION.BLOOD_POTION", "name": "Blood Potion", "rarity": "Common", "description": "Heal for 20% of your Max HP."},
-  {"id": "POTION.COLORLESS_POTION", "name": "Colorless Potion", "rarity": "Common", "description": "Choose 1 of 3 random Colorless cards to add into your Hand."},
-  {"id": "POTION.DEXTERITY_POTION", "name": "Dexterity Potion", "rarity": "Common", "description": "Gain 2 Dexterity."},
-  {"id": "POTION.ENERGY_POTION", "name": "Energy Potion", "rarity": "Common", "description": "Gain 2 energy."},
-  {"id": "POTION.EXPLOSIVE_AMPOULE", "name": "Explosive Ampoule", "rarity": "Common", "description": "Deal 10 damage to ALL enemies."},
-  {"id": "POTION.FLEX_POTION", "name": "Flex Potion", "rarity": "Common", "description": "Gain 5 Strength. At the end of your turn, lose 5 Strength."},
-  {"id": "POTION.FOCUS_POTION", "name": "Focus Potion", "rarity": "Common", "description": "Gain 2 Focus."},
-  {"id": "POTION.POISON_POTION", "name": "Poison Potion", "rarity": "Common", "description": "Apply 6 Poison."},
-  {"id": "POTION.POTION_OF_DOOM", "name": "Potion of Doom", "rarity": "Common", "description": "Apply 33 Doom."},
-  {"id": "POTION.POWER_POTION", "name": "Power Potion", "rarity": "Common", "description": "Choose 1 of 3 random Power cards to add into your Hand."},
-  {"id": "POTION.SKILL_POTION", "name": "Skill Potion", "rarity": "Common", "description": "Choose 1 of 3 random Skill cards to add into your Hand."},
-  {"id": "POTION.SPEED_POTION", "name": "Speed Potion", "rarity": "Common", "description": "Gain 5 Dexterity. At the end of your turn, lose 5 Dexterity."},
-  {"id": "POTION.STAR_POTION", "name": "Star Potion", "rarity": "Common", "description": "Gain 1 Star."},
-  {"id": "POTION.STRENGTH_POTION", "name": "Strength Potion", "rarity": "Common", "description": "Gain 2 Strength."},
-  {"id": "POTION.SWIFT_POTION", "name": "Swift Potion", "rarity": "Common", "description": "Draw 3 cards."},
-  {"id": "POTION.VULNERABLE_POTION", "name": "Vulnerable Potion", "rarity": "Common", "description": "Apply 3 Vulnerable."},
-  {"id": "POTION.WEAK_POTION", "name": "Weak Potion", "rarity": "Common", "description": "Apply 3 Weak."},
-  {"id": "POTION.STABLE_SERUM", "name": "Stable Serum", "rarity": "Uncommon", "description": "Retain your Hand for 2 turns."},
-  {"id": "POTION.POTION_OF_BINDING", "name": "Potion of Binding", "rarity": "Uncommon", "description": "Apply 1 Weak and 1 Vulnerable to ALL enemies."},
-  {"id": "POTION.FORTIFIER", "name": "Fortifier", "rarity": "Uncommon", "description": "Triple your Block."},
-  {"id": "POTION.HEART_OF_IRON", "name": "Heart of Iron", "rarity": "Uncommon", "description": "Gain 7 Plating."},
-  {"id": "POTION.LIQUID_BRONZE", "name": "Liquid Bronze", "rarity": "Uncommon", "description": "Gain 3 Thorns."},
-  {"id": "POTION.LIQUID_MEMORIES", "name": "Liquid Memories", "rarity": "Rare", "description": "Put a card from your Discard Pile into your Hand. It costs 0 this turn."},
-  {"id": "POTION.BLESSING_OF_THE_FORGE", "name": "Blessing of the Forge", "rarity": "Uncommon", "description": "Upgrade all cards in your Hand for the rest of combat."},
-  {"id": "POTION.ASHWATER", "name": "Ashwater", "rarity": "Uncommon", "description": "Exhaust any number of cards in your Hand."},
-  {"id": "POTION.BONE_BREW", "name": "Bone Brew", "rarity": "Uncommon", "description": "Summon 15."},
-  {"id": "POTION.CLARITY_EXTRACT", "name": "Clarity Extract", "rarity": "Uncommon", "description": "Draw 1 card. At the start of your next 3 turns, draw 1 additional card."},
-  {"id": "POTION.CUNNING_POTION", "name": "Cunning Potion", "rarity": "Uncommon", "description": "Add 3 Upgraded Shivs into your Hand."},
-  {"id": "POTION.CURE_ALL", "name": "Cure All", "rarity": "Uncommon", "description": "Gain 1 energy. Draw 2 cards."},
-  {"id": "POTION.DUPLICATOR", "name": "Duplicator", "rarity": "Uncommon", "description": "This turn, your next card is played an extra time."},
-  {"id": "POTION.FYSH_OIL", "name": "Fysh Oil", "rarity": "Uncommon", "description": "Gain 1 Strength and 1 Dexterity."},
-  {"id": "POTION.GAMBLERS_BREW", "name": "Gambler's Brew", "rarity": "Uncommon", "description": "Discard any number of cards, then draw that many."},
-  {"id": "POTION.KINGS_COURAGE", "name": "King's Courage", "rarity": "Uncommon", "description": "Forge additional resources."},
-  {"id": "POTION.POTION_OF_CAPACITY", "name": "Potion of Capacity", "rarity": "Uncommon", "description": "Gain 2 Orb Slots."},
-  {"id": "POTION.POWDERED_DEMISE", "name": "Powdered Demise", "rarity": "Uncommon", "description": "Enemy loses 9 HP at the end of each of its turns."},
-  {"id": "POTION.RADIANT_TINCTURE", "name": "Radiant Tincture", "rarity": "Uncommon", "description": "Gain 1 energy. Gain additional energy at the start of your next 3 turns."},
-  {"id": "POTION.REGEN_POTION", "name": "Regen Potion", "rarity": "Uncommon", "description": "Gain 5 Regen."},
-  {"id": "POTION.TOUCH_OF_INSANITY", "name": "Touch of Insanity", "rarity": "Uncommon", "description": "Choose a card in your Hand. It is free to play this combat."},
-  {"id": "POTION.BEETLE_JUICE", "name": "Beetle Juice", "rarity": "Rare", "description": "Enemy's attacks deal 30% less damage for the next 4 turns."},
-  {"id": "POTION.BOTTLED_POTENTIAL", "name": "Bottled Potential", "rarity": "Rare", "description": "Shuffle ALL your cards into your Draw Pile. Draw 5 cards."},
-  {"id": "POTION.COSMIC_CONCOCTION", "name": "Cosmic Concoction", "rarity": "Rare", "description": "Add 3 Upgraded Colorless cards into your Hand."},
-  {"id": "POTION.DISTILLED_CHAOS", "name": "Distilled Chaos", "rarity": "Rare", "description": "Play the top 3 cards of your Draw Pile."},
-  {"id": "POTION.DROPLET_OF_PRECOGNITION", "name": "Droplet of Precognition", "rarity": "Rare", "description": "Choose a card in your Draw Pile and add it into your Hand."},
-  {"id": "POTION.ENTROPIC_BREW", "name": "Entropic Brew", "rarity": "Rare", "description": "Fill all your empty potion slots with random potions."},
-  {"id": "POTION.ESSENCE_OF_DARKNESS", "name": "Essence of Darkness", "rarity": "Rare", "description": "Channel a Dark for each of your Orb Slots."},
-  {"id": "POTION.FAIRY_IN_A_BOTTLE", "name": "Fairy in a Bottle", "rarity": "Rare", "description": "When you would die, heal to 30% of your Max HP instead."},
-  {"id": "POTION.FRUIT_JUICE", "name": "Fruit Juice", "rarity": "Rare", "description": "Gain Max HP."},
-  {"id": "POTION.GHOST_IN_A_JAR", "name": "Ghost in a Jar", "rarity": "Rare", "description": "Gain 1 Intangible."},
-  {"id": "POTION.GIGANTIFICATION_POTION", "name": "Gigantification Potion", "rarity": "Rare", "description": "The next Attack you play deals triple damage."},
-  {"id": "POTION.LUCKY_TONIC", "name": "Lucky Tonic", "rarity": "Rare", "description": "Gain 1 Buffer."},
-  {"id": "POTION.MAZALETHS_GIFT", "name": "Mazaleth's Gift", "rarity": "Rare", "description": "Gain 1 Ritual."},
-  {"id": "POTION.OROBIC_ACID", "name": "Orobic Acid", "rarity": "Rare", "description": "Add a random Attack, Skill, and Power into your Hand. They're free to play this turn."},
-  {"id": "POTION.POT_OF_GHOULS", "name": "Pot of Ghouls", "rarity": "Rare", "description": "Add 2 Souls into your Hand."},
-  {"id": "POTION.SHACKLING_POTION", "name": "Shackling Potion", "rarity": "Rare", "description": "ALL enemies lose 7 Strength this turn."},
-  {"id": "POTION.SHIP_IN_A_BOTTLE", "name": "Ship in a Bottle", "rarity": "Rare", "description": "Gain 10 Block. Next turn, gain 10 Block."},
-  {"id": "POTION.SNECKO_OIL", "name": "Snecko Oil", "rarity": "Rare", "description": "Draw 7 cards. Randomize the cost of cards in your Hand this turn."},
-  {"id": "POTION.SOLDIERS_STEW", "name": "Soldier's Stew", "rarity": "Rare", "description": "All cards containing Strike gain 1 Replay this combat."},
-  {"id": "POTION.FOUL_POTION", "name": "Foul Potion", "rarity": "Event", "description": "Deal 12 damage to EVERYONE. Can be thrown at the Merchant for Gold instead."},
-  {"id": "POTION.GLOWWATER_POTION", "name": "Glowwater Potion", "rarity": "Event", "description": "Exhaust your Hand. Draw 10 cards."},
-  {"id": "POTION.POTION_SHAPED_ROCK", "name": "Potion-Shaped Rock", "rarity": "Token", "description": "Deal 15 damage."}
+  {
+    "id": "POTION.FIRE_POTION",
+    "name": "Fire Potion",
+    "rarity": "Common",
+    "description": "Deal 20 damage."
+  },
+  {
+    "id": "POTION.ATTACK_POTION",
+    "name": "Attack Potion",
+    "rarity": "Common",
+    "description": "Choose 1 of 3 random Attack cards to add into your Hand. It's free to play this turn."
+  },
+  {
+    "id": "POTION.BLOCK_POTION",
+    "name": "Block Potion",
+    "rarity": "Common",
+    "description": "Gain 12 Block."
+  },
+  {
+    "id": "POTION.BLOOD_POTION",
+    "name": "Blood Potion",
+    "rarity": "Common",
+    "description": "Heal for 20% of your Max HP."
+  },
+  {
+    "id": "POTION.COLORLESS_POTION",
+    "name": "Colorless Potion",
+    "rarity": "Common",
+    "description": "Choose 1 of 3 random Colorless cards to add into your Hand. It's free to play this turn."
+  },
+  {
+    "id": "POTION.DEXTERITY_POTION",
+    "name": "Dexterity Potion",
+    "rarity": "Common",
+    "description": "Gain 2 Dexterity."
+  },
+  {
+    "id": "POTION.ENERGY_POTION",
+    "name": "Energy Potion",
+    "rarity": "Common",
+    "description": "Gain 2 Energy."
+  },
+  {
+    "id": "POTION.EXPLOSIVE_AMPOULE",
+    "name": "Explosive Ampoule",
+    "rarity": "Common",
+    "description": "Deal 10 damage to ALL enemies."
+  },
+  {
+    "id": "POTION.FLEX_POTION",
+    "name": "Flex Potion",
+    "rarity": "Common",
+    "description": "Gain 5 Strength. At the end of your turn, lose 5 Strength."
+  },
+  {
+    "id": "POTION.FOCUS_POTION",
+    "name": "Focus Potion",
+    "rarity": "Common",
+    "description": "Gain 2 Focus."
+  },
+  {
+    "id": "POTION.POISON_POTION",
+    "name": "Poison Potion",
+    "rarity": "Common",
+    "description": "Apply 6 Poison."
+  },
+  {
+    "id": "POTION.POTION_OF_DOOM",
+    "name": "Potion of Doom",
+    "rarity": "Common",
+    "description": "Apply 33 Doom."
+  },
+  {
+    "id": "POTION.POWER_POTION",
+    "name": "Power Potion",
+    "rarity": "Common",
+    "description": "Choose 1 of 3 random Power cards to add into your Hand. It's free to play this turn."
+  },
+  {
+    "id": "POTION.SKILL_POTION",
+    "name": "Skill Potion",
+    "rarity": "Common",
+    "description": "Choose 1 of 3 random Skill cards to add into your Hand. It's free to play this turn."
+  },
+  {
+    "id": "POTION.SPEED_POTION",
+    "name": "Speed Potion",
+    "rarity": "Common",
+    "description": "Gain 5 Dexterity. At the end of your turn, lose 5 Dexterity."
+  },
+  {
+    "id": "POTION.STAR_POTION",
+    "name": "Star Potion",
+    "rarity": "Common",
+    "description": "Gain 1 Star."
+  },
+  {
+    "id": "POTION.STRENGTH_POTION",
+    "name": "Strength Potion",
+    "rarity": "Common",
+    "description": "Gain 2 Strength."
+  },
+  {
+    "id": "POTION.SWIFT_POTION",
+    "name": "Swift Potion",
+    "rarity": "Common",
+    "description": "Draw 3 cards."
+  },
+  {
+    "id": "POTION.VULNERABLE_POTION",
+    "name": "Vulnerable Potion",
+    "rarity": "Common",
+    "description": "Apply 3 Vulnerable."
+  },
+  {
+    "id": "POTION.WEAK_POTION",
+    "name": "Weak Potion",
+    "rarity": "Common",
+    "description": "Apply 3 Weak."
+  },
+  {
+    "id": "POTION.STABLE_SERUM",
+    "name": "Stable Serum",
+    "rarity": "Uncommon",
+    "description": "Retain your Hand for 2 turns."
+  },
+  {
+    "id": "POTION.POTION_OF_BINDING",
+    "name": "Potion of Binding",
+    "rarity": "Uncommon",
+    "description": "Apply 1 Weak and 1 Vulnerable to ALL enemies."
+  },
+  {
+    "id": "POTION.FORTIFIER",
+    "name": "Fortifier",
+    "rarity": "Uncommon",
+    "description": "Triple your Block."
+  },
+  {
+    "id": "POTION.HEART_OF_IRON",
+    "name": "Heart of Iron",
+    "rarity": "Uncommon",
+    "description": "Gain 7 Plating."
+  },
+  {
+    "id": "POTION.LIQUID_BRONZE",
+    "name": "Liquid Bronze",
+    "rarity": "Uncommon",
+    "description": "Gain 3 Thorns."
+  },
+  {
+    "id": "POTION.LIQUID_MEMORIES",
+    "name": "Liquid Memories",
+    "rarity": "Rare",
+    "description": "Put a card from your Discard Pile into your Hand. It costs 0 1 Energy this turn."
+  },
+  {
+    "id": "POTION.BLESSING_OF_THE_FORGE",
+    "name": "Blessing of the Forge",
+    "rarity": "Uncommon",
+    "description": "Upgrade all cards in your Hand for the rest of combat."
+  },
+  {
+    "id": "POTION.ASHWATER",
+    "name": "Ashwater",
+    "rarity": "Uncommon",
+    "description": "Exhaust any number of cards in your Hand."
+  },
+  {
+    "id": "POTION.BONE_BREW",
+    "name": "Bone Brew",
+    "rarity": "Uncommon",
+    "description": "Summon 15."
+  },
+  {
+    "id": "POTION.CLARITY_EXTRACT",
+    "name": "Clarity Extract",
+    "rarity": "Uncommon",
+    "description": "Draw 1 card. At the start of your next 3 turns, draw 1 additional card."
+  },
+  {
+    "id": "POTION.CUNNING_POTION",
+    "name": "Cunning Potion",
+    "rarity": "Uncommon",
+    "description": "Add 3 Upgraded Shivs into your Hand."
+  },
+  {
+    "id": "POTION.CURE_ALL",
+    "name": "Cure All",
+    "rarity": "Uncommon",
+    "description": "Gain 1 Energy. Draw 2 cards."
+  },
+  {
+    "id": "POTION.DUPLICATOR",
+    "name": "Duplicator",
+    "rarity": "Uncommon",
+    "description": "This turn, your next card is played an extra time."
+  },
+  {
+    "id": "POTION.FYSH_OIL",
+    "name": "Fysh Oil",
+    "rarity": "Uncommon",
+    "description": "Gain 1 Strength and 1 Dexterity."
+  },
+  {
+    "id": "POTION.GAMBLERS_BREW",
+    "name": "Gambler's Brew",
+    "rarity": "Uncommon",
+    "description": "Discard any number of cards, then draw that many."
+  },
+  {
+    "id": "POTION.KINGS_COURAGE",
+    "name": "King's Courage",
+    "rarity": "Uncommon",
+    "description": "Forge additional resources."
+  },
+  {
+    "id": "POTION.POTION_OF_CAPACITY",
+    "name": "Potion of Capacity",
+    "rarity": "Uncommon",
+    "description": "Gain 2 Orb Slots."
+  },
+  {
+    "id": "POTION.POWDERED_DEMISE",
+    "name": "Powdered Demise",
+    "rarity": "Uncommon",
+    "description": "Enemy loses 9 HP at the end of each of its turns."
+  },
+  {
+    "id": "POTION.RADIANT_TINCTURE",
+    "name": "Radiant Tincture",
+    "rarity": "Uncommon",
+    "description": "Gain 1 Energy. Gain an additional 1 Energy at the start of your next 3 turns."
+  },
+  {
+    "id": "POTION.REGEN_POTION",
+    "name": "Regen Potion",
+    "rarity": "Uncommon",
+    "description": "Gain 5 Regen."
+  },
+  {
+    "id": "POTION.TOUCH_OF_INSANITY",
+    "name": "Touch of Insanity",
+    "rarity": "Uncommon",
+    "description": "Choose a card in your Hand. It is free to play this combat."
+  },
+  {
+    "id": "POTION.BEETLE_JUICE",
+    "name": "Beetle Juice",
+    "rarity": "Rare",
+    "description": "Enemy's attacks deal 30% less damage for the next 4 turns."
+  },
+  {
+    "id": "POTION.BOTTLED_POTENTIAL",
+    "name": "Bottled Potential",
+    "rarity": "Rare",
+    "description": "Shuffle ALL your cards into your Draw Pile. Draw 5 cards."
+  },
+  {
+    "id": "POTION.COSMIC_CONCOCTION",
+    "name": "Cosmic Concoction",
+    "rarity": "Rare",
+    "description": "Add 3 Upgraded Colorless cards into your Hand."
+  },
+  {
+    "id": "POTION.DISTILLED_CHAOS",
+    "name": "Distilled Chaos",
+    "rarity": "Rare",
+    "description": "Play the top 3 cards of your Draw Pile."
+  },
+  {
+    "id": "POTION.DROPLET_OF_PRECOGNITION",
+    "name": "Droplet of Precognition",
+    "rarity": "Rare",
+    "description": "Choose a card in your Draw Pile and add it into your Hand."
+  },
+  {
+    "id": "POTION.ENTROPIC_BREW",
+    "name": "Entropic Brew",
+    "rarity": "Rare",
+    "description": "Fill all your empty potion slots with random potions."
+  },
+  {
+    "id": "POTION.ESSENCE_OF_DARKNESS",
+    "name": "Essence of Darkness",
+    "rarity": "Rare",
+    "description": "Channel a Dark for each of your Orb Slots."
+  },
+  {
+    "id": "POTION.FAIRY_IN_A_BOTTLE",
+    "name": "Fairy in a Bottle",
+    "rarity": "Rare",
+    "description": "When you would die, instead this potion is discarded and you heal to 30% of your Max HP."
+  },
+  {
+    "id": "POTION.FRUIT_JUICE",
+    "name": "Fruit Juice",
+    "rarity": "Rare",
+    "description": "Gain 5 Max HP."
+  },
+  {
+    "id": "POTION.GHOST_IN_A_JAR",
+    "name": "Ghost in a Jar",
+    "rarity": "Rare",
+    "description": "Gain 1 Intangible."
+  },
+  {
+    "id": "POTION.GIGANTIFICATION_POTION",
+    "name": "Gigantification Potion",
+    "rarity": "Rare",
+    "description": "The next Attack you play deals triple damage."
+  },
+  {
+    "id": "POTION.LUCKY_TONIC",
+    "name": "Lucky Tonic",
+    "rarity": "Rare",
+    "description": "Gain 1 Buffer."
+  },
+  {
+    "id": "POTION.MAZALETHS_GIFT",
+    "name": "Mazaleth's Gift",
+    "rarity": "Rare",
+    "description": "Gain 1 Ritual."
+  },
+  {
+    "id": "POTION.OROBIC_ACID",
+    "name": "Orobic Acid",
+    "rarity": "Rare",
+    "description": "Add a random Attack, Skill, and Power into your Hand. They're free to play this turn."
+  },
+  {
+    "id": "POTION.POT_OF_GHOULS",
+    "name": "Pot of Ghouls",
+    "rarity": "Rare",
+    "description": "Add 2 Souls into your Hand."
+  },
+  {
+    "id": "POTION.SHACKLING_POTION",
+    "name": "Shackling Potion",
+    "rarity": "Rare",
+    "description": "ALL enemies lose 7 Strength this turn."
+  },
+  {
+    "id": "POTION.SHIP_IN_A_BOTTLE",
+    "name": "Ship in a Bottle",
+    "rarity": "Rare",
+    "description": "Gain 10 Block. Next turn, gain 10 Block."
+  },
+  {
+    "id": "POTION.SNECKO_OIL",
+    "name": "Snecko Oil",
+    "rarity": "Rare",
+    "description": "Draw 7 cards. Randomize the cost of cards in your Hand this turn."
+  },
+  {
+    "id": "POTION.SOLDIERS_STEW",
+    "name": "Soldier's Stew",
+    "rarity": "Rare",
+    "description": "All cards containing Strike gain 1 Replay this combat."
+  },
+  {
+    "id": "POTION.FOUL_POTION",
+    "name": "Foul Potion",
+    "rarity": "Event",
+    "description": "Deal 12 damage to EVERYONE. Can be thrown at the Merchant for Gold instead."
+  },
+  {
+    "id": "POTION.GLOWWATER_POTION",
+    "name": "Glowwater Potion",
+    "rarity": "Event",
+    "description": "Exhaust your Hand. Draw 10 cards."
+  },
+  {
+    "id": "POTION.POTION_SHAPED_ROCK",
+    "name": "Potion-Shaped Rock",
+    "rarity": "Token",
+    "description": "Deal 15 damage."
+  }
 ]

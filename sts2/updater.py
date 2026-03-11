@@ -2,8 +2,8 @@
 import json
 import logging
 import threading
-import urllib.request
 import urllib.error
+import urllib.request
 
 log = logging.getLogger(__name__)
 

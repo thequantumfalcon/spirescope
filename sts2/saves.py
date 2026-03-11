@@ -3,8 +3,8 @@ import json
 import logging
 from pathlib import Path
 
-from sts2.config import SAVE_DIR, CHARACTER_IDS
-from sts2.models import PlayerProgress, RunHistory, RunFloor, CurrentRun
+from sts2.config import CHARACTER_IDS, SAVE_DIR
+from sts2.models import CurrentRun, PlayerProgress, RunFloor, RunHistory
 
 log = logging.getLogger(__name__)
 

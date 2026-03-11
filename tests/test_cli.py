@@ -1,11 +1,10 @@
 """Tests for the CLI entry point (__main__.py)."""
 import sys
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from sts2.__main__ import main, _get_version
-
+from sts2.__main__ import _get_version, main
 
 # ── Version helper ───────────────────────────────────────────────────────
 

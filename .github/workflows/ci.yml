@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: pip install -e ".[dev]"
 
+      - name: Lint with ruff
+        run: ruff check sts2/ tests/
+
       - name: Run tests
         id: tests
         run: |

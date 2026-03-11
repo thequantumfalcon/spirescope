@@ -1,12 +1,9 @@
 """Tests for the save file parser."""
 import json
-import pytest
-from pathlib import Path
 from unittest.mock import patch
 
-from sts2.saves import get_current_run, get_progress, get_run_history
 from sts2.models import CurrentRun, PlayerProgress, RunHistory
-
+from sts2.saves import get_current_run, get_progress, get_run_history
 
 MOCK_CURRENT_RUN = {
     "players": [{

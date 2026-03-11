@@ -1,5 +1,31 @@
 # Changelog
 
+## v2.2.1
+
+### Fixed
+
+- **Fetcher: energy/star markup conversion** — `[energy:N]` and `[star:N]` wiki markup now converts to readable text ("2 Energy", "1 Star") instead of being silently deleted
+- **Fetcher: prefixed icon handling** — Correctly handles `6[star:1]` → "6 Star" (digit before tag takes precedence)
+- **Fetcher: merge preserves curated data** — Wiki scrapes no longer overwrite non-empty existing fields with empty values; falsy-but-valid values (0, False, []) are handled correctly
+- **Fetcher: character normalization** — Wiki's "The Regent" automatically normalized to "Regent" to match app convention
+- **Fetcher: rarity default** — Changed from "Common" (which corrupted 92% of cards) to empty string (honest about missing data)
+- **Cards: 67 cards** mislabeled as "The Regent" normalized to "Regent"
+- **Cards: DEFEND_SILENT/STRIKE_SILENT** restored to character "Silent" with rarity "Starter"
+- **Cards: 269 descriptions** had embedded newlines replaced with spaces
+- **Cards: 9 descriptions** had missing Energy/Star values restored from canon wiki data (Bloodletting, Adrenaline, Alignment, Big Bang, Black Hole, Convergence, Genesis, Solar Strike, Venerate)
+- **Cards: missing Offering** added from canon wiki data
+- **Cards: 43 entries** missing `description_upgraded` field now have it
+- **Relics: 17 descriptions** had truncated Energy/Star values restored (Lantern, Glowing Orb, Happy Flower, Bread, etc.)
+- **Relics: 16 descriptions** had double-space gaps from stripped icons fixed (Sozu, Velvet Choker, Philosopher's Stone, etc.)
+- **Relics: 3 empty rarities** filled (Glowing Orb, Medical Kit, Mysterious Cocoon)
+- **Relics: Deprecated Relic** placeholder removed
+- **Potions: 4 truncated descriptions** fixed (Energy Potion, Star Potion, Cure All, Radiant Tincture)
+- **Potions: Liquid Memories** stripped Energy icon restored
+- **Potions: Deprecated Potion** placeholder removed
+- **Enemies: 45 display names** had "Monster." prefix stripped
+- **Sync: User-Agent** updated from stale "Spirescope/2.1" to dynamic version
+- **CSS: muted text contrast** bumped from 4.48:1 to 4.65:1 (meets WCAG AA)
+
 ## v2.2.0
 
 ### Added

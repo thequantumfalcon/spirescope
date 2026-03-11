@@ -8,10 +8,10 @@ from __future__ import annotations
 
 import json
 import logging
-import urllib.request
 import urllib.error
+import urllib.request
 
-from sts2.config import SYNC_URL, SYNC_API_KEY
+from sts2.config import SYNC_API_KEY, SYNC_URL
 
 log = logging.getLogger(__name__)
 
@@ -24,7 +24,8 @@ class SyncError(Exception):
 
 
 def _headers() -> dict[str, str]:
-    h = {"Content-Type": "application/json", "User-Agent": "Spirescope/2.1"}
+    from sts2.config import VERSION
+    h = {"Content-Type": "application/json", "User-Agent": f"Spirescope/{VERSION}"}
     if SYNC_API_KEY:
         h["X-Api-Key"] = SYNC_API_KEY
     return h

@@ -1,19 +1,19 @@
 """Tests for the fetcher module."""
 import json
-import pytest
 from unittest.mock import patch
+
 from sts2.fetcher import (
     _clean_description,
-    _extract_json_objects,
-    _extract_keywords,
-    _wiki_id_to_game_id,
-    _load_existing_name_index,
-    _merge_with_existing,
     _discover_enemies_from_saves,
     _discover_events_from_saves,
+    _existing_count,
+    _extract_json_objects,
+    _extract_keywords,
+    _load_existing_name_index,
+    _merge_with_existing,
     _scrape_cards,
     _scrape_relics,
-    _existing_count,
+    _wiki_id_to_game_id,
 )
 
 
@@ -24,11 +24,17 @@ class TestCleanDescription:
     def test_strip_blue_tags(self):
         assert _clean_description("Gain [blue]5[/blue] Block") == "Gain 5 Block"
 
-    def test_strip_energy_tags(self):
-        assert _clean_description("[energy:1] Deal 10 damage") == "Deal 10 damage"
+    def test_convert_energy_tags(self):
+        assert _clean_description("[energy:1] Deal 10 damage") == "1 Energy Deal 10 damage"
 
-    def test_strip_star_tags(self):
-        assert _clean_description("[star:1] Draw 2") == "Draw 2"
+    def test_convert_star_tags(self):
+        assert _clean_description("[star:1] Draw 2") == "1 Star Draw 2"
+
+    def test_prefixed_digit_star(self):
+        assert _clean_description("Gain 6[star:1].") == "Gain 6 Star."
+
+    def test_energy_value_in_sentence(self):
+        assert _clean_description("Gain [energy:2].") == "Gain 2 Energy."
 
     def test_strip_multiple_tags(self):
         text = "Gain [gold]3[/gold] [blue]Strength[/blue]"

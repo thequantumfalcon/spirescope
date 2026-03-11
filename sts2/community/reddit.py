@@ -4,11 +4,16 @@ import logging
 import time
 import urllib.error
 import urllib.request
-from collections import defaultdict
 
 from ._types import (
-    STRATEGY_KEYWORDS, STS2_INDICATORS, TIER_KEYWORDS, SourceResult,
-    USER_AGENT, REQUEST_DELAY, extract_tier_ratings, extract_tips,
+    REQUEST_DELAY,
+    STRATEGY_KEYWORDS,
+    STS2_INDICATORS,
+    TIER_KEYWORDS,
+    USER_AGENT,
+    SourceResult,
+    extract_tier_ratings,
+    extract_tips,
 )
 
 log = logging.getLogger(__name__)
