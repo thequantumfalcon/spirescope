@@ -171,6 +171,7 @@ footer a { color: var(--text2); } footer a:hover { color: var(--gold); }
   border-bottom: none; padding-bottom: 0;
 }
 .hero-title::after { display: none; }
+.hero-version { color: var(--gold); font-size: 0.85rem; margin: 0.25rem 0 0; letter-spacing: 0.08em; opacity: 0.8; }
 .hero-sub { color: var(--text2); font-size: 1.05rem; margin-top: 0.25rem; }
 .hero-sub .data-updated { font-size: 0.75rem; margin-left: 1rem; }
 

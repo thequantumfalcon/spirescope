@@ -11,6 +11,7 @@
 <div class="home-hero">
   <img src="/static/logo.jpg?v={{ logo_hash }}" alt="SpireScope logo" class="hero-logo">
   <h1 class="hero-title">SpireScope</h1>
+  <p class="hero-version">v{{ version }}</p>
   <p class="hero-sub">Your Slay the Spire 2 companion
     {% if last_updated %}<span class="data-updated" title="{{ last_updated }}">Data updated: {{ last_updated[:10] }}</span>{% endif %}
   </p>
