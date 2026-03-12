@@ -219,11 +219,22 @@ async def rate_limit(request: Request, call_next):
     while timestamps and timestamps[0] < now - _RATE_LIMIT_WINDOW:
         timestamps.popleft()
 
+    remaining = max(0, _RATE_LIMIT_MAX - len(timestamps))
+    reset_at = int(timestamps[0] + _RATE_LIMIT_WINDOW) if timestamps else int(now + _RATE_LIMIT_WINDOW)
+
     if len(timestamps) >= _RATE_LIMIT_MAX:
-        return PlainTextResponse("Rate limit exceeded. Try again later.", status_code=429)
+        resp = PlainTextResponse("Rate limit exceeded. Try again later.", status_code=429)
+        resp.headers["X-RateLimit-Limit"] = str(_RATE_LIMIT_MAX)
+        resp.headers["X-RateLimit-Remaining"] = "0"
+        resp.headers["X-RateLimit-Reset"] = str(reset_at)
+        return resp
 
     timestamps.append(now)
-    return await call_next(request)
+    response = await call_next(request)
+    response.headers["X-RateLimit-Limit"] = str(_RATE_LIMIT_MAX)
+    response.headers["X-RateLimit-Remaining"] = str(remaining - 1 if remaining > 0 else 0)
+    response.headers["X-RateLimit-Reset"] = str(reset_at)
+    return response
 
 
 @app.middleware("http")

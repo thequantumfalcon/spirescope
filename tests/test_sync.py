@@ -5,7 +5,7 @@ from urllib.error import HTTPError, URLError
 
 import pytest
 
-from sts2.sync import SyncError, download_stats, upload_stats
+from sts2.sync import SyncError, _validate_url, download_stats, upload_stats
 
 
 class TestUploadStats:
@@ -136,3 +136,41 @@ class TestHeaders:
 
         req = mock_open.call_args[0][0]
         assert not req.has_header("X-api-key")
+
+
+class TestValidateUrl:
+    """Tests for _validate_url() SSRF protection."""
+
+    def test_https_valid(self):
+        # Should not raise for valid HTTPS URL (DNS resolution may fail, that's OK)
+        with patch("sts2.sync.socket.getaddrinfo", return_value=[
+            (2, 1, 6, "", ("93.184.216.34", 0)),
+        ]):
+            assert _validate_url("https://example.com/sync") == "https://example.com/sync"
+
+    def test_http_rejected(self):
+        with pytest.raises(ValueError, match="HTTPS"):
+            _validate_url("http://example.com/sync")
+
+    def test_no_scheme_rejected(self):
+        with pytest.raises(ValueError, match="HTTPS"):
+            _validate_url("example.com/sync")
+
+    def test_loopback_rejected(self):
+        with pytest.raises(ValueError, match="private|loopback"):
+            _validate_url("https://127.0.0.1/sync")
+
+    def test_private_ip_rejected(self):
+        with pytest.raises(ValueError, match="private|loopback"):
+            _validate_url("https://192.168.1.1/sync")
+
+    def test_private_10_rejected(self):
+        with pytest.raises(ValueError, match="private|loopback"):
+            _validate_url("https://10.0.0.1/sync")
+
+    def test_dns_resolves_to_private_rejected(self):
+        with patch("sts2.sync.socket.getaddrinfo", return_value=[
+            (2, 1, 6, "", ("127.0.0.1", 0)),
+        ]):
+            with pytest.raises(ValueError, match="private|loopback"):
+                _validate_url("https://evil.example.com/sync")

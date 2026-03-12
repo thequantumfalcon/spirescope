@@ -319,3 +319,63 @@ class TestExistingCount:
         (tmp_path / "bad.json").write_text("not json")
         with patch("sts2.fetcher.DATA_DIR", tmp_path):
             assert _existing_count("bad.json") == 0
+
+
+class TestRunFetcher:
+    def test_zero_results_guard(self, tmp_path):
+        """Wiki returning very few results vs large existing dataset should skip overwrite."""
+        from sts2.fetcher import run_fetcher
+
+        # Pre-populate with 50 existing cards
+        existing = [{"id": f"CARD.C{i}", "name": f"Card{i}"} for i in range(50)]
+        (tmp_path / "cards.json").write_text(json.dumps(existing))
+        (tmp_path / "relics.json").write_text("[]")
+        (tmp_path / "potions.json").write_text("[]")
+        (tmp_path / "enemies.json").write_text("[]")
+        (tmp_path / "events.json").write_text("[]")
+
+        # Mock wiki to return only 2 cards (< 10% of 50)
+        tiny_html = json.dumps({
+            "id": "bash-ironclad", "category": "CARD", "name": "Bash",
+            "character": "Ironclad", "energy": 2, "cardType": "Attack",
+            "rarity": "Starter", "description": "Deal 8 damage.",
+        })
+        with patch("sts2.fetcher.DATA_DIR", tmp_path), \
+             patch("sts2.fetcher._fetch_with_retry", return_value=tiny_html), \
+             patch("sts2.fetcher.time.sleep"), \
+             patch("sts2.config.SAVE_DIR", tmp_path):
+            run_fetcher(save_only=False)
+
+        # Existing 50 cards should be preserved (not overwritten with 1)
+        result = json.loads((tmp_path / "cards.json").read_text())
+        assert len(result) == 50
+
+    def test_save_only_skips_wiki(self, tmp_path):
+        """save_only=True should not call _fetch_with_retry."""
+        from sts2.fetcher import run_fetcher
+
+        (tmp_path / "enemies.json").write_text("[]")
+        (tmp_path / "events.json").write_text("[]")
+
+        with patch("sts2.fetcher.DATA_DIR", tmp_path), \
+             patch("sts2.fetcher._fetch_with_retry") as mock_fetch, \
+             patch("sts2.config.SAVE_DIR", tmp_path):
+            run_fetcher(save_only=True)
+
+        mock_fetch.assert_not_called()
+
+    def test_retry_on_timeout(self):
+        """_fetch_with_retry should retry on URLError."""
+        import urllib.error
+
+        from sts2.fetcher import _fetch_with_retry
+
+        with patch("sts2.fetcher._fetch_page") as mock_page, \
+             patch("sts2.fetcher.time.sleep"):
+            mock_page.side_effect = [
+                urllib.error.URLError("timeout"),
+                "<html>success</html>",
+            ]
+            result = _fetch_with_retry("/cards", retries=1)
+        assert result == "<html>success</html>"
+        assert mock_page.call_count == 2

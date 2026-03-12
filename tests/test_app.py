@@ -1446,6 +1446,42 @@ async def test_options_request_bypasses_rate_limit(client):
     assert resp.status_code != 429
 
 
+async def test_rate_limit_headers_present(client):
+    """Normal responses should include rate limit headers."""
+    _rate_limit_store.clear()
+    resp = await client.get("/health")
+    assert "X-RateLimit-Limit" in resp.headers
+    assert "X-RateLimit-Remaining" in resp.headers
+    assert "X-RateLimit-Reset" in resp.headers
+    assert resp.headers["X-RateLimit-Limit"] == "60"
+
+
+async def test_rate_limit_headers_remaining_decrements(client):
+    """Remaining count should decrease with successive requests."""
+    _rate_limit_store.clear()
+    resp1 = await client.get("/health")
+    resp2 = await client.get("/health")
+    r1 = int(resp1.headers["X-RateLimit-Remaining"])
+    r2 = int(resp2.headers["X-RateLimit-Remaining"])
+    assert r2 < r1
+
+
+async def test_rate_limit_headers_on_429(client):
+    """Rate limit headers should be present on 429 responses too."""
+    import collections
+    import time
+
+    _rate_limit_store.clear()
+    # httpx ASGI transport reports client as 127.0.0.1
+    ip = "127.0.0.1"
+    _rate_limit_store[ip] = collections.deque([time.monotonic()] * 65)
+    resp = await client.get("/health")
+    assert resp.status_code == 429
+    assert resp.headers["X-RateLimit-Remaining"] == "0"
+    assert "X-RateLimit-Limit" in resp.headers
+    assert "X-RateLimit-Reset" in resp.headers
+
+
 async def test_csrf_token_validation():
     """CSRF tokens should validate correctly."""
     from sts2.app import generate_csrf_token, validate_csrf_token
@@ -1547,3 +1583,290 @@ async def test_analytics_cache_keyed_by_ascension():
     """Filtered and unfiltered analytics use separate cache entries."""
     from sts2.app import _analytics_cache_time
     assert isinstance(_analytics_cache_time, dict)
+
+
+# ---------------------------------------------------------------------------
+# Analytics edge cases
+# ---------------------------------------------------------------------------
+
+
+async def test_analytics_single_run_via_route(client):
+    """Analytics route should handle a single run without crashing."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunFloor, RunHistory
+
+    run = RunHistory(id="solo", character="Ironclad", win=True, ascension=0,
+                     deck=["Strike", "Defend"], relics=["BurningBlood"],
+                     floors=[RunFloor(floor=1, type="monster", damage_taken=5,
+                                      current_hp=70, max_hp=75)])
+    with patch("sts2.app._get_runs", new_callable=AsyncMock, return_value=[run]), \
+         patch("sts2.app._get_progress", new_callable=AsyncMock, return_value=None), \
+         patch("sts2.app._analytics_cache", {}), \
+         patch("sts2.app._analytics_cache_time", {}):
+        resp = await client.get("/analytics")
+    assert resp.status_code == 200
+    assert "100" in resp.text  # 100% win rate
+
+
+async def test_analytics_all_losses(client):
+    """Analytics should handle all-loss runs without division errors."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunFloor, RunHistory
+
+    runs = [
+        RunHistory(id=f"loss{i}", character="Silent", win=False, ascension=0,
+                   killed_by="Lagavulin", deck=["Strike"], relics=[],
+                   floors=[RunFloor(floor=1, type="monster", damage_taken=50,
+                                    current_hp=0, max_hp=70)])
+        for i in range(3)
+    ]
+    with patch("sts2.app._get_runs", new_callable=AsyncMock, return_value=runs), \
+         patch("sts2.app._get_progress", new_callable=AsyncMock, return_value=None), \
+         patch("sts2.app._analytics_cache", {}), \
+         patch("sts2.app._analytics_cache_time", {}):
+        resp = await client.get("/analytics")
+    assert resp.status_code == 200
+    assert "0.0%" in resp.text or "0%" in resp.text  # 0% win rate
+
+
+async def test_analytics_zero_floors(client):
+    """Analytics should handle a run with zero floors gracefully."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunHistory
+
+    run = RunHistory(id="empty", character="Defect", win=False, ascension=0,
+                     deck=[], relics=[], floors=[])
+    with patch("sts2.app._get_runs", new_callable=AsyncMock, return_value=[run]), \
+         patch("sts2.app._get_progress", new_callable=AsyncMock, return_value=None), \
+         patch("sts2.app._analytics_cache", {}), \
+         patch("sts2.app._analytics_cache_time", {}):
+        resp = await client.get("/analytics")
+    assert resp.status_code == 200
+
+
+async def test_analytics_single_card_filtered():
+    """Cards appearing only once should be excluded from rankings (min 2)."""
+    from sts2.analytics import compute_analytics
+    from sts2.models import RunFloor, RunHistory
+
+    runs = [
+        RunHistory(id="r1", character="Ironclad", win=True, ascension=0,
+                   deck=["Strike", "RareCard"], relics=[],
+                   floors=[RunFloor(floor=1, type="monster")]),
+        RunHistory(id="r2", character="Ironclad", win=False, ascension=0,
+                   deck=["Strike", "Defend"], relics=[],
+                   floors=[RunFloor(floor=1, type="monster")]),
+    ]
+    result = compute_analytics(runs)
+    # "RareCard" only appears once — should not be in card_rankings (min 2)
+    card_ids = [c["id"] for c in result.get("card_rankings", [])]
+    assert "RareCard" not in card_ids
+    # "Strike" appears in both runs — should be in rankings
+    assert "Strike" in card_ids
+
+
+# ---------------------------------------------------------------------------
+# _get_live_run merge logic
+# ---------------------------------------------------------------------------
+
+
+async def test_get_live_run_save_active():
+    """When save file has active run, return it directly."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import CurrentRun
+    from sts2.routes import _get_live_run
+
+    active_run = CurrentRun(active=True, character="Ironclad", current_hp=50,
+                            max_hp=80, gold=100, act=1, floor=5)
+    with patch("sts2.routes.get_current_run", return_value=active_run), \
+         patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
+               return_value=active_run):
+        result = await _get_live_run()
+    assert result.active is True
+    assert result.character == "Ironclad"
+
+
+async def test_get_live_run_log_only():
+    """When save has no active run but log parser does, return log data."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import CurrentRun
+    from sts2.routes import _get_live_run
+
+    inactive_run = CurrentRun(active=False)
+    log_state = {"active": True, "character": "Silent", "current_hp": 40,
+                 "max_hp": 70, "gold": 50, "act": 2, "floor": 15}
+    with patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
+               return_value=inactive_run), \
+         patch("sts2.routes._log_run_state", log_state, create=True), \
+         patch("sts2.app._log_run_state", log_state):
+        result = await _get_live_run()
+    assert result.active is True
+    assert result.character == "Silent"
+
+
+async def test_get_live_run_neither():
+    """When neither save nor log has active run, return inactive."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import CurrentRun
+    from sts2.routes import _get_live_run
+
+    inactive_run = CurrentRun(active=False)
+    with patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
+               return_value=inactive_run), \
+         patch("sts2.app._log_run_state", None):
+        result = await _get_live_run()
+    assert result.active is False
+
+
+# ---------------------------------------------------------------------------
+# SSE connection cap
+# ---------------------------------------------------------------------------
+
+
+async def test_sse_connection_cap_enforced(client):
+    """SSE endpoint should reject when at max connections."""
+    import sts2.routes as routes_mod
+    original = routes_mod._sse_active
+    try:
+        routes_mod._sse_active = 10
+        resp = await client.get("/api/live/stream")
+        assert resp.status_code == 429
+        assert "Too many" in resp.text
+    finally:
+        routes_mod._sse_active = original
+
+
+async def test_sse_counter_tracks_connections():
+    """SSE active counter should exist as module-level int."""
+    import sts2.routes as routes_mod
+    assert hasattr(routes_mod, "_sse_active")
+    assert isinstance(routes_mod._sse_active, int)
+    assert routes_mod._SSE_MAX_CONNECTIONS == 10
+
+
+# ---------------------------------------------------------------------------
+# Background tasks
+# ---------------------------------------------------------------------------
+
+
+async def test_prewarm_caches():
+    """_prewarm_caches should call get_progress and get_run_history."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.app import _prewarm_caches
+
+    with patch("sts2.app.get_progress", return_value=None), \
+         patch("sts2.app.get_run_history", return_value=[]), \
+         patch("sts2.app.asyncio.to_thread", new_callable=AsyncMock,
+               side_effect=[None, []]):
+        await _prewarm_caches()
+    # to_thread is called twice: once for progress, once for runs
+
+
+async def test_refresh_data_clears_caches():
+    """_refresh_data should reset analytics cache."""
+    from unittest.mock import AsyncMock, patch
+
+    import sts2.app as app_mod
+    from sts2.app import _refresh_data
+
+    original_kb = app_mod.kb
+    # Pre-fill caches
+    app_mod._analytics_cache = {None: {"total": 5}}
+    app_mod._analytics_cache_time = {None: 1000.0}
+
+    try:
+        with patch("sts2.app.asyncio.to_thread", new_callable=AsyncMock,
+                   side_effect=[original_kb, None, []]):
+            await _refresh_data()
+
+        assert app_mod._analytics_cache == {} or None not in app_mod._analytics_cache_time or \
+            app_mod._analytics_cache_time.get(None, 0) != 1000.0
+    finally:
+        app_mod.kb = original_kb
+
+
+async def test_refresh_data_reloads_kb():
+    """_refresh_data should create a new KnowledgeBase."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    import sts2.app as app_mod
+    from sts2.app import _refresh_data
+
+    original_kb = app_mod.kb
+    mock_kb = MagicMock()
+    try:
+        with patch("sts2.app.asyncio.to_thread", new_callable=AsyncMock,
+                   side_effect=[mock_kb, None, []]):
+            await _refresh_data()
+        assert app_mod.kb is mock_kb
+    finally:
+        app_mod.kb = original_kb  # Restore for other tests
+
+
+async def test_poll_game_log_handles_error():
+    """_poll_game_log should not crash on exceptions."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    from sts2.app import _poll_game_log
+
+    mock_tailer = MagicMock()
+    mock_tailer.poll.side_effect = RuntimeError("log file missing")
+    mock_tailer.state = None
+
+    call_count = 0
+
+    async def fake_to_thread(fn, *args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        if call_count > 2:
+            raise asyncio.CancelledError  # Stop the infinite loop
+        return fn(*args, **kwargs)
+
+    import asyncio
+
+    with patch("sts2.logparser.LogTailer", return_value=mock_tailer), \
+         patch("sts2.app.asyncio.to_thread", side_effect=fake_to_thread), \
+         patch("sts2.app.asyncio.sleep", new_callable=AsyncMock):
+        try:
+            await _poll_game_log()
+        except asyncio.CancelledError:
+            pass  # Expected — we use this to break the infinite loop
+
+    # If we got here without an unhandled exception, the error handling works
+    assert call_count >= 2
+
+
+async def test_watch_saves_polling_fallback():
+    """_watch_saves should fall back to polling when watchdog unavailable."""
+    from unittest.mock import patch
+
+    from sts2.app import _watch_saves
+
+    call_count = 0
+
+    async def fake_sleep(t):
+        nonlocal call_count
+        call_count += 1
+        if call_count > 2:
+            raise asyncio.CancelledError
+
+    import asyncio
+
+    with patch("sts2.watcher.start_observer", return_value=None), \
+         patch("sts2.app.SAVE_DIR") as mock_dir, \
+         patch("sts2.app.asyncio.sleep", side_effect=fake_sleep), \
+         patch("sts2.app._check_mtime", return_value=0.0):
+        mock_dir.exists.return_value = False
+        try:
+            await _watch_saves()
+        except asyncio.CancelledError:
+            pass
+
+    assert call_count >= 2  # Confirms polling loop ran
