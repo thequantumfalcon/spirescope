@@ -292,5 +292,15 @@
 </div>
 {% endif %}
 
+{% if run_patterns %}
+<h2 class="mt-xl">Recurring Patterns</h2>
+<p class="text-sm text-muted mb-sm">Trends detected across your recent runs.</p>
+{% for p in run_patterns %}
+<div class="card {% if p.severity == 'high' %}card-loss{% elif p.severity == 'medium' %}card-caution{% else %}card-tip{% endif %} mb-sm">
+  <p>{{ p.text }}</p>
+</div>
+{% endfor %}
+{% endif %}
+
 {% endif %}
 {% endblock %}

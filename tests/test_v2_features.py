@@ -317,7 +317,8 @@ class TestCoaching:
         with patch("sts2.routes.get_current_run", return_value=mock_run):
             resp = await client.get("/live")
         assert resp.status_code == 200
-        assert "danger-banner" not in resp.text
+        # No HP danger banner (coaching alerts may still appear)
+        assert "% HP" not in resp.text
 
     async def test_empty_floors_no_crash(self, client):
         from sts2.models import CurrentRun
@@ -336,7 +337,8 @@ class TestCoaching:
         with patch("sts2.routes.get_current_run", return_value=mock_run):
             resp = await client.get("/live")
         assert resp.status_code == 200
-        assert "danger-banner" not in resp.text
+        # No HP danger banner (coaching alerts may still appear)
+        assert "% HP" not in resp.text
 
 
 # ---------------------------------------------------------------------------

@@ -19,6 +19,14 @@
 </div>
 {% endif %}
 
+{% if coaching_alerts %}
+{% for alert in coaching_alerts %}
+<div class="danger-banner danger-{{ alert.level }}" role="alert">
+  {{ alert.text }}
+</div>
+{% endfor %}
+{% endif %}
+
 <div class="stat-grid">
   <div class="stat-box">
     <div class="num live-hp" style="color:{% if run.current_hp < run.max_hp * 0.3 %}var(--red){% elif run.current_hp < run.max_hp * 0.6 %}var(--yellow){% else %}var(--green){% endif %}">{{ run.current_hp }}/{{ run.max_hp }}</div>

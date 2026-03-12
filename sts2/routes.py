@@ -21,19 +21,39 @@ router = APIRouter()
 
 
 async def _get_live_run(player: int = 0) -> CurrentRun:
-    """Get the best available live run data.
+    """Get the best available live run data, merging save + log sources.
 
-    Priority: save file (has HP) > log parser (has deck/floor/gold).
-    Merges log data into save data when both are available.
+    Save provides: HP, relics, floors, deck_upgrades, run_time, events_seen.
+    Log provides: fresher deck, gold, potions, act, floor (updates mid-combat).
+    When both are active, merge log's fresher fields into save's complete state.
     """
     run = await asyncio.to_thread(get_current_run, player_index=player)
-    if run.active:
-        return run  # Save file has full data including HP
 
-    # No save file — check the log parser for live state
     from sts2.app import _log_run_state
-    if _log_run_state and _log_run_state.get("active"):
-        return CurrentRun(**_log_run_state)
+    log_active = _log_run_state and _log_run_state.get("active")
+
+    if run.active and log_active:
+        # Both sources — merge log's fresher data into save's complete state
+        log = _log_run_state
+        merged = run.model_dump()
+        if log.get("deck"):
+            merged["deck"] = log["deck"]
+            merged["deck_upgrades"] = [False] * len(log["deck"])
+        if log.get("gold", 0) > 0:
+            merged["gold"] = log["gold"]
+        if log.get("potions"):
+            merged["potions"] = log["potions"]
+        if log.get("floor", 0) > 0:
+            merged["floor"] = log["floor"]
+        if log.get("act", 1) > merged.get("act", 1):
+            merged["act"] = log["act"]
+        return CurrentRun(**merged)
+
+    if run.active:
+        return run  # Save file only
+
+    if log_active:
+        return CurrentRun(**_log_run_state)  # Log parser only
 
     return run  # No active run from either source
 
@@ -373,7 +393,7 @@ async def compare_runs(request: Request,
 
     return a.templates.TemplateResponse(request, "compare.html", {
         "run_a": run_a, "run_b": run_b, "kb": a.kb,
-        "analysis_a": analyze_run(run_a), "analysis_b": analyze_run(run_b),
+        "analysis_a": analyze_run(run_a, kb=a.kb), "analysis_b": analyze_run(run_b, kb=a.kb),
         "deck_diff": deck_diff, "relic_diff": relic_diff,
         "stats_a": run_stats(run_a), "stats_b": run_stats(run_b),
     })
@@ -388,7 +408,7 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Run '{run_id[:100]}' not found.",
         }, status_code=404)
-    run_analysis = analyze_run(run)
+    run_analysis = analyze_run(run, kb=a.kb)
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "kb": a.kb, "run_analysis": run_analysis,
     })
@@ -417,7 +437,7 @@ async def export_run_html(run_id: str = Path(max_length=200)):
     run = await a._get_run_by_id(run_id)
     if not run:
         return PlainTextResponse("Run not found.", status_code=404)
-    run_analysis = analyze_run(run)
+    run_analysis = analyze_run(run, kb=a.kb)
     css_path = STATIC_DIR / "style.css"
     css_content = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
     html = a.templates.env.get_template("run_export.html").render(
@@ -466,7 +486,7 @@ async def import_run(request: Request, file: UploadFile = File(...),
             "error_code": 400,
             "error_message": "Invalid run file format.",
         }, status_code=400)
-    run_analysis = analyze_run(run)
+    run_analysis = analyze_run(run, kb=a.kb)
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "run_analysis": run_analysis, "kb": a.kb, "imported": True,
     })
@@ -475,13 +495,16 @@ async def import_run(request: Request, file: UploadFile = File(...),
 @router.get("/analytics", response_class=HTMLResponse)
 async def analytics(request: Request,
                     ascension: int = Query(None, ge=0, le=20)):
+    from sts2.analytics import analyze_run_patterns
     a = _app()
     runs = await a._get_runs()
     ascension_levels = sorted({r.ascension for r in runs})
     stats = await a._get_analytics(ascension=ascension)
+    run_patterns = analyze_run_patterns(runs, kb=a.kb)
     return a.templates.TemplateResponse(request, "analytics.html", {
         "stats": stats, "kb": a.kb,
         "selected_ascension": ascension, "ascension_levels": ascension_levels,
+        "run_patterns": run_patterns,
     })
 
 
@@ -583,6 +606,8 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
     last_enemy_name = ""
     synergy_hints = []
 
+    coaching_alerts = []
+
     if run.active and run.deck:
         try:
             analysis = a.kb.analyze_deck(run.deck)
@@ -678,6 +703,64 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
         except Exception:
             _log.debug("Coaching: synergy hints failed", exc_info=True)
 
+        # Defensive gap warning — no Block/defense by floor threshold
+        try:
+            if run.floor >= 4 and analysis:
+                kw_freq = dict(analysis.get("top_keywords", []))
+                has_defense = any(k in kw_freq for k in ("Block", "Dexterity", "Frost"))
+                if not has_defense:
+                    severity = "critical" if run.floor >= 8 else "warning"
+                    coaching_alerts.append({
+                        "level": severity,
+                        "text": f"No defensive cards by floor {run.floor} — pick Block/Frost cards to survive elite fights.",
+                    })
+        except Exception:
+            _log.debug("Coaching: defensive gap alert failed", exc_info=True)
+
+        # Card fatigue — flag over-stacking
+        try:
+            from collections import Counter as _Counter
+            card_counts = _Counter(run.deck)
+            for card_id, count in card_counts.items():
+                if count >= 3:
+                    card_name = a.kb.id_to_name(card_id)
+                    coaching_alerts.append({
+                        "level": "warning",
+                        "text": f"{card_name} appears {count}x in deck — diminishing returns, consider diversifying.",
+                    })
+        except Exception:
+            _log.debug("Coaching: card fatigue failed", exc_info=True)
+
+        # Energy efficiency — avg cost too high for default 3 energy
+        try:
+            if analysis and analysis.get("avg_cost", 0) > 1.8:
+                coaching_alerts.append({
+                    "level": "warning",
+                    "text": f"Average card cost is {analysis['avg_cost']:.1f} — you may not play your full hand. Add 0-cost cards or energy relics.",
+                })
+        except Exception:
+            _log.debug("Coaching: energy efficiency failed", exc_info=True)
+
+        # Boss preparation — approaching boss floor without key tools
+        try:
+            boss_floors = {1: 16, 2: 33, 3: 50}
+            boss_floor = boss_floors.get(run.act, 99)
+            floors_to_boss = boss_floor - run.floor
+            if 0 < floors_to_boss <= 4 and analysis:
+                kw_freq = dict(analysis.get("top_keywords", []))
+                missing = []
+                if not any(k in kw_freq for k in ("Block", "Dexterity", "Frost")):
+                    missing.append("Block/defense")
+                if not any(k in kw_freq for k in ("Strength", "Poison", "Lightning", "Frost")):
+                    missing.append("damage scaling")
+                if missing:
+                    coaching_alerts.append({
+                        "level": "critical",
+                        "text": f"Boss in ~{floors_to_boss} floors — still missing {', '.join(missing)}. Prioritize these picks.",
+                    })
+        except Exception:
+            _log.debug("Coaching: boss prep failed", exc_info=True)
+
     return a.templates.TemplateResponse(request, "live.html", {
         "run": run, "analysis": analysis, "kb": a.kb,
         "selected_player": player, "total_players": run.total_players,
@@ -685,6 +768,7 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
         "danger_level": danger_level, "danger_pct": danger_pct,
         "counter_cards": counter_cards, "last_enemy_name": last_enemy_name,
         "synergy_hints": synergy_hints,
+        "coaching_alerts": coaching_alerts,
     })
 
 

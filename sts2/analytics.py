@@ -361,8 +361,12 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None) -> dict:
     }
 
 
-def analyze_run(run: RunHistory) -> dict:
-    """Generate post-mortem insights for a single run."""
+def analyze_run(run: RunHistory, kb=None) -> dict:
+    """Generate post-mortem insights for a single run.
+
+    Pass kb (KnowledgeBase) for card-type-aware analysis: deck balance,
+    defensive gap detection, and card stacking warnings.
+    """
     insights = []
     total_damage = sum(f.damage_taken for f in run.floors)
     combat_floors = [f for f in run.floors if f.damage_taken > 0]
@@ -408,4 +412,86 @@ def analyze_run(run: RunHistory) -> dict:
         if run.killed_by:
             insights.append({"type": "bad", "text": f"Killed by {run.killed_by} on floor {len(run.floors)}."})
 
+    # KB-powered insights: deck balance, defensive gaps, card stacking
+    if kb and run.deck:
+        try:
+            typed = [kb.get_card_by_id(c) for c in run.deck]
+            typed = [c for c in typed if c]
+            if typed:
+                n = len(typed)
+                skl = sum(1 for c in typed if getattr(c, "type", "") == "Skill")
+                skl_pct = round(skl / n * 100)
+                if skl_pct < 20:
+                    insights.append({"type": "warning",
+                        "text": f"Only {skl_pct}% Skills ({skl}/{n}) — severely limited defense. Winning decks average ~40% Skills."})
+                elif skl_pct < 30:
+                    insights.append({"type": "warning",
+                        "text": f"{skl_pct}% Skills ({skl}/{n}) — below average defense."})
+
+                # Defensive gap
+                kw_set = set()
+                for c in typed:
+                    kw_set.update(getattr(c, "keywords", []))
+                has_block = any(k in kw_set for k in ("Block", "Dexterity", "Frost"))
+                if not has_block:
+                    severity = "bad" if not run.win else "warning"
+                    insights.append({"type": severity,
+                        "text": "Zero Block/defensive keywords in entire deck — this is the #1 cause of early deaths."})
+        except Exception:
+            pass
+
+        # Card stacking
+        try:
+            stacked = [(cid, cnt) for cid, cnt in Counter(run.deck).items() if cnt >= 3]
+            if stacked:
+                names = [kb.id_to_name(cid) for cid, _ in stacked[:3]]
+                insights.append({"type": "warning",
+                    "text": f"Card stacking: {', '.join(names)} — diminishing returns from duplicates."})
+        except Exception:
+            pass
+
     return {"insights": insights}
+
+
+def analyze_run_patterns(runs: list[RunHistory], kb=None) -> list[dict]:
+    """Detect recurring patterns across multiple runs."""
+    if len(runs) < 3:
+        return []
+
+    patterns = []
+    recent = runs[:10]
+
+    # Pattern: consistently skipping defense
+    if kb:
+        defense_skip = 0
+        for run in recent:
+            typed = [kb.get_card_by_id(c) for c in run.deck]
+            typed = [c for c in typed if c]
+            kw_set = set()
+            for c in typed:
+                kw_set.update(getattr(c, "keywords", []))
+            if not any(k in kw_set for k in ("Block", "Dexterity", "Frost")):
+                defense_skip += 1
+        if defense_skip >= len(recent) * 0.6:
+            patterns.append({
+                "type": "recurring",
+                "text": f"Defense neglected in {defense_skip}/{len(recent)} recent runs — this is a consistent blind spot.",
+                "severity": "high",
+            })
+
+    # Pattern: dying in same act repeatedly
+    death_acts: Counter = Counter()
+    for run in recent:
+        if not run.win and run.floors:
+            n = len(run.floors)
+            act = 3 if n > 34 else 2 if n > 17 else 1
+            death_acts[act] += 1
+    for act, count in death_acts.items():
+        if count >= 3:
+            patterns.append({
+                "type": "recurring",
+                "text": f"Died in Act {act} in {count} of your last {len(recent)} runs — review Act {act} strategy.",
+                "severity": "medium",
+            })
+
+    return patterns

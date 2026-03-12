@@ -1674,7 +1674,7 @@ async def test_analytics_single_card_filtered():
 
 
 async def test_get_live_run_save_active():
-    """When save file has active run, return it directly."""
+    """When save file has active run and no log, return save data."""
     from unittest.mock import AsyncMock, patch
 
     from sts2.models import CurrentRun
@@ -1682,12 +1682,42 @@ async def test_get_live_run_save_active():
 
     active_run = CurrentRun(active=True, character="Ironclad", current_hp=50,
                             max_hp=80, gold=100, act=1, floor=5)
-    with patch("sts2.routes.get_current_run", return_value=active_run), \
-         patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
-               return_value=active_run):
+    with patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
+               return_value=active_run), \
+         patch("sts2.app._log_run_state", None):
         result = await _get_live_run()
     assert result.active is True
     assert result.character == "Ironclad"
+    assert result.current_hp == 50
+
+
+async def test_get_live_run_merge_both_active():
+    """When both save and log are active, merge: save HP + log deck/gold."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import CurrentRun
+    from sts2.routes import _get_live_run
+
+    save_run = CurrentRun(active=True, character="Defect", current_hp=60,
+                          max_hp=80, gold=50, act=1, floor=3,
+                          relics=["RELIC.CRACKED_CORE"])
+    log_state = {"active": True, "character": "Defect", "current_hp": 0,
+                 "max_hp": 0, "gold": 120, "act": 1, "floor": 5,
+                 "deck": ["CARD.BEAM_CELL", "CARD.TEMPEST"],
+                 "potions": ["POTION.POWER_POTION"]}
+    with patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
+               return_value=save_run), \
+         patch("sts2.app._log_run_state", log_state):
+        result = await _get_live_run()
+    # Save provides HP and relics
+    assert result.current_hp == 60
+    assert result.max_hp == 80
+    assert "RELIC.CRACKED_CORE" in result.relics
+    # Log provides fresher deck, gold, potions, floor
+    assert result.deck == ["CARD.BEAM_CELL", "CARD.TEMPEST"]
+    assert result.gold == 120
+    assert result.potions == ["POTION.POWER_POTION"]
+    assert result.floor == 5
 
 
 async def test_get_live_run_log_only():
@@ -1870,3 +1900,201 @@ async def test_watch_saves_polling_fallback():
             pass
 
     assert call_count >= 2  # Confirms polling loop ran
+
+
+# ---------------------------------------------------------------------------
+# Coaching alerts (live page)
+# ---------------------------------------------------------------------------
+
+
+async def test_coaching_defensive_gap_warning(client):
+    """Floor ≥4 with no Block keywords should produce a warning alert."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import CurrentRun
+
+    run = CurrentRun(active=True, character="Defect", current_hp=60, max_hp=80,
+                     gold=50, act=1, floor=5,
+                     deck=["CARD.ZAP", "CARD.ZAP", "CARD.BEAM_CELL"])
+    with patch("sts2.routes._get_live_run", new_callable=AsyncMock,
+               return_value=run):
+        resp = await client.get("/live")
+    assert resp.status_code == 200
+    assert "No defensive cards by floor" in resp.text
+
+
+async def test_coaching_defensive_gap_critical(client):
+    """Floor ≥8 with no defense should escalate to critical."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import CurrentRun
+
+    run = CurrentRun(active=True, character="Defect", current_hp=60, max_hp=80,
+                     gold=50, act=1, floor=10,
+                     deck=["CARD.ZAP", "CARD.ZAP", "CARD.BEAM_CELL"])
+    with patch("sts2.routes._get_live_run", new_callable=AsyncMock,
+               return_value=run):
+        resp = await client.get("/live")
+    assert resp.status_code == 200
+    assert "danger-critical" in resp.text
+    assert "No defensive cards by floor" in resp.text
+
+
+async def test_coaching_card_fatigue(client):
+    """3+ copies of same card should trigger fatigue warning."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import CurrentRun
+
+    run = CurrentRun(active=True, character="Defect", current_hp=60, max_hp=80,
+                     gold=50, act=1, floor=5,
+                     deck=["CARD.ZAP", "CARD.ZAP", "CARD.ZAP", "CARD.BEAM_CELL"])
+    with patch("sts2.routes._get_live_run", new_callable=AsyncMock,
+               return_value=run):
+        resp = await client.get("/live")
+    assert resp.status_code == 200
+    assert "appears 3x in deck" in resp.text
+    assert "diminishing returns" in resp.text
+
+
+async def test_coaching_boss_prep(client):
+    """Approaching boss floor without defense should warn."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import CurrentRun
+
+    run = CurrentRun(active=True, character="Defect", current_hp=60, max_hp=80,
+                     gold=50, act=1, floor=13,
+                     deck=["CARD.ZAP", "CARD.ZAP", "CARD.BEAM_CELL"])
+    with patch("sts2.routes._get_live_run", new_callable=AsyncMock,
+               return_value=run):
+        resp = await client.get("/live")
+    assert resp.status_code == 200
+    assert "Boss in" in resp.text
+    assert "Block/defense" in resp.text
+
+
+# ---------------------------------------------------------------------------
+# Enhanced analyze_run + analyze_run_patterns
+# ---------------------------------------------------------------------------
+
+
+def test_analyze_run_low_skills():
+    """All-attack deck should warn about low Skill percentage."""
+    from unittest.mock import MagicMock
+
+    from sts2.analytics import analyze_run
+    from sts2.models import RunHistory
+
+    kb = MagicMock()
+
+    def make_card(type_):
+        card = MagicMock()
+        card.type = type_
+        card.keywords = []
+        return card
+
+    # 8 attacks, 1 skill, 1 power = 10% skills
+    cards = ["CARD.A"] * 8 + ["CARD.S"] + ["CARD.P"]
+    kb.get_card_by_id.side_effect = lambda cid: (
+        make_card("Attack") if "A" in cid else
+        make_card("Skill") if "S" in cid else
+        make_card("Power"))
+
+    run = RunHistory(id="test", character="Defect", win=False, deck=cards,
+                     relics=[], floors=[], run_time=600, ascension=0)
+    result = analyze_run(run, kb=kb)
+    texts = [i["text"] for i in result["insights"]]
+    assert any("Skills" in t and "severely" in t.lower() for t in texts)
+
+
+def test_analyze_run_no_defense():
+    """Deck with no Block keywords should flag defensive gap."""
+    from unittest.mock import MagicMock
+
+    from sts2.analytics import analyze_run
+    from sts2.models import RunHistory
+
+    kb = MagicMock()
+    card = MagicMock()
+    card.type = "Attack"
+    card.keywords = ["Damage"]
+    kb.get_card_by_id.return_value = card
+
+    run = RunHistory(id="test", character="Defect", win=False,
+                     deck=["CARD.A"] * 5, relics=[], floors=[],
+                     run_time=600, ascension=0)
+    result = analyze_run(run, kb=kb)
+    texts = [i["text"] for i in result["insights"]]
+    assert any("Block/defensive" in t for t in texts)
+
+
+def test_analyze_run_card_stacking():
+    """3+ copies of same card should warn about stacking."""
+    from unittest.mock import MagicMock
+
+    from sts2.analytics import analyze_run
+    from sts2.models import RunHistory
+
+    kb = MagicMock()
+    card = MagicMock()
+    card.type = "Attack"
+    card.keywords = ["Block"]
+    kb.get_card_by_id.return_value = card
+    kb.id_to_name.return_value = "Zap"
+
+    run = RunHistory(id="test", character="Defect", win=False,
+                     deck=["CARD.ZAP"] * 4 + ["CARD.OTHER"],
+                     relics=[], floors=[], run_time=600, ascension=0)
+    result = analyze_run(run, kb=kb)
+    texts = [i["text"] for i in result["insights"]]
+    assert any("Card stacking" in t for t in texts)
+
+
+def test_analyze_run_without_kb():
+    """Without kb, analyze_run should produce existing insights only."""
+    from sts2.analytics import analyze_run
+    from sts2.models import RunHistory
+
+    run = RunHistory(id="test", character="Defect", win=True,
+                     deck=["CARD.A"] * 5, relics=["R1"] * 8,
+                     floors=[], run_time=600, ascension=0)
+    result = analyze_run(run)
+    # Should still work without kb
+    assert "insights" in result
+    # No KB-powered insights about Skills percentage
+    texts = [i["text"] for i in result["insights"]]
+    assert not any("Skills" in t for t in texts)
+
+
+def test_analyze_run_patterns_defense_neglect():
+    """6/10 runs with no defense should produce a recurring pattern."""
+    from unittest.mock import MagicMock
+
+    from sts2.analytics import analyze_run_patterns
+    from sts2.models import RunHistory
+
+    kb = MagicMock()
+    # All cards have no defensive keywords
+    card = MagicMock()
+    card.keywords = ["Damage"]
+    kb.get_card_by_id.return_value = card
+
+    runs = [RunHistory(id=f"r{i}", character="Defect", win=False,
+                       deck=["CARD.A"] * 5, relics=[], floors=[],
+                       run_time=600, ascension=0)
+            for i in range(8)]
+    patterns = analyze_run_patterns(runs, kb=kb)
+    assert len(patterns) >= 1
+    assert any("Defense neglected" in p["text"] for p in patterns)
+
+
+def test_analyze_run_patterns_insufficient_runs():
+    """Fewer than 3 runs should return empty patterns."""
+    from sts2.analytics import analyze_run_patterns
+    from sts2.models import RunHistory
+
+    runs = [RunHistory(id="r1", character="Defect", win=False,
+                       deck=["CARD.A"], relics=[], floors=[],
+                       run_time=600, ascension=0)]
+    assert analyze_run_patterns(runs) == []
