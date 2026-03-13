@@ -37,6 +37,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Run History** — Floor-by-floor breakdown of completed runs with HP tracking, card picks, and damage taken. Import/export runs as JSON or standalone HTML.
 - **Run Comparison** — Side-by-side comparison of two runs with deck diff, relic diff, and stat comparison
 - **Collections** — Track card/relic discovery progress with ascension filtering
+- **Epochs** — Track all 49 epoch unlock requirements, see what's locked/unlocked, filter by category and character
 - **Co-op Support** — Track any player in a multiplayer run via `?player=N`
 
 ### Analyze & Compete
@@ -57,7 +58,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Download (No Python Required)
 
-**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.2.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.3.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
 
 ### From Source
 
@@ -185,9 +186,9 @@ sts2/
   updater.py         # Auto-update checker
   watcher.py         # File watcher with debounce + polling fallback
   data/              # JSON game data + mods
-  templates/         # Jinja2 HTML templates (21 templates)
+  templates/         # Jinja2 HTML templates (22 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 494 tests (pytest + pytest-asyncio)
+tests/               # 565 tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements
