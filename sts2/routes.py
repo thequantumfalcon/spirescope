@@ -524,6 +524,43 @@ async def community(request: Request):
     })
 
 
+@router.get("/epochs", response_class=HTMLResponse)
+async def epochs_page(request: Request, category: str = Query(None, max_length=50),
+                      character: str = Query(None, max_length=50)):
+    a = _app()
+    progress = await a._get_progress()
+    epoch_list = a.kb.get_epochs(category=category, character=character)
+
+    # Merge static data with save state
+    epoch_states = {}
+    if progress:
+        for e in progress.epochs:
+            epoch_states[e["id"]] = e
+
+    from datetime import datetime, timezone
+    epochs_with_state = []
+    for ep in epoch_list:
+        state_data = epoch_states.get(ep.id, {})
+        ts = state_data.get("obtain_date", 0)
+        date_str = ""
+        if ts > 0:
+            date_str = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%b %d, %Y")
+        epochs_with_state.append({
+            "epoch": ep,
+            "state": state_data.get("state", "not_obtained"),
+            "date": date_str,
+        })
+
+    unlocked = sum(1 for e in epochs_with_state if e["state"] == "revealed")
+    total = len(epochs_with_state)
+
+    return a.templates.TemplateResponse(request, "epochs.html", {
+        "epochs": epochs_with_state, "unlocked": unlocked, "total": total,
+        "selected_category": category, "selected_character": character,
+        "characters": CHARACTERS, "progress": progress,
+    })
+
+
 @router.get("/collections", response_class=HTMLResponse)
 async def collections(request: Request):
     a = _app()

@@ -1,0 +1,443 @@
+[
+  {
+    "id": "NEOW_EPOCH",
+    "name": "Neow",
+    "category": "core",
+    "character": "",
+    "requirement": "Finish your very first run",
+    "unlocks": ["Neow (Ancient)"],
+    "unlock_type": "ancient"
+  },
+  {
+    "id": "SILENT1_EPOCH",
+    "name": "Fog Rolls In",
+    "category": "character",
+    "character": "Silent",
+    "requirement": "Play one run with Ironclad",
+    "unlocks": ["Silent (Character)"],
+    "unlock_type": "character"
+  },
+  {
+    "id": "REGENT1_EPOCH",
+    "name": "Anomalous Planet",
+    "category": "character",
+    "character": "Regent",
+    "requirement": "Play one run with Silent",
+    "unlocks": ["Regent (Character)"],
+    "unlock_type": "character"
+  },
+  {
+    "id": "NECROBINDER1_EPOCH",
+    "name": "Life and Death",
+    "category": "character",
+    "character": "Necrobinder",
+    "requirement": "Play one run with Regent",
+    "unlocks": ["Necrobinder (Character)"],
+    "unlock_type": "character"
+  },
+  {
+    "id": "DEFECT1_EPOCH",
+    "name": "Booting Up",
+    "category": "character",
+    "character": "Defect",
+    "requirement": "Play one run with Necrobinder",
+    "unlocks": ["Defect (Character)"],
+    "unlock_type": "character"
+  },
+  {
+    "id": "IRONCLAD2_EPOCH",
+    "name": "The Ironclad",
+    "category": "character",
+    "character": "Ironclad",
+    "requirement": "Beat Act 1 with Ironclad",
+    "unlocks": ["Molten Fist", "Dominate", "Cruelty"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "IRONCLAD3_EPOCH",
+    "name": "Devastation",
+    "category": "character",
+    "character": "Ironclad",
+    "requirement": "Beat Act 2 with Ironclad",
+    "unlocks": ["Red Skull", "Paper Phrog", "Ruined Helmet"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "IRONCLAD4_EPOCH",
+    "name": "The Pact",
+    "category": "character",
+    "character": "Ironclad",
+    "requirement": "Beat Act 3 with Ironclad",
+    "unlocks": ["Blood", "Ashwater", "Soldier's Stew"],
+    "unlock_type": "potions"
+  },
+  {
+    "id": "IRONCLAD5_EPOCH",
+    "name": "Ablaze",
+    "category": "character",
+    "character": "Ironclad",
+    "requirement": "Kill 15 Elites with Ironclad",
+    "unlocks": ["Cinder", "Drum of Battle", "Pact's End"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "IRONCLAD6_EPOCH",
+    "name": "Snuffed",
+    "category": "character",
+    "character": "Ironclad",
+    "requirement": "Kill 15 Bosses with Ironclad",
+    "unlocks": ["Self-Forming Clay", "Charon's Ashes", "Demon Tongue"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "IRONCLAD7_EPOCH",
+    "name": "My Face",
+    "category": "character",
+    "character": "Ironclad",
+    "requirement": "Beat Ascension 1 with Ironclad",
+    "unlocks": ["Blood Wall", "Inferno", "Tear Asunder"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "SILENT2_EPOCH",
+    "name": "Bigger Prey",
+    "category": "character",
+    "character": "Silent",
+    "requirement": "Beat Act 1 with Silent",
+    "unlocks": ["Snakebite", "Bubble Bubble", "Accelerant"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "SILENT3_EPOCH",
+    "name": "Ill",
+    "category": "character",
+    "character": "Silent",
+    "requirement": "Beat Act 2 with Silent",
+    "unlocks": ["Tingsha", "Tough Bandages", "Paper Krane"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "SILENT4_EPOCH",
+    "name": "Trophies",
+    "category": "character",
+    "character": "Silent",
+    "requirement": "Beat Act 3 with Silent",
+    "unlocks": ["Poison", "Cunning", "Ghost in a Jar"],
+    "unlock_type": "potions"
+  },
+  {
+    "id": "SILENT5_EPOCH",
+    "name": "Nemesis",
+    "category": "character",
+    "character": "Silent",
+    "requirement": "Kill 15 Bosses with Silent",
+    "unlocks": ["Snecko Skull", "Twisted Funnel", "Helical Dart"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "SILENT6_EPOCH",
+    "name": "Poisoner",
+    "category": "character",
+    "character": "Silent",
+    "requirement": "Kill 15 Elites with Silent",
+    "unlocks": ["Reflex", "Hand Trick", "Master Planner"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "SILENT7_EPOCH",
+    "name": "Soup",
+    "category": "character",
+    "character": "Silent",
+    "requirement": "Beat Ascension 1 with Silent",
+    "unlocks": ["Hidden Daggers", "Phantom Blades", "Blade of Ink"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "REGENT2_EPOCH",
+    "name": "I Arrive",
+    "category": "character",
+    "character": "Regent",
+    "requirement": "Beat Act 1 with Regent",
+    "unlocks": ["Spoils of Battle", "Furnace", "Sword Sage"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "REGENT3_EPOCH",
+    "name": "We Need a Hero!",
+    "category": "character",
+    "character": "Regent",
+    "requirement": "Beat Act 2 with Regent",
+    "unlocks": ["Fencing Manual", "Galactic Dust", "Lunar Pastry"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "REGENT4_EPOCH",
+    "name": "Grand Strategy",
+    "category": "character",
+    "character": "Regent",
+    "requirement": "Beat Act 3 with Regent",
+    "unlocks": ["Star", "King's Courage", "Cosmic Concoction"],
+    "unlock_type": "potions"
+  },
+  {
+    "id": "REGENT5_EPOCH",
+    "name": "Discontent",
+    "category": "character",
+    "character": "Regent",
+    "requirement": "Kill 15 Bosses with Regent",
+    "unlocks": ["Regalite", "Mini Regent", "Orange Dough"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "REGENT6_EPOCH",
+    "name": "Friends",
+    "category": "character",
+    "character": "Regent",
+    "requirement": "Kill 15 Elites with Regent",
+    "unlocks": ["BEGONE!", "Supermassive", "Arsenal"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "REGENT7_EPOCH",
+    "name": "Little King",
+    "category": "character",
+    "character": "Regent",
+    "requirement": "Beat Ascension 1 with Regent",
+    "unlocks": ["Patter", "Lunar Blast", "Heavenly Drill"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "NECROBINDER2_EPOCH",
+    "name": "The Twelve",
+    "category": "character",
+    "character": "Necrobinder",
+    "requirement": "Beat Act 1 with Necrobinder",
+    "unlocks": ["Scourge", "Countdown", "Oblivion"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "NECROBINDER3_EPOCH",
+    "name": "Futility",
+    "category": "character",
+    "character": "Necrobinder",
+    "requirement": "Beat Act 2 with Necrobinder",
+    "unlocks": ["Bone Flute", "Funerary Mask", "Book Repair Knife"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "NECROBINDER4_EPOCH",
+    "name": "Spireborn",
+    "category": "character",
+    "character": "Necrobinder",
+    "requirement": "Beat Act 3 with Necrobinder",
+    "unlocks": ["Potion of Doom", "Bone Brew", "Pot of Ghouls"],
+    "unlock_type": "potions"
+  },
+  {
+    "id": "NECROBINDER5_EPOCH",
+    "name": "Annihilation",
+    "category": "character",
+    "character": "Necrobinder",
+    "requirement": "Kill 15 Bosses with Necrobinder",
+    "unlocks": ["Ivory Tile", "Big Hat", "Bookmark"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "NECROBINDER6_EPOCH",
+    "name": "The Giant",
+    "category": "character",
+    "character": "Necrobinder",
+    "requirement": "Kill 15 Elites with Necrobinder",
+    "unlocks": ["Afterlife", "Calcify", "Sacrifice"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "NECROBINDER7_EPOCH",
+    "name": "To Kill",
+    "category": "character",
+    "character": "Necrobinder",
+    "requirement": "Beat Ascension 1 with Necrobinder",
+    "unlocks": ["Sculpting Strike", "Veilpiercer", "Banshee's Cry"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "DEFECT2_EPOCH",
+    "name": "Tricked",
+    "category": "character",
+    "character": "Defect",
+    "requirement": "Beat Act 1 with Defect",
+    "unlocks": ["Loop", "Null", "Consuming Shadow"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "DEFECT3_EPOCH",
+    "name": "Hello! Hello!",
+    "category": "character",
+    "character": "Defect",
+    "requirement": "Beat Act 2 with Defect",
+    "unlocks": ["Data Disk", "Symbiotic Virus", "Metronome"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "DEFECT4_EPOCH",
+    "name": "Resolving Bugs",
+    "category": "character",
+    "character": "Defect",
+    "requirement": "Beat Act 3 with Defect",
+    "unlocks": ["Focus", "Potion of Capacity", "Essence of Darkness"],
+    "unlock_type": "potions"
+  },
+  {
+    "id": "DEFECT5_EPOCH",
+    "name": "Laser Beams",
+    "category": "character",
+    "character": "Defect",
+    "requirement": "Kill 15 Bosses with Defect",
+    "unlocks": ["Gold-Plated Cables", "Emotion Chip", "Power Cell"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "DEFECT6_EPOCH",
+    "name": "Confrontation",
+    "category": "character",
+    "character": "Defect",
+    "requirement": "Kill 15 Elites with Defect",
+    "unlocks": ["Barrage", "Smokestack", "Flak Cannon"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "DEFECT7_EPOCH",
+    "name": "Ooh Shiny!",
+    "category": "character",
+    "character": "Defect",
+    "requirement": "Beat Ascension 1 with Defect",
+    "unlocks": ["TURBO", "Scavenge", "Heelix Drill"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "OROBAS_EPOCH",
+    "name": "Orobas",
+    "category": "ancient",
+    "character": "",
+    "requirement": "Play a run with every character",
+    "unlocks": ["Orobas (Ancient)"],
+    "unlock_type": "ancient"
+  },
+  {
+    "id": "DARV_EPOCH",
+    "name": "Darv",
+    "category": "ancient",
+    "character": "",
+    "requirement": "Encounter all other Ancients in the game",
+    "unlocks": ["Darv (Ancient)"],
+    "unlock_type": "ancient"
+  },
+  {
+    "id": "UNDERDOCKS_EPOCH",
+    "name": "Underdocks",
+    "category": "act",
+    "character": "",
+    "requirement": "Accumulate score across runs",
+    "unlocks": ["Underdocks (Alternate Act 1)"],
+    "unlock_type": "act"
+  },
+  {
+    "id": "ACT2_B_EPOCH",
+    "name": "Elsewhere \u2014 Slumber",
+    "category": "act",
+    "character": "",
+    "requirement": "Accumulate score across runs",
+    "unlocks": ["Alternate Act 2 path"],
+    "unlock_type": "act"
+  },
+  {
+    "id": "CUSTOM_AND_SEEDS_EPOCH",
+    "name": "Seeds",
+    "category": "mode",
+    "character": "",
+    "requirement": "Beat Act 3 three separate times",
+    "unlocks": ["Custom Game Mode", "Seeded Runs"],
+    "unlock_type": "mode"
+  },
+  {
+    "id": "DAILY_RUN_EPOCH",
+    "name": "The Daily",
+    "category": "mode",
+    "character": "",
+    "requirement": "Beat Act 3 at least once with all five characters",
+    "unlocks": ["Daily Climb mode"],
+    "unlock_type": "mode"
+  },
+  {
+    "id": "COLORLESS1_EPOCH",
+    "name": "Preon",
+    "category": "score",
+    "character": "",
+    "requirement": "Accumulate score across runs",
+    "unlocks": ["Automation", "Catastrophe", "Entropy"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "COLORLESS2_EPOCH",
+    "name": "The Architect",
+    "category": "score",
+    "character": "",
+    "requirement": "Accumulate score across runs",
+    "unlocks": ["Prep Time", "Eternal Armor", "Jackpot"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "COLORLESS3_EPOCH",
+    "name": "Traitors",
+    "category": "score",
+    "character": "",
+    "requirement": "Accumulate score across runs",
+    "unlocks": ["Prowess", "Rend", "Beat Down"],
+    "unlock_type": "cards"
+  },
+  {
+    "id": "RELIC1_EPOCH",
+    "name": "Scribbles",
+    "category": "score",
+    "character": "",
+    "requirement": "Accumulate score across runs",
+    "unlocks": ["Reptile Trinket", "Unsettling Lamp", "Intimidating Helmet"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "RELIC2_EPOCH",
+    "name": "Ancients",
+    "category": "score",
+    "character": "",
+    "requirement": "Accumulate score across runs",
+    "unlocks": ["Book of Five Rings", "Kusarigama", "Ice Cream"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "RELIC3_EPOCH",
+    "name": "Consequences",
+    "category": "score",
+    "character": "",
+    "requirement": "Accumulate score across runs",
+    "unlocks": ["Miniature Cannon", "Tungsten Ron", "White Star"],
+    "unlock_type": "relics"
+  },
+  {
+    "id": "POTION1_EPOCH",
+    "name": "Open",
+    "category": "score",
+    "character": "",
+    "requirement": "Accumulate score across runs",
+    "unlocks": ["Beetle Juice", "Mazaleth's Gift", "Droplet of Precognition"],
+    "unlock_type": "potions"
+  },
+  {
+    "id": "POTION2_EPOCH",
+    "name": "Buy Something!",
+    "category": "score",
+    "character": "",
+    "requirement": "Accumulate score across runs",
+    "unlocks": ["Splash", "Anointed", "Calamity"],
+    "unlock_type": "cards"
+  }
+]

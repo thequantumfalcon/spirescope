@@ -331,3 +331,28 @@ class TestSuggest:
         card = kb.cards[0]
         suggestions = kb.suggest(card.name)
         assert card.name in suggestions
+
+
+class TestEpochs:
+    def test_epochs_loaded(self, kb):
+        assert len(kb.epochs) > 0
+
+    def test_get_epoch_by_id(self, kb):
+        epoch = kb.epochs[0]
+        result = kb.get_epoch_by_id(epoch.id)
+        assert result is not None
+        assert result.id == epoch.id
+        assert result.name == epoch.name
+
+    def test_get_epochs_filter_category(self, kb):
+        character_epochs = kb.get_epochs(category="character")
+        assert len(character_epochs) > 0
+        assert all(e.category == "character" for e in character_epochs)
+
+    def test_get_epochs_filter_character(self, kb):
+        ironclad_epochs = kb.get_epochs(character="Ironclad")
+        assert len(ironclad_epochs) > 0
+        assert all(e.character.lower() == "ironclad" for e in ironclad_epochs)
+
+    def test_get_epoch_by_id_missing(self, kb):
+        assert kb.get_epoch_by_id("NONEXISTENT_EPOCH") is None

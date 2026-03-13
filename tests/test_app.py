@@ -2098,3 +2098,59 @@ def test_analyze_run_patterns_insufficient_runs():
                        deck=["CARD.A"], relics=[], floors=[],
                        run_time=600, ascension=0)]
     assert analyze_run_patterns(runs) == []
+
+
+# --- Epochs page ---
+
+
+async def test_epochs_page_loads(client):
+    """Epochs page should return 200 and contain heading."""
+    resp = await client.get("/epochs")
+    assert resp.status_code == 200
+    assert "Epochs" in resp.text
+
+
+async def test_epochs_no_progress(client):
+    """Epochs page without progress should show empty state."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_progress", new=AsyncMock(return_value=None)):
+        resp = await client.get("/epochs")
+    assert resp.status_code == 200
+    assert "No save data found" in resp.text
+
+
+async def test_epochs_filter_by_category(client):
+    """Epochs page should accept category filter."""
+    resp = await client.get("/epochs?category=character")
+    assert resp.status_code == 200
+    assert "Character" in resp.text
+
+
+async def test_epochs_with_progress(client):
+    """Epochs page with progress should show unlock status."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import PlayerProgress
+
+    progress = PlayerProgress(
+        epochs=[
+            {"id": "NEOW_EPOCH", "state": "revealed", "obtain_date": 1772861383},
+            {"id": "IRONCLAD2_EPOCH", "state": "not_obtained", "obtain_date": 0},
+        ],
+    )
+    with patch("sts2.app._get_progress", new=AsyncMock(return_value=progress)):
+        resp = await client.get("/epochs")
+    assert resp.status_code == 200
+    assert "stat-box" in resp.text
+    # Unlocked epoch should show checkmark
+    assert "&#10003;" in resp.text
+    # Locked epoch should show requirement
+    assert "Requirement" in resp.text
+
+
+async def test_epochs_nav_link(client):
+    """Nav should include Epochs link."""
+    resp = await client.get("/")
+    assert resp.status_code == 200
+    assert 'href="/epochs"' in resp.text

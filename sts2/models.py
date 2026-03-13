@@ -60,6 +60,16 @@ class Event(BaseModel):
     source: str = "base"
 
 
+class Epoch(BaseModel):
+    id: str
+    name: str
+    category: str = ""  # core, character, score, act, ancient, mode
+    character: str = ""  # which character this relates to (if any)
+    requirement: str = ""  # human-readable unlock condition
+    unlocks: list[str] = []  # names of cards/relics/potions/etc unlocked
+    unlock_type: str = ""  # cards, relics, potions, character, act, ancient, mode
+
+
 class SynergyGroup(BaseModel):
     name: str
     description: str = ""
@@ -138,3 +148,4 @@ class PlayerProgress(BaseModel):
     discovered_relics: list[str] = []
     discovered_potions: list[str] = []
     discovered_events: list[str] = []
+    epochs: list[dict] = []

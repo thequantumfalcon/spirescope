@@ -8,6 +8,7 @@ from sts2.models import (
     Card,
     CharacterStrategy,
     Enemy,
+    Epoch,
     Event,
     EventChoice,
     Potion,
@@ -53,6 +54,7 @@ class KnowledgeBase:
         self.enemies: list[Enemy] = []
         self.events: list[Event] = []
         self.strategies: list[CharacterStrategy] = []
+        self.epochs: list[Epoch] = []
 
         # Community data from Reddit
         self.community_tips: dict[str, list[str]] = {}  # name_lower -> tips
@@ -64,6 +66,7 @@ class KnowledgeBase:
         self._relics_by_id: dict[str, Relic] = {}
         self._potions_by_id: dict[str, Potion] = {}
         self._strategies_by_char: dict[str, CharacterStrategy] = {}
+        self._epochs_by_id: dict[str, Epoch] = {}
 
         # Pre-built search index: list of (searchable_text, type, obj)
         self._search_index: list[tuple[str, str, object]] = []
@@ -133,6 +136,12 @@ class KnowledgeBase:
                 self.strategies.append(CharacterStrategy(**strat_data))
             except Exception as exc:
                 log.warning("Skipping malformed strategy %s: %s", d.get("character", "?"), exc)
+
+        for d in self._load_json("epochs.json"):
+            try:
+                self.epochs.append(Epoch(**d))
+            except Exception as exc:
+                log.warning("Skipping malformed epoch %s: %s", d.get("id", "?"), exc)
 
     def _load_mods(self):
         """Load mod data from JSON files in the mods directory."""
@@ -278,6 +287,8 @@ class KnowledgeBase:
             self._potions_by_id[p.id] = p
         for s in self.strategies:
             self._strategies_by_char[s.character.lower()] = s
+        for ep in self.epochs:
+            self._epochs_by_id[ep.id] = ep
 
         # Build search index with pre-lowered text for fast substring/token matching
         for card in self.cards:
@@ -408,6 +419,17 @@ class KnowledgeBase:
 
     def get_enemy_by_id(self, enemy_id: str) -> Enemy | None:
         return self._enemies_by_id.get(enemy_id)
+
+    def get_epochs(self, category: str = None, character: str = None) -> list[Epoch]:
+        result = self.epochs
+        if category:
+            result = [e for e in result if e.category.lower() == category.lower()]
+        if character:
+            result = [e for e in result if e.character.lower() == character.lower()]
+        return result
+
+    def get_epoch_by_id(self, epoch_id: str) -> Epoch | None:
+        return self._epochs_by_id.get(epoch_id)
 
     def get_enemies(self, act: str = None, enemy_type: str = None) -> list[Enemy]:
         result = self.enemies

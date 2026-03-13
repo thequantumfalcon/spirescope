@@ -386,3 +386,25 @@ class TestGetRunHistory:
         # Should be reverse sorted by filename
         assert runs[0].id == "run_002"
         assert runs[2].id == "run_000"
+
+
+class TestProgressEpochs:
+    def test_progress_includes_epochs(self, tmp_path):
+        """Epochs should be parsed from progress save data."""
+        data = {
+            **MOCK_PROGRESS,
+            "epochs": [
+                {"id": "NEOW_EPOCH", "state": "revealed", "obtain_date": 1772861383},
+                {"id": "SILENT1_EPOCH", "state": "not_obtained", "obtain_date": 0},
+            ],
+        }
+        save_file = tmp_path / "progress.save"
+        save_file.write_text(json.dumps(data))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path):
+            progress = get_progress()
+
+        assert len(progress.epochs) == 2
+        assert progress.epochs[0]["id"] == "NEOW_EPOCH"
+        assert progress.epochs[0]["state"] == "revealed"
+        assert progress.epochs[1]["state"] == "not_obtained"

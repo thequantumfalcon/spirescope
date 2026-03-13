@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block page_id %}epochs{% endblock %}
+{% block title %}Epochs{% endblock %}
+{% block og_title %}Epochs — SpireScope{% endblock %}
+{% block content %}
+<h1>Epochs</h1>
+<p class="text-muted mb-lg">Track your progression through the Spire's timeline. Unlock new cards, relics, potions, characters, and game modes.</p>
+
+{% if not progress %}
+<p class="text-muted mt-lg mb-lg">No save data found. Play some Slay the Spire 2 and your epoch progress will appear here.</p>
+{% else %}
+
+<div class="stat-grid mb-lg">
+  <div class="stat-box">
+    <div class="num">{{ unlocked }}/{{ total }}</div>
+    <div class="label">Epochs</div>
+  </div>
+  <div class="stat-box">
+    <div class="num">{{ ((unlocked / total) * 100)|round(0)|int if total > 0 else 0 }}%</div>
+    <div class="label">Complete</div>
+  </div>
+</div>
+
+{% set epoch_pct = ((unlocked / total) * 100)|round(0)|int if total > 0 else 0 %}
+<div class="collection-bar mb-lg">
+  <div class="collection-bar-fill" style="width:{{ epoch_pct }}%"></div>
+  <span class="collection-bar-label">{{ epoch_pct }}%</span>
+</div>
+
+<div class="filters mb-sm">
+  <a href="/epochs" {% if not selected_category %}class="active"{% endif %}>All</a>
+  <a href="/epochs?category=character" {% if selected_category == 'character' %}class="active"{% endif %}>Character</a>
+  <a href="/epochs?category=score" {% if selected_category == 'score' %}class="active"{% endif %}>Score</a>
+  <a href="/epochs?category=act" {% if selected_category == 'act' %}class="active"{% endif %}>Acts</a>
+  <a href="/epochs?category=ancient" {% if selected_category == 'ancient' %}class="active"{% endif %}>Ancients</a>
+  <a href="/epochs?category=mode" {% if selected_category == 'mode' %}class="active"{% endif %}>Modes</a>
+  <a href="/epochs?category=core" {% if selected_category == 'core' %}class="active"{% endif %}>Core</a>
+</div>
+
+{% if selected_category == 'character' %}
+<div class="filters mb-sm">
+  <a href="/epochs?category=character" {% if not selected_character %}class="active"{% endif %}>All Characters</a>
+  {% for char in characters %}
+  <a href="/epochs?category=character&character={{ char }}"
+     {% if selected_character == char %}class="active"{% endif %}
+     class="{% if selected_character == char %}active {% endif %}char-{{ char|lower }}">{{ char }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="grid grid-2">
+{% for item in epochs %}
+{% set ep = item.epoch %}
+{% set is_unlocked = item.state == 'revealed' %}
+<div class="card {% if is_unlocked %}collection-discovered{% else %}collection-undiscovered{% endif %}">
+  <div class="flex flex-between flex-center mb-xs">
+    <h3 class="mb-0">
+      {% if is_unlocked %}&#10003;{% else %}&#128274;{% endif %}
+      {{ ep.name }}
+    </h3>
+    <span class="tag tag-{{ ep.category }}">{{ ep.category|title }}</span>
+  </div>
+  {% if ep.character %}
+  <p class="text-xs char-{{ ep.character|lower }} mb-xs">{{ ep.character }}</p>
+  {% endif %}
+  {% if is_unlocked %}
+  <p class="text-sm text-muted mb-xs">Unlocked
+    {% if item.date %}
+    {{ item.date }}
+    {% endif %}
+  </p>
+  <p class="text-sm">Unlocked: <strong>{{ ep.unlocks|join(', ') }}</strong>
+    <span class="tag tag-keyword text-xs">{{ ep.unlock_type }}</span>
+  </p>
+  {% else %}
+  <p class="text-sm mb-xs"><strong>Requirement:</strong> {{ ep.requirement }}</p>
+  <p class="text-sm text-muted">Will unlock: {{ ep.unlocks|join(', ') }}
+    <span class="tag tag-keyword text-xs">{{ ep.unlock_type }}</span>
+  </p>
+  {% endif %}
+</div>
+{% endfor %}
+</div>
+
+{% if not epochs %}
+<p class="text-muted mt-lg">No epochs match the selected filters.</p>
+{% endif %}
+
+{% endif %}
+{% endblock %}

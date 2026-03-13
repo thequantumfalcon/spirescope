@@ -193,6 +193,11 @@ def get_progress() -> PlayerProgress | None:
         discovered_relics=data.get("discovered_relics", []),
         discovered_potions=data.get("discovered_potions", []),
         discovered_events=data.get("discovered_events", []),
+        epochs=[
+            {"id": e.get("id", ""), "state": e.get("state", "not_obtained"),
+             "obtain_date": e.get("obtain_date", 0)}
+            for e in data.get("epochs", [])
+        ],
     )
 
 
