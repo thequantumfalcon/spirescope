@@ -2121,8 +2121,14 @@ async def test_epochs_no_progress(client):
 
 
 async def test_epochs_filter_by_category(client):
-    """Epochs page should accept category filter."""
-    resp = await client.get("/epochs?category=character")
+    """Epochs page should accept category filter and show filter links."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import PlayerProgress
+
+    progress = PlayerProgress(epochs=[])
+    with patch("sts2.app._get_progress", new=AsyncMock(return_value=progress)):
+        resp = await client.get("/epochs?category=character")
     assert resp.status_code == 200
     assert "Character" in resp.text
 
@@ -2154,3 +2160,66 @@ async def test_epochs_nav_link(client):
     resp = await client.get("/")
     assert resp.status_code == 200
     assert 'href="/epochs"' in resp.text
+
+
+# ---------------------------------------------------------------------------
+# Records (Personal Records / Hall of Fame)
+# ---------------------------------------------------------------------------
+
+
+async def test_records_page_loads(client):
+    """Records page should load with 200 status."""
+    resp = await client.get("/records")
+    assert resp.status_code == 200
+    assert "Personal Records" in resp.text
+
+
+async def test_records_with_no_runs(client):
+    """Records page should handle no run data gracefully."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=[])):
+        resp = await client.get("/records")
+    assert resp.status_code == 200
+    assert "No run data" in resp.text
+
+
+async def test_records_nav_link(client):
+    """Nav should include Records link."""
+    resp = await client.get("/")
+    assert resp.status_code == 200
+    assert 'href="/records"' in resp.text
+
+
+# ---------------------------------------------------------------------------
+# Seed Display
+# ---------------------------------------------------------------------------
+
+
+async def test_run_detail_shows_seed(client):
+    """Run detail page should display seed text."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunFloor, RunHistory
+
+    run = RunHistory(id="test_seed", character="Ironclad", win=True, seed="TESTSEED123",
+                     deck=["CARD.BASH"], floors=[RunFloor(floor=1, current_hp=80, max_hp=80)])
+    with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=run)):
+        resp = await client.get("/runs/test_seed")
+    assert resp.status_code == 200
+    assert "TESTSEED123" in resp.text
+
+
+async def test_run_detail_copy_button(client):
+    """Run detail page should have a copy seed button."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunFloor, RunHistory
+
+    run = RunHistory(id="test_copy", character="Ironclad", win=True, seed="ABC123",
+                     deck=["CARD.BASH"], floors=[RunFloor(floor=1, current_hp=80, max_hp=80)])
+    with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=run)):
+        resp = await client.get("/runs/test_copy")
+    assert resp.status_code == 200
+    assert 'copy-seed' in resp.text
+    assert 'data-seed="ABC123"' in resp.text

@@ -1035,3 +1035,338 @@ class TestRunComparison:
         resp = await client.get("/runs")
         assert resp.status_code == 200
         assert "onchange=" not in resp.text
+
+
+# ---------------------------------------------------------------------------
+# Per-Act Breakdown
+# ---------------------------------------------------------------------------
+
+
+class TestPerActBreakdown:
+    def test_analytics_per_act(self):
+        from sts2.analytics import compute_analytics
+        runs = _make_runs()
+        result = compute_analytics(runs)
+        assert "per_act" in result
+        assert 1 in result["per_act"]
+        assert 2 in result["per_act"]
+        assert 3 in result["per_act"]
+        for act_num in (1, 2, 3):
+            act = result["per_act"][act_num]
+            assert "avg_damage" in act
+            assert "cards_added" in act
+            assert "death_count" in act
+
+    def test_analytics_per_act_values(self):
+        from sts2.analytics import compute_analytics
+        runs = _make_runs()
+        result = compute_analytics(runs)
+        # r2 dies on floor 8 (Act 1), so Act 1 should have at least 1 death
+        assert result["per_act"][1]["death_count"] >= 1
+        # All test runs have Act 1 floors with damage
+        assert result["per_act"][1]["avg_damage"] > 0
+
+    def test_analytics_per_act_empty_runs(self):
+        from sts2.analytics import compute_analytics
+        result = compute_analytics([])
+        assert result.get("per_act") is None or result == {"overview": {"total": 0}, "hp_tracking": [], "death_floors": [], "ascension_curve": [], "card_quality": [], "damage_percentiles": []}
+
+
+# ---------------------------------------------------------------------------
+# Turn Efficiency
+# ---------------------------------------------------------------------------
+
+
+class TestTurnEfficiency:
+    def test_analytics_turn_efficiency(self):
+        from sts2.analytics import compute_analytics
+        runs = [
+            RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                       floors=[
+                           RunFloor(floor=1, type="monster", turns=4, damage_taken=10,
+                                    current_hp=70, max_hp=80, encounter="E.JAW_WORM"),
+                           RunFloor(floor=10, type="elite", turns=7, damage_taken=20,
+                                    current_hp=50, max_hp=80, encounter="E.LAGAVULIN"),
+                           RunFloor(floor=17, type="boss", turns=10, damage_taken=15,
+                                    current_hp=35, max_hp=80, encounter="E.HEXAGHOST"),
+                       ]),
+        ]
+        result = compute_analytics(runs)
+        te = result["turn_efficiency"]
+        assert te["avg_turns_per_fight"] > 0
+        assert te["avg_turns_per_elite"] == 7.0
+        assert te["avg_turns_per_boss"] == 10.0
+        assert "turns_vs_damage" in te
+        assert "efficiency_trend" in te
+        assert len(te["efficiency_trend"]) == 3
+
+    def test_pearson_r_basic(self):
+        from sts2.analytics import _pearson_r
+        assert _pearson_r([1, 2, 3, 4, 5], [2, 4, 6, 8, 10]) == 1.0
+        assert _pearson_r([1, 2], [3, 4]) == 0.0
+        assert _pearson_r([1, 1, 1], [2, 3, 4]) == 0.0
+
+    def test_turn_efficiency_no_turns_data(self):
+        from sts2.analytics import compute_analytics
+        runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                           floors=[RunFloor(floor=1, type="monster", turns=0, damage_taken=5,
+                                            current_hp=75, max_hp=80)])]
+        result = compute_analytics(runs)
+        assert result["turn_efficiency"]["avg_turns_per_fight"] == 0
+
+
+# ---------------------------------------------------------------------------
+# Archetype Auto-Detection
+# ---------------------------------------------------------------------------
+
+
+class TestArchetypeDetection:
+    def test_classify_archetype_match(self):
+        """Classify archetype when key cards match."""
+        from sts2.knowledge import KnowledgeBase
+        kb = KnowledgeBase()
+        # Get a character that has strategy data
+        strategies = [s for s in kb.strategies if s.archetypes]
+        if not strategies:
+            return  # skip if no strategy data
+        strat = strategies[0]
+        arch = strat.archetypes[0]
+        # Build deck from key card names -> IDs by searching all cards
+        card_ids = []
+        name_lower_to_id = {c.name.lower(): c.id for c in kb.cards}
+        for name in arch.key_cards[:5]:
+            cid = name_lower_to_id.get(name.lower())
+            if cid:
+                card_ids.append(cid)
+        if len(card_ids) < 2:
+            return  # skip if can't resolve enough cards
+        result = kb.classify_archetype(card_ids, strat.character)
+        assert result["name"] == arch.name
+        assert result["confidence"] > 0
+        assert len(result["matching_cards"]) >= 2
+
+    def test_classify_archetype_custom(self):
+        """Returns Custom when no archetype matches."""
+        from sts2.knowledge import KnowledgeBase
+        kb = KnowledgeBase()
+        result = kb.classify_archetype(["CARD.NONEXISTENT", "CARD.FAKE"], "Ironclad")
+        assert result["name"] == "Custom"
+        assert result["confidence"] == 0
+
+    def test_classify_archetype_unknown_character(self):
+        """Returns Custom for unknown character."""
+        from sts2.knowledge import KnowledgeBase
+        kb = KnowledgeBase()
+        result = kb.classify_archetype(["CARD.BASH"], "UnknownChar")
+        assert result["name"] == "Custom"
+
+    def test_analytics_archetype_stats(self):
+        from sts2.analytics import compute_analytics
+        from sts2.knowledge import KnowledgeBase
+        kb = KnowledgeBase()
+        runs = _make_runs()
+        result = compute_analytics(runs, kb=kb)
+        assert "archetype_stats" in result
+        # All runs should get classified (even if "Custom")
+        total = sum(a["wins"] + a["losses"] for a in result["archetype_stats"].values())
+        assert total == len(runs)
+
+
+# ---------------------------------------------------------------------------
+# Card Pick Timing
+# ---------------------------------------------------------------------------
+
+
+class TestCardPickTiming:
+    def test_analytics_card_pick_timing(self):
+        from sts2.analytics import compute_analytics
+        runs = _make_runs()
+        result = compute_analytics(runs)
+        assert "card_pick_timing" in result
+        assert "early_picks" in result["card_pick_timing"]
+        assert "mid_picks" in result["card_pick_timing"]
+        assert "late_picks" in result["card_pick_timing"]
+
+    def test_card_pick_timing_floor_buckets(self):
+        from sts2.analytics import compute_analytics
+        # Need 2+ picks of same card to appear in results (min count threshold)
+        runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                           floors=[
+                               RunFloor(floor=3, card_picked="CARD.BASH", cards_offered=["CARD.BASH"]),
+                               RunFloor(floor=7, card_picked="CARD.BASH", cards_offered=["CARD.BASH"]),
+                               RunFloor(floor=15, card_picked="CARD.STRIKE", cards_offered=["CARD.STRIKE"]),
+                               RunFloor(floor=18, card_picked="CARD.STRIKE", cards_offered=["CARD.STRIKE"]),
+                           ])]
+        result = compute_analytics(runs)
+        early_cards = [c["card"] for c in result["card_pick_timing"]["early_picks"]]
+        assert "CARD.BASH" in early_cards
+        mid_cards = [c["card"] for c in result["card_pick_timing"]["mid_picks"]]
+        assert "CARD.STRIKE" in mid_cards
+
+
+# ---------------------------------------------------------------------------
+# Encounter Danger Ratings
+# ---------------------------------------------------------------------------
+
+
+class TestEncounterDanger:
+    def test_encounter_danger_grades(self):
+        from sts2.analytics import compute_analytics
+        runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                           floors=[
+                               RunFloor(floor=1, encounter="E.EASY", damage_taken=5, type="monster"),
+                               RunFloor(floor=2, encounter="E.EASY", damage_taken=8, type="monster"),
+                               RunFloor(floor=10, encounter="E.HARD", damage_taken=45, type="elite"),
+                               RunFloor(floor=11, encounter="E.HARD", damage_taken=50, type="elite"),
+                           ])]
+        result = compute_analytics(runs)
+        assert "encounter_danger" in result
+        assert result["encounter_danger"]["E.EASY"]["grade"] == "Low"
+        assert result["encounter_danger"]["E.HARD"]["grade"] == "Extreme"
+
+    def test_encounter_danger_empty(self):
+        from sts2.analytics import compute_analytics
+        result = compute_analytics([])
+        assert result.get("encounter_danger") is None or result == {"overview": {"total": 0}, "hp_tracking": [], "death_floors": [], "ascension_curve": [], "card_quality": [], "damage_percentiles": []}
+
+
+# ---------------------------------------------------------------------------
+# Gold Economy
+# ---------------------------------------------------------------------------
+
+
+class TestGoldEconomy:
+    def test_analytics_gold_economy(self):
+        from sts2.analytics import compute_analytics
+        runs = _make_runs()
+        result = compute_analytics(runs)
+        assert "gold_economy" in result
+        assert "avg_gold_per_run" in result["gold_economy"]
+        assert "highest_gold" in result["gold_economy"]
+        assert "win_vs_loss_gold" in result["gold_economy"]
+
+    def test_gold_economy_values(self):
+        from sts2.analytics import compute_analytics
+        runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                           floors=[
+                               RunFloor(floor=1, gold=100, current_hp=70, max_hp=80),
+                               RunFloor(floor=5, gold=200, current_hp=60, max_hp=80),
+                           ]),
+                RunHistory(id="r2", character="Ironclad", win=False, deck=["CARD.BASH"],
+                           floors=[
+                               RunFloor(floor=1, gold=50, current_hp=70, max_hp=80),
+                           ])]
+        result = compute_analytics(runs)
+        ge = result["gold_economy"]
+        assert ge["avg_gold_per_run"] > 0
+        assert ge["highest_gold"]["gold"] == 200
+        assert ge["win_vs_loss_gold"]["win_avg"] > 0
+
+    def test_gold_economy_no_data(self):
+        from sts2.analytics import compute_analytics
+        runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                           floors=[RunFloor(floor=1)])]
+        result = compute_analytics(runs)
+        assert result["gold_economy"]["avg_gold_per_run"] == 0
+
+
+# ---------------------------------------------------------------------------
+# Co-op Analytics
+# ---------------------------------------------------------------------------
+
+
+class TestCoopAnalytics:
+    def test_coop_stats_present(self):
+        from sts2.analytics import compute_analytics
+        runs = [
+            RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                       total_players=2,
+                       floors=[RunFloor(floor=1, current_hp=70, max_hp=80)]),
+            RunHistory(id="r2", character="Silent", win=False, deck=["CARD.STRIKE"],
+                       total_players=1,
+                       floors=[RunFloor(floor=1, current_hp=60, max_hp=70)]),
+        ]
+        result = compute_analytics(runs)
+        assert "coop_stats" in result
+        assert result["coop_stats"]["total_coop_runs"] == 1
+        assert result["coop_stats"]["coop_win_rate"] == 100.0
+
+    def test_coop_stats_absent_when_solo(self):
+        from sts2.analytics import compute_analytics
+        runs = _make_runs()
+        result = compute_analytics(runs)
+        assert "coop_stats" not in result
+
+    def test_run_history_total_players_field(self):
+        run = RunHistory(id="test", character="Ironclad", win=True, deck=[],
+                         total_players=3)
+        assert run.total_players == 3
+
+    def test_run_history_total_players_default(self):
+        run = RunHistory(id="test", character="Ironclad", win=True, deck=[])
+        assert run.total_players == 1
+
+
+# ---------------------------------------------------------------------------
+# Healing Sources
+# ---------------------------------------------------------------------------
+
+
+class TestHealingSources:
+    def test_analytics_healing_sources(self):
+        from sts2.analytics import compute_analytics
+        runs = _make_runs()
+        result = compute_analytics(runs)
+        assert "healing_sources" in result
+        assert "total_healing" in result["healing_sources"]
+        assert "rest_healing" in result["healing_sources"]
+
+    def test_healing_categorization(self):
+        from sts2.analytics import compute_analytics
+        runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                           floors=[
+                               RunFloor(floor=1, type="rest", hp_healed=15, current_hp=70, max_hp=80),
+                               RunFloor(floor=5, type="monster", hp_healed=5, damage_taken=10,
+                                        current_hp=65, max_hp=80, encounter="E.TEST"),
+                           ])]
+        result = compute_analytics(runs)
+        hs = result["healing_sources"]
+        assert hs["rest_healing"]["total"] == 15
+        assert hs["rest_healing"]["count"] == 1
+        assert hs["combat_healing"]["total"] == 5
+        assert hs["total_healing"] == 20
+
+
+# ---------------------------------------------------------------------------
+# Card Regret
+# ---------------------------------------------------------------------------
+
+
+class TestCardRegret:
+    def test_analytics_card_regret(self):
+        from sts2.analytics import compute_analytics
+        runs = _make_runs()
+        result = compute_analytics(runs)
+        assert "card_regret" in result
+        assert "most_skipped_in_wins" in result["card_regret"]
+        assert "most_picked_in_losses" in result["card_regret"]
+        assert "high_regret" in result["card_regret"]
+
+    def test_card_regret_scoring(self):
+        from sts2.analytics import compute_analytics
+        # Create runs where a card is picked in losses but skipped in wins
+        wins = [RunHistory(id=f"w{i}", character="Ironclad", win=True, deck=["CARD.BASH"],
+                           floors=[
+                               RunFloor(floor=1, cards_offered=["CARD.BAD", "CARD.GOOD"],
+                                        card_picked="CARD.GOOD"),
+                           ]) for i in range(5)]
+        losses = [RunHistory(id=f"l{i}", character="Ironclad", win=False, deck=["CARD.BAD"],
+                             floors=[
+                                 RunFloor(floor=1, cards_offered=["CARD.BAD", "CARD.GOOD"],
+                                          card_picked="CARD.BAD"),
+                             ]) for i in range(5)]
+        result = compute_analytics(wins + losses)
+        cr = result["card_regret"]
+        # CARD.BAD should be in most_picked_in_losses
+        loss_pick_cards = [c["card"] for c in cr["most_picked_in_losses"]]
+        assert "CARD.BAD" in loss_pick_cards

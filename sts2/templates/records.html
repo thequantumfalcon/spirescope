@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block page_id %}records{% endblock %}
+{% block title %}Personal Records{% endblock %}
+{% block og_title %}Personal Records — SpireScope{% endblock %}
+{% block content %}
+<h1>Personal Records</h1>
+
+{% if not records %}
+<p class="text-muted mb-xl mt-lg">No run data yet. Complete some runs in Slay the Spire 2 and your records will appear here.</p>
+{% else %}
+
+<h2>Hall of Fame</h2>
+<div class="stat-grid">
+{% if records.fastest_win %}
+<div class="stat-box">
+  <div class="num win">{{ (records.fastest_win.time / 60)|int }}m</div>
+  <div class="label">Fastest Win</div>
+  <p class="text-xs text-muted mt-xs"><a href="/runs/{{ records.fastest_win.run_id }}">{{ records.fastest_win.character }}</a></p>
+</div>
+{% endif %}
+{% if records.highest_ascension_win %}
+<div class="stat-box">
+  <div class="num win">A{{ records.highest_ascension_win.ascension }}</div>
+  <div class="label">Highest Ascension Win</div>
+  <p class="text-xs text-muted mt-xs"><a href="/runs/{{ records.highest_ascension_win.run_id }}">{{ records.highest_ascension_win.character }}</a></p>
+</div>
+{% endif %}
+{% if records.longest_streak %}
+<div class="stat-box">
+  <div class="num win">{{ records.longest_streak.count }}</div>
+  <div class="label">Best Win Streak</div>
+  <p class="text-xs text-muted mt-xs">{{ records.longest_streak.character }}</p>
+</div>
+{% endif %}
+{% if records.flawless_bosses %}
+<div class="stat-box">
+  <div class="num win">{{ records.flawless_bosses }}</div>
+  <div class="label">Flawless Boss Kills</div>
+  <p class="text-xs text-muted mt-xs">0 damage taken</p>
+</div>
+{% endif %}
+</div>
+
+<h2>Notable Runs</h2>
+<div class="stat-grid">
+{% if records.smallest_deck %}
+<div class="stat-box">
+  <div class="num">{{ records.smallest_deck.size }}</div>
+  <div class="label">Smallest Winning Deck</div>
+  <p class="text-xs text-muted mt-xs"><a href="/runs/{{ records.smallest_deck.run_id }}">{{ records.smallest_deck.character }}</a></p>
+</div>
+{% endif %}
+{% if records.biggest_deck %}
+<div class="stat-box">
+  <div class="num">{{ records.biggest_deck.size }}</div>
+  <div class="label">Biggest Winning Deck</div>
+  <p class="text-xs text-muted mt-xs"><a href="/runs/{{ records.biggest_deck.run_id }}">{{ records.biggest_deck.character }}</a></p>
+</div>
+{% endif %}
+{% if records.most_gold %}
+<div class="stat-box">
+  <div class="num">{{ records.most_gold.gold }}</div>
+  <div class="label">Most Gold (Single Floor)</div>
+  <p class="text-xs text-muted mt-xs"><a href="/runs/{{ records.most_gold.run_id }}">Floor {{ records.most_gold.floor }}</a></p>
+</div>
+{% endif %}
+{% if records.most_damage_floor %}
+<div class="stat-box">
+  <div class="num loss">{{ records.most_damage_floor.damage }}</div>
+  <div class="label">Most Damage Taken (Single Floor)</div>
+  <p class="text-xs text-muted mt-xs"><a href="/runs/{{ records.most_damage_floor.run_id }}">Floor {{ records.most_damage_floor.floor }}</a></p>
+</div>
+{% endif %}
+</div>
+
+{% if records.per_character %}
+<h2>Per Character</h2>
+<table>
+<tr><th>Character</th><th>Wins</th><th>Losses</th><th>Best Ascension</th><th>Fastest Win</th></tr>
+{% for char, cs in records.per_character.items() %}
+<tr>
+  <td class="char-{{ char|lower }}">{{ char }}</td>
+  <td class="win">{{ cs.wins }}</td>
+  <td class="loss">{{ cs.losses }}</td>
+  <td>{% if cs.best_ascension > 0 %}A{{ cs.best_ascension }}{% else %}&mdash;{% endif %}</td>
+  <td>{% if cs.fastest > 0 %}{{ (cs.fastest / 60)|int }}m{% else %}&mdash;{% endif %}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% endif %}
+{% endblock %}

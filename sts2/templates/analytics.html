@@ -149,6 +149,49 @@
 </div>
 {% endif %}
 
+{% if stats.per_act %}
+<h2>Per-Act Breakdown</h2>
+<p class="text-sm text-muted mb-sm">How your runs play out across each act</p>
+<div class="stat-grid">
+{% for act_num, act in stats.per_act.items() %}
+<div class="stat-box">
+  <div class="label mb-sm"><strong>Act {{ act_num }}</strong></div>
+  <p>Avg Damage/Floor: <strong style="color:{% if act.avg_damage > 10 %}var(--red){% elif act.avg_damage > 5 %}var(--yellow){% else %}var(--green){% endif %}">{{ act.avg_damage }}</strong></p>
+  <p>Cards Added/Run: <strong>{{ act.avg_cards_per_run }}</strong></p>
+  <p>Deaths: <strong class="loss">{{ act.death_count }}</strong></p>
+  {% if act.avg_gold %}<p>Avg Gold: <strong>{{ act.avg_gold|int }}</strong></p>{% endif %}
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if stats.turn_efficiency and stats.turn_efficiency.avg_turns_per_fight %}
+<h2>Combat Efficiency</h2>
+<p class="text-sm text-muted mb-sm">How quickly you end fights — fewer turns means less damage taken</p>
+<div class="stat-grid">
+  <div class="stat-box"><div class="num">{{ stats.turn_efficiency.avg_turns_per_fight }}</div><div class="label">Avg Turns/Fight</div></div>
+  {% if stats.turn_efficiency.avg_turns_per_elite %}<div class="stat-box"><div class="num">{{ stats.turn_efficiency.avg_turns_per_elite }}</div><div class="label">Avg Turns/Elite</div></div>{% endif %}
+  {% if stats.turn_efficiency.avg_turns_per_boss %}<div class="stat-box"><div class="num">{{ stats.turn_efficiency.avg_turns_per_boss }}</div><div class="label">Avg Turns/Boss</div></div>{% endif %}
+</div>
+{% if stats.turn_efficiency.efficiency_trend %}
+<div class="card card-tip mt-sm mb-md">
+  {% set t = stats.turn_efficiency.efficiency_trend %}
+  {% if t[0] > 0 and t[2] > 0 %}
+    {% if t[2] < t[0] * 0.85 %}
+    <p>Your fights are getting shorter as the run progresses — strong scaling.</p>
+    {% elif t[2] > t[0] * 1.15 %}
+    <p>Fights take longer in Act 3 than Act 1 — your deck may lack scaling.</p>
+    {% else %}
+    <p>Consistent fight length across acts.</p>
+    {% endif %}
+  {% endif %}
+  {% if stats.turn_efficiency.turns_vs_damage > 0.3 %}
+  <p>Longer fights correlate with more damage taken (r={{ stats.turn_efficiency.turns_vs_damage }}).</p>
+  {% endif %}
+</div>
+{% endif %}
+{% endif %}
+
 {% if stats.deadly_encounters %}
 <h2>Deadliest Encounters</h2>
 <table>
@@ -289,6 +332,122 @@
   <p class="text-sm text-muted">{{ edge.weight }} winning runs together</p>
 </div>
 {% endfor %}
+</div>
+{% endif %}
+
+{% if stats.archetype_stats %}
+<h2>Archetype Performance</h2>
+<p class="text-sm text-muted mb-sm">Win rates by detected deck archetype</p>
+<table>
+<tr><th>Archetype</th><th>Wins</th><th>Losses</th><th>Win Rate</th></tr>
+{% for name, arch in stats.archetype_stats.items() %}
+<tr>
+  <td><strong>{{ name }}</strong></td>
+  <td class="win">{{ arch.wins }}</td>
+  <td class="loss">{{ arch.losses }}</td>
+  <td><strong style="color:{% if arch.win_rate >= 60 %}var(--green){% elif arch.win_rate >= 40 %}var(--yellow){% else %}var(--red){% endif %}">{{ arch.win_rate }}%</strong></td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if stats.card_pick_timing %}
+<h2>Card Pick Timing</h2>
+<p class="text-sm text-muted mb-sm">When you pick cards — early (floors 1-10), mid (11-25), or late (26+)</p>
+<div class="grid grid-3">
+  <div>
+    <h3>Early Picks</h3>
+    {% for cp in stats.card_pick_timing.early_picks[:8] %}
+    <p><a href="/cards/{{ cp.card }}">{{ kb.id_to_name(cp.card) }}</a> <span class="text-muted">&times;{{ cp.count }}</span></p>
+    {% else %}<p class="text-muted">No data</p>{% endfor %}
+  </div>
+  <div>
+    <h3>Mid Picks</h3>
+    {% for cp in stats.card_pick_timing.mid_picks[:8] %}
+    <p><a href="/cards/{{ cp.card }}">{{ kb.id_to_name(cp.card) }}</a> <span class="text-muted">&times;{{ cp.count }}</span></p>
+    {% else %}<p class="text-muted">No data</p>{% endfor %}
+  </div>
+  <div>
+    <h3>Late Picks</h3>
+    {% for cp in stats.card_pick_timing.late_picks[:8] %}
+    <p><a href="/cards/{{ cp.card }}">{{ kb.id_to_name(cp.card) }}</a> <span class="text-muted">&times;{{ cp.count }}</span></p>
+    {% else %}<p class="text-muted">No data</p>{% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if stats.encounter_danger %}
+<h2>Encounter Danger Ratings</h2>
+<p class="text-sm text-muted mb-sm">How dangerous each encounter is based on your history</p>
+<table>
+<tr><th>Encounter</th><th>Danger</th><th>Avg Damage</th><th>Kill Rate</th><th>Fights</th></tr>
+{% for enc_id, d in stats.encounter_danger.items()|sort(attribute='1.avg_damage', reverse=true) %}
+{% if loop.index <= 15 %}
+<tr>
+  <td><a href="/enemies/{{ enc_id }}">{{ kb.id_to_name(enc_id) }}</a></td>
+  <td><span class="danger-{{ d.grade|lower }}">{{ d.grade }}</span></td>
+  <td class="text-red">{{ d.avg_damage }}</td>
+  <td>{{ d.kill_rate }}%</td>
+  <td>{{ d.fights }}</td>
+</tr>
+{% endif %}
+{% endfor %}
+</table>
+{% endif %}
+
+{% if stats.gold_economy and stats.gold_economy.avg_gold_per_run %}
+<h2>Gold Economy</h2>
+<p class="text-sm text-muted mb-sm">How you earn and spend gold across runs</p>
+<div class="stat-grid">
+  <div class="stat-box"><div class="num">{{ stats.gold_economy.avg_gold_per_run|int }}</div><div class="label">Avg Gold/Run</div></div>
+  {% if stats.gold_economy.avg_gold_at_death %}<div class="stat-box"><div class="num">{{ stats.gold_economy.avg_gold_at_death|int }}</div><div class="label">Avg Gold at Death</div></div>{% endif %}
+  {% if stats.gold_economy.highest_gold %}<div class="stat-box"><div class="num">{{ stats.gold_economy.highest_gold.gold }}</div><div class="label">Peak Gold (F{{ stats.gold_economy.highest_gold.floor }})</div></div>{% endif %}
+</div>
+{% if stats.gold_economy.win_vs_loss_gold %}
+<div class="two-col mt-sm">
+  <div class="card card-win"><p>Avg gold in wins: <strong>{{ stats.gold_economy.win_vs_loss_gold.win_avg|int }}</strong></p></div>
+  <div class="card card-loss"><p>Avg gold in losses: <strong>{{ stats.gold_economy.win_vs_loss_gold.loss_avg|int }}</strong></p></div>
+</div>
+{% endif %}
+{% endif %}
+
+{% if stats.coop_stats %}
+<h2>Co-op Stats</h2>
+<p class="text-sm text-muted mb-sm">How your multiplayer runs compare to solo</p>
+<div class="stat-grid">
+  <div class="stat-box"><div class="num">{{ stats.coop_stats.total_coop_runs }}</div><div class="label">Co-op Runs</div></div>
+  <div class="stat-box"><div class="num">{{ stats.coop_stats.coop_win_rate }}%</div><div class="label">Co-op Win Rate</div></div>
+  <div class="stat-box"><div class="num">{{ stats.coop_stats.solo_win_rate }}%</div><div class="label">Solo Win Rate</div></div>
+</div>
+{% endif %}
+
+{% if stats.healing_sources and stats.healing_sources.total_healing > 0 %}
+<h2>Healing Sources</h2>
+<p class="text-sm text-muted mb-sm">Where your HP recovery comes from</p>
+<div class="stat-grid">
+  <div class="stat-box"><div class="num">{{ stats.healing_sources.total_healing }}</div><div class="label">Total Healing</div></div>
+  <div class="stat-box"><div class="num">{{ stats.healing_sources.rest_healing.total }}</div><div class="label">Rest Healing ({{ stats.healing_sources.rest_healing.count }} rests)</div></div>
+  <div class="stat-box"><div class="num">{{ stats.healing_sources.combat_healing.total }}</div><div class="label">Combat Healing</div></div>
+  <div class="stat-box"><div class="num">{{ stats.healing_sources.other_healing.total }}</div><div class="label">Other Healing</div></div>
+</div>
+{% endif %}
+
+{% if stats.card_regret and stats.card_regret.high_regret %}
+<h2>Card Regret Analysis</h2>
+<p class="text-sm text-muted mb-sm">Cards you might want to reconsider picking or skipping</p>
+<div class="two-col">
+  <div>
+    <h3>Picked Often in Losses</h3>
+    {% for cr in stats.card_regret.most_picked_in_losses[:8] %}
+    <p><a href="/cards/{{ cr.card }}">{{ kb.id_to_name(cr.card) }}</a> <span class="text-muted">{{ cr.pick_rate }}% pick rate, {{ cr.times_picked }}&times;</span></p>
+    {% else %}<p class="text-muted">No data</p>{% endfor %}
+  </div>
+  <div>
+    <h3>Skipped Often in Wins</h3>
+    {% for cr in stats.card_regret.most_skipped_in_wins[:8] %}
+    <p><a href="/cards/{{ cr.card }}">{{ kb.id_to_name(cr.card) }}</a> <span class="text-muted">{{ cr.skip_rate }}% skip rate, {{ cr.times_skipped }}&times;</span></p>
+    {% else %}<p class="text-muted">No data</p>{% endfor %}
+  </div>
 </div>
 {% endif %}
 

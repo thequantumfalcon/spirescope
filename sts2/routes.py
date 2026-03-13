@@ -298,9 +298,12 @@ async def enemy_detail(request: Request, enemy_id: str = Path(max_length=200)):
             encounter_stats = enemy_fight_stats
     community_tips = a.kb.get_community_tips(enemy.name)
     counter_cards = a.kb.get_counter_cards(enemy)
+    analytics = await a._get_analytics()
+    danger = analytics.get("encounter_danger", {}).get(enemy_id, None)
     return a.templates.TemplateResponse(request, "enemy_detail.html", {
         "enemy": enemy, "encounter_stats": encounter_stats, "kb": a.kb,
         "community_tips": community_tips, "counter_cards": counter_cards,
+        "danger": danger,
     })
 
 
@@ -409,8 +412,10 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
             "error_code": 404, "error_message": f"Run '{run_id[:100]}' not found.",
         }, status_code=404)
     run_analysis = analyze_run(run, kb=a.kb)
+    archetype = a.kb.classify_archetype(run.deck, run.character)
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "kb": a.kb, "run_analysis": run_analysis,
+        "archetype": archetype,
     })
 
 
@@ -505,6 +510,18 @@ async def analytics(request: Request,
         "stats": stats, "kb": a.kb,
         "selected_ascension": ascension, "ascension_levels": ascension_levels,
         "run_patterns": run_patterns,
+    })
+
+
+@router.get("/records", response_class=HTMLResponse)
+async def records(request: Request):
+    from sts2.analytics import compute_records
+    a = _app()
+    runs = await a._get_runs()
+    progress = await a._get_progress()
+    recs = compute_records(runs, progress)
+    return a.templates.TemplateResponse(request, "records.html", {
+        "records": recs, "kb": a.kb,
     })
 
 

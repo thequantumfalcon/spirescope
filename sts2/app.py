@@ -157,7 +157,7 @@ async def _get_analytics(ascension=None):
             runs = [r for r in runs if r.ascension == ascension]
         progress = await _get_progress()
         card_stats = progress.card_stats if progress else {}
-        _analytics_cache[ascension] = await asyncio.to_thread(compute_analytics, runs, card_stats)
+        _analytics_cache[ascension] = await asyncio.to_thread(compute_analytics, runs, card_stats, kb)
         _analytics_cache_time[ascension] = now
     return _analytics_cache[ascension]
 

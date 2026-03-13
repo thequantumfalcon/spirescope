@@ -10,8 +10,9 @@
   &mdash; <span class="char-{{ run.character|lower }}">{{ run.character }}</span>
 </h1>
 <p class="text-muted">
-  Ascension {{ run.ascension }} &bull; Seed: {{ run.seed }} &bull; {{ (run.run_time / 60)|int }} minutes &bull; {{ run.build_id }}
+  Ascension {{ run.ascension }} &bull; Seed: <span id="seed-text">{{ run.seed }}</span>{% if run.seed %} <button class="btn btn-sm btn-secondary copy-seed" data-seed="{{ run.seed }}" aria-label="Copy seed">Copy</button>{% endif %} &bull; {{ (run.run_time / 60)|int }} minutes &bull; {{ run.build_id }}
   {% if run.killed_by %} &bull; <span class="loss">Killed by {{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
+  {% if archetype and archetype.name != 'Custom' %} &bull; <span class="tag tag-power">{{ archetype.name }}</span>{% endif %}
   {% if not imported %}&bull; <a href="/runs/{{ run.id }}/export" class="btn btn-sm btn-secondary">Export JSON</a> <a href="/runs/{{ run.id }}/export/html" class="btn btn-sm btn-secondary">Export HTML</a>{% endif %}
 </p>
 

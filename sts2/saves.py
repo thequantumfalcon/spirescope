@@ -272,6 +272,7 @@ def get_run_history() -> list[RunHistory]:
                 relics=relics,
                 floors=floors,
                 build_id=data.get("build_id", ""),
+                total_players=len(players),
             ))
         except Exception as e:
             log.warning("Failed to parse run file %s: %s", run_file.name, e)

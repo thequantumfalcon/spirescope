@@ -43,6 +43,16 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 ### Analyze & Compete
 
 - **Analytics** — Aggregate stats: per-character win rates, floor survival, card pick rates, HP curves, death floor heatmaps, and causes of death. Filter by ascension level.
+- **Personal Records** — Hall of fame with fastest win, highest ascension, biggest/smallest deck, flawless bosses, per-character breakdowns, and notable achievements
+- **Per-Act Breakdown** — Damage, card picks, deaths, and gold tracked separately for Act 1/2/3
+- **Combat Efficiency** — Average turns per fight type with scaling trend analysis and turns-vs-damage correlation
+- **Archetype Detection** — Auto-classify decks into archetypes (Strength Scaling, Poison, etc.) with per-archetype win rates
+- **Card Pick Timing** — When you pick cards: early (floors 1-10), mid (11-25), or late (26+)
+- **Encounter Danger Ratings** — Danger grades (Low/Medium/High/Extreme) for every encounter based on your damage history
+- **Gold Economy** — Track gold earned, gold at death, peak gold, and win-vs-loss gold comparison
+- **Co-op Analytics** — Compare multiplayer vs solo win rates (shown only when co-op runs exist)
+- **Healing Sources** — Breakdown of HP recovery by source: rest sites, combat, and passive/relic healing
+- **Card Regret Analysis** — Cards you pick in losses but skip in wins, helping identify bad picks
 - **Community Meta** — Tier lists and strategy posts from Reddit and Steam, community-voted card tiers, aggregate player stats with import/export
 - **Global Search** — Fuzzy search with "Did you mean?" suggestions across all entities
 
@@ -58,7 +68,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Download (No Python Required)
 
-**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.3.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.4.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
 
 ### From Source
 
@@ -188,7 +198,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (22 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 565 tests (pytest + pytest-asyncio)
+tests/               # 595 tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements

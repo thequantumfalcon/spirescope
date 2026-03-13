@@ -570,6 +570,34 @@ class KnowledgeBase:
             "suggestions": [a.get("strategy", "") for a in detected_archetypes[:1]],
         }
 
+    def classify_archetype(self, card_ids: list[str], character: str) -> dict:
+        """Classify a deck's archetype based on card IDs and character.
+
+        Returns {"name": str, "confidence": float, "matching_cards": list[str]}.
+        Works with card IDs (as stored in RunHistory), resolving to names internally.
+        """
+        strategy = self.get_strategy(character)
+        if not strategy:
+            return {"name": "Custom", "confidence": 0, "matching_cards": []}
+
+        # Resolve IDs to names
+        deck_names = set()
+        for cid in card_ids:
+            card = self.get_card_by_id(cid)
+            if card:
+                deck_names.add(card.name.lower())
+
+        best = {"name": "Custom", "confidence": 0, "matching_cards": []}
+        for arch in strategy.archetypes:
+            arch_cards = set(name.lower() for name in arch.key_cards)
+            overlap = arch_cards & deck_names
+            if len(overlap) >= 2:
+                confidence = round(len(overlap) / len(arch_cards), 2) if arch_cards else 0
+                if confidence > best["confidence"]:
+                    best = {"name": arch.name, "confidence": confidence,
+                            "matching_cards": list(overlap)}
+        return best
+
     def get_data_status(self, skip_last_updated: bool = False) -> dict:
         """Return data source status for the home page."""
         from sts2.config import SAVE_DIR

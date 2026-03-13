@@ -1,6 +1,6 @@
 [project]
 name = "spirescope"
-version = "2.3.0"
+version = "2.4.0"
 description = "Spirescope — a local web dashboard for Slay the Spire 2. Card/relic/enemy lookup, deck analysis, live run tracking, and strategy guides."
 readme = "README.md"
 license = {text = "MIT"}

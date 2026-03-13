@@ -309,6 +309,10 @@ h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; font-weight: 600; }
 .tag-rare { background: rgba(212,168,87,0.1); color: var(--yellow); }
 .tag-starter { background: rgba(74,158,92,0.1); color: var(--green); }
 .tag-keyword { background: rgba(160,120,76,0.1); color: var(--bronze); border: 1px solid rgba(160,120,76,0.2); }
+.danger-low { color: var(--green); }
+.danger-medium { color: var(--gold); }
+.danger-high { color: var(--red); font-weight: 600; }
+.danger-extreme { color: #ff4444; font-weight: 700; }
 .tag-cost { background: var(--bg3); color: var(--text); border: 1px solid var(--border); font-weight: 700; min-width: 24px; text-align: center; }
 .tag-mod { background: rgba(201,123,42,0.15); color: var(--orange); border: 1px solid rgba(201,123,42,0.3); }
 .tag-discovered { background: rgba(74,158,92,0.1); color: var(--green); border: 1px solid rgba(74,158,92,0.25); }

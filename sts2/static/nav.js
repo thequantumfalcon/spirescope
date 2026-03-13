@@ -22,4 +22,17 @@
     tb.textContent = cur === 'light' ? '\u2600' : '\u263E';
     tb.setAttribute('aria-label', cur === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
   }
+  // Copy seed button
+  var cs = document.querySelector('.copy-seed');
+  if (cs) {
+    cs.addEventListener('click', function() {
+      var seed = cs.getAttribute('data-seed');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(seed).then(function() {
+          cs.textContent = 'Copied!';
+          setTimeout(function() { cs.textContent = 'Copy'; }, 1500);
+        });
+      }
+    });
+  }
 })();
