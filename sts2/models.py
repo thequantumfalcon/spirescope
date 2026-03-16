@@ -117,6 +117,7 @@ class RunHistory(BaseModel):
     relics: list[str] = []
     floors: list[RunFloor] = []
     build_id: str = ""
+    timestamp: int = 0
     total_players: int = 1
 
 

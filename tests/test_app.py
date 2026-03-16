@@ -2223,3 +2223,262 @@ async def test_run_detail_copy_button(client):
     assert resp.status_code == 200
     assert 'copy-seed' in resp.text
     assert 'data-seed="ABC123"' in resp.text
+
+
+# ---------------------------------------------------------------------------
+# Version & Time Range Filter Tests
+# ---------------------------------------------------------------------------
+
+def _make_filter_runs():
+    """Create mock runs with varying build_ids and timestamps."""
+    from sts2.models import RunHistory
+
+    return [
+        RunHistory(id="r1", character="Ironclad", win=True,
+                   deck=["CARD.BASH"], build_id="0.2.0", timestamp=1710000000),
+        RunHistory(id="r2", character="Silent", win=False,
+                   deck=["CARD.NEUTRALIZE"], build_id="0.2.1", timestamp=1710100000),
+        RunHistory(id="r3", character="Defect", win=True,
+                   deck=["CARD.ZAP"], build_id="0.2.0", timestamp=1710200000),
+        RunHistory(id="r4", character="Ironclad", win=False,
+                   deck=["CARD.BASH"], build_id="0.2.1", timestamp=1710300000),
+    ]
+
+
+async def test_runs_filter_by_version(client):
+    """Runs page should filter by game version."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/runs?version=0.2.0")
+    assert resp.status_code == 200
+    assert "Showing 2 run" in resp.text
+
+
+async def test_runs_filter_by_date_range(client):
+    """Runs page should filter by date range."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/runs?from=2024-03-10&to=2024-03-11")
+    assert resp.status_code == 200
+    assert "Showing" in resp.text
+
+
+async def test_runs_filter_version_and_date(client):
+    """Both version and date filters should combine."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/runs?version=0.2.0&from=2024-03-10&to=2024-03-11")
+    assert resp.status_code == 200
+    assert "Showing" in resp.text
+
+
+async def test_runs_filter_invalid_date(client):
+    """Invalid date string should be silently ignored, not 422."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/runs?from=garbage&to=also-bad")
+    assert resp.status_code == 200
+    assert "Showing 4 run" in resp.text
+
+
+async def test_runs_filter_preserves_character(client):
+    """Version filter should combine with character filter."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/runs?version=0.2.0&character=Ironclad")
+    assert resp.status_code == 200
+    assert "Showing 1 run" in resp.text
+
+
+async def test_runs_version_dropdown_populated(client):
+    """Response should contain version dropdown options."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/runs")
+    assert resp.status_code == 200
+    assert "version-select" in resp.text
+    assert "0.2.0" in resp.text
+    assert "0.2.1" in resp.text
+
+
+async def test_runs_no_versions_hides_dropdown(client):
+    """When all runs have empty build_id, version dropdown hidden."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunHistory
+
+    runs = [RunHistory(id="r1", character="Ironclad", win=True,
+                       deck=["CARD.BASH"], build_id="")]
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=runs)):
+        resp = await client.get("/runs")
+    assert resp.status_code == 200
+    assert "version-select" not in resp.text
+
+
+async def test_runs_preset_7d(client):
+    """Preset 7d should set from date to 7 days ago."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/runs?preset=7d")
+    assert resp.status_code == 200
+    assert "Showing" in resp.text
+
+
+async def test_runs_preset_all(client):
+    """Preset 'all' should show everything."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/runs?preset=all")
+    assert resp.status_code == 200
+    assert "Showing 4 run" in resp.text
+
+
+async def test_runs_date_from_only(client):
+    """Only from param should show runs after that date."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/runs?from=2024-03-11")
+    assert resp.status_code == 200
+
+
+async def test_runs_date_to_only(client):
+    """Only to param should show runs before that date."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/runs?to=2024-03-11")
+    assert resp.status_code == 200
+
+
+async def test_analytics_filter_by_version(client):
+    """Analytics should compute on filtered runs when version is set."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunFloor, RunHistory
+
+    runs = [
+        RunHistory(id="a1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                   build_id="0.2.0", timestamp=1710000000,
+                   floors=[RunFloor(floor=1, type="monster", damage_taken=5,
+                                    current_hp=70, max_hp=75)]),
+        RunHistory(id="a2", character="Silent", win=False, deck=["CARD.NEUTRALIZE"],
+                   build_id="0.2.1", timestamp=1710100000,
+                   floors=[RunFloor(floor=1, type="monster", damage_taken=10,
+                                    current_hp=60, max_hp=70)]),
+    ]
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=runs)), \
+         patch("sts2.app._get_progress", new=AsyncMock(return_value=None)):
+        resp = await client.get("/analytics?version=0.2.0")
+    assert resp.status_code == 200
+    # Should show stats for only the filtered run (1 total)
+    assert "Total Runs" in resp.text
+
+
+async def test_analytics_filter_by_date_range(client):
+    """Analytics should filter by date range."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunFloor, RunHistory
+
+    runs = [
+        RunHistory(id="a1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                   build_id="0.2.0", timestamp=1710000000,
+                   floors=[RunFloor(floor=1, type="monster")]),
+    ]
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=runs)), \
+         patch("sts2.app._get_progress", new=AsyncMock(return_value=None)):
+        resp = await client.get("/analytics?from=2024-03-09&to=2024-03-10")
+    assert resp.status_code == 200
+
+
+async def test_analytics_filter_empty_result(client):
+    """Filters matching zero runs should show 'No run data yet'."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunHistory
+
+    runs = [RunHistory(id="a1", character="Ironclad", win=True,
+                       deck=["CARD.BASH"], build_id="0.2.0", timestamp=1710000000)]
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=runs)), \
+         patch("sts2.app._get_progress", new=AsyncMock(return_value=None)):
+        resp = await client.get("/analytics?version=nonexistent")
+    assert resp.status_code == 200
+    assert "No run data yet" in resp.text
+
+
+async def test_analytics_filter_invalid_date(client):
+    """Invalid date in analytics should be silently ignored."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunFloor, RunHistory
+
+    runs = [RunHistory(id="a1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                       timestamp=1710000000,
+                       floors=[RunFloor(floor=1, type="monster")])]
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=runs)), \
+         patch("sts2.app._get_progress", new=AsyncMock(return_value=None)), \
+         patch("sts2.app._analytics_cache", {}), \
+         patch("sts2.app._analytics_cache_time", {}):
+        resp = await client.get("/analytics?from=baddate")
+    assert resp.status_code == 200
+
+
+async def test_api_runs_version_filter(client):
+    """API runs endpoint should accept version filter."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=_make_filter_runs())):
+        resp = await client.get("/api/runs?version=0.2.0")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["total"] == 2
+
+
+async def test_api_analytics_version_filter(client):
+    """API analytics endpoint should accept version filter."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunFloor, RunHistory
+
+    runs = [
+        RunHistory(id="a1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                   build_id="0.2.0", timestamp=1710000000,
+                   floors=[RunFloor(floor=1, type="monster")]),
+        RunHistory(id="a2", character="Silent", win=False, deck=["CARD.NEUTRALIZE"],
+                   build_id="0.2.1", timestamp=1710100000,
+                   floors=[RunFloor(floor=1, type="monster")]),
+    ]
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=runs)), \
+         patch("sts2.app._get_progress", new=AsyncMock(return_value=None)):
+        resp = await client.get("/api/analytics?version=0.2.0")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["overview"]["total"] == 1
+
+
+async def test_filter_bar_on_analytics(client):
+    """Analytics page should include the filter bar partial."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunFloor, RunHistory
+
+    runs = [RunHistory(id="a1", character="Ironclad", win=True, deck=["CARD.BASH"],
+                       build_id="0.2.0", timestamp=1710000000,
+                       floors=[RunFloor(floor=1, type="monster")])]
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=runs)), \
+         patch("sts2.app._get_progress", new=AsyncMock(return_value=None)), \
+         patch("sts2.app._analytics_cache", {}), \
+         patch("sts2.app._analytics_cache_time", {}):
+        resp = await client.get("/analytics")
+    assert resp.status_code == 200
+    assert "filter-bar" in resp.text
+    assert "version-select" in resp.text

@@ -42,7 +42,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Analyze & Compete
 
-- **Analytics** — Aggregate stats: per-character win rates, floor survival, card pick rates, HP curves, death floor heatmaps, and causes of death. Filter by ascension level.
+- **Analytics** — Aggregate stats: per-character win rates, floor survival, card pick rates, HP curves, death floor heatmaps, and causes of death. Filter by ascension level, game version, or time range.
 - **Personal Records** — Hall of fame with fastest win, highest ascension, biggest/smallest deck, flawless bosses, per-character breakdowns, and notable achievements
 - **Per-Act Breakdown** — Damage, card picks, deaths, and gold tracked separately for Act 1/2/3
 - **Combat Efficiency** — Average turns per fight type with scaling trend analysis and turns-vs-damage correlation
@@ -68,7 +68,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Download (No Python Required)
 
-**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.4.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.5.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
 
 ### From Source
 
@@ -198,7 +198,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (22 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 595 tests (pytest + pytest-asyncio)
+tests/               # 613 tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements

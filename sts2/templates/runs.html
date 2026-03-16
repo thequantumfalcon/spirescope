@@ -4,6 +4,12 @@
 {% block content %}
 <h1>Run History</h1>
 
+{# Build a suffix string to carry version/time filters across character/result/ascension links #}
+{% set vt = "" %}
+{% if selected_version %}{% set vt = vt ~ "&version=" ~ selected_version %}{% endif %}
+{% if selected_from %}{% set vt = vt ~ "&from=" ~ selected_from %}{% endif %}
+{% if selected_to %}{% set vt = vt ~ "&to=" ~ selected_to %}{% endif %}
+
 {% if total_runs %}
 <div class="stat-grid mb-md">
   <div class="stat-box"><div class="num">{{ total_runs }}</div><div class="label">Total Runs</div></div>
@@ -14,20 +20,23 @@
 {% endif %}
 
 <div class="filters">
-  <a href="/runs{% if selected_ascension is not none %}?ascension={{ selected_ascension }}{% endif %}" {% if not selected_character and not selected_result %}class="active"{% endif %}>All</a>
+  <a href="/runs{% if selected_ascension is not none %}?ascension={{ selected_ascension }}{{ vt }}{% elif vt %}?{{ vt[1:] }}{% endif %}" {% if not selected_character and not selected_result %}class="active"{% endif %}>All</a>
   {% for char in characters %}
-  <a href="/runs?character={{ char }}{% if selected_result %}&result={{ selected_result }}{% endif %}{% if selected_ascension is not none %}&ascension={{ selected_ascension }}{% endif %}" {% if selected_character == char %}class="active"{% endif %}>{{ char }}</a>
+  <a href="/runs?character={{ char }}{% if selected_result %}&result={{ selected_result }}{% endif %}{% if selected_ascension is not none %}&ascension={{ selected_ascension }}{% endif %}{{ vt }}" {% if selected_character == char %}class="active"{% endif %}>{{ char }}</a>
   {% endfor %}
   <span class="filter-divider"></span>
-  <a href="/runs?result=win{% if selected_character %}&character={{ selected_character }}{% endif %}{% if selected_ascension is not none %}&ascension={{ selected_ascension }}{% endif %}" {% if selected_result == 'win' %}class="active"{% endif %}>Wins</a>
-  <a href="/runs?result=loss{% if selected_character %}&character={{ selected_character }}{% endif %}{% if selected_ascension is not none %}&ascension={{ selected_ascension }}{% endif %}" {% if selected_result == 'loss' %}class="active"{% endif %}>Losses</a>
+  <a href="/runs?result=win{% if selected_character %}&character={{ selected_character }}{% endif %}{% if selected_ascension is not none %}&ascension={{ selected_ascension }}{% endif %}{{ vt }}" {% if selected_result == 'win' %}class="active"{% endif %}>Wins</a>
+  <a href="/runs?result=loss{% if selected_character %}&character={{ selected_character }}{% endif %}{% if selected_ascension is not none %}&ascension={{ selected_ascension }}{% endif %}{{ vt }}" {% if selected_result == 'loss' %}class="active"{% endif %}>Losses</a>
   {% if ascension_levels|length > 1 %}
   <span class="filter-divider"></span>
   {% for asc in ascension_levels %}
-  <a href="/runs?ascension={{ asc }}{% if selected_character %}&character={{ selected_character }}{% endif %}{% if selected_result %}&result={{ selected_result }}{% endif %}" {% if selected_ascension == asc %}class="active"{% endif %}>A{{ asc }}</a>
+  <a href="/runs?ascension={{ asc }}{% if selected_character %}&character={{ selected_character }}{% endif %}{% if selected_result %}&result={{ selected_result }}{% endif %}{{ vt }}" {% if selected_ascension == asc %}class="active"{% endif %}>A{{ asc }}</a>
   {% endfor %}
   {% endif %}
 </div>
+
+{% set filter_action = "/runs" %}
+{% include "_filter_bar.html" %}
 
 <div class="flex items-center justify-between mb-sm">
   <p class="text-muted">Showing {{ runs|length }} run{{ 's' if runs|length != 1 else '' }}</p>

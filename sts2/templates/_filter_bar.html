@@ -1,0 +1,29 @@
+{# Version & Time Range Filter Bar — included by runs.html and analytics.html #}
+<form class="filter-bar" method="get" action="{{ filter_action }}">
+  {# Preserve existing filter params as hidden inputs #}
+  {% if selected_character %}<input type="hidden" name="character" value="{{ selected_character }}">{% endif %}
+  {% if selected_result %}<input type="hidden" name="result" value="{{ selected_result }}">{% endif %}
+  {% if selected_ascension is defined and selected_ascension is not none %}<input type="hidden" name="ascension" value="{{ selected_ascension }}">{% endif %}
+
+  {% if available_versions %}
+  <label class="text-sm text-muted" for="version-select">Version</label>
+  <select id="version-select" name="version" class="select-input" data-auto-submit>
+    <option value="">All</option>
+    {% for v in available_versions %}
+    <option value="{{ v }}" {% if selected_version == v %}selected{% endif %}>{{ v }}</option>
+    {% endfor %}
+  </select>
+  {% endif %}
+
+  <span class="filter-divider"></span>
+  <span class="text-sm text-muted">Period</span>
+  <button type="submit" name="preset" value="7d" class="btn btn-sm {% if selected_preset == '7d' %}active{% endif %}">7d</button>
+  <button type="submit" name="preset" value="30d" class="btn btn-sm {% if selected_preset == '30d' %}active{% endif %}">30d</button>
+  <button type="submit" name="preset" value="90d" class="btn btn-sm {% if selected_preset == '90d' %}active{% endif %}">90d</button>
+  <button type="submit" name="preset" value="all" class="btn btn-sm {% if not selected_from and not selected_to and selected_preset != '7d' and selected_preset != '30d' and selected_preset != '90d' %}active{% endif %}">All</button>
+
+  <span class="filter-divider"></span>
+  <input type="date" name="from" class="select-input date-input" value="{{ selected_from }}" title="From date" data-auto-submit>
+  <span class="text-muted">&ndash;</span>
+  <input type="date" name="to" class="select-input date-input" value="{{ selected_to }}" title="To date" data-auto-submit>
+</form>

@@ -6,6 +6,7 @@ import math
 import re
 import secrets
 import time
+from datetime import date, datetime, timedelta, timezone
 from xml.sax.saxutils import escape as xml_escape
 
 from fastapi import APIRouter, File, Form, Path, Query, Request, UploadFile
@@ -18,6 +19,49 @@ from sts2.models import CurrentRun
 from sts2.saves import get_current_run
 
 router = APIRouter()
+
+
+# ---------------------------------------------------------------------------
+# Run filtering helpers
+# ---------------------------------------------------------------------------
+
+def _parse_date(value: str | None) -> date | None:
+    """Safely parse a YYYY-MM-DD string. Returns None on invalid input."""
+    if not value:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except (ValueError, TypeError):
+        return None
+
+
+def _resolve_preset(preset: str | None) -> str | None:
+    """Convert a preset like '7d' into a from-date string. Returns None if invalid."""
+    if preset in ("7d", "30d", "90d"):
+        days = {"7d": 7, "30d": 30, "90d": 90}[preset]
+        return (date.today() - timedelta(days=days)).isoformat()
+    return None
+
+
+def _filter_runs(runs: list, *, version: str | None = None,
+                 date_from: str | None = None, date_to: str | None = None) -> list:
+    """Filter runs by game version and/or date range.
+
+    Runs with timestamp=0 (unknown) are excluded by any date filter.
+    """
+    if version:
+        runs = [r for r in runs if r.build_id == version]
+    from_date = _parse_date(date_from)
+    if from_date:
+        from_ts = int(datetime(from_date.year, from_date.month, from_date.day,
+                               tzinfo=timezone.utc).timestamp())
+        runs = [r for r in runs if r.timestamp >= from_ts]
+    to_date = _parse_date(date_to)
+    if to_date:
+        to_ts = int(datetime(to_date.year, to_date.month, to_date.day,
+                             23, 59, 59, tzinfo=timezone.utc).timestamp())
+        runs = [r for r in runs if r.timestamp <= to_ts]
+    return runs
 
 
 async def _get_live_run(player: int = 0) -> CurrentRun:
@@ -335,10 +379,25 @@ async def strategy(request: Request, character: str = Path(max_length=50)):
 @router.get("/runs", response_class=HTMLResponse)
 async def runs(request: Request, character: str = Query(None, max_length=50),
                result: str = Query(None, max_length=10),
-               ascension: int = Query(None, ge=0, le=20)):
+               ascension: int = Query(None, ge=0, le=20),
+               version: str = Query(None, max_length=100),
+               date_from: str = Query(None, alias="from", max_length=10),
+               date_to: str = Query(None, alias="to", max_length=10),
+               preset: str = Query(None, max_length=10)):
     a = _app()
     run_list = await a._get_runs()
-    filtered = run_list
+
+    # Resolve preset into date range
+    if preset and preset != "all":
+        p_from = _resolve_preset(preset)
+        if p_from:
+            date_from = p_from
+            date_to = None
+
+    # Version/time filters apply before character/result/ascension
+    filtered = _filter_runs(run_list, version=version,
+                            date_from=date_from, date_to=date_to)
+
     if character:
         filtered = [r for r in filtered if r.character == character]
     if result == "win":
@@ -347,15 +406,19 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
         filtered = [r for r in filtered if not r.win]
     if ascension is not None:
         filtered = [r for r in filtered if r.ascension == ascension]
-    total = len(run_list)
-    wins = sum(1 for r in run_list if r.win)
-    # Collect ascension levels present in runs for the filter dropdown
+    total = len(filtered)
+    wins = sum(1 for r in filtered if r.win)
     ascension_levels = sorted({r.ascension for r in run_list})
+    available_versions = sorted({r.build_id for r in run_list if r.build_id}, reverse=True)
+    selected_preset = preset if preset in ("7d", "30d", "90d", "all") else ""
     return a.templates.TemplateResponse(request, "runs.html", {
         "runs": filtered, "kb": a.kb, "characters": CHARACTERS,
         "selected_character": character, "selected_result": result,
         "selected_ascension": ascension, "ascension_levels": ascension_levels,
         "total_runs": total, "total_wins": wins, "csrf_token": a.generate_csrf_token(),
+        "available_versions": available_versions, "selected_version": version,
+        "selected_from": date_from or "", "selected_to": date_to or "",
+        "selected_preset": selected_preset,
     })
 
 
@@ -499,17 +562,51 @@ async def import_run(request: Request, file: UploadFile = File(...),
 
 @router.get("/analytics", response_class=HTMLResponse)
 async def analytics(request: Request,
-                    ascension: int = Query(None, ge=0, le=20)):
-    from sts2.analytics import analyze_run_patterns
+                    ascension: int = Query(None, ge=0, le=20),
+                    version: str = Query(None, max_length=100),
+                    date_from: str = Query(None, alias="from", max_length=10),
+                    date_to: str = Query(None, alias="to", max_length=10),
+                    preset: str = Query(None, max_length=10)):
+    from sts2.analytics import analyze_run_patterns, compute_analytics
     a = _app()
-    runs = await a._get_runs()
-    ascension_levels = sorted({r.ascension for r in runs})
-    stats = await a._get_analytics(ascension=ascension)
-    run_patterns = analyze_run_patterns(runs, kb=a.kb)
+    all_runs = await a._get_runs()
+    ascension_levels = sorted({r.ascension for r in all_runs})
+    available_versions = sorted({r.build_id for r in all_runs if r.build_id}, reverse=True)
+
+    # Resolve preset into date range
+    if preset and preset != "all":
+        p_from = _resolve_preset(preset)
+        if p_from:
+            date_from = p_from
+            date_to = None
+
+    has_filters = version or date_from or date_to
+
+    if has_filters:
+        # Bypass cache — compute analytics on filtered subset
+        filtered = _filter_runs(all_runs, version=version,
+                                date_from=date_from, date_to=date_to)
+        if ascension is not None:
+            filtered = [r for r in filtered if r.ascension == ascension]
+        progress = await a._get_progress()
+        card_stats = progress.card_stats if progress else {}
+        stats = await asyncio.to_thread(compute_analytics, filtered, card_stats, a.kb)
+        run_patterns = analyze_run_patterns(filtered, kb=a.kb)
+    else:
+        stats = await a._get_analytics(ascension=ascension)
+        filtered = all_runs
+        if ascension is not None:
+            filtered = [r for r in filtered if r.ascension == ascension]
+        run_patterns = analyze_run_patterns(filtered, kb=a.kb)
+
+    selected_preset = preset if preset in ("7d", "30d", "90d", "all") else ""
     return a.templates.TemplateResponse(request, "analytics.html", {
         "stats": stats, "kb": a.kb,
         "selected_ascension": ascension, "ascension_levels": ascension_levels,
         "run_patterns": run_patterns,
+        "available_versions": available_versions, "selected_version": version,
+        "selected_from": date_from or "", "selected_to": date_to or "",
+        "selected_preset": selected_preset,
     })
 
 
@@ -889,8 +986,22 @@ async def analyze_deck(request: Request):
 # ---------------------------------------------------------------------------
 
 @router.get("/api/analytics")
-async def api_analytics():
-    return await _app()._get_analytics()
+async def api_analytics(version: str = Query(None, max_length=100),
+                        date_from: str = Query(None, alias="from", max_length=10),
+                        date_to: str = Query(None, alias="to", max_length=10),
+                        ascension: int = Query(None, ge=0, le=20)):
+    a = _app()
+    if version or date_from or date_to:
+        from sts2.analytics import compute_analytics
+        runs = await a._get_runs()
+        filtered = _filter_runs(runs, version=version,
+                                date_from=date_from, date_to=date_to)
+        if ascension is not None:
+            filtered = [r for r in filtered if r.ascension == ascension]
+        progress = await a._get_progress()
+        card_stats = progress.card_stats if progress else {}
+        return await asyncio.to_thread(compute_analytics, filtered, card_stats, a.kb)
+    return await a._get_analytics(ascension=ascension)
 
 
 @router.get("/api/live")
@@ -982,10 +1093,14 @@ def _csv_safe(v: str) -> str:
 
 @router.get("/api/runs")
 async def api_runs(character: str = Query(None, max_length=50), result: str = Query(None, max_length=10),
+                   version: str = Query(None, max_length=100),
+                   date_from: str = Query(None, alias="from", max_length=10),
+                   date_to: str = Query(None, alias="to", max_length=10),
                    limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)):
     a = _app()
     run_list = await a._get_runs()
-    filtered = run_list
+    filtered = _filter_runs(run_list, version=version,
+                            date_from=date_from, date_to=date_to)
     if character:
         filtered = [r for r in filtered if r.character == character]
     if result == "win":

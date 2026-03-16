@@ -259,6 +259,14 @@ def get_run_history() -> list[RunHistory]:
                         potions_gained=[p.get("choice", "") for p in p_stats.get("potion_choices", []) if p.get("was_picked")],
                     ))
 
+            # Timestamp: prefer start_time from data, fallback to filename
+            timestamp = data.get("start_time", 0)
+            if not timestamp:
+                try:
+                    timestamp = int(run_file.stem)
+                except (ValueError, TypeError):
+                    timestamp = 0
+
             runs.append(RunHistory(
                 id=run_file.stem,
                 character=character,
@@ -272,6 +280,7 @@ def get_run_history() -> list[RunHistory]:
                 relics=relics,
                 floors=floors,
                 build_id=data.get("build_id", ""),
+                timestamp=timestamp,
                 total_players=len(players),
             ))
         except Exception as e:

@@ -38,9 +38,9 @@
   }
 
   // Handle data-auto-submit (replaces inline onchange for CSP compliance)
-  var autoSubmit = document.querySelector('[data-auto-submit]');
-  if (autoSubmit) {
-    autoSubmit.addEventListener('change', function() {
+  var autoSubmits = document.querySelectorAll('[data-auto-submit]');
+  for (var k = 0; k < autoSubmits.length; k++) {
+    autoSubmits[k].addEventListener('change', function() {
       this.form.submit();
     });
   }

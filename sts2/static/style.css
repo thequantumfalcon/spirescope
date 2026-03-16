@@ -676,6 +676,10 @@ ul { margin: 0.5rem 0 0.5rem 1.5rem; } ul li { margin-bottom: 0.35rem; }
 .opacity-60 { opacity: 0.6; }
 hr.divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
 .select-input { padding: 0.4rem 0.75rem; background: var(--bg3); color: var(--text); border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+.filter-bar { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; padding: 0.75rem 1rem; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1rem; }
+.filter-bar .btn-sm.active { background: linear-gradient(135deg, var(--accent2), var(--copper)); color: #fff; border-color: transparent; }
+input[type="date"].date-input { width: auto; min-width: 140px; color-scheme: dark; }
+[data-theme="light"] input[type="date"].date-input { color-scheme: light; }
 .run-result-min-w { min-width: 40px; }
 .run-char-min-w { min-width: 100px; }
 .ml-auto { margin-left: auto; }
