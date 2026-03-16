@@ -143,7 +143,8 @@
     "rarity": "",
     "energy": "",
     "description": "",
-    "keywords": []
+    "keywords": [],
+    "cost": ""
   },
   {
     "id": "CARD.ANGER",
@@ -3791,7 +3792,8 @@
     "rarity": "",
     "energy": "",
     "description": "",
-    "keywords": []
+    "keywords": [],
+    "cost": ""
   },
   {
     "id": "CARD.LUNAR_BLAST",
@@ -5231,7 +5233,8 @@
     "rarity": "",
     "energy": "",
     "description": "",
-    "keywords": []
+    "keywords": [],
+    "cost": ""
   },
   {
     "id": "CARD.SCRAWL",
@@ -5889,7 +5892,8 @@
     "rarity": "",
     "energy": "",
     "description": "",
-    "keywords": []
+    "keywords": [],
+    "cost": ""
   },
   {
     "id": "CARD.SQUASH_EVENT",
@@ -6102,7 +6106,8 @@
     "rarity": "",
     "energy": "",
     "description": "",
-    "keywords": []
+    "keywords": [],
+    "cost": ""
   },
   {
     "id": "CARD.SUCKER_PUNCH",
