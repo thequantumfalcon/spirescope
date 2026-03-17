@@ -59,14 +59,15 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
   <p><strong>Enemies</strong> &mdash; Filter by act and type (normal/elite/boss). Detail pages show attack patterns, strategy tips, and your personal win/loss stats.</p>
   <p><strong>Events</strong> &mdash; Every event with optimal choices and outcomes, filterable by act.</p>
   <p><strong>Strategy Guides</strong> &mdash; Per-character archetypes, key cards, key relics, and general tips. Access from character cards on the home page.</p>
-  <p><strong>Run History</strong> &mdash; All completed runs with floor-by-floor breakdown, HP tracking, card picks, and damage taken. Export as JSON or standalone HTML. Select two runs to compare side-by-side.</p>
-  <p><strong>Analytics</strong> &mdash; Aggregate statistics across all your runs: win rates, character performance, card pick rates, and more. Filter by ascension level.</p>
-  <p><strong>Community</strong> &mdash; Community tier lists and meta discussion from Reddit.</p>
+  <p><strong>Run History</strong> &mdash; All completed runs with floor-by-floor breakdown, HP timeline chart, card picks, cards offered (what you rejected), potions gained, monsters fought, gold per floor, and damage taken. Filter by character, result, ascension, game version, or time range. Export as JSON or standalone HTML. Select two runs to compare side-by-side.</p>
+  <p><strong>Analytics</strong> &mdash; Aggregate statistics across all your runs: win rates, character performance, card pick rates, boss matchups, per-character relic tiers, card pick heatmap, and more. Filter by ascension level, game version, or time range.</p>
+  <p><strong>Records</strong> &mdash; Personal records: fastest win, highest ascension, best streak, biggest/smallest deck, flawless bosses, per-character breakdowns.</p>
+  <p><strong>Community</strong> &mdash; Community tier lists and meta discussion from Reddit and Steam.</p>
 </div>
 
 <h2 id="live">Live Run Tracking</h2>
 <div class="card mb-md">
-  <p>The <strong>Live Run</strong> page updates in real time via Server-Sent Events (SSE) &mdash; no page reloads needed. It shows your current deck, relics, potions, HP, floor history, and a live deck analysis.</p>
+  <p>The <strong>Live Run</strong> page updates in real time via Server-Sent Events (SSE) &mdash; no page reloads needed. It shows your current deck, relics, potions, HP, floor history, encounters won, events encountered, and a live deck analysis with archetype detection and coaching alerts.</p>
   <p class="mt-sm">For <strong>co-op</strong>, use the player selector or add <code>?player=1</code> to track a different player in the same run.</p>
   <p class="text-sm text-muted mt-sm">The SSE stream checks for changes every 3 seconds and auto-disconnects after 5 minutes of inactivity.</p>
 </div>
@@ -89,11 +90,15 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
   <p>The analytics page aggregates data across all your completed runs:</p>
   <ul>
     <li>Overall and per-character win rates</li>
-    <li>Floor survival curves</li>
-    <li>Most picked and highest win-rate cards</li>
-    <li>Common causes of death</li>
+    <li>Floor survival curves and HP tracking</li>
+    <li>Most picked and highest win-rate cards with pick heatmap</li>
+    <li>Boss matchups: win rate and avg damage per boss per character</li>
+    <li>Relic tier list per character</li>
+    <li>Per-act breakdown, combat efficiency, encounter danger ratings</li>
+    <li>Gold economy, healing sources, co-op stats</li>
+    <li>Card regret analysis and archetype performance</li>
   </ul>
-  <p class="mt-sm">Use the ascension filter bar at the top to focus on a specific ascension level.</p>
+  <p class="mt-sm">Use the filter bars to focus by ascension level, game version, or time range (7d/30d/90d presets or custom dates).</p>
   <p class="text-sm text-muted mt-sm">Analytics are cached for 60 seconds and recompute automatically when new runs are detected.</p>
 </div>
 

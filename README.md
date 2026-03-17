@@ -32,9 +32,9 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Play & Track
 
-- **Live Run Tracker** — Real-time dashboard via Server-Sent Events (SSE) — no page reloads. Shows deck, relics, potions, HP, floor history, counter-cards, synergy hints, and danger alerts.
+- **Live Run Tracker** — Real-time dashboard via Server-Sent Events (SSE) — no page reloads. Shows deck, relics, potions, HP, floor history, counter-cards, synergy hints, danger alerts, encounters won, and events encountered.
 - **Deck Analyzer** — Select cards to get archetype detection, synergy analysis, weakness identification, and suggestions. Save/load decks to localStorage.
-- **Run History** — Floor-by-floor breakdown of completed runs with HP tracking, card picks, and damage taken. Import/export runs as JSON or standalone HTML.
+- **Run History** — Floor-by-floor breakdown with HP tracking, card picks, cards offered (what you rejected), potions gained, monsters fought, gold per floor, and damage taken. Visual HP timeline chart. Import/export runs as JSON or standalone HTML.
 - **Run Comparison** — Side-by-side comparison of two runs with deck diff, relic diff, and stat comparison
 - **Collections** — Track card/relic discovery progress with ascension filtering
 - **Epochs** — Track all 49 epoch unlock requirements, see what's locked/unlocked, filter by category and character
@@ -52,7 +52,12 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Gold Economy** — Track gold earned, gold at death, peak gold, and win-vs-loss gold comparison
 - **Co-op Analytics** — Compare multiplayer vs solo win rates (shown only when co-op runs exist)
 - **Healing Sources** — Breakdown of HP recovery by source: rest sites, combat, and passive/relic healing
+- **Boss Matchups** — Win rate, average damage, and fight count per boss, broken down by character
+- **Relic Tiers by Character** — Top relics by win rate for each character
+- **Card Pick Heatmap** — Pick rate vs win rate grid — green means pick and win, red means pick and lose
 - **Card Regret Analysis** — Cards you pick in losses but skip in wins, helping identify bad picks
+- **Win Streak Tracker** — Prominent current win streak display on the home page
+- **Next Epoch Suggestions** — Upcoming epochs you haven't unlocked yet with requirements and rewards
 - **Community Meta** — Tier lists and strategy posts from Reddit and Steam, community-voted card tiers, aggregate player stats with import/export
 - **Global Search** — Fuzzy search with "Did you mean?" suggestions across all entities
 
