@@ -129,6 +129,27 @@
 </table>
 {% endif %}
 
+{% if stats.relic_rankings_by_character %}
+<h2>Best Relics by Character</h2>
+<p class="text-sm text-muted mb-sm">Top relics per character (2+ runs with relic)</p>
+{% for char, relics in stats.relic_rankings_by_character.items() %}
+{% if relics %}
+<h3 class="char-{{ char|lower }} mt-md">{{ char }}</h3>
+<table>
+<tr><th>Relic</th><th>Win Rate</th><th>Wins</th><th>Appearances</th></tr>
+{% for rr in relics[:10] %}
+<tr>
+  <td><a href="/relics/{{ rr.id }}">{{ kb.id_to_name(rr.id) }}</a></td>
+  <td><strong style="color:{% if rr.win_rate >= 60 %}var(--green){% elif rr.win_rate >= 40 %}var(--yellow){% else %}var(--red){% endif %}">{{ rr.win_rate }}%</strong></td>
+  <td>{{ rr.wins }}</td>
+  <td>{{ rr.appearances }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+{% endfor %}
+{% endif %}
+
 {% if stats.card_pick_rates %}
 <h2>Most Picked Cards</h2>
 <p class="text-sm text-muted mb-sm">How often you pick each card when offered (from floor rewards)</p>
@@ -143,6 +164,19 @@
 </tr>
 {% endfor %}
 </table>
+
+{% if stats.card_quality %}
+<h3 class="mt-md">Card Pick Heatmap</h3>
+<p class="text-sm text-muted mb-sm">Pick rate vs. win rate — green means pick often and win, red means pick often and lose</p>
+<div class="heatmap-grid">
+{% for cq in stats.card_quality[:40] %}
+<a href="/cards/{{ cq.id }}" class="heatmap-cell" title="{{ kb.id_to_name(cq.id) }}: {{ cq.pick_rate }}% pick, {{ cq.win_rate }}% win" style="background:{% if cq.win_rate >= 60 and cq.pick_rate >= 50 %}var(--green){% elif cq.win_rate < 40 and cq.pick_rate >= 50 %}var(--red){% elif cq.pick_rate < 30 %}var(--bg3){% else %}var(--yellow){% endif %}">
+  <span class="text-xs">{{ kb.id_to_name(cq.id)[:12] }}</span>
+</a>
+{% endfor %}
+</div>
+{% endif %}
+
 {% endif %}
 
 {% if stats.damage_by_act %}
@@ -400,6 +434,25 @@
   <td>{{ d.fights }}</td>
 </tr>
 {% endif %}
+{% endfor %}
+</table>
+{% endif %}
+
+{% if boss_matchups %}
+<h2>Boss Matchups</h2>
+<p class="text-sm text-muted mb-sm">Win rate = runs won after fighting this boss / total encounters</p>
+<table class="data-table">
+<tr><th>Boss</th><th>Character</th><th>Wins</th><th>Losses</th><th>Win Rate</th><th>Avg Dmg</th><th>Fights</th></tr>
+{% for bm in boss_matchups %}
+<tr>
+  <td><a href="/enemies/{{ bm.boss }}">{{ bm.boss_name }}</a></td>
+  <td class="char-{{ bm.character|lower }}">{{ bm.character }}</td>
+  <td class="win">{{ bm.wins }}</td>
+  <td class="loss">{{ bm.losses }}</td>
+  <td>{{ bm.win_rate }}%</td>
+  <td class="text-red">{{ bm.avg_damage }}</td>
+  <td>{{ bm.fights }}</td>
+</tr>
 {% endfor %}
 </table>
 {% endif %}

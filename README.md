@@ -42,7 +42,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Analyze & Compete
 
-- **Analytics** — Aggregate stats: per-character win rates, floor survival, card pick rates, HP curves, death floor heatmaps, and causes of death. Filter by ascension level, game version, or time range.
+- **Analytics** — Aggregate stats: per-character win rates, floor survival, card pick rates, HP curves, death floor heatmaps, and causes of death. Filter by ascension level, game version, or time range. Boss matchup intelligence, per-character relic tiers, and card pick heatmaps.
 - **Personal Records** — Hall of fame with fastest win, highest ascension, biggest/smallest deck, flawless bosses, per-character breakdowns, and notable achievements
 - **Per-Act Breakdown** — Damage, card picks, deaths, and gold tracked separately for Act 1/2/3
 - **Combat Efficiency** — Average turns per fight type with scaling trend analysis and turns-vs-damage correlation
@@ -68,7 +68,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Download (No Python Required)
 
-**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.5.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.6.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
 
 ### From Source
 

@@ -52,6 +52,24 @@
 {% endif %}
 {% endif %}
 
+{% if run.floors and run.floors|selectattr('max_hp', 'gt', 0)|list %}
+<h2>Run Timeline</h2>
+<p class="text-sm text-muted mb-sm">HP trajectory across floors — hover for details</p>
+<div class="timeline-chart">
+{% for floor in run.floors %}
+{% if floor.max_hp > 0 %}
+{% set hp_pct = (floor.current_hp / floor.max_hp * 100)|int %}
+<div class="timeline-col" title="F{{ floor.floor }}: {{ floor.current_hp }}/{{ floor.max_hp }} HP{% if floor.damage_taken %} (-{{ floor.damage_taken }}){% endif %}{% if floor.card_picked %} +{{ kb.id_to_name(floor.card_picked) }}{% endif %}">
+  <div class="timeline-bar" style="height:{{ hp_pct }}%;background:{% if hp_pct < 30 %}var(--red){% elif hp_pct < 60 %}var(--yellow){% else %}var(--green){% endif %}"></div>
+  {% if floor.card_picked %}<div class="timeline-marker timeline-card" title="Picked card"></div>{% endif %}
+  {% if floor.damage_taken > 20 %}<div class="timeline-marker timeline-hit" title="-{{ floor.damage_taken }} HP"></div>{% endif %}
+  <span class="timeline-label">{{ floor.floor }}</span>
+</div>
+{% endif %}
+{% endfor %}
+</div>
+{% endif %}
+
 <h2>Floor by Floor</h2>
 <div class="floor-timeline">
 {% for floor in run.floors %}
@@ -62,11 +80,15 @@
   </div>
   <div class="floor-detail">
     {% if floor.encounter %}<strong>{{ kb.id_to_name(floor.encounter) }}</strong>{% endif %}
-    {% if floor.turns %}<span class="text-muted"> ({{ floor.turns }} turns)</span>{% endif %}
+    {% if floor.monsters %}<span class="text-muted text-sm"> ({% for m in floor.monsters %}{{ kb.id_to_name(m) }}{% if not loop.last %}, {% endif %}{% endfor %})</span>{% endif %}
+    {% if floor.turns %}<span class="text-muted"> &mdash; {{ floor.turns }} turns</span>{% endif %}
     {% if floor.card_picked %}<br><span class="text-green">+ {{ kb.id_to_name(floor.card_picked) }}</span>{% endif %}
+    {% if floor.cards_offered %}{% set skipped = floor.cards_offered|reject('equalto', floor.card_picked)|list %}{% if skipped %}<br><span class="text-muted text-sm opacity-60">Offered: {% for s in skipped %}{{ kb.id_to_name(s) }}{% if not loop.last %}, {% endif %}{% endfor %}</span>{% endif %}{% endif %}
+    {% if floor.potions_gained %}{% for p in floor.potions_gained %}<br><span class="text-accent text-sm">Found {{ kb.id_to_name(p) }}</span>{% endfor %}{% endif %}
     {% if floor.potions_used %}{% for p in floor.potions_used %}<br><span class="text-yellow">Used {{ kb.id_to_name(p) }}</span>{% endfor %}{% endif %}
   </div>
   <div class="floor-hp-col">
+    {% if floor.gold %}<span class="text-yellow text-sm">{{ floor.gold }}g</span>{% endif %}
     {% if floor.damage_taken %}<span class="loss">-{{ floor.damage_taken }} HP</span>{% endif %}
     {% if floor.hp_healed %}<span class="win">+{{ floor.hp_healed }} HP</span>{% endif %}
     <div class="hp-bar">

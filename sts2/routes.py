@@ -91,6 +91,8 @@ async def _get_live_run(player: int = 0) -> CurrentRun:
             merged["floor"] = log["floor"]
         if log.get("act", 1) > merged.get("act", 1):
             merged["act"] = log["act"]
+        if log.get("encounters_won"):
+            merged["encounters_won"] = log["encounters_won"]
         return CurrentRun(**merged)
 
     if run.active:
@@ -163,8 +165,31 @@ async def index(request: Request):
     undiscovered = []
     if progress and progress.discovered_cards:
         undiscovered = a.kb.get_undiscovered_cards(progress.discovered_cards)[:12]
+    # Compute aggregate current streak across all characters
+    current_streak = 0
+    streak_character = ""
+    if progress and progress.character_stats:
+        for char, cs in progress.character_stats.items():
+            s = cs.get("current_streak", 0)
+            if s > current_streak:
+                current_streak = s
+                streak_character = char
+
+    # Next epochs to unlock
+    next_epochs = []
+    if progress and progress.epochs:
+        obtained_ids = {e["id"] for e in progress.epochs if e.get("state") == "revealed"}
+        for ep in a.kb.epochs:
+            if ep.id not in obtained_ids:
+                next_epochs.append({"name": ep.name, "requirement": ep.requirement,
+                                    "unlocks": ep.unlocks[:3]})
+            if len(next_epochs) >= 3:
+                break
+
     return a.templates.TemplateResponse(request, "index.html", {
         "characters": CHARACTERS, "progress": progress, "recent_runs": runs[:5],
+        "current_streak": current_streak, "streak_character": streak_character,
+        "next_epochs": next_epochs,
         "kb": a.kb, "total_cards": len(a.kb.cards), "total_relics": len(a.kb.relics),
         "total_potions": len(a.kb.potions), "total_enemies": len(a.kb.enemies),
         "last_updated": await asyncio.to_thread(get_last_updated),
@@ -567,7 +592,7 @@ async def analytics(request: Request,
                     date_from: str = Query(None, alias="from", max_length=10),
                     date_to: str = Query(None, alias="to", max_length=10),
                     preset: str = Query(None, max_length=10)):
-    from sts2.analytics import analyze_run_patterns, compute_analytics
+    from sts2.analytics import analyze_run_patterns, compute_analytics, compute_boss_matchups
     a = _app()
     all_runs = await a._get_runs()
     ascension_levels = sorted({r.ascension for r in all_runs})
@@ -600,10 +625,11 @@ async def analytics(request: Request,
         run_patterns = analyze_run_patterns(filtered, kb=a.kb)
 
     selected_preset = preset if preset in ("7d", "30d", "90d", "all") else ""
+    boss_matchups = compute_boss_matchups(filtered, kb=a.kb)
     return a.templates.TemplateResponse(request, "analytics.html", {
         "stats": stats, "kb": a.kb,
         "selected_ascension": ascension, "ascension_levels": ascension_levels,
-        "run_patterns": run_patterns,
+        "run_patterns": run_patterns, "boss_matchups": boss_matchups,
         "available_versions": available_versions, "selected_version": version,
         "selected_from": date_from or "", "selected_to": date_to or "",
         "selected_preset": selected_preset,

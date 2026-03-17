@@ -85,14 +85,17 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
         })
     card_rankings.sort(key=lambda x: (-x["win_rate"], -x["appearances"]))
 
-    # --- Relic Win Rates ---
+    # --- Relic Win Rates (global + per-character in single pass) ---
     relic_wins = Counter()
     relic_total = Counter()
+    relic_by_char: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(lambda: [0, 0]))
     for run in runs:
         for relic_id in set(run.relics):
             relic_total[relic_id] += 1
+            relic_by_char[run.character][relic_id][0] += 1
             if run.win:
                 relic_wins[relic_id] += 1
+                relic_by_char[run.character][relic_id][1] += 1
 
     relic_rankings = []
     for relic_id, appearances in relic_total.most_common():
@@ -106,6 +109,21 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
             "win_rate": wr,
         })
     relic_rankings.sort(key=lambda x: (-x["win_rate"], -x["appearances"]))
+
+    relic_rankings_by_character: dict[str, list[dict]] = {}
+    for char, relics in sorted(relic_by_char.items()):
+        char_list = []
+        for relic_id, (r_total, r_wins) in relics.items():
+            if r_total < 2:
+                continue
+            char_list.append({
+                "id": relic_id,
+                "appearances": r_total,
+                "wins": r_wins,
+                "win_rate": round(r_wins / r_total * 100, 1),
+            })
+        char_list.sort(key=lambda x: (-x["win_rate"], -x["appearances"]))
+        relic_rankings_by_character[char] = char_list[:10]
 
     # --- Character Breakdown ---
     char_runs = defaultdict(list)
@@ -608,6 +626,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
         "overview": overview,
         "card_rankings": card_rankings[:30],
         "relic_rankings": relic_rankings[:20],
+        "relic_rankings_by_character": relic_rankings_by_character,
         "character_breakdown": character_breakdown,
         "card_pick_rates": card_pick_rates[:30],
         "damage_by_act": damage_by_act,
@@ -857,3 +876,63 @@ def compute_records(runs: list[RunHistory], progress: PlayerProgress | None = No
         "flawless_bosses": flawless_bosses,
         "per_character": per_character,
     }
+
+
+def compute_boss_matchups(runs: list[RunHistory], kb=None) -> list[dict]:
+    """Compute win/loss/damage stats per boss encounter, broken down by character.
+
+    Returns a list of dicts sorted by total fights descending:
+        [{"boss": str, "boss_name": str, "character": str, "wins": int,
+          "losses": int, "win_rate": int, "avg_damage": int, "fights": int}]
+    """
+    if not runs or not kb:
+        return []
+
+    # Build set of boss encounter IDs from KB
+    boss_ids = {e.id for e in kb.enemies if e.type == "boss" and e.id.startswith("ENCOUNTER.")}
+    if not boss_ids:
+        return []
+
+    # Collect per-boss per-character stats from floor data
+    stats: dict[tuple[str, str], dict] = {}  # (encounter_id, character) -> {wins, losses, total_damage, fights}
+
+    for run in runs:
+        boss_floors = [f for f in run.floors if f.encounter in boss_ids]
+        for floor in boss_floors:
+            key = (floor.encounter, run.character)
+            if key not in stats:
+                stats[key] = {"wins": 0, "losses": 0, "total_damage": 0, "fights": 0}
+            stats[key]["fights"] += 1
+            stats[key]["total_damage"] += floor.damage_taken
+            # If the run was a win, every boss floor was cleared
+            if run.win:
+                stats[key]["wins"] += 1
+
+        # Loss: only the killing boss gets a loss
+        if not run.win and run.killed_by in boss_ids:
+            key = (run.killed_by, run.character)
+            if key not in stats:
+                stats[key] = {"wins": 0, "losses": 0, "total_damage": 0, "fights": 0}
+            stats[key]["losses"] += 1
+            # Death counts as a fight if floor data didn't record it
+            if stats[key]["fights"] == 0:
+                stats[key]["fights"] = 1
+
+    results = []
+    for (boss_id, character), s in stats.items():
+        fights = s["fights"]
+        if fights == 0:
+            continue
+        results.append({
+            "boss": boss_id,
+            "boss_name": kb.id_to_name(boss_id),
+            "character": character,
+            "wins": s["wins"],
+            "losses": s["losses"],
+            "win_rate": round(s["wins"] / fights * 100) if fights else 0,
+            "avg_damage": round(s["total_damage"] / fights),
+            "fights": fights,
+        })
+
+    results.sort(key=lambda x: x["fights"], reverse=True)
+    return results

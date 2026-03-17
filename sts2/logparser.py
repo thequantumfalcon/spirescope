@@ -83,6 +83,7 @@ class LogRunState:
             "relics": list(self.relics),
             "potions": list(self.potions),
             "events_seen": list(self.events_seen),
+            "encounters_won": list(self.encounters_won),
             "floors": [],
             "player_index": 0,
             "total_players": self.total_players,

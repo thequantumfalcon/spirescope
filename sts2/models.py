@@ -135,6 +135,7 @@ class CurrentRun(BaseModel):
     relics: list[str] = []
     potions: list[str] = []
     events_seen: list[str] = []
+    encounters_won: list[str] = []
     floors: list[RunFloor] = []
     player_index: int = 0
     total_players: int = 1

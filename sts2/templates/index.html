@@ -27,6 +27,9 @@
   <div class="stat-box"><div class="num">{{ (progress.total_playtime / 60)|int }}m</div><div class="label">Playtime</div></div>
   <div class="stat-box"><div class="num">{{ progress.discovered_cards|length }}</div><div class="label">Cards Seen</div></div>
   {% endif %}
+  {% if current_streak and current_streak > 1 %}
+  <div class="stat-box"><div class="num win">{{ current_streak }}</div><div class="label">Win Streak ({{ streak_character }})</div></div>
+  {% endif %}
 </div>
 
 <h2>Explore</h2>
@@ -69,6 +72,20 @@
   {% if run.killed_by %}<span class="text-red">Killed by {{ kb.id_to_name(run.killed_by) }}</span>{% endif %}
 </a>
 {% endfor %}
+{% endif %}
+
+{% if next_epochs %}
+<h2>Next Unlocks</h2>
+<p class="text-sm text-muted mb-sm">Epochs you haven't unlocked yet</p>
+<div class="grid grid-3">
+{% for ep in next_epochs %}
+<div class="card card-link">
+  <h3>{{ ep.name }}</h3>
+  <p class="text-sm text-muted">{{ ep.requirement }}</p>
+  {% if ep.unlocks %}<p class="text-sm text-green mt-xs">Unlocks: {{ ep.unlocks|join(', ') }}</p>{% endif %}
+</div>
+{% endfor %}
+</div>
 {% endif %}
 
 {% if data_status %}

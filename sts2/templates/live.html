@@ -69,6 +69,24 @@
     {% endfor %}
     </div>
     {% endif %}
+
+    {% if run.encounters_won %}
+    <h2>Encounters Won ({{ run.encounters_won|length }})</h2>
+    <div class="flex flex-wrap gap-xs mb-lg">
+    {% for enc_id in run.encounters_won %}
+    <span class="tag tag-skill">{{ kb.id_to_name(enc_id) }}</span>
+    {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if run.events_seen %}
+    <h2>Events Encountered</h2>
+    <div class="flex flex-wrap gap-xs mb-lg">
+    {% for event_id in run.events_seen %}
+    <a href="/events" class="tag tag-curse card-link">{{ kb.id_to_name(event_id) }}</a>
+    {% endfor %}
+    </div>
+    {% endif %}
   </div>
 
   <div>
