@@ -1,6 +1,5 @@
-<p align="center">
-  <img src="docs/banner.png" alt="SpireScope" width="100%">
-</p>
+<h1 align="center">SPIRESCOPE</h1>
+<p align="center"><em>Card lookup &bull; Deck analysis &bull; Live run tracking &bull; Analytics for Slay the Spire 2</em></p>
 
 <p align="center">
   <img src="https://github.com/thequantumfalcon/spirescope/actions/workflows/ci.yml/badge.svg" alt="CI">
