@@ -1,257 +1,5 @@
 [
   {
-    "id": "RELIC.CRACKED_CORE",
-    "name": "Cracked Core",
-    "character": "Defect",
-    "rarity": "Starter",
-    "description": "At the start of each combat, Channel 1 Lightning."
-  },
-  {
-    "id": "RELIC.DATA_DISK",
-    "name": "Data Disk",
-    "character": "Defect",
-    "rarity": "Common",
-    "description": "Start each combat with 1 Focus."
-  },
-  {
-    "id": "RELIC.EMOTION_CHIP",
-    "name": "Emotion Chip",
-    "character": "Defect",
-    "rarity": "Rare",
-    "description": "If you lost HP during the previous turn, trigger the passive ability of all Orbs at the start of your turn."
-  },
-  {
-    "id": "RELIC.GOLD_PLATED_CABLES",
-    "name": "Gold-Plated Cables",
-    "character": "Defect",
-    "rarity": "Uncommon",
-    "description": "Your rightmost Orb triggers its passive an additional time."
-  },
-  {
-    "id": "RELIC.INFUSED_CORE",
-    "name": "Infused Core",
-    "character": "Event",
-    "rarity": "Starter",
-    "description": "At the start of each combat, Channel 3 Lightning."
-  },
-  {
-    "id": "RELIC.METRONOME",
-    "name": "Metronome",
-    "character": "Defect",
-    "rarity": "Rare",
-    "description": "The first time you Channel 7 Orbs each combat, deal 30 damage to ALL enemies."
-  },
-  {
-    "id": "RELIC.POWER_CELL",
-    "name": "Power Cell",
-    "character": "Defect",
-    "rarity": "Rare",
-    "description": "At the start of each combat, add 2 zero-cost cards from your Draw Pile into your Hand."
-  },
-  {
-    "id": "RELIC.RUNIC_CAPACITOR",
-    "name": "Runic Capacitor",
-    "character": "Defect",
-    "rarity": "Shop",
-    "description": "Start each combat with 3 additional Orb Slots."
-  },
-  {
-    "id": "RELIC.SYMBIOTIC_VIRUS",
-    "name": "Symbiotic Virus",
-    "character": "Defect",
-    "rarity": "Uncommon",
-    "description": "At the start of each combat, Channel 1 Dark."
-  },
-  {
-    "id": "RELIC.BLACK_BLOOD",
-    "name": "Black Blood",
-    "character": "Event",
-    "rarity": "Starter",
-    "description": "At the end of combat, heal 12 HP."
-  },
-  {
-    "id": "RELIC.BRIMSTONE",
-    "name": "Brimstone",
-    "character": "Ironclad",
-    "rarity": "Shop",
-    "description": "At the start of your turn, gain 2 Strength and ALL enemies gain 1 Strength."
-  },
-  {
-    "id": "RELIC.BURNING_BLOOD",
-    "name": "Burning Blood",
-    "character": "Ironclad",
-    "rarity": "Starter",
-    "description": "At the end of combat, heal 6 HP."
-  },
-  {
-    "id": "RELIC.CHARONS_ASHES",
-    "name": "Charon's Ashes",
-    "character": "Ironclad",
-    "rarity": "Rare",
-    "description": "Whenever you Exhaust a card, deal 3 damage to ALL enemies."
-  },
-  {
-    "id": "RELIC.DEMON_TONGUE",
-    "name": "Demon Tongue",
-    "character": "Ironclad",
-    "rarity": "Rare",
-    "description": "The first time you lose HP on your turn, heal HP equal to the amount lost."
-  },
-  {
-    "id": "RELIC.PAPER_PHROG",
-    "name": "Paper Phrog",
-    "character": "Ironclad",
-    "rarity": "Uncommon",
-    "description": "Enemies with Vulnerable take 75% more damage rather than 50%."
-  },
-  {
-    "id": "RELIC.RED_SKULL",
-    "name": "Red Skull",
-    "character": "Ironclad",
-    "rarity": "Common",
-    "description": "While your HP is at or below 50%, you have 3 additional Strength."
-  },
-  {
-    "id": "RELIC.RUINED_HELMET",
-    "name": "Ruined Helmet",
-    "character": "Ironclad",
-    "rarity": "Rare",
-    "description": "The first time you gain Strength each combat, double the amount gained."
-  },
-  {
-    "id": "RELIC.SELF_FORMING_CLAY",
-    "name": "Self-Forming Clay",
-    "character": "Ironclad",
-    "rarity": "Uncommon",
-    "description": "Whenever you lose HP in combat, gain 3 Block next turn."
-  },
-  {
-    "id": "RELIC.BIG_HAT",
-    "name": "Big Hat",
-    "character": "Necrobinder",
-    "rarity": "Rare",
-    "description": "At the start of each combat, add 2 random Ethereal cards into your Hand."
-  },
-  {
-    "id": "RELIC.BONE_FLUTE",
-    "name": "Bone Flute",
-    "character": "Necrobinder",
-    "rarity": "Common",
-    "description": "Whenever Osty attacks, gain 2 Block."
-  },
-  {
-    "id": "RELIC.BOOK_REPAIR_KNIFE",
-    "name": "Book Repair Knife",
-    "character": "Necrobinder",
-    "rarity": "Uncommon",
-    "description": "Whenever a non-Minion enemy dies to Doom, heal 3 HP."
-  },
-  {
-    "id": "RELIC.BOOKMARK",
-    "name": "Bookmark",
-    "character": "Necrobinder",
-    "rarity": "Rare",
-    "description": "At the end of each turn, lower the cost of a random Retained card by 1 until played."
-  },
-  {
-    "id": "RELIC.BOUND_PHYLACTERY",
-    "name": "Bound Phylactery",
-    "character": "Necrobinder",
-    "rarity": "Starter",
-    "description": "At the start of your turn, Summon 1."
-  },
-  {
-    "id": "RELIC.FUNERARY_MASK",
-    "name": "Funerary Mask",
-    "character": "Necrobinder",
-    "rarity": "Uncommon",
-    "description": "At the start of each combat, add 3 Souls into your Draw Pile."
-  },
-  {
-    "id": "RELIC.IVORY_TILE",
-    "name": "Ivory Tile",
-    "character": "Necrobinder",
-    "rarity": "Rare",
-    "description": "Whenever you play a card that costs 3 Energy or more, gain 1 Energy."
-  },
-  {
-    "id": "RELIC.PHYLACTERY_UNBOUND",
-    "name": "Phylactery Unbound",
-    "character": "Event",
-    "rarity": "Starter",
-    "description": "At the start of each combat, Summon 5. At the start of your turn, Summon 2."
-  },
-  {
-    "id": "RELIC.UNDYING_SIGIL",
-    "name": "Undying Sigil",
-    "character": "Necrobinder",
-    "rarity": "Shop",
-    "description": "Enemies with at least as much Doom as HP deal 50% less damage."
-  },
-  {
-    "id": "RELIC.DIVINE_DESTINY",
-    "name": "Divine Destiny",
-    "character": "Event",
-    "rarity": "Starter",
-    "description": "At the start of each combat, gain 6 Star."
-  },
-  {
-    "id": "RELIC.DIVINE_RIGHT",
-    "name": "Divine Right",
-    "character": "Regent",
-    "rarity": "Starter",
-    "description": "At the start of each combat, gain 3 Star."
-  },
-  {
-    "id": "RELIC.FENCING_MANUAL",
-    "name": "Fencing Manual",
-    "character": "Regent",
-    "rarity": "Common",
-    "description": "At the start of each combat, Forge 10."
-  },
-  {
-    "id": "RELIC.GALACTIC_DUST",
-    "name": "Galactic Dust",
-    "character": "Regent",
-    "rarity": "Uncommon",
-    "description": "For every 10 1 Star spent, gain 10 Block."
-  },
-  {
-    "id": "RELIC.LUNAR_PASTRY",
-    "name": "Lunar Pastry",
-    "character": "Regent",
-    "rarity": "Rare",
-    "description": "At the end of your turn, gain 1 Star."
-  },
-  {
-    "id": "RELIC.MINI_REGENT",
-    "name": "Mini Regent",
-    "character": "Regent",
-    "rarity": "Rare",
-    "description": "The first time you spend 1 Star each turn, gain 1 Strength."
-  },
-  {
-    "id": "RELIC.ORANGE_DOUGH",
-    "name": "Orange Dough",
-    "character": "Regent",
-    "rarity": "Rare",
-    "description": "At the start of each combat, add 2 random Colorless cards into your Hand."
-  },
-  {
-    "id": "RELIC.REGALITE",
-    "name": "Regalite",
-    "character": "Regent",
-    "rarity": "Uncommon",
-    "description": "Whenever you create a Colorless card, gain 2 Block."
-  },
-  {
-    "id": "RELIC.VITRUVIAN_MINION",
-    "name": "Vitruvian Minion",
-    "character": "Regent",
-    "rarity": "Shop",
-    "description": "Cards containing âMinionâ deal double damage and gain double Block."
-  },
-  {
     "id": "RELIC.AKABEKO",
     "name": "Akabeko",
     "character": "Shared",
@@ -357,6 +105,13 @@
     "description": "While you have no potions, you have 2 additional Dexterity."
   },
   {
+    "id": "RELIC.BIG_HAT",
+    "name": "Big Hat",
+    "character": "Necrobinder",
+    "rarity": "Rare",
+    "description": "At the start of each combat, add 2 random Ethereal cards into your Hand."
+  },
+  {
     "id": "RELIC.BIG_MUSHROOM",
     "name": "Big Mushroom",
     "character": "Event",
@@ -376,6 +131,13 @@
     "character": "Event",
     "rarity": "Event",
     "description": "Whenever you add a card to your Deck, add one additional copy."
+  },
+  {
+    "id": "RELIC.BLACK_BLOOD",
+    "name": "Black Blood",
+    "character": "Event",
+    "rarity": "Starter",
+    "description": "At the end of combat, heal 12 HP."
   },
   {
     "id": "RELIC.BLACK_STAR",
@@ -413,11 +175,25 @@
     "description": "Upon pickup, add 1 Enthralled to your Deck. Gain 1 Energy at the start of each turn."
   },
   {
+    "id": "RELIC.BONE_FLUTE",
+    "name": "Bone Flute",
+    "character": "Necrobinder",
+    "rarity": "Common",
+    "description": "Whenever Osty attacks, gain 2 Block."
+  },
+  {
     "id": "RELIC.BONE_TEA",
     "name": "Bone Tea",
     "character": "Event",
     "rarity": "Event",
     "description": "At the start of the next combats, Upgrade your starting hand."
+  },
+  {
+    "id": "RELIC.BOOK_REPAIR_KNIFE",
+    "name": "Book Repair Knife",
+    "character": "Necrobinder",
+    "rarity": "Uncommon",
+    "description": "Whenever a non-Minion enemy dies to Doom, heal 3 HP."
   },
   {
     "id": "RELIC.BOOK_OF_FIVE_RINGS",
@@ -427,11 +203,25 @@
     "description": "Every 5 cards you add to your Deck, heal 15 HP."
   },
   {
+    "id": "RELIC.BOOKMARK",
+    "name": "Bookmark",
+    "character": "Necrobinder",
+    "rarity": "Rare",
+    "description": "At the end of each turn, lower the cost of a random Retained card by 1 until played."
+  },
+  {
     "id": "RELIC.BOOMING_CONCH",
     "name": "Booming Conch",
     "character": "Event",
     "rarity": "Ancient",
     "description": "At the start of Elite combats, draw 2 additional cards."
+  },
+  {
+    "id": "RELIC.BOUND_PHYLACTERY",
+    "name": "Bound Phylactery",
+    "character": "Necrobinder",
+    "rarity": "Starter",
+    "description": "At the start of your turn, Summon 1."
   },
   {
     "id": "RELIC.BOWLER_HAT",
@@ -455,11 +245,25 @@
     "description": "The 5th card you play each turn is free."
   },
   {
+    "id": "RELIC.BRIMSTONE",
+    "name": "Brimstone",
+    "character": "Ironclad",
+    "rarity": "Shop",
+    "description": "At the start of your turn, gain 2 Strength and ALL enemies gain 1 Strength."
+  },
+  {
     "id": "RELIC.BRONZE_SCALES",
     "name": "Bronze Scales",
     "character": "Shared",
     "rarity": "Common",
     "description": "Start each combat with 3 Thorns."
+  },
+  {
+    "id": "RELIC.BURNING_BLOOD",
+    "name": "Burning Blood",
+    "character": "Ironclad",
+    "rarity": "Starter",
+    "description": "At the end of combat, heal 6 HP."
   },
   {
     "id": "RELIC.BURNING_STICKS",
@@ -518,6 +322,13 @@
     "description": "At the start of your 3rd turn, gain 3 Energy."
   },
   {
+    "id": "RELIC.CHARONS_ASHES",
+    "name": "Charon's Ashes",
+    "character": "Ironclad",
+    "rarity": "Rare",
+    "description": "Whenever you Exhaust a card, deal 3 damage to ALL enemies."
+  },
+  {
     "id": "RELIC.CHEMICAL_X",
     "name": "Chemical X",
     "character": "Shared",
@@ -553,6 +364,13 @@
     "description": "At the end of your turn, gain 1 Block for each card in your Hand."
   },
   {
+    "id": "RELIC.CRACKED_CORE",
+    "name": "Cracked Core",
+    "character": "Defect",
+    "rarity": "Starter",
+    "description": "At the start of each combat, Channel 1 Lightning."
+  },
+  {
     "id": "RELIC.CROSSBOW",
     "name": "Crossbow",
     "character": "Event",
@@ -581,6 +399,13 @@
     "description": "Whenever you obtain a Curse, raise your Max HP by 6."
   },
   {
+    "id": "RELIC.DATA_DISK",
+    "name": "Data Disk",
+    "character": "Defect",
+    "rarity": "Common",
+    "description": "Start each combat with 1 Focus."
+  },
+  {
     "id": "RELIC.DAUGHTER_OF_THE_WIND",
     "name": "Daughter of the Wind",
     "character": "Event",
@@ -593,6 +418,13 @@
     "character": "Event",
     "rarity": "Ancient",
     "description": "At the start of each combat, fill all empty potion slots with random potions."
+  },
+  {
+    "id": "RELIC.DEMON_TONGUE",
+    "name": "Demon Tongue",
+    "character": "Ironclad",
+    "rarity": "Rare",
+    "description": "The first time you lose HP on your turn, heal HP equal to the amount lost."
   },
   {
     "id": "RELIC.DIAMOND_DIADEM",
@@ -614,6 +446,20 @@
     "character": "Event",
     "rarity": "Ancient",
     "description": "Upon pickup, lose 9 Max HP. Add 3 Apparitions to your Deck."
+  },
+  {
+    "id": "RELIC.DIVINE_DESTINY",
+    "name": "Divine Destiny",
+    "character": "Event",
+    "rarity": "Starter",
+    "description": "At the start of each combat, gain 6 Star."
+  },
+  {
+    "id": "RELIC.DIVINE_RIGHT",
+    "name": "Divine Right",
+    "character": "Regent",
+    "rarity": "Starter",
+    "description": "At the start of each combat, gain 3 Star."
   },
   {
     "id": "RELIC.DOLLYS_MIRROR",
@@ -672,6 +518,13 @@
     "description": "At the start of the next combats, gain 2 Strength."
   },
   {
+    "id": "RELIC.EMOTION_CHIP",
+    "name": "Emotion Chip",
+    "character": "Defect",
+    "rarity": "Rare",
+    "description": "If you lost HP during the previous turn, trigger the passive ability of all Orbs at the start of your turn."
+  },
+  {
     "id": "RELIC.EMPTY_CAGE",
     "name": "Empty Cage",
     "character": "Event",
@@ -691,6 +544,13 @@
     "character": "Shared",
     "rarity": "Uncommon",
     "description": "For every 5 cards in your Deck, heal 3 HP whenever you enter a Rest Site."
+  },
+  {
+    "id": "RELIC.FENCING_MANUAL",
+    "name": "Fencing Manual",
+    "character": "Regent",
+    "rarity": "Common",
+    "description": "At the start of each combat, Forge 10."
   },
   {
     "id": "RELIC.FESTIVE_POPPER",
@@ -735,11 +595,25 @@
     "description": "Whenever you add a Power into your Deck, Upgrade it."
   },
   {
+    "id": "RELIC.FUNERARY_MASK",
+    "name": "Funerary Mask",
+    "character": "Necrobinder",
+    "rarity": "Uncommon",
+    "description": "At the start of each combat, add 3 Souls into your Draw Pile."
+  },
+  {
     "id": "RELIC.FUR_COAT",
     "name": "Fur Coat",
     "character": "Event",
     "rarity": "Ancient",
     "description": "Upon pickup, mark 7 random combats. Enemies in those rooms have 1 HP."
+  },
+  {
+    "id": "RELIC.GALACTIC_DUST",
+    "name": "Galactic Dust",
+    "character": "Regent",
+    "rarity": "Uncommon",
+    "description": "For every 10 1 Star spent, gain 10 Block."
   },
   {
     "id": "RELIC.GAMBLING_CHIP",
@@ -798,6 +672,13 @@
     "description": "Upon pickup, Enchant up to 3 Attacks with [purple]Sharp[/purple] 3."
   },
   {
+    "id": "RELIC.GOLD_PLATED_CABLES",
+    "name": "Gold-Plated Cables",
+    "character": "Defect",
+    "rarity": "Uncommon",
+    "description": "Your rightmost Orb triggers its passive an additional time."
+  },
+  {
     "id": "RELIC.GOLDEN_COMPASS",
     "name": "Golden Compass",
     "character": "Event",
@@ -847,6 +728,20 @@
     "description": "Every 5 turns, gain 1 Energy."
   },
   {
+    "id": "RELIC.HEFTY_TABLET",
+    "name": "Hefty Tablet",
+    "character": "Event",
+    "rarity": "Ancient",
+    "description": "Upon pickup, choose 1 of 3 Rare cards to add to your Deck, and add 1 Injury to your Deck."
+  },
+  {
+    "id": "RELIC.HELICAL_DART",
+    "name": "Helical Dart",
+    "character": "Silent",
+    "rarity": "Rare",
+    "description": "Whenever you play a Shiv, gain 1 Dexterity this turn."
+  },
+  {
     "id": "RELIC.HISTORY_COURSE",
     "name": "History Course",
     "character": "Event",
@@ -868,6 +763,13 @@
     "description": "Energy is now conserved between turns."
   },
   {
+    "id": "RELIC.INFUSED_CORE",
+    "name": "Infused Core",
+    "character": "Event",
+    "rarity": "Starter",
+    "description": "At the start of each combat, Channel 3 Lightning."
+  },
+  {
     "id": "RELIC.INK_BOTTLE",
     "name": "Ink Bottle",
     "character": "Shared",
@@ -887,6 +789,13 @@
     "character": "Event",
     "rarity": "Ancient",
     "description": "Every 4 cards you play, draw 1 card."
+  },
+  {
+    "id": "RELIC.IVORY_TILE",
+    "name": "Ivory Tile",
+    "character": "Necrobinder",
+    "rarity": "Rare",
+    "description": "Whenever you play a card that costs 3 Energy or more, gain 1 Energy."
   },
   {
     "id": "RELIC.JEWELED_MASK",
@@ -1050,6 +959,13 @@
     "description": "Whenever you add a card to your Deck, gain 15 Gold."
   },
   {
+    "id": "RELIC.LUNAR_PASTRY",
+    "name": "Lunar Pastry",
+    "character": "Regent",
+    "rarity": "Rare",
+    "description": "At the end of your turn, gain 1 Star."
+  },
+  {
     "id": "RELIC.MANGO",
     "name": "Mango",
     "character": "Shared",
@@ -1120,6 +1036,20 @@
     "description": "At the start of your turn, deal 3 damage to ALL enemies."
   },
   {
+    "id": "RELIC.METRONOME",
+    "name": "Metronome",
+    "character": "Defect",
+    "rarity": "Rare",
+    "description": "The first time you Channel 7 Orbs each combat, deal 30 damage to ALL enemies."
+  },
+  {
+    "id": "RELIC.MINI_REGENT",
+    "name": "Mini Regent",
+    "character": "Regent",
+    "rarity": "Rare",
+    "description": "The first time you spend 1 Star each turn, gain 1 Strength."
+  },
+  {
     "id": "RELIC.MINIATURE_CANNON",
     "name": "Miniature Cannon",
     "character": "Shared",
@@ -1176,6 +1106,13 @@
     "description": "Enchanted Attacks deal 9 additional damage."
   },
   {
+    "id": "RELIC.NEOWS_TALISMAN",
+    "name": "Neow's Talisman",
+    "character": "Event",
+    "rarity": "Ancient",
+    "description": "Upon pickup, Upgrade 1 of your Strikes and 1 of your Defends."
+  },
+  {
     "id": "RELIC.NEOWS_TORMENT",
     "name": "Neow's Torment",
     "character": "Event",
@@ -1188,6 +1125,13 @@
     "character": "Event",
     "rarity": "Ancient",
     "description": "Upon pickup, Transform 1 card."
+  },
+  {
+    "id": "RELIC.NINJA_SCROLL",
+    "name": "Ninja Scroll",
+    "character": "Silent",
+    "rarity": "Shop",
+    "description": "At the start of each combat, add 3 Shivs into your Hand."
   },
   {
     "id": "RELIC.NUNCHAKU",
@@ -1223,6 +1167,13 @@
     "character": "Shared",
     "rarity": "Rare",
     "description": "Upon pickup, gain 300 Gold."
+  },
+  {
+    "id": "RELIC.ORANGE_DOUGH",
+    "name": "Orange Dough",
+    "character": "Regent",
+    "rarity": "Rare",
+    "description": "At the start of each combat, add 2 random Colorless cards into your Hand."
   },
   {
     "id": "RELIC.ORICHALCUM",
@@ -1337,6 +1288,20 @@
     "description": "At the start of each Boss combat, heal 25 HP."
   },
   {
+    "id": "RELIC.PAPER_KRANE",
+    "name": "Paper Krane",
+    "character": "Silent",
+    "rarity": "Rare",
+    "description": "Enemies with Weak deal 40% less damage to you rather than 25%."
+  },
+  {
+    "id": "RELIC.PAPER_PHROG",
+    "name": "Paper Phrog",
+    "character": "Ironclad",
+    "rarity": "Uncommon",
+    "description": "Enemies with Vulnerable take 75% more damage rather than 50%."
+  },
+  {
     "id": "RELIC.PARRYING_SHIELD",
     "name": "Parrying Shield",
     "character": "Shared",
@@ -1386,6 +1351,13 @@
     "description": "Gain 1 Energy at the start of each turn. ALL enemies start combat with 1 Strength."
   },
   {
+    "id": "RELIC.PHYLACTERY_UNBOUND",
+    "name": "Phylactery Unbound",
+    "character": "Event",
+    "rarity": "Starter",
+    "description": "At the start of each combat, Summon 5. At the start of your turn, Summon 2."
+  },
+  {
     "id": "RELIC.PLANISPHERE",
     "name": "Planisphere",
     "character": "Shared",
@@ -1419,6 +1391,13 @@
     "character": "Shared",
     "rarity": "Common",
     "description": "Upon pickup, gain 2 potion slots."
+  },
+  {
+    "id": "RELIC.POWER_CELL",
+    "name": "Power Cell",
+    "character": "Defect",
+    "rarity": "Rare",
+    "description": "At the start of each combat, add 2 zero-cost cards from your Draw Pile into your Hand."
   },
   {
     "id": "RELIC.PRAYER_WHEEL",
@@ -1498,6 +1477,13 @@
     "description": "At the start of each combat, apply 1 Weak to ALL enemies."
   },
   {
+    "id": "RELIC.RED_SKULL",
+    "name": "Red Skull",
+    "character": "Ironclad",
+    "rarity": "Common",
+    "description": "While your HP is at or below 50%, you have 3 additional Strength."
+  },
+  {
     "id": "RELIC.RED_VINE_TEA",
     "name": "Red Vine Tea",
     "character": "Shared",
@@ -1512,11 +1498,32 @@
     "description": "Whenever you Rest, heal an additional 15 HP."
   },
   {
+    "id": "RELIC.REGALITE",
+    "name": "Regalite",
+    "character": "Regent",
+    "rarity": "Uncommon",
+    "description": "Whenever you create a Colorless card, gain 2 Block."
+  },
+  {
     "id": "RELIC.REPTILE_TRINKET",
     "name": "Reptile Trinket",
     "character": "Shared",
     "rarity": "Uncommon",
     "description": "Whenever you use a potion, gain 3 Strength this turn."
+  },
+  {
+    "id": "RELIC.RING_OF_THE_DRAKE",
+    "name": "Ring of the Drake",
+    "character": "Event",
+    "rarity": "Starter",
+    "description": "At the start of your first 3 turns, draw 2 additional cards."
+  },
+  {
+    "id": "RELIC.RING_OF_THE_SNAKE",
+    "name": "Ring of the Snake",
+    "character": "Silent",
+    "rarity": "Starter",
+    "description": "At the start of each combat, draw 2 additional cards."
   },
   {
     "id": "RELIC.RINGING_TRIANGLE",
@@ -1545,6 +1552,20 @@
     "character": "Shared",
     "rarity": "Shop",
     "description": "Upon pickup, choose an Attack or Skill to Enchant."
+  },
+  {
+    "id": "RELIC.RUINED_HELMET",
+    "name": "Ruined Helmet",
+    "character": "Ironclad",
+    "rarity": "Rare",
+    "description": "The first time you gain Strength each combat, double the amount gained."
+  },
+  {
+    "id": "RELIC.RUNIC_CAPACITOR",
+    "name": "Runic Capacitor",
+    "character": "Defect",
+    "rarity": "Shop",
+    "description": "Start each combat with 3 additional Orb Slots."
   },
   {
     "id": "RELIC.RUNIC_PYRAMID",
@@ -1594,6 +1615,13 @@
     "character": "Event",
     "rarity": "Ancient",
     "description": "At the start of your turn, spend 5 Gold to gain 1 Energy."
+  },
+  {
+    "id": "RELIC.SELF_FORMING_CLAY",
+    "name": "Self-Forming Clay",
+    "character": "Ironclad",
+    "rarity": "Uncommon",
+    "description": "Whenever you lose HP in combat, gain 3 Block next turn."
   },
   {
     "id": "RELIC.SERE_TALON",
@@ -1657,6 +1685,13 @@
     "character": "Event",
     "rarity": "Event",
     "description": "Start each combat Confused."
+  },
+  {
+    "id": "RELIC.SNECKO_SKULL",
+    "name": "Snecko Skull",
+    "character": "Silent",
+    "rarity": "Common",
+    "description": "Whenever you apply Poison, apply an additional 1 Poison."
   },
   {
     "id": "RELIC.SOZU",
@@ -1750,6 +1785,13 @@
     "description": "Transforms into a powerful Relic after defeating 5 Elites."
   },
   {
+    "id": "RELIC.SYMBIOTIC_VIRUS",
+    "name": "Symbiotic Virus",
+    "character": "Defect",
+    "rarity": "Uncommon",
+    "description": "At the start of each combat, Channel 1 Dark."
+  },
+  {
     "id": "RELIC.TANXS_WHISTLE",
     "name": "Tanx's Whistle",
     "character": "Event",
@@ -1806,6 +1848,13 @@
     "description": "The first card you play each combat is played an extra time."
   },
   {
+    "id": "RELIC.TINGSHA",
+    "name": "Tingsha",
+    "character": "Silent",
+    "rarity": "Uncommon",
+    "description": "Whenever you discard a card during your turn, deal 3 damage to a random enemy for each card discarded."
+  },
+  {
     "id": "RELIC.TINY_MAILBOX",
     "name": "Tiny Mailbox",
     "character": "Shared",
@@ -1832,6 +1881,13 @@
     "character": "Event",
     "rarity": "Ancient",
     "description": "Upon pickup, replace your starter Relic with an Ancient version."
+  },
+  {
+    "id": "RELIC.TOUGH_BANDAGES",
+    "name": "Tough Bandages",
+    "character": "Silent",
+    "rarity": "Rare",
+    "description": "Whenever you discard a card during your turn, gain 3 Block."
   },
   {
     "id": "RELIC.TOXIC_EGG",
@@ -1869,11 +1925,25 @@
     "description": "Every time you play 10 Skills, gain 7 Block."
   },
   {
+    "id": "RELIC.TWISTED_FUNNEL",
+    "name": "Twisted Funnel",
+    "character": "Silent",
+    "rarity": "Uncommon",
+    "description": "At the start of each combat, apply 4 Poison to ALL enemies."
+  },
+  {
     "id": "RELIC.UNCEASING_TOP",
     "name": "Unceasing Top",
     "character": "Shared",
     "rarity": "Rare",
     "description": "Whenever you have no cards in Hand during your turn, draw a card."
+  },
+  {
+    "id": "RELIC.UNDYING_SIGIL",
+    "name": "Undying Sigil",
+    "character": "Necrobinder",
+    "rarity": "Shop",
+    "description": "Enemies with at least as much Doom as HP deal 50% less damage."
   },
   {
     "id": "RELIC.UNSETTLING_LAMP",
@@ -1918,6 +1988,41 @@
     "description": "Whenever you enter a Rest Site, start the next combat with an additional 1 Energy."
   },
   {
+    "id": "RELIC.VERY_HOT_COCOA",
+    "name": "Very Hot Cocoa",
+    "character": "Shared",
+    "rarity": "Ancient",
+    "description": "Start each combat with an additional 4 Energy."
+  },
+  {
+    "id": "RELIC.VEXING_PUZZLEBOX",
+    "name": "Vexing Puzzlebox",
+    "character": "Shared",
+    "rarity": "Rare",
+    "description": "At the start of each combat, add a random card into your Hand. It costs 01 Energy."
+  },
+  {
+    "id": "RELIC.VINE_BRACELET",
+    "name": "Vine Bracelet",
+    "character": "Shared",
+    "rarity": "",
+    "description": "Upon pickup, raise your Max HP by 5."
+  },
+  {
+    "id": "RELIC.VITRUVIAN_MINION",
+    "name": "Vitruvian Minion",
+    "character": "Regent",
+    "rarity": "Shop",
+    "description": "Cards containing âMinionâ deal double damage and gain double Block."
+  },
+  {
+    "id": "RELIC.WAR_HAMMER",
+    "name": "War Hammer",
+    "character": "Event",
+    "rarity": "Ancient",
+    "description": "Whenever you kill an Elite, Upgrade 4 random cards."
+  },
+  {
     "id": "RELIC.WAR_PAINT",
     "name": "War Paint",
     "character": "Shared",
@@ -1932,6 +2037,13 @@
     "description": "Upon pickup, Upgrade 2 random Attacks."
   },
   {
+    "id": "RELIC.WHISPERING_EARRING",
+    "name": "Whispering Earring",
+    "character": "Event",
+    "rarity": "Ancient",
+    "description": "Gain 1 Energy at the start of each turn. Vakuu plays your first turn for you."
+  },
+  {
     "id": "RELIC.WHITE_BEAST_STATUE",
     "name": "White Beast Statue",
     "character": "Shared",
@@ -1939,81 +2051,18 @@
     "description": "Potions always appear in combat rewards."
   },
   {
-    "id": "RELIC.HELICAL_DART",
-    "name": "Helical Dart",
-    "character": "Silent",
+    "id": "RELIC.WHITE_STAR",
+    "name": "White Star",
+    "character": "Shared",
     "rarity": "Rare",
-    "description": "Whenever you play a Shiv, gain 1 Dexterity this turn."
+    "description": "Elites drop an additional Rare card reward."
   },
   {
-    "id": "RELIC.NINJA_SCROLL",
-    "name": "Ninja Scroll",
-    "character": "Silent",
+    "id": "RELIC.WING_CHARM",
+    "name": "Wing Charm",
+    "character": "Shared",
     "rarity": "Shop",
-    "description": "At the start of each combat, add 3 Shivs into your Hand."
-  },
-  {
-    "id": "RELIC.PAPER_KRANE",
-    "name": "Paper Krane",
-    "character": "Silent",
-    "rarity": "Rare",
-    "description": "Enemies with Weak deal 40% less damage to you rather than 25%."
-  },
-  {
-    "id": "RELIC.RING_OF_THE_DRAKE",
-    "name": "Ring of the Drake",
-    "character": "Event",
-    "rarity": "Starter",
-    "description": "At the start of your first 3 turns, draw 2 additional cards."
-  },
-  {
-    "id": "RELIC.RING_OF_THE_SNAKE",
-    "name": "Ring of the Snake",
-    "character": "Silent",
-    "rarity": "Starter",
-    "description": "At the start of each combat, draw 2 additional cards."
-  },
-  {
-    "id": "RELIC.SNECKO_SKULL",
-    "name": "Snecko Skull",
-    "character": "Silent",
-    "rarity": "Common",
-    "description": "Whenever you apply Poison, apply an additional 1 Poison."
-  },
-  {
-    "id": "RELIC.TINGSHA",
-    "name": "Tingsha",
-    "character": "Silent",
-    "rarity": "Uncommon",
-    "description": "Whenever you discard a card during your turn, deal 3 damage to a random enemy for each card discarded."
-  },
-  {
-    "id": "RELIC.TOUGH_BANDAGES",
-    "name": "Tough Bandages",
-    "character": "Silent",
-    "rarity": "Rare",
-    "description": "Whenever you discard a card during your turn, gain 3 Block."
-  },
-  {
-    "id": "RELIC.TWISTED_FUNNEL",
-    "name": "Twisted Funnel",
-    "character": "Silent",
-    "rarity": "Uncommon",
-    "description": "At the start of each combat, apply 4 Poison to ALL enemies."
-  },
-  {
-    "id": "RELIC.WAR_HAMMER",
-    "name": "War Hammer",
-    "character": "Event",
-    "rarity": "Ancient",
-    "description": "Whenever you kill an Elite, Upgrade 4 random cards."
-  },
-  {
-    "id": "RELIC.WHISPERING_EARRING",
-    "name": "Whispering Earring",
-    "character": "Event",
-    "rarity": "Ancient",
-    "description": "Gain 1 Energy at the start of each turn. Vakuu plays your first turn for you."
+    "description": "A random card in each card reward is Enchanted with [purple]Swift[/purple] 1."
   },
   {
     "id": "RELIC.WONGO_CUSTOMER_APPRECIATION_BADGE",
@@ -2035,33 +2084,5 @@
     "character": "Event",
     "rarity": "Ancient",
     "description": "Upon pickup, Upgrade 4 cards."
-  },
-  {
-    "id": "RELIC.VERY_HOT_COCOA",
-    "name": "Very Hot Cocoa",
-    "character": "Shared",
-    "rarity": "Ancient",
-    "description": "Start each combat with an additional 4 Energy."
-  },
-  {
-    "id": "RELIC.VEXING_PUZZLEBOX",
-    "name": "Vexing Puzzlebox",
-    "character": "Shared",
-    "rarity": "Rare",
-    "description": "At the start of each combat, add a random card into your Hand. It costs 01 Energy."
-  },
-  {
-    "id": "RELIC.WHITE_STAR",
-    "name": "White Star",
-    "character": "Shared",
-    "rarity": "Rare",
-    "description": "Elites drop an additional Rare card reward."
-  },
-  {
-    "id": "RELIC.WING_CHARM",
-    "name": "Wing Charm",
-    "character": "Shared",
-    "rarity": "Shop",
-    "description": "A random card in each card reward is Enchanted with [purple]Swift[/purple] 1."
   }
 ]

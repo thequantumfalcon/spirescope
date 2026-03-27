@@ -1,5 +1,128 @@
 [
   {
+    "id": "EVENT.ABYSSAL_BATHS",
+    "name": "Abyssal Baths",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A secluded chamber with hypnotic colored pools, barnacled growths dripping fluid.",
+    "choices": [
+      {
+        "option": "Abstain",
+        "outcome": "Heal 10 HP",
+        "recommendation": "Safe healing with no risk"
+      },
+      {
+        "option": "Immerse",
+        "outcome": "Gain 2 Max HP; take 3 damage",
+        "recommendation": "Better long-term — 2 Max HP is permanent, 3 damage is minor"
+      }
+    ],
+    "notes": "Underdocks event. Immerse is usually better since Max HP is permanent."
+  },
+  {
+    "id": "EVENT.AMALGAMATOR",
+    "name": "Amalgamator",
+    "act": [],
+    "description": "A hulking six-armed figure offers to combine your cards on its Bone Anvil.",
+    "choices": [
+      {
+        "option": "Combine Defends",
+        "outcome": "Remove 2 Defends from your deck. Add Ultimate Defend to your deck",
+        "recommendation": ""
+      },
+      {
+        "option": "Combine Strikes",
+        "outcome": "Remove 2 Strikes from your deck. Add Ultimate Strike to your deck",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.AROMA_OF_CHAOS",
+    "name": "Aroma Of Chaos",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A clearing with floral, decay, and unknown scents causing disorientation.",
+    "choices": [
+      {
+        "option": "Let Go",
+        "outcome": "Transform 1 card in your deck",
+        "recommendation": "Good for replacing a weak card — transformation is random but can upgrade"
+      },
+      {
+        "option": "Maintain Control",
+        "outcome": "Upgrade 1 card in your deck",
+        "recommendation": "Safer — guaranteed improvement to a card you choose"
+      }
+    ],
+    "notes": "Overgrowth event. Maintain Control is safer; Let Go is higher variance but can find strong cards."
+  },
+  {
+    "id": "EVENT.BATTLEWORN_DUMMY",
+    "name": "Battleworn Dummy",
+    "act": [],
+    "description": "A training dummy challenges you to defeat it within 3 turns at different difficulty settings.",
+    "choices": [
+      {
+        "option": "Setting 1",
+        "outcome": "Fight a 75 HP dummy. Procure 1 random Potion",
+        "recommendation": ""
+      },
+      {
+        "option": "Setting 2",
+        "outcome": "Fight a 150 HP dummy. Upgrade 2 random cards",
+        "recommendation": ""
+      },
+      {
+        "option": "Setting 3",
+        "outcome": "Fight a 300 HP dummy. Obtain a random Relic",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.BRAIN_LEECH",
+    "name": "Brain Leech",
+    "act": [
+      "Act 1",
+      "Act 2"
+    ],
+    "description": "A sharp pain — a creature has latched on and demands knowledge-sharing.",
+    "choices": [
+      {
+        "option": "Rip the Leech Off",
+        "outcome": "Lose 5 HP; gain 1 Colorless card",
+        "recommendation": "Take if the HP cost is manageable — Colorless cards can be powerful"
+      },
+      {
+        "option": "Share Knowledge",
+        "outcome": "Choose 1 of 5 random cards to add to deck",
+        "recommendation": "Good selection pool — pick the best fit for your archetype"
+      }
+    ],
+    "notes": "Shared event. Both options give a card — choose based on whether you want Colorless or class cards."
+  },
+  {
+    "id": "EVENT.BUGSLAYER",
+    "name": "Bugslayer",
+    "act": [
+      "Act 2"
+    ],
+    "description": "Encounter with a bug-hunting warrior in the Hive.",
+    "choices": [
+      {
+        "option": "Help the Bugslayer",
+        "outcome": "Combat encounter with a reward",
+        "recommendation": "Take if your deck can handle the fight"
+      }
+    ],
+    "notes": "Hive event. Details may vary — Early Access content."
+  },
+  {
     "id": "EVENT.BYRDONIS_NEST",
     "name": "Byrdonis Nest",
     "act": [
@@ -21,6 +144,96 @@
     "notes": "The quest card route can be very rewarding. The +7 Max HP is a reliable alternative."
   },
   {
+    "id": "EVENT.COLORFUL_PHILOSOPHERS",
+    "name": "Colorful Philosophers",
+    "act": [],
+    "description": "Three colored statues debate the philosophical implications of color.",
+    "choices": [
+      {
+        "option": "Blue",
+        "outcome": "Obtain 3 Defect cards",
+        "recommendation": ""
+      },
+      {
+        "option": "Red",
+        "outcome": "Obtain 3 Ironclad cards",
+        "recommendation": ""
+      },
+      {
+        "option": "Green",
+        "outcome": "Obtain 3 Silent cards",
+        "recommendation": ""
+      },
+      {
+        "option": "Orange",
+        "outcome": "Obtain 3 Regent cards",
+        "recommendation": ""
+      },
+      {
+        "option": "Pink",
+        "outcome": "Obtain 3 Necrobinder cards",
+        "recommendation": ""
+      },
+      {
+        "option": "Equality",
+        "outcome": "Obtain Prismatic Shard",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.COLOSSAL_FLOWER",
+    "name": "Colossal Flower",
+    "act": [],
+    "description": "A dangerous flower atop bones offers increasingly valuable rewards for deeper exploration.",
+    "choices": [
+      {
+        "option": "Extract Nectar (shallow)",
+        "outcome": "Gain 35 Gold",
+        "recommendation": ""
+      },
+      {
+        "option": "Reach Deeper + Extract",
+        "outcome": "Lose 5 HP. Gain 75 Gold",
+        "recommendation": ""
+      },
+      {
+        "option": "Reach Deepest + Extract",
+        "outcome": "Lose 11 HP. Gain 135 Gold",
+        "recommendation": ""
+      },
+      {
+        "option": "Enter the Center",
+        "outcome": "Lose 18 HP total. Obtain Pollinous Core relic",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.CRYSTAL_SPHERE",
+    "name": "Crystal Sphere",
+    "act": [
+      "Act 2",
+      "Act 3"
+    ],
+    "description": "A mystic hut with a fortune-teller: 'Your destiny has brought you here.'",
+    "choices": [
+      {
+        "option": "Payment Plan",
+        "outcome": "Gain Debt curse; Divine 6 times",
+        "recommendation": "More divinations but adds a curse — only if the extra info is worth it"
+      },
+      {
+        "option": "Uncover Future",
+        "outcome": "Pay 50 Gold; Divine 3 times",
+        "recommendation": "Safer option — gold cost only, no curse"
+      }
+    ],
+    "notes": "Shared event in Acts 2-3. Divination reveals upcoming map encounters."
+  },
+  {
     "id": "EVENT.DENSE_VEGETATION",
     "name": "Dense Vegetation",
     "act": [
@@ -40,6 +253,155 @@
       }
     ],
     "notes": "Overgrowth event. Trade-off between healing (with combat risk) and card removal (with HP cost)."
+  },
+  {
+    "id": "EVENT.DOLL_ROOM",
+    "name": "Doll Room",
+    "act": [
+      "Act 2"
+    ],
+    "description": "A hidden room filled with unique dolls of varying expressions and ages.",
+    "choices": [
+      {
+        "option": "Examine Each",
+        "outcome": "Lose 15 HP; choose 1 of 3 Doll Relics",
+        "recommendation": "Best selection but highest cost — only if you can afford the HP"
+      },
+      {
+        "option": "Take Some Time",
+        "outcome": "Lose 5 HP; choose 1 of 2 Doll Relics",
+        "recommendation": "Middle ground — decent selection at moderate cost"
+      },
+      {
+        "option": "Pick at Random",
+        "outcome": "Obtain 1 random Doll Relic",
+        "recommendation": "Free relic but no choice — take if HP is low"
+      }
+    ],
+    "notes": "Hive event. More HP spent = more choice over which Doll Relic you get."
+  },
+  {
+    "id": "EVENT.DOORS_OF_LIGHT_AND_DARK",
+    "name": "Doors of Light and Dark",
+    "act": [],
+    "description": "A doorway appears with two shimmering doors and a well-dressed doorman.",
+    "choices": [
+      {
+        "option": "Dark Door",
+        "outcome": "Remove 1 card from your Deck",
+        "recommendation": ""
+      },
+      {
+        "option": "Light Door",
+        "outcome": "Upgrade 2 random cards",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.DROWNING_BEACON",
+    "name": "Drowning Beacon",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A submerged beacon emitting a faint glow in the Underdocks.",
+    "choices": [
+      {
+        "option": "Investigate",
+        "outcome": "Risk/reward — potential relic or card gain",
+        "recommendation": "Evaluate based on current HP and deck state"
+      }
+    ],
+    "notes": "Underdocks event. Details may vary — Early Access content."
+  },
+  {
+    "id": "EVENT.ENDLESS_CONVEYOR",
+    "name": "Endless Conveyor",
+    "act": [
+      "Act 2"
+    ],
+    "description": "A shack with a multi-armed chef: 'ENDLESS FEAST — PAY WHAT YOU HUNGER!' (35 Gold per item).",
+    "choices": [
+      {
+        "option": "Observe the Chef",
+        "outcome": "Upgrade 1 random card in your deck",
+        "recommendation": "Free upgrade — always worth taking"
+      }
+    ],
+    "notes": "Hive event. Free card upgrade with no downside."
+  },
+  {
+    "id": "EVENT.FAKE_MERCHANT",
+    "name": "Fake Merchant",
+    "act": [],
+    "description": "Auto-discovered from save data",
+    "choices": [],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.FIELD_OF_MAN_SIZED_HOLES",
+    "name": "Field Of Man Sized Holes",
+    "act": [
+      "Act 2"
+    ],
+    "description": "A massive field with body-shaped outlines; one matches your form perfectly.",
+    "choices": [
+      {
+        "option": "Enter Your Hole",
+        "outcome": "Enchant a card with Perfect Fit",
+        "recommendation": "Unique enchantment — worth taking if you have a good target card"
+      },
+      {
+        "option": "Resist",
+        "outcome": "Remove 2 cards; add Normality curse",
+        "recommendation": "Deck thinning but the Normality curse limits hand plays — risky"
+      }
+    ],
+    "notes": "Hive event. Enter Your Hole is generally safer; Resist gives card removal but a harsh curse."
+  },
+  {
+    "id": "EVENT.GRAVE_OF_THE_FORGOTTEN",
+    "name": "Grave of the Forgotten",
+    "act": [],
+    "description": "A single grave with a roiling blue flame. A prideful warrior's restless soul.",
+    "choices": [
+      {
+        "option": "Accept the Forgotten Soul",
+        "outcome": "Obtain the Forgotten Soul relic",
+        "recommendation": ""
+      },
+      {
+        "option": "Confront with Truth",
+        "outcome": "Add Decay to your deck. Enchant an exhausting card with Soul's Power",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.HUNGRY_FOR_MUSHROOMS",
+    "name": "Hungry for Mushrooms",
+    "act": [],
+    "description": "A cozy campground with tasty mushrooms and a dead adventurer nearby.",
+    "choices": [
+      {
+        "option": "Big Mushroom",
+        "outcome": "Gain Max HP but draw 1 fewer card",
+        "recommendation": ""
+      },
+      {
+        "option": "Fragrant Mushroom",
+        "outcome": "Upgrade random cards but take damage",
+        "recommendation": ""
+      },
+      {
+        "option": "Medley",
+        "outcome": "Fight the dead adventurer, then finish the meal",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
   },
   {
     "id": "EVENT.INFESTED_AUTOMATON",
@@ -84,6 +446,67 @@
     "notes": "Overgrowth event. Classic risk/reward — solo pays 3x but costs significant HP."
   },
   {
+    "id": "EVENT.LOST_WISP",
+    "name": "Lost Wisp",
+    "act": [
+      "Act 2"
+    ],
+    "description": "A glowing mote surrounded by deceased insects, emanating flames.",
+    "choices": [
+      {
+        "option": "Capture the Wisp",
+        "outcome": "Add Decay curse; obtain Lost Wisp relic",
+        "recommendation": "The relic can be powerful but the curse hurts deck consistency"
+      },
+      {
+        "option": "Search Nearby Area",
+        "outcome": "Gain 60 Gold",
+        "recommendation": "Safe option — solid gold with no downside"
+      }
+    ],
+    "notes": "Hive event. Relic + curse vs safe gold — evaluate the relic's value for your build."
+  },
+  {
+    "id": "EVENT.LUMINOUS_CHOIR",
+    "name": "Luminous Choir",
+    "act": [],
+    "description": "Towering mushrooms pulse with bioluminescence; something gleams within the largest.",
+    "choices": [
+      {
+        "option": "Offer Tribute",
+        "outcome": "Pay 100-149 Gold. Obtain a random Relic",
+        "recommendation": ""
+      },
+      {
+        "option": "Reach into the Flesh",
+        "outcome": "Remove 2 cards from your Deck. Add Spore Mind to your Deck",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.MORPHIC_GROVE",
+    "name": "Morphic Grove",
+    "act": [
+      "Act 1"
+    ],
+    "description": "Crystalline trees with excited Morphic creatures; one stands apart from the group.",
+    "choices": [
+      {
+        "option": "Group",
+        "outcome": "Lose 100 Gold; transform 2 cards",
+        "recommendation": "Expensive but powerful — 2 card transforms can reshape your deck"
+      },
+      {
+        "option": "Loner",
+        "outcome": "Gain 5 Max HP",
+        "recommendation": "Safe choice — free Max HP with no downside"
+      }
+    ],
+    "notes": "Overgrowth event. Group is high cost but high reward; Loner is free value."
+  },
+  {
     "id": "EVENT.NEOW",
     "name": "Neow's Blessing",
     "act": [
@@ -98,6 +521,46 @@
       }
     ],
     "notes": "Always appears at the start. Options improve based on how far you reached in your previous run. Choose based on your character and planned archetype."
+  },
+  {
+    "id": "EVENT.NONUPEIPE",
+    "name": "Nonupeipe",
+    "act": [],
+    "description": "Auto-discovered from save data",
+    "choices": [],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.OROBAS",
+    "name": "Orobas",
+    "act": [
+      "Act 2"
+    ],
+    "description": "Ancient being who offers powerful blessings at the start of an act.",
+    "choices": [
+      {
+        "option": "Choose a blessing",
+        "outcome": "Receive a unique Ancient relic or powerful effect",
+        "recommendation": "Evaluate each blessing based on your current build"
+      }
+    ],
+    "notes": "Ancient encounter — offers blessings similar to Neow but between acts. Not a standard '?' event."
+  },
+  {
+    "id": "EVENT.PAEL",
+    "name": "Pael",
+    "act": [
+      "Act 3"
+    ],
+    "description": "Ancient being who offers powerful blessings at the start of an act.",
+    "choices": [
+      {
+        "option": "Choose a blessing",
+        "outcome": "Receive a unique Ancient relic or powerful effect",
+        "recommendation": "Evaluate each blessing based on your current build"
+      }
+    ],
+    "notes": "Ancient encounter — offers blessings between acts. Not a standard '?' event."
   },
   {
     "id": "EVENT.POTION_COURIER",
@@ -120,6 +583,84 @@
       }
     ],
     "notes": "Shared event in Acts 2-3. Quantity vs quality potion choice."
+  },
+  {
+    "id": "EVENT.PUNCH_OFF",
+    "name": "Punch Off",
+    "act": [
+      "Act 1"
+    ],
+    "description": "Two Punch Constructs are duking it out and you see some treasure in between them.",
+    "choices": [
+      {
+        "option": "I Can Take Them",
+        "outcome": "Fight the Punch Constructs for greater rewards",
+        "recommendation": ""
+      },
+      {
+        "option": "Nab",
+        "outcome": "Add Injury to your deck; obtain a random relic",
+        "recommendation": ""
+      }
+    ],
+    "notes": "Undocumented event — discovered from save data. Details pending wiki documentation."
+  },
+  {
+    "id": "EVENT.RANWID_THE_ELDER",
+    "name": "Ranwid the Elder",
+    "act": [],
+    "description": "An elderly stranger claims to know you and offers trades.",
+    "choices": [
+      {
+        "option": "Give 100 Gold",
+        "outcome": "Obtain a random Relic",
+        "recommendation": ""
+      },
+      {
+        "option": "Give a Potion",
+        "outcome": "Obtain a random Relic",
+        "recommendation": ""
+      },
+      {
+        "option": "Give a Relic",
+        "outcome": "Obtain 2 random Relics",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.REFLECTIONS_SNOITCELFER",
+    "name": "Reflections snoitcelfeR",
+    "act": [],
+    "description": "A mysterious mirror-themed encounter with reversed text.",
+    "choices": [
+      {
+        "option": "Shatter",
+        "outcome": "Duplicate your Deck. Receive Bad Luck",
+        "recommendation": ""
+      },
+      {
+        "option": "Touch a Mirror",
+        "outcome": "Downgrade 2 random cards. Upgrade 4 random cards",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.RELIC_TRADER",
+    "name": "Relic Trader",
+    "act": [],
+    "description": "A shadowy merchant offers to trade relics.",
+    "choices": [
+      {
+        "option": "Trade a Relic",
+        "outcome": "Trade one of your relics for a random relic",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
   },
   {
     "id": "EVENT.ROOM_FULL_OF_CHEESE",
@@ -164,6 +705,33 @@
     "notes": "Overgrowth event. Consume is usually the better choice for the heal + upgrade combo."
   },
   {
+    "id": "EVENT.SELF_HELP_BOOK",
+    "name": "Self Help Book",
+    "act": [
+      "Act 1",
+      "Act 2"
+    ],
+    "description": "A blood-stained tome on the ground: 'Top 3 Ways to Conquer the Spire.'",
+    "choices": [
+      {
+        "option": "Read Entire Book",
+        "outcome": "Enchant a Power with Swift 2",
+        "recommendation": "Best if you have a strong Power card to enchant"
+      },
+      {
+        "option": "Read Random Passage",
+        "outcome": "Enchant a Skill with Nimble 2",
+        "recommendation": "Good for defensive builds"
+      },
+      {
+        "option": "Read the Back",
+        "outcome": "Enchant an Attack with Sharp 2",
+        "recommendation": "Good for offensive builds"
+      }
+    ],
+    "notes": "Shared event. Free enchantment — choose based on which card type matters most to your deck."
+  },
+  {
     "id": "EVENT.SLIPPERY_BRIDGE",
     "name": "Slippery Bridge",
     "act": [
@@ -187,6 +755,32 @@
     "notes": "Shared event across all acts. Forced card removal with no way to skip. Overcome is usually better since it costs no HP."
   },
   {
+    "id": "EVENT.SPIRALING_WHIRLPOOL",
+    "name": "Spiraling Whirlpool",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A massive spiraling whirlpool with beautiful precision and spiral-adorned walls.",
+    "choices": [
+      {
+        "option": "Drink",
+        "outcome": "Heal 1/3rd of your Max HP",
+        "recommendation": ""
+      },
+      {
+        "option": "Observe",
+        "outcome": "Enchant a Strike or Defend with Spiral",
+        "recommendation": ""
+      },
+      {
+        "option": "Reach In",
+        "outcome": "Obtain a random Relic. Add Writhe to your Deck",
+        "recommendation": ""
+      }
+    ],
+    "notes": "Undocumented event — discovered from save data. Likely an Underdocks event. Details pending wiki documentation."
+  },
+  {
     "id": "EVENT.SPIRIT_GRAFTER",
     "name": "Spirit Grafter",
     "act": [
@@ -207,6 +801,126 @@
       }
     ],
     "notes": "Trade-off between large heal (with a card added) and card removal (with HP cost)."
+  },
+  {
+    "id": "EVENT.STONE_OF_ALL_TIME",
+    "name": "Stone of All Time",
+    "act": [],
+    "description": "A massive boulder in an abandoned courtyard that has never moved.",
+    "choices": [
+      {
+        "option": "Drink and Lift",
+        "outcome": "Lose a potion. Gain 10 Max HP",
+        "recommendation": ""
+      },
+      {
+        "option": "Push",
+        "outcome": "Lose 6 HP. Enchant an Attack with Vigorous 8",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.SUNKEN_STATUE",
+    "name": "Sunken Statue",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A half-submerged statue with a stone sword; glittering objects visible below the water.",
+    "choices": [
+      {
+        "option": "Dive into Water",
+        "outcome": "Gain ~111 Gold; lose 7 HP",
+        "recommendation": "Great gold gain if you can afford the HP"
+      },
+      {
+        "option": "Grab the Sword",
+        "outcome": "Obtain the Sword of Stone relic",
+        "recommendation": "Take if the relic fits your build"
+      }
+    ],
+    "notes": "Overgrowth event. Gold vs relic choice — both options are solid."
+  },
+  {
+    "id": "EVENT.SUNKEN_TREASURY",
+    "name": "Sunken Treasury",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A vault with 2 chests but only 1 brittle key available.",
+    "choices": [
+      {
+        "option": "First Chest",
+        "outcome": "Gain ~60 Gold",
+        "recommendation": "Safe, guaranteed gold"
+      },
+      {
+        "option": "Second Chest",
+        "outcome": "Gain ~333 Gold; receive Greed curse",
+        "recommendation": "Massive gold but adds a curse — only if you can handle deck pollution"
+      }
+    ],
+    "notes": "Underdocks event. Classic risk/reward — the second chest is 5x the gold but adds a curse."
+  },
+  {
+    "id": "EVENT.SYMBIOTE",
+    "name": "Symbiote",
+    "act": [
+      "Act 2",
+      "Act 3"
+    ],
+    "description": "A dark, ancient, amorphous polyp encountered during your travels.",
+    "choices": [
+      {
+        "option": "Approach",
+        "outcome": "Enchant an Attack with Corrupted",
+        "recommendation": "Corrupted enchantment can be powerful on the right Attack"
+      },
+      {
+        "option": "Kill with Fire",
+        "outcome": "Choose 1 card to transform",
+        "recommendation": "Good for replacing a weak card"
+      }
+    ],
+    "notes": "Shared event in Acts 2-3. Both options modify your deck — choose based on what you need."
+  },
+  {
+    "id": "EVENT.TABLET_OF_TRUTH",
+    "name": "Tablet Of Truth",
+    "act": [
+      "Act 1"
+    ],
+    "description": "Defeat Guardian Kin to access a vault containing an inscribed tablet.",
+    "choices": [
+      {
+        "option": "Decipher",
+        "outcome": "Lose 3 Max HP; upgrade a random card",
+        "recommendation": "Worth it if you can spare the Max HP — free upgrade is strong"
+      },
+      {
+        "option": "Smash",
+        "outcome": "Heal 20 HP",
+        "recommendation": "Safe option if you need healing"
+      }
+    ],
+    "notes": "Overgrowth event. Trade Max HP for a card upgrade or take a big heal."
+  },
+  {
+    "id": "EVENT.TANX",
+    "name": "Tanx",
+    "act": [
+      "Act 1"
+    ],
+    "description": "An encounter with a mysterious creature or challenge.",
+    "choices": [
+      {
+        "option": "Interact",
+        "outcome": "Outcome varies",
+        "recommendation": "Evaluate based on current run state"
+      }
+    ],
+    "notes": "Undocumented event — discovered from save data. Details pending wiki documentation."
   },
   {
     "id": "EVENT.TEA_MASTER",
@@ -256,6 +970,123 @@
     "notes": "Overgrowth event. The deal varies — weigh the benefit against the cost based on your run state."
   },
   {
+    "id": "EVENT.THE_FUTURE_OF_POTIONS",
+    "name": "The Future Of Potions",
+    "act": [
+      "Act 2",
+      "Act 3"
+    ],
+    "description": "A machine that converts liquids into compressed tablets — the future of potions.",
+    "choices": [
+      {
+        "option": "Insert a Potion",
+        "outcome": "Trade 1 potion for an upgraded version of that potion type",
+        "recommendation": "Great if you have a common potion worth upgrading"
+      }
+    ],
+    "notes": "Shared event in Acts 2-3. Only useful if you have a potion to sacrifice."
+  },
+  {
+    "id": "EVENT.THE_LANTERN_KEY",
+    "name": "The Lantern Key",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A quest event involving a mysterious lantern and a key.",
+    "choices": [
+      {
+        "option": "Take the key",
+        "outcome": "Receive the Lantern Key quest item",
+        "recommendation": "Quest items can provide rewards later in the run"
+      }
+    ],
+    "notes": "Quest event. The Lantern Key may unlock something later."
+  },
+  {
+    "id": "EVENT.THE_LEGENDS_WERE_TRUE",
+    "name": "The Legends Were True",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A pitch-dark chamber suddenly illuminated, revealing a podium with a map.",
+    "choices": [
+      {
+        "option": "Nab the Map",
+        "outcome": "Receive Spoils Map quest item",
+        "recommendation": "RECOMMENDED — quest items provide rewards later in the run"
+      },
+      {
+        "option": "Slowly Find Exit",
+        "outcome": "Lose 8 HP; obtain 1 random potion",
+        "recommendation": "Only if you don't want the quest item"
+      }
+    ],
+    "notes": "Shared event in Act 1. The Spoils Map is generally the better pick."
+  },
+  {
+    "id": "EVENT.THE_ROUND_TEA_PARTY",
+    "name": "The Round Tea Party",
+    "act": [],
+    "description": "An invitation to a tea party among commanders, generals, and warlords.",
+    "choices": [
+      {
+        "option": "Enjoy Your Tea",
+        "outcome": "Obtain Royal Poison relic. Heal to full HP",
+        "recommendation": ""
+      },
+      {
+        "option": "Pick a Fight",
+        "outcome": "Lose 11 HP. Obtain a random relic",
+        "recommendation": ""
+      },
+      {
+        "option": "Nope",
+        "outcome": "Pay gold to leave",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.TRIAL",
+    "name": "The Trial",
+    "act": [],
+    "description": "You are designated the Decider for today's Trial. Judge three cases.",
+    "choices": [
+      {
+        "option": "Merchant: Guilty",
+        "outcome": "Add Regret to Deck. Obtain 2 random Relics",
+        "recommendation": ""
+      },
+      {
+        "option": "Merchant: Innocent",
+        "outcome": "Add Shame to Deck. Upgrade 2 cards",
+        "recommendation": ""
+      },
+      {
+        "option": "Noble: Guilty",
+        "outcome": "Heal 10 HP",
+        "recommendation": ""
+      },
+      {
+        "option": "Noble: Innocent",
+        "outcome": "Add Regret to Deck. Obtain 300 Gold",
+        "recommendation": ""
+      },
+      {
+        "option": "Woman: Guilty",
+        "outcome": "Add Doubt to Deck. Gain 2 card rewards",
+        "recommendation": ""
+      },
+      {
+        "option": "Woman: Innocent",
+        "outcome": "Add Doubt to Deck. Transform 2 cards",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
     "id": "EVENT.THIS_OR_THAT",
     "name": "This Or That",
     "act": [
@@ -276,6 +1107,169 @@
       }
     ],
     "notes": "Shared event. Gold vs Relic trade-off. The relic option is stronger but adds a curse card to your deck."
+  },
+  {
+    "id": "EVENT.TINKER_TIME",
+    "name": "Tinker Time",
+    "act": [],
+    "description": "A mad scientist offers to build a custom card. Choose type then rider effect.",
+    "choices": [
+      {
+        "option": "Weapon",
+        "outcome": "Make an Attack with a chosen rider effect",
+        "recommendation": ""
+      },
+      {
+        "option": "Gadget",
+        "outcome": "Make a Power with a chosen rider effect",
+        "recommendation": ""
+      },
+      {
+        "option": "Protector",
+        "outcome": "Make a Skill with a chosen rider effect",
+        "recommendation": ""
+      }
+    ],
+    "notes": "Rider effects: Chaos, Choking, Curious, Energized, Expertise, Improvement, Sapping, Violence, Wisdom"
+  },
+  {
+    "id": "EVENT.TRASH_HEAP",
+    "name": "Trash Heap",
+    "act": [],
+    "description": "A towering pile of scrapped weapons and discarded trinkets.",
+    "choices": [
+      {
+        "option": "Dive In",
+        "outcome": "Lose 8 HP. Obtain a random forgotten Relic from the past",
+        "recommendation": ""
+      },
+      {
+        "option": "Grab Random Junk",
+        "outcome": "Gain 100 Gold. Obtain a random forgotten card from the past",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.UNREST_SITE",
+    "name": "Unrest Site",
+    "act": [],
+    "description": "A secluded Rest Site with a fire that swells toward oil-seeping trees.",
+    "choices": [
+      {
+        "option": "Kill the Trees",
+        "outcome": "Lose 8 Max HP. Obtain a random Relic",
+        "recommendation": ""
+      },
+      {
+        "option": "Rest Anyways",
+        "outcome": "Heal to full HP. Receive Poor Sleep status",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.VAKUU",
+    "name": "Vakuu",
+    "act": [],
+    "description": "Auto-discovered from save data",
+    "choices": [],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.WAR_HISTORIAN_REPY",
+    "name": "War Historian, Repy",
+    "act": [],
+    "description": "An academic trapped in a hanging cage next to a treasure chest. Requires Lantern Key.",
+    "choices": [
+      {
+        "option": "Unlock the Cage",
+        "outcome": "Lose Lantern Key. Obtain History Course",
+        "recommendation": ""
+      },
+      {
+        "option": "Unlock the Chest",
+        "outcome": "Lose Lantern Key. Procure 2 random Potions and obtain 2 random Relics",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.WATERLOGGED_SCRIPTORIUM",
+    "name": "Waterlogged Scriptorium",
+    "act": [],
+    "description": "A withered figure working a small shop with damp scrolls and parchment.",
+    "choices": [
+      {
+        "option": "Bloody Ink",
+        "outcome": "Gain 6 Max HP",
+        "recommendation": ""
+      },
+      {
+        "option": "Prickly Sponge",
+        "outcome": "Pay 155 Gold. Enchant 2 cards with Steady",
+        "recommendation": ""
+      },
+      {
+        "option": "Tentacle Quill",
+        "outcome": "Pay 65 Gold. Enchant a card with Steady",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.WELCOME_TO_WONGOS",
+    "name": "Welcome to Wongo's",
+    "act": [],
+    "description": "An unenthusiastic clerk's shop with Wongtastic prices.",
+    "choices": [
+      {
+        "option": "Wongo's Bargain Bin",
+        "outcome": "Pay 100 Gold. Obtain 1 random Common Relic",
+        "recommendation": ""
+      },
+      {
+        "option": "Wongo's Featured Item",
+        "outcome": "Pay 200 Gold. Obtain 1 random Relic",
+        "recommendation": ""
+      },
+      {
+        "option": "Wongo's Mystery Box",
+        "outcome": "Pay 300 Gold. Obtain 3 random Relics after 5 combats",
+        "recommendation": ""
+      },
+      {
+        "option": "Leave",
+        "outcome": "Downgrade a random card",
+        "recommendation": ""
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.WELLSPRING",
+    "name": "Wellspring",
+    "act": [
+      "Act 1"
+    ],
+    "description": "A tranquil emerald wellspring with glowing motes.",
+    "choices": [
+      {
+        "option": "Bathe",
+        "outcome": "Remove 1 card from deck; add 1 Guilty curse",
+        "recommendation": "Good for removing a bad card, but the curse offsets deck thinning"
+      },
+      {
+        "option": "Bottle",
+        "outcome": "Obtain 1 random potion",
+        "recommendation": "Safe option — free potion with no downside"
+      }
+    ],
+    "notes": "Overgrowth event. Bottle is safer; Bathe is only worth it if you desperately need to remove a card."
   },
   {
     "id": "EVENT.WHISPERING_HOLLOW",
@@ -325,493 +1319,27 @@
     "notes": "Overgrowth event. All three options modify your deck — choose based on which transformed card best fits your archetype."
   },
   {
-    "id": "EVENT.TABLET_OF_TRUTH",
-    "name": "Tablet Of Truth",
-    "act": [
-      "Act 1"
-    ],
-    "description": "Defeat Guardian Kin to access a vault containing an inscribed tablet.",
+    "id": "EVENT.ZEN_WEAVER",
+    "name": "Zen Weaver",
+    "act": [],
+    "description": "A spider offers meditation techniques in exchange for gold.",
     "choices": [
       {
-        "option": "Decipher",
-        "outcome": "Lose 3 Max HP; upgrade a random card",
-        "recommendation": "Worth it if you can spare the Max HP — free upgrade is strong"
+        "option": "Arachnid Acupuncture",
+        "outcome": "Pay 250 Gold. Remove 2 cards from your Deck",
+        "recommendation": ""
       },
       {
-        "option": "Smash",
-        "outcome": "Heal 20 HP",
-        "recommendation": "Safe option if you need healing"
-      }
-    ],
-    "notes": "Overgrowth event. Trade Max HP for a card upgrade or take a big heal."
-  },
-  {
-    "id": "EVENT.SELF_HELP_BOOK",
-    "name": "Self Help Book",
-    "act": [
-      "Act 1",
-      "Act 2"
-    ],
-    "description": "A blood-stained tome on the ground: 'Top 3 Ways to Conquer the Spire.'",
-    "choices": [
-      {
-        "option": "Read Entire Book",
-        "outcome": "Enchant a Power with Swift 2",
-        "recommendation": "Best if you have a strong Power card to enchant"
+        "option": "Breathing Techniques",
+        "outcome": "Pay 50 Gold. Add 2 Enlightenment cards to your Deck",
+        "recommendation": ""
       },
       {
-        "option": "Read Random Passage",
-        "outcome": "Enchant a Skill with Nimble 2",
-        "recommendation": "Good for defensive builds"
-      },
-      {
-        "option": "Read the Back",
-        "outcome": "Enchant an Attack with Sharp 2",
-        "recommendation": "Good for offensive builds"
+        "option": "Emotional Awareness",
+        "outcome": "Pay 125 Gold. Remove 1 card from your Deck",
+        "recommendation": ""
       }
     ],
-    "notes": "Shared event. Free enchantment — choose based on which card type matters most to your deck."
-  },
-  {
-    "id": "EVENT.THE_FUTURE_OF_POTIONS",
-    "name": "The Future Of Potions",
-    "act": [
-      "Act 2",
-      "Act 3"
-    ],
-    "description": "A machine that converts liquids into compressed tablets — the future of potions.",
-    "choices": [
-      {
-        "option": "Insert a Potion",
-        "outcome": "Trade 1 potion for an upgraded version of that potion type",
-        "recommendation": "Great if you have a common potion worth upgrading"
-      }
-    ],
-    "notes": "Shared event in Acts 2-3. Only useful if you have a potion to sacrifice."
-  },
-  {
-    "id": "EVENT.SUNKEN_STATUE",
-    "name": "Sunken Statue",
-    "act": [
-      "Act 1"
-    ],
-    "description": "A half-submerged statue with a stone sword; glittering objects visible below the water.",
-    "choices": [
-      {
-        "option": "Dive into Water",
-        "outcome": "Gain ~111 Gold; lose 7 HP",
-        "recommendation": "Great gold gain if you can afford the HP"
-      },
-      {
-        "option": "Grab the Sword",
-        "outcome": "Obtain the Sword of Stone relic",
-        "recommendation": "Take if the relic fits your build"
-      }
-    ],
-    "notes": "Overgrowth event. Gold vs relic choice — both options are solid."
-  },
-  {
-    "id": "EVENT.WELLSPRING",
-    "name": "Wellspring",
-    "act": [
-      "Act 1"
-    ],
-    "description": "A tranquil emerald wellspring with glowing motes.",
-    "choices": [
-      {
-        "option": "Bathe",
-        "outcome": "Remove 1 card from deck; add 1 Guilty curse",
-        "recommendation": "Good for removing a bad card, but the curse offsets deck thinning"
-      },
-      {
-        "option": "Bottle",
-        "outcome": "Obtain 1 random potion",
-        "recommendation": "Safe option — free potion with no downside"
-      }
-    ],
-    "notes": "Overgrowth event. Bottle is safer; Bathe is only worth it if you desperately need to remove a card."
-  },
-  {
-    "id": "EVENT.OROBAS",
-    "name": "Orobas",
-    "act": [
-      "Act 2"
-    ],
-    "description": "Ancient being who offers powerful blessings at the start of an act.",
-    "choices": [
-      {
-        "option": "Choose a blessing",
-        "outcome": "Receive a unique Ancient relic or powerful effect",
-        "recommendation": "Evaluate each blessing based on your current build"
-      }
-    ],
-    "notes": "Ancient encounter — offers blessings similar to Neow but between acts. Not a standard '?' event."
-  },
-  {
-    "id": "EVENT.THE_LANTERN_KEY",
-    "name": "The Lantern Key",
-    "act": [
-      "Act 1"
-    ],
-    "description": "A quest event involving a mysterious lantern and a key.",
-    "choices": [
-      {
-        "option": "Take the key",
-        "outcome": "Receive the Lantern Key quest item",
-        "recommendation": "Quest items can provide rewards later in the run"
-      }
-    ],
-    "notes": "Quest event. The Lantern Key may unlock something later."
-  },
-  {
-    "id": "EVENT.MORPHIC_GROVE",
-    "name": "Morphic Grove",
-    "act": [
-      "Act 1"
-    ],
-    "description": "Crystalline trees with excited Morphic creatures; one stands apart from the group.",
-    "choices": [
-      {
-        "option": "Group",
-        "outcome": "Lose 100 Gold; transform 2 cards",
-        "recommendation": "Expensive but powerful — 2 card transforms can reshape your deck"
-      },
-      {
-        "option": "Loner",
-        "outcome": "Gain 5 Max HP",
-        "recommendation": "Safe choice — free Max HP with no downside"
-      }
-    ],
-    "notes": "Overgrowth event. Group is high cost but high reward; Loner is free value."
-  },
-  {
-    "id": "EVENT.PAEL",
-    "name": "Pael",
-    "act": [
-      "Act 3"
-    ],
-    "description": "Ancient being who offers powerful blessings at the start of an act.",
-    "choices": [
-      {
-        "option": "Choose a blessing",
-        "outcome": "Receive a unique Ancient relic or powerful effect",
-        "recommendation": "Evaluate each blessing based on your current build"
-      }
-    ],
-    "notes": "Ancient encounter — offers blessings between acts. Not a standard '?' event."
-  },
-  {
-    "id": "EVENT.ENDLESS_CONVEYOR",
-    "name": "Endless Conveyor",
-    "act": [
-      "Act 2"
-    ],
-    "description": "A shack with a multi-armed chef: 'ENDLESS FEAST — PAY WHAT YOU HUNGER!' (35 Gold per item).",
-    "choices": [
-      {
-        "option": "Observe the Chef",
-        "outcome": "Upgrade 1 random card in your deck",
-        "recommendation": "Free upgrade — always worth taking"
-      }
-    ],
-    "notes": "Hive event. Free card upgrade with no downside."
-  },
-  {
-    "id": "EVENT.BRAIN_LEECH",
-    "name": "Brain Leech",
-    "act": [
-      "Act 1",
-      "Act 2"
-    ],
-    "description": "A sharp pain — a creature has latched on and demands knowledge-sharing.",
-    "choices": [
-      {
-        "option": "Rip the Leech Off",
-        "outcome": "Lose 5 HP; gain 1 Colorless card",
-        "recommendation": "Take if the HP cost is manageable — Colorless cards can be powerful"
-      },
-      {
-        "option": "Share Knowledge",
-        "outcome": "Choose 1 of 5 random cards to add to deck",
-        "recommendation": "Good selection pool — pick the best fit for your archetype"
-      }
-    ],
-    "notes": "Shared event. Both options give a card — choose based on whether you want Colorless or class cards."
-  },
-  {
-    "id": "EVENT.DOLL_ROOM",
-    "name": "Doll Room",
-    "act": [
-      "Act 2"
-    ],
-    "description": "A hidden room filled with unique dolls of varying expressions and ages.",
-    "choices": [
-      {
-        "option": "Examine Each",
-        "outcome": "Lose 15 HP; choose 1 of 3 Doll Relics",
-        "recommendation": "Best selection but highest cost — only if you can afford the HP"
-      },
-      {
-        "option": "Take Some Time",
-        "outcome": "Lose 5 HP; choose 1 of 2 Doll Relics",
-        "recommendation": "Middle ground — decent selection at moderate cost"
-      },
-      {
-        "option": "Pick at Random",
-        "outcome": "Obtain 1 random Doll Relic",
-        "recommendation": "Free relic but no choice — take if HP is low"
-      }
-    ],
-    "notes": "Hive event. More HP spent = more choice over which Doll Relic you get."
-  },
-  {
-    "id": "EVENT.BUGSLAYER",
-    "name": "Bugslayer",
-    "act": [
-      "Act 2"
-    ],
-    "description": "Encounter with a bug-hunting warrior in the Hive.",
-    "choices": [
-      {
-        "option": "Help the Bugslayer",
-        "outcome": "Combat encounter with a reward",
-        "recommendation": "Take if your deck can handle the fight"
-      }
-    ],
-    "notes": "Hive event. Details may vary — Early Access content."
-  },
-  {
-    "id": "EVENT.SUNKEN_TREASURY",
-    "name": "Sunken Treasury",
-    "act": [
-      "Act 1"
-    ],
-    "description": "A vault with 2 chests but only 1 brittle key available.",
-    "choices": [
-      {
-        "option": "First Chest",
-        "outcome": "Gain ~60 Gold",
-        "recommendation": "Safe, guaranteed gold"
-      },
-      {
-        "option": "Second Chest",
-        "outcome": "Gain ~333 Gold; receive Greed curse",
-        "recommendation": "Massive gold but adds a curse — only if you can handle deck pollution"
-      }
-    ],
-    "notes": "Underdocks event. Classic risk/reward — the second chest is 5x the gold but adds a curse."
-  },
-  {
-    "id": "EVENT.DROWNING_BEACON",
-    "name": "Drowning Beacon",
-    "act": [
-      "Act 1"
-    ],
-    "description": "A submerged beacon emitting a faint glow in the Underdocks.",
-    "choices": [
-      {
-        "option": "Investigate",
-        "outcome": "Risk/reward — potential relic or card gain",
-        "recommendation": "Evaluate based on current HP and deck state"
-      }
-    ],
-    "notes": "Underdocks event. Details may vary — Early Access content."
-  },
-  {
-    "id": "EVENT.LOST_WISP",
-    "name": "Lost Wisp",
-    "act": [
-      "Act 2"
-    ],
-    "description": "A glowing mote surrounded by deceased insects, emanating flames.",
-    "choices": [
-      {
-        "option": "Capture the Wisp",
-        "outcome": "Add Decay curse; obtain Lost Wisp relic",
-        "recommendation": "The relic can be powerful but the curse hurts deck consistency"
-      },
-      {
-        "option": "Search Nearby Area",
-        "outcome": "Gain 60 Gold",
-        "recommendation": "Safe option — solid gold with no downside"
-      }
-    ],
-    "notes": "Hive event. Relic + curse vs safe gold — evaluate the relic's value for your build."
-  },
-  {
-    "id": "EVENT.THE_LEGENDS_WERE_TRUE",
-    "name": "The Legends Were True",
-    "act": [
-      "Act 1"
-    ],
-    "description": "A pitch-dark chamber suddenly illuminated, revealing a podium with a map.",
-    "choices": [
-      {
-        "option": "Nab the Map",
-        "outcome": "Receive Spoils Map quest item",
-        "recommendation": "RECOMMENDED — quest items provide rewards later in the run"
-      },
-      {
-        "option": "Slowly Find Exit",
-        "outcome": "Lose 8 HP; obtain 1 random potion",
-        "recommendation": "Only if you don't want the quest item"
-      }
-    ],
-    "notes": "Shared event in Act 1. The Spoils Map is generally the better pick."
-  },
-  {
-    "id": "EVENT.ABYSSAL_BATHS",
-    "name": "Abyssal Baths",
-    "act": [
-      "Act 1"
-    ],
-    "description": "A secluded chamber with hypnotic colored pools, barnacled growths dripping fluid.",
-    "choices": [
-      {
-        "option": "Abstain",
-        "outcome": "Heal 10 HP",
-        "recommendation": "Safe healing with no risk"
-      },
-      {
-        "option": "Immerse",
-        "outcome": "Gain 2 Max HP; take 3 damage",
-        "recommendation": "Better long-term — 2 Max HP is permanent, 3 damage is minor"
-      }
-    ],
-    "notes": "Underdocks event. Immerse is usually better since Max HP is permanent."
-  },
-  {
-    "id": "EVENT.FIELD_OF_MAN_SIZED_HOLES",
-    "name": "Field Of Man Sized Holes",
-    "act": [
-      "Act 2"
-    ],
-    "description": "A massive field with body-shaped outlines; one matches your form perfectly.",
-    "choices": [
-      {
-        "option": "Enter Your Hole",
-        "outcome": "Enchant a card with Perfect Fit",
-        "recommendation": "Unique enchantment — worth taking if you have a good target card"
-      },
-      {
-        "option": "Resist",
-        "outcome": "Remove 2 cards; add Normality curse",
-        "recommendation": "Deck thinning but the Normality curse limits hand plays — risky"
-      }
-    ],
-    "notes": "Hive event. Enter Your Hole is generally safer; Resist gives card removal but a harsh curse."
-  },
-  {
-    "id": "EVENT.AROMA_OF_CHAOS",
-    "name": "Aroma Of Chaos",
-    "act": [
-      "Act 1"
-    ],
-    "description": "A clearing with floral, decay, and unknown scents causing disorientation.",
-    "choices": [
-      {
-        "option": "Let Go",
-        "outcome": "Transform 1 card in your deck",
-        "recommendation": "Good for replacing a weak card — transformation is random but can upgrade"
-      },
-      {
-        "option": "Maintain Control",
-        "outcome": "Upgrade 1 card in your deck",
-        "recommendation": "Safer — guaranteed improvement to a card you choose"
-      }
-    ],
-    "notes": "Overgrowth event. Maintain Control is safer; Let Go is higher variance but can find strong cards."
-  },
-  {
-    "id": "EVENT.CRYSTAL_SPHERE",
-    "name": "Crystal Sphere",
-    "act": [
-      "Act 2",
-      "Act 3"
-    ],
-    "description": "A mystic hut with a fortune-teller: 'Your destiny has brought you here.'",
-    "choices": [
-      {
-        "option": "Payment Plan",
-        "outcome": "Gain Debt curse; Divine 6 times",
-        "recommendation": "More divinations but adds a curse — only if the extra info is worth it"
-      },
-      {
-        "option": "Uncover Future",
-        "outcome": "Pay 50 Gold; Divine 3 times",
-        "recommendation": "Safer option — gold cost only, no curse"
-      }
-    ],
-    "notes": "Shared event in Acts 2-3. Divination reveals upcoming map encounters."
-  },
-  {
-    "id": "EVENT.SYMBIOTE",
-    "name": "Symbiote",
-    "act": [
-      "Act 2",
-      "Act 3"
-    ],
-    "description": "A dark, ancient, amorphous polyp encountered during your travels.",
-    "choices": [
-      {
-        "option": "Approach",
-        "outcome": "Enchant an Attack with Corrupted",
-        "recommendation": "Corrupted enchantment can be powerful on the right Attack"
-      },
-      {
-        "option": "Kill with Fire",
-        "outcome": "Choose 1 card to transform",
-        "recommendation": "Good for replacing a weak card"
-      }
-    ],
-    "notes": "Shared event in Acts 2-3. Both options modify your deck — choose based on what you need."
-  },
-  {
-    "id": "EVENT.TANX",
-    "name": "Tanx",
-    "act": [
-      "Act 1"
-    ],
-    "description": "An encounter with a mysterious creature or challenge.",
-    "choices": [
-      {
-        "option": "Interact",
-        "outcome": "Outcome varies",
-        "recommendation": "Evaluate based on current run state"
-      }
-    ],
-    "notes": "Undocumented event — discovered from save data. Details pending wiki documentation."
-  },
-  {
-    "id": "EVENT.PUNCH_OFF",
-    "name": "Punch Off",
-    "act": [
-      "Act 1"
-    ],
-    "description": "A physical challenge or confrontation.",
-    "choices": [
-      {
-        "option": "Participate",
-        "outcome": "Outcome varies",
-        "recommendation": "Evaluate based on current run state"
-      }
-    ],
-    "notes": "Undocumented event — discovered from save data. Details pending wiki documentation."
-  },
-  {
-    "id": "EVENT.SPIRALING_WHIRLPOOL",
-    "name": "Spiraling Whirlpool",
-    "act": [
-      "Act 1"
-    ],
-    "description": "A dangerous whirlpool threatening to pull you under.",
-    "choices": [
-      {
-        "option": "Navigate through",
-        "outcome": "Outcome varies",
-        "recommendation": "Evaluate based on current run state"
-      }
-    ],
-    "notes": "Undocumented event — discovered from save data. Likely an Underdocks event. Details pending wiki documentation."
+    "notes": ""
   }
 ]
