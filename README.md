@@ -122,7 +122,12 @@ SpireScope automatically checks both vanilla and modded save paths and uses whic
 
 ## Streamer Mode / OBS Browser Source
 
-SpireScope's live run tracker works as an OBS browser source. Add `http://127.0.0.1:8000/live` as a Browser Source in OBS. The tracker updates in real time via SSE -- no page reloads, no stream interruption. Use `?player=N` for co-op runs to track a specific teammate.
+SpireScope's live run tracker works as an OBS browser source. Two options:
+
+- **Full view**: Add `http://127.0.0.1:8000/live` as a Browser Source — full dashboard with all coaching features
+- **Overlay mode**: Add `http://127.0.0.1:8000/overlay` — minimal transparent HUD showing character, floor, HP bar, top cards, and danger alerts. Designed for always-on-top windows or small OBS overlays.
+
+Both update in real time via SSE — no page reloads, no stream interruption. Use `?player=N` for co-op runs to track a specific teammate.
 
 ## Steam Deck
 
@@ -194,6 +199,8 @@ SpireScope auto-detects both vanilla and modded paths and uses whichever has mor
 | `/api/import/stats` | POST | Import/merge aggregate stats |
 | `/api/reload` | POST | Hot-reload knowledge base (requires `X-Admin-Token` header) |
 | `/api/reset/stats` | POST | Reset aggregate stats (requires `X-Admin-Token` header) |
+| `/overlay?player=0` | GET | Minimal overlay for OBS browser source or second monitor |
+| `/shutdown` | POST | Gracefully stop SpireScope (localhost only) |
 | `/health` | GET | Health check for monitors |
 | `/docs` | GET | Interactive API documentation (Swagger UI) |
 
@@ -237,7 +244,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (22 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 613 tests (pytest + pytest-asyncio)
+tests/               # 613+ tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements

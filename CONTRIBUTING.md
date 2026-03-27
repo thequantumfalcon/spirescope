@@ -46,7 +46,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates
   static/            # CSS, fonts, images, JS
-tests/               # 514 tests (pytest + pytest-asyncio)
+tests/               # 613+ tests (pytest + pytest-asyncio)
 ```
 
 ## CSS Conventions
@@ -63,7 +63,7 @@ tests/               # 514 tests (pytest + pytest-asyncio)
 - pytest with pytest-asyncio in auto mode
 - Async test functions: use `async def test_*` (not `asyncio.get_event_loop()`)
 - Mock external dependencies (save files, network) — never hit real endpoints in tests
-- All 514 tests must pass before merge
+- All tests must pass before merge
 
 ## Guidelines
 
