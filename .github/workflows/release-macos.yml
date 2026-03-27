@@ -1,0 +1,45 @@
+name: Release (macOS)
+
+# Separate from the Windows release so a macOS failure doesn't block Windows builds.
+# macOS builds are unsigned — users must right-click > Open to bypass Gatekeeper.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install ".[dev]"
+
+      - name: Run tests
+        run: pytest -q --tb=short
+
+      - name: Build macOS app
+        run: python -m PyInstaller spirescope.spec --clean --noconfirm
+
+      - name: Create zip archive
+        run: |
+          cd dist
+          zip -r Spirescope-${{ github.ref_name }}-macos.zip Spirescope/
+          cp Spirescope-${{ github.ref_name }}-macos.zip Spirescope-macos.zip
+
+      - name: Upload to existing release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/Spirescope-${{ github.ref_name }}-macos.zip
+            dist/Spirescope-macos.zip

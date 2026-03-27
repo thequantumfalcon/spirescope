@@ -38,6 +38,17 @@ def _find_save_dir() -> Path:
         base = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
 
     sts2_dir = base / "SlayTheSpire2"
+
+    # Steam Deck (Proton): saves are in the Wine/Proton prefix
+    if sys.platform == "linux":
+        proton_base = (
+            Path.home() / ".local" / "share" / "Steam" / "steamapps"
+            / "compatdata" / "2832040" / "pfx" / "drive_c" / "users"
+            / "steamuser" / "AppData" / "Local" / "SlayTheSpire2"
+        )
+        if proton_base.exists():
+            sts2_dir = proton_base
+
     if not sts2_dir.exists():
         return sts2_dir / "saves"  # Return plausible path even if missing
 

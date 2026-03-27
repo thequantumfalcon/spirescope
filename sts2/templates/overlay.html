@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SpireScope Overlay</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: transparent; color: #f5f0e8; font-family: system-ui, sans-serif; font-size: 14px; padding: 8px; }
+    .overlay { background: rgba(12, 10, 14, 0.85); border: 1px solid rgba(201, 165, 92, 0.3); border-radius: 8px; padding: 12px; max-width: 360px; }
+    .header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .live-dot { width: 8px; height: 8px; background: #4a9e5c; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .char { font-weight: bold; font-size: 15px; }
+    .char-ironclad { color: #c0392b; } .char-silent { color: #15753c; }
+    .char-defect { color: #2563eb; } .char-necrobinder { color: #7e22ce; }
+    .char-regent { color: #c9a55c; }
+    .stats { display: flex; gap: 12px; margin-bottom: 8px; font-size: 13px; }
+    .stat { color: #938880; }
+    .stat b { color: #f5f0e8; }
+    .hp-bar { height: 6px; background: #2a2030; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+    .hp-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+    .hp-healthy { background: #4a9e5c; }
+    .hp-warning { background: #c9a55c; }
+    .hp-critical { background: #d15858; }
+    .danger { background: rgba(209, 88, 88, 0.2); border: 1px solid rgba(209, 88, 88, 0.4); border-radius: 4px; padding: 6px 8px; margin-bottom: 8px; color: #d15858; font-size: 12px; font-weight: bold; }
+    .deck-top { font-size: 12px; color: #938880; margin-bottom: 4px; }
+    .deck-top b { color: #c9a55c; }
+    .alerts { font-size: 12px; }
+    .alert-item { color: #c9a55c; margin-bottom: 2px; }
+    .inactive { color: #938880; text-align: center; padding: 20px; }
+    .synergy { color: #4a9e5c; font-size: 12px; margin-bottom: 2px; }
+  </style>
+</head>
+<body>
+<div class="overlay" id="overlay">
+{% if run.active %}
+  <div class="header">
+    <div class="live-dot"></div>
+    <span class="char char-{{ run.character|lower }}">{{ run.character }}</span>
+    <span class="stat">Floor {{ run.current_floor }}</span>
+    <span class="stat">{{ (run.run_time / 60)|int }}m</span>
+  </div>
+
+  {% set hp_pct = (run.current_hp / run.max_hp * 100)|int if run.max_hp else 0 %}
+  <div class="stats">
+    <span class="stat"><b>{{ run.current_hp }}/{{ run.max_hp }}</b> HP</span>
+    <span class="stat"><b>{{ run.gold }}</b> Gold</span>
+    <span class="stat"><b>{{ run.deck|length }}</b> Cards</span>
+  </div>
+
+  <div class="hp-bar">
+    <div class="hp-fill {% if hp_pct > 60 %}hp-healthy{% elif hp_pct > 30 %}hp-warning{% else %}hp-critical{% endif %}" style="width: {{ hp_pct }}%"></div>
+  </div>
+
+  {% if danger_level == 'critical' %}
+  <div class="danger">CRITICAL: {{ danger_pct }}% HP</div>
+  {% elif danger_level == 'warning' %}
+  <div class="danger" style="border-color: rgba(201,165,92,0.4); background: rgba(201,165,92,0.15); color: #c9a55c;">LOW HP: {{ danger_pct }}%</div>
+  {% endif %}
+
+  {% if top_cards %}
+  <div class="deck-top">Top cards: {% for c in top_cards %}<b>{{ c.name }}</b>{% if not loop.last %}, {% endif %}{% endfor %}</div>
+  {% endif %}
+
+  {% if synergy_hints %}
+  <div class="alerts">
+    {% for hint in synergy_hints[:3] %}
+    <div class="synergy">{{ hint }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if counter_cards %}
+  <div class="alerts">
+    {% for cc in counter_cards[:3] %}
+    <div class="alert-item">{{ cc.name }}: {{ cc.reason }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% else %}
+  <div class="inactive">No active run</div>
+{% endif %}
+</div>
+
+<script>
+(function() {
+  const player = new URLSearchParams(location.search).get('player') || '0';
+  const es = new EventSource('/api/live/stream?player=' + player);
+  es.onmessage = function() {
+    // Reload the whole overlay on any update — it's tiny
+    location.reload();
+  };
+  es.onerror = function() {
+    setTimeout(function() { location.reload(); }, 5000);
+  };
+})();
+</script>
+</body>
+</html>

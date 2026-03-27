@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "language": "English",
+    "code": "en",
+    "direction": "ltr"
+  },
+  "nav": {
+    "live_run": "Live Run",
+    "cards": "Cards",
+    "relics": "Relics",
+    "potions": "Potions",
+    "enemies": "Enemies",
+    "events": "Events",
+    "deck_analyzer": "Deck Analyzer",
+    "run_history": "Run History",
+    "analytics": "Analytics",
+    "records": "Records",
+    "collections": "Collections",
+    "epochs": "Epochs",
+    "community": "Community",
+    "guide": "Guide",
+    "search_placeholder": "Search cards, relics, enemies...",
+    "stop": "Stop"
+  },
+  "common": {
+    "no_data": "No data available",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "floor": "Floor",
+    "hp": "HP",
+    "gold": "Gold",
+    "cards": "Cards",
+    "win": "Win",
+    "loss": "Loss",
+    "wins": "Wins",
+    "losses": "Losses",
+    "win_rate": "Win Rate"
+  }
+}

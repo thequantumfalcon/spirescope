@@ -949,6 +949,35 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
     })
 
 
+@router.get("/overlay", response_class=HTMLResponse)
+async def overlay(request: Request, player: int = Query(0, ge=0, le=3)):
+    """Minimal overlay for OBS browser source or always-on-top second monitor."""
+    a = _app()
+    run = await _get_live_run(player)
+    danger_level = None
+    danger_pct = 0
+    counter_cards = []
+    synergy_hints = []
+    top_cards = []
+    if run.active:
+        if run.max_hp and run.current_hp:
+            danger_pct = int(run.current_hp / run.max_hp * 100)
+            if danger_pct <= 25:
+                danger_level = "critical"
+            elif danger_pct <= 50:
+                danger_level = "warning"
+        # Top cards by play count
+        card_counts = _Counter(run.deck)
+        for card_id, count in card_counts.most_common(5):
+            name = a.kb.id_to_name(card_id)
+            top_cards.append({"name": name, "count": count})
+    return a.templates.TemplateResponse(request, "overlay.html", {
+        "run": run, "danger_level": danger_level, "danger_pct": danger_pct,
+        "counter_cards": counter_cards, "synergy_hints": synergy_hints,
+        "top_cards": top_cards,
+    })
+
+
 @router.get("/deck", response_class=HTMLResponse)
 async def deck_analyzer(request: Request,
                         from_run: str = Query(None, max_length=200)):
