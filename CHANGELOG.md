@@ -1,5 +1,26 @@
 # Changelog
 
+## v2.7.0
+
+### Added
+- **Data enrichment**: 589 cards (+43), 298 relics (+3), 64 events (+24), 170 enemies (+23) from canon sources
+- **Modded save detection**: auto-detects both vanilla and modded save paths, prefers most recent
+- **Shutdown endpoint**: POST /shutdown + red Stop button in nav bar (replaces console window)
+- **README**: Why SpireScope, Works Without STS2, Using with Mods, Streamer Mode, Steam Deck sections
+- **GitHub Pages**: dark gothic landing page at thequantumfalcon.github.io/spirescope
+- **Repo hygiene**: SECURITY.md, issue templates, CHANGELOG backfilled, 15 topic tags
+
+### Fixed
+- Download link now version-agnostic (Spirescope-windows.zip) — no more stale links
+- Capital-S URLs in pyproject.toml, CONTRIBUTING.md, footer template
+- Author metadata: full name + email in pyproject.toml
+- Light theme WCAG AA contrast on page-accent headings
+- console=False in PyInstaller spec — no more black terminal window
+
+### Changed
+- CI: Python 3.13 added to test matrix
+- Release workflow: uploads both versioned and fixed-name zip assets
+
 ## v2.6.0
 
 ### Added
