@@ -967,6 +967,7 @@ async def overlay(request: Request, player: int = Query(0, ge=0, le=3)):
             elif danger_pct <= 50:
                 danger_level = "warning"
         # Top cards by play count
+        from collections import Counter as _Counter
         card_counts = _Counter(run.deck)
         for card_id, count in card_counts.most_common(5):
             name = a.kb.id_to_name(card_id)
