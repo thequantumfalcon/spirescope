@@ -16,7 +16,14 @@ STATIC_DIR = PROJECT_ROOT / "static"
 
 
 def _find_save_dir() -> Path:
-    """Auto-detect the STS2 save directory across platforms."""
+    """Auto-detect the STS2 save directory across platforms.
+
+    STS2 stores modded saves in a separate directory tree:
+      Vanilla: steam/<id>/profile1/saves/
+      Modded:  steam/<id>/modded/profile1/saves/
+
+    When both exist, prefer whichever contains more recent run data.
+    """
     # Environment variable override
     env_dir = os.environ.get("STS2_SAVE_DIR")
     if env_dir:
@@ -34,17 +41,53 @@ def _find_save_dir() -> Path:
     if not sts2_dir.exists():
         return sts2_dir / "saves"  # Return plausible path even if missing
 
-    # Walk steam/<id>/profile*/saves/ to find the first valid save dir
+    # Walk steam/<id>/ to find vanilla and modded save dirs
     steam_dir = sts2_dir / "steam"
+    candidates: list[Path] = []
     if steam_dir.exists():
         for steam_id_dir in steam_dir.iterdir():
-            if steam_id_dir.is_dir():
-                for profile_dir in sorted(steam_id_dir.iterdir()):
+            if not steam_id_dir.is_dir():
+                continue
+            # Check vanilla profiles: steam/<id>/profile*/saves/
+            for profile_dir in sorted(steam_id_dir.iterdir()):
+                if profile_dir.is_dir() and profile_dir.name.startswith("profile"):
                     saves = profile_dir / "saves"
                     if saves.exists():
-                        return saves
+                        candidates.append(saves)
+            # Check modded profiles: steam/<id>/modded/profile*/saves/
+            modded_dir = steam_id_dir / "modded"
+            if modded_dir.exists():
+                for profile_dir in sorted(modded_dir.iterdir()):
+                    if profile_dir.is_dir() and profile_dir.name.startswith("profile"):
+                        saves = profile_dir / "saves"
+                        if saves.exists():
+                            candidates.append(saves)
 
-    return sts2_dir / "saves"
+    if not candidates:
+        return sts2_dir / "saves"
+
+    if len(candidates) == 1:
+        return candidates[0]
+
+    # Multiple save dirs found — prefer the one with more recent history
+    return max(candidates, key=_save_dir_freshness)
+
+
+def _save_dir_freshness(save_dir: Path) -> float:
+    """Return the modification time of the newest run file, or 0."""
+    history = save_dir / "history"
+    if not history.exists():
+        return 0.0
+    newest = 0.0
+    try:
+        for f in history.iterdir():
+            if f.suffix == ".run":
+                mtime = f.stat().st_mtime
+                if mtime > newest:
+                    newest = mtime
+    except OSError:
+        pass
+    return newest
 
 
 def _find_mods_dir() -> Path:

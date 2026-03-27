@@ -19,6 +19,6 @@ NOTES:
 
   - Requires Slay the Spire 2 installed on this PC for save file features
     (card/relic/enemy lookup works without it)
-  - Close the console window to stop the server
+  - Click the red "Stop" button in the nav bar, or close the browser tab
   - Default address: http://127.0.0.1:8000
   - To change the port, set STS2_PORT environment variable before launching

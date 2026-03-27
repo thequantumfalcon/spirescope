@@ -1,5 +1,42 @@
 # Changelog
 
+## v2.6.0
+
+### Added
+- **Run Detail**: cards offered, potions gained, monsters fought, gold per floor, HP timeline chart
+- **Boss Intelligence**: boss matchup table, relic tier list by character, card pick heatmap
+- **Home Page**: win streak tracker, next epoch suggestions
+- **Live Tracker**: encounters won log, events encountered list
+- Cinzel font SIL Open Font License attribution
+- 613 tests passing on Python 3.11 + 3.12
+
+## v2.5.0
+
+### Added
+- **Version & Time Range Filters**: filter runs and analytics by game version or date range
+- Version dropdown auto-populated from run history
+- Time presets: 7-day, 30-day, 90-day, All
+- Custom date range with native date pickers
+- API support for version/from/to query params on /api/runs and /api/analytics
+- 5 new card stubs, 2 new enemy stubs (542 cards, 143 enemies total)
+- 18 new tests (613 total)
+
+## v2.4.0
+
+### Added
+- **Personal Records** (/records): fastest win, highest ascension, best streak, flawless bosses
+- **10 New Analytics**: per-act breakdown, combat efficiency, archetype performance, card pick timing, encounter danger ratings, gold economy, co-op stats, healing sources, card regret analysis
+- Seed copy button, archetype badge, danger grades on enemy pages
+
+## v2.3.0
+
+### Added
+- **Epochs Progression Tracker** (/epochs): all 49 epoch unlock states with filters
+- Enhanced live tracker: merged save+log data, coaching alerts, post-run analysis
+- Hardened sync URL validation, rate limit headers
+- Version badge on landing page
+- 565 tests passing
+
 ## v2.2.1
 
 ### Fixed

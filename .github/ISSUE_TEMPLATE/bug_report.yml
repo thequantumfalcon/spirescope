@@ -1,0 +1,17 @@
+name: Bug Report
+description: Something isn't working as expected
+labels: [bug]
+body:
+  - type: input
+    label: SpireScope version
+    placeholder: 'e.g. v2.6.0'
+  - type: dropdown
+    label: OS
+    options: [Windows, macOS, Linux, Steam Deck]
+  - type: input
+    label: Python version
+    placeholder: 'e.g. 3.11.4 (skip if using .exe)'
+  - type: textarea
+    label: What happened?
+  - type: textarea
+    label: Steps to reproduce

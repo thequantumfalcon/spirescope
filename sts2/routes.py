@@ -1094,6 +1094,22 @@ async def reload_data(request: Request):
             "potions": len(a.kb.potions), "enemies": len(a.kb.enemies)}
 
 
+@router.post("/shutdown")
+async def shutdown(request: Request):
+    """Gracefully stop SpireScope. Requires admin token or localhost origin."""
+    a = _app()
+    token = request.headers.get("X-Admin-Token", "")
+    referer = request.headers.get("referer", "")
+    is_local = "127.0.0.1" in referer or "localhost" in referer
+    if not is_local and (not token or not secrets.compare_digest(token, a._ADMIN_TOKEN)):
+        return PlainTextResponse("Unauthorized.", status_code=403)
+    import os
+    import signal
+    import threading
+    threading.Timer(0.5, lambda: os.kill(os.getpid(), signal.SIGTERM)).start()
+    return {"status": "shutting down"}
+
+
 @router.get("/api/cards/{card_id}")
 async def api_card(card_id: str = Path(max_length=200)):
     a = _app()

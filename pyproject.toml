@@ -5,7 +5,7 @@ description = "Spirescope — a local web dashboard for Slay the Spire 2. Card/r
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"
-authors = [{name = "Thomas"}]
+authors = [{name = "Thomas Albrecht", email = "thequantumfalcon@users.noreply.github.com"}]
 keywords = ["slay-the-spire", "slay-the-spire-2", "dashboard", "deck-analysis", "live-tracking", "companion-app"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -26,9 +26,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/thequantumfalcon/Spirescope"
-Repository = "https://github.com/thequantumfalcon/Spirescope"
-Issues = "https://github.com/thequantumfalcon/Spirescope/issues"
+Homepage = "https://github.com/thequantumfalcon/spirescope"
+Repository = "https://github.com/thequantumfalcon/spirescope"
+Issues = "https://github.com/thequantumfalcon/spirescope/issues"
+Changelog = "https://github.com/thequantumfalcon/spirescope/blob/master/CHANGELOG.md"
 
 [project.scripts]
 spirescope = "sts2.__main__:main"

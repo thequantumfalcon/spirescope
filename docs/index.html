@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SpireScope - Local Dashboard for Slay the Spire 2</title>
+  <meta property="og:title" content="SpireScope">
+  <meta property="og:description" content="No cloud. No accounts. No telemetry. Runs entirely on your machine.">
+  <meta property="og:image" content="screenshot-dashboard.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0c0a0e; color: #f5f0e8; font-family: system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+    .hero { text-align: center; padding: 4rem 2rem 2rem; max-width: 800px; }
+    h1 { font-family: 'Cinzel', serif; color: #c9a55c; font-size: 3rem; margin-bottom: 0.5rem; }
+    .tagline { color: #938880; font-size: 1.1rem; margin-bottom: 2rem; }
+    .download { display: inline-block; background: linear-gradient(135deg, #8B1A1A, #a0784c); color: #fff; text-decoration: none; padding: 1rem 2.5rem; border-radius: 8px; font-size: 1.2rem; margin-bottom: 1rem; transition: opacity 0.2s; }
+    .download:hover { opacity: 0.85; }
+    .sub { color: #938880; font-size: 0.85rem; margin-bottom: 3rem; }
+    .sub a { color: #c9a55c; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; max-width: 800px; padding: 0 2rem; margin-bottom: 3rem; }
+    .feature { background: #1a1520; border: 1px solid #2a2030; border-radius: 8px; padding: 1.5rem; }
+    .feature h3 { color: #c9a55c; font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .feature p { color: #938880; font-size: 0.85rem; line-height: 1.5; }
+    .screenshots { max-width: 900px; padding: 0 2rem; margin-bottom: 3rem; }
+    .screenshots img { width: 100%; border-radius: 8px; border: 1px solid #2a2030; margin-bottom: 1.5rem; }
+    footer { color: #938880; font-size: 0.8rem; padding: 2rem; text-align: center; }
+    footer a { color: #c9a55c; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>SpireScope</h1>
+    <p class="tagline">No cloud. No accounts. No telemetry. Runs entirely on your machine.</p>
+    <a class="download" href="https://github.com/thequantumfalcon/spirescope/releases/latest">Download for Windows</a>
+    <p class="sub">Open source &middot; MIT License &middot; <a href="https://github.com/thequantumfalcon/spirescope">View on GitHub</a></p>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <h3>Knowledge Base</h3>
+      <p>Browse all cards, relics, potions, enemies, and events with filters, search, and strategy guides.</p>
+    </div>
+    <div class="feature">
+      <h3>Live Run Tracker</h3>
+      <p>Real-time dashboard via SSE. Deck, HP, synergy hints, danger alerts, counter-cards.</p>
+    </div>
+    <div class="feature">
+      <h3>Run Analytics</h3>
+      <p>Win rates, death heatmaps, card pick timing, boss matchups, archetype detection, gold economy.</p>
+    </div>
+    <div class="feature">
+      <h3>Works Without STS2</h3>
+      <p>Card browser, enemy guides, and strategy guides work without any save files or game install.</p>
+    </div>
+  </div>
+
+  <div class="screenshots">
+    <img src="screenshot-dashboard.png" alt="SpireScope dashboard showing run history and analytics">
+    <img src="screenshot-live.png" alt="SpireScope live run tracker with real-time updates">
+  </div>
+
+  <footer>
+    <p>SpireScope is not affiliated with Mega Crit Games.</p>
+    <p>Slay the Spire is a trademark of Mega Crit Games.</p>
+  </footer>
+</body>
+</html>

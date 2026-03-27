@@ -56,6 +56,9 @@
     radial-gradient(ellipse at 80% 0%, rgba(139,32,32,0.04) 0%, transparent 50%),
     radial-gradient(ellipse at 50% 100%, rgba(107,80,48,0.05) 0%, transparent 50%);
 }
+[data-theme="light"] [data-page="cards"] { --page-accent: #7a5c1a; }
+[data-theme="light"] [data-page="strategy"] { --page-accent: #7a5c1a; }
+[data-theme="light"] [data-page="community"] { --page-accent: #8a6c18; }
 [data-theme="light"] a:hover { color: #5a4210; }
 [data-theme="light"] nav { border-bottom-color: var(--border); box-shadow: 0 1px 10px rgba(0,0,0,0.06); }
 [data-theme="light"] nav button { background: linear-gradient(135deg, var(--accent2), var(--copper)); }
@@ -142,6 +145,8 @@ nav button { background: linear-gradient(135deg, var(--accent2), var(--copper));
 nav button:hover { opacity: 0.85; }
 .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text); font-size: 1.2rem; padding: 0.3rem 0.5rem; border-radius: 6px; cursor: pointer; line-height: 1; transition: border-color 0.15s; margin-left: 0.5rem; }
 .theme-toggle:hover { border-color: var(--gold); }
+.stop-btn { background: none; border: 1px solid var(--crimson); color: var(--crimson); font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; margin-left: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; transition: background 0.15s, color 0.15s; }
+.stop-btn:hover { background: var(--crimson); color: var(--bg); }
 
 /* ── Layout ── */
 .container { max-width: 1200px; margin: 0 auto; padding: 2rem; flex: 1; }

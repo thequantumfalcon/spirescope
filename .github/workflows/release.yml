@@ -33,12 +33,16 @@ jobs:
           if (Test-Path README_DIST.txt) { Copy-Item README_DIST.txt dist/Spirescope/README.txt }
         shell: pwsh
 
-      - name: Create zip archive
-        run: Compress-Archive -Path dist/Spirescope -DestinationPath dist/Spirescope-${{ github.ref_name }}-windows.zip
+      - name: Create zip archives
+        run: |
+          Compress-Archive -Path dist/Spirescope -DestinationPath dist/Spirescope-${{ github.ref_name }}-windows.zip
+          Copy-Item dist/Spirescope-${{ github.ref_name }}-windows.zip dist/Spirescope-windows.zip
         shell: pwsh
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/Spirescope-${{ github.ref_name }}-windows.zip
+          files: |
+            dist/Spirescope-${{ github.ref_name }}-windows.zip
+            dist/Spirescope-windows.zip
           generate_release_notes: true

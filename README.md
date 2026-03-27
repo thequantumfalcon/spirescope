@@ -72,7 +72,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Download (No Python Required)
 
-**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-v2.6.0-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
 
 ### From Source
 
@@ -104,6 +104,38 @@ Output: `dist/Spirescope/Spirescope.exe` — zip the entire `dist/Spirescope/` f
 docker build -t spirescope .
 docker run -p 8000:8000 spirescope
 ```
+
+## Why SpireScope?
+
+Unlike cloud trackers, SpireScope runs entirely on your machine -- your run data never leaves your PC. Unlike browser extensions, it works on any OS and doesn't require game mods. Unlike the wiki, it knows your specific run history and tracks how your win rate changes across patches, characters, and ascension levels. And unlike anything else in the STS2 ecosystem, it's fully open source.
+
+## Works Without STS2 Installed
+
+The card browser, relic browser, enemy guides, event guides, deck analyzer, and strategy guides all work without any save files. If you're curious about the game before buying, SpireScope is a full reference tool.
+
+## Using with Mods
+
+SpireScope automatically checks both vanilla and modded save paths and uses whichever contains more recent runs. If you use multiple mods, install [UnifiedSavePath](https://www.nexusmods.com/slaythespire2/mods/6) (NexusMods mod #6) to merge both paths into one location.
+
+- Vanilla: `%APPDATA%\SlayTheSpire2\steam\<id>\profile1\saves\`
+- Modded: `%APPDATA%\SlayTheSpire2\steam\<id>\modded\profile1\saves\`
+
+## Streamer Mode / OBS Browser Source
+
+SpireScope's live run tracker works as an OBS browser source. Add `http://127.0.0.1:8000/live` as a Browser Source in OBS. The tracker updates in real time via SSE -- no page reloads, no stream interruption. Use `?player=N` for co-op runs to track a specific teammate.
+
+## Steam Deck
+
+SpireScope runs on Steam Deck via the Linux source install. From Desktop Mode:
+
+```bash
+pip install -e .
+spirescope
+```
+
+Save path (Proton): `~/.local/share/Steam/steamapps/compatdata/2832040/pfx/drive_c/users/steamuser/AppData/Local/SlayTheSpire2/`
+
+Set `STS2_SAVE_DIR` to this path if auto-detection doesn't find your saves.
 
 ## CLI Commands
 
@@ -141,8 +173,11 @@ spirescope --version    # Show version
 ### Save File Location
 
 - **Windows**: `%APPDATA%\SlayTheSpire2\steam\<steam_id>\profile1\saves\`
+- **Windows (modded)**: `%APPDATA%\SlayTheSpire2\steam\<steam_id>\modded\profile1\saves\`
 - **macOS**: `~/Library/Application Support/SlayTheSpire2/steam/<steam_id>/profile1/saves/`
 - **Linux**: `~/.local/share/SlayTheSpire2/steam/<steam_id>/profile1/saves/`
+
+SpireScope auto-detects both vanilla and modded paths and uses whichever has more recent data.
 
 ## API Endpoints
 

@@ -5,8 +5,8 @@ Thanks for your interest in contributing!
 ## Getting Started
 
 ```bash
-git clone https://github.com/thequantumfalcon/Spirescope.git
-cd Spirescope
+git clone https://github.com/thequantumfalcon/spirescope.git
+cd spirescope
 pip install -e ".[dev]"
 pytest -q
 ```

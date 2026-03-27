@@ -44,6 +44,7 @@
         <button type="submit">Search</button>
       </form>
     </div>
+    <button class="stop-btn" aria-label="Stop SpireScope" onclick="fetch('/shutdown',{method:'POST'}).then(()=>{document.body.innerHTML='<h1 style=&quot;text-align:center;margin-top:20vh;color:var(--gold)&quot;>SpireScope stopped. You can close this tab.</h1>'})">Stop</button>
     <button class="theme-toggle" aria-label="Switch to light mode">&#9790;</button>
   </nav>
   <main id="main" class="container" data-page="{% block page_id %}home{% endblock %}">
@@ -51,7 +52,7 @@
   </main>
   <footer>
     <span>SpireScope v{{ version }}</span> &middot;
-    <a href="https://github.com/thequantumfalcon/Spirescope">GitHub</a>
+    <a href="https://github.com/thequantumfalcon/spirescope">GitHub</a>
   </footer>
   <div id="shortcut-overlay" class="shortcut-overlay" hidden>
     <div class="shortcut-overlay-content">
