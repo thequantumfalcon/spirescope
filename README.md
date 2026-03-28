@@ -12,15 +12,15 @@
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
 
 <p align="center">
-  <img src="docs/screenshot-dashboard.png" alt="SpireScope Dashboard" width="80%">
+  <img src="docs/screenshot-game.png" alt="Slay the Spire 2 — the game SpireScope tracks" width="80%">
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-cards.png" alt="Card Browser" width="80%">
+  <img src="docs/screenshot-dashboard.png" alt="SpireScope Dashboard — your runs, your stats, your data" width="80%">
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-game.png" alt="Slay the Spire 2 Gameplay" width="80%">
+  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — all 589 cards with filters and search" width="80%">
 </p>
 
 ## Features
