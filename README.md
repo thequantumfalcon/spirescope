@@ -16,11 +16,11 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — all 589 cards with filters and search" width="80%">
+  <img src="docs/screenshot-live.png" alt="SpireScope Live Run Tracker — real-time deck, HP, and floor tracking" width="80%">
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-game.png" alt="Slay the Spire 2 — real game data powering the dashboard" width="80%">
+  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — all 589 cards with filters and search" width="80%">
 </p>
 
 ## Features
