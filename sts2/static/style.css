@@ -900,3 +900,4 @@ kbd {
 .grave-killer { margin-bottom: 0.75rem; }
 .grave-epitaph { font-style: italic; color: var(--text2); line-height: 1.5; margin-bottom: 0.75rem; font-size: 0.95rem; border-left: 2px solid var(--gold); padding-left: 0.75rem; }
 .grave-date { font-size: 0.8rem; }
+.empty-state { text-align: center; padding: 3rem; color: var(--text2); font-style: italic; }
