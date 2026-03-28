@@ -94,7 +94,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 **[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
 
-Also available on [NexusMods](https://www.nexusmods.com/slaythespire2/mods/309).
+Also available on [NexusMods](https://www.nexusmods.com/slaythespire2/mods/309). See the [Steam Guide](https://steamcommunity.com/sharedfiles/filedetails/?id=3694453471) for an overview.
 
 ### From Source
 
