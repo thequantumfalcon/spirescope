@@ -32,7 +32,10 @@ def generate_prophecy(character, ascension, runs):
         "sample_size": len(comparable),
         "danger_zone": danger_zone,
         "recommendation": recommendation,
-        "avg_floor": round(sum(r.floors[-1].floor for r in comparable if r.floors) / len(comparable), 1),
+        "avg_floor": round(
+            sum(r.floors[-1].floor for r in comparable if r.floors)
+            / max(sum(1 for r in comparable if r.floors), 1), 1
+        ),
     }
 
 

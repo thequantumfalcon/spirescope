@@ -316,11 +316,14 @@ class KnowledgeBase:
                 self._all_names.append(name)
 
     def _score_match(self, query: str, text: str, boundary_re=None) -> float:
-        """Fast scoring: exact substring > word boundary > token overlap."""
+        """Fast scoring: exact name > exact substring > word boundary > token overlap."""
+        if query == text:
+            return 1.2  # Exact match beats everything
         if query in text:
-            # Boost for matching at word boundary or being a large portion of the name
+            # Boost for shorter names (closer to exact match)
+            length_bonus = max(0, 0.1 - 0.005 * (len(text) - len(query)))
             if boundary_re and boundary_re.search(text):
-                return 1.0
+                return 1.0 + length_bonus
             return 0.9
         # Normalized query with underscores
         q_norm = query.replace(" ", "_")
@@ -364,6 +367,12 @@ class KnowledgeBase:
         for text, category, obj in self._search_index:
             score = self._score_match(q, text, boundary_re)
             if score > 0.3:
+                # Boost exact name matches (starter cards like "Strike", "Defend")
+                name = getattr(obj, "name", "").lower()
+                if name == q:
+                    score += 0.3
+                elif name.startswith(q + " ") or name.startswith(q + "("):
+                    score += 0.1
                 scored.append((score, category, obj))
 
         scored.sort(key=lambda x: -x[0])

@@ -203,7 +203,7 @@ def _encode_decisions(run, kb):
     for f in run.floors:
         # Encode floor type as base signal
         type_scores = {"monster": 1, "elite": 3, "boss": 5, "shop": 2,
-                       "rest_site": 2, "event": 1, "treasure": 1, "unknown": 1}
+                       "rest": 2, "rest_site": 2, "event": 1, "treasure": 1, "unknown": 1}
         score = type_scores.get(f.type, 1)
 
         # Add card pick diversity signal

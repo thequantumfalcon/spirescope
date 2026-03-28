@@ -554,7 +554,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
         for floor in run.floors:
             if floor.hp_healed > 0:
                 total_healing += floor.hp_healed
-                if floor.type == "rest":
+                if floor.type in ("rest", "rest_site"):
                     rest_healing["total"] += floor.hp_healed
                     rest_healing["count"] += 1
                 elif floor.type in ("monster", "elite", "boss"):
