@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block page_id %}graveyard{% endblock %}
+{% block title %}The Graveyard{% endblock %}
+{% block content %}
+<h1>The Graveyard</h1>
+<p class="text-muted mb-lg">In memoriam. Every fall remembered.</p>
+
+{% if graves %}
+<div class="grave-grid">
+  {% for g in graves %}
+  <a href="/runs/{{ g.run.id }}" class="grave-card">
+    <div class="grave-header">
+      <span class="char-{{ g.run.character|lower }}">{{ g.run.character }}</span>
+      <span class="text-muted text-sm">A{{ g.run.ascension }}</span>
+    </div>
+    <div class="grave-floor">Floor {{ g.run.floors[-1].floor if g.run.floors else '?' }}</div>
+    <div class="grave-killer text-sm text-muted">{{ g.run.killed_by.replace('ENCOUNTER.', '').replace('_', ' ').title() if g.run.killed_by else 'Unknown' }}</div>
+    <div class="grave-epitaph">"{{ g.epitaph }}"</div>
+    <div class="grave-date text-sm text-muted">{{ g.run.timestamp }}</div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p>No fallen runs yet. The Spire awaits.</p>
+</div>
+{% endif %}
+{% endblock %}

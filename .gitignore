@@ -38,20 +38,9 @@ htmlcov/
 *.log
 spirescope logo.jpg
 
-# Research modules (private, local-only)
+# Private modules (active investigation dependencies)
 sts2/risk.py
 sts2/diagnosis.py
-sts2/behavior.py
-sts2/spectral.py
-sts2/graveyard.py
-sts2/ghost.py
-sts2/drift.py
-sts2/pheromone.py
-sts2/cascade.py
-sts2/prophecy.py
-sts2/hypothesis.py
-sts2/rivalry.py
-sts2/integrity.py
 sts2/data/pheromones.json
 sts2/data/hypotheses.json
 

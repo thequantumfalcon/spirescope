@@ -888,3 +888,15 @@ kbd {
 @media (max-width: 600px) {
   .compare-header { flex-direction: column; gap: 1rem; }
 }
+
+/* ── Graveyard ── */
+[data-page="graveyard"] { --page-accent: #6b5d4f; --page-glow: rgba(107,93,79,0.12); }
+.grave-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+.grave-card { display: block; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; text-decoration: none; color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; }
+.grave-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.3; }
+.grave-card:hover { border-color: var(--gold); box-shadow: 0 0 20px rgba(201,165,92,0.08); text-decoration: none; }
+.grave-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.grave-floor { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--gold); margin-bottom: 0.25rem; }
+.grave-killer { margin-bottom: 0.75rem; }
+.grave-epitaph { font-style: italic; color: var(--text2); line-height: 1.5; margin-bottom: 0.75rem; font-size: 0.95rem; border-left: 2px solid var(--gold); padding-left: 0.75rem; }
+.grave-date { font-size: 0.8rem; }

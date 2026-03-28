@@ -99,6 +99,40 @@
 </div>
 {% endfor %}
 </div>
+{% if autopsy %}
+<details class="autopsy-section" open>
+  <summary><h2 style="display:inline">Autopsy Report</h2></summary>
+  <div class="autopsy-chain mb-md">
+    <p class="text-muted"><strong>Causal chain:</strong> {{ autopsy.causal_chain }}</p>
+    <p class="text-sm text-muted mt-sm"><em>{{ autopsy.consensus }}</em></p>
+  </div>
+  {% if autopsy.exculpatory %}
+  <h3>What Went Right</h3>
+  {% for f in autopsy.exculpatory %}
+  <div class="card mb-sm" style="border-left: 3px solid var(--green);">
+    <strong>{{ f.title }}</strong>
+    <span class="text-sm text-muted">({{ f.agent }}, {{ (f.confidence * 100)|int }}% confidence)</span>
+    <p class="text-sm mt-sm">{{ f.detail }}</p>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% set problems = [] %}
+  {% for f in autopsy.findings if f.severity in ['critical', 'warning'] %}
+    {% if problems.append(f) %}{% endif %}
+  {% endfor %}
+  {% if problems %}
+  <h3>Issues Identified</h3>
+  {% for f in problems %}
+  <div class="card mb-sm" style="border-left: 3px solid {% if f.severity == 'critical' %}var(--crimson){% else %}var(--gold){% endif %};">
+    <strong>{{ f.title }}</strong>
+    <span class="text-sm text-muted">({{ f.agent }}{% if f.floor %}, floor {{ f.floor }}{% endif %}, {{ (f.confidence * 100)|int }}%)</span>
+    <p class="text-sm mt-sm">{{ f.detail }}</p>
+  </div>
+  {% endfor %}
+  {% endif %}
+</details>
+{% endif %}
+
 {% else %}
 <h1>Run Not Found</h1>
 {% endif %}

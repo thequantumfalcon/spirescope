@@ -501,9 +501,19 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
         }, status_code=404)
     run_analysis = analyze_run(run, kb=a.kb)
     archetype = a.kb.classify_archetype(run.deck, run.character)
+    autopsy = None
+    if not run.win:
+        try:
+            from sts2.diagnosis import diagnose_run
+            all_runs = await a._get_runs()
+            autopsy = diagnose_run(run, a.kb, all_runs)
+        except ImportError:
+            pass
+        except Exception:
+            pass
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "kb": a.kb, "run_analysis": run_analysis,
-        "archetype": archetype,
+        "archetype": archetype, "autopsy": autopsy,
     })
 
 
@@ -646,6 +656,19 @@ async def records(request: Request):
     return a.templates.TemplateResponse(request, "records.html", {
         "records": recs, "kb": a.kb,
     })
+
+
+@router.get("/graveyard", response_class=HTMLResponse)
+async def graveyard(request: Request):
+    a = _app()
+    try:
+        from sts2.graveyard import generate_epitaph
+        runs = await a._get_runs()
+        deaths = [r for r in runs if not r.win][-50:]
+        graves = [{"run": r, "epitaph": generate_epitaph(r, a.kb)} for r in reversed(deaths)]
+    except ImportError:
+        graves = []
+    return a.templates.TemplateResponse(request, "graveyard.html", {"graves": graves})
 
 
 @router.get("/community", response_class=HTMLResponse)
@@ -836,17 +859,28 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
         except Exception:
             _log.debug("Coaching: analytics suggestions failed", exc_info=True)
 
-        # Danger zone alerts
+        # Compound risk scoring
         try:
-            if run.max_hp > 0:
-                hp_pct = run.current_hp / run.max_hp
-                danger_pct = int(hp_pct * 100)
-                if hp_pct < 0.2:
-                    danger_level = "critical"
-                elif hp_pct < 0.4:
-                    danger_level = "warning"
+            from sts2.risk import compute_death_risk
+            risk = compute_death_risk(run, a.kb)
+            # Only show danger banner for danger/critical, not caution
+            if risk["level"] in ("danger", "critical"):
+                danger_level = risk["level"]
+                danger_pct = int(run.current_hp / run.max_hp * 100) if run.max_hp else 0
+        except ImportError:
+            # Fallback: simple HP percentage
+            try:
+                if run.max_hp > 0:
+                    hp_pct = run.current_hp / run.max_hp
+                    danger_pct = int(hp_pct * 100)
+                    if hp_pct < 0.2:
+                        danger_level = "critical"
+                    elif hp_pct < 0.4:
+                        danger_level = "warning"
+            except Exception:
+                pass
         except Exception:
-            _log.debug("Coaching: danger zone failed", exc_info=True)
+            _log.debug("Coaching: risk scoring failed", exc_info=True)
 
         # Counter-card suggestions (based on last combat encounter)
         try:
@@ -938,6 +972,22 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
         except Exception:
             _log.debug("Coaching: boss prep failed", exc_info=True)
 
+    # Ghost run comparison
+    ghost_splits = []
+    ghost_info = None
+    if run.active:
+        try:
+            from sts2.ghost import compute_splits, find_ghost_run, ghost_summary
+            all_runs = await a._get_runs()
+            ghost = find_ghost_run(run.character, getattr(run, "ascension", 0), all_runs)
+            if ghost:
+                ghost_splits = compute_splits(run, ghost)
+                ghost_info = ghost_summary(ghost_splits)
+        except ImportError:
+            pass
+        except Exception:
+            pass
+
     return a.templates.TemplateResponse(request, "live.html", {
         "run": run, "analysis": analysis, "kb": a.kb,
         "selected_player": player, "total_players": run.total_players,
@@ -946,6 +996,8 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
         "counter_cards": counter_cards, "last_enemy_name": last_enemy_name,
         "synergy_hints": synergy_hints,
         "coaching_alerts": coaching_alerts,
+        "ghost_splits": ghost_splits[-5:] if ghost_splits else [],
+        "ghost_info": ghost_info,
     })
 
 
@@ -960,12 +1012,20 @@ async def overlay(request: Request, player: int = Query(0, ge=0, le=3)):
     synergy_hints = []
     top_cards = []
     if run.active:
-        if run.max_hp and run.current_hp:
-            danger_pct = int(run.current_hp / run.max_hp * 100)
-            if danger_pct <= 25:
-                danger_level = "critical"
-            elif danger_pct <= 50:
-                danger_level = "warning"
+        try:
+            from sts2.risk import compute_death_risk
+            risk = compute_death_risk(run, a.kb)
+            danger_level = risk["level"] if risk["level"] != "safe" else None
+            danger_pct = int(100 - risk["win_probability"])
+        except ImportError:
+            if run.max_hp and run.current_hp:
+                danger_pct = int(run.current_hp / run.max_hp * 100)
+                if danger_pct <= 25:
+                    danger_level = "critical"
+                elif danger_pct <= 50:
+                    danger_level = "warning"
+        except Exception:
+            pass
         # Top cards by play count
         from collections import Counter as _Counter
         card_counts = _Counter(run.deck)
