@@ -60,6 +60,22 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Community Meta** — Tier lists and strategy posts from Reddit and Steam, community-voted card tiers, aggregate player stats with import/export
 - **Global Search** — Fuzzy search with "Did you mean?" suggestions across all entities
 
+### Advanced Analytics (v2.9.0)
+
+- **The Graveyard** — Every dead run gets a procedural epitaph: *"Had 4 potions. Used none of them."* Visit `/graveyard` to see your memorial wall.
+- **Ghost Run Comparison** — Speedrun-style splits against your best run. See HP and gold deltas floor by floor during live runs. Green arrows = ahead, red = behind.
+- **Tilt Detection** — Tracks session momentum and warns when you're on a losing streak: *"Your last 4 runs averaged floor 11. Your session average is 23. Consider a break."*
+- **Anti-Pattern Detection** — Named recurring mistakes: "The Hoarder" (unused potions), "The Greedy Builder" (oversized decks), "The Coward" (skipping elites).
+- **Deck Health Score** — Synergy graph analysis scoring deck coherence from 0-100. Identifies orphan cards with zero synergy connections.
+- **Archetype Drift** — Alerts when your card picks drift away from your deck's archetype mid-run.
+- **Strategy Memory** — Tracks which strategies you use over time. Frequently-used strategies glow bright; forgotten ones fade.
+- **Cascade Map** — Click any card in a completed run to see its downstream impact: how damage, fight length, and HP changed after picking it.
+- **Prophecy Engine** — Pre-run predictions based on your history: win probability, danger zone floors, and strategic recommendations.
+- **Autopsy Report** — When you die, 5 diagnostic agents analyze what went wrong AND what went right. Causal chain narrative + exculpatory findings.
+- **Hypothesis Lab** — Register strategic beliefs (*"Skipping elites helps"*) and test them with Bayesian statistics across your runs.
+- **Rivalry Seeds** — Export your run, share the seed with a friend, import their run, and see a floor-by-floor decision diff.
+- **Run Integrity** — SHA-256 Merkle chain proves a run is unmodified. Share your hash to verify achievements.
+
 ### Customize & Extend
 
 - **Keyboard Shortcuts** — Press `?` for shortcut help, navigate pages with single keys, `/` to search

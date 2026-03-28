@@ -17,6 +17,7 @@
     <li><a href="#analytics">Analytics</a></li>
     <li><a href="#community">Community Data</a></li>
     <li><a href="#mods">Mod Support</a></li>
+    <li><a href="#advanced">Advanced Analytics</a></li>
     <li><a href="#shortcuts">Keyboard Shortcuts</a></li>
     <li><a href="#config">Configuration</a></li>
     <li><a href="#troubleshooting">Troubleshooting</a></li>
@@ -131,6 +132,73 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
   ]
 }</code></pre>
   <p class="text-sm text-muted mt-sm">All entity types are optional per file. Base game data always takes priority — if a mod ID conflicts with a base card, the mod entry is skipped. Mod entities are tagged with a <span class="tag tag-mod">Mod</span> badge. After adding mod files, use <code>POST /api/reload</code> or restart to load them.</p>
+</div>
+
+<h2 id="advanced">Advanced Analytics</h2>
+<div class="card mb-md">
+  <p>SpireScope includes advanced analytics that go deeper than any STS2 companion tool. Here's how to use each one:</p>
+</div>
+
+<div class="card mb-md">
+  <h3>The Graveyard</h3>
+  <p>Visit <a href="/graveyard">/graveyard</a> to see a memorial wall for every dead run. Each gravestone shows a procedural epitaph based on what actually happened — potion hoarding, oversized decks, instant deaths, marathon losses. Screenshot and share your favorites.</p>
+</div>
+
+<div class="card mb-md">
+  <h3>Ghost Run Comparison</h3>
+  <p>During a live run, SpireScope finds your best comparable historical run and shows floor-by-floor deltas. Green arrows mean you're ahead of your personal best. Red arrows mean you're behind. Works automatically — just open the live tracker.</p>
+</div>
+
+<div class="card mb-md">
+  <h3>Tilt Detection</h3>
+  <p>SpireScope tracks your session momentum. If your recent runs are getting shorter and your floor average is dropping, a gentle warning appears on the home page suggesting a break. No judgment — just data.</p>
+</div>
+
+<div class="card mb-md">
+  <h3>Anti-Pattern Detection</h3>
+  <p>After enough runs, SpireScope identifies recurring habits that hurt your win rate:</p>
+  <ul class="mb-sm">
+    <li><strong>The Hoarder</strong> — dying with unused potions</li>
+    <li><strong>The Greedy Builder</strong> — losing decks are bigger than winning decks</li>
+    <li><strong>The Coward</strong> — skipping too many elites</li>
+    <li><strong>Potion Paralysis</strong> — consistently dying with potions in hand</li>
+  </ul>
+  <p class="text-sm text-muted">Shown on the analytics page once you have 5+ runs.</p>
+</div>
+
+<div class="card mb-md">
+  <h3>Deck Health Score</h3>
+  <p>The deck analyzer computes a synergy graph where cards are connected by shared keywords. The health score (0-100) measures how well your cards work together. Orphan cards — those with zero connections — are highlighted. Available on the deck analyzer and live tracker.</p>
+</div>
+
+<div class="card mb-md">
+  <h3>Autopsy Report</h3>
+  <p>When a run ends in death, open the run detail page to see the Autopsy Report. Five diagnostic agents analyze your run from different angles — deck coherence, combat tempo, economy, adaptation, and (uniquely) what went <em>right</em>. The causal chain traces the sequence of decisions that led to death.</p>
+</div>
+
+<div class="card mb-md">
+  <h3>Cascade Map</h3>
+  <p>On any completed run's detail page, click a card to see its downstream impact. SpireScope compares your performance before and after picking that card — damage taken, fight length, floors survived. One card, its entire ripple through your run.</p>
+</div>
+
+<div class="card mb-md">
+  <h3>Prophecy Engine</h3>
+  <p>Before starting a run, the home page shows a prediction based on your history with that character: win probability, danger zone floors, and a recommendation. After the run, the prophecy is graded. Requires 5+ runs with the same character.</p>
+</div>
+
+<div class="card mb-md">
+  <h3>Hypothesis Lab</h3>
+  <p>Test your strategic beliefs with data. Register a hypothesis like "skipping elites helps" and SpireScope tracks qualifying runs, updates Bayesian probabilities, and delivers a verdict: confirmed, refuted, or inconclusive.</p>
+</div>
+
+<div class="card mb-md">
+  <h3>Rivalry Seeds</h3>
+  <p>Export a run as JSON from the run detail page. Share the seed with a friend. They play the same seed and export their run. Import both on the rivalry page to see a floor-by-floor decision diff — where you picked differently and who survived longer.</p>
+</div>
+
+<div class="card mb-md">
+  <h3>Run Integrity</h3>
+  <p>Every run gets a SHA-256 hash chain (Merkle root) that proves the run data is unmodified. Shown on the run detail page. Share your hash to verify achievements without trusting a central server.</p>
 </div>
 
 <h2 id="shortcuts">Keyboard Shortcuts</h2>
