@@ -1,8 +1,6 @@
 """Hypothesis Lab — formally test strategic beliefs with Bayesian statistics."""
 import json
-import math
 import time
-from pathlib import Path
 
 from sts2.config import DATA_DIR
 

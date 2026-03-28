@@ -1,7 +1,6 @@
 """Pheromone strategy memory — track which strategies you use vs forget."""
 import json
 import time
-from pathlib import Path
 
 from sts2.config import DATA_DIR
 

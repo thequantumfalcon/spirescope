@@ -1,7 +1,6 @@
 """Behavior analysis — tilt detection, anti-patterns, decision quality."""
 import math
 
-
 # ── Tilt Detection ──
 
 def detect_tilt(runs, session_window_hours=4):
