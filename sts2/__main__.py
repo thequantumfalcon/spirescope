@@ -1,7 +1,16 @@
 """Entry point for Spirescope: python -m sts2"""
+import os
 import sys
 import threading
 import webbrowser
+
+# When running as a windowed exe (console=False), sys.stdout/stderr are None.
+# Uvicorn's logger crashes trying to call sys.stderr.isatty(). Fix by replacing
+# None streams with a no-op TextIO wrapper.
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w")
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w")
 
 USAGE = """\
 Spirescope - Slay the Spire 2 companion dashboard
