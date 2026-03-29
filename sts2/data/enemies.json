@@ -1071,12 +1071,14 @@
   {
     "id": "MONSTER.BATTLE_FRIEND_V2",
     "name": "Battle Friend V2",
-    "act": [],
-    "type": "",
+    "act": [
+      "Act 3"
+    ],
+    "type": "normal",
     "hp_range": "",
     "patterns": [],
     "tips": [
-      "Enhanced version of Battle Friend with higher stats."
+      "Part of the Battle Friend V1/V2/V3 trio. Appears as a 3-foe normal encounter in Act 3 (Glory)."
     ]
   },
   {
@@ -1315,11 +1317,14 @@
   {
     "id": "MONSTER.DECIMILLIPEDE",
     "name": "Decimillipede",
-    "type": "",
+    "type": "elite",
     "hp": "",
     "description": "",
     "tips": [
-      "Multi-segment enemy that attacks multiple times per turn."
+      "Elite with three segments (40-46 HP each). All three moves are always in play — one per segment. When a segment dies, it revives with 25 HP if another segment lives. Strong AoE check; kill all segments before Reattach triggers."
+    ],
+    "act": [
+      "Act 2"
     ]
   },
   {
@@ -1956,11 +1961,11 @@
     "act": [
       "Act 1"
     ],
-    "type": "",
+    "type": "normal",
     "hp_range": "",
     "patterns": [],
     "tips": [
-      "Applies debuffs and constricts, reducing your ability to act."
+      "Normal enemy in Act 1 Overgrowth (53-55 HP). Uses Constrict, Thwack, and Lash. Applies Weak debuff. One of the weaker Overgrowth encounters."
     ]
   },
   {
@@ -2097,7 +2102,7 @@
     "hp_range": "",
     "patterns": [],
     "tips": [
-      "Act 1 boss in the Overgrowth path. Summons allies during combat."
+      "Act 1 Overgrowth boss: 1 Kin Priest (190 HP) + 2 Kin Followers (58-59 HP). Priest cycles: Orb of Frailty, Orb of Weakness, Soul Beam (3x3), Dark Ritual (+2 Str). Followers flee if Priest dies — focus the Priest to end the fight early."
     ]
   },
   {
@@ -2159,11 +2164,14 @@
   {
     "id": "MONSTER.TOADPOLES",
     "name": "Toadpoles",
-    "type": "",
+    "type": "normal",
     "hp": "",
     "description": "",
     "tips": [
-      "Small enemies that appear in groups. Individually weak but dangerous in numbers."
+      "Normal enemy in Act 1 Underdocks (21-25 HP each). Cycle: Whirl (7 dmg), Spiken (gains 2 Thorns), Spike Spit (3x3 dmg). Watch for Thorns — time attacks to avoid hitting into Spiken turns."
+    ],
+    "act": [
+      "Act 1"
     ]
   },
   {
