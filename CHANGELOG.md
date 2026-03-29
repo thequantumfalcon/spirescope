@@ -1,5 +1,36 @@
 # Changelog
 
+## v2.9.2
+
+### Fixed
+
+- **Card rarity**: 402 cards corrected from wiki.gg Lua data modules — most were incorrectly labeled "Common" when they should be Uncommon, Rare, or Ancient
+- **Card name**: "All For One" corrected to "All for One" (Defect)
+- **Card character**: Brightest Flame moved from Ironclad to Colorless (Ancient)
+- **Deprecated Card** removed — explicitly removed from game
+- **Event names**: 9 events corrected to match canon naming (case, hyphens, articles, punctuation)
+  - Aroma Of Chaos → Aroma of Chaos
+  - Field Of Man Sized Holes → Field of Man-Sized Holes
+  - Lost Wisp → The Lost Wisp
+  - Room Full Of Cheese → Room Full of Cheese
+  - Self Help Book → Self-Help Book
+  - Sunken Statue → The Sunken Statue
+  - Tablet Of Truth → Tablet of Truth
+  - The Future Of Potions → The Future of Potions?
+  - This Or That → This or That?
+- **Vine Bracelet** relic: missing rarity set to Event
+- **5 enemies enriched** with gameplay tips: Battle Friend V2, Decimillipede, Slithering Strangler, The Kin, Toadpoles
+- **The Kin** classified as Act 1 boss
+
+### Data Audit Summary
+
+- cards.json: 588 (was 589, removed Deprecated Card)
+- relics.json: 298 (11 more than untapped.gg — all verified as real game items)
+- potions.json: 63 (perfect match with untapped.gg)
+- events.json: 64 (56 on untapped.gg + 8 save-discovered)
+- enemies.json: 170 (most complete dataset available, 0 empty tips remaining)
+- epochs.json: 49 (complete, manually verified)
+
 ## v2.7.0
 
 ### Added

@@ -5,7 +5,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Procure a random potion. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -18,7 +18,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Put every Rare card from your Draw Pile into your Hand. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -59,7 +59,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you gain Block on your turn, other players gain half that much Block.",
     "description_upgraded": "",
     "keywords": [
@@ -72,7 +72,7 @@
     "character": "Colorless",
     "cost": "3",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Play 3 random Attacks from your Discard Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -94,7 +94,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 3 damage. At the start of your next turn, return this to your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -114,7 +114,7 @@
     "character": "Colorless",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you play an Attack, add a random Attack into your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -125,7 +125,7 @@
     "character": "Colorless",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Play 2 random cards from your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -138,7 +138,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Give another player 5 Strength this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -151,24 +151,13 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Enemy loses 9 Strength this turn. Exhaust.",
     "description_upgraded": "",
     "keywords": [
       "Strength",
       "Exhaust"
     ]
-  },
-  {
-    "id": "CARD.DEPRECATED_CARD",
-    "name": "Deprecated Card",
-    "character": "Colorless",
-    "cost": "Unplayable",
-    "type": "Skill",
-    "rarity": "Common",
-    "description": "This card has been removed from the game.",
-    "description_upgraded": "",
-    "keywords": []
   },
   {
     "id": "CARD.DESPAIR",
@@ -207,7 +196,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 11 damage to ALL enemies. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -231,7 +220,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, Transform 1 card in your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -242,7 +231,7 @@
     "character": "Colorless",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 13 Block. Retain your Hand this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -256,7 +245,7 @@
     "character": "Colorless",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 7 Plating.",
     "description_upgraded": "",
     "keywords": []
@@ -276,7 +265,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain an additional 5 Block from Defend cards.",
     "description_upgraded": "",
     "keywords": [
@@ -298,7 +287,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 4 Block. Draw 1 card.",
     "description_upgraded": "",
     "keywords": [
@@ -312,7 +301,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 7 damage. Gain Block equal to damage dealt.",
     "description_upgraded": "",
     "keywords": [
@@ -325,7 +314,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 5 damage. Draw 1 card.",
     "description_upgraded": "",
     "keywords": [
@@ -347,7 +336,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 5 damage. Deals 5 additional damage for each time another player has attacked the enemy this turn.",
     "description_upgraded": "",
     "keywords": []
@@ -367,7 +356,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal damage equal to the number of cards played this combat.",
     "description_upgraded": "",
     "keywords": []
@@ -378,7 +367,7 @@
     "character": "Colorless",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 20 damage. If Fatal, gain 20 Gold.",
     "description_upgraded": "",
     "keywords": []
@@ -413,7 +402,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "ALL allies draw 2 cards.",
     "description_upgraded": "",
     "keywords": [
@@ -439,7 +428,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "If you have no Attacks in your Hand, draw 2 cards.",
     "description_upgraded": "",
     "keywords": [
@@ -452,7 +441,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 9 Block. Redirect all incoming attacks that would be dealt to another player this turn to you.",
     "description_upgraded": "",
     "keywords": [
@@ -465,7 +454,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Add 1 random Colorless card into your Hand. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -487,7 +476,7 @@
     "character": "Colorless",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 10 damage. The enemy takes double damage from other players this turn.",
     "description_upgraded": "",
     "keywords": []
@@ -507,7 +496,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Give another player 11 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -531,7 +520,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Draw 3 cards. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -554,7 +543,7 @@
     "character": "Colorless",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, play the top card of your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -567,7 +556,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain Block equal to the Block on another player. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -581,7 +570,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal damage equal to the number of cards in your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -630,7 +619,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Special",
+    "rarity": "Ancient",
     "description": "Deal damage. Given by Neow.",
     "keywords": [],
     "description_upgraded": ""
@@ -650,7 +639,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "The first Attack or Skill you play each turn is placed on top of your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -663,7 +652,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 8 damage. Damage ALL other enemies equal to the damage dealt.",
     "description_upgraded": "",
     "keywords": []
@@ -685,7 +674,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Every time you play 5 cards in a single turn, deal 10 damage to ALL enemies.",
     "description_upgraded": "",
     "keywords": []
@@ -696,7 +685,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 30 Block. You cannot gain Block from cards for 2 turns. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -710,7 +699,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the start of your turn, gain 4 Vigor.",
     "description_upgraded": "",
     "keywords": []
@@ -721,7 +710,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Next turn, gain Block equal to your current Block. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -735,7 +724,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 1 Strength. Gain 1 Dexterity.",
     "description_upgraded": "",
     "keywords": [
@@ -749,7 +738,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Exhaust up to 3 cards in your Hand.",
     "description_upgraded": "",
     "keywords": [
@@ -762,7 +751,7 @@
     "character": "Colorless",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "ALL players gain 12 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -784,7 +773,7 @@
     "character": "Colorless",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 15 damage. Deals 5 additional damage for each unique debuff on the enemy.",
     "description_upgraded": "",
     "keywords": []
@@ -804,7 +793,7 @@
     "character": "Colorless",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, deal 5 damage to ALL enemies and increase this damage by 5.",
     "description_upgraded": "",
     "keywords": []
@@ -815,7 +804,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 12 damage. Retain your Hand this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -828,7 +817,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Draw cards until your Hand is full. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -842,7 +831,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Put a Skill from your Draw Pile into your Hand. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -856,7 +845,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Put an Attack from your Draw Pile into your Hand. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -870,7 +859,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 6 damage. Choose 1 of 3 cards in your Draw Pile to add into your Hand.",
     "description_upgraded": "",
     "keywords": [
@@ -896,7 +885,7 @@
     "character": "Colorless",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Apply 3 Weak and Vulnerable to ALL enemies. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -920,7 +909,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Choose 1 of 3 random Attacks from another character to add into your Hand. It's free to play this turn.",
     "description_upgraded": "",
     "keywords": []
@@ -951,7 +940,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you shuffle your Draw Pile, choose a card from it to put into your Hand.",
     "description_upgraded": "",
     "keywords": [
@@ -973,7 +962,7 @@
     "character": "Colorless",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 11 damage. The next Attack another player plays on the enemy is played an extra time.",
     "description_upgraded": "",
     "keywords": []
@@ -984,7 +973,7 @@
     "character": "Colorless",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the end of 3 turns, deal 3 damage to ALL enemies.",
     "description_upgraded": "",
     "keywords": []
@@ -995,7 +984,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 50 Block. If you take unblocked attack damage this combat, die.",
     "description_upgraded": "",
     "keywords": [
@@ -1008,7 +997,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 2 cards. Put 1 card from your Hand on top of your Draw Pile. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -1022,7 +1011,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 11 damage. At the start of your next turn, return this to your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -1033,7 +1022,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 11 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -1046,7 +1035,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 14 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -1066,7 +1055,7 @@
     "character": "Colorless",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 10 damage to a random enemy X times.",
     "description_upgraded": "",
     "keywords": []
@@ -1115,7 +1104,7 @@
     "character": "Curse",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Curse",
     "description": "At the end of your turn, if this is in your Hand, lose 13 HP.",
     "description_upgraded": "",
     "keywords": []
@@ -1148,7 +1137,7 @@
     "character": "Curse",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Curse",
     "description": "At the end of your turn, if this is in your Hand, lose 10 Gold.",
     "description_upgraded": "",
     "keywords": []
@@ -1159,7 +1148,7 @@
     "character": "Curse",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Curse",
     "description": "At the end of your turn, if this is in your Hand, take 2 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -1170,7 +1159,7 @@
     "character": "Curse",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Curse",
     "description": "At the end of your turn, if this is in your Hand, gain 1 Weak.",
     "description_upgraded": "",
     "keywords": [
@@ -1183,7 +1172,7 @@
     "character": "Curse",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Curse",
     "description": "If this is in your Hand, it must be played before other cards.",
     "description_upgraded": "",
     "keywords": []
@@ -1216,7 +1205,7 @@
     "character": "Curse",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Curse",
     "description": "Removed from your Deck after 5 combats.",
     "description_upgraded": "",
     "keywords": []
@@ -1249,7 +1238,7 @@
     "character": "Curse",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Curse",
     "description": "At the end of your turn, if this is in your Hand, lose 1 HP for each card in your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -1260,7 +1249,7 @@
     "character": "Curse",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Curse",
     "description": "At the end of your turn, if this is in your Hand, gain 1 Frail.",
     "description_upgraded": "",
     "keywords": []
@@ -1298,7 +1287,7 @@
   },
   {
     "id": "CARD.ALL_FOR_ONE",
-    "name": "All For One",
+    "name": "All for One",
     "character": "Defect",
     "type": "Attack",
     "rarity": "Rare",
@@ -1353,7 +1342,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Ancient",
     "description": "Gain 4 Focus. At the start of your turn, lose 1 Focus.",
     "description_upgraded": "",
     "keywords": [
@@ -1381,7 +1370,7 @@
     "character": "Defect",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 10 Block. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -1395,7 +1384,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Prevent the next time you would lose HP.",
     "description_upgraded": "",
     "keywords": []
@@ -1406,7 +1395,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Lose 1 Orb Slot. Gain 2 Strength. Gain 2 Dexterity.",
     "description_upgraded": "",
     "keywords": [
@@ -1420,7 +1409,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 2 Orb Slots.",
     "description_upgraded": "",
     "keywords": []
@@ -1431,7 +1420,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Channel 1 random Orb.",
     "description_upgraded": "",
     "keywords": [
@@ -1458,7 +1447,7 @@
     "character": "Defect",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Channel 1 Frost for each enemy. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -1498,7 +1487,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 6 Block. Transform all Status cards in your Hand into Fuel.",
     "description_upgraded": "",
     "keywords": [
@@ -1524,7 +1513,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Channel 2 Dark. At the end of your turn, Evoke your leftmost Orb.",
     "description_upgraded": "",
     "keywords": [
@@ -1539,7 +1528,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, gain 2 Block for each unique Orb you have.",
     "description_upgraded": "",
     "keywords": [
@@ -1567,7 +1556,7 @@
     "character": "Defect",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, add a random Power into your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -1578,7 +1567,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Channel 1 Dark. Trigger the passive ability of all Dark Orbs.",
     "description_upgraded": "",
     "keywords": [
@@ -1605,7 +1594,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 1 Focus.",
     "description_upgraded": "",
     "keywords": [
@@ -1618,7 +1607,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Double your Energy. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -1631,7 +1620,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Starter",
     "description": "Evoke your rightmost Orb twice.",
     "description_upgraded": "",
     "keywords": [
@@ -1644,7 +1633,7 @@
     "character": "Defect",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "The first card you play each turn is played an extra time.",
     "description_upgraded": "",
     "keywords": []
@@ -1664,7 +1653,7 @@
     "character": "Defect",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 5 damage. If you have played fewer than 3 cards this turn, draw 1 card.",
     "description_upgraded": "",
     "keywords": [
@@ -1686,7 +1675,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 13 Block. Add 2 Wounds into your Discard Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -1701,7 +1690,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Exhaust ALL your Status cards. Deal 8 damage to a random enemy for each card Exhausted.",
     "description_upgraded": "",
     "keywords": [
@@ -1727,7 +1716,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Channel 1 Plasma.",
     "description_upgraded": "",
     "keywords": [
@@ -1741,7 +1730,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 3 Block. Permanently increase this card's Block by 1. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -1755,7 +1744,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 6 Block. Channel 2 Frost.",
     "description_upgraded": "",
     "keywords": [
@@ -1770,7 +1759,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 5 Block. Channel 1 Glass.",
     "description_upgraded": "",
     "keywords": [
@@ -1811,7 +1800,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the end of your turn, if you have Frost, deal 6 damage to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -1861,7 +1850,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 26 damage to ALL enemies. Lose 3 Focus.",
     "description_upgraded": "",
     "keywords": [
@@ -1874,7 +1863,7 @@
     "character": "Defect",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 19 damage. Channel 3 Frost.",
     "description_upgraded": "",
     "keywords": [
@@ -1888,7 +1877,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Another player Channels Plasma. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -1903,7 +1892,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "The first time you draw a Status card each turn, draw 2 cards.",
     "description_upgraded": "",
     "keywords": [
@@ -1944,7 +1933,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the start of your turn, trigger the passive ability of your rightmost Orb.",
     "description_upgraded": "",
     "keywords": []
@@ -1955,7 +1944,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, draw 1 additional card.",
     "description_upgraded": "",
     "keywords": [
@@ -1968,7 +1957,7 @@
     "character": "Defect",
     "cost": "5",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 24 damage. Channel 3 Plasma.",
     "description_upgraded": "",
     "keywords": [
@@ -1982,7 +1971,7 @@
     "character": "Defect",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 1 Orb Slot. Draw 1 card. Increase this card's cost by 1.",
     "description_upgraded": "",
     "keywords": [
@@ -2004,7 +1993,7 @@
     "character": "Defect",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Evoke your rightmost Orb X times.",
     "description_upgraded": "",
     "keywords": [
@@ -2017,7 +2006,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 10 damage. Apply 2 Weak. Channel 1 Dark.",
     "description_upgraded": "",
     "keywords": [
@@ -2032,7 +2021,7 @@
     "character": "Defect",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 2 cards. Add a Burn into your Discard Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -2047,7 +2036,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Ancient",
     "description": "Evoke your rightmost Orb 4 times.",
     "description_upgraded": "",
     "keywords": [
@@ -2060,7 +2049,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Channel 1 Lightning. Channel 1 Frost. Channel 1 Dark. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2077,7 +2066,7 @@
     "character": "Defect",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Shuffle ALL your cards into your Draw Pile. Draw 4 cards. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2091,7 +2080,7 @@
     "character": "Defect",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 9 damage twice. Channel 2 Glass.",
     "description_upgraded": "",
     "keywords": [
@@ -2124,7 +2113,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 11 Block. Channel 1 Dark.",
     "description_upgraded": "",
     "keywords": [
@@ -2139,7 +2128,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 11 damage to ALL enemies. Evoke all of your Orbs.",
     "description_upgraded": "",
     "keywords": [
@@ -2152,7 +2141,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "The next Power you play is played an additional time. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2165,7 +2154,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 3 cards.",
     "description_upgraded": "",
     "keywords": [
@@ -2178,7 +2167,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you create a Status, deal 5 damage to ALL enemies.",
     "description_upgraded": "",
     "keywords": []
@@ -2189,7 +2178,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, Channel 1 Glass.",
     "description_upgraded": "",
     "keywords": [
@@ -2202,7 +2191,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you play a Power, Channel 1 Lightning.",
     "description_upgraded": "",
     "keywords": [
@@ -2269,7 +2258,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 2 Focus this turn for each unique Orb you have. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2294,7 +2283,7 @@
     "character": "Defect",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Channel X Lightning.",
     "description_upgraded": "",
     "keywords": [
@@ -2308,7 +2297,7 @@
     "character": "Defect",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 3 damage. Trigger all Lightning against the enemy.",
     "description_upgraded": "",
     "keywords": [
@@ -2321,7 +2310,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you Evoke Lightning, deal 6 damage to each enemy hit.",
     "description_upgraded": "",
     "keywords": [
@@ -2335,7 +2324,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you create a Status card, Channel 1 random Orb.",
     "description_upgraded": "",
     "keywords": [
@@ -2361,7 +2350,7 @@
     "character": "Defect",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Channel Lightning equal to the Lightning already Channeled this combat. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2376,7 +2365,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Add a random Power into your Hand. It's free to play this turn. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2389,7 +2378,7 @@
     "character": "Defect",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Starter",
     "description": "Channel 1 Lightning.",
     "description_upgraded": "",
     "keywords": [
@@ -2403,7 +2392,7 @@
     "character": "Event",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Upgrade ALL your cards. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2416,7 +2405,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Gain 1 Intangible. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2430,7 +2419,7 @@
     "character": "Event",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Deal 14 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -2441,7 +2430,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Whenever you are attacked, deal 3 damage back.",
     "description_upgraded": "",
     "keywords": []
@@ -2452,7 +2441,7 @@
     "character": "Event",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Can only be played if every card in your Hand is an Attack. Deal 14 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -2463,7 +2452,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Add a random Skill into your Hand. It's free to play this turn. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2476,7 +2465,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Choose an Attack or Power card. Add a copy of that card into your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -2487,7 +2476,7 @@
     "character": "Event",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Reduce the cost of ALL cards in your Hand to 1 this turn. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2500,7 +2489,7 @@
     "character": "Event",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Double your Block.",
     "description_upgraded": "",
     "keywords": [
@@ -2513,7 +2502,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Deal 3 damage 4 times to ALL enemies.",
     "description_upgraded": "",
     "keywords": []
@@ -2524,7 +2513,7 @@
     "character": "Event",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Gain 5 Strength this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -2537,7 +2526,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "At the start of your turn, add a random Common card into your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -2548,7 +2537,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Deal 5 damage twice. Increase the damage of ALL Maul cards by 1 this combat.",
     "description_upgraded": "",
     "keywords": []
@@ -2559,7 +2548,7 @@
     "character": "Event",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Add 3 random Attacks into your Draw Pile. They're free to play this combat. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2573,7 +2562,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Deal 2 damage 3 times.",
     "description_upgraded": "",
     "keywords": []
@@ -2584,7 +2573,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Deal 9 damage. Put the next card you play this turn on top of your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -2597,7 +2586,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Deal 7 damage to a random enemy twice.",
     "description_upgraded": "",
     "keywords": []
@@ -2608,7 +2597,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Deal 10 damage. Apply 2 Vulnerable.",
     "description_upgraded": "",
     "keywords": [
@@ -2621,7 +2610,7 @@
     "character": "Event",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Gain Block equal to the number of cards in your Discard Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -2635,7 +2624,7 @@
     "character": "Event",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Gain 5 Block. Gain 5 Block at the start of the next 2 turns.",
     "description_upgraded": "",
     "keywords": [
@@ -2648,7 +2637,7 @@
     "character": "Event",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Deal 33 damage. Stun the enemy. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2661,7 +2650,7 @@
     "character": "Event",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Event",
     "description": "Put a card from your Draw Pile into your Hand. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -2675,7 +2664,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, put a random Attack from your Discard Pile into your Hand and Upgrade it.",
     "description_upgraded": "",
     "keywords": [
@@ -2714,7 +2703,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 6 damage. Deals 3 additional damage for each card in your Exhaust Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -2727,7 +2716,7 @@
     "character": "Ironclad",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Block is not removed at the start of your turn.",
     "description_upgraded": "",
     "keywords": [
@@ -2740,7 +2729,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Starter",
     "description": "Deal 8 damage. Apply 2 Vulnerable.",
     "description_upgraded": "",
     "keywords": [
@@ -2753,7 +2742,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 3 cards. You cannot draw additional cards this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -2792,7 +2781,7 @@
     "character": "Ironclad",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 32 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -2816,7 +2805,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Lose 1 HP. Exhaust 1 card. Gain 1 Strength.",
     "description_upgraded": "",
     "keywords": [
@@ -2830,7 +2819,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Ancient",
     "description": "Deal 20 damage. Apply 5 Vulnerable.",
     "description_upgraded": "",
     "keywords": [
@@ -2851,10 +2840,10 @@
   {
     "id": "CARD.BRIGHTEST_FLAME",
     "name": "Brightest Flame",
-    "character": "Ironclad",
+    "character": "Colorless",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Uncommon",
+    "rarity": "Ancient",
     "description": "Gain 1 Energy. Draw 2 cards. Lose 1 Max HP. Exhaust.",
     "keywords": [
       "Energy",
@@ -2869,7 +2858,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 4 damage. Deals 2 additional damage for each Vulnerable on the enemy.",
     "description_upgraded": "",
     "keywords": [
@@ -2882,7 +2871,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Exhaust 1 card. Draw 2 cards.",
     "description_upgraded": "",
     "keywords": [
@@ -2896,7 +2885,7 @@
     "character": "Ironclad",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Play the top X cards of your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -2938,7 +2927,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 5 Block. You receive 50% less damage from Vulnerable enemies this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -2952,7 +2941,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 8 damage to ALL enemies. Deals 2 additional damage for each other Attack you've played this turn.",
     "description_upgraded": "",
     "keywords": []
@@ -2963,7 +2952,7 @@
     "character": "Ironclad",
     "cost": "3",
     "type": "Power",
-    "rarity": "Rare",
+    "rarity": "Ancient",
     "description": "Skills cost 0 Energy. Whenever you play a Skill, Exhaust it.",
     "keywords": [
       "Exhaust"
@@ -2976,7 +2965,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, lose 1 HP and gain 8 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -2989,7 +2978,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Vulnerable enemies take an additional 25% damage.",
     "description_upgraded": "",
     "keywords": [
@@ -3002,7 +2991,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever a card is Exhausted, draw 1 card. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -3029,7 +3018,7 @@
     "character": "Ironclad",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, gain 2 Strength.",
     "description_upgraded": "",
     "keywords": [
@@ -3042,7 +3031,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Lose 1 HP. Give another player Block equal to your Block. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -3056,7 +3045,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 8 damage. If the enemy is Vulnerable, hits twice.",
     "description_upgraded": "",
     "keywords": [
@@ -3069,7 +3058,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 1 Strength for each Vulnerable on the enemy. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -3084,7 +3073,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 2 cards. At the start of your turn, Exhaust the top card of your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -3098,7 +3087,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 8 Block. Gain another 8 Block if you have Exhausted a card this turn. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -3121,7 +3110,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 10 damage. If Fatal, raise your Max HP by 3. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -3134,7 +3123,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever a card is Exhausted, gain 3 Block. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -3148,7 +3137,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Exhaust your Hand. Deal 7 damage for each card Exhausted.",
     "description_upgraded": "",
     "keywords": [
@@ -3161,7 +3150,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 5 damage twice. Gain 2 Strength. The enemy gains 1 Strength.",
     "description_upgraded": "",
     "keywords": [
@@ -3174,7 +3163,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 12 Block. Whenever you are attacked this turn, deal 4 damage back.",
     "description_upgraded": "",
     "keywords": [
@@ -3196,7 +3185,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 7 damage. Whenever you gain Block this turn, deal 5 damage to the enemy.",
     "description_upgraded": "",
     "keywords": [
@@ -3237,7 +3226,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you draw a card containing âStrikeâ, it is played against a random enemy.",
     "description_upgraded": "",
     "keywords": [
@@ -3250,7 +3239,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Lose 2 HP. Deal 14 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -3261,7 +3250,7 @@
     "character": "Ironclad",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 16 damage to ALL enemies. At the start of your turn, plays from the Exhaust Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -3274,7 +3263,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 30 Block. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -3288,7 +3277,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Add a random Attack into your Hand. It's free to play this turn. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -3301,7 +3290,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the start of your turn, lose 1 HP. Whenever you lose HP on your turn, deal 6 damage to ALL enemies.",
     "description_upgraded": "",
     "keywords": []
@@ -3312,7 +3301,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 2 Strength.",
     "description_upgraded": "",
     "keywords": [
@@ -3338,7 +3327,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you gain Block, deal 5 damage to a random enemy.",
     "description_upgraded": "",
     "keywords": [
@@ -3351,7 +3340,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Add a copy of the third Attack you play each turn into your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -3362,7 +3351,7 @@
     "character": "Ironclad",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 15 damage. Enemy loses 10 Strength this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -3389,7 +3378,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Lose 6 HP. Gain 2 Energy. Draw 3 cards. Exhaust.",
     "description_upgraded": "Lose 6 HP. Gain 2 Energy. Draw 5 cards. Exhaust.",
     "keywords": [
@@ -3403,7 +3392,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "This turn, your next Attack is played an extra time.",
     "description_upgraded": "",
     "keywords": []
@@ -3414,7 +3403,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Can only be played if you have 3 or more cards in your Exhaust Pile. Deal 17 damage to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -3438,7 +3427,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 6 damage. Draw cards until you draw a non-Attack card.",
     "description_upgraded": "",
     "keywords": [
@@ -3464,7 +3453,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Transform all Attacks in your Hand into Giant Rock.",
     "description_upgraded": "",
     "keywords": []
@@ -3484,7 +3473,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you play an Attack this turn, gain 3 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -3497,7 +3486,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 9 damage. Increase this card's damage by 5 this combat.",
     "description_upgraded": "",
     "keywords": []
@@ -3508,7 +3497,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you lose HP on your turn, gain 1 Strength.",
     "description_upgraded": "",
     "keywords": [
@@ -3521,7 +3510,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Exhaust all non-Attack cards in your Hand. Gain 5 Block for each card Exhausted.",
     "description_upgraded": "",
     "keywords": [
@@ -3562,7 +3551,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 6 damage. If you lost HP this turn, draw 1 card.",
     "description_upgraded": "",
     "keywords": [
@@ -3575,7 +3564,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the end of your turn, 1 random Attack in your Hand is played against a random enemy.",
     "description_upgraded": "",
     "keywords": []
@@ -3586,7 +3575,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Exhaust your Hand. Draw a card for each card Exhausted.",
     "description_upgraded": "",
     "keywords": [
@@ -3600,7 +3589,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 12 damage.",
     "keywords": [],
     "description_upgraded": ""
@@ -3611,7 +3600,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 4 Plating.",
     "description_upgraded": "",
     "keywords": []
@@ -3644,7 +3633,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Take double damage from enemies. Allies take half damage from enemies.",
     "description_upgraded": "",
     "keywords": []
@@ -3655,7 +3644,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 7 Block. Apply 1 Vulnerable.",
     "description_upgraded": "",
     "keywords": [
@@ -3669,7 +3658,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 5 damage. Hits an additional time for each time you lost HP this combat.",
     "description_upgraded": "",
     "keywords": []
@@ -3680,7 +3669,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 4 damage twice. Exhaust a random Attack in your Hand and add its damage to this card.",
     "description_upgraded": "",
     "keywords": [
@@ -3744,7 +3733,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "The first time you gain Block from a card each turn, double the amount gained.",
     "description_upgraded": "",
     "keywords": [
@@ -3766,7 +3755,7 @@
     "character": "Ironclad",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 13 damage. Apply 1 Weak. Apply 1 Vulnerable.",
     "description_upgraded": "",
     "keywords": [
@@ -3780,7 +3769,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you apply Vulnerable, draw 1 card.",
     "description_upgraded": "",
     "keywords": [
@@ -3794,7 +3783,7 @@
     "character": "Ironclad",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 5 damage to ALL enemies X times.",
     "description_upgraded": "",
     "keywords": []
@@ -3843,7 +3832,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Starter",
     "description": "Summon 5.",
     "description_upgraded": "",
     "keywords": [
@@ -3856,7 +3845,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "If Osty is alive, he deals 9 damage to ALL enemies and you gain 9 Block. Osty dies.",
     "description_upgraded": "",
     "keywords": [
@@ -3883,7 +3872,7 @@
     "character": "Necrobinder",
     "cost": "4",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 52 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -3894,7 +3883,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Osty's attacks deal 4 additional damage.",
     "description_upgraded": "",
     "keywords": []
@@ -3905,7 +3894,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, add 1 random card into your Hand. It gains Ethereal.",
     "description_upgraded": "",
     "keywords": [
@@ -3918,7 +3907,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Enemy loses 3 HP. Add 3 Souls into your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -3932,7 +3921,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Summon 3. Exhaust 1 card from your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -3947,7 +3936,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the start of your turn, apply 6 Doom to a random enemy.",
     "description_upgraded": "",
     "keywords": []
@@ -3971,7 +3960,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 8 damage. Deals 3 additional damage for each card drawn during your turn.",
     "description_upgraded": "",
     "keywords": [
@@ -3984,7 +3973,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 6 Block. If you applied Doom this turn, gain Block 2 additional times.",
     "description_upgraded": "",
     "keywords": [
@@ -3997,7 +3986,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Apply 21 Doom and 1 Weak to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -4010,7 +3999,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 7 damage. Vulnerable and Weak are twice as effective against the enemy for the next 3 turns.",
     "description_upgraded": "",
     "keywords": [
@@ -4080,7 +4069,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you play a Soul, Summon 1.",
     "description_upgraded": "",
     "keywords": [
@@ -4094,7 +4083,7 @@
     "character": "Necrobinder",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Summon 3 X times. Add X Souls into your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -4122,7 +4111,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Put 3 cards from your Discard Pile into your Hand. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -4136,7 +4125,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Exhaust your Hand. If 9 cards were Exhausted this way, gain 1 Intangible.",
     "description_upgraded": "",
     "keywords": [
@@ -4150,7 +4139,7 @@
     "character": "Necrobinder",
     "cost": "3",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Apply 29 Doom to ALL enemies. Kill enemies with at least as much Doom as HP.",
     "description_upgraded": "",
     "keywords": []
@@ -4161,7 +4150,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Enemy loses 8 Strength this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -4174,7 +4163,7 @@
     "character": "Necrobinder",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 11 damage X times.",
     "description_upgraded": "",
     "keywords": []
@@ -4198,7 +4187,7 @@
     "character": "Necrobinder",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Osty deals 3 damage. If this is the first time this card has been played this turn, draw 1 card.",
     "description_upgraded": "",
     "keywords": [
@@ -4211,7 +4200,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Uncommon",
+    "rarity": "Common",
     "description": "Osty deals 12 damage. Costs 0 if Osty attacked this turn.",
     "keywords": [
       "Summon"
@@ -4224,7 +4213,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Ancient",
     "description": "At the end of combat, you may remove a card from your Deck.",
     "description_upgraded": "",
     "keywords": []
@@ -4248,7 +4237,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "ALL players add 3 Souls into their Draw Pile. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -4292,7 +4281,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 10 damage. Double the damage ALL Hang cards deal to this enemy.",
     "description_upgraded": "",
     "keywords": []
@@ -4303,7 +4292,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you play a Soul, a random enemy loses 6 HP.",
     "description_upgraded": "",
     "keywords": [
@@ -4316,7 +4305,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Osty deals 11 damage and applies 2 Vulnerable to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -4343,7 +4332,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "ALL players Summon 6. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -4357,7 +4346,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "The first Attack each turn deals 50% additional damage.",
     "description_upgraded": "",
     "keywords": []
@@ -4383,7 +4372,7 @@
     "character": "Necrobinder",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 7 damage. Apply any debuffs on the enemy to ALL other enemies.",
     "description_upgraded": "",
     "keywords": []
@@ -4394,7 +4383,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Summon 5. Whenever Osty loses HP, ALL enemies lose that much HP as well.",
     "description_upgraded": "",
     "keywords": [
@@ -4435,7 +4424,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Apply 10 Doom, plus an additional 5 Doom for every 10 Doom already on this enemy.",
     "description_upgraded": "",
     "keywords": []
@@ -4446,7 +4435,7 @@
     "character": "Necrobinder",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you play a card this turn, apply 3 Doom to the enemy.",
     "description_upgraded": "",
     "keywords": []
@@ -4457,7 +4446,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you draw an Ethereal card, draw 1 card.",
     "description_upgraded": "",
     "keywords": [
@@ -4471,7 +4460,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 3 cards.",
     "description_upgraded": "",
     "keywords": [
@@ -4495,7 +4484,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Ancient",
     "description": "Osty deals 10 damage. Deals additional damage equal to Osty's Max HP.",
     "description_upgraded": "",
     "keywords": []
@@ -4520,7 +4509,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 5 damage for each Ethereal card played this combat.",
     "description_upgraded": "",
     "keywords": [
@@ -4533,7 +4522,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Apply 2 Weak. Apply 2 Vulnerable. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -4548,7 +4537,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Osty deals 7 damage. Hits an additional time for each other time he has attacked this turn.",
     "description_upgraded": "",
     "keywords": []
@@ -4559,7 +4548,7 @@
     "character": "Necrobinder",
     "cost": "3",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Summon 20. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -4584,7 +4573,7 @@
     "character": "Necrobinder",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever Attacks deal damage, they also apply that much Doom.",
     "description_upgraded": "",
     "keywords": []
@@ -4609,7 +4598,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Osty gains abilities.",
     "keywords": [
       "Summon"
@@ -4622,7 +4611,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "If Osty is alive, he dies and you gain Block equal to double his Max HP.",
     "description_upgraded": "",
     "keywords": [
@@ -4661,7 +4650,7 @@
     "character": "Necrobinder",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Transform a card in your Draw Pile into Soul.",
     "description_upgraded": "",
     "keywords": [
@@ -4675,7 +4664,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, add 1 Sweeping Gaze into your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -4686,7 +4675,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 13 damage. Add a Soul into your Draw Pile, Hand, and Discard Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -4701,7 +4690,7 @@
     "character": "Necrobinder",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Lose 2 Strength. Enemy loses 2 Strength. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -4715,7 +4704,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you apply Doom, gain 2 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -4728,7 +4717,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Osty deals 5 damage. Whenever Osty hits this enemy this turn, Summon 2.",
     "description_upgraded": "",
     "keywords": [
@@ -4741,7 +4730,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you apply a debuff to an enemy, they take 9 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -4765,7 +4754,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 9 damage. Deals 2 additional damage for each Soul in your Exhaust Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -4790,7 +4779,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you play an Ethereal card, gain 4 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -4804,7 +4793,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Summon 3. Osty heals 5 HP.",
     "description_upgraded": "",
     "keywords": [
@@ -4817,7 +4806,7 @@
     "character": "Necrobinder",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Osty deals 25 damage. Deals 5 additional damage for ALL your other Osty Attacks.",
     "description_upgraded": "",
     "keywords": []
@@ -4839,7 +4828,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 3 damage. Permanently increase this card's damage by 1. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -4852,7 +4841,7 @@
     "character": "Necrobinder",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal damage equal to the enemy's Doom. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -4865,7 +4854,7 @@
     "character": "Necrobinder",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 7 Block. Add a copy of this card into your Discard Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -4879,7 +4868,7 @@
     "character": "Necrobinder",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Starter",
     "description": "Osty deals 6 damage. Deals additional damage equal to Osty's current HP.",
     "description_upgraded": "",
     "keywords": []
@@ -4904,7 +4893,7 @@
     "character": "Quest",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Quest",
     "description": "Can be hatched at a Rest Site.",
     "description_upgraded": "",
     "keywords": []
@@ -4915,7 +4904,7 @@
     "character": "Quest",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Quest",
     "description": "Unlocks a special event in the next Act.",
     "description_upgraded": "",
     "keywords": []
@@ -4926,7 +4915,7 @@
     "character": "Quest",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Quest",
     "description": "Marks a site of 600 extra Gold in the next Act.",
     "description_upgraded": "",
     "keywords": []
@@ -4937,7 +4926,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 2 Energy.",
     "keywords": [
       "Stars",
@@ -4951,7 +4940,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you play a Colorless card, gain 1 Strength.",
     "description_upgraded": "",
     "keywords": [
@@ -4986,7 +4975,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 5 damage. Forge 5. Forges an additional 5 for every other time you've hit the enemy this turn.",
     "description_upgraded": "",
     "keywords": []
@@ -5027,7 +5016,7 @@
     "character": "Regent",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 18 damage. At the start of your turn, plays from the Exhaust Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -5040,7 +5029,7 @@
     "character": "Regent",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 13 Block. Forge 10.",
     "description_upgraded": "",
     "keywords": [
@@ -5053,7 +5042,7 @@
     "character": "Regent",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Add 3 random Colorless cards into your Hand. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -5077,7 +5066,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you spend 2, gain 2 Block for each 2 spent.",
     "description_upgraded": "",
     "keywords": [
@@ -5114,7 +5103,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 33 damage. Apply 3 Weak. Apply 3 Vulnerable.",
     "description_upgraded": "",
     "keywords": [
@@ -5128,7 +5117,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Forge 3. Sovereign Blade deals double damage to the enemy this turn.",
     "description_upgraded": "",
     "keywords": []
@@ -5169,7 +5158,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 21 damage to ALL enemies. Fill your Hand with Debris.",
     "description_upgraded": "",
     "keywords": []
@@ -5206,7 +5195,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Draw 3 cards. Choose a Skill in your Hand and play it 3 times. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -5233,7 +5222,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 30 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -5244,7 +5233,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 9 damage to ALL enemies. ALL enemies lose 9 Strength this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -5257,7 +5246,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Starter",
     "description": "Deal 7 damage. Apply 1 Weak. Apply 1 Vulnerable.",
     "description_upgraded": "",
     "keywords": [
@@ -5271,7 +5260,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Next turn, put 2 cards from your Draw Pile into your Hand.",
     "description_upgraded": "",
     "keywords": [
@@ -5284,7 +5273,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the start of your turn, Forge 4.",
     "description_upgraded": "",
     "keywords": []
@@ -5295,7 +5284,7 @@
     "character": "Regent",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Transform any number of cards in your Hand into Minion Sacrifice. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -5308,7 +5297,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 13 damage. Apply 2 Weak. Apply 2 Vulnerable.",
     "description_upgraded": "",
     "keywords": [
@@ -5349,7 +5338,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 3 cards. Put 1 card from your Hand on top of your Draw Pile.",
     "description_upgraded": "",
     "keywords": [
@@ -5402,7 +5391,7 @@
     "character": "Regent",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you Forge, all allies Forge as well.",
     "description_upgraded": "",
     "keywords": []
@@ -5413,7 +5402,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 8 damage X times. Double X if it's 4 or more.",
     "description_upgraded": "",
     "keywords": []
@@ -5437,7 +5426,7 @@
     "character": "Regent",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 17 damage. Choose a Colorless card in your Hand. Add a copy of that card into your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -5448,7 +5437,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 9 Block. At the end of your turn, if this is on top of your Draw Pile, play it.",
     "description_upgraded": "",
     "keywords": [
@@ -5462,7 +5451,7 @@
     "character": "Regent",
     "cost": "4",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 24 damage. Whenever you draw this card, reduce its cost by 1.",
     "description_upgraded": "",
     "keywords": [
@@ -5475,7 +5464,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 8 damage. Whenever you draw this card, increase its damage by 3 this combat.",
     "description_upgraded": "",
     "keywords": [
@@ -5514,7 +5503,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Another player adds 1 random Colorless card to their Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -5525,7 +5514,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 4 damage for each Skill already played this turn.",
     "description_upgraded": "",
     "keywords": []
@@ -5536,7 +5525,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 6 damage. Every 3 Skills you play in a turn, put this into your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -5547,7 +5536,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 7 Block. Add 1 random Colorless card into your Hand.",
     "description_upgraded": "",
     "keywords": [
@@ -5560,7 +5549,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Ancient",
     "description": "Deal 14 damage to ALL enemies. Apply 2 Weak and Vulnerable to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -5574,7 +5563,7 @@
     "character": "Regent",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you attack an enemy, it loses 1 Strength this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -5587,7 +5576,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you play a card this turn, gain 1 Strength this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -5600,7 +5589,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 8 Plating.",
     "description_upgraded": "",
     "keywords": []
@@ -5624,7 +5613,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "If you play 5 or more cards in a turn, draw 1 card at the start of your next turn.",
     "description_upgraded": "",
     "keywords": [
@@ -5637,7 +5626,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you play Sovereign Blade, gain 6 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -5650,7 +5639,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 9 Block. Return this card to your Hand.",
     "description_upgraded": "",
     "keywords": [
@@ -5689,7 +5678,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you create a card, gain 3 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -5702,7 +5691,7 @@
     "character": "Regent",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 6 cards.",
     "description_upgraded": "",
     "keywords": [
@@ -5715,7 +5704,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Choose 1 of 3 random Colorless cards to add into your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -5754,7 +5743,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 17 Block. Blocked attack damage is reflected to your attacker this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -5767,7 +5756,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 1 Strength. ALL enemies lose 1 Strength.",
     "description_upgraded": "",
     "keywords": [
@@ -5780,7 +5769,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the end of combat, gain 30 Gold.",
     "description_upgraded": "",
     "keywords": []
@@ -5791,7 +5780,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Forge 7. Sovereign Blade now deals damage to ALL enemies.",
     "description_upgraded": "",
     "keywords": []
@@ -5826,7 +5815,7 @@
     "character": "Regent",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the start of your turn, add 1 random Colorless card into your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -5848,7 +5837,7 @@
     "character": "Regent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 5 damage to a random enemy X times.",
     "description_upgraded": "",
     "keywords": []
@@ -5870,7 +5859,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Forge 8. Put Sovereign Blade into your Hand from anywhere.",
     "description_upgraded": "",
     "keywords": []
@@ -5881,7 +5870,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 5 damage. Deals 3 additional damage for each card you created this combat.",
     "description_upgraded": "",
     "keywords": []
@@ -5892,7 +5881,7 @@
     "character": "Regent",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Increase the cost of Sovereign Blade by 1. Sovereign Blade now hits an additional time.",
     "description_upgraded": "",
     "keywords": []
@@ -5903,7 +5892,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 6 Vigor.",
     "description_upgraded": "",
     "keywords": []
@@ -5923,7 +5912,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Forge 30.",
     "description_upgraded": "",
     "keywords": []
@@ -5934,7 +5923,7 @@
     "character": "Regent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, draw 1 card and Exhaust 1 card from your Hand.",
     "description_upgraded": "",
     "keywords": [
@@ -5962,7 +5951,7 @@
     "character": "Regent",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "End your turn. The first 2 cards you play each turn are free to play.",
     "description_upgraded": "",
     "keywords": []
@@ -5984,7 +5973,7 @@
     "character": "Silent",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Gain 1 Dexterity. Gain 4 Thorns.",
     "description_upgraded": "",
     "keywords": [
@@ -5998,7 +5987,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Poison is triggered 1 additional time.",
     "description_upgraded": "",
     "keywords": [
@@ -6011,7 +6000,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Shivs deal 4 additional damage.",
     "description_upgraded": "",
     "keywords": [
@@ -6053,7 +6042,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you play a card, gain 1 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -6079,7 +6068,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 10 damage. Apply 1 Vulnerable. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -6107,7 +6096,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 11 damage. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -6134,7 +6123,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "This turn, whenever you play an Attack, gain 2 Strength this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -6147,7 +6136,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 5 Block. Block is not removed at the start of your next turn.",
     "description_upgraded": "",
     "keywords": [
@@ -6160,7 +6149,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Apply 3 Poison to a random enemy 3 times.",
     "description_upgraded": "",
     "keywords": [
@@ -6173,7 +6162,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "If the enemy has Poison, apply 9 Poison.",
     "description_upgraded": "",
     "keywords": [
@@ -6186,7 +6175,7 @@
     "character": "Silent",
     "cost": "3",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "You cannot draw additional cards this turn. ALL cards in your Hand are free to play this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -6199,7 +6188,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "This turn, your next Skill is played an extra time.",
     "description_upgraded": "",
     "keywords": []
@@ -6210,7 +6199,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Discard your Hand, then draw that many cards. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -6239,7 +6228,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you draw a card this turn, apply 3 Poison to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -6278,7 +6267,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 10 Block. Deal 10 damage.",
     "description_upgraded": "",
     "keywords": [
@@ -6343,7 +6332,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 10 damage to ALL enemies. Repeat this effect for each enemy killed.",
     "description_upgraded": "",
     "keywords": []
@@ -6354,7 +6343,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever an Attack deals unblocked damage, apply 1 Poison.",
     "description_upgraded": "",
     "keywords": [
@@ -6368,7 +6357,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 1 card. If you draw a Skill, gain 3 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -6382,7 +6371,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw cards until you have 6 in your Hand.",
     "description_upgraded": "",
     "keywords": [
@@ -6395,7 +6384,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Remove all Artifact and Block from the enemy. Apply 2 Vulnerable. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -6411,7 +6400,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Shivs now hit ALL enemies. Add 4 Shivs into your Hand.",
     "description_upgraded": "",
     "keywords": [
@@ -6424,7 +6413,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 6 damage for each Attack already played this turn.",
     "description_upgraded": "",
     "keywords": []
@@ -6435,7 +6424,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "The enemy takes double damage from other players this turn.",
     "description_upgraded": "",
     "keywords": []
@@ -6446,7 +6435,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 5 damage for each Skill in your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -6468,7 +6457,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 6 damage to ALL enemies. If the last card you played this turn was a Skill, apply 1 Weak to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -6481,7 +6470,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 2 Dexterity.",
     "description_upgraded": "",
     "keywords": [
@@ -6494,7 +6483,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Can only be played if there are no cards in your Draw Pile. Deal 50 damage to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -6507,7 +6496,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain 7 Block. Add Sly to a Skill in your Hand this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -6520,7 +6509,7 @@
     "character": "Silent",
     "cost": "3",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Apply 4 Poison to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -6533,7 +6522,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the start of your turn, add 1 Shiv into your Hand.",
     "description_upgraded": "",
     "keywords": [
@@ -6546,7 +6535,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Play every Shiv in your Exhaust Pile on the enemy.",
     "description_upgraded": "",
     "keywords": [
@@ -6573,7 +6562,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Apply 2 Weak. Gain 11 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -6587,7 +6576,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Enemy loses X Strength. Apply X Weak. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -6602,7 +6591,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "When you play a Skill, it gains Sly.",
     "description_upgraded": "",
     "keywords": []
@@ -6613,7 +6602,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 8 damage. Deals 4 additional damage for each card discarded this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -6626,7 +6615,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Gain Block equal to Poison on ALL enemies. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -6641,7 +6630,7 @@
     "character": "Silent",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 1 damage. Deals 1 additional damage for each card drawn this combat.",
     "description_upgraded": "",
     "keywords": [
@@ -6654,7 +6643,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Starter",
     "description": "Deal 3 damage. Apply 1 Weak.",
     "description_upgraded": "",
     "keywords": [
@@ -6667,7 +6656,7 @@
     "character": "Silent",
     "cost": "3",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Choose a card. Next turn, add 3 copies of that card into your Hand. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -6680,7 +6669,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the start of your turn, apply 2 Poison to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -6693,7 +6682,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Every 3 times you apply Poison, deal 11 damage to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -6706,7 +6695,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Shivs gain Retain. The first Shiv you play each turn deals 9 additional damage.",
     "description_upgraded": "",
     "keywords": [
@@ -6734,7 +6723,7 @@
     "character": "Silent",
     "cost": "3",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 17 damage. Costs 1 less energy for each Skill played this turn.",
     "keywords": [],
     "description_upgraded": ""
@@ -6758,7 +6747,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 13 damage. Deals 2 less damage for each other card in your Hand.",
     "description_upgraded": "",
     "keywords": []
@@ -6769,7 +6758,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 15 damage. Next turn, draw 2 cards.",
     "description_upgraded": "",
     "keywords": [
@@ -6796,7 +6785,7 @@
     "character": "Silent",
     "cost": "3",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 2 cards.",
     "description_upgraded": "",
     "keywords": [
@@ -6820,7 +6809,7 @@
     "character": "Silent",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever you play a card, deal 4 damage to a random enemy.",
     "description_upgraded": "",
     "keywords": []
@@ -6831,7 +6820,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Discard your Hand. Next turn, Attacks deal double damage.",
     "description_upgraded": "",
     "keywords": [
@@ -6844,7 +6833,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Double your Block gain this turn.",
     "description_upgraded": "",
     "keywords": [
@@ -6857,7 +6846,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 7 damage X times.",
     "description_upgraded": "",
     "keywords": []
@@ -6892,7 +6881,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Whenever another player attacks an enemy, gain 1 Block.",
     "description_upgraded": "",
     "keywords": [
@@ -6905,7 +6894,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Whenever you draw a card during your turn, deal 2 damage to ALL enemies.",
     "description_upgraded": "",
     "keywords": [
@@ -6918,7 +6907,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Discard your Hand. Add 1 Shiv into your Hand for each card discarded.",
     "description_upgraded": "",
     "keywords": [
@@ -6932,7 +6921,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Deal 8 damage. Whenever you play a card this turn, the enemy loses 2 HP.",
     "description_upgraded": "",
     "keywords": []
@@ -6967,7 +6956,7 @@
     "character": "Silent",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Ancient",
     "description": "Deal 11 damage. Apply 3 Weak.",
     "description_upgraded": "",
     "keywords": [
@@ -6980,7 +6969,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Starter",
     "description": "Gain 8 Block. Discard 1 card.",
     "description_upgraded": "",
     "keywords": [
@@ -6994,7 +6983,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Deal 10 damage. If Fatal, gain an additional card reward. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -7007,7 +6996,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "At the start of your turn, draw 1 card and discard 1 card.",
     "description_upgraded": "",
     "keywords": [
@@ -7021,7 +7010,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Rare",
     "description": "Weak enemies take double damage from Attacks.",
     "description_upgraded": "",
     "keywords": [
@@ -7047,7 +7036,7 @@
     "character": "Silent",
     "cost": "2",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Add 3 Shivs into your Hand. Reduce this card's cost by 1.",
     "description_upgraded": "",
     "keywords": [
@@ -7060,7 +7049,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "At the end of your turn, Retain up to 1 card.",
     "description_upgraded": "",
     "keywords": [
@@ -7073,7 +7062,7 @@
     "character": "Silent",
     "cost": "3",
     "type": "Power",
-    "rarity": "Common",
+    "rarity": "Ancient",
     "description": "Gain 2 Intangible. At the start of your turn, lose 1 Dexterity.",
     "description_upgraded": "",
     "keywords": [
@@ -7087,7 +7076,7 @@
     "character": "Status",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Status",
     "description": "At the end of your turn, if this is in your Hand, lose 6 HP.",
     "description_upgraded": "",
     "keywords": []
@@ -7098,7 +7087,7 @@
     "character": "Status",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Status",
     "description": "At the end of your turn, if this is in your Hand, take 2 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -7109,7 +7098,7 @@
     "character": "Status",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Special",
+    "rarity": "Status",
     "description": "Unplayable. Ethereal.",
     "description_upgraded": "",
     "keywords": []
@@ -7120,7 +7109,7 @@
     "character": "Status",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Special",
+    "rarity": "Status",
     "description": "Exhaust.",
     "description_upgraded": "",
     "keywords": []
@@ -7131,7 +7120,7 @@
     "character": "Status",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Status",
     "description": "Get farther away. Increase Sandpit by 1. Increase the cost of this card by 1.",
     "description_upgraded": "",
     "keywords": []
@@ -7142,7 +7131,7 @@
     "character": "Status",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Status",
     "description": "At the end of your turn, if this is in your Hand, take 3 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -7153,7 +7142,7 @@
     "character": "Status",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Status",
     "description": "Draw 1 card. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -7167,7 +7156,7 @@
     "character": "Status",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Special",
+    "rarity": "Status",
     "description": "Unplayable.",
     "description_upgraded": "",
     "keywords": []
@@ -7178,7 +7167,7 @@
     "character": "Status",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Status",
     "description": "At the end of your turn, if this is in your Hand, take 5 damage. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -7191,7 +7180,7 @@
     "character": "Status",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Special",
+    "rarity": "Status",
     "description": "Unplayable.",
     "description_upgraded": "",
     "keywords": []
@@ -7202,7 +7191,7 @@
     "character": "Token",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "At the end of your turn, take 6 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -7213,7 +7202,7 @@
     "character": "Token",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "Deal 16 damage.",
     "description_upgraded": "",
     "keywords": []
@@ -7224,7 +7213,7 @@
     "character": "Token",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "Draw 1 fewer card each turn.",
     "description_upgraded": "",
     "keywords": [
@@ -7237,7 +7226,7 @@
     "character": "Token",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "Deal 13 damage. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -7250,7 +7239,7 @@
     "character": "Token",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "Gain 9 Block. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -7264,7 +7253,7 @@
     "character": "Token",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "Deal 7 damage. Draw 1 card. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -7278,7 +7267,7 @@
     "character": "Token",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "Deal 4 damage. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -7291,7 +7280,7 @@
     "character": "Token",
     "cost": "Unplayable",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "You cannot play more than 3 cards each turn.",
     "description_upgraded": "",
     "keywords": []
@@ -7302,7 +7291,7 @@
     "character": "Token",
     "cost": "0",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "Draw 2 cards. Exhaust.",
     "description_upgraded": "",
     "keywords": [
@@ -7316,7 +7305,7 @@
     "character": "Token",
     "cost": "2",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "Retain. Deal 10 damage.",
     "description_upgraded": "",
     "keywords": [
@@ -7329,7 +7318,7 @@
     "character": "Token",
     "cost": "0",
     "type": "Attack",
-    "rarity": "Common",
+    "rarity": "Token",
     "description": "Osty deals 10 damage to a random enemy. Exhaust.",
     "description_upgraded": "",
     "keywords": [

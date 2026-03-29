@@ -41,7 +41,7 @@
   },
   {
     "id": "EVENT.AROMA_OF_CHAOS",
-    "name": "Aroma Of Chaos",
+    "name": "Aroma of Chaos",
     "act": [
       "Act 1"
     ],
@@ -341,7 +341,7 @@
   },
   {
     "id": "EVENT.FIELD_OF_MAN_SIZED_HOLES",
-    "name": "Field Of Man Sized Holes",
+    "name": "Field of Man-Sized Holes",
     "act": [
       "Act 2"
     ],
@@ -447,7 +447,7 @@
   },
   {
     "id": "EVENT.LOST_WISP",
-    "name": "Lost Wisp",
+    "name": "The Lost Wisp",
     "act": [
       "Act 2"
     ],
@@ -664,7 +664,7 @@
   },
   {
     "id": "EVENT.ROOM_FULL_OF_CHEESE",
-    "name": "Room Full Of Cheese",
+    "name": "Room Full of Cheese",
     "act": [
       "Act 1"
     ],
@@ -706,7 +706,7 @@
   },
   {
     "id": "EVENT.SELF_HELP_BOOK",
-    "name": "Self Help Book",
+    "name": "Self-Help Book",
     "act": [
       "Act 1",
       "Act 2"
@@ -823,7 +823,7 @@
   },
   {
     "id": "EVENT.SUNKEN_STATUE",
-    "name": "Sunken Statue",
+    "name": "The Sunken Statue",
     "act": [
       "Act 1"
     ],
@@ -887,7 +887,7 @@
   },
   {
     "id": "EVENT.TABLET_OF_TRUTH",
-    "name": "Tablet Of Truth",
+    "name": "Tablet of Truth",
     "act": [
       "Act 1"
     ],
@@ -971,7 +971,7 @@
   },
   {
     "id": "EVENT.THE_FUTURE_OF_POTIONS",
-    "name": "The Future Of Potions",
+    "name": "The Future of Potions?",
     "act": [
       "Act 2",
       "Act 3"
@@ -1088,7 +1088,7 @@
   },
   {
     "id": "EVENT.THIS_OR_THAT",
-    "name": "This Or That",
+    "name": "This or That?",
     "act": [
       "Act 1",
       "Act 2"

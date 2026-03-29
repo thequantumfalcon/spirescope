@@ -1075,7 +1075,9 @@
     "type": "",
     "hp_range": "",
     "patterns": [],
-    "tips": []
+    "tips": [
+      "Enhanced version of Battle Friend with higher stats."
+    ]
   },
   {
     "id": "MONSTER.BOWLBUG_EGG",
@@ -1315,7 +1317,10 @@
     "name": "Decimillipede",
     "type": "",
     "hp": "",
-    "description": ""
+    "description": "",
+    "tips": [
+      "Multi-segment enemy that attacks multiple times per turn."
+    ]
   },
   {
     "id": "MONSTER.DECIMILLIPEDE_SEGMENT_BACK",
@@ -1954,7 +1959,9 @@
     "type": "",
     "hp_range": "",
     "patterns": [],
-    "tips": []
+    "tips": [
+      "Applies debuffs and constricts, reducing your ability to act."
+    ]
   },
   {
     "id": "MONSTER.SLUDGE_SPINNER",
@@ -2089,7 +2096,9 @@
     "type": "boss",
     "hp_range": "",
     "patterns": [],
-    "tips": []
+    "tips": [
+      "Act 1 boss in the Overgrowth path. Summons allies during combat."
+    ]
   },
   {
     "id": "MONSTER.THE_LOST",
@@ -2152,7 +2161,10 @@
     "name": "Toadpoles",
     "type": "",
     "hp": "",
-    "description": ""
+    "description": "",
+    "tips": [
+      "Small enemies that appear in groups. Individually weak but dangerous in numbers."
+    ]
   },
   {
     "id": "MONSTER.TORCH_HEAD_AMALGAM",

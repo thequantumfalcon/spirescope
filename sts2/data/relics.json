@@ -2005,7 +2005,7 @@
     "id": "RELIC.VINE_BRACELET",
     "name": "Vine Bracelet",
     "character": "Shared",
-    "rarity": "",
+    "rarity": "Event",
     "description": "Upon pickup, raise your Max HP by 5."
   },
   {
