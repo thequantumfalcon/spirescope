@@ -45,6 +45,13 @@ def main():
         print("Build failed.")
         sys.exit(1)
 
+    # Strip dist-info metadata to avoid false positives from package scanners
+    # (e.g. NexusMods flagging bundled 'click' as typosquatting)
+    for dist_info in DIST.rglob("*.dist-info"):
+        if dist_info.is_dir():
+            shutil.rmtree(dist_info)
+            print(f"  Stripped: {dist_info.name}")
+
     # Copy user-facing README into dist folder
     readme_src = ROOT / "README_DIST.txt"
     if readme_src.exists():
