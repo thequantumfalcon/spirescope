@@ -31,6 +31,9 @@ jobs:
       - name: Build macOS app
         run: python -m PyInstaller spirescope.spec --clean --noconfirm
 
+      - name: Strip dist-info metadata
+        run: find dist/Spirescope -name "*.dist-info" -type d -exec rm -rf {} +
+
       - name: Create zip archive
         run: |
           cd dist

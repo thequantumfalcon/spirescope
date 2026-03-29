@@ -28,6 +28,11 @@ jobs:
       - name: Build executable
         run: python -m PyInstaller spirescope.spec --clean --noconfirm
 
+      - name: Strip dist-info metadata
+        run: |
+          Get-ChildItem -Path dist/Spirescope -Recurse -Filter "*.dist-info" -Directory | Remove-Item -Recurse -Force
+        shell: pwsh
+
       - name: Copy distribution README
         run: |
           if (Test-Path README_DIST.txt) { Copy-Item README_DIST.txt dist/Spirescope/README.txt }
