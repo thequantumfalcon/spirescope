@@ -4,9 +4,8 @@ import sys
 import threading
 import webbrowser
 
-# When running as a windowed exe (console=False), sys.stdout/stderr are None.
-# Uvicorn's logger crashes trying to call sys.stderr.isatty(). Fix by replacing
-# None streams with a no-op TextIO wrapper.
+# Guard against custom windowed/frozen builds where stdout/stderr may be None.
+# Uvicorn's logger expects a real stream with isatty().
 if sys.stdout is None:
     sys.stdout = open(os.devnull, "w")
 if sys.stderr is None:
@@ -27,12 +26,14 @@ Commands:
   sync-down     Download and merge community stats from sync service
 
 Options:
+    --browser     With 'serve': force opening browser automatically
   --save-only   With 'update': skip wiki, only discover from save files
   --no-browser  With 'serve': don't open browser automatically
   --help, -h    Show this help message
   --version, -V Show version
 
 Environment:
+    SPIRESCOPE_OPEN_BROWSER  1/0 override for auto-opening browser on 'serve'
   STS2_SYNC_URL   Sync service URL (required for sync-up/sync-down)
   STS2_SYNC_KEY   Optional API key for sync service authentication
 """
@@ -41,6 +42,31 @@ Environment:
 def _get_version() -> str:
     from sts2.config import VERSION
     return VERSION
+
+
+def _env_flag(name: str) -> bool | None:
+    value = os.environ.get(name)
+    if value is None:
+        return None
+    normalized = value.strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    return None
+
+
+def _should_open_browser(args: list[str]) -> bool:
+    if "--no-browser" in args:
+        return False
+    if "--browser" in args:
+        return True
+
+    env_override = _env_flag("SPIRESCOPE_OPEN_BROWSER")
+    if env_override is not None:
+        return env_override
+
+    return not getattr(sys, "frozen", False)
 
 
 def main():
@@ -124,9 +150,13 @@ def main():
         from sts2.config import HOST, PORT
 
         url = f"http://{HOST}:{PORT}"
-        if "--no-browser" not in args:
+        open_browser = _should_open_browser(args)
+        if open_browser:
             threading.Timer(1.5, lambda: webbrowser.open(url)).start()
         print(f"\n  Spirescope {_get_version()} starting at {url}")
+        if getattr(sys, "frozen", False) and not open_browser:
+            print("  Browser auto-open is disabled for the packaged build by default.")
+            print("  Open the URL above manually, or launch with '--browser'.")
         if HOST not in ("127.0.0.1", "localhost", "::1"):
             print("  WARNING: Spirescope is designed for single-user local use.")
             print("  Binding to a public address exposes it without authentication.\n")

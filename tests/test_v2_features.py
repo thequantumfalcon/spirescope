@@ -974,10 +974,11 @@ class TestNoBrowserFlag:
         """Verify --no-browser flag is wired into serve command."""
         import inspect
 
-        from sts2.__main__ import main
-        source = inspect.getsource(main)
-        assert "--no-browser" in source
-        assert "webbrowser" in source
+        from sts2.__main__ import _should_open_browser, main
+        main_source = inspect.getsource(main)
+        helper_source = inspect.getsource(_should_open_browser)
+        assert "--no-browser" in helper_source
+        assert "webbrowser" in main_source
 
 
 # ---------------------------------------------------------------------------

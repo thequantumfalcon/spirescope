@@ -1,4 +1,5 @@
 """Build Spirescope into a standalone executable."""
+import hashlib
 import shutil
 import subprocess
 import sys
@@ -32,6 +33,18 @@ def _ensure_venv():
     print("Build venv ready.")
 
 
+def _write_sha256_manifest() -> Path:
+    """Write SHA-256 checksums for the built distribution files."""
+    manifest = ROOT / "dist" / "SHA256SUMS.txt"
+    lines = []
+    for artifact in sorted(path for path in DIST.rglob("*") if path.is_file()):
+        digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
+        rel = artifact.relative_to(ROOT / "dist").as_posix()
+        lines.append(f"{digest}  {rel}")
+    manifest.write_text("\n".join(lines) + "\n", encoding="ascii")
+    return manifest
+
+
 def main():
     _ensure_venv()
     venv_python = _get_venv_python()
@@ -57,7 +70,10 @@ def main():
     if readme_src.exists():
         shutil.copy2(readme_src, DIST / "README.txt")
 
+    manifest = _write_sha256_manifest()
+
     print(f"\nBuild complete: {DIST}")
+    print(f"Checksums written to: {manifest}")
     print(f"Zip the '{DIST.name}' folder and share it.")
 
 

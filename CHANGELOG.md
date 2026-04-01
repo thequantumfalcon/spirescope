@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **Windows release hardening**: removed UPX compression from the PyInstaller build to reduce antivirus false positives on the packaged executable
+- **Windows startup behavior**: frozen builds now keep a visible console window open and do not auto-open the browser unless explicitly requested with `--browser` or `SPIRESCOPE_OPEN_BROWSER=1`
+- **Frozen update checks**: packaged builds no longer make automatic GitHub update checks unless `SPIRESCOPE_CHECK_UPDATES=1` is set
+- **Live tracker background activity**: game log polling now runs on demand for live endpoints instead of as a permanent startup task
+- **Shutdown auth**: `/shutdown` now requires a valid admin token or an actual loopback client, rather than trusting a spoofable `Referer` header
+- **Release integrity**: Windows release workflow now publishes `.sha256` checksum files alongside the zip archive
+
 ## v2.9.2
 
 ### Fixed

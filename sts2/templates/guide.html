@@ -29,7 +29,7 @@
   <p>Install SpireScope and start the dashboard:</p>
   <pre><code>pip install -e .
 spirescope</code></pre>
-  <p class="text-sm text-muted mt-sm">Or run directly with <code>python -m sts2</code>. Your browser will open automatically at <code>http://127.0.0.1:8000</code>.</p>
+  <p class="text-sm text-muted mt-sm">Or run directly with <code>python -m sts2</code>. Source installs open your browser automatically at <code>http://127.0.0.1:8000</code>. The packaged Windows build keeps a console window open and serves the same local address by default.</p>
 </div>
 
 <h2 id="save-files">Save File Setup</h2>
@@ -237,5 +237,6 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
   <p class="mt-sm"><strong>Live run not updating</strong> &mdash; The game must be running with an active run. Check that your save directory is correct.</p>
   <p class="mt-sm"><strong>Port already in use</strong> &mdash; Set <code>STS2_PORT=8001</code> (or any free port) before starting.</p>
   <p class="mt-sm"><strong>Rate limited (429)</strong> &mdash; The server limits to 60 requests per minute per IP. Wait a moment and try again.</p>
+  <p class="mt-sm"><strong>Windows warns about the download</strong> &mdash; The packaged build is unsigned, so SmartScreen or mod-host scanners may still show a reputation warning. The release zip ships with a <code>.sha256</code> file so you can verify integrity, and the app runs locally on <code>127.0.0.1</code> by default.</p>
 </div>
 {% endblock %}

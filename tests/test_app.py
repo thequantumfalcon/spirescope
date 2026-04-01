@@ -229,6 +229,44 @@ async def test_api_reload_rejects_missing_token(client):
     assert resp.status_code == 403
 
 
+def test_is_loopback_client_helper():
+    from types import SimpleNamespace
+
+    from sts2.routes import _is_loopback_client
+
+    assert _is_loopback_client(SimpleNamespace(client=SimpleNamespace(host="127.0.0.1"))) is True
+    assert _is_loopback_client(SimpleNamespace(client=SimpleNamespace(host="::1"))) is True
+    assert _is_loopback_client(SimpleNamespace(client=SimpleNamespace(host="8.8.8.8"))) is False
+
+
+async def test_shutdown_allows_loopback_client(client):
+    from unittest.mock import patch
+
+    timer = type("TimerStub", (), {"start": lambda self: None})()
+    with patch("threading.Timer", return_value=timer):
+        resp = await client.post("/shutdown")
+    assert resp.status_code == 200
+    assert resp.json()["status"] == "shutting down"
+
+
+async def test_shutdown_rejects_non_loopback_without_token(client):
+    from unittest.mock import patch
+
+    with patch("sts2.routes._is_loopback_client", return_value=False):
+        resp = await client.post("/shutdown")
+    assert resp.status_code == 403
+
+
+async def test_shutdown_allows_valid_token_when_not_loopback(client):
+    from unittest.mock import patch
+
+    timer = type("TimerStub", (), {"start": lambda self: None})()
+    with patch("sts2.routes._is_loopback_client", return_value=False), \
+         patch("threading.Timer", return_value=timer):
+        resp = await client.post("/shutdown", headers={"X-Admin-Token": _ADMIN_TOKEN})
+    assert resp.status_code == 200
+
+
 async def test_live_page_has_sse_script(client):
     resp = await client.get("/live")
     assert resp.status_code == 200
@@ -1684,6 +1722,7 @@ async def test_get_live_run_save_active():
                             max_hp=80, gold=100, act=1, floor=5)
     with patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
                return_value=active_run), \
+           patch("sts2.app._poll_game_log_once", new_callable=AsyncMock), \
          patch("sts2.app._log_run_state", None):
         result = await _get_live_run()
     assert result.active is True
@@ -1707,6 +1746,7 @@ async def test_get_live_run_merge_both_active():
                  "potions": ["POTION.POWER_POTION"]}
     with patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
                return_value=save_run), \
+           patch("sts2.app._poll_game_log_once", new_callable=AsyncMock), \
          patch("sts2.app._log_run_state", log_state):
         result = await _get_live_run()
     # Save provides HP and relics
@@ -1732,6 +1772,7 @@ async def test_get_live_run_log_only():
                  "max_hp": 70, "gold": 50, "act": 2, "floor": 15}
     with patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
                return_value=inactive_run), \
+           patch("sts2.app._poll_game_log_once", new_callable=AsyncMock), \
          patch("sts2.routes._log_run_state", log_state, create=True), \
          patch("sts2.app._log_run_state", log_state):
         result = await _get_live_run()
@@ -1749,6 +1790,7 @@ async def test_get_live_run_neither():
     inactive_run = CurrentRun(active=False)
     with patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
                return_value=inactive_run), \
+           patch("sts2.app._poll_game_log_once", new_callable=AsyncMock), \
          patch("sts2.app._log_run_state", None):
         result = await _get_live_run()
     assert result.active is False

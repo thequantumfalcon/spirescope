@@ -92,7 +92,9 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Download (No Python Required)
 
-**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`. That's it.
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`, leave the console window open, then open `http://127.0.0.1:8000` in your browser. Release archives also ship with `.sha256` checksum files.
+
+Windows may still show a SmartScreen or reputation warning because the build is unsigned. SpireScope is open source, local-only by default, and the packaged release avoids the usual UPX-compressed hidden-window profile that tends to trigger extra false positives.
 
 Also available on [NexusMods](https://www.nexusmods.com/slaythespire2/mods/309). See the [Steam Guide](https://steamcommunity.com/sharedfiles/filedetails/?id=3694453471) for an overview.
 
@@ -119,6 +121,7 @@ python build.py
 ```
 
 Output: `dist/Spirescope/Spirescope.exe` — zip the entire `dist/Spirescope/` folder and share it.
+Local builds also write `dist/SHA256SUMS.txt` for checksum verification.
 
 ### Docker
 
@@ -169,6 +172,7 @@ Set `STS2_SAVE_DIR` to this path if auto-detection doesn't find your saves.
 ```bash
 spirescope              # Start the web dashboard (default)
 spirescope serve        # Same as above
+spirescope serve --browser     # Force opening browser automatically
 spirescope serve --no-browser  # Start without opening browser
 spirescope update       # Fetch latest data from the wiki + saves
 spirescope update --save-only  # Discover from saves only (no network)
@@ -195,6 +199,8 @@ spirescope --version    # Show version
 | `STS2_SYNC_KEY` | API key for sync service | None |
 | `SPIRESCOPE_API_KEY` | Optional API key for rate limit bypass | None |
 | `SPIRESCOPE_ADMIN_TOKEN` | Token for `/api/reload` and `/api/reset/stats` | Auto-generated |
+| `SPIRESCOPE_OPEN_BROWSER` | `1`/`0` override for browser auto-open on `serve` | Source: enabled, frozen build: disabled |
+| `SPIRESCOPE_CHECK_UPDATES` | `1`/`0` override for automatic GitHub update checks | Source: enabled, frozen build: disabled |
 | `STS2_CORS_ORIGINS` | Comma-separated CORS allowed origins | Localhost only |
 
 ### Save File Location

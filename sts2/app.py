@@ -53,7 +53,6 @@ async def _lifespan(application):
     check_for_update(templates.env.globals.get("version", "0.0.0"))
     await _prewarm_caches()
     _watcher_task = asyncio.create_task(_watch_saves())  # noqa: F841
-    _log_task = asyncio.create_task(_poll_game_log())  # noqa: F841
     yield
 
 
@@ -405,24 +404,46 @@ async def _watch_saves():
 
 _log_tailer = None  # type: ignore[assignment]
 _log_run_state: dict | None = None
+_log_poll_lock: asyncio.Lock | None = None
+
+
+async def _poll_game_log_once() -> None:
+    """Poll the game log on demand instead of running a permanent background task."""
+    global _log_tailer, _log_run_state, _log_poll_lock
+
+    if _log_poll_lock is None:
+        _log_poll_lock = asyncio.Lock()
+
+    async with _log_poll_lock:
+        if _log_tailer is None:
+            from sts2.logparser import LogTailer
+            _log_tailer = LogTailer()
+
+        try:
+            previous_active = bool(_log_run_state and _log_run_state.get("active"))
+            result = await asyncio.to_thread(_log_tailer.poll)
+            changed = False
+            if result is not None:
+                if hasattr(result, "model_dump"):
+                    result = result.model_dump()
+                elif hasattr(result, "to_dict"):
+                    result = result.to_dict()
+                _log_run_state = result
+                changed = True
+            elif _log_tailer.state and not _log_tailer.state.active and previous_active:
+                _log_run_state = None
+                changed = True
+
+            if changed:
+                _save_changed_event.set()
+                await asyncio.sleep(0)
+                _save_changed_event.clear()
+        except Exception:
+            log.debug("Log tailer error", exc_info=True)
 
 
 async def _poll_game_log():
     """Poll the game log every 3 seconds for new events."""
-    global _log_tailer, _log_run_state
-    from sts2.logparser import LogTailer
-    _log_tailer = LogTailer()
     while True:
-        try:
-            result = await asyncio.to_thread(_log_tailer.poll)
-            if result is not None:
-                _log_run_state = result
-                # Wake SSE consumers
-                _save_changed_event.set()
-                await asyncio.sleep(0)
-                _save_changed_event.clear()
-            elif _log_tailer.state and not _log_tailer.state.active:
-                _log_run_state = None
-        except Exception:
-            log.debug("Log tailer error", exc_info=True)
+        await _poll_game_log_once()
         await asyncio.sleep(3)

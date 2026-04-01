@@ -44,10 +44,23 @@ jobs:
           Copy-Item dist/Spirescope-${{ github.ref_name }}-windows.zip dist/Spirescope-windows.zip
         shell: pwsh
 
+      - name: Create SHA-256 checksums
+        run: |
+          $tagZip = "dist/Spirescope-${{ github.ref_name }}-windows.zip"
+          $latestZip = "dist/Spirescope-windows.zip"
+          foreach ($path in @($tagZip, $latestZip)) {
+            $hash = (Get-FileHash $path -Algorithm SHA256).Hash.ToLower()
+            $name = Split-Path $path -Leaf
+            Set-Content -Path "$path.sha256" -Value "$hash  $name" -Encoding ascii
+          }
+        shell: pwsh
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             dist/Spirescope-${{ github.ref_name }}-windows.zip
+            dist/Spirescope-${{ github.ref_name }}-windows.zip.sha256
             dist/Spirescope-windows.zip
+            dist/Spirescope-windows.zip.sha256
           generate_release_notes: true

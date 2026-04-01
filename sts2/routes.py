@@ -1,6 +1,7 @@
 """Route handlers for Spirescope."""
 import asyncio
 import hashlib
+import ipaddress
 import json
 import math
 import re
@@ -71,6 +72,8 @@ async def _get_live_run(player: int = 0) -> CurrentRun:
     Log provides: fresher deck, gold, potions, act, floor (updates mid-combat).
     When both are active, merge log's fresher fields into save's complete state.
     """
+    a = _app()
+    await a._poll_game_log_once()
     run = await asyncio.to_thread(get_current_run, player_index=player)
 
     from sts2.app import _log_run_state
@@ -114,6 +117,17 @@ def _app():
     """
     import sts2.app as _a
     return _a
+
+
+def _is_loopback_client(request: Request) -> bool:
+    """Only trust the actual client address, never a spoofable Referer header."""
+    host = request.client.host if request.client else ""
+    if not host:
+        return False
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return host.lower() == "localhost"
 
 
 # ---------------------------------------------------------------------------
@@ -1186,12 +1200,11 @@ async def reload_data(request: Request):
 
 @router.post("/shutdown")
 async def shutdown(request: Request):
-    """Gracefully stop SpireScope. Requires admin token or localhost origin."""
+    """Gracefully stop SpireScope. Requires admin token or a loopback client."""
     a = _app()
     token = request.headers.get("X-Admin-Token", "")
-    referer = request.headers.get("referer", "")
-    is_local = "127.0.0.1" in referer or "localhost" in referer
-    if not is_local and (not token or not secrets.compare_digest(token, a._ADMIN_TOKEN)):
+    has_valid_token = bool(token) and secrets.compare_digest(token, a._ADMIN_TOKEN)
+    if not _is_loopback_client(request) and not has_valid_token:
         return PlainTextResponse("Unauthorized.", status_code=403)
     import os
     import signal

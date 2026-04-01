@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from sts2.__main__ import _get_version, main
+from sts2.__main__ import _get_version, _should_open_browser, main
 
 # ── Version helper ───────────────────────────────────────────────────────
 
@@ -180,3 +180,27 @@ def test_cli_serve_defaults():
         mock_uvicorn.assert_called_once()
         call_kwargs = mock_uvicorn.call_args
         assert call_kwargs.kwargs.get("log_level") == "warning" or call_kwargs[1].get("log_level") == "warning"
+
+
+def test_should_open_browser_default_source():
+    with patch.object(sys, "frozen", False, create=True), \
+         patch.dict("os.environ", {}, clear=False):
+        assert _should_open_browser([]) is True
+
+
+def test_should_open_browser_default_frozen():
+    with patch.object(sys, "frozen", True, create=True), \
+         patch.dict("os.environ", {}, clear=False):
+        assert _should_open_browser([]) is False
+
+
+def test_should_open_browser_env_override():
+    with patch.object(sys, "frozen", True, create=True), \
+         patch.dict("os.environ", {"SPIRESCOPE_OPEN_BROWSER": "1"}, clear=False):
+        assert _should_open_browser([]) is True
+
+
+def test_should_open_browser_flag_override():
+    with patch.object(sys, "frozen", True, create=True), \
+         patch.dict("os.environ", {"SPIRESCOPE_OPEN_BROWSER": "0"}, clear=False):
+        assert _should_open_browser(["--browser"]) is True

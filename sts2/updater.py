@@ -1,6 +1,8 @@
 """Lightweight update checker — queries GitHub releases on startup."""
 import json
 import logging
+import os
+import sys
 import threading
 import urllib.error
 import urllib.request
@@ -26,8 +28,25 @@ def _parse_version(tag: str) -> tuple[int, ...]:
     return tuple(parts) or (0,)
 
 
+def update_checks_enabled() -> bool:
+    """Disable automatic update checks in frozen builds unless opted in."""
+    raw = os.environ.get("SPIRESCOPE_CHECK_UPDATES")
+    if raw is not None:
+        normalized = raw.strip().lower()
+        if normalized in {"1", "true", "yes", "on"}:
+            return True
+        if normalized in {"0", "false", "no", "off"}:
+            return False
+    return not getattr(sys, "frozen", False)
+
+
 def check_for_update(current_version: str) -> None:
     """Check GitHub for a newer release (runs in background thread)."""
+    global _checked
+    if not update_checks_enabled():
+        _checked = True
+        return
+
     def _check():
         global _latest_version, _update_url, _checked
         try:

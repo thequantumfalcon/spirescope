@@ -4,7 +4,7 @@ import urllib.error
 from unittest.mock import MagicMock, patch
 
 import sts2.updater as updater
-from sts2.updater import _parse_version, check_for_update, get_update_info
+from sts2.updater import _parse_version, check_for_update, get_update_info, update_checks_enabled
 
 
 class TestParseVersion:
@@ -109,6 +109,15 @@ class TestCheckForUpdate:
 
         assert get_update_info() is None
 
+    def test_disabled_in_frozen_build(self):
+        with patch.object(updater.sys, "frozen", True, create=True), \
+             patch.dict("os.environ", {}, clear=False), \
+             patch("urllib.request.urlopen") as mock_urlopen:
+            check_for_update("1.1.0")
+
+        mock_urlopen.assert_not_called()
+        assert updater._checked is True
+
 
 class TestGetUpdateInfo:
     def setup_method(self):
@@ -123,3 +132,20 @@ class TestGetUpdateInfo:
         updater._update_url = "https://example.com/release"
         info = get_update_info()
         assert info == {"version": "2.0.0", "url": "https://example.com/release"}
+
+
+class TestUpdateChecksEnabled:
+    def test_source_default_enabled(self):
+        with patch.object(updater.sys, "frozen", False, create=True), \
+             patch.dict("os.environ", {}, clear=False):
+            assert update_checks_enabled() is True
+
+    def test_frozen_default_disabled(self):
+        with patch.object(updater.sys, "frozen", True, create=True), \
+             patch.dict("os.environ", {}, clear=False):
+            assert update_checks_enabled() is False
+
+    def test_env_override_enables_checks(self):
+        with patch.object(updater.sys, "frozen", True, create=True), \
+             patch.dict("os.environ", {"SPIRESCOPE_CHECK_UPDATES": "1"}, clear=False):
+            assert update_checks_enabled() is True
