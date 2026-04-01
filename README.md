@@ -20,7 +20,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — all 589 cards with filters and search" width="80%">
+  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — all 588 cards with filters and search" width="80%">
 </p>
 
 ## Features
@@ -272,7 +272,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (22 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 613+ tests (pytest + pytest-asyncio)
+tests/               # 625+ tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements
