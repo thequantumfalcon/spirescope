@@ -55,6 +55,35 @@ jobs:
           }
         shell: pwsh
 
+      - name: Extract release notes from CHANGELOG
+        id: changelog
+        run: |
+          python -c "
+          import re, os
+          tag = os.environ['TAG']
+          version = tag.lstrip('v')
+          with open('CHANGELOG.md', encoding='utf-8') as f:
+              text = f.read()
+          # Extract section for this version
+          pattern = rf'## v{re.escape(version)}\n(.*?)(?=\n## v|\Z)'
+          m = re.search(pattern, text, re.DOTALL)
+          body = m.group(1).strip() if m else 'See CHANGELOG.md for details.'
+          # Build full release body
+          header = '<h2 align=\"center\">⚔ S P I R E S C O P E ⚔</h2>\n'
+          header += '<p align=\"center\"><em>Card lookup · Deck analysis · Live run tracking · Analytics for Slay the Spire 2</em></p>\n\n---\n\n'
+          header += f'## What\'s New in {tag}\n\n'
+          footer = '\n\n---\n\n### Download\n\n'
+          footer += '**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)**'
+          footer += ' — extract the zip, open the \`Spirescope\` folder, double-click \`Spirescope.exe\`.\n\n'
+          footer += 'GitHub is the only official download source. Use the release assets here and the attached checksum file.'
+          notes = header + body + footer
+          with open('RELEASE_NOTES.md', 'w', encoding='utf-8') as f:
+              f.write(notes)
+          "
+        env:
+          TAG: ${{ github.ref_name }}
+        shell: bash
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -63,4 +92,4 @@ jobs:
             dist/Spirescope-${{ github.ref_name }}-windows.zip.sha256
             dist/Spirescope-windows.zip
             dist/Spirescope-windows.zip.sha256
-          generate_release_notes: true
+          body_path: RELEASE_NOTES.md
