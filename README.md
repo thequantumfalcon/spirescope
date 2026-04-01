@@ -96,7 +96,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 Windows may still show a SmartScreen or reputation warning because the build is unsigned. SpireScope is open source, local-only by default, and the packaged release avoids the usual UPX-compressed hidden-window profile that tends to trigger extra false positives.
 
-Also available on [NexusMods](https://www.nexusmods.com/slaythespire2/mods/309). See the [Steam Guide](https://steamcommunity.com/sharedfiles/filedetails/?id=3694453471) for an overview.
+If you're cautious about unsigned Windows apps, that's fair. Grab SpireScope from this repo's Releases page, check the `.sha256` file, and look through the source, tests, and changelog here before you run it.
 
 ### From Source
 
