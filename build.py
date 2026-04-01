@@ -59,7 +59,7 @@ def main():
         sys.exit(1)
 
     # Strip dist-info metadata to avoid false positives from package scanners
-    # (e.g. NexusMods flagging bundled 'click' as typosquatting)
+    # (for example, bundled metadata being misread as typosquatting)
     for dist_info in DIST.rglob("*.dist-info"):
         if dist_info.is_dir():
             shutil.rmtree(dist_info)

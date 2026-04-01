@@ -140,7 +140,7 @@ The card browser, relic browser, enemy guides, event guides, deck analyzer, and 
 
 ## Using with Mods
 
-SpireScope automatically checks both vanilla and modded save paths and uses whichever contains more recent runs. If you use multiple mods, install [UnifiedSavePath](https://www.nexusmods.com/slaythespire2/mods/6) (NexusMods mod #6) to merge both paths into one location.
+SpireScope automatically checks both vanilla and modded save paths and uses whichever contains more recent runs. If you use multiple mods, install UnifiedSavePath to merge both paths into one location.
 
 - Vanilla: `%APPDATA%\SlayTheSpire2\steam\<id>\profile1\saves\`
 - Modded: `%APPDATA%\SlayTheSpire2\steam\<id>\modded\profile1\saves\`
