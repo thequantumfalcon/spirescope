@@ -1,15 +1,61 @@
 # Changelog
 
-## Unreleased
+## v2.9.3
+
+### Security
+
+- **`/shutdown` auth** — now requires a valid admin token or an actual loopback client (`request.client.host`), rather than trusting a spoofable `Referer` header. The previous `"127.0.0.1" in referer` substring check was bypassable by any cross-origin page hosted under a path containing `127.0.0.1` (e.g. `http://attacker.com/127.0.0.1.html`).
+- **CSRF future-timestamp window closed** — `validate_csrf_token` was using `abs(time.time() - ts)`, accepting future timestamps up to 4 h. One-sided check now: future skew capped at 60 s.
+- **SSE atomic reserve** — `_sse_active += 1` moved inside the request handler before `StreamingResponse` returns. Previously the increment was deferred inside `event_generator`, allowing concurrent requests to all pass the cap check.
+- **Admin token visibility** — auto-generated `_ADMIN_TOKEN` (when `SPIRESCOPE_ADMIN_TOKEN` env var is unset) is now logged once at startup so operators can actually use admin endpoints.
+- **`merge_aggregate` first-import cap** — applied `_MIN_IMPORT_CAP` even on first import to prevent a malicious file from anchoring future merges with bogus stats.
 
 ### Fixed
 
-- **Windows release hardening**: removed UPX compression from the PyInstaller build to reduce antivirus false positives on the packaged executable
-- **Windows startup behavior**: frozen builds now keep a visible console window open and do not auto-open the browser unless explicitly requested with `--browser` or `SPIRESCOPE_OPEN_BROWSER=1`
-- **Frozen update checks**: packaged builds no longer make automatic GitHub update checks unless `SPIRESCOPE_CHECK_UPDATES=1` is set
-- **Live tracker background activity**: game log polling now runs on demand for live endpoints instead of as a permanent startup task
-- **Shutdown auth**: `/shutdown` now requires a valid admin token or an actual loopback client, rather than trusting a spoofable `Referer` header
-- **Release integrity**: Windows release workflow now publishes `.sha256` checksum files alongside the zip archive
+- **Windows release hardening** — removed UPX compression from the PyInstaller build to reduce antivirus false positives on the packaged executable.
+- **Windows startup behavior** — frozen builds now keep a visible console window open and do not auto-open the browser unless explicitly requested with `--browser` or `SPIRESCOPE_OPEN_BROWSER=1`.
+- **Frozen update checks** — packaged builds no longer make automatic GitHub update checks unless `SPIRESCOPE_CHECK_UPDATES=1` is set.
+- **Live tracker background activity** — game log polling now runs on demand for live endpoints instead of as a permanent startup task.
+- **Stop button CSP fix** — extracted inline `onclick` from `base.html` to `nav.js`. Existing `script-src 'self'` CSP was silently blocking the button in strict browsers.
+- **Fetcher description newline regression** — `_clean_description` now collapses all internal whitespace (including embedded newlines from RSC payload structure and double-spaces left by stripped icons). v2.2.1 fixed 269 descriptions but the fix lived only in the data, not the fetcher, so each wiki refresh re-introduced them. Patched 192 descriptions on this refresh.
+- **`/api/cards/{id}` 404 response** — was `PlainTextResponse`, broke JS clients calling `.json()`. Now JSON for both 200 and 404.
+- **`steam.py` HTMLParser None crash** — `attr_dict.get("class", "")` returns the value if key exists, including `None`. `<div class>` (no value) → `"workshopItemTitle" in None` → TypeError. Coalesced 5 sites with `(.get("x") or "")`.
+- **`steam.py` silent-staleness** — scraper now logs loud when the guide parser returns zero results (likely sign Steam HTML class names changed).
+- **`live.js` SSE error setTimeout pile-up** — flapping SSE connection no longer stacks 10 s reload timers. `clearTimeout` before each new schedule.
+- **`live.html` missing cache-buster** — `<script src="/static/live.js">` now uses `?v={{ live_js_hash }}` like every other JS file.
+- **Reworked card text** — Drum of Battle (Power → Skill, new behavior), Synthesis (12 → 14 damage), Unrelenting (12 → 14 damage), Predator (Uncommon → Common). Patches 0.104.0 + 0.106.0.
+- **`Monster.` prefix on 6 enemies** — Owl Magistrate, Slimed Berserker, Soul Nexus, Test Subject, Fabricator, Mecha Knight.
+
+### Added
+
+- **Run Integrity** wired to `/runs/{id}` — SHA-256 Merkle chain over every floor decision. Same hash means same run, byte-for-byte.
+- **Cascade Map** wired to `/runs/{id}` — per-pick Δdamage / Δturns table showing each card's downstream impact.
+- **Archetype Drift** wired to `/runs/{id}` — floor-by-floor archetype classification with drift alert when early and late dominant archetype diverge.
+- **Deck Health Score** wired to `/deck/analyze` — spectral graph connectivity (0-100), orphan list, edge density.
+- **Rivalry Seeds** wired to `/runs/compare` — when both runs played the same seed, surfaces floor-by-floor card-pick diffs.
+- **Prophecy Engine** — new `/prophecy` route. Pre-run prediction: win probability, danger zone, recommendation based on historical runs at same character + similar ascension.
+- **Tilt Detection + Anti-Patterns** wired to `/analytics` — session momentum banner; named anti-patterns (The Hoarder, Greedy Builder, Coward, Potion Paralysis).
+- **Hypothesis Lab** — new `/hypothesis` route. Register strategic beliefs (`elite_skip`, `deck_size`, `card_pick`, `character` conditions); Bayesian-style update against run history; verdict after 10+ runs.
+- **Nav links** for `/prophecy` and `/hypothesis`.
+- **Stale-data badge** on home page — shows when wiki data is >30 days old, prompting `python -m sts2 update`. No silent network call on launch.
+- **Fetcher field-validation + drift log** — rejects scraped batch when >10% of objects miss required fields; persists key-union baseline to `sts2/data/.fetcher_keys.json` to detect upstream schema drift between runs.
+- **Log parser combat telemetry** — `cards_played`, `extra_turns`, `elites_defeated` now captured from `godot.log` and surfaced via `to_dict()` for SSE consumers. Closes part of the per-turn-analytics gap.
+- **Release integrity** — Windows release workflow now publishes `.sha256` checksum files alongside the zip archive.
+
+### Changed
+
+- **Rate-limiter loopback skip** — middleware now bypasses rate-limit accounting when `STS2_HOST` is `127.0.0.1`, `localhost`, or `::1`. Eliminates an unbounded-dictionary memory growth path for the default single-user dashboard configuration. Tests force `STS2_HOST=0.0.0.0` in `conftest.py` to keep the rate-limit code path under coverage.
+- **`python-multipart` minimum bump** 0.0.5 → 0.0.29 (security-relevant).
+- **Pyright type-hint cleanup** — `_fetch_url` / `_fetch_reddit_json` return types now `str | None` / `dict | None` to match exhaustion-retry behavior.
+
+### Data
+
+- cards.json: 598 (+10) — wiki refresh + manual additions (Prepare, Not Yet) + Deprecated Card removal
+- relics.json: 309 (+11) — wiki refresh added Neow's Bones, Phial Holster, Winged Boots, Hefty Tablet, Neow's Talisman, Pendulum, Silken Tress, etc.
+- potions.json: 64 (+1)
+- enemies.json: 184 (+14) — save-discovery + manual Aeonglass (Act 3 boss, 0.105.0)
+- events.json: 67 (+3) — save-discovery
+- Rarities canonicalized via `scripts/fix_card_rarity.py` against wiki.gg Lua module data.
 
 ## v2.9.2
 
