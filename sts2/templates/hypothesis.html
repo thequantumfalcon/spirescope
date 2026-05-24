@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block page_id %}hypothesis{% endblock %}
+{% block title %}Hypothesis Lab{% endblock %}
+{% block content %}
+<h1>Hypothesis Lab</h1>
+<p class="text-muted mb-md">Register a strategic belief and have it tested against your run history. Each hypothesis tracks runs matching vs not, with a verdict after 10+ runs.</p>
+
+<h2 class="mt-md">Register New Hypothesis</h2>
+<form action="/hypothesis/create" method="post" class="mb-lg">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label>
+    Hypothesis text:
+    <input type="text" name="text" maxlength="200" required placeholder="e.g. Skipping elites helps me win" style="width:30em;">
+  </label>
+  <br><br>
+  <label>
+    Condition type:
+    <select name="condition_type" required>
+      <option value="elite_skip">Elite skip (run had zero elite fights)</option>
+      <option value="deck_size">Small deck (≤ max_size)</option>
+      <option value="card_pick">Has specific card (param: card ID)</option>
+      <option value="character">Specific character (param: character name)</option>
+    </select>
+  </label>
+  <label>
+    Param (for deck_size / card_pick / character):
+    <input type="text" name="param_value" maxlength="100" placeholder="e.g. 25 or CARD.STRIKE or Ironclad">
+  </label>
+  <br><br>
+  <button type="submit" class="btn btn-sm">Register Hypothesis</button>
+</form>
+
+{% if hypotheses %}
+<h2 class="mt-md">Active Hypotheses</h2>
+{% for hyp_id, h in hypotheses.items() %}
+<div class="card mb-md" style="border-left: 3px solid {% if h.verdict == 'confirmed' %}var(--green){% elif h.verdict == 'refuted' %}var(--crimson){% else %}var(--gold){% endif %};">
+  <p><strong>{{ h.text }}</strong></p>
+  <p class="text-sm text-muted">
+    Condition: <code>{{ h.condition_type }}</code>
+    {% if h.params %} · Params: <code>{{ h.params }}</code>{% endif %}
+  </p>
+  <div class="stat-grid mt-sm" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stat-box">
+      <div class="num {% if h.verdict == 'confirmed' %}text-green{% elif h.verdict == 'refuted' %}text-red{% else %}text-muted{% endif %}">{{ h.verdict }}</div>
+      <div class="label">Verdict</div>
+    </div>
+    <div class="stat-box"><div class="num">{{ h.runs_tested }}</div><div class="label">Runs Tested</div></div>
+    <div class="stat-box"><div class="num">{{ h.runs_matching }}/{{ h.runs_tested }}</div><div class="label">Match Rate</div></div>
+    <div class="stat-box">
+      {% if h.get('effect_size') is not none %}
+      <div class="num {% if h.effect_size > 0 %}text-green{% elif h.effect_size < 0 %}text-red{% endif %}">{{ '%+.1f%%' % (h.effect_size * 100) }}</div>
+      {% else %}
+      <div class="num text-muted">—</div>
+      {% endif %}
+      <div class="label">Effect Size</div>
+    </div>
+  </div>
+  <form action="/hypothesis/delete/{{ hyp_id }}" method="post" class="mt-sm">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit" class="btn btn-sm btn-secondary">Delete</button>
+  </form>
+</div>
+{% endfor %}
+{% else %}
+<p class="text-muted">No hypotheses yet. Register one above to start testing.</p>
+{% endif %}
+{% endblock %}

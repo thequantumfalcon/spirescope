@@ -45,6 +45,8 @@ _shortcuts_js_path = STATIC_DIR / "shortcuts.js"
 _SHORTCUTS_JS_HASH = hashlib.md5(_shortcuts_js_path.read_bytes()).hexdigest()[:8] if _shortcuts_js_path.exists() else "0"
 _compare_js_path = STATIC_DIR / "compare.js"
 _COMPARE_JS_HASH = hashlib.md5(_compare_js_path.read_bytes()).hexdigest()[:8] if _compare_js_path.exists() else "0"
+_live_js_path = STATIC_DIR / "live.js"
+_LIVE_JS_HASH = hashlib.md5(_live_js_path.read_bytes()).hexdigest()[:8] if _live_js_path.exists() else "0"
 
 
 @contextlib.asynccontextmanager
@@ -68,6 +70,7 @@ templates.env.globals["deck_js_hash"] = _DECK_JS_HASH
 templates.env.globals["collections_js_hash"] = _COLLECTIONS_JS_HASH
 templates.env.globals["shortcuts_js_hash"] = _SHORTCUTS_JS_HASH
 templates.env.globals["compare_js_hash"] = _COMPARE_JS_HASH
+templates.env.globals["live_js_hash"] = _LIVE_JS_HASH
 
 kb = KnowledgeBase()
 
@@ -83,20 +86,33 @@ def generate_csrf_token() -> str:
     return f"{ts:x}.{sig}"
 
 
+# Expose to templates so the Stop button (and any JS that needs CSRF) can read
+# a fresh token from a <meta name="csrf-token"> tag in base.html. Named `csrf`
+# to avoid colliding with the per-route `csrf_token` string passed to forms.
+templates.env.globals["csrf"] = generate_csrf_token
+
+
 def validate_csrf_token(token: str) -> bool:
-    """Validate an HMAC-signed CSRF token and check it's not expired."""
+    """Validate an HMAC-signed CSRF token and check it's not expired.
+
+    One-sided window: future timestamps (>60s skew) are rejected outright
+    so a forged-or-replayed token can't extend its useful life by jumping ts.
+    """
     try:
         ts_hex, sig = token.split(".", 1)
         ts = int(ts_hex, 16)
     except (ValueError, AttributeError):
         return False
-    if abs(time.time() - ts) > _CSRF_MAX_AGE:
+    now = time.time()
+    if ts > now + 60 or now - ts > _CSRF_MAX_AGE:
         return False
     msg = struct.pack(">Q", ts)
     expected = hmac.new(_CSRF_SECRET, msg, hashlib.sha256).hexdigest()
     return hmac.compare_digest(sig, expected)
 
 _ADMIN_TOKEN = os.environ.get("SPIRESCOPE_ADMIN_TOKEN", secrets.token_hex(32))
+if not os.environ.get("SPIRESCOPE_ADMIN_TOKEN"):
+    log.info("ADMIN TOKEN (auto-generated, one-time): %s — set SPIRESCOPE_ADMIN_TOKEN env to override", _ADMIN_TOKEN)
 
 # ---------------------------------------------------------------------------
 # Caches
@@ -185,8 +201,18 @@ app.add_middleware(CORSMiddleware, allow_origins=_cors_origins,
 # ---------------------------------------------------------------------------
 
 
+def _is_loopback_bind() -> bool:
+    """Runtime-checked so tests can monkeypatch STS2_HOST without re-importing app."""
+    return os.environ.get("STS2_HOST", "127.0.0.1") in ("127.0.0.1", "localhost", "::1")
+
+
 @app.middleware("http")
 async def rate_limit(request: Request, call_next):
+    # Loopback bind = single-user dashboard. Rate-limiting is dead weight there
+    # and the unbounded-keys dict is a memory liability if anyone ever spoofs
+    # source IPs. Only enforce when bound to a real network interface.
+    if _is_loopback_bind():
+        return await call_next(request)
     # Exempt static files, SSE stream, and CORS preflight
     if request.url.path.startswith("/static/") or request.url.path == "/api/live/stream":
         return await call_next(request)

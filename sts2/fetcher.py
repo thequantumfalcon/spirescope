@@ -32,6 +32,12 @@ def _clean_description(desc: str) -> str:
     desc = _ENERGY_RE.sub(lambda m: f"{m.group(1)} Energy", desc)
     desc = _STAR_RE.sub(lambda m: f"{m.group(1)} Star", desc)
     desc = _COLOR_RE.sub("", desc)
+    # Collapse all internal whitespace (including embedded newlines from RSC
+    # payload structure and double-spaces left by stripped icons) into single
+    # spaces. CLAUDE.md data-hygiene protocol forbids both. Regression: v2.2.1
+    # fixed 269 newline descriptions, but the fix lived only in the data, not
+    # in the fetcher — so each wiki refresh re-introduced them.
+    desc = re.sub(r"\s+", " ", desc)
     return desc.strip()
 
 
@@ -260,9 +266,77 @@ def _wiki_id_to_game_id(wiki_id: str, prefix: str, character: str = "") -> str:
     return f"{prefix}.{slug.upper().replace('-', '_')}"
 
 
+# Fields that must be non-empty on most scraped objects. If the wiki renames or
+# drops one of these, downstream merge silently keeps stale data — validation
+# rejects the batch so the existing "no X found" guard preserves curated data.
+_EXPECTED_FIELDS: dict[str, frozenset[str]] = {
+    "CARD": frozenset({"id", "name", "cardType", "description"}),
+    "RELIC": frozenset({"id", "name", "description"}),
+    "POTION": frozenset({"id", "name", "description"}),
+}
+_KEYS_BASELINE_FILE = ".fetcher_keys.json"
+
+
+def _validate_extraction(raw: list[dict], category: str) -> bool:
+    """Return True when at least 90% of objects have all required fields populated."""
+    required = _EXPECTED_FIELDS.get(category)
+    if not required or not raw:
+        return True
+    missing_counts: dict[str, int] = {}
+    bad = 0
+    for obj in raw:
+        obj_missing = [f for f in required if not obj.get(f)]
+        if obj_missing:
+            bad += 1
+            for f in obj_missing:
+                missing_counts[f] = missing_counts.get(f, 0) + 1
+    if bad / len(raw) > 0.1:
+        summary = ", ".join(f"{f}={n}" for f, n in sorted(missing_counts.items()))
+        log.warning(
+            "Field-validation failed for category=%s: %d/%d objects missing required fields (%s)",
+            category, bad, len(raw), summary,
+        )
+        return False
+    return True
+
+
+def _log_field_drift(raw: list[dict], category: str) -> None:
+    """Persist the union of keys per category and log additions/removals between runs."""
+    if not raw:
+        return
+    current = sorted({k for obj in raw for k in obj.keys()})
+    baseline_path = DATA_DIR / _KEYS_BASELINE_FILE
+    baseline: dict[str, list[str]] = {}
+    if baseline_path.exists():
+        try:
+            baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            baseline = {}
+    previous = set(baseline.get(category, []))
+    current_set = set(current)
+    if previous and previous != current_set:
+        added = sorted(current_set - previous)
+        removed = sorted(previous - current_set)
+        if added or removed:
+            log.info(
+                "Field-set drift for category=%s: added=%s removed=%s",
+                category, added or "[]", removed or "[]",
+            )
+    baseline[category] = current
+    try:
+        baseline_path.write_text(
+            json.dumps(baseline, indent=2, sort_keys=True), encoding="utf-8"
+        )
+    except OSError as exc:
+        log.warning("Failed to write %s: %s", _KEYS_BASELINE_FILE, exc)
+
+
 def _scrape_cards(html: str) -> list[dict]:
     """Parse card data from wiki HTML."""
     raw = _extract_json_objects(html, "CARD")
+    _log_field_drift(raw, "CARD")
+    if not _validate_extraction(raw, "CARD"):
+        return []
     # Build name->id index from existing data for matching
     name_index = _load_existing_name_index("cards.json", "CARD")
     cards = []
@@ -322,6 +396,9 @@ def _scrape_cards(html: str) -> list[dict]:
 def _scrape_relics(html: str) -> list[dict]:
     """Parse relic data from wiki HTML."""
     raw = _extract_json_objects(html, "RELIC")
+    _log_field_drift(raw, "RELIC")
+    if not _validate_extraction(raw, "RELIC"):
+        return []
     name_index = _load_existing_name_index("relics.json", "RELIC")
     relics = []
     seen = set()
@@ -353,6 +430,9 @@ def _scrape_relics(html: str) -> list[dict]:
 def _scrape_potions(html: str) -> list[dict]:
     """Parse potion data from wiki HTML."""
     raw = _extract_json_objects(html, "POTION")
+    _log_field_drift(raw, "POTION")
+    if not _validate_extraction(raw, "POTION"):
+        return []
     name_index = _load_existing_name_index("potions.json", "POTION")
     potions = []
     seen = set()

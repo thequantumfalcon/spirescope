@@ -164,6 +164,23 @@
   <div class="stat-box"><div class="num text-yellow">{{ analysis.powers }}</div><div class="label">Powers</div></div>
 </div>
 
+{% if spectral_health %}
+<h3 class="mt-md">Deck Health Score</h3>
+<p class="text-sm text-muted">Synergy-graph connectivity. Cards sharing keywords are connected; the more internally connected the deck, the higher the score.</p>
+<div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
+  <div class="stat-box">
+    <div class="num {% if spectral_health.health_score >= 70 %}text-green{% elif spectral_health.health_score >= 40 %}text-yellow{% else %}text-red{% endif %}">{{ spectral_health.health_score }}</div>
+    <div class="label">Health (0-100)</div>
+  </div>
+  <div class="stat-box"><div class="num">{{ spectral_health.total_edges }}</div><div class="label">Synergy Edges</div></div>
+  <div class="stat-box"><div class="num">{{ spectral_health.avg_degree }}</div><div class="label">Avg Connections</div></div>
+  <div class="stat-box"><div class="num {% if spectral_health.orphans %}text-red{% else %}text-green{% endif %}">{{ spectral_health.orphans|length }}</div><div class="label">Orphan Cards</div></div>
+</div>
+{% if spectral_health.orphans %}
+<p class="text-sm mt-sm"><strong>Orphans</strong> (no synergy connections): {% for name in spectral_health.orphans %}<span class="tag opacity-60">{{ name }}</span>{% endfor %}</p>
+{% endif %}
+{% endif %}
+
 {% if analysis.detected_archetypes %}
 <h3>Detected Archetypes</h3>
 {% for arch in analysis.detected_archetypes %}

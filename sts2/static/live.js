@@ -31,7 +31,12 @@
       lastFloor = d.floor;
     }
   };
+  var reloadTimer = null;
   es.onerror = function() {
-    setTimeout(function() { location.reload(); }, 10000);
+    // Dedup: a flapping SSE connection can fire onerror many times in
+    // quick succession. Without cancellation, each fires a 10s reload
+    // timer and they pile up. Cancel any pending timer first.
+    if (reloadTimer !== null) { clearTimeout(reloadTimer); }
+    reloadTimer = setTimeout(function() { location.reload(); }, 10000);
   };
 })();

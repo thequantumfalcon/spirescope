@@ -35,6 +35,12 @@ _RE_CHAR_SELECT = re.compile(r"Received LobbyPlayerChangedCharacterMessage for \
 _RE_LOCAL_READY = re.compile(r"\[INFO\] \[StartRunLobby.*?\] Local player (\d+) is ready")
 _RE_CLIENT_CONNECT = re.compile(r"\[INFO\] \[StartRunLobby.*?\] Client (\d+) connected")
 _RE_NEOW_EVENT = re.compile(r"\[VERYDEBUG\] \[EventSynchronizer\] Event EVENT\.NEOW began for player (\d+)")
+# Combat telemetry — surfaces signal the godot.log emits but the parser
+# previously ignored. Enables turn-by-turn analytics without requiring the
+# STS2MCP mod.
+_RE_PLAYING_CARD = re.compile(r"\[INFO\] Player \d+ playing card (\w+)")
+_RE_EXTRA_TURN = re.compile(r"\[INFO\] Player \d+ \([A-Z]+\) is taking an extra turn")
+_RE_ELITES_DEFEATED = re.compile(r"\[INFO\] Elites Defeated: (\d+)/\d+")
 
 # Character ID mapping
 _CHAR_MAP = {
@@ -66,9 +72,20 @@ class LogRunState:
         self.events_seen: list[str] = []
         self.total_players = 1
         self.run_started = False
+        # Combat telemetry captured from godot.log
+        self.cards_played: list[str] = []
+        self.extra_turns = 0
+        self.elites_defeated = 0
 
     def to_dict(self) -> dict:
-        """Convert to dict compatible with CurrentRun.model_dump()."""
+        """Convert to dict compatible with CurrentRun.model_dump().
+
+        Combat telemetry fields (cards_played, extra_turns, elites_defeated)
+        are extra signal the log carries that CurrentRun's Pydantic model
+        doesn't currently declare — they're returned for SSE consumers that
+        opt in via dict access. Adding them to CurrentRun would force model
+        bumps on every save-file-only path that doesn't have these signals.
+        """
         return {
             "active": self.active,
             "character": self.character,
@@ -87,6 +104,9 @@ class LogRunState:
             "floors": [],
             "player_index": 0,
             "total_players": self.total_players,
+            "cards_played": list(self.cards_played),
+            "extra_turns": self.extra_turns,
+            "elites_defeated": self.elites_defeated,
         }
 
 
@@ -325,6 +345,23 @@ class LogTailer:
         m = _RE_LOBBY_DISCONNECT.search(line)
         if m and m.group(1) == "QuitGameOver":
             self.state.active = False
+            return True
+
+        # Card played in combat
+        m = _RE_PLAYING_CARD.search(line)
+        if m:
+            self.state.cards_played.append(m.group(1))
+            return True
+
+        # Extra turn triggered (Regent / Heel / etc.)
+        if _RE_EXTRA_TURN.search(line):
+            self.state.extra_turns += 1
+            return True
+
+        # Elites defeated counter — game emits cumulative count
+        m = _RE_ELITES_DEFEATED.search(line)
+        if m:
+            self.state.elites_defeated = int(m.group(1))
             return True
 
         return False

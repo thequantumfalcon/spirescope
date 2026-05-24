@@ -24,6 +24,23 @@
 {% set filter_action = "/analytics" %}
 {% include "_filter_bar.html" %}
 
+{% if tilt and tilt.tilting %}
+<div class="danger-banner danger-critical" role="alert">
+  <strong>Tilt detected:</strong> {{ tilt.message }}
+</div>
+{% endif %}
+
+{% if anti_patterns %}
+<h2 class="mt-md">Recurring Patterns</h2>
+<p class="text-sm text-muted">Named anti-patterns detected across your run history. Each one tells you what to watch for next session.</p>
+{% for p in anti_patterns %}
+<div class="card mb-sm" style="border-left: 3px solid {% if p.severity == 'warning' %}var(--crimson){% else %}var(--gold){% endif %};">
+  <strong>{{ p.name }}</strong> <span class="tag tag-keyword">{{ p.stat }}</span>
+  <p class="text-sm mt-sm">{{ p.description }}</p>
+</div>
+{% endfor %}
+{% endif %}
+
 {% if stats.overview.total == 0 %}
 <p class="text-muted mb-xl mt-lg">No run data yet. Complete some runs in Slay the Spire 2 and your stats will appear here.</p>
 {% else %}

@@ -104,5 +104,28 @@
     {% else %}<p class="text-muted">No insights.</p>{% endif %}
   </div>
 </div>
+
+{% if rivalry_diff %}
+<h2 class="mt-lg">Seed-Match Diff</h2>
+<p class="text-sm text-muted">Both runs played seed <code class="tag tag-keyword">{{ rivalry_diff.seed }}</code> — same map, same rolls. Diffs are decisions you and your rival made differently.</p>
+<div class="text-sm mb-md">
+  Your result: <strong>{{ rivalry_diff.your_result }}</strong> (floor {{ rivalry_diff.your_floor }})
+  &middot;
+  Rival result: <strong>{{ rivalry_diff.rival_result }}</strong> (floor {{ rivalry_diff.rival_floor }})
+</div>
+{% if rivalry_diff.card_diffs %}
+<h3 class="mt-md">Card Pick Differences</h3>
+<table class="comparison-table">
+  <thead><tr><th>Floor</th><th>Yours</th><th>Rival</th></tr></thead>
+  <tbody>
+  {% for d in rivalry_diff.card_diffs %}
+    <tr><td>{{ d.floor }}</td><td>{{ d.yours }}</td><td>{{ d.rival }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-muted">No card-pick differences — you both chose the same cards on every floor.</p>
+{% endif %}
+{% endif %}
 {% endif %}
 {% endblock %}

@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 _SUBREDDITS = ["slaythespire", "slaythespire2"]
 
 
-def _fetch_reddit_json(url: str, retries: int = 2) -> dict:
+def _fetch_reddit_json(url: str, retries: int = 2) -> dict | None:
     """Fetch a Reddit JSON endpoint with retry on network/HTTP error."""
     for attempt in range(retries + 1):
         try:

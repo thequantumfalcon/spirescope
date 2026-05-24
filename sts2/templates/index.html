@@ -95,6 +95,11 @@
     {% if data_status.save_connected %}<span class="text-green">Save files connected</span>{% else %}<span class="text-muted">No save files found</span>{% endif %}
     {% if data_status.last_updated %}&bull; Wiki data: {{ data_status.last_updated[:10] }}{% endif %}
   </p>
+  {% if data_age_days is not none and data_age_days > 30 %}
+  <p class="text-sm text-yellow mt-sm">
+    Wiki data is <strong>{{ data_age_days }} days old</strong>. Run <code>python -m sts2 update</code> to refresh card/relic/potion data.
+  </p>
+  {% endif %}
 </div>
 {% endif %}
 

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block page_id %}prophecy{% endblock %}
+{% block title %}Prophecy Engine{% endblock %}
+{% block content %}
+<h1>Prophecy Engine</h1>
+<p class="text-muted mb-md">Predict your run before you start it. Estimates draw on your historical runs at the same character and similar ascension level.</p>
+
+<form action="/prophecy" method="get" class="mb-lg">
+  <label class="mr-sm">Character:
+    <select name="character">
+      <option value="">— select —</option>
+      {% for char in characters %}
+      <option value="{{ char }}" {% if char == selected_character %}selected{% endif %}>{{ char }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="mr-sm">Ascension:
+    <input type="number" name="ascension" min="0" max="20" value="{{ selected_ascension }}" style="width:5em;">
+  </label>
+  <button type="submit" class="btn btn-sm">Predict</button>
+</form>
+
+{% if result %}
+  {% if result.available %}
+  <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-box">
+      <div class="num {% if result.win_probability >= 50 %}text-green{% elif result.win_probability >= 25 %}text-yellow{% else %}text-red{% endif %}">{{ result.win_probability }}%</div>
+      <div class="label">Win Probability</div>
+    </div>
+    <div class="stat-box"><div class="num">{{ result.avg_floor }}</div><div class="label">Avg Floor</div></div>
+    <div class="stat-box"><div class="num">{{ result.sample_size }}</div><div class="label">Sample Size</div></div>
+  </div>
+
+  {% if result.danger_zone %}
+  <h2 class="mt-lg">Danger Zone</h2>
+  <p>Floors <strong>{{ result.danger_zone.range }}</strong> account for <strong>{{ result.danger_zone.percentage }}%</strong> of your deaths at this character + ascension ({{ result.danger_zone.deaths }} deaths in this range). Plan ahead — extra healing, key relics, or careful path picks before reaching this band.</p>
+  {% endif %}
+
+  {% if result.recommendation %}
+  <h2 class="mt-lg">Recommendation</h2>
+  <div class="card card-tip mb-md"><p>{{ result.recommendation }}</p></div>
+  {% endif %}
+  {% else %}
+  <div class="card card-loss"><p>{{ result.reason }}</p></div>
+  {% endif %}
+{% endif %}
+{% endblock %}

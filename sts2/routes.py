@@ -200,13 +200,24 @@ async def index(request: Request):
             if len(next_epochs) >= 3:
                 break
 
+    last_updated = await asyncio.to_thread(get_last_updated)
+    # Stale-data hint: surface a badge when the wiki data is >30 days old so
+    # players know to run `python -m sts2 update`. Does NOT auto-network on
+    # launch (per Round 30 — that would break the local-first promise).
+    data_age_days = None
+    if last_updated:
+        try:
+            parsed = datetime.fromisoformat(last_updated)
+            data_age_days = (datetime.now(timezone.utc) - parsed).days
+        except (ValueError, TypeError):
+            pass
     return a.templates.TemplateResponse(request, "index.html", {
         "characters": CHARACTERS, "progress": progress, "recent_runs": runs[:5],
         "current_streak": current_streak, "streak_character": streak_character,
         "next_epochs": next_epochs,
         "kb": a.kb, "total_cards": len(a.kb.cards), "total_relics": len(a.kb.relics),
         "total_potions": len(a.kb.potions), "total_enemies": len(a.kb.enemies),
-        "last_updated": await asyncio.to_thread(get_last_updated),
+        "last_updated": last_updated, "data_age_days": data_age_days,
         "data_status": a.kb.get_data_status(skip_last_updated=True),
         "update_info": get_update_info(), "undiscovered_cards": undiscovered,
     })
@@ -496,11 +507,21 @@ async def compare_runs(request: Request,
                 "relics": len(r.relics),
                 "total_damage": sum(f.damage_taken for f in r.floors)}
 
+    # Seed-match rivalry diff: when both runs played the same seed, surface
+    # floor-by-floor decision differences (card picks chosen differently, HP
+    # divergence). Reuses the existing rivalry module.
+    rivalry_diff = None
+    if run_a.seed and run_b.seed and run_a.seed == run_b.seed:
+        from sts2.rivalry import compare_seed_runs
+        result = compare_seed_runs(run_a, run_b, kb=a.kb)
+        if "error" not in result:
+            rivalry_diff = result
     return a.templates.TemplateResponse(request, "compare.html", {
         "run_a": run_a, "run_b": run_b, "kb": a.kb,
         "analysis_a": analyze_run(run_a, kb=a.kb), "analysis_b": analyze_run(run_b, kb=a.kb),
         "deck_diff": deck_diff, "relic_diff": relic_diff,
         "stats_a": run_stats(run_a), "stats_b": run_stats(run_b),
+        "rivalry_diff": rivalry_diff,
     })
 
 
@@ -525,9 +546,34 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
             pass
         except Exception:
             pass
+    # Tamper-evidence: SHA-256 Merkle chain over every floor decision.
+    # Same chain = same run, byte-for-byte. Shared hash lets two players
+    # confirm they're talking about the identical run.
+    from sts2.integrity import compute_merkle_root
+    integrity_hash = compute_merkle_root(run)
+    # Cascade map: per-pick downstream impact (Δ damage, Δ turns vs pre-pick).
+    # Helps identify which pick changed the run's trajectory.
+    from sts2.cascade import trace_all_picks
+    try:
+        cascade = trace_all_picks(run, a.kb)
+    except Exception:
+        cascade = []
+    # Archetype drift: reconstruct deck floor-by-floor, classify per snapshot,
+    # detect dominant-archetype shift between early and late game.
+    from sts2.drift import compute_archetype_drift, detect_drift_alert
+    try:
+        drift_trajectory = compute_archetype_drift(run, a.kb)
+        drift_alert = detect_drift_alert(drift_trajectory)
+    except Exception:
+        drift_trajectory = []
+        drift_alert = None
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "kb": a.kb, "run_analysis": run_analysis,
         "archetype": archetype, "autopsy": autopsy,
+        "integrity_hash": integrity_hash,
+        "cascade": cascade,
+        "drift_trajectory": drift_trajectory,
+        "drift_alert": drift_alert,
     })
 
 
@@ -650,6 +696,16 @@ async def analytics(request: Request,
 
     selected_preset = preset if preset in ("7d", "30d", "90d", "all") else ""
     boss_matchups = compute_boss_matchups(filtered, kb=a.kb)
+    # Behavior signals: tilt detection (session momentum) + named anti-patterns
+    # (The Hoarder, Greedy Builder, Coward, Potion Paralysis). Surfaces here
+    # because /analytics is where a player goes to reflect.
+    from sts2.behavior import detect_anti_patterns, detect_tilt
+    try:
+        tilt = detect_tilt(filtered)
+        anti_patterns = detect_anti_patterns(filtered)
+    except Exception:
+        tilt = None
+        anti_patterns = []
     return a.templates.TemplateResponse(request, "analytics.html", {
         "stats": stats, "kb": a.kb,
         "selected_ascension": ascension, "ascension_levels": ascension_levels,
@@ -657,6 +713,7 @@ async def analytics(request: Request,
         "available_versions": available_versions, "selected_version": version,
         "selected_from": date_from or "", "selected_to": date_to or "",
         "selected_preset": selected_preset,
+        "tilt": tilt, "anti_patterns": anti_patterns,
     })
 
 
@@ -669,6 +726,110 @@ async def records(request: Request):
     recs = compute_records(runs, progress)
     return a.templates.TemplateResponse(request, "records.html", {
         "records": recs, "kb": a.kb,
+    })
+
+
+@router.get("/hypothesis", response_class=HTMLResponse)
+async def hypothesis_list(request: Request):
+    """List + manage Bayesian-style hypotheses tested against run history."""
+    from sts2.hypothesis import load_hypotheses, save_hypotheses, update_hypothesis
+    a = _app()
+    runs = await a._get_runs()
+    hyps = load_hypotheses()
+    # Re-evaluate all hypotheses fresh against current run history so the page
+    # is idempotent and never double-counts.
+    for h in hyps.values():
+        h["runs_tested"] = 0
+        h["runs_matching"] = 0
+        h["runs_not_matching"] = 0
+        h["wins_matching"] = 0
+        h["wins_not_matching"] = 0
+        h["verdict"] = "insufficient_data"
+        h.pop("effect_size", None)
+    save_hypotheses(hyps)
+    for run in runs:
+        for hyp_id in list(hyps):
+            update_hypothesis(hyp_id, run)
+    hyps = load_hypotheses()
+    return a.templates.TemplateResponse(request, "hypothesis.html", {
+        "hypotheses": hyps,
+        "csrf_token": a.generate_csrf_token(),
+        "characters": CHARACTERS,
+    })
+
+
+@router.post("/hypothesis/create", response_class=HTMLResponse)
+async def hypothesis_create(request: Request,
+                            csrf_token: str = Form(""),
+                            text: str = Form("", max_length=200),
+                            condition_type: str = Form(""),
+                            param_value: str = Form("", max_length=100)):
+    import hashlib
+    import time as _t
+    from starlette.responses import RedirectResponse
+
+    from sts2.hypothesis import register_hypothesis
+    a = _app()
+    if not a.validate_csrf_token(csrf_token):
+        return PlainTextResponse("Invalid form submission.", status_code=403)
+    if not text or condition_type not in ("elite_skip", "deck_size", "card_pick", "character"):
+        return PlainTextResponse("Invalid hypothesis.", status_code=400)
+    hyp_id = hashlib.sha1(f"{text}{_t.time()}".encode()).hexdigest()[:12]
+    params: dict = {}
+    if condition_type == "deck_size":
+        try:
+            params["max_size"] = max(1, min(100, int(param_value or "25")))
+        except ValueError:
+            params["max_size"] = 25
+    elif condition_type == "card_pick":
+        params["card_id"] = param_value[:100]
+    elif condition_type == "character":
+        params["character"] = param_value[:50]
+    register_hypothesis(hyp_id, text[:200], condition_type, params)
+    return RedirectResponse("/hypothesis", status_code=303)
+
+
+@router.post("/hypothesis/delete/{hyp_id}", response_class=HTMLResponse)
+async def hypothesis_delete(request: Request,
+                            hyp_id: str = Path(max_length=64),
+                            csrf_token: str = Form("")):
+    from starlette.responses import RedirectResponse
+
+    from sts2.hypothesis import load_hypotheses, save_hypotheses
+    a = _app()
+    if not a.validate_csrf_token(csrf_token):
+        return PlainTextResponse("Invalid form submission.", status_code=403)
+    hyps = load_hypotheses()
+    if hyp_id in hyps:
+        del hyps[hyp_id]
+        save_hypotheses(hyps)
+    return RedirectResponse("/hypothesis", status_code=303)
+
+
+@router.get("/prophecy", response_class=HTMLResponse)
+async def prophecy(request: Request,
+                   character: str = Query("", max_length=20),
+                   ascension: int = Query(0, ge=0, le=20)):
+    """Pre-run prediction: win probability, danger zones, recommendation.
+
+    Uses historical runs at the same character + similar ascension to estimate
+    what's likely to happen if you start this run. Empowers planning rather
+    than gating play.
+    """
+    from sts2.prophecy import generate_prophecy
+    a = _app()
+    result = None
+    if character:
+        runs = await a._get_runs()
+        try:
+            result = generate_prophecy(character, ascension, runs)
+        except Exception:
+            result = {"available": False, "reason": "Prophecy computation failed."}
+    return a.templates.TemplateResponse(request, "prophecy.html", {
+        "characters": CHARACTERS,
+        "selected_character": character,
+        "selected_ascension": ascension,
+        "result": result,
     })
 
 
@@ -1104,10 +1265,19 @@ async def analyze_deck(request: Request):
     selected_counts: dict[str, int] = {}
     for cid in card_ids:
         selected_counts[cid] = selected_counts.get(cid, 0) + 1
+    # Deck health via spectral graph analysis: builds keyword-synergy graph,
+    # computes algebraic connectivity + orphan list. Score 0-100, higher = more
+    # internally coherent. Identifies cards with zero synergy connections.
+    from sts2.spectral import deck_spectral_health
+    try:
+        spectral_health = deck_spectral_health(card_ids, a.kb)
+    except Exception:
+        spectral_health = None
     return a.templates.TemplateResponse(request, "deck.html", {
         "cards": a.kb.cards, "analysis": analysis, "selected_ids": card_ids,
         "selected_counts": selected_counts,
         "kb": a.kb, "csrf_token": a.generate_csrf_token(),
+        "spectral_health": spectral_health,
     })
 
 
@@ -1149,13 +1319,16 @@ _sse_active = 0
 @router.get("/api/live/stream")
 async def live_stream(player: int = Query(0, ge=0, le=3)):
     global _sse_active
+    # Atomic check-and-reserve: increment *before* returning the StreamingResponse
+    # so concurrent requests can't all pass the cap check while the deferred
+    # generator hasn't incremented yet.
     if _sse_active >= _SSE_MAX_CONNECTIONS:
         return PlainTextResponse("Too many live connections. Close another tab.",
                                  status_code=429)
+    _sse_active += 1
 
     async def event_generator():
         global _sse_active
-        _sse_active += 1
         try:
             last_hash = ""
             idle_since = time.monotonic()
@@ -1218,7 +1391,10 @@ async def api_card(card_id: str = Path(max_length=200)):
     a = _app()
     card = a.kb.get_card_by_id(card_id)
     if not card:
-        return PlainTextResponse("Card not found.", status_code=404)
+        # Match the JSON shape used by the success path so API clients
+        # can parse both responses uniformly.
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"error": "Card not found.", "card_id": card_id}, status_code=404)
     progress = await a._get_progress()
     card_stats = progress.card_stats.get(card_id, {}) if progress else {}
     synergies = a.kb.find_synergies(card_id)

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="SpireScope — Slay the Spire 2 companion dashboard. Browse cards, relics, enemies, track live runs, and analyze decks.">
   <meta name="theme-color" content="#0c0a0e">
+  <meta name="csrf-token" content="{{ csrf() }}">
   <meta property="og:title" content="{% block og_title %}SpireScope{% endblock %}">
   <meta property="og:description" content="Slay the Spire 2 companion — cards, relics, enemies, live run tracking, and deck analysis.">
   <meta property="og:type" content="website">
@@ -35,6 +36,8 @@
       <a href="/runs" {% if p.startswith('/runs') %}aria-current="page"{% endif %}>Run History</a>
       <a href="/analytics" {% if p == '/analytics' %}aria-current="page"{% endif %}>Analytics</a>
       <a href="/records" {% if p == '/records' %}aria-current="page"{% endif %}>Records</a>
+      <a href="/prophecy" {% if p == '/prophecy' %}aria-current="page"{% endif %}>Prophecy</a>
+      <a href="/hypothesis" {% if p.startswith('/hypothesis') %}aria-current="page"{% endif %}>Hypothesis</a>
       <a href="/graveyard" {% if p == '/graveyard' %}aria-current="page"{% endif %}>Graveyard</a>
       <a href="/collections" {% if p == '/collections' %}aria-current="page"{% endif %}>Collections</a>
       <a href="/epochs" {% if p == '/epochs' %}aria-current="page"{% endif %}>Epochs</a>
@@ -45,7 +48,7 @@
         <button type="submit">Search</button>
       </form>
     </div>
-    <button class="stop-btn" aria-label="Stop SpireScope" onclick="fetch('/shutdown',{method:'POST'}).then(()=>{document.body.innerHTML='<h1 style=&quot;text-align:center;margin-top:20vh;color:var(--gold)&quot;>SpireScope stopped. You can close this tab.</h1>'})">Stop</button>
+    <button class="stop-btn" aria-label="Stop SpireScope">Stop</button>
     <button class="theme-toggle" aria-label="Switch to light mode">&#9790;</button>
   </nav>
   <main id="main" class="container" data-page="{% block page_id %}home{% endblock %}">

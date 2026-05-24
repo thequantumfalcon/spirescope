@@ -81,6 +81,11 @@ def compute_aggregate_stats(runs: list[RunHistory]) -> dict:
 def merge_aggregate(existing: dict, imported: dict) -> dict:
     """Weighted merge with anti-manipulation cap."""
     if not existing or existing.get("run_count", 0) == 0:
+        # Apply min-cap even on first import — prevents a malicious first file
+        # from seeding massive bogus stats that then anchor the future cap.
+        imported_count = imported.get("run_count", 0)
+        if imported_count > _MIN_IMPORT_CAP:
+            return {**imported, "run_count": _MIN_IMPORT_CAP}
         return imported
 
     existing_count = existing.get("run_count", 0)

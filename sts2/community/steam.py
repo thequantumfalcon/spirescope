@@ -27,7 +27,7 @@ _GUIDES_URL = f"https://steamcommunity.com/app/{_APP_ID}/guides/"
 _DISCUSSIONS_URL = f"https://steamcommunity.com/app/{_APP_ID}/discussions/"
 
 
-def _fetch_url(url: str, retries: int = 1) -> str:
+def _fetch_url(url: str, retries: int = 1) -> str | None:
     """Fetch URL content as string with retry."""
     for attempt in range(retries + 1):
         try:
@@ -107,10 +107,10 @@ class _GuideListParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attr_dict = dict(attrs)
         # Guide links are <a> tags pointing to /sharedfiles/filedetails/
-        if tag == "a" and attr_dict.get("href", "").startswith("https://steamcommunity.com/sharedfiles/filedetails/"):
+        if tag == "a" and (attr_dict.get("href") or "").startswith("https://steamcommunity.com/sharedfiles/filedetails/"):
             self._current = {"url": attr_dict["href"], "title": ""}
         # Guide title is inside a div with class containing "workshopItemTitle"
-        if tag == "div" and "workshopItemTitle" in attr_dict.get("class", ""):
+        if tag == "div" and "workshopItemTitle" in (attr_dict.get("class") or ""):
             self._in_title = True
 
     def handle_data(self, data: str) -> None:
@@ -136,7 +136,7 @@ class _GuideDetailParser(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attr_dict = dict(attrs)
-        if tag == "div" and "workshopItemDescription" in attr_dict.get("class", ""):
+        if tag == "div" and "workshopItemDescription" in (attr_dict.get("class") or ""):
             self._in_description = True
             self._depth = 0
         if self._in_description and tag == "div":
@@ -166,6 +166,10 @@ def _scrape_guides(existing_names: set[str], result: SourceResult) -> None:
         result.errors.append(f"Steam guides: {e}")
         print("    Guides: network error, skipping")
         return
+    if not html:
+        result.errors.append("Steam guides: empty response")
+        print("    Guides: empty response, skipping")
+        return
 
     parser = _GuideListParser()
     try:
@@ -174,6 +178,16 @@ def _scrape_guides(existing_names: set[str], result: SourceResult) -> None:
         result.errors.append(f"Steam guides parse: {e}")
         print("    Guides: parse error, skipping")
         return
+
+    # Silent-staleness defense: if Steam's HTML structure renames the
+    # workshopItemTitle/workshopItemDescription/forum_topic_overlay classes,
+    # the parser silently returns zero guides — looks like "no STS2 guides
+    # exist" rather than "scraper is broken". Log loud when zero are found.
+    if not parser.guides:
+        msg = "Steam guides: parser returned 0 guides — likely Steam HTML changed (workshopItemTitle class rename?)"
+        log.warning(msg)
+        result.errors.append(msg)
+        print(f"    Warning: {msg}")
 
     # Filter guides with strategy/tier keywords in title
     matching = []
@@ -241,8 +255,8 @@ class _DiscussionListParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attr_dict = dict(attrs)
         # Discussion topic links
-        if tag == "a" and "forum_topic_overlay" in attr_dict.get("class", ""):
-            href = attr_dict.get("href", "")
+        if tag == "a" and "forum_topic_overlay" in (attr_dict.get("class") or ""):
+            href = (attr_dict.get("href") or "")
             if href.startswith("https://"):
                 self._current = {"url": href, "title": ""}
                 self._in_title = True

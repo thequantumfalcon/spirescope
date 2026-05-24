@@ -191,13 +191,13 @@
 {% endif %}
 
 <div id="live-config" data-player="{{ selected_player }}" data-was-active="true"></div>
-<script src="/static/live.js"></script>
+<script src="/static/live.js?v={{ live_js_hash }}"></script>
 
 {% else %}
 <h1>No Active Run</h1>
 <p class="text-muted mb-md">Start a run in Slay the Spire 2 and this page will automatically show your live progress.</p>
 <p class="text-muted">Checking for an active run...</p>
 <div id="live-config" data-player="{{ selected_player }}" data-was-active="false"></div>
-<script src="/static/live.js"></script>
+<script src="/static/live.js?v={{ live_js_hash }}"></script>
 {% endif %}
 {% endblock %}

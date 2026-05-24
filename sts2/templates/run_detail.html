@@ -133,6 +133,53 @@
 </details>
 {% endif %}
 
+{% if drift_trajectory %}
+<h2 class="mt-lg">Archetype Drift</h2>
+{% if drift_alert %}
+<div class="card card-caution mb-md"><p><strong>Drift detected:</strong> {{ drift_alert }}</p></div>
+{% endif %}
+<p class="text-sm text-muted">Floor-by-floor archetype classification as the deck grew. Drift between early and late dominant archetype is the danger sign.</p>
+<table class="comparison-table">
+  <thead><tr><th>Floor</th><th>Archetype</th><th>Confidence</th><th>Deck Size</th><th>Card Added</th></tr></thead>
+  <tbody>
+  {% for t in drift_trajectory %}
+    <tr>
+      <td>F{{ t.floor }}</td>
+      <td>{{ t.archetype }}</td>
+      <td>{{ (t.confidence * 100)|int }}%</td>
+      <td>{{ t.deck_size }}</td>
+      <td>{% if t.card_added %}{{ kb.id_to_name(t.card_added) }}{% else %}—{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if cascade %}
+<h2 class="mt-lg">Cascade Map</h2>
+<p class="text-sm text-muted">Each card pick's downstream impact — change in damage-taken and combat length after the pick vs before. Negative damage delta = your damage taken dropped after that pick.</p>
+<table class="comparison-table">
+  <thead><tr><th>Floor</th><th>Card</th><th>Δ Damage</th><th>Δ Turns</th><th>Impact</th></tr></thead>
+  <tbody>
+  {% for c in cascade %}
+    <tr>
+      <td>F{{ c.picked_floor }}</td>
+      <td>{{ c.card_name }}</td>
+      <td class="{% if c.damage_delta < 0 %}text-green{% elif c.damage_delta > 0 %}text-red{% endif %}">{{ c.damage_delta }}</td>
+      <td>{{ c.turns_delta }}</td>
+      <td><span class="tag tag-{% if c.impact == 'positive' %}skill{% elif c.impact == 'negative' %}attack{% else %}keyword{% endif %}">{{ c.impact }}</span></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if integrity_hash %}
+<h2 class="mt-lg">Run Integrity</h2>
+<p class="text-sm text-muted">SHA-256 Merkle chain over every floor decision. Same hash means same run, byte-for-byte — share it to prove a run hasn't been edited.</p>
+<code class="tag tag-keyword run-integrity-hash">{{ integrity_hash }}</code>
+{% endif %}
+
 {% else %}
 <h1>Run Not Found</h1>
 {% endif %}
