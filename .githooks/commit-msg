@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# commit-msg hook — reject commit messages with AI authorship attribution.
+# Complements the pre-commit hook (which scans staged FILE content).
+# This one scans the COMMIT MESSAGE itself.
+#
+# User-wide standing rule: see ~/.claude/CLAUDE.md RULE 1.
+
+set -euo pipefail
+
+COMMIT_MSG_FILE="$1"
+
+if [ ! -f "$COMMIT_MSG_FILE" ]; then
+    exit 0
+fi
+
+PATTERNS=(
+    "co-authored-by:[[:space:]]*claude"
+    "noreply@anthropic\.com"
+    "claude@anthropic\.com"
+    "🤖 generated with"
+    "generated with.*\[claude code\]"
+    "generated with.*claude\.com/claude-code"
+    "assisted by claude"
+    "authored by claude code"
+)
+
+MSG=$(grep -v '^#' "$COMMIT_MSG_FILE" || true)
+
+for pat in "${PATTERNS[@]}"; do
+    if echo "$MSG" | grep -iqE "$pat"; then
+        echo ""
+        echo "🛑 commit-msg BLOCKED: commit message contains AI authorship attribution matching '$pat'" >&2
+        echo ""
+        echo "   Standing rule (~/.claude/CLAUDE.md, RULE 1): no AI attribution, ever." >&2
+        echo "   Strip the line from your commit message and try again." >&2
+        echo ""
+        echo "   Offending lines:" >&2
+        echo "$MSG" | grep -inE "$pat" | head -5 >&2
+        echo ""
+        exit 1
+    fi
+done
+
+exit 0

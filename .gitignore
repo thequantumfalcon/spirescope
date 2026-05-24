@@ -43,6 +43,10 @@ sts2/risk.py
 sts2/diagnosis.py
 sts2/data/pheromones.json
 sts2/data/hypotheses.json
+sts2/data/.fetcher_keys.json
+ROADMAP.md
+AUDIT.md
+SESSION_NOTES.md
 
 # Claude
 .claude/

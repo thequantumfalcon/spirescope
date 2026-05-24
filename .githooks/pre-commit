@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+#
+# Pre-commit hook — reject any commit that contains AI authorship attribution.
+# This enforces the user-wide standing rule from ~/.claude/CLAUDE.md.
+#
+# Checks both the staged commit message (via $1 if called as commit-msg) and
+# any trailers already in the commit buffer. Also scans staged content for
+# pasted "Generated with Claude Code" boilerplate.
+#
+# If you need to bypass (you shouldn't), use: git commit --no-verify
+# (but that also skips other legitimate checks — rather: fix the message)
+
+set -euo pipefail
+
+# Pattern list — case-insensitive
+PATTERNS=(
+    "co-authored-by:[[:space:]]*claude"
+    "noreply@anthropic\.com"
+    "claude@anthropic\.com"
+    "🤖 generated with"
+    "generated with.*\[claude code\]"
+    "generated with.*claude\.com/claude-code"
+    "assisted by claude"
+    "authored by claude code"
+)
+
+# The commit message is in .git/COMMIT_EDITMSG at pre-commit time if using -m
+# but more reliably inspected at commit-msg time. Git's pre-commit runs BEFORE
+# the message is finalized, so we focus here on pasted-content checks in staged diff.
+
+# Check staged diff for pasted AI-attribution lines.
+# Exclude self-referential files where the patterns appear by design
+# (the hooks themselves, the CI workflow, CLAUDE.md). Without this, staging
+# the hooks for the first time fails because they contain the patterns.
+STAGED=$(git diff --cached -- \
+    ':(exclude).githooks/*' \
+    ':(exclude).github/workflows/no-ai-attribution.yml' \
+    ':(exclude)CLAUDE.md' \
+    2>/dev/null || true)
+
+if [ -n "$STAGED" ]; then
+    for pat in "${PATTERNS[@]}"; do
+        if echo "$STAGED" | grep -iqE "$pat"; then
+            echo ""
+            echo "🛑 pre-commit BLOCKED: staged change contains AI authorship attribution matching '$pat'" >&2
+            echo ""
+            echo "   Standing rule (~/.claude/CLAUDE.md, RULE 1): no AI attribution, ever." >&2
+            echo "   Strip the line and re-stage, or use --no-verify only if you really mean it." >&2
+            echo ""
+            echo "   Offending lines:" >&2
+            echo "$STAGED" | grep -inE "$pat" | head -5 >&2
+            echo ""
+            exit 1
+        fi
+    done
+fi
+
+exit 0

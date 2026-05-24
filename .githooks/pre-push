@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+#
+# pre-push hook — last-chance scan of everything about to go to the remote.
+# Scans BOTH commit messages and tracked file content for AI attribution.
+# Blocks the push before it reaches GitHub.
+
+set -euo pipefail
+
+REMOTE="${1:-}"
+URL="${2:-}"
+
+PATTERNS=(
+    "co-authored-by:[[:space:]]*claude"
+    "noreply@anthropic\.com"
+    "claude@anthropic\.com"
+    "🤖 generated with"
+    "generated with.*\[claude code\]"
+    "generated with.*claude\.com/claude-code"
+    "assisted by claude"
+    "authored by claude code"
+    "claude \(anthropic\)"
+    "senior research partner:[[:space:]]*claude"
+    "thomas[[:space:]]*/[[:space:]]*claude"
+)
+
+FAIL=0
+
+while IFS=' ' read -r local_ref local_sha remote_ref remote_sha; do
+    if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+        # Branch deletion — skip
+        continue
+    fi
+    if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+        # New branch — scan all commits reachable from local_sha that aren't already on remote
+        range=$(git rev-list "$local_sha" --not --remotes="$REMOTE" 2>/dev/null | head -200)
+    else
+        # Existing branch — scan only the new commits
+        range=$(git rev-list "$remote_sha..$local_sha" 2>/dev/null)
+    fi
+
+    if [ -z "$range" ]; then
+        continue
+    fi
+
+    for commit in $range; do
+        msg=$(git log -1 --format='%B' "$commit")
+        for pat in "${PATTERNS[@]}"; do
+            if echo "$msg" | grep -iqE "$pat"; then
+                echo ""
+                echo "🛑 pre-push BLOCKED: commit $commit has AI attribution matching '$pat' in its message" >&2
+                echo ""
+                echo "$msg" | grep -inE "$pat" | head -3 >&2
+                FAIL=1
+            fi
+        done
+    done
+done
+
+if [ $FAIL -eq 1 ]; then
+    echo "" >&2
+    echo "Fix: git rebase -i, drop or amend the offending commit(s), then push again." >&2
+    echo "Or the nuclear option: git filter-repo --message-callback (destructive; confirm first)." >&2
+    exit 1
+fi
+
+# Also scan tracked file content in HEAD
+EXCLUDES='^(CLAUDE\.md|\.githooks/|\.github/workflows/no-ai-attribution\.yml|\.gitignore)$'
+for pat in "${PATTERNS[@]}"; do
+    hits=$(git ls-files | grep -vE "$EXCLUDES" | xargs -I{} grep -liE "$pat" {} 2>/dev/null || true)
+    if [ -n "$hits" ]; then
+        echo "" >&2
+        echo "🛑 pre-push BLOCKED: tracked files contain AI attribution matching '$pat':" >&2
+        echo "$hits" | sed 's/^/  /' >&2
+        FAIL=1
+    fi
+done
+
+if [ $FAIL -eq 1 ]; then
+    exit 1
+fi
+
+exit 0

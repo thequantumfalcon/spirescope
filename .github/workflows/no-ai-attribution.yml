@@ -1,0 +1,95 @@
+name: No AI Attribution
+
+# Server-side enforcement: rejects any push/PR containing Claude/Anthropic
+# attribution in commit messages OR tracked file content.
+#
+# Runs on EVERY push to ANY branch and on EVERY pull request. Failing this
+# workflow should be paired with a branch protection rule so master cannot
+# merge violating content.
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  scan:
+    name: Scan for AI attribution
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan commit messages in this push
+        run: |
+          set -euo pipefail
+          # For PRs, compare against the base. For pushes, check HEAD commits since
+          # the previous ref — fall back to scanning the last 50 commits.
+          if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
+            RANGE="${{ github.event.pull_request.base.sha }}..HEAD"
+          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            RANGE="${{ github.event.before }}..${{ github.event.after }}"
+          else
+            RANGE="HEAD~50..HEAD"
+          fi
+          echo "Scanning commit messages in range: $RANGE"
+          MSGS=$(git log --format='%B' "$RANGE" 2>/dev/null || git log --format='%B' -50)
+          PATTERNS=(
+            "co-authored-by:[[:space:]]*claude"
+            "noreply@anthropic\.com"
+            "claude@anthropic\.com"
+            "generated with.*\[claude code\]"
+            "generated with.*claude\.com/claude-code"
+            "assisted by claude"
+            "authored by claude code"
+          )
+          FAIL=0
+          for pat in "${PATTERNS[@]}"; do
+            if echo "$MSGS" | grep -iqE "$pat"; then
+              echo "::error::Commit message contains forbidden pattern: $pat"
+              echo "$MSGS" | grep -inE "$pat" | head -5
+              FAIL=1
+            fi
+          done
+          if [ $FAIL -eq 1 ]; then
+            exit 1
+          fi
+
+      - name: Scan tracked file content
+        run: |
+          set -euo pipefail
+          # Exclude legitimate guardrail files (these contain the patterns by design)
+          EXCLUDES='^(CLAUDE\.md|\.githooks/|\.github/workflows/no-ai-attribution\.yml|\.gitignore)$'
+          FILES=$(git ls-files | grep -vE "$EXCLUDES")
+          PATTERNS=(
+            "co-authored-by:[[:space:]]*claude"
+            "noreply@anthropic\.com"
+            "claude@anthropic\.com"
+            "generated with.*claude code"
+            "assisted by claude"
+            "authored by claude code"
+            "\bclaude \(anthropic\)"
+            "senior research partner:[[:space:]]*claude"
+            "thomas[[:space:]]*/[[:space:]]*claude"
+            "thomas[[:space:]]*\([^)]*\),[[:space:]]*claude"
+          )
+          FAIL=0
+          for pat in "${PATTERNS[@]}"; do
+            HITS=$(echo "$FILES" | xargs -I{} grep -liE "$pat" {} 2>/dev/null || true)
+            if [ -n "$HITS" ]; then
+              echo "::error::Tracked files contain forbidden pattern '$pat':"
+              echo "$HITS"
+              for f in $HITS; do
+                echo "  $f:"
+                grep -inE "$pat" "$f" | head -3 | sed 's/^/    /'
+              done
+              FAIL=1
+            fi
+          done
+          if [ $FAIL -eq 1 ]; then
+            exit 1
+          fi
+          echo "✓ No AI attribution found in tracked files"
