@@ -1341,5 +1341,29 @@
       }
     ],
     "notes": ""
+  },
+  {
+    "id": "EVENT.DARV",
+    "name": "Darv",
+    "act": [],
+    "description": "Auto-discovered from save data",
+    "choices": [],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.ROUND_TEA_PARTY",
+    "name": "Round Tea Party",
+    "act": [],
+    "description": "Auto-discovered from save data",
+    "choices": [],
+    "notes": ""
+  },
+  {
+    "id": "EVENT.REFLECTIONS",
+    "name": "Reflections",
+    "act": [],
+    "description": "Auto-discovered from save data",
+    "choices": [],
+    "notes": ""
   }
 ]

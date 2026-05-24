@@ -153,7 +153,7 @@
     "id": "POTION.LIQUID_MEMORIES",
     "name": "Liquid Memories",
     "rarity": "Rare",
-    "description": "Put a card from your Discard Pile into your Hand. It costs 0 1 Energy this turn."
+    "description": "Put a card from your Discard Pile into your Hand. It's free to play this turn."
   },
   {
     "id": "POTION.BLESSING_OF_THE_FORGE",
@@ -213,7 +213,7 @@
     "id": "POTION.KINGS_COURAGE",
     "name": "King's Courage",
     "rarity": "Uncommon",
-    "description": "Forge additional resources."
+    "description": "Forge 15."
   },
   {
     "id": "POTION.POTION_OF_CAPACITY",
@@ -291,7 +291,7 @@
     "id": "POTION.FAIRY_IN_A_BOTTLE",
     "name": "Fairy in a Bottle",
     "rarity": "Rare",
-    "description": "When you would die, instead this potion is discarded and you heal to 30% of your Max HP."
+    "description": "When your HP would be reduced to 0, instead this potion is discarded and you heal to 30% of your Max HP."
   },
   {
     "id": "POTION.FRUIT_JUICE",
@@ -376,5 +376,11 @@
     "name": "Potion-Shaped Rock",
     "rarity": "Token",
     "description": "Deal 15 damage."
+  },
+  {
+    "id": "POTION.DEPRECATED_POTION",
+    "name": "Deprecated Potion",
+    "rarity": "None",
+    "description": "This potion has been removed from the game."
   }
 ]
