@@ -203,7 +203,7 @@ async def index(request: Request):
     last_updated = await asyncio.to_thread(get_last_updated)
     # Stale-data hint: surface a badge when the wiki data is >30 days old so
     # players know to run `python -m sts2 update`. Does NOT auto-network on
-    # launch (per Round 30 — that would break the local-first promise).
+    # launch — auto-fetch would break the local-first, no-telemetry promise.
     data_age_days = None
     if last_updated:
         try:
