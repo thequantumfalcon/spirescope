@@ -10,9 +10,11 @@ from sts2.fetcher import (
     _extract_json_objects,
     _extract_keywords,
     _load_existing_name_index,
+    _log_field_drift,
     _merge_with_existing,
     _scrape_cards,
     _scrape_relics,
+    _validate_extraction,
     _wiki_id_to_game_id,
 )
 
@@ -319,6 +321,98 @@ class TestExistingCount:
         (tmp_path / "bad.json").write_text("not json")
         with patch("sts2.fetcher.DATA_DIR", tmp_path):
             assert _existing_count("bad.json") == 0
+
+
+class TestValidateExtraction:
+    def test_all_fields_present(self):
+        raw = [{"id": "x", "name": "X", "cardType": "Attack", "description": "Deal damage"}]
+        assert _validate_extraction(raw, "CARD") is True
+
+    def test_empty_list_passes(self):
+        assert _validate_extraction([], "CARD") is True
+
+    def test_unknown_category_passes(self):
+        assert _validate_extraction([{"id": "x"}], "BOGUS") is True
+
+    def test_one_missing_field_under_threshold(self):
+        # 1 of 20 missing a field = 5%, below 10% threshold
+        raw = [{"id": f"x{i}", "name": "X", "cardType": "Attack", "description": "d"} for i in range(19)]
+        raw.append({"id": "y", "name": "Y", "cardType": "", "description": "d"})
+        assert _validate_extraction(raw, "CARD") is True
+
+    def test_systematic_field_rename_rejected(self):
+        # Simulate wiki renaming cardType -> type on all objects
+        raw = [{"id": f"x{i}", "name": "X", "type": "Attack", "description": "d"} for i in range(10)]
+        assert _validate_extraction(raw, "CARD") is False
+
+    def test_warning_lists_missing_fields(self, caplog):
+        import logging
+        raw = [{"id": "x", "name": "", "cardType": "", "description": "d"}] * 5
+        with caplog.at_level(logging.WARNING, logger="sts2.fetcher"):
+            _validate_extraction(raw, "CARD")
+        assert "cardType=5" in caplog.text
+        assert "name=5" in caplog.text
+
+
+class TestLogFieldDrift:
+    def test_writes_baseline_on_first_run(self, tmp_path):
+        raw = [{"id": "x", "name": "X", "cardType": "Attack"}]
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
+            _log_field_drift(raw, "CARD")
+        baseline = json.loads((tmp_path / ".fetcher_keys.json").read_text())
+        assert sorted(baseline["CARD"]) == ["cardType", "id", "name"]
+
+    def test_no_log_when_unchanged(self, tmp_path, caplog):
+        import logging
+        baseline = {"CARD": ["cardType", "id", "name"]}
+        (tmp_path / ".fetcher_keys.json").write_text(json.dumps(baseline))
+        raw = [{"id": "x", "name": "X", "cardType": "Attack"}]
+        with patch("sts2.fetcher.DATA_DIR", tmp_path), caplog.at_level(logging.INFO, logger="sts2.fetcher"):
+            _log_field_drift(raw, "CARD")
+        assert "drift" not in caplog.text
+
+    def test_logs_added_and_removed_keys(self, tmp_path, caplog):
+        import logging
+        baseline = {"CARD": ["cardType", "id", "name"]}
+        (tmp_path / ".fetcher_keys.json").write_text(json.dumps(baseline))
+        # Simulate wiki renaming cardType -> type and adding rarity
+        raw = [{"id": "x", "name": "X", "type": "Attack", "rarity": "Common"}]
+        with patch("sts2.fetcher.DATA_DIR", tmp_path), caplog.at_level(logging.INFO, logger="sts2.fetcher"):
+            _log_field_drift(raw, "CARD")
+        assert "drift" in caplog.text
+        assert "type" in caplog.text and "rarity" in caplog.text
+        assert "cardType" in caplog.text
+
+    def test_corrupt_baseline_treated_as_empty(self, tmp_path):
+        (tmp_path / ".fetcher_keys.json").write_text("not json")
+        raw = [{"id": "x", "name": "X", "cardType": "Attack"}]
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
+            _log_field_drift(raw, "CARD")
+        # Recovers and writes a valid baseline
+        baseline = json.loads((tmp_path / ".fetcher_keys.json").read_text())
+        assert "CARD" in baseline
+
+    def test_empty_raw_is_noop(self, tmp_path):
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
+            _log_field_drift([], "CARD")
+        assert not (tmp_path / ".fetcher_keys.json").exists()
+
+
+class TestScrapeRejectsOnFieldDrift:
+    def test_scrape_cards_returns_empty_when_cardtype_missing(self, tmp_path):
+        # Simulate wiki rename: cardType -> type on every card
+        cards = [
+            json.dumps({
+                "id": f"card-{i}", "category": "CARD", "name": f"Card{i}",
+                "character": "Ironclad", "energy": 1, "type": "Attack",
+                "rarity": "Common", "description": "Deal damage.",
+            })
+            for i in range(15)
+        ]
+        html = " ".join(cards)
+        with patch("sts2.fetcher.DATA_DIR", tmp_path):
+            result = _scrape_cards(html)
+        assert result == []
 
 
 class TestRunFetcher:

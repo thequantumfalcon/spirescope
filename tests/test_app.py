@@ -2524,3 +2524,201 @@ async def test_filter_bar_on_analytics(client):
     assert resp.status_code == 200
     assert "filter-bar" in resp.text
     assert "version-select" in resp.text
+
+
+# ---------------------------------------------------------------------------
+# Suite A — behavioral coverage for previously-untested route surfaces.
+# One test per route; each covers the spec's full set of cases for that route.
+# ---------------------------------------------------------------------------
+
+async def test_compare_runs_route_behavior(client):
+    """/runs/compare: 400 when missing one ID, 404 when one run missing, 200 when both present."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunHistory
+
+    run_a = RunHistory(id="cmp-a", character="Ironclad", win=True, deck=["CARD.BASH"])
+    run_b = RunHistory(id="cmp-b", character="Ironclad", win=False, deck=["CARD.STRIKE"])
+
+    # Missing one ID -> 400 (covers both omitted and empty-string cases).
+    resp_missing_b = await client.get("/runs/compare?a=cmp-a")
+    assert resp_missing_b.status_code == 400
+    resp_empty_a = await client.get("/runs/compare?a=&b=cmp-b")
+    assert resp_empty_a.status_code == 400
+
+    # One ID resolves to None -> 404.
+    async def half_resolver(rid):
+        return run_a if rid == "cmp-a" else None
+    with patch("sts2.app._get_run_by_id", new=AsyncMock(side_effect=half_resolver)):
+        resp_404 = await client.get("/runs/compare?a=cmp-a&b=ghost")
+    assert resp_404.status_code == 404
+    assert "not found" in resp_404.text.lower()
+
+    # Both IDs resolve -> 200.
+    async def both_resolver(rid):
+        return run_a if rid == "cmp-a" else run_b
+    with patch("sts2.app._get_run_by_id", new=AsyncMock(side_effect=both_resolver)):
+        resp_ok = await client.get("/runs/compare?a=cmp-a&b=cmp-b")
+    assert resp_ok.status_code == 200
+    assert "Run Comparison" in resp_ok.text
+
+
+async def test_graveyard_route_renders_empty(client):
+    """/graveyard returns 200 even when there are no fallen runs."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=[])):
+        resp = await client.get("/graveyard")
+    assert resp.status_code == 200
+    assert "Graveyard" in resp.text
+
+
+async def test_run_import_route_behavior(client):
+    """POST /runs/import: 403 without CSRF, 200 with CSRF+valid file, 400 on malformed JSON."""
+    import json as _json
+
+    # Bad CSRF -> 403.
+    good_body = _json.dumps({"spirescope_version": "x", "format_version": 1,
+                             "run": {"id": "imp-1", "character": "Ironclad",
+                                     "win": True, "deck": []}}).encode()
+    resp_bad = await client.post("/runs/import",
+                                 files={"file": ("r.json", good_body, "application/json")},
+                                 data={"csrf_token": "bogus"})
+    assert resp_bad.status_code == 403
+
+    # Valid CSRF + valid file -> 200.
+    resp_ok = await client.post("/runs/import",
+                                files={"file": ("r.json", good_body, "application/json")},
+                                data={"csrf_token": generate_csrf_token()})
+    assert resp_ok.status_code == 200
+    assert "imp-1" in resp_ok.text or "Imported" in resp_ok.text
+
+    # Malformed JSON -> 400.
+    resp_bad_json = await client.post("/runs/import",
+                                      files={"file": ("r.json", b"{not json", "application/json")},
+                                      data={"csrf_token": generate_csrf_token()})
+    assert resp_bad_json.status_code == 400
+
+
+async def test_run_export_json_route_behavior(client):
+    """GET /runs/{id}/export: 404 when missing, JSON when present."""
+    import json as _json
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunHistory
+
+    # Missing -> 404.
+    resp_missing = await client.get("/runs/no_such_run_xyz/export")
+    assert resp_missing.status_code == 404
+
+    # Exists -> JSON.
+    run = RunHistory(id="exp-1", character="Ironclad", win=True, deck=["CARD.BASH"])
+    with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=run)):
+        resp = await client.get("/runs/exp-1/export")
+    assert resp.status_code == 200
+    data = _json.loads(resp.text)
+    assert data["format_version"] == 1
+    assert data["run"]["id"] == "exp-1"
+
+
+async def test_run_export_html_route_behavior(client):
+    """GET /runs/{id}/export/html: 404 when missing, HTML when present."""
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunHistory
+
+    # Missing -> 404.
+    resp_missing = await client.get("/runs/no_such_run_xyz/export/html")
+    assert resp_missing.status_code == 404
+
+    # Exists -> standalone HTML.
+    run = RunHistory(id="exh-1", character="Ironclad", win=True, deck=["CARD.BASH"])
+    with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=run)):
+        resp = await client.get("/runs/exh-1/export/html")
+    assert resp.status_code == 200
+    assert "<!DOCTYPE html>" in resp.text
+
+
+async def test_api_export_stats_shape(client):
+    """GET /api/export/stats returns a JSON dict with the documented keys."""
+    resp = await client.get("/api/export/stats")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert isinstance(data, dict)
+    assert "run_count" in data
+    assert "character_stats" in data
+
+
+async def test_api_import_stats_route_behavior(client):
+    """POST /api/import/stats: 403 without CSRF, 200 with valid CSRF + JSON body."""
+    import json as _json
+
+    body = _json.dumps({"run_count": 1, "character_stats": {}}).encode()
+
+    # Bad CSRF -> 403.
+    resp_bad = await client.post("/api/import/stats",
+                                 files={"file": ("s.json", body, "application/json")},
+                                 data={"csrf_token": "bogus"})
+    assert resp_bad.status_code == 403
+
+    # Valid CSRF -> 200.
+    resp_ok = await client.post("/api/import/stats",
+                                files={"file": ("s.json", body, "application/json")},
+                                data={"csrf_token": generate_csrf_token()})
+    assert resp_ok.status_code == 200
+    data = resp_ok.json()
+    assert data["status"] == "ok"
+    assert "run_count" in data
+
+
+async def test_api_reset_stats_route_behavior(client):
+    """POST /api/reset/stats: 403 without admin token, 200 with correct admin token."""
+    # No token -> 403.
+    resp_no = await client.post("/api/reset/stats")
+    assert resp_no.status_code == 403
+
+    # Correct admin token -> 200.
+    resp_ok = await client.post("/api/reset/stats",
+                                headers={"X-Admin-Token": _ADMIN_TOKEN})
+    assert resp_ok.status_code == 200
+    assert resp_ok.json()["status"] == "ok"
+
+
+async def test_shutdown_route_behavior(client):
+    """POST /shutdown: 403 without auth, 403 on bad token, 200 with admin token, 200 with CSRF+Origin."""
+    from unittest.mock import patch
+
+    from sts2.app import _cors_origins
+
+    # The handler does `import os; import threading` at call time and then
+    # schedules `threading.Timer(0.5, lambda: os.kill(...))`. We patch the
+    # top-level modules so the timer's target never actually fires SIGTERM
+    # in the test process.
+    with patch("os.kill") as mock_kill, \
+         patch("threading.Timer") as mock_timer:
+        # No auth -> 403.
+        resp_none = await client.post("/shutdown")
+        assert resp_none.status_code == 403
+
+        # Wrong admin token -> 403.
+        resp_bad = await client.post("/shutdown",
+                                     headers={"X-Admin-Token": "definitely_not_the_token"})
+        assert resp_bad.status_code == 403
+
+        # Correct admin token -> 200, timer armed but SIGTERM never fires here.
+        resp_admin = await client.post("/shutdown",
+                                       headers={"X-Admin-Token": _ADMIN_TOKEN})
+        assert resp_admin.status_code == 200
+        assert resp_admin.json()["status"] == "shutting down"
+
+        # Valid CSRF + allowed Origin -> 200.
+        origin = next(iter(_cors_origins))
+        resp_csrf = await client.post("/shutdown",
+                                      headers={"X-CSRF-Token": generate_csrf_token(),
+                                               "Origin": origin})
+        assert resp_csrf.status_code == 200
+        assert resp_csrf.json()["status"] == "shutting down"
+
+    # SIGTERM lambda must never have run, even though Timer was scheduled.
+    assert not mock_kill.called
+    assert mock_timer.call_count == 2  # One per successful 200.
