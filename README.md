@@ -64,7 +64,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Community Meta** — Tier lists and strategy posts from Reddit and Steam, community-voted card tiers, aggregate player stats with import/export
 - **Global Search** — Fuzzy search with "Did you mean?" suggestions across all entities
 
-### Advanced Analytics (v2.9.0)
+### Advanced Analytics (v2.9.3)
 
 - **The Graveyard** — Every dead run gets a procedural epitaph: *"Had 4 potions. Used none of them."* Visit `/graveyard` to see your memorial wall.
 - **Ghost Run Comparison** — Speedrun-style splits against your best run. See HP and gold deltas floor by floor during live runs. Green arrows = ahead, red = behind.
@@ -272,7 +272,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (22 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 625+ tests (pytest + pytest-asyncio)
+tests/               # 654 tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements
