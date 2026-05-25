@@ -1,5 +1,28 @@
 # Changelog
 
+## v2.9.4
+
+### Fixed
+
+- **Debilitate duration** — description now reads "for the next 2 turns" (was "3 turns"), matching v0.106.0 Necrobinder rebalance.
+- **Howl from Beyond trigger** — description now reads "at the end of your turn" (was "at the start"), matching v0.106.0 patch notes.
+- **Fetcher 403 on slaythespire2.gg** — `sts2/fetcher.py` UA switched to polite hybrid `Mozilla/5.0 (compatible; Spirescope/X.Y.Z; +github URL)`. Their robots.txt explicitly permits scraping of `/cards`, `/relics`, `/potions`, `/events`, `/enemies`. Verified 403 → 200.
+- **Fetcher rarity-canonicalizer wiring** — `python -m sts2 update` now auto-runs `scripts/fix_card_rarity.py` after the wiki fetch, so canonical rarities and Deprecated-Card removal survive every refresh. Previously had to be re-applied manually.
+
+### Added
+
+- **Pounce** card (Silent, Uncommon, 14 dmg + next-Skill-costs-0) — was missing from `cards.json`.
+- **Wither** status card (Unplayable, 3 dmg/turn from hand) — Aeonglass-inflicted status, was missing.
+- **OFFICIAL_CHARACTERS allowlist** (`sts2/analytics.py`) — per-character breakdown now filters out modded characters (Komeijikoishi, Hina, Cursed, WineFox, Marisa, etc.) so small-sample modded chars don't distort tier reporting. Mirrors spire-codex's approach.
+- **THIRD_PARTY_NOTICES.md** — full attribution for FastAPI / Starlette / Uvicorn / Jinja2 / Pydantic / python-multipart / watchdog / httpx / PyInstaller (with bootloader exception), dev deps, Cinzel font (SIL OFL), and data sources (slaythespire.wiki.gg CC BY-SA 4.0, slaythespire2.gg per robots.txt, sts2.untapped.gg, Reddit, Steam).
+- **OFL.txt** bundled at `sts2/static/fonts/OFL.txt` alongside the Cinzel woff2 subsets we ship — the SIL Open Font License requires the license text be included.
+- **README Acknowledgments section** — credits data sources, font, and trademarks in one paragraph between Disclaimer and License.
+
+### Changed
+
+- **Removed orphan `docs/banner.png`** — the file was not referenced anywhere in the repo (no markdown / HTML / Python references) and carried an opaque base64 `Signature:` EXIF watermark that did not belong in a public release artifact.
+- **`scripts/fix_card_rarity.py`** — `main()` now takes a `dry_run` parameter so it's importable from the update flow. Moved Silent/Predator from Uncommon → Common (v0.106.0 rebalance). Added Wither to STATUS_CARDS set.
+
 ## v2.9.3
 
 ### Security
