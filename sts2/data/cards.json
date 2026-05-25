@@ -3331,7 +3331,7 @@
     "cost": "3",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "Deal 16 damage to ALL enemies. At the start of your turn, plays from the Exhaust Pile.",
+    "description": "Deal 16 damage to ALL enemies. At the end of your turn, plays from the Exhaust Pile.",
     "description_upgraded": "",
     "keywords": [
       "Exhaust"
@@ -7502,5 +7502,27 @@
       "Exhaust",
       "Ethereal"
     ]
+  },
+  {
+    "id": "CARD.POUNCE",
+    "name": "Pounce",
+    "character": "Silent",
+    "cost": "2",
+    "type": "Attack",
+    "rarity": "Uncommon",
+    "description": "Deal 14 damage. The next Skill you play costs 0 Energy.",
+    "description_upgraded": "Deal 20 damage. The next Skill you play costs 0 Energy.",
+    "keywords": []
+  },
+  {
+    "id": "CARD.WITHER",
+    "name": "Wither",
+    "character": "Status",
+    "cost": "Unplayable",
+    "type": "Status",
+    "rarity": "Status",
+    "description": "Unplayable.\nAt the end of your turn, if this is in your Hand, take 3 damage.",
+    "description_upgraded": "",
+    "keywords": []
   }
 ]

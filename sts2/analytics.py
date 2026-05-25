@@ -3,6 +3,14 @@ from collections import Counter, defaultdict
 
 from sts2.models import PlayerProgress, RunHistory
 
+# Mega Crit's shipped characters. Modded characters (Komeijikoishi, Hina,
+# Cursed, WineFox, Marisa, etc.) are kept out of the per-character breakdown
+# so their tiny sample sizes don't distort the official tier picture.
+# Spire-codex applies the same allowlist for community stats integrity.
+OFFICIAL_CHARACTERS = frozenset({
+    "Ironclad", "Silent", "Defect", "Necrobinder", "Regent",
+})
+
 
 def _estimate_act(floor: int) -> int:
     """Estimate which act a floor belongs to based on floor number."""
@@ -132,6 +140,8 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
 
     character_breakdown = {}
     for char, char_run_list in sorted(char_runs.items()):
+        if char not in OFFICIAL_CHARACTERS:
+            continue
         char_wins = sum(1 for r in char_run_list if r.win)
         char_total = len(char_run_list)
         character_breakdown[char] = {

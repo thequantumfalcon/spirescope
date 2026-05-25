@@ -44,6 +44,23 @@ def _get_version() -> str:
     return VERSION
 
 
+def _canonicalize_card_rarities() -> None:
+    """Run scripts/fix_card_rarity.py after a wiki refresh so the rarity
+    canonicalization (Basic->Starter, deprecated removal, etc.) survives.
+    Silently no-op when the script is absent (e.g. frozen builds)."""
+    import importlib.util
+    from pathlib import Path
+    script_path = Path(__file__).resolve().parent.parent / "scripts" / "fix_card_rarity.py"
+    if not script_path.exists():
+        return
+    spec = importlib.util.spec_from_file_location("fix_card_rarity", script_path)
+    if spec is None or spec.loader is None:
+        return
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.main(dry_run=False)
+
+
 def _env_flag(name: str) -> bool | None:
     value = os.environ.get(name)
     if value is None:
@@ -86,6 +103,7 @@ def main():
         from sts2.fetcher import run_fetcher
         save_only = "--save-only" in args
         run_fetcher(save_only=save_only)
+        _canonicalize_card_rarities()
         return
 
     if command == "community":

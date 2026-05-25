@@ -59,9 +59,11 @@ _add("Silent", [
     "Finisher", "Flanking", "Flechettes", "Follow Through", "Footwork",
     "Hand Trick", "Haze", "Hidden Daggers", "Infinite Blades", "Leg Sweep",
     "Memento Mori", "Mirage", "Noxious Fumes", "Outbreak", "Phantom Blades",
-    "Pinpoint", "Pounce", "Precise Cut", "Predator", "Reflex", "Skewer",
+    "Pinpoint", "Pounce", "Precise Cut", "Reflex", "Skewer",
     "Speedster", "Strangle", "Tactician", "Up My Sleeve", "Well-Laid Plans",
 ], "Uncommon")
+# Predator moved Uncommon -> Common in v0.106.0 (wiki Lua module still stale)
+_add("Silent", ["Predator"], "Common")
 _add("Silent", [
     "Abrasive", "Accelerant", "Adrenaline", "Afterimage", "Assassinate",
     "Blade of Ink", "Bullet Time", "Burst", "Corrosive Wave", "Echoing Slash",
@@ -183,7 +185,7 @@ _add("Colorless", [
 STATUS_CARDS = {
     "Beckon", "Burn", "Dazed", "Debris", "Disintegration", "Frantic Escape",
     "Infection", "Mind Rot", "Slimed", "Sloth", "Soot", "Toxic", "Void",
-    "Waste Away", "Wound",
+    "Waste Away", "Wither", "Wound",
 }
 CURSE_CARDS = {
     "Ascender's Bane", "Bad Luck", "Clumsy", "Curse of the Bell", "Debt",
@@ -226,8 +228,9 @@ NOT_IN_WIKI_OK = {
 }
 
 
-def main():
-    dry_run = "--dry-run" in sys.argv
+def main(dry_run: bool | None = None):
+    if dry_run is None:
+        dry_run = "--dry-run" in sys.argv
 
     with open(DATA_FILE, "r", encoding="utf-8") as f:
         cards = json.load(f)
