@@ -48,5 +48,12 @@ ROADMAP.md
 AUDIT.md
 SESSION_NOTES.md
 
+# Internal strategy / review documents — keep local, never commit
+SpireScope_Complete_Guide.pdf
+
+# Demo GIF pending regeneration with non-personal sample data
+# (current capture shows personal playtime + discovery counts)
+docs/demo.gif
+
 # Claude
 .claude/
