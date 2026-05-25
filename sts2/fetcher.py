@@ -11,6 +11,8 @@ from sts2.config import DATA_DIR
 log = logging.getLogger(__name__)
 
 WIKI_BASE = "https://slaythespire2.gg"
+# Per their robots.txt: general scraping is permitted; /api, /admin,
+# /analysis, /planner are disallowed and we never request them.
 _SCRAPE_DELAY = 1.0  # seconds between wiki requests to avoid hammering
 
 # Markup tags used in wiki descriptions: [gold]...[/gold], [blue], [red], etc.

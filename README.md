@@ -284,6 +284,10 @@ tests/               # 654 tests (pytest + pytest-asyncio)
 
 SpireScope is a fan-made project and is not affiliated with, endorsed by, or associated with [Mega Crit Games](https://www.megacrit.com/). Slay the Spire and Slay the Spire 2 are trademarks of Mega Crit Games. All game content and materials referenced within this tool are the property of their respective owners.
 
+## Acknowledgments
+
+Card, relic, potion, and event data is derived from the community wiki at [slaythespire.wiki.gg](https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2), available under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), and from the [slaythespire2.gg](https://slaythespire2.gg/) reference site (scraped with their robots.txt permission, identified by a project-named User-Agent). Strategy guides for the Epochs system reference notes by NeonLightsMedia. UI typography uses [Cinzel](https://fonts.google.com/specimen/Cinzel) by Natanael Gama under the SIL Open Font License 1.1. Full third-party attributions are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 ## License
 
 MIT
