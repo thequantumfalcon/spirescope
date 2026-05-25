@@ -18,7 +18,6 @@ from unittest.mock import AsyncMock, patch
 from sts2.app import generate_csrf_token
 from sts2.models import RunFloor, RunHistory
 
-
 # ---------------------------------------------------------------------------
 # sts2.integrity — Merkle hash on run detail
 # ---------------------------------------------------------------------------

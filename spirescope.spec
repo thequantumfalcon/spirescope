@@ -1,47 +1,55 @@
 # -*- mode: python ; coding: utf-8 -*-
 """PyInstaller spec file for Spirescope."""
 
-from PyInstaller.utils.win32.versioninfo import (
-    FixedFileInfo,
-    StringFileInfo,
-    StringStruct,
-    StringTable,
-    VarFileInfo,
-    VarStruct,
-    VSVersionInfo,
-)
+import sys
 
 
-VERSION = "2.9.2"
-VERSION_TUPLE = tuple(int(part) for part in VERSION.split(".")) + (0,)
+VERSION = "2.9.3"
 
-version_info = VSVersionInfo(
-    ffi=FixedFileInfo(
-        filevers=VERSION_TUPLE,
-        prodvers=VERSION_TUPLE,
-        mask=0x3F,
-        flags=0x0,
-        OS=0x40004,
-        fileType=0x1,
-        subtype=0x0,
-        date=(0, 0),
-    ),
-    kids=[
-        StringFileInfo([
-            StringTable("040904B0", [
-                StringStruct("CompanyName", "Thomas Albrecht"),
-                StringStruct("FileDescription", "Spirescope - Slay the Spire 2 companion dashboard"),
-                StringStruct("FileVersion", VERSION),
-                StringStruct("InternalName", "Spirescope"),
-                StringStruct("LegalCopyright", "Copyright (c) Thomas Albrecht"),
-                StringStruct("OriginalFilename", "Spirescope.exe"),
-                StringStruct("ProductName", "Spirescope"),
-                StringStruct("ProductVersion", VERSION),
+# Windows EXE version metadata (CompanyName / ProductName / FileVersion).
+# The win32 import branch only loads on Windows because the underlying
+# `pefile` dependency is PE/Windows-specific; the macOS/Linux release CIs
+# don't need (and can't import) it.
+version_info = None
+if sys.platform == "win32":
+    from PyInstaller.utils.win32.versioninfo import (
+        FixedFileInfo,
+        StringFileInfo,
+        StringStruct,
+        StringTable,
+        VarFileInfo,
+        VarStruct,
+        VSVersionInfo,
+    )
+
+    VERSION_TUPLE = tuple(int(part) for part in VERSION.split(".")) + (0,)
+    version_info = VSVersionInfo(
+        ffi=FixedFileInfo(
+            filevers=VERSION_TUPLE,
+            prodvers=VERSION_TUPLE,
+            mask=0x3F,
+            flags=0x0,
+            OS=0x40004,
+            fileType=0x1,
+            subtype=0x0,
+            date=(0, 0),
+        ),
+        kids=[
+            StringFileInfo([
+                StringTable("040904B0", [
+                    StringStruct("CompanyName", "Thomas Albrecht"),
+                    StringStruct("FileDescription", "Spirescope - Slay the Spire 2 companion dashboard"),
+                    StringStruct("FileVersion", VERSION),
+                    StringStruct("InternalName", "Spirescope"),
+                    StringStruct("LegalCopyright", "Copyright (c) Thomas Albrecht"),
+                    StringStruct("OriginalFilename", "Spirescope.exe"),
+                    StringStruct("ProductName", "Spirescope"),
+                    StringStruct("ProductVersion", VERSION),
+                ]),
             ]),
-        ]),
-        VarFileInfo([VarStruct("Translation", [1033, 1200])]),
-    ],
-)
+            VarFileInfo([VarStruct("Translation", [1033, 1200])]),
+        ],
+    )
 
 a = Analysis(
     ['sts2/__main__.py'],
