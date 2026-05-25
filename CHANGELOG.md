@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.9.5
+
+### Fixed
+
+- **PyInstaller spec version mismatch** — `spirescope.spec` hardcoded `VERSION = "2.9.3"` while `pyproject.toml` was 2.9.4. The v2.9.4 binaries on GitHub display "2.9.3" in Windows Properties / FileVersion metadata. v2.9.5 binaries display the correct version.
+- **Save-parser co-op cross-contamination** — `sts2/saves.py:_get_player_stats` returned the first player's stats when the requested player's row was missing, polluting co-op analytics. Now returns `{}` so downstream `.get()` calls degrade to documented defaults.
+- **Save-parser `None` arithmetic crashes** — `current_act_index`, `save_time`, `upgrade_count` could be JSON-null in some save schemas; `(value or default)` coalescing added.
+- **Log parser unbounded `cards_played` growth** — long runs accumulated every card-play into a list copied on every SSE poll. Now capped at 500 entries (sliding window of most-recent plays).
+- **Per-act death-attribution off-by-one** — `analytics.py` used `len(run.floors)` (count) as the death-floor index; skipped floors mis-attributed Act 2/3 deaths to earlier acts. Now uses `run.floors[-1].floor` (actual final floor number).
+- **Live UI freeze on malformed SSE payload** — `static/live.js` `JSON.parse` was unwrapped; a single malformed message froze the live tracker until manual reload. Now caught + skipped silently.
+- **Live UI reload flap-loop** — back-to-back state changes could trigger multiple `location.reload()` calls without cooldown. Now 10s minimum interval between reloads.
+
 ## v2.9.4
 
 ### Fixed

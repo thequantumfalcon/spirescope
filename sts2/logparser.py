@@ -72,8 +72,10 @@ class LogRunState:
         self.events_seen: list[str] = []
         self.total_players = 1
         self.run_started = False
-        # Combat telemetry captured from godot.log
+        # Combat telemetry captured from godot.log. cards_played is bounded
+        # to prevent unbounded memory growth on long runs (O(n) copy per SSE poll).
         self.cards_played: list[str] = []
+        self._cards_played_cap = 500
         self.extra_turns = 0
         self.elites_defeated = 0
 
@@ -351,6 +353,9 @@ class LogTailer:
         m = _RE_PLAYING_CARD.search(line)
         if m:
             self.state.cards_played.append(m.group(1))
+            # Cap the list to prevent unbounded growth on long runs.
+            if len(self.state.cards_played) > self.state._cards_played_cap:
+                self.state.cards_played = self.state.cards_played[-self.state._cards_played_cap:]
             return True
 
         # Extra turn triggered (Regent / Heel / etc.)

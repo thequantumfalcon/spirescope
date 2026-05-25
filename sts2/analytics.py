@@ -429,7 +429,9 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
                 if floor.gold > 0:
                     act_stats[act]["gold"].append(floor.gold)
         if not run.win and run.floors:
-            act_deaths[_estimate_act(len(run.floors))] += 1
+            # Use the actual final floor number (not len(floors)) so skipped
+            # floors don't misattribute deaths to earlier acts.
+            act_deaths[_estimate_act(run.floors[-1].floor)] += 1
 
     per_act = {}
     for act_num in (1, 2, 3):
@@ -788,7 +790,7 @@ def analyze_run_patterns(runs: list[RunHistory], kb=None) -> list[dict]:
     death_acts: Counter = Counter()
     for run in recent:
         if not run.win and run.floors:
-            death_acts[_estimate_act(len(run.floors))] += 1
+            death_acts[_estimate_act(run.floors[-1].floor)] += 1
     for act, count in death_acts.items():
         if count >= 3:
             patterns.append({

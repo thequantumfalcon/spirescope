@@ -29,12 +29,13 @@ def _get_player(players: list[dict], index: int = 0) -> dict:
 
 
 def _get_player_stats(player_stats: list[dict], player: dict) -> dict:
-    """Find matching player stats for a floor. Falls back to first entry."""
+    """Find matching player stats for a floor. Returns {} when no match — co-op
+    runs must not cross-contaminate by returning the wrong player's stats."""
     player_id = str(player.get("id", ""))
     for ps in player_stats:
         if str(ps.get("player_id", "")) == player_id:
             return ps
-    return player_stats[0] if player_stats else {}
+    return {}
 
 
 def get_current_run(player_index: int = 0) -> CurrentRun:
@@ -62,9 +63,13 @@ def get_current_run(player_index: int = 0) -> CurrentRun:
             start = str(candidate.get("start_time", ""))
             if start in history_starts:
                 continue  # This run already finished
-            if candidate.get("save_time", 0) > best_time:
+            try:
+                save_time = int(candidate.get("save_time") or 0)
+            except (TypeError, ValueError):
+                save_time = 0
+            if save_time > best_time:
                 best = candidate
-                best_time = candidate.get("save_time", 0)
+                best_time = save_time
         if best:
             data = best
 
@@ -79,7 +84,7 @@ def get_current_run(player_index: int = 0) -> CurrentRun:
         player.get("character_id", "Unknown"),
     )
     deck = [c.get("id", "") for c in player.get("deck", [])]
-    deck_upgrades = [c.get("upgrade_count", 0) > 0 for c in player.get("deck", [])]
+    deck_upgrades = [(c.get("upgrade_count") or 0) > 0 for c in player.get("deck", [])]
     relics = [r.get("id", "") for r in player.get("relics", [])]
     potions = [p.get("id", "") for p in player.get("potions", [])]
 
@@ -118,7 +123,7 @@ def get_current_run(player_index: int = 0) -> CurrentRun:
         current_hp=player.get("current_hp", 0),
         max_hp=player.get("max_hp", 0),
         gold=player.get("gold", 0),
-        act=data.get("current_act_index", 0) + 1,
+        act=(data.get("current_act_index") or 0) + 1,
         floor=floor_num,
         run_time=data.get("run_time", 0),
         deck=deck,
