@@ -9,6 +9,7 @@ package metadata.
 | Package | License | Project |
 |---|---|---|
 | FastAPI | MIT | https://github.com/fastapi/fastapi |
+| Starlette | BSD-3-Clause | https://github.com/encode/starlette |
 | Uvicorn | BSD-3-Clause | https://github.com/encode/uvicorn |
 | Jinja2 | BSD-3-Clause | https://github.com/pallets/jinja |
 | Pydantic | MIT | https://github.com/pydantic/pydantic |
@@ -41,6 +42,19 @@ the PyInstaller-produced binary is unmodified.
 
 The Cinzel typeface is © Natanael Gama. The OFL text is bundled at
 `sts2/static/fonts/OFL.txt`.
+
+## Project artwork
+
+| File | Description |
+|---|---|
+| `sts2/static/hero-bg.jpg` | Dark gothic background used on the home page |
+| `sts2/static/logo.jpg` | 120x120 project logo |
+| `sts2/static/favicon.ico` | Browser favicon (multi-resolution) |
+
+These decorative assets are part of the SpireScope project and are
+covered by the project's MIT license (see `LICENSE`). They are not
+derived from, and do not reproduce, any Mega Crit Games artwork or
+copyrighted character/card/relic art.
 
 ## Game data sources
 
