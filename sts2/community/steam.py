@@ -219,11 +219,13 @@ def _scrape_guides(existing_names: set[str], result: SourceResult) -> None:
         # Extract tier ratings and tips from guide body
         ratings = extract_tier_ratings(body_text, existing_names)
         for name_lower, tiers in ratings.items():
-            # Weight guide tier votes at 1.5x (curated content)
+            # Weight guide tier votes at 1.5x (curated content): the full
+            # list contributes 1x, plus ceil(n/2) extras contribute 0.5x.
+            # Prior code took every-other-index which only averaged 0.5x on
+            # even-length lists; on odd lists it drifted off the 1.5x target.
             result.tier_votes[name_lower].extend(tiers)
-            # Add an extra half-vote for each (round up)
-            extra = [t for i, t in enumerate(tiers) if i % 2 == 0]
-            result.tier_votes[name_lower].extend(extra)
+            half_up = (len(tiers) + 1) // 2
+            result.tier_votes[name_lower].extend(tiers[:half_up])
 
         tips = extract_tips(body_text, existing_names)
         for name_lower, tip_list in tips.items():

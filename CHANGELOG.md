@@ -1,5 +1,33 @@
 # Changelog
 
+## v2.9.6
+
+### Fixed
+
+- **Integrity Merkle hash incomplete** — `sts2/integrity.py` chained only floor/type/card_picked/damage/hp/gold per floor. Relic swaps, encounter substitutions, and turn-count edits went undetected. Hash now binds seed+character+ascension+build_id+total_players at genesis and chains encounter+monsters+turns+hp_healed+max_hp+cards_offered+potions_used+potions_gained per floor, plus a final block over relics+deck.
+- **Knowledge synergy filter included Status/Curse/Token pools** — `find_synergies` returned Status cards (e.g. Wound, Slimed) as synergies because the filter only excluded Status by `other.character`. Now also excludes Curse, Event, Token, Quest pools — only same-character + Colorless cards remain as synergy candidates.
+- **Aggregate merge shallow-copy corruption** — `merge_aggregate` did `dict(existing)` (shallow), then `merged_field[key][subkey] += val` mutated the caller's in-memory aggregate. Subsequent reads doubled stats. Now deep-copies nested dicts.
+- **Aggregate first-import inner counters uncapped** — first-import clamped `run_count` to `_MIN_IMPORT_CAP` but left per-card/per-relic counters un-scaled. A malicious file with 10k inflated subcounts passed through. Now scales inner counters proportionally.
+- **Aggregate merge treats booleans as ints** — `isinstance(True, int)` is True in Python; bools could be summed. Now explicit `isinstance(_, bool)` exclusion.
+- **Save parser empty card IDs** — malformed save entries with no `id` produced empty-string keys in deck/relics/potions, polluting `card_rankings` etc. Now filtered out at parse time in both `get_current_run` and `get_run_history`.
+- **Save parser character field-name mismatch** — `get_run_history` only looked at `character`, missing the `character_id` field used by current_run saves. Now tries `character_id` first then falls back to `character`.
+- **/runs/import unbounded floor count** — 1 MB byte cap still permitted 100k tiny floor entries (template/analyzer DoS). Now also rejects runs with >500 floors / >200 deck / >100 relics.
+- **/enemies/{id} substring match collision** — `enemy_id.split(".")[-1].lower() in enc_id.lower()` matched "RAT" against "BIG_RAT_PACK" and similar. Now exact suffix-equality.
+- **SSE connection counter leak on early disconnect** — `_sse_active += 1` happened in the request handler before the generator ran; a client disconnect between header send and body start leaked a slot. Now the increment is inside the generator's try/finally so the decrement is guaranteed.
+- **_get_progress cache treated None as uncached** — users with no save file re-ran `get_progress()` on every request. Now `cache_time == 0` is the sentinel for "never populated".
+- **analytics.html division-by-zero on zero-only data** — `death_floors` / `floor_survival` divisors could be 0. Now `(max or 1)` guard prevents 500.
+- **overlay.html full-page reload on every SSE tick** — overlay flickered every 3 seconds with full reload, breaking OBS browser-source captures. New `sts2/static/overlay.js` does in-place DOM diff with 10s reload cooldown.
+- **__main__.py treated `--browser` as a command** — `python -m sts2 --browser` errored with "Unknown command". Now picks first non-flag arg as the command.
+- **watcher.py debounce TOCTOU** — `_last_trigger` was mutated from watchdog's background thread without a lock; burst events could double-fire `call_soon_threadsafe`. Added `threading.Lock`.
+- **community/__init__.py duplicate __all__** — second assignment silently dropped `STS2_INDICATORS` and `SourceResult` from public re-exports. Now a single canonical list.
+- **community/_types extract_tips substring match pollution** — short entity names matched substrings (e.g. "rat" in "strategy"). Now anchored on `\b` word boundaries; names <3 chars skipped.
+- **community/reddit retry loop implicit None return** — control-flow could fall off the end of `_fetch_reddit_json` without raising or returning, crashing callers with `AttributeError`. Now raises explicitly.
+- **community/steam tier weight off-spec** — comment said "1.5x" but every-other-index extras averaged 0.5x only on even-length tier lists. Now `ceil(n/2)` extras for true 1.5x weighting.
+- **logparser.py Linux log dir mismatch** — `XDG_DATA_HOME`-rooted log dir disagreed with the Proton-prefix-rooted save dir from `config.py`; Steam Deck users had save watcher and log poller looking at different game installs. Now matches the save-dir Proton resolution.
+- **knowledge.py auto-discovered enemies invisible to act filter** — discovered enemies had `act=[]`, hidden by every `/enemies?act=X` filter. Now `act=["1","2","3"]` so they appear under any act filter.
+- **knowledge.py boss-type misclassification** — `"BOSS" in enemy_id.upper()` substring-matched IDs like `SUB_BOSS_SKILLS`. Now token-matches the suffix segment.
+- **deck.js localStorage uncaught QuotaExceededError** — private-browsing / full storage broke the deck builder silently. `setItem` now wrapped in try/catch.
+
 ## v2.9.5
 
 ### Fixed

@@ -4,7 +4,7 @@
 import sys
 
 
-VERSION = "2.9.5"
+VERSION = "2.9.6"
 
 # Windows EXE version metadata (CompanyName / ProductName / FileVersion).
 # The win32 import branch only loads on Windows because the underlying

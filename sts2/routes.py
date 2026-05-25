@@ -383,8 +383,11 @@ async def enemy_detail(request: Request, enemy_id: str = Path(max_length=200)):
     progress = await a._get_progress()
     encounter_stats = {}
     if progress:
+        # Exact match on enemy_id first; only fall back to suffix-equality so
+        # short IDs like "RAT" don't substring-match "BIG_RAT_PACK".
+        enemy_suffix = enemy_id.split(".")[-1].lower()
         for enc_id, stats in progress.encounter_stats.items():
-            if enemy_id.split(".")[-1].lower() in enc_id.lower():
+            if enc_id.split(".")[-1].lower() == enemy_suffix:
                 encounter_stats = stats
                 break
         enemy_fight_stats = progress.enemy_stats.get(enemy_id, {})
@@ -648,6 +651,13 @@ async def import_run(request: Request, file: UploadFile = File(...),
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400,
             "error_message": "Invalid run file format.",
+        }, status_code=400)
+    # Per-field guard: a 1 MB byte cap still permits ~100k tiny floor entries,
+    # which would DoS the analyzer + template render. STS2 runs are 50–60 floors.
+    if len(run.floors) > 500 or len(run.deck) > 200 or len(run.relics) > 100:
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 400,
+            "error_message": "Run file exceeds reasonable size (floors/deck/relics).",
         }, status_code=400)
     run_analysis = analyze_run(run, kb=a.kb)
     return a.templates.TemplateResponse(request, "run_detail.html", {
@@ -1320,16 +1330,22 @@ _sse_active = 0
 @router.get("/api/live/stream")
 async def live_stream(player: int = Query(0, ge=0, le=3)):
     global _sse_active
-    # Atomic check-and-reserve: increment *before* returning the StreamingResponse
-    # so concurrent requests can't all pass the cap check while the deferred
-    # generator hasn't incremented yet.
+    # Atomic check-and-reserve. Increment is done INSIDE the generator's try
+    # block (paired with the finally decrement) so a pre-stream client
+    # disconnect can't leak a slot. The pre-check here only refuses obvious
+    # overflows — the generator will re-check on first yield.
     if _sse_active >= _SSE_MAX_CONNECTIONS:
         return PlainTextResponse("Too many live connections. Close another tab.",
                                  status_code=429)
-    _sse_active += 1
 
     async def event_generator():
         global _sse_active
+        # Re-check cap and reserve atomically when the body actually starts;
+        # this pairs with the `finally` decrement so disconnect cannot leak.
+        if _sse_active >= _SSE_MAX_CONNECTIONS:
+            yield "event: error\ndata: {\"reason\":\"too_many\"}\n\n"
+            return
+        _sse_active += 1
         try:
             last_hash = ""
             idle_since = time.monotonic()

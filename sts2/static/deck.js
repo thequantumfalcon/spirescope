@@ -12,7 +12,12 @@
   });
 
   function getDecks() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) { return {}; } }
-  function saveDecks(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+  function saveDecks(d) {
+    // localStorage can throw QuotaExceededError (full / private browsing),
+    // or SecurityError (sandboxed iframe). Swallow rather than break the
+    // builder; the in-memory cardQtys are still authoritative for the session.
+    try { localStorage.setItem(KEY, JSON.stringify(d)); } catch(e) { /* noop */ }
+  }
 
   function getSelectedCards() {
     var result = {};

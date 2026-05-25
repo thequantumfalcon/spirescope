@@ -83,18 +83,6 @@
 {% endif %}
 </div>
 
-<script>
-(function() {
-  const player = new URLSearchParams(location.search).get('player') || '0';
-  const es = new EventSource('/api/live/stream?player=' + player);
-  es.onmessage = function() {
-    // Reload the whole overlay on any update — it's tiny
-    location.reload();
-  };
-  es.onerror = function() {
-    setTimeout(function() { location.reload(); }, 5000);
-  };
-})();
-</script>
+<script src="/static/overlay.js"></script>
 </body>
 </html>

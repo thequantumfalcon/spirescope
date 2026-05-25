@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import threading
 import time
 from pathlib import Path
 
@@ -36,6 +37,11 @@ class SaveFileHandler(FileSystemEventHandler):
         self._event = event
         self._debounce = debounce_seconds
         self._last_trigger = 0.0
+        # watchdog fires events from a background thread; without a lock the
+        # check-and-set on _last_trigger is a TOCTOU race that under burst
+        # events can fire call_soon_threadsafe multiple times within the
+        # debounce window on multi-core.
+        self._lock = threading.Lock()
 
     def _should_handle(self, path: str) -> bool:
         """Only react to save-relevant files."""
@@ -45,9 +51,10 @@ class SaveFileHandler(FileSystemEventHandler):
         if event.is_directory or not self._should_handle(event.src_path):
             return
         now = time.monotonic()
-        if now - self._last_trigger < self._debounce:
-            return
-        self._last_trigger = now
+        with self._lock:
+            if now - self._last_trigger < self._debounce:
+                return
+            self._last_trigger = now
         self._loop.call_soon_threadsafe(self._event.set)
 
     on_created = on_modified  # type: ignore[assignment]

@@ -1,4 +1,5 @@
 """Aggregate stats: compute and merge player-sourced data."""
+import copy
 import json
 import logging
 from pathlib import Path
@@ -78,15 +79,42 @@ def compute_aggregate_stats(runs: list[RunHistory]) -> dict:
     }
 
 
+def _scale_subcounts(d: dict, scale: float) -> dict:
+    """Scale every numeric sub-counter in a dict-of-dicts by `scale`."""
+    out = {}
+    for key, vals in d.items():
+        if not isinstance(vals, dict):
+            out[key] = vals
+            continue
+        scaled = {}
+        for subkey, subval in vals.items():
+            # Exclude bools — they're technically int but should not aggregate.
+            if isinstance(subval, bool):
+                scaled[subkey] = subval
+            elif isinstance(subval, (int, float)):
+                scaled[subkey] = int(subval * scale) if isinstance(subval, int) else subval * scale
+            else:
+                scaled[subkey] = subval
+        out[key] = scaled
+    return out
+
+
 def merge_aggregate(existing: dict, imported: dict) -> dict:
     """Weighted merge with anti-manipulation cap."""
     if not existing or existing.get("run_count", 0) == 0:
         # Apply min-cap even on first import — prevents a malicious first file
         # from seeding massive bogus stats that then anchor the future cap.
+        # Scale inner counters too so a 10k-run import doesn't sneak inflated
+        # sub-counts through under a clamped run_count.
         imported_count = imported.get("run_count", 0)
-        if imported_count > _MIN_IMPORT_CAP:
-            return {**imported, "run_count": _MIN_IMPORT_CAP}
-        return imported
+        if imported_count > _MIN_IMPORT_CAP and imported_count > 0:
+            scale = _MIN_IMPORT_CAP / imported_count
+            scaled = {"run_count": _MIN_IMPORT_CAP}
+            for field in ("card_pick_rates", "card_win_rates", "relic_win_rates",
+                          "character_stats", "ascension_stats"):
+                scaled[field] = _scale_subcounts(imported.get(field, {}), scale)
+            return scaled
+        return copy.deepcopy(imported)
 
     existing_count = existing.get("run_count", 0)
     imported_count = imported.get("run_count", 0)
@@ -96,15 +124,21 @@ def merge_aggregate(existing: dict, imported: dict) -> dict:
 
     merged = {"run_count": existing_count + imported_count}
 
-    # Merge dict-of-dicts fields
+    # Merge dict-of-dicts fields. Deep-copy nested dicts from `existing` so the
+    # caller's in-memory aggregate is not mutated when we add imported counts.
     for field in ("card_pick_rates", "card_win_rates", "relic_win_rates",
                   "character_stats", "ascension_stats"):
         ex = existing.get(field, {})
         im = imported.get(field, {})
-        merged_field = dict(ex)
+        merged_field = {k: dict(v) if isinstance(v, dict) else v for k, v in ex.items()}
         for key, vals in im.items():
-            if key in merged_field:
+            if not isinstance(vals, dict):
+                continue
+            if key in merged_field and isinstance(merged_field[key], dict):
                 for subkey, subval in vals.items():
+                    # Exclude bools — isinstance(True, int) is True.
+                    if isinstance(subval, bool):
+                        continue
                     if isinstance(subval, (int, float)):
                         merged_field[key][subkey] = merged_field[key].get(subkey, 0) + subval
             else:

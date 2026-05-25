@@ -50,6 +50,10 @@ def _fetch_reddit_json(url: str, retries: int = 2) -> dict | None:
                 time.sleep(2 * (attempt + 1))
             else:
                 raise
+    # Defensive: all retries exhausted without raising or returning. This
+    # path is unreachable under current control flow but guards against
+    # future refactors silently returning None.
+    raise urllib.error.URLError("Reddit fetch retries exhausted")
 
 
 def _fetch_subreddit_posts(subreddit: str, sort: str = "top",

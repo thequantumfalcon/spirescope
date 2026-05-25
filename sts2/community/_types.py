@@ -68,16 +68,23 @@ def extract_tier_ratings(text: str, existing_names: set[str]) -> dict[str, list[
 
 
 def extract_tips(text: str, entity_names: set[str]) -> dict[str, list[str]]:
-    """Extract strategy tips mentioning specific cards/relics."""
+    """Extract strategy tips mentioning specific cards/relics.
+
+    Names match on word boundaries (not substring) so short names like "rat"
+    don't collide with unrelated words like "strategy" or "fascinating".
+    Names shorter than 3 characters are skipped entirely to avoid noise.
+    """
     tips: dict[str, list[str]] = defaultdict(list)
     sentences = re.split(r"[.!?\n]+", text)
+    # Pre-compile word-boundary patterns once per call.
+    patterns = {n: re.compile(r"\b" + re.escape(n) + r"\b") for n in entity_names if len(n) >= 3}
     for sentence in sentences:
         sentence = sentence.strip()
         if len(sentence) < 20 or len(sentence) > 300:
             continue
         sentence_lower = sentence.lower()
-        for name in entity_names:
-            if name in sentence_lower:
+        for name, pat in patterns.items():
+            if pat.search(sentence_lower):
                 tips[name].append(sentence)
     return tips
 

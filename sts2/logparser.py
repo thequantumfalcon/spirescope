@@ -12,7 +12,17 @@ _LOG_DIR = Path(os.environ.get("APPDATA") or Path.home() / "AppData" / "Roaming"
 if sys.platform == "darwin":
     _LOG_DIR = Path.home() / "Library" / "Application Support" / "SlayTheSpire2" / "logs"
 elif sys.platform == "linux":
-    _LOG_DIR = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share")) / "SlayTheSpire2" / "logs"
+    # On Linux STS2 typically runs under Proton — match the save-dir resolution
+    # in sts2/config.py so the log poller and save watcher see the same install.
+    _proton_base = (
+        Path.home() / ".local" / "share" / "Steam" / "steamapps"
+        / "compatdata" / "2832040" / "pfx" / "drive_c" / "users"
+        / "steamuser" / "AppData" / "Local" / "SlayTheSpire2"
+    )
+    if _proton_base.exists():
+        _LOG_DIR = _proton_base / "logs"
+    else:
+        _LOG_DIR = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share")) / "SlayTheSpire2" / "logs"
 
 LOG_FILE = _LOG_DIR / "godot.log"
 

@@ -97,7 +97,10 @@ def main():
         print(f"Spirescope {_get_version()}")
         return
 
-    command = args[0] if args else "serve"
+    # Pick the first positional (non-flag) arg as the command so
+    # `python -m sts2 --browser` correctly defaults to "serve" instead of
+    # treating "--browser" as an unknown command.
+    command = next((a for a in args if not a.startswith("-")), "serve")
 
     if command == "update":
         from sts2.fetcher import run_fetcher

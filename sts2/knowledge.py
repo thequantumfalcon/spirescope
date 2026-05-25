@@ -259,8 +259,20 @@ class KnowledgeBase:
                     continue
                 existing_enemy_ids.add(enemy_id)
                 name = enemy_id.split(".", 1)[-1].replace("_", " ").title() if "." in enemy_id else enemy_id
-                etype = "boss" if "BOSS" in enemy_id.upper() else "elite" if "ELITE" in enemy_id.upper() else "normal"
+                # Token-match the suffix segment so "SUB_BOSS_SKILLS" doesn't
+                # type as boss just because "BOSS" appears as a substring.
+                suffix_tokens = enemy_id.split(".")[-1].upper().split("_")
+                if "BOSS" in suffix_tokens:
+                    etype = "boss"
+                elif "ELITE" in suffix_tokens:
+                    etype = "elite"
+                else:
+                    etype = "normal"
+                # Discovered enemies have unknown act assignment; mark all acts
+                # so they show up under any /enemies?act=X filter rather than
+                # being filtered out entirely.
                 self.enemies.append(Enemy(id=enemy_id, name=name, type=etype,
+                                         act=["1", "2", "3"],
                                          tips=["Auto-discovered from your save data"], source="discovered"))
 
             # Discover events
@@ -452,16 +464,26 @@ class KnowledgeBase:
         return self._strategies_by_char.get(character.lower())
 
     def find_synergies(self, card_id: str) -> list[Card]:
-        """Find cards that synergize with the given card based on shared keywords."""
+        """Find cards that synergize with the given card based on shared keywords.
+
+        Synergy targets are cards the player can pick: same-character cards
+        or Colorless cards. Status/Curse/Event/Token/Quest pools are excluded
+        because they aren't draftable as synergy partners.
+        """
         card = self.get_card_by_id(card_id)
         if not card or not card.keywords:
             return []
+
+        # Non-draftable pools — never offered as a synergy partner.
+        _NON_DRAFTABLE = {"Status", "Curse", "Event", "Token", "Quest"}
 
         synergies = []
         for other in self.cards:
             if other.id == card_id:
                 continue
-            if other.character != card.character and other.character not in ("Colorless", "Status"):
+            if other.character in _NON_DRAFTABLE:
+                continue
+            if other.character != card.character and other.character != "Colorless":
                 continue
             shared = set(card.keywords) & set(other.keywords)
             if shared:

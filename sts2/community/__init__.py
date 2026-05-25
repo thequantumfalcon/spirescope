@@ -12,8 +12,6 @@ from ._types import (
     STS2_INDICATORS,
     SourceResult,
 )
-
-__all__ = ["STS2_INDICATORS", "SourceResult", "merge_results"]
 from ._types import (
     compute_consensus_tier as _compute_consensus_tier,
 )
@@ -27,8 +25,13 @@ from .reddit import _is_sts2_post
 
 log = logging.getLogger(__name__)
 
-# Re-exports for backward compatibility (tests import these from sts2.community)
+# Re-exports for backward compatibility (tests import these from sts2.community).
+# Single canonical __all__ — previous code declared it twice and silently
+# dropped STS2_INDICATORS + SourceResult on the second assignment.
 __all__ = [
+    "STS2_INDICATORS",
+    "SourceResult",
+    "merge_results",
     "run_community_scraper",
     "save_community_data",
     "apply_community_tiers",

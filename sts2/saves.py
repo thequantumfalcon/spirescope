@@ -83,10 +83,12 @@ def get_current_run(player_index: int = 0) -> CurrentRun:
         player.get("character_id", player.get("character", "")),
         player.get("character_id", "Unknown"),
     )
-    deck = [c.get("id", "") for c in player.get("deck", [])]
-    deck_upgrades = [(c.get("upgrade_count") or 0) > 0 for c in player.get("deck", [])]
-    relics = [r.get("id", "") for r in player.get("relics", [])]
-    potions = [p.get("id", "") for p in player.get("potions", [])]
+    # Filter empty IDs: malformed entries would pollute analytics with "" keys.
+    deck_entries = [c for c in player.get("deck", []) if c.get("id")]
+    deck = [c.get("id", "") for c in deck_entries]
+    deck_upgrades = [(c.get("upgrade_count") or 0) > 0 for c in deck_entries]
+    relics = [r.get("id", "") for r in player.get("relics", []) if r.get("id")]
+    potions = [p.get("id", "") for p in player.get("potions", []) if p.get("id")]
 
     # Parse floor history
     floors = []
@@ -222,9 +224,12 @@ def get_run_history() -> list[RunHistory]:
             players = data.get("players", [])
             player = _get_player(players)
 
-            character = CHARACTER_IDS.get(player.get("character", ""), player.get("character", "Unknown"))
-            deck = [c.get("id", "") for c in player.get("deck", [])]
-            relics = [r.get("id", "") for r in player.get("relics", [])]
+            # History files use "character"; current_run files use "character_id".
+            # Try both to keep per-character analytics consistent across both.
+            char_key = player.get("character_id") or player.get("character", "")
+            character = CHARACTER_IDS.get(char_key, char_key or "Unknown")
+            deck = [c.get("id", "") for c in player.get("deck", []) if c.get("id")]
+            relics = [r.get("id", "") for r in player.get("relics", []) if r.get("id")]
 
             # Parse floor history
             floors = []

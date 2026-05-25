@@ -141,7 +141,9 @@ _ANALYTICS_CACHE_TTL = 60.0
 async def _get_progress():
     global _progress_cache, _progress_cache_time
     now = time.monotonic()
-    if _progress_cache is None or (now - _progress_cache_time) > _PROGRESS_CACHE_TTL:
+    # Use cache_time==0 (never populated) rather than cache is None — get_progress
+    # returns None for "no save file" which is a valid cached value.
+    if _progress_cache_time == 0 or (now - _progress_cache_time) > _PROGRESS_CACHE_TTL:
         _progress_cache = await asyncio.to_thread(get_progress)
         _progress_cache_time = now
     return _progress_cache
