@@ -4094,7 +4094,7 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "Deal 7 damage. Vulnerable and Weak are twice as effective against the enemy for the next 3 turns.",
+    "description": "Deal 7 damage. Vulnerable and Weak are twice as effective against the enemy for the next 2 turns.",
     "description_upgraded": "",
     "keywords": [
       "Vulnerable",

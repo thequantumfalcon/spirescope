@@ -43,7 +43,10 @@ def _clean_description(desc: str) -> str:
 
 def _get_user_agent() -> str:
     from sts2.config import VERSION
-    return f"Spirescope/{VERSION}"
+    return (
+        f"Mozilla/5.0 (compatible; Spirescope/{VERSION}; "
+        f"+https://github.com/thequantumfalcon/spirescope)"
+    )
 
 
 def _fetch_page(path: str) -> str:
