@@ -2685,40 +2685,40 @@ async def test_api_reset_stats_route_behavior(client):
 
 
 async def test_shutdown_route_behavior(client):
-    """POST /shutdown: 403 without auth, 403 on bad token, 200 with admin token, 200 with CSRF+Origin."""
+    """POST /shutdown: 403 without auth from non-loopback, 200 with admin token, 200 from loopback."""
     from unittest.mock import patch
-
-    from sts2.app import _cors_origins
 
     # The handler does `import os; import threading` at call time and then
     # schedules `threading.Timer(0.5, lambda: os.kill(...))`. We patch the
     # top-level modules so the timer's target never actually fires SIGTERM
     # in the test process.
+    #
+    # Auth model is admin-token OR loopback client. The ASGI test client
+    # reports 127.0.0.1, so to exercise the unauthorized path we monkeypatch
+    # _is_loopback_client to False.
     with patch("os.kill") as mock_kill, \
          patch("threading.Timer") as mock_timer:
-        # No auth -> 403.
-        resp_none = await client.post("/shutdown")
-        assert resp_none.status_code == 403
+        with patch("sts2.routes._is_loopback_client", return_value=False):
+            # No auth from non-loopback -> 403.
+            resp_none = await client.post("/shutdown")
+            assert resp_none.status_code == 403
 
-        # Wrong admin token -> 403.
-        resp_bad = await client.post("/shutdown",
-                                     headers={"X-Admin-Token": "definitely_not_the_token"})
-        assert resp_bad.status_code == 403
+            # Wrong admin token from non-loopback -> 403.
+            resp_bad = await client.post("/shutdown",
+                                         headers={"X-Admin-Token": "definitely_not_the_token"})
+            assert resp_bad.status_code == 403
 
-        # Correct admin token -> 200, timer armed but SIGTERM never fires here.
-        resp_admin = await client.post("/shutdown",
-                                       headers={"X-Admin-Token": _ADMIN_TOKEN})
-        assert resp_admin.status_code == 200
-        assert resp_admin.json()["status"] == "shutting down"
+            # Correct admin token -> 200, timer armed but SIGTERM never fires here.
+            resp_admin = await client.post("/shutdown",
+                                           headers={"X-Admin-Token": _ADMIN_TOKEN})
+            assert resp_admin.status_code == 200
+            assert resp_admin.json()["status"] == "shutting down"
 
-        # Valid CSRF + allowed Origin -> 200.
-        origin = next(iter(_cors_origins))
-        resp_csrf = await client.post("/shutdown",
-                                      headers={"X-CSRF-Token": generate_csrf_token(),
-                                               "Origin": origin})
-        assert resp_csrf.status_code == 200
-        assert resp_csrf.json()["status"] == "shutting down"
+        # Loopback path (default test-client behavior) -> 200 without any token.
+        resp_loopback = await client.post("/shutdown")
+        assert resp_loopback.status_code == 200
+        assert resp_loopback.json()["status"] == "shutting down"
 
-    # SIGTERM lambda must never have run, even though Timer was scheduled.
+    # SIGTERM lambda must never have run, even though Timer was scheduled twice.
     assert not mock_kill.called
-    assert mock_timer.call_count == 2  # One per successful 200.
+    assert mock_timer.call_count == 2  # admin-token success + loopback success.
