@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.9.7
+
+### Fixed
+
+- **Save parser more empty-ID filters** — `card_stats`, `encounter_stats`, `enemy_stats`, `discovered_*`, `cards_offered`, `potions_used`, `potions_gained` all now drop empty-string IDs at parse time. Previously a malformed entry yielded `card_stats[""]` etc. which collapsed all unknown items into one bucket and produced nonsense analytics.
+- **/runs/import per-floor caps** — top-level floors/deck/relics caps were in place (v2.9.6), but per-floor lists (`cards_offered` ≤50, `monsters` ≤20, `potions_used`/`potions_gained` ≤20) were still uncapped. Crafted imports could DoS the analyzer with 500 floors × unlimited per-floor items.
+- **sync._validate_url SSRF hardening** — now blocks link-local (169.254.0.0/16, cloud metadata 169.254.169.254), multicast, and unspecified addresses in addition to private/loopback/reserved. Replaced fragile string-match logic with a sentinel-based check.
+- **community.html javascript: URL XSS** — scraped Reddit/Steam URLs were rendered into `<a href>` without scheme validation. Added template guard: only `http://` or `https://` URLs become clickable; anything else renders as plain `<span>`.
+- **tests/conftest.py STS2_HOST** — was `setdefault` (no-op if dev shell had `STS2_HOST=127.0.0.1` set), silently bypassing rate-limiter tests. Now unconditional assignment.
+
 ## v2.9.6
 
 ### Fixed

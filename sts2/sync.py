@@ -27,7 +27,14 @@ class SyncError(Exception):
 
 
 def _validate_url(url: str) -> str:
-    """Validate sync URL: require HTTPS and reject private/loopback addresses."""
+    """Validate sync URL: require HTTPS and reject private/loopback addresses.
+
+    Caveat: DNS-rebinding TOCTOU is not fully closed — between validation here
+    and the actual urlopen() request, an attacker-controlled DNS server could
+    return a public IP on first lookup and 127.0.0.1 on the second. A complete
+    fix requires a custom connection adapter that pins the validated IP at
+    socket level. Out of scope for current sync use (opt-in only).
+    """
     parsed = urllib.parse.urlparse(url)
     if parsed.scheme != "https":
         raise ValueError(f"Sync URL must use HTTPS (got {parsed.scheme or 'no scheme'})")
@@ -36,24 +43,51 @@ def _validate_url(url: str) -> str:
     if not hostname:
         raise ValueError("Sync URL has no hostname")
 
+    def _disallowed_reason(addr: ipaddress._BaseAddress) -> str | None:
+        # Block private, loopback, reserved, multicast, link-local (cloud-
+        # metadata 169.254.169.254 is link-local — must be explicit).
+        if addr.is_loopback:
+            return "loopback"
+        if addr.is_link_local:
+            return "link-local (cloud metadata)"
+        if addr.is_private:
+            return "private"
+        if addr.is_reserved:
+            return "reserved"
+        if addr.is_multicast:
+            return "multicast"
+        if addr.is_unspecified:
+            return "unspecified"
+        return None
+
+    # Try parsing hostname as a literal IP first.
     try:
         addr = ipaddress.ip_address(hostname)
-        if addr.is_private or addr.is_loopback or addr.is_reserved:
-            raise ValueError(f"Sync URL must not point to private/loopback address ({hostname})")
-    except ValueError as e:
-        if "private" in str(e) or "HTTPS" in str(e) or "no hostname" in str(e):
-            raise
-        # hostname is a DNS name — resolve it
-        try:
-            infos = socket.getaddrinfo(hostname, None, proto=socket.IPPROTO_TCP)
-            for _family, _type, _proto, _canonname, sockaddr in infos:
-                addr = ipaddress.ip_address(sockaddr[0])
-                if addr.is_private or addr.is_loopback or addr.is_reserved:
-                    raise ValueError(
-                        f"Sync URL resolves to private/loopback address ({sockaddr[0]})"
-                    )
-        except socket.gaierror:
-            pass  # DNS resolution failure — let urllib handle it at request time
+    except ValueError:
+        addr = None
+    if addr is not None:
+        reason = _disallowed_reason(addr)
+        if reason:
+            raise ValueError(
+                f"Sync URL must not point to {reason} address ({hostname})"
+            )
+        return url
+
+    # Hostname is a DNS name — resolve and check every returned address.
+    try:
+        infos = socket.getaddrinfo(hostname, None, proto=socket.IPPROTO_TCP)
+        for _family, _type, _proto, _canonname, sockaddr in infos:
+            try:
+                resolved = ipaddress.ip_address(sockaddr[0])
+            except (ValueError, IndexError):
+                continue
+            reason = _disallowed_reason(resolved)
+            if reason:
+                raise ValueError(
+                    f"Sync URL resolves to {reason} address ({sockaddr[0]})"
+                )
+    except socket.gaierror:
+        pass  # DNS resolution failure — let urllib handle it at request time
 
     return url
 

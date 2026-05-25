@@ -13,7 +13,11 @@
 <div class="card {% if post.type == 'tier_list' %}card-caution{% else %}card-highlight{% endif %}">
   <div class="flex justify-between items-start">
     <div>
+      {% if post.url and (post.url.startswith('http://') or post.url.startswith('https://')) %}
       <a href="{{ post.url }}" target="_blank" rel="noopener" class="font-bold text-base">{{ post.title }}</a>
+      {% else %}
+      <span class="font-bold text-base">{{ post.title }}</span>
+      {% endif %}
       <p class="text-sm text-muted mt-xs">
         <span class="tag {% if post.type == 'tier_list' %}tag-power{% else %}tag-skill{% endif %}">{{ post.type|replace('_', ' ')|title }}</span>
         {% if post.source is defined %}<span class="tag tag-{{ 'reddit' if post.source == 'reddit' else 'steam' }}">{{ post.source|replace('_', ' ')|title }}</span>{% endif %}

@@ -7,7 +7,9 @@ from pathlib import Path
 # when bound to loopback (single-user dashboard, no real attack surface), but
 # the rate-limit tests need the middleware active to assert on its headers.
 # Set BEFORE importing sts2.app so any import-time reads see the override.
-os.environ.setdefault("STS2_HOST", "0.0.0.0")
+# Unconditional assignment (was setdefault): a dev shell with STS2_HOST=127.0.0.1
+# would silently bypass the rate-limiter and break those tests.
+os.environ["STS2_HOST"] = "0.0.0.0"
 
 import pytest
 import pytest_asyncio

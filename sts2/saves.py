@@ -160,7 +160,10 @@ def get_progress() -> PlayerProgress | None:
 
     card_stats = {}
     for cs in data.get("card_stats", []):
-        card_stats[cs.get("id", "")] = {
+        cid = cs.get("id", "")
+        if not cid:
+            continue  # malformed save entry — skip rather than collapse into ""
+        card_stats[cid] = {
             "picked": cs.get("times_picked", 0),
             "skipped": cs.get("times_skipped", 0),
             "won": cs.get("times_won", 0),
@@ -170,6 +173,8 @@ def get_progress() -> PlayerProgress | None:
     encounter_stats = {}
     for es in data.get("encounter_stats", []):
         enc_id = es.get("encounter_id", "")
+        if not enc_id:
+            continue  # skip empty IDs
         encounter_stats[enc_id] = {}
         for fs in es.get("fight_stats", []):
             char_name = CHARACTER_IDS.get(fs.get("character", ""), fs.get("character", ""))
@@ -182,6 +187,8 @@ def get_progress() -> PlayerProgress | None:
     enemy_stats = {}
     for es in data.get("enemy_stats", []):
         enemy_id = es.get("enemy_id", "")
+        if not enemy_id:
+            continue  # malformed entry — skip rather than create enemy_stats[""]
         enemy_stats[enemy_id] = {}
         for fs in es.get("fight_stats", []):
             char_name = CHARACTER_IDS.get(fs.get("character", ""), fs.get("character", ""))
@@ -196,10 +203,12 @@ def get_progress() -> PlayerProgress | None:
         card_stats=card_stats,
         encounter_stats=encounter_stats,
         enemy_stats=enemy_stats,
-        discovered_cards=data.get("discovered_cards", []),
-        discovered_relics=data.get("discovered_relics", []),
-        discovered_potions=data.get("discovered_potions", []),
-        discovered_events=data.get("discovered_events", []),
+        # Filter empties — malformed save entries would create phantom Card/
+        # Relic/Potion/Event records with id="" that pollute search + analytics.
+        discovered_cards=[i for i in data.get("discovered_cards", []) if i],
+        discovered_relics=[i for i in data.get("discovered_relics", []) if i],
+        discovered_potions=[i for i in data.get("discovered_potions", []) if i],
+        discovered_events=[i for i in data.get("discovered_events", []) if i],
         epochs=[
             {"id": e.get("id", ""), "state": e.get("state", "not_obtained"),
              "obtain_date": e.get("obtain_date", 0)}
@@ -248,9 +257,12 @@ def get_run_history() -> list[RunHistory]:
                     cards_offered = []
                     for cc in p_stats.get("card_choices", []):
                         card_info = cc.get("card", {})
-                        cards_offered.append(card_info.get("id", ""))
+                        cid = card_info.get("id", "")
+                        if not cid:
+                            continue  # skip empty IDs — they pollute pick-rate counters
+                        cards_offered.append(cid)
                         if cc.get("was_picked"):
-                            card_picked = card_info.get("id", "")
+                            card_picked = cid
 
                     floors.append(RunFloor(
                         floor=floor_num,
@@ -265,8 +277,8 @@ def get_run_history() -> list[RunHistory]:
                         gold=p_stats.get("current_gold", 0),
                         cards_offered=cards_offered,
                         card_picked=card_picked,
-                        potions_used=p_stats.get("potion_used", []),
-                        potions_gained=[p.get("choice", "") for p in p_stats.get("potion_choices", []) if p.get("was_picked")],
+                        potions_used=[p for p in p_stats.get("potion_used", []) if p],
+                        potions_gained=[p.get("choice", "") for p in p_stats.get("potion_choices", []) if p.get("was_picked") and p.get("choice")],
                     ))
 
             # Timestamp: prefer start_time from data, fallback to filename

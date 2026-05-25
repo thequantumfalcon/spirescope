@@ -653,12 +653,22 @@ async def import_run(request: Request, file: UploadFile = File(...),
             "error_message": "Invalid run file format.",
         }, status_code=400)
     # Per-field guard: a 1 MB byte cap still permits ~100k tiny floor entries,
-    # which would DoS the analyzer + template render. STS2 runs are 50–60 floors.
+    # which would DoS the analyzer + template render. STS2 runs are 50-60 floors.
     if len(run.floors) > 500 or len(run.deck) > 200 or len(run.relics) > 100:
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400,
             "error_message": "Run file exceeds reasonable size (floors/deck/relics).",
         }, status_code=400)
+    # Per-floor cap: 500 floors x 1000-item cards_offered would still DoS.
+    for f in run.floors:
+        if (len(getattr(f, "cards_offered", []) or []) > 50 or
+                len(getattr(f, "monsters", []) or []) > 20 or
+                len(getattr(f, "potions_used", []) or []) > 20 or
+                len(getattr(f, "potions_gained", []) or []) > 20):
+            return a.templates.TemplateResponse(request, "error.html", {
+                "error_code": 400,
+                "error_message": "Run file has unreasonable per-floor list sizes.",
+            }, status_code=400)
     run_analysis = analyze_run(run, kb=a.kb)
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "run_analysis": run_analysis, "kb": a.kb, "imported": True,
