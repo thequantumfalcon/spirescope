@@ -62,7 +62,7 @@ jobs:
         run: |
           set -euo pipefail
           # Exclude legitimate guardrail files (these contain the patterns by design)
-          EXCLUDES='^(CLAUDE\.md|\.githooks/|\.github/workflows/no-ai-attribution\.yml|\.gitignore)$'
+          EXCLUDES='^(CLAUDE\.md|\.githooks/.*|\.github/workflows/no-ai-attribution\.yml|\.gitignore)$'
           FILES=$(git ls-files | grep -vE "$EXCLUDES")
           PATTERNS=(
             "co-authored-by:[[:space:]]*claude"

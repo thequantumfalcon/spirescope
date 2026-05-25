@@ -63,8 +63,12 @@ if [ $FAIL -eq 1 ]; then
     exit 1
 fi
 
-# Also scan tracked file content in HEAD
-EXCLUDES='^(CLAUDE\.md|\.githooks/|\.github/workflows/no-ai-attribution\.yml|\.gitignore)$'
+# Also scan tracked file content in HEAD.
+# The self-referential files contain the patterns by design and must be
+# excluded. The previous EXCLUDES anchored on whole-filename equality
+# (^.githooks/$) which never matched the actual paths (.githooks/pre-push
+# etc.), so the hook blocked itself. Switched to prefix/glob style.
+EXCLUDES='^(CLAUDE\.md|\.githooks/.*|\.github/workflows/no-ai-attribution\.yml|\.gitignore)$'
 for pat in "${PATTERNS[@]}"; do
     hits=$(git ls-files | grep -vE "$EXCLUDES" | xargs -I{} grep -liE "$pat" {} 2>/dev/null || true)
     if [ -n "$hits" ]; then
