@@ -1,4 +1,4 @@
-# Copilot instructions for Spirescope
+# Project guidance for Spirescope
 
 ## Read first
 
