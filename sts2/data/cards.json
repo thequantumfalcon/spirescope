@@ -1995,7 +1995,8 @@
     "rarity": "Rare",
     "description": "Deal 28 damage to ALL enemies. Lose 3 Focus.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.ICE_LANCE",
@@ -2024,7 +2025,8 @@
       "Exhaust",
       "Channel",
       "Plasma"
-    ]
+    ],
+    "last_changed": "v0.108.0"
   },
   {
     "id": "CARD.ITERATION",
@@ -2382,7 +2384,8 @@
     "rarity": "Uncommon",
     "description": "Deal 26 damage. If this kills an enemy, gain 1 Energy.",
     "description_upgraded": "Deal 34 damage. If this kills an enemy, gain 1 Energy.",
-    "keywords": []
+    "keywords": [],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.SUPERCRITICAL",
@@ -2487,7 +2490,8 @@
     "description_upgraded": "Whenever you create a Status, Channel 1 random Orb.",
     "keywords": [
       "Channel"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.UPROAR",
@@ -2945,7 +2949,8 @@
     "rarity": "Uncommon",
     "description": "Lose 3 HP. Gain 2 Energy.",
     "keywords": [],
-    "description_upgraded": "Lose 3 HP. Gain 3 Energy."
+    "description_upgraded": "Lose 3 HP. Gain 3 Energy.",
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.BLUDGEON",
@@ -3074,7 +3079,8 @@
     "keywords": [
       "Block",
       "Vulnerable"
-    ]
+    ],
+    "last_changed": "v0.108.0"
   },
   {
     "id": "CARD.CONFLAGRATION",
@@ -3122,7 +3128,8 @@
     "description_upgraded": "Vulnerable enemies take an additional 50% damage.",
     "keywords": [
       "Vulnerable"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.DARK_EMBRACE",
@@ -3162,7 +3169,8 @@
     "description_upgraded": "At the start of your turn, gain 4 Strength.",
     "keywords": [
       "Strength"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.DEMONIC_SHIELD",
@@ -3204,7 +3212,8 @@
       "Strength",
       "Vulnerable",
       "Exhaust"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.DRUM_OF_BATTLE",
@@ -3218,7 +3227,8 @@
     "keywords": [
       "Exhaust",
       "Draw"
-    ]
+    ],
+    "last_changed": "v0.107.1"
   },
   {
     "id": "CARD.EVIL_EYE",
@@ -3243,7 +3253,8 @@
     "rarity": "Uncommon",
     "description": "Gain 1 Energy for each Attack in your Hand.",
     "description_upgraded": "Gain 1 Energy for each Attack in your Hand.",
-    "keywords": []
+    "keywords": [],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.FEED",
@@ -3372,8 +3383,8 @@
     "cost": "2",
     "type": "Power",
     "rarity": "Rare",
-    "description": "Whenever you draw a card containing âStrikeâ, it is played against a random enemy.",
-    "description_upgraded": "Whenever you draw a card containing âStrikeâ, it is played against a random enemy.",
+    "description": "Whenever you draw a card containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d, it is played against a random enemy.",
+    "description_upgraded": "Whenever you draw a card containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d, it is played against a random enemy.",
     "keywords": [
       "Draw"
     ]
@@ -3577,8 +3588,8 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 6 damage. Deals 2 additional damage for ALL your cards containing âStrikeâ.",
-    "description_upgraded": "Deal 6 damage. Deals 3 additional damage for ALL your cards containing âStrikeâ.",
+    "description": "Deal 6 damage. Deals 2 additional damage for ALL your cards containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d.",
+    "description_upgraded": "Deal 6 damage. Deals 3 additional damage for ALL your cards containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d.",
     "keywords": []
   },
   {
@@ -3616,7 +3627,8 @@
     "rarity": "Rare",
     "description": "Transform all Attacks in your Hand into Giant Rock.",
     "description_upgraded": "Transform all Attacks in your Hand into Giant Rock+.",
-    "keywords": []
+    "keywords": [],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.PYRE",
@@ -3804,7 +3816,8 @@
     "rarity": "Common",
     "description": "Gain 7 Block. Apply 1 Vulnerable.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.TEAR_ASUNDER",
@@ -4298,7 +4311,8 @@
     "keywords": [
       "Exhaust",
       "Ethereal"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.END_OF_DAYS",
@@ -5272,7 +5286,8 @@
     "rarity": "Common",
     "description": "Deal 10 damage. Add a Debris into your Hand.",
     "description_upgraded": "Deal 14 damage. Add a Debris into your Hand.",
-    "keywords": []
+    "keywords": [],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.COMET",
@@ -5847,7 +5862,8 @@
     "description_upgraded": "The first time you create a card each turn, gain 7 Block.",
     "keywords": [
       "Block"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.PROPHESIZE",
@@ -5906,7 +5922,8 @@
     "description_upgraded": "Gain 20 Block. Blocked attack damage is reflected to your attacker this turn.",
     "keywords": [
       "Block"
-    ]
+    ],
+    "last_changed": "v0.107.1"
   },
   {
     "id": "CARD.RESONANCE",
@@ -6164,7 +6181,8 @@
     "description_upgraded": "Poison is triggered 2 additional time.",
     "keywords": [
       "Poison"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.ACCURACY",
@@ -6550,7 +6568,8 @@
     "keywords": [
       "Retain",
       "Draw"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.EXPOSE",
@@ -6601,7 +6620,8 @@
     "rarity": "Rare",
     "description": "The enemy takes double attack damage from other players this turn.",
     "description_upgraded": "The enemy takes double attack damage from other players this turn.",
-    "keywords": []
+    "keywords": [],
+    "last_changed": "v0.108.0"
   },
   {
     "id": "CARD.FLECHETTES",
@@ -6793,7 +6813,8 @@
     "rarity": "Uncommon",
     "description": "Next turn, gain 1 Energy.",
     "description_upgraded": "Next turn, gain 2 Energy.",
-    "keywords": []
+    "keywords": [],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.MURDER",
@@ -6858,7 +6879,8 @@
     "description_upgraded": "Whenever you apply Poison, deal 5 damage to ALL enemies.",
     "keywords": [
       "Poison"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.PHANTOM_BLADES",
@@ -6934,7 +6956,8 @@
     "description_upgraded": "Deal 20 damage. Next turn, draw 2 cards.",
     "keywords": [
       "Draw"
-    ]
+    ],
+    "last_changed": "v0.107.1"
   },
   {
     "id": "CARD.PREPARE",
@@ -7001,7 +7024,9 @@
     "keywords": [
       "Weak",
       "Exhaust"
-    ]
+    ],
+    "last_changed": "v0.107.1",
+    "introduced": "v0.107.1"
   },
   {
     "id": "CARD.SERPENT_FORM",
@@ -7256,7 +7281,8 @@
     "description_upgraded": "At the end of your turn, you no longer discard your Hand.",
     "keywords": [
       "Discard"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.WRAITH_FORM",
@@ -7726,7 +7752,8 @@
     "rarity": "Uncommon",
     "description": "",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.TRAINING_STRIKE",
@@ -7849,7 +7876,9 @@
     "description_upgraded": "Choose 1 of 3 upgraded Powers to add into your Hand. It's free to play this turn. Exhaust.",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "introduced": "v0.109.0",
+    "branch": "beta"
   },
   {
     "id": "CARD.MAD_SCIENCE_EVENT",
@@ -7897,7 +7926,8 @@
     "description_upgraded": "Deal 72 damage. Costs 1 less 1 Energy for each card Exhausted this combat by ANYONE.",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.OUTRAGE",
@@ -7987,7 +8017,9 @@
     "rarity": "Quest",
     "description": "Unplayable. After entering 5 more ? rooms, transforms into an Abundance.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "introduced": "v0.109.0",
+    "branch": "beta"
   },
   {
     "id": "CARD.CONSTELLATION",
@@ -8051,7 +8083,10 @@
     "description_upgraded": "Another player chooses a card in their Draw Pile to add into their Hand.",
     "keywords": [
       "Draw"
-    ]
+    ],
+    "introduced": "v0.109.0",
+    "branch": "beta",
+    "mp_only": true
   },
   {
     "id": "CARD.BLADE_SYMPHONY",
@@ -8064,7 +8099,8 @@
     "description_upgraded": "Add 2 Shivs to ALL player's Hands.",
     "keywords": [
       "Shiv"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "CARD.CONCOCT",

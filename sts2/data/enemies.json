@@ -12,10 +12,11 @@
     ],
     "tips": [
       "Introduced in v0.105.0 as replacement for Doormaker.",
-      "Reworked Wither/Withering Presence in v0.106.0 — fight is now more even across all five characters.",
+      "Reworked Wither/Withering Presence in v0.106.0 \u2014 fight is now more even across all five characters.",
       "Final Act 3 boss; bring scaling damage and consistent block."
     ],
-    "source": "patch-0.105.0"
+    "source": "patch-0.105.0",
+    "last_changed": "v0.109.0"
   },
   {
     "id": "MONSTER.ASSASSIN_RUBY_RAIDER",
@@ -44,7 +45,7 @@
       "Appears with other Ruby Raiders"
     ],
     "tips": [
-      "Part of a group fight — prioritize the most dangerous variant",
+      "Part of a group fight \u2014 prioritize the most dangerous variant",
       "AoE damage is effective against Raider packs"
     ]
   },
@@ -184,7 +185,7 @@
       "Highest damage of the Ruby Raider variants"
     ],
     "tips": [
-      "Focus this one first — hits hardest",
+      "Focus this one first \u2014 hits hardest",
       "Block heavily on its attack turns"
     ]
   },
@@ -474,7 +475,7 @@
     "hp": "",
     "description": "",
     "tips": [
-      "Elite with three segments (40-46 HP each). All three moves are always in play — one per segment. When a segment dies, it revives with 25 HP if another segment lives. Strong AoE check; kill all segments before Reattach triggers."
+      "Elite with three segments (40-46 HP each). All three moves are always in play \u2014 one per segment. When a segment dies, it revives with 25 HP if another segment lives. Strong AoE check; kill all segments before Reattach triggers."
     ],
     "act": [
       "Act 2"
@@ -599,7 +600,7 @@
       "Ramps damage over time"
     ],
     "tips": [
-      "Endgame boss — needs fully built deck",
+      "Endgame boss \u2014 needs fully built deck",
       "All scaling synergies should be online",
       "Burst damage windows are critical"
     ]
@@ -854,7 +855,7 @@
       "Slow but steady damage"
     ],
     "tips": [
-      "Standard fight — good for learning mechanics",
+      "Standard fight \u2014 good for learning mechanics",
       "Use as an opportunity to set up powers"
     ]
   },
@@ -870,7 +871,7 @@
       "Weaker crawler variant"
     ],
     "tips": [
-      "Easy fight — take minimal damage"
+      "Easy fight \u2014 take minimal damage"
     ]
   },
   {
@@ -1095,7 +1096,7 @@
       "Ramps Strength over time"
     ],
     "tips": [
-      "Requires offensive play — can't turtle",
+      "Requires offensive play \u2014 can't turtle",
       "Must outdamage its healing",
       "Dangerous Doom application can kill you if ignored"
     ]
@@ -1929,7 +1930,7 @@
       "Turn 4 of each pattern is optimal damage window"
     ],
     "tips": [
-      "Don't discard Beckon cards — take the HP loss instead",
+      "Don't discard Beckon cards \u2014 take the HP loss instead",
       "Burst damage on turn 4 of each cycle",
       "Intangible on turn 5 means you can't damage it"
     ]
@@ -2110,7 +2111,7 @@
     "hp_range": "",
     "patterns": [],
     "tips": [
-      "Act 1 Overgrowth boss: 1 Kin Priest (190 HP) + 2 Kin Followers (58-59 HP). Priest cycles: Orb of Frailty, Orb of Weakness, Soul Beam (3x3), Dark Ritual (+2 Str). Followers flee if Priest dies — focus the Priest to end the fight early."
+      "Act 1 Overgrowth boss: 1 Kin Priest (190 HP) + 2 Kin Followers (58-59 HP). Priest cycles: Orb of Frailty, Orb of Weakness, Soul Beam (3x3), Dark Ritual (+2 Str). Followers flee if Priest dies \u2014 focus the Priest to end the fight early."
     ]
   },
   {
@@ -2205,7 +2206,7 @@
       "Weaker hopper variant"
     ],
     "tips": [
-      "Still steals gold — kill fast"
+      "Still steals gold \u2014 kill fast"
     ]
   },
   {
@@ -2228,7 +2229,7 @@
     "hp": "",
     "description": "",
     "tips": [
-      "Normal enemy in Act 1 Underdocks (21-25 HP each). Cycle: Whirl (7 dmg), Spiken (gains 2 Thorns), Spike Spit (3x3 dmg). Watch for Thorns — time attacks to avoid hitting into Spiken turns."
+      "Normal enemy in Act 1 Underdocks (21-25 HP each). Cycle: Whirl (7 dmg), Spiken (gains 2 Thorns), Spike Spit (3x3 dmg). Watch for Thorns \u2014 time attacks to avoid hitting into Spiken turns."
     ],
     "act": [
       "Act 1"
@@ -2267,7 +2268,8 @@
     "patterns": [],
     "tips": [
       "Auto-discovered from save data"
-    ]
+    ],
+    "last_changed": "v0.109.0"
   },
   {
     "id": "MONSTER.TRACKER_RUBY_RAIDER",
@@ -2283,7 +2285,7 @@
       "Appears with other Ruby Raiders"
     ],
     "tips": [
-      "Part of group fights — use AoE",
+      "Part of group fights \u2014 use AoE",
       "Medium threat level among Raiders"
     ]
   },

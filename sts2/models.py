@@ -14,6 +14,12 @@ class Card(BaseModel):
     keywords: list[str] = []
     tier: str = ""  # S, A, B, C, D
     source: str = "base"  # base, mod, discovered
+    # Schema v2 — all optional so v1 data files load unchanged
+    mp_only: bool = False  # multiplayer-only card
+    branch: str = ""  # main | beta | both ("" = unknown)
+    introduced: str = ""  # patch that added it, e.g. "v0.109.0"
+    last_changed: str = ""  # patch that last reworked/rebalanced it
+    tags: list[str] = []  # e.g. enchantment-interaction keywords
 
 
 class Relic(BaseModel):
@@ -23,6 +29,9 @@ class Relic(BaseModel):
     rarity: str = ""  # Starter, Common, Uncommon, Rare, Boss, Event, Shop
     description: str = ""
     source: str = "base"
+    branch: str = ""
+    introduced: str = ""
+    last_changed: str = ""
 
 
 class Potion(BaseModel):
@@ -31,6 +40,9 @@ class Potion(BaseModel):
     rarity: str = ""  # Common, Uncommon, Rare
     description: str = ""
     source: str = "base"
+    branch: str = ""
+    introduced: str = ""
+    last_changed: str = ""
 
 
 class Enemy(BaseModel):
@@ -41,6 +53,16 @@ class Enemy(BaseModel):
     hp_range: str = ""  # e.g. "40-44" or "250"
     patterns: list[str] = []  # Description of attack patterns
     tips: list[str] = []  # Strategy tips
+    source: str = "base"
+    branch: str = ""
+    introduced: str = ""
+    last_changed: str = ""  # enemy moves can change per patch (era context)
+
+
+class Badge(BaseModel):
+    id: str
+    name: str
+    requirement: str = ""  # human-readable earn condition
     source: str = "base"
 
 
@@ -68,6 +90,7 @@ class Epoch(BaseModel):
     requirement: str = ""  # human-readable unlock condition
     unlocks: list[str] = []  # names of cards/relics/potions/etc unlocked
     unlock_type: str = ""  # cards, relics, potions, character, act, ancient, mode
+    status: str = "active"  # active | deprecated (the game deprecates epochs)
 
 
 class SynergyGroup(BaseModel):

@@ -431,7 +431,8 @@
     "name": "Diamond Diadem",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Start combat with 20 Block. Your Block is not removed at the start of your next turn."
+    "description": "Start combat with 20 Block. Your Block is not removed at the start of your next turn.",
+    "last_changed": "v0.109.0"
   },
   {
     "id": "RELIC.DINGY_RUG",
@@ -445,7 +446,8 @@
     "name": "Distinguished Cape",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, add 2 random Curses and 3 Apparitions to your Deck."
+    "description": "Upon pickup, add 2 random Curses and 3 Apparitions to your Deck.",
+    "last_changed": "v0.109.0"
   },
   {
     "id": "RELIC.DIVINE_DESTINY",
@@ -564,7 +566,8 @@
     "name": "Fiddle",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "At the start of each turn, draw 3 additional cards. You may not draw cards during your turn."
+    "description": "At the start of each turn, draw 3 additional cards. You may not draw cards during your turn.",
+    "last_changed": "v0.109.0"
   },
   {
     "id": "RELIC.FORGOTTEN_SOUL",
@@ -746,7 +749,8 @@
     "name": "History Course",
     "character": "Event",
     "rarity": "Event",
-    "description": "At the start of your turn, play a copy of your last played Attack."
+    "description": "At the start of your turn, play a copy of your last played Attack.",
+    "last_changed": "v0.109.0"
   },
   {
     "id": "RELIC.HORN_CLEAT",
@@ -1005,7 +1009,8 @@
     "name": "Meat Cleaver",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "You may Cook at Rest Sites."
+    "description": "You may Cook at Rest Sites.",
+    "last_changed": "v0.109.0"
   },
   {
     "id": "RELIC.MEAT_ON_THE_BONE",
@@ -1586,7 +1591,8 @@
     "name": "Sand Castle",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, Upgrade 6 random cards."
+    "description": "Upon pickup, Upgrade 6 random cards.",
+    "last_changed": "v0.109.0"
   },
   {
     "id": "RELIC.SCREAMING_FLAGON",
@@ -1628,7 +1634,8 @@
     "name": "Sere Talon",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, lose 9 Max HP. Add 3 [purple]Wishes[/purple] to your Deck."
+    "description": "Upon pickup, lose 9 Max HP. Add 3 [purple]Wishes[/purple] to your Deck.",
+    "last_changed": "v0.109.0"
   },
   {
     "id": "RELIC.SHOVEL",
@@ -1754,14 +1761,14 @@
     "name": "Strike Dummy",
     "character": "Shared",
     "rarity": "Common",
-    "description": "Cards containing âStrikeâ deal 3 additional damage."
+    "description": "Cards containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d deal 3 additional damage."
   },
   {
     "id": "RELIC.STRIKE_DUMMY_FAKE",
     "name": "Strike Dummy???",
     "character": "Event",
     "rarity": "Event",
-    "description": "Cards containing âStrikeâ deal 1 additional damage."
+    "description": "Cards containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d deal 1 additional damage."
   },
   {
     "id": "RELIC.STURDY_CLAMP",
@@ -1901,7 +1908,8 @@
     "name": "Toy Box",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, obtain 5 Wax Relics. Every 3 combats, your left-most Wax Relic will melt away."
+    "description": "Upon pickup, obtain 5 Wax Relics. Every 3 combats, your left-most Wax Relic will melt away.",
+    "last_changed": "v0.109.0"
   },
   {
     "id": "RELIC.TRI_BOOMERANG",
@@ -2013,7 +2021,7 @@
     "name": "Vitruvian Minion",
     "character": "Regent",
     "rarity": "Shop",
-    "description": "Cards containing âMinionâ deal double damage and gain double Block."
+    "description": "Cards containing \u00e2\u0080\u009cMinion\u00e2\u0080\u009d deal double damage and gain double Block."
   },
   {
     "id": "RELIC.WAR_HAMMER",
@@ -2090,7 +2098,8 @@
     "name": "Kaleidoscope",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, obtain 2 card rewards from other characters."
+    "description": "Upon pickup, obtain 2 card rewards from other characters.",
+    "introduced": "beta-2026-06-19"
   },
   {
     "id": "RELIC.NEOWS_BONES",
@@ -2111,7 +2120,8 @@
     "name": "Silken Tress",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, lose all Gold. Enchant all cards in the first card reward with [purple]Glam[/purple]."
+    "description": "Upon pickup, lose all Gold. Enchant all cards in the first card reward with [purple]Glam[/purple].",
+    "introduced": "beta-2026-06-19"
   },
   {
     "id": "RELIC.WINGED_BOOTS",
@@ -2167,20 +2177,25 @@
     "name": "Dowsing Rod",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, add 1 Dowsing to your Deck."
+    "description": "Upon pickup, add 1 Dowsing to your Deck.",
+    "introduced": "v0.109.0",
+    "branch": "beta"
   },
   {
     "id": "RELIC.FISHING_ROD",
     "name": "Fishing Rod",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Every 3 normal combats, Upgrade a random card in your Deck."
+    "description": "Every 3 normal combats, Upgrade a random card in your Deck.",
+    "introduced": "beta-2026-06-19"
   },
   {
     "id": "RELIC.NEOWS_SACRIFICE",
     "name": "Neow's Sacrifice",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, procure 1 Ambergris and add 1 Guilty to your Deck."
+    "description": "Upon pickup, procure 1 Ambergris and add 1 Guilty to your Deck.",
+    "introduced": "v0.109.0",
+    "branch": "beta"
   }
 ]

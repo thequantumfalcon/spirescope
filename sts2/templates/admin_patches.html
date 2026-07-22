@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block page_id %}admin-patches{% endblock %}
+{% block title %}Patch Manifest{% endblock %}
+{% block content %}
+<h1>Patch Manifest</h1>
+<p class="text-muted">Runs resolve their build id to a patch era via <code>patches.json</code>. Unknown build ids land here for one-click assignment — nothing is guessed.</p>
+
+{% if assigned %}<p class="win">Build id assigned.</p>{% endif %}
+
+<h2>Unmapped build ids</h2>
+{% if unmapped %}
+<table class="data-table">
+  <thead><tr><th>Build id</th><th>Runs</th><th>Assign to patch</th></tr></thead>
+  <tbody>
+  {% for u in unmapped %}
+  <tr>
+    <td><code>{{ u.build_id }}</code></td>
+    <td>{{ u.count }}</td>
+    <td>
+      <form method="post" action="/admin/patches/assign" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="build_id" value="{{ u.build_id }}">
+        <select name="patch" class="select-input">
+          {% for p in patches %}
+          <option value="{{ p.patch }}">{{ p.patch }}{% if p.date %} ({{ p.date }}){% endif %}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-sm">Assign</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-muted">All observed build ids are mapped.</p>
+{% endif %}
+
+<h2 class="mt-md">Known patches</h2>
+<table class="data-table">
+  <thead><tr><th>Patch</th><th>Date</th><th>Branch</th><th>Build ids</th><th>Changed entities</th></tr></thead>
+  <tbody>
+  {% for p in patches %}
+  <tr>
+    <td>{{ p.patch }}</td>
+    <td>{{ p.date }}</td>
+    <td>{{ p.branch }}</td>
+    <td>{% for b in p.build_ids %}<code>{{ b }}</code>{% if not loop.last %}, {% endif %}{% endfor %}</td>
+    <td>{{ p.changed.cards|length }} cards, {{ p.changed.relics|length }} relics, {{ p.changed.enemies|length }} enemies</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

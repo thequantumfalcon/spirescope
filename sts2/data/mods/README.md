@@ -46,3 +46,11 @@ Place `.json` files in this directory to add mod cards, relics, and enemies.
 - All entity types (cards, relics, enemies) are optional per file.
 - Base game data always takes priority — conflicting IDs are skipped.
 - Restart Spirescope or call `POST /api/reload` after adding files.
+
+## Schema v2 fields (optional)
+
+Cards additionally accept: `mp_only` (bool), `branch` ("main" | "beta" |
+"both"), `introduced` (patch version string), `last_changed` (patch version
+string), `tags` (list of strings). Relics, potions, and enemies accept
+`branch`, `introduced`, `last_changed`. All are optional — v1 mod files load
+unchanged.

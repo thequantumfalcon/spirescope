@@ -1,0 +1,108 @@
+[
+  {
+    "patch": "v0.107.0",
+    "date": "2026-06-04",
+    "branch": "beta",
+    "build_ids": [
+      "v0.107.0"
+    ],
+    "changed": {
+      "cards": [],
+      "relics": [],
+      "enemies": []
+    }
+  },
+  {
+    "patch": "beta-2026-06-19",
+    "date": "2026-06-19",
+    "branch": "beta",
+    "build_ids": [],
+    "changed": {
+      "cards": [],
+      "relics": [],
+      "enemies": []
+    }
+  },
+  {
+    "patch": "v0.107.1",
+    "date": "2026-06",
+    "branch": "main",
+    "build_ids": [
+      "v0.107.1"
+    ],
+    "changed": {
+      "cards": [
+        "CARD.FOLLOW_THROUGH",
+        "CARD.PREDATOR",
+        "CARD.DRUM_OF_BATTLE",
+        "CARD.REFLECT"
+      ],
+      "relics": [],
+      "enemies": []
+    }
+  },
+  {
+    "patch": "v0.108.0",
+    "date": "2026-07-03",
+    "branch": "beta",
+    "build_ids": [
+      "v0.108.0"
+    ],
+    "changed": {
+      "cards": [
+        "CARD.FLANKING",
+        "CARD.IGNITION",
+        "CARD.COLOSSUS"
+      ],
+      "relics": [],
+      "enemies": []
+    }
+  },
+  {
+    "patch": "v0.109.0",
+    "date": "2026-07-17",
+    "branch": "beta",
+    "build_ids": [
+      "v0.109.0"
+    ],
+    "changed": {
+      "cards": [
+        "CARD.TAUNT",
+        "CARD.BLOODLETTING",
+        "CARD.CRUELTY",
+        "CARD.DOMINATE",
+        "CARD.DEMON_FORM",
+        "CARD.EXPECT_A_FIGHT",
+        "CARD.PRIMAL_FORCE",
+        "CARD.MIDNIGHT",
+        "CARD.ACCELERANT",
+        "CARD.WELL_LAID_PLANS",
+        "CARD.MIRAGE",
+        "CARD.EXPERTISE",
+        "CARD.OUTBREAK",
+        "CARD.BLADE_SYMPHONY",
+        "CARD.EIDOLON",
+        "CARD.PILLAR_OF_CREATION",
+        "CARD.COLLISION_COURSE",
+        "CARD.HYPERBEAM",
+        "CARD.SUNDER",
+        "CARD.TRASH_TO_TREASURE",
+        "CARD.THE_BALL"
+      ],
+      "relics": [
+        "RELIC.DIAMOND_DIADEM",
+        "RELIC.MEAT_CLEAVER",
+        "RELIC.HISTORY_COURSE",
+        "RELIC.SAND_CASTLE",
+        "RELIC.TOY_BOX",
+        "RELIC.FIDDLE",
+        "RELIC.SERE_TALON",
+        "RELIC.DISTINGUISHED_CAPE"
+      ],
+      "enemies": [
+        "BOSS.AEONGLASS",
+        "MONSTER.TORCH_HEAD_AMALGAM"
+      ]
+    }
+  }
+]

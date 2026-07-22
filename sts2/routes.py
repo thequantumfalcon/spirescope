@@ -1558,3 +1558,39 @@ async def api_import_stats(request: Request, file: UploadFile = File(...),
     merged = merge_aggregate(existing, imported)
     save_aggregate(merged)
     return {"status": "ok", "run_count": merged.get("run_count", 0)}
+
+
+@router.get("/admin/patches", response_class=HTMLResponse)
+async def admin_patches(request: Request):
+    """Patch manifest admin: assign unmapped build_ids to patch eras."""
+    from sts2 import patches as patch_manifest
+    a = _app()
+    runs = await a._get_runs()
+    return a.templates.TemplateResponse(request, "admin_patches.html", {
+        "unmapped": patch_manifest.unmapped_builds(runs),
+        "patches": list(reversed(patch_manifest.load_patches())),
+        "csrf_token": a.generate_csrf_token(),
+        "assigned": request.query_params.get("assigned", ""),
+    })
+
+
+@router.post("/admin/patches/assign", response_class=HTMLResponse)
+async def admin_patches_assign(request: Request,
+                               build_id: str = Form("", max_length=100),
+                               patch: str = Form("", max_length=100),
+                               csrf_token: str = Form("")):
+    from fastapi.responses import RedirectResponse
+
+    from sts2 import patches as patch_manifest
+    a = _app()
+    if not a.validate_csrf_token(csrf_token):
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 403,
+            "error_message": "Invalid form submission. Please go back and try again.",
+        }, status_code=403)
+    if not patch_manifest.assign_build(build_id.strip(), patch.strip()):
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 400,
+            "error_message": "Unknown patch or empty build id.",
+        }, status_code=400)
+    return RedirectResponse("/admin/patches?assigned=1", status_code=303)

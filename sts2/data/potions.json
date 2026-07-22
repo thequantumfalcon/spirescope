@@ -387,6 +387,8 @@
     "id": "POTION.AMBERGRIS",
     "name": "Ambergris",
     "rarity": "Event",
-    "description": "Heal for 50% of your Max HP. If used in combat, take an extra turn."
+    "description": "Heal for 50% of your Max HP. If used in combat, take an extra turn.",
+    "introduced": "v0.109.0",
+    "branch": "beta"
   }
 ]

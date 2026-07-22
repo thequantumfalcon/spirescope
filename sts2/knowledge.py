@@ -5,6 +5,7 @@ import re
 
 from sts2.config import DATA_DIR, MODS_DIR
 from sts2.models import (
+    Badge,
     Card,
     CharacterStrategy,
     Enemy,
@@ -55,6 +56,7 @@ class KnowledgeBase:
         self.events: list[Event] = []
         self.strategies: list[CharacterStrategy] = []
         self.epochs: list[Epoch] = []
+        self.badges: list[Badge] = []
 
         # Community data from Reddit
         self.community_tips: dict[str, list[str]] = {}  # name_lower -> tips
@@ -142,6 +144,12 @@ class KnowledgeBase:
                 self.epochs.append(Epoch(**d))
             except Exception as exc:
                 log.warning("Skipping malformed epoch %s: %s", d.get("id", "?"), exc)
+
+        for d in self._load_json("badges.json"):
+            try:
+                self.badges.append(Badge(**d))
+            except Exception as exc:
+                log.warning("Skipping malformed badge %s: %s", d.get("id", "?"), exc)
 
     def _load_mods(self):
         """Load mod data from JSON files in the mods directory."""
