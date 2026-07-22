@@ -89,5 +89,19 @@
 </table>
 {% endif %}
 
+{% if badges %}
+<h2>Badges</h2>
+<div class="flex flex-wrap gap-xs mb-lg">
+{% for badge_id, tiers in badges.items()|sort %}
+<span class="tag tag-keyword" title="{{ kb.id_to_name('BADGE.' ~ badge_id) }}: {% for tier, n in tiers.items() %}{{ tier }} ×{{ n }}{% if not loop.last %}, {% endif %}{% endfor %}">
+  {{ kb.id_to_name('BADGE.' ~ badge_id) }}
+  {% if tiers.gold %}<span class="text-yellow">&#9733;{{ tiers.gold }}</span>{% endif %}
+  {% if tiers.silver %}<span class="text-muted">&#9733;{{ tiers.silver }}</span>{% endif %}
+  {% if tiers.bronze %}<span class="text-accent">&#9733;{{ tiers.bronze }}</span>{% endif %}
+</span>
+{% endfor %}
+</div>
+{% endif %}
+
 {% endif %}
 {% endblock %}

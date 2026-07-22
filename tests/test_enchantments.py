@@ -62,3 +62,51 @@ def test_current_run_parses_deck_enchantments(tmp_path):
                         "CARD.REAP"]
     assert run.deck_enchantments == ["ENCHANTMENT.TEZCATARAS_EMBER", "", ""]
     assert run.deck_upgrades == [False, True, False]
+
+
+# ── P8: badges + epoch deprecation ──
+
+def test_get_progress_aggregates_badges(tmp_path):
+    progress = {
+        "total_playtime": 100,
+        "character_stats": [
+            {"id": "CHARACTER.IRONCLAD", "badges": [
+                {"count": 2, "id": "ELITE", "rarity": "bronze"},
+                {"count": 1, "id": "HEALER", "rarity": "gold"},
+            ]},
+            {"id": "CHARACTER.SILENT", "badges": [
+                {"count": 3, "id": "ELITE", "rarity": "bronze"},
+            ]},
+        ],
+    }
+    (tmp_path / "progress.save").write_text(json.dumps(progress))
+    with patch("sts2.saves.SAVE_DIR", tmp_path):
+        from sts2.saves import get_progress
+        p = get_progress()
+    assert p.badges == {"ELITE": {"bronze": 5}, "HEALER": {"gold": 1}}
+
+
+def test_discover_badges_from_saves(tmp_path):
+    from sts2.fetcher import _discover_badges_from_saves
+    progress = {"character_stats": [{"id": "CHARACTER.IRONCLAD", "badges": [
+        {"count": 1, "id": "BIG_DECK", "rarity": "silver"}]}]}
+    (tmp_path / "progress.save").write_text(json.dumps(progress))
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    (data_dir / "badges.json").write_text("[]")
+    with patch("sts2.config.SAVE_DIR", tmp_path), \
+         patch("sts2.fetcher.DATA_DIR", data_dir):
+        found = _discover_badges_from_saves()
+    assert found == [{"id": "BADGE.BIG_DECK", "name": "Big Deck",
+                      "requirement": "", "source": "discovered"}]
+
+
+def test_deprecated_epochs_never_suggested():
+    from sts2.models import Epoch
+    active = Epoch(id="EPOCH.A", name="A")
+    dead = Epoch(id="EPOCH.B", name="B", status="deprecated")
+    # mirror the routes.py suggestion predicate
+    obtained = set()
+    suggestable = [e for e in (active, dead)
+                   if e.id not in obtained and e.status != "deprecated"]
+    assert suggestable == [active]

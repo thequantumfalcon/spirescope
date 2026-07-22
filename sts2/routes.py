@@ -209,7 +209,8 @@ async def index(request: Request):
     if progress and progress.epochs:
         obtained_ids = {e["id"] for e in progress.epochs if e.get("state") == "revealed"}
         for ep in a.kb.epochs:
-            if ep.id not in obtained_ids:
+            # Deprecated epochs can no longer be earned — never suggest them
+            if ep.id not in obtained_ids and ep.status != "deprecated":
                 next_epochs.append({"name": ep.name, "requirement": ep.requirement,
                                     "unlocks": ep.unlocks[:3]})
             if len(next_epochs) >= 3:
@@ -819,6 +820,7 @@ async def records(request: Request):
     recs = compute_records(runs, progress)
     return a.templates.TemplateResponse(request, "records.html", {
         "records": recs, "kb": a.kb,
+        "badges": progress.badges if progress else {},
     })
 
 

@@ -184,3 +184,4 @@ class PlayerProgress(BaseModel):
     discovered_potions: list[str] = []
     discovered_events: list[str] = []
     epochs: list[dict] = []
+    badges: dict = {}  # badge id -> {"bronze": n, "silver": n, "gold": n}

@@ -1,1 +1,68 @@
-[]
+[
+  {
+    "id": "BADGE.BIG_DECK",
+    "name": "Big Deck",
+    "requirement": "",
+    "source": "discovered"
+  },
+  {
+    "id": "BADGE.ELITE",
+    "name": "Elite",
+    "requirement": "",
+    "source": "discovered"
+  },
+  {
+    "id": "BADGE.GLUTTON",
+    "name": "Glutton",
+    "requirement": "",
+    "source": "discovered"
+  },
+  {
+    "id": "BADGE.HEALER",
+    "name": "Healer",
+    "requirement": "",
+    "source": "discovered"
+  },
+  {
+    "id": "BADGE.HIGHLANDER",
+    "name": "Highlander",
+    "requirement": "",
+    "source": "discovered"
+  },
+  {
+    "id": "BADGE.HONED",
+    "name": "Honed",
+    "requirement": "",
+    "source": "discovered"
+  },
+  {
+    "id": "BADGE.ILIKESHINY",
+    "name": "Ilikeshiny",
+    "requirement": "",
+    "source": "discovered"
+  },
+  {
+    "id": "BADGE.MONEY_MONEY",
+    "name": "Money Money",
+    "requirement": "",
+    "source": "discovered"
+  },
+  {
+    "id": "BADGE.PERFECT",
+    "name": "Perfect",
+    "requirement": "",
+    "source": "discovered"
+  },
+  {
+    "id": "BADGE.SPEEDY",
+    "name": "Speedy",
+    "requirement": "",
+    "source": "discovered"
+  },
+  {
+    "id": "BADGE.TINY_DECK",
+    "name": "Tiny Deck",
+    "requirement": "",
+    "source": "discovered"
+  }
+]

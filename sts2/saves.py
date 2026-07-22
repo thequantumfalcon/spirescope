@@ -166,7 +166,15 @@ def get_progress() -> PlayerProgress | None:
         return None
 
     char_stats = {}
+    badges: dict[str, dict[str, int]] = {}
     for cs in data.get("character_stats", []):
+        # Badges are stored per character; aggregate by badge id and tier
+        for b in cs.get("badges", []):
+            bid = b.get("id", "")
+            rarity = b.get("rarity", "")
+            if bid and rarity:
+                tiers = badges.setdefault(bid, {})
+                tiers[rarity] = tiers.get(rarity, 0) + (b.get("count") or 1)
         char_name = CHARACTER_IDS.get(cs.get("id", ""), cs.get("id", ""))
         char_stats[char_name] = {
             "wins": cs.get("total_wins", 0),
@@ -220,6 +228,7 @@ def get_progress() -> PlayerProgress | None:
     return PlayerProgress(
         total_playtime=data.get("total_playtime", 0),
         character_stats=char_stats,
+        badges=badges,
         card_stats=card_stats,
         encounter_stats=encounter_stats,
         enemy_stats=enemy_stats,

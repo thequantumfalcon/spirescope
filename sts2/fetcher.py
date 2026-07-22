@@ -818,6 +818,12 @@ def run_fetcher(save_only: bool = False):
     else:
         print("    No new events found")
 
+    new_badges = _discover_badges_from_saves()
+    if new_badges:
+        merged = _merge_with_existing("badges.json", new_badges)
+        count = _save_json("badges.json", merged)
+        print(f"    Discovered {len(new_badges)} new badges (total: {count})")
+
     # Report all data files
     print()
     print("  Data summary:")
@@ -834,3 +840,40 @@ def run_fetcher(save_only: bool = False):
     print()
     print("  Done! Restart Spirescope to use updated data.")
     print()
+
+
+def _discover_badges_from_saves() -> list[dict]:
+    """Scan progress.save for earned badges not yet in badges.json."""
+    from sts2.config import SAVE_DIR
+
+    existing_ids = set()
+    existing_path = DATA_DIR / "badges.json"
+    if existing_path.exists():
+        try:
+            for item in json.loads(existing_path.read_text(encoding="utf-8")):
+                existing_ids.add(item.get("id", ""))
+        except (json.JSONDecodeError, OSError):
+            pass
+    progress_path = SAVE_DIR / "progress.save"
+    if not progress_path.exists():
+        return []
+    try:
+        data = json.loads(progress_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return []
+    discovered = []
+    seen = set()
+    for cs in data.get("character_stats", []):
+        for b in cs.get("badges", []):
+            bid = b.get("id", "")
+            game_id = f"BADGE.{bid}"
+            if not bid or game_id in existing_ids or game_id in seen:
+                continue
+            seen.add(game_id)
+            discovered.append({
+                "id": game_id,
+                "name": bid.replace("_", " ").title(),
+                "requirement": "",
+                "source": "discovered",
+            })
+    return discovered
