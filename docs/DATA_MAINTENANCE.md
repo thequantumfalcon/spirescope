@@ -27,7 +27,7 @@ data through in-app data bundles, not new executables.
    ```
 
    The `Data Release` workflow packages `sts2/data/` into
-   `spirescope-data-<tag>.tar.gz` + `.sha256` and publishes a GitHub release.
+   `spirescope-data-vYYYY.MM.DD.tar.gz` + `.sha256` and publishes a GitHub release.
 
 ## How users receive it
 
