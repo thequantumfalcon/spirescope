@@ -35,8 +35,8 @@ turns balance churn into analytics no wiki or in-game Bestiary can offer
   (57 total, matching the game).
 - **Mod namespace** — mod files can declare `mod_id` for collision-proof
   `mod:<modid>:<entity>` ids (groundwork for Steam Workshop ingestion).
-- **zh-TW UI (draft)** — persisted language setting (/settings), navigation
-  chrome externalized; Traditional Chinese locale pending human review.
+- **zh-TW UI** — persisted language setting (/settings), navigation chrome
+  externalized; Traditional Chinese locale for the UI chrome (reviewed).
 - **New-character day-one playbook** — docs/NEW_CHARACTER_PLAYBOOK.md,
   dry-run verified end-to-end.
 

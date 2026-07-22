@@ -35,7 +35,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Main vs beta awareness** — runs badge their game branch; beta-only content is chipped; filter analytics by branch.
 - **Merged save history** — vanilla and modded save trees merge into one deduplicated history (the game copies saves between them since v0.108.0); runs carry a vanilla/modded origin filter.
 - **Badges** — earned badges with bronze/silver/gold tiers on the Records page.
-- **UI language setting** — locale files under `sts2/locales/` (a Traditional Chinese draft ships pending review; contributions welcome).
+- **UI language setting** — switch languages under Settings; Traditional Chinese ships for the UI chrome, with locale files under `sts2/locales/` open for more strings and languages.
 
 ### Browse & Research
 
