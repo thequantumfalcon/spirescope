@@ -278,7 +278,18 @@ async def test_live_stream_endpoint_exists(client):
     from starlette.routing import Route
 
     from sts2.app import app as _app
-    sse_routes = [r for r in _app.routes if isinstance(r, Route) and r.path == "/api/live/stream"]
+
+    def _all_routes(routes):
+        # Newer FastAPI wraps include_router() as a nested entry instead of
+        # flattening into app.routes — walk both shapes.
+        for r in routes:
+            yield r
+            nested = getattr(getattr(r, "original_router", None), "routes", None)
+            if nested:
+                yield from _all_routes(nested)
+
+    sse_routes = [r for r in _all_routes(_app.routes)
+                  if isinstance(r, Route) and r.path == "/api/live/stream"]
     assert len(sse_routes) == 1
 
 
