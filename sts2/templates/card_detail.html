@@ -13,6 +13,7 @@
     {% if card.tier %}<span class="tag" style="background:var(--bg3);color:var(--yellow);border:1px solid var(--border);font-size:1rem">{{ card.tier }}-Tier</span>{% endif %}
     {% if card.source == 'mod' %}<span class="tag tag-mod">Mod</span>{% elif card.source == 'discovered' %}<span class="tag tag-discovered">Discovered</span>{% endif %}
     {% if changed_patch %}<span class="tag tag-keyword" title="Reworked or rebalanced in {{ changed_patch }}">Changed in {{ changed_patch }}</span>{% endif %}
+    {% if card.branch == 'beta' %}<span class="tag tag-keyword" title="Currently only on the beta branch">Beta only</span>{% endif %}
   </h1>
   <p class="text-muted">{{ card.character }} &bull; {{ card.id }}</p>
 </div>

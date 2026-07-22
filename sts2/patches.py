@@ -124,3 +124,9 @@ def era_index(patch_name: str) -> int:
         if entry.get("patch") == patch_name:
             return i
     return -1
+
+
+def branch_of(build_id: str) -> str:
+    """Branch (main|beta) a build_id belongs to, or "" when unmapped."""
+    entry = resolve_build(build_id)
+    return entry.get("branch", "") if entry else ""

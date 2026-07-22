@@ -35,6 +35,16 @@
   </select>
   {% endif %}
 
+  {% if available_branches and available_branches|length > 1 %}
+  <label class="text-sm text-muted" for="branch-select">Branch</label>
+  <select id="branch-select" name="branch" class="select-input" data-auto-submit>
+    <option value="">All</option>
+    {% for b in available_branches %}
+    <option value="{{ b }}" {% if selected_branch == b %}selected{% endif %}>{{ b|capitalize }}</option>
+    {% endfor %}
+  </select>
+  {% endif %}
+
   <span class="filter-divider"></span>
   <span class="text-sm text-muted">Period</span>
   <button type="submit" name="preset" value="7d" class="btn btn-sm {% if selected_preset == '7d' %}active{% endif %}">7d</button>

@@ -87,3 +87,26 @@ def test_era_split_unknown_patch_or_no_data():
     assert compute_era_split([_run("v0.109.0")], "CARD.TAUNT", "v9.9.9") is None
     assert compute_era_split([_run("v0.98.2", deck=["CARD.TAUNT"])],
                              "CARD.TAUNT", "v0.109.0") is None
+
+
+# ── P6 branch awareness ──
+
+def test_branch_of():
+    assert patch_manifest.branch_of("v0.109.0") == "beta"
+    assert patch_manifest.branch_of("v0.98.2") == ""
+
+
+def test_branch_filter_separates_cleanly(tmp_path, monkeypatch):
+    """G6: runs from two branches separate on fixture data."""
+    manifest = MANIFEST + [
+        {"patch": "v0.107.1", "date": "2026-06-25", "branch": "main",
+         "build_ids": ["v0.107.1"],
+         "changed": {"cards": [], "relics": [], "enemies": []}},
+    ]
+    (tmp_path / "patches.json").write_text(json.dumps(manifest))
+    monkeypatch.setattr(patch_manifest, "DATA_DIR", tmp_path)
+    patch_manifest.invalidate_cache()
+    runs = [_run("v0.107.1"), _run("v0.108.0"), _run("v0.109.0"), _run("v0.98.2")]
+    assert [r.build_id for r in _filter_runs(runs, branch="main")] == ["v0.107.1"]
+    assert [r.build_id for r in _filter_runs(runs, branch="beta")] == ["v0.108.0", "v0.109.0"]
+    assert len(_filter_runs(runs, branch=None)) == 4

@@ -46,9 +46,11 @@ def _resolve_preset(preset: str | None) -> str | None:
 
 def _filter_runs(runs: list, *, version: str | None = None,
                  date_from: str | None = None, date_to: str | None = None,
-                 origin: str | None = None, scope: str | None = None) -> list:
-    """Filter runs by game version, date range, save-tree origin, and/or
-    patch-era scope ("current" = runs from the newest patch in the manifest).
+                 origin: str | None = None, scope: str | None = None,
+                 branch: str | None = None) -> list:
+    """Filter runs by game version, date range, save-tree origin, game
+    branch (main/beta via the patch manifest), and/or patch-era scope
+    ("current" = runs from the newest patch in the manifest).
 
     Runs with timestamp=0 (unknown) are excluded by any date filter.
     """
@@ -61,6 +63,9 @@ def _filter_runs(runs: list, *, version: str | None = None,
             runs = [r for r in runs if era_of(r.build_id) == current]
     if origin in ("vanilla", "modded"):
         runs = [r for r in runs if r.origin == origin]
+    if branch in ("main", "beta"):
+        from sts2.patches import branch_of
+        runs = [r for r in runs if branch_of(r.build_id) == branch]
     from_date = _parse_date(date_from)
     if from_date:
         from_ts = int(datetime(from_date.year, from_date.month, from_date.day,
@@ -465,7 +470,8 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
                date_to: str = Query(None, alias="to", max_length=10),
                preset: str = Query(None, max_length=10),
                origin: str = Query(None, max_length=10),
-               scope: str = Query("current", max_length=10)):
+               scope: str = Query("current", max_length=10),
+               branch: str = Query(None, max_length=10)):
     a = _app()
     run_list = await a._get_runs()
 
@@ -476,10 +482,11 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
             date_from = p_from
             date_to = None
 
-    # Version/time/origin/scope filters apply before character/result/ascension
+    # Version/time/origin/branch/scope filters apply before
+    # character/result/ascension
     filtered = _filter_runs(run_list, version=version,
                             date_from=date_from, date_to=date_to,
-                            origin=origin, scope=scope)
+                            origin=origin, scope=scope, branch=branch)
     scope_expanded = False
     if scope == "current" and not filtered and run_list:
         # No runs on the current patch yet — fall back to all-time with a
@@ -487,7 +494,7 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
         scope_expanded = True
         filtered = _filter_runs(run_list, version=version,
                                 date_from=date_from, date_to=date_to,
-                                origin=origin)
+                                origin=origin, branch=branch)
 
     if character:
         filtered = [r for r in filtered if r.character == character]
@@ -499,9 +506,11 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
         filtered = [r for r in filtered if r.ascension == ascension]
     total = len(filtered)
     wins = sum(1 for r in filtered if r.win)
+    from sts2.patches import branch_of
     ascension_levels = sorted({r.ascension for r in run_list})
     available_versions = sorted({r.build_id for r in run_list if r.build_id}, reverse=True)
     available_origins = sorted({r.origin for r in run_list})
+    available_branches = sorted({b for b in (branch_of(r.build_id) for r in run_list) if b})
     selected_preset = preset if preset in ("7d", "30d", "90d", "all") else ""
     return a.templates.TemplateResponse(request, "runs.html", {
         "runs": filtered, "kb": a.kb, "characters": CHARACTERS,
@@ -510,9 +519,11 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
         "total_runs": total, "total_wins": wins, "csrf_token": a.generate_csrf_token(),
         "available_versions": available_versions, "selected_version": version,
         "available_origins": available_origins, "selected_origin": origin,
+        "available_branches": available_branches, "selected_branch": branch,
         "selected_from": date_from or "", "selected_to": date_to or "",
         "selected_preset": selected_preset,
         "selected_scope": scope, "scope_expanded": scope_expanded,
+        "branch_of": branch_of,
     })
 
 
@@ -611,6 +622,7 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
     except Exception:
         drift_trajectory = []
         drift_alert = None
+    from sts2.patches import branch_of
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "kb": a.kb, "run_analysis": run_analysis,
         "archetype": archetype, "autopsy": autopsy,
@@ -618,6 +630,7 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
         "cascade": cascade,
         "drift_trajectory": drift_trajectory,
         "drift_alert": drift_alert,
+        "run_branch": branch_of(run.build_id),
     })
 
 
@@ -724,13 +737,16 @@ async def analytics(request: Request,
                     date_to: str = Query(None, alias="to", max_length=10),
                     preset: str = Query(None, max_length=10),
                     origin: str = Query(None, max_length=10),
-                    scope: str = Query("current", max_length=10)):
+                    scope: str = Query("current", max_length=10),
+                    branch: str = Query(None, max_length=10)):
     from sts2.analytics import analyze_run_patterns, compute_analytics, compute_boss_matchups
+    from sts2.patches import branch_of
     a = _app()
     all_runs = await a._get_runs()
     ascension_levels = sorted({r.ascension for r in all_runs})
     available_versions = sorted({r.build_id for r in all_runs if r.build_id}, reverse=True)
     available_origins = sorted({r.origin for r in all_runs})
+    available_branches = sorted({b for b in (branch_of(r.build_id) for r in all_runs) if b})
 
     # Resolve preset into date range
     if preset and preset != "all":
@@ -747,13 +763,13 @@ async def analytics(request: Request,
         scope_expanded = True
         scope = "all"
 
-    has_filters = version or date_from or date_to or origin or scope == "current"
+    has_filters = version or date_from or date_to or origin or branch or scope == "current"
 
     if has_filters:
         # Bypass cache — compute analytics on filtered subset
         filtered = _filter_runs(all_runs, version=version,
                                 date_from=date_from, date_to=date_to,
-                                origin=origin,
+                                origin=origin, branch=branch,
                                 scope="current" if scope == "current" else None)
         if ascension is not None:
             filtered = [r for r in filtered if r.ascension == ascension]
@@ -786,6 +802,7 @@ async def analytics(request: Request,
         "run_patterns": run_patterns, "boss_matchups": boss_matchups,
         "available_versions": available_versions, "selected_version": version,
         "available_origins": available_origins, "selected_origin": origin,
+        "available_branches": available_branches, "selected_branch": branch,
         "selected_from": date_from or "", "selected_to": date_to or "",
         "selected_preset": selected_preset,
         "selected_scope": scope, "scope_expanded": scope_expanded,

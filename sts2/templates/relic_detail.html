@@ -10,6 +10,7 @@
     <span class="tag tag-{{ relic.rarity|lower }}">{{ relic.rarity }}</span>
     {% if relic.source == 'mod' %}<span class="tag tag-mod">Mod</span>{% elif relic.source == 'discovered' %}<span class="tag tag-discovered">Discovered</span>{% endif %}
     {% if changed_patch %}<span class="tag tag-keyword" title="Reworked or rebalanced in {{ changed_patch }}">Changed in {{ changed_patch }}</span>{% endif %}
+    {% if relic.branch == 'beta' %}<span class="tag tag-keyword" title="Currently only on the beta branch">Beta only</span>{% endif %}
   </h1>
   <p class="text-muted">{{ relic.character }}</p>
 </div>
