@@ -116,7 +116,9 @@
     "keywords": [
       "Draw"
     ],
-    "description_upgraded": "Gain 3 Energy. Draw 3 cards. Lose 1 Max HP."
+    "description_upgraded": "Gain 3 Energy. Draw 3 cards. Lose 1 Max HP.",
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.BYRD_SWOOP",
@@ -852,7 +854,9 @@
       "Block",
       "Exhaust",
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.REND",
@@ -1144,7 +1148,9 @@
     "keywords": [
       "Ethereal",
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.VOLLEY",
@@ -1166,7 +1172,9 @@
     "rarity": "Token",
     "description": "Gain 1 less 1 Energy per turn.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.WHISTLE",
@@ -1755,7 +1763,9 @@
     "description_upgraded": "Evoke your rightmost Orb twice.",
     "keywords": [
       "Evoke"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.ECHO_FORM",
@@ -1993,10 +2003,12 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Rare",
-    "description": "Deal 28 damage to ALL enemies. Lose 3 Focus.",
-    "description_upgraded": "",
+    "description": "Deal 30 damage to ALL enemies. Lose 3 Focus.",
+    "description_upgraded": "Deal 38 damage to ALL enemies. Lose 3 Focus.",
     "keywords": [],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.ICE_LANCE",
@@ -2546,7 +2558,9 @@
     "keywords": [
       "Channel",
       "Lightning"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.APOTHEOSIS_EVENT",
@@ -2560,7 +2574,9 @@
     "keywords": [
       "Exhaust",
       "Innate"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.APPARITION_EVENT",
@@ -2575,7 +2591,9 @@
       "Exhaust",
       "Ethereal",
       "Intangible"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.BYRD_SWOOP_EVENT",
@@ -2667,9 +2685,11 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Event",
-    "description": "Deal 3 damage 4 times to ALL enemies.",
+    "description": "Deal 3 damage to ALL enemies 4 times.",
     "description_upgraded": "Deal 4 damage to ALL enemies 4 times.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.FEEDING_FRENZY_EVENT",
@@ -2704,7 +2724,9 @@
     "rarity": "Event",
     "description": "Deal 5 damage twice. Increase the damage of ALL Maul cards by 1 this combat.",
     "description_upgraded": "Deal 6 damage twice. Increase the damage of ALL Maul cards by 2 this combat.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.METAMORPHOSIS",
@@ -2732,7 +2754,9 @@
       "Exhaust",
       "Discard"
     ],
-    "description_upgraded": "Deal 14 damage. Put up to 3 cards from your Discard Pile into your Hand. Exhaust."
+    "description_upgraded": "Deal 14 damage. Put up to 3 cards from your Discard Pile into your Hand. Exhaust.",
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.PECK",
@@ -2820,7 +2844,9 @@
     "description_upgraded": "Deal 44 damage. Stun the enemy. Exhaust.",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.WISH_EVENT",
@@ -2834,7 +2860,9 @@
     "keywords": [
       "Exhaust",
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.AGGRESSION",
@@ -2912,7 +2940,9 @@
     "description_upgraded": "Deal 10 damage. Apply 3 Vulnerable.",
     "keywords": [
       "Vulnerable"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.BATTLE_TRANCE",
@@ -3080,7 +3110,9 @@
       "Block",
       "Vulnerable"
     ],
-    "last_changed": "v0.108.0"
+    "last_changed": "v0.108.0",
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.CONFLAGRATION",
@@ -3113,9 +3145,11 @@
     "cost": "1",
     "type": "Power",
     "rarity": "Rare",
-    "description": "At the start of your turn, lose 1 HP and gain 8 Block.",
-    "description_upgraded": "",
-    "keywords": []
+    "description": "At the start of your turn, lose 1 HP and gain 7 Block.",
+    "description_upgraded": "At the start of your turn, lose 1 HP and gain 10 Block.",
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.CRUELTY",
@@ -3383,8 +3417,8 @@
     "cost": "2",
     "type": "Power",
     "rarity": "Rare",
-    "description": "Whenever you draw a card containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d, it is played against a random enemy.",
-    "description_upgraded": "Whenever you draw a card containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d, it is played against a random enemy.",
+    "description": "Whenever you draw a card containing âStrikeâ, it is played against a random enemy.",
+    "description_upgraded": "Whenever you draw a card containing âStrikeâ, it is played against a random enemy.",
     "keywords": [
       "Draw"
     ]
@@ -3588,8 +3622,8 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 6 damage. Deals 2 additional damage for ALL your cards containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d.",
-    "description_upgraded": "Deal 6 damage. Deals 3 additional damage for ALL your cards containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d.",
+    "description": "Deal 6 damage. Deals 2 additional damage for ALL your cards containing âStrikeâ.",
+    "description_upgraded": "Deal 6 damage. Deals 3 additional damage for ALL your cards containing âStrikeâ.",
     "keywords": []
   },
   {
@@ -3699,9 +3733,11 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 7 damage. Gain 2 Strength this turn.",
-    "description_upgraded": "",
-    "keywords": []
+    "description": "Deal 7 damage. Gain 3 Strength this turn.",
+    "description_upgraded": "Deal 9 damage. Gain 4 Strength this turn.",
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.SHRUG_IT_OFF",
@@ -3803,9 +3839,11 @@
     "cost": "1",
     "type": "Power",
     "rarity": "Rare",
-    "description": "Take double damage from enemies. Allies take half damage from enemies.",
-    "description_upgraded": "",
-    "keywords": []
+    "description": "Take 50% additional damage from enemies. Allies take 50% less damage from enemies.",
+    "description_upgraded": "Take 50% additional damage from enemies. Allies take 50% less damage from enemies.",
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.TAUNT",
@@ -3814,10 +3852,12 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Common",
-    "description": "Gain 7 Block. Apply 1 Vulnerable.",
-    "description_upgraded": "",
+    "description": "Gain 6 Block. Apply 1 Vulnerable.",
+    "description_upgraded": "Gain 7 Block. Apply 2 Vulnerable.",
     "keywords": [],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.TEAR_ASUNDER",
@@ -4007,7 +4047,9 @@
     "description_upgraded": "Summon 7.",
     "keywords": [
       "Summon"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.BONE_SHARDS",
@@ -5058,7 +5100,9 @@
     "rarity": "Starter",
     "description": "Osty deals 6 damage. Deals additional damage equal to Osty's current HP.",
     "description_upgraded": "Osty deals 6 damage. Deals additional damage equal to Osty's current HP.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.WISP",
@@ -5082,7 +5126,9 @@
     "rarity": "Quest",
     "description": "Unplayable. Can be hatched at a Rest Site.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.LANTERN_KEY_QUEST",
@@ -5093,7 +5139,9 @@
     "rarity": "Quest",
     "description": "Unplayable. Unlocks a special event in the next Act.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.SPOILS_MAP_QUEST",
@@ -5104,7 +5152,9 @@
     "rarity": "Quest",
     "description": "Unplayable. Marks a site of 600 extra Gold in the next Act.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.ALIGNMENT",
@@ -5441,7 +5491,9 @@
     "keywords": [
       "Vulnerable",
       "Weak"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.FOREGONE_CONCLUSION",
@@ -5538,9 +5590,11 @@
     "cost": "2",
     "type": "Skill",
     "rarity": "Common",
-    "description": "Gain 11 Block. Next turn, gain 11 Block.",
+    "description": "Gain 11 Block. Next turn, gain 5 Block.",
     "description_upgraded": "Gain 13 Block. Next turn, gain 2 Block.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.GLOW",
@@ -6130,7 +6184,9 @@
     "rarity": "Starter",
     "description": "Gain 2 Star.",
     "keywords": [],
-    "description_upgraded": "Gain 3 Star."
+    "description_upgraded": "Gain 3 Star.",
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.VOID_FORM",
@@ -6209,7 +6265,9 @@
     "keywords": [
       "Draw",
       "Discard"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.ADRENALINE",
@@ -6489,7 +6547,9 @@
     "description_upgraded": "Gain 8 Block.",
     "keywords": [
       "Block"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.DEFLECT",
@@ -6840,7 +6900,9 @@
     "description_upgraded": "Deal 4 damage. Apply 2 Weak.",
     "keywords": [
       "Weak"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.NIGHTMARE",
@@ -6942,8 +7004,10 @@
     "type": "Attack",
     "rarity": "Uncommon",
     "description": "Deal 13 damage. Deals 2 less damage for each other card in your Hand.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Deal 16 damage. Deals 2 less damage for each other card in your Hand.",
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.PREDATOR",
@@ -7161,7 +7225,9 @@
     "rarity": "Starter",
     "description": "Deal 6 damage.",
     "description_upgraded": "Deal 9 damage.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.SUCKER_PUNCH",
@@ -7202,7 +7268,9 @@
     "keywords": [
       "Block",
       "Discard"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.THE_HUNT",
@@ -7307,7 +7375,9 @@
     "rarity": "Status",
     "description": "At the end of your turn, if this is in your Hand, lose 6 HP.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.BURN",
@@ -7318,7 +7388,9 @@
     "rarity": "Status",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, take 2 damage.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.DAZED",
@@ -7331,7 +7403,9 @@
     "description_upgraded": "",
     "keywords": [
       "Ethereal"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.DEBRIS",
@@ -7344,7 +7418,9 @@
     "description_upgraded": "",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.FRANTIC_ESCAPE",
@@ -7355,7 +7431,9 @@
     "rarity": "Status",
     "description": "Get farther away. Increase Sandpit by 1. Increase the cost of this card by 1.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.INFECTION",
@@ -7366,7 +7444,9 @@
     "rarity": "Status",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, take 3 damage.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.SLIMED",
@@ -7380,7 +7460,9 @@
     "keywords": [
       "Exhaust",
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.SOOT",
@@ -7391,7 +7473,9 @@
     "rarity": "Status",
     "description": "Unplayable.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.TOXIC",
@@ -7404,7 +7488,9 @@
     "description_upgraded": "",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.WOUND",
@@ -7415,7 +7501,9 @@
     "rarity": "Status",
     "description": "Unplayable.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.DISINTEGRATION_TOKEN",
@@ -7426,7 +7514,9 @@
     "rarity": "Token",
     "description": "At the end of your turn, take 6 damage.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.GIANT_ROCK_TOKEN",
@@ -7450,7 +7540,9 @@
     "description_upgraded": "",
     "keywords": [
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.MINION_DIVE_BOMB_TOKEN",
@@ -7501,8 +7593,10 @@
     "type": "Attack",
     "rarity": "Token",
     "description": "Deal 4 damage. Exhaust.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Deal 6 damage. Exhaust.",
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.SLOTH_TOKEN",
@@ -7513,7 +7607,9 @@
     "rarity": "Token",
     "description": "You cannot play more than 3 cards each turn.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.SOUL",
@@ -7537,8 +7633,10 @@
     "type": "Attack",
     "rarity": "Token",
     "description": "Retain. Deal 10 damage.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Retain. Deal 10 damage.",
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.SWEEPING_GAZE_TOKEN",
@@ -7574,7 +7672,9 @@
     "rarity": "Status",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, take 2 damage.",
     "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, take 3 damage.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.CHRYSALIS",
@@ -7750,10 +7850,12 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "",
-    "description_upgraded": "",
+    "description": "Deal 10 damage. Increase this card's damage by 15 this combat and give it to a random ally.",
+    "description_upgraded": "Deal 10 damage. Increase this card's damage by 25 this combat and give it to a random ally.",
     "keywords": [],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.TRAINING_STRIKE",
@@ -7878,7 +7980,9 @@
       "Exhaust"
     ],
     "introduced": "v0.109.0",
-    "branch": "beta"
+    "branch": "beta",
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.MAD_SCIENCE_EVENT",
@@ -7887,9 +7991,11 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Event",
-    "description": "",
-    "description_upgraded": "",
-    "keywords": []
+    "description": "Powers cost 1 Energy less.",
+    "description_upgraded": "Innate Powers cost 1 Energy less.",
+    "keywords": [],
+    "fetched_from": "slaythespire2.gg",
+    "fetched_at": "2026-07-22"
   },
   {
     "id": "CARD.OUTMANEUVER_EVENT",

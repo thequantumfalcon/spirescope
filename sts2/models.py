@@ -20,6 +20,8 @@ class Card(BaseModel):
     introduced: str = ""  # patch that added it, e.g. "v0.109.0"
     last_changed: str = ""  # patch that last reworked/rebalanced it
     tags: list[str] = []  # e.g. enchantment-interaction keywords
+    fetched_from: str = ""  # provenance: source that last changed this record
+    fetched_at: str = ""  # provenance: date this record last changed
 
 
 class Relic(BaseModel):
@@ -32,6 +34,8 @@ class Relic(BaseModel):
     branch: str = ""
     introduced: str = ""
     last_changed: str = ""
+    fetched_from: str = ""
+    fetched_at: str = ""
 
 
 class Potion(BaseModel):
@@ -43,6 +47,8 @@ class Potion(BaseModel):
     branch: str = ""
     introduced: str = ""
     last_changed: str = ""
+    fetched_from: str = ""
+    fetched_at: str = ""
 
 
 class Enemy(BaseModel):

@@ -19,7 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from sts2.analytics import compute_analytics
-from sts2.config import SAVE_DIR, STATIC_DIR, TEMPLATES_DIR, VERSION
+from sts2.config import SAVE_DIR, STATIC_DIR, TEMPLATES_DIR, VERSION, ensure_data_dir
 from sts2.knowledge import KnowledgeBase
 from sts2.saves import get_progress, get_run_history
 
@@ -51,8 +51,9 @@ _LIVE_JS_HASH = hashlib.md5(_live_js_path.read_bytes()).hexdigest()[:8] if _live
 
 @contextlib.asynccontextmanager
 async def _lifespan(application):
-    from sts2.updater import check_for_update
+    from sts2.updater import check_for_data_update, check_for_update
     check_for_update(templates.env.globals.get("version", "0.0.0"))
+    check_for_data_update()
     await _prewarm_caches()
     _watcher_task = asyncio.create_task(_watch_saves())  # noqa: F841
     yield
@@ -72,6 +73,8 @@ templates.env.globals["shortcuts_js_hash"] = _SHORTCUTS_JS_HASH
 templates.env.globals["compare_js_hash"] = _COMPARE_JS_HASH
 templates.env.globals["live_js_hash"] = _LIVE_JS_HASH
 
+# Frozen builds: seed the writable data dir from bundled data before loading
+ensure_data_dir()
 kb = KnowledgeBase()
 
 _CSRF_SECRET = secrets.token_bytes(32)

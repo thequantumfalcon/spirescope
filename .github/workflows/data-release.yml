@@ -1,0 +1,52 @@
+name: Data Release
+
+on:
+  push:
+    tags: ["data-v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate data files
+        run: |
+          python - <<'EOF'
+          import json, pathlib, sys
+          data = pathlib.Path("sts2/data")
+          required = ["cards.json", "relics.json", "potions.json", "enemies.json",
+                      "events.json", "epochs.json", "patches.json", "last_updated.txt"]
+          for name in required:
+              path = data / name
+              if not path.exists():
+                  sys.exit(f"Missing {name}")
+              if name.endswith(".json"):
+                  json.loads(path.read_text(encoding="utf-8"))
+          cards = json.loads((data / "cards.json").read_text(encoding="utf-8"))
+          if len(cards) < 400:
+              sys.exit(f"cards.json suspiciously small ({len(cards)})")
+          print(f"OK: {len(cards)} cards")
+          EOF
+
+      - name: Package data bundle
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          tar -czf "spirescope-data-${TAG}.tar.gz" -C sts2 data \
+            --exclude='data/mods' --exclude='data/.fetcher_keys.json'
+          sha256sum "spirescope-data-${TAG}.tar.gz" > "spirescope-data-${TAG}.sha256"
+          cat "spirescope-data-${TAG}.sha256"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          gh release create "$TAG" \
+            --title "Game data ${TAG#data-}" \
+            --notes "Game data bundle. Installed in-app via the data-update banner, or manually: extract over sts2/data/. See docs/DATA_MAINTENANCE.md." \
+            "spirescope-data-${TAG}.tar.gz" "spirescope-data-${TAG}.sha256"

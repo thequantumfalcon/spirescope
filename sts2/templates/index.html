@@ -8,6 +8,19 @@
 </div>
 {% endif %}
 
+{% if data_update_info %}
+<div class="update-banner">
+  New game data available ({{ data_update_info.tag }}).
+  <form method="post" action="/data-update/install" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit" class="btn btn-sm">Update game data</button>
+  </form>
+</div>
+{% endif %}
+{% if data_updated_msg %}
+<div class="update-banner">Game data updated.</div>
+{% endif %}
+
 <div class="home-hero">
   <img src="/static/logo.jpg?v={{ logo_hash }}" alt="SpireScope logo" class="hero-logo">
   <h1 class="hero-title">SpireScope</h1>

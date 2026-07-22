@@ -5,10 +5,14 @@ import re
 import time
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 
 from sts2.config import DATA_DIR
 
 log = logging.getLogger(__name__)
+
+# Per-entity provenance fields (set at merge time when content changes)
+_PROVENANCE_FIELDS = ("fetched_from", "fetched_at")
 
 WIKI_BASE = "https://slaythespire2.gg"
 # Per their robots.txt: general scraping is permitted; /api, /admin,
@@ -525,18 +529,19 @@ def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "i
     that are NOT in new_data are kept (they may be manual additions like enemies/events).
     """
     existing_path = DATA_DIR / filename
-    if not existing_path.exists():
-        return new_data
-
-    try:
-        with open(existing_path, "r", encoding="utf-8") as f:
-            existing = json.load(f)
-    except (json.JSONDecodeError, OSError) as exc:
-        log.warning("Existing %s is corrupted (%s), overwriting with new data", filename, exc)
-        return new_data
+    existing: list[dict] = []
+    if existing_path.exists():
+        try:
+            with open(existing_path, "r", encoding="utf-8") as f:
+                existing = json.load(f)
+        except (json.JSONDecodeError, OSError) as exc:
+            log.warning("Existing %s is corrupted (%s), overwriting with new data", filename, exc)
+            existing = []
 
     existing_by_id = {item[id_field]: item for item in existing}
     new_by_id = {item[id_field]: item for item in new_data}
+
+    today = datetime.now(timezone.utc).date().isoformat()
 
     # Update existing with new data, but preserve non-empty existing fields
     # when wiki provides empty values (avoids overwriting curated data)
@@ -545,14 +550,27 @@ def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "i
         if item_id in merged_by_id:
             old = merged_by_id[item_id]
             merged = dict(old)
+            changed = False
             for k, v in new_item.items():
+                if k in _PROVENANCE_FIELDS:
+                    continue
                 old_v = old.get(k)
                 # Only preserve old value when new is empty/None and old has content
                 if v in (None, "") and old_v not in (None, ""):
                     continue
+                if merged.get(k) != v:
+                    changed = True
                 merged[k] = v
+            # Provenance stamps move only when the record's content changed,
+            # so data diffs stay reviewable (unchanged entities don't churn)
+            if changed and new_item.get("fetched_from"):
+                merged["fetched_from"] = new_item["fetched_from"]
+                merged["fetched_at"] = today
             merged_by_id[item_id] = merged
         else:
+            new_item = dict(new_item)
+            if new_item.get("fetched_from"):
+                new_item["fetched_at"] = today
             merged_by_id[item_id] = new_item
     return list(merged_by_id.values())
 
@@ -705,40 +723,80 @@ def run_fetcher(save_only: bool = False):
     print("  ======================\n")
 
     if not save_only:
-        scrapers = {
-            "cards.json": ("cards", "/cards", _scrape_cards),
-            "relics.json": ("relics", "/relics", _scrape_relics),
-            "potions.json": ("potions", "/potions", _scrape_potions),
-        }
+        from sts2.sources import Sts2ggSource, WikiggSource
+        primary, secondary = Sts2ggSource(), WikiggSource()
 
         first = True
-        for filename, (label, path, scraper_fn) in scrapers.items():
+        for filename, label in (("cards.json", "cards"),
+                                ("relics.json", "relics"),
+                                ("potions.json", "potions")):
             if not first:
                 time.sleep(_SCRAPE_DELAY)
             first = False
-            print(f"  Fetching {label} from {WIKI_BASE}{path} ...")
-            try:
-                html = _fetch_with_retry(path)
-                new_data = scraper_fn(html)
-                if not new_data:
-                    log.warning("No %s found from %s — wiki format may have changed", label, path)
-                    print(f"    Warning: no {label} found — wiki format may have changed")
-                    print("    Keeping existing data. Try 'spirescope update --save-only' instead.")
-                    continue
-                # Guard: don't overwrite large dataset with empty/tiny wiki result
-                existing = _existing_count(filename)
-                if existing > 20 and len(new_data) < existing * 0.1:
-                    log.warning("Wiki returned %d %s vs %d existing — possible format change, skipping", len(new_data), label, existing)
-                    print(f"    Warning: wiki returned only {len(new_data)} {label} vs {existing} existing, skipping overwrite")
-                    continue
-                merged = _merge_with_existing(filename, new_data)
-                count = _save_json(filename, merged)
-                print(f"    Saved {count} {label} ({len(new_data)} from wiki)")
-            except urllib.error.URLError as e:
-                print(f"    Error fetching {label}: {e}")
-            except Exception as e:
-                log.exception("Scraper error for %s", label)
-                print(f"    Error processing {label}: {e}")
+
+            # Primary source; secondary fills gaps or takes over entirely
+            # when the primary fails (see docs/DATA_SOURCES.md)
+            records: list[dict] = []
+            for source in (primary, secondary):
+                fetch = getattr(source, f"fetch_{label}")
+                try:
+                    print(f"  Fetching {label} from {source.name} ...")
+                    fetched = fetch()
+                except urllib.error.URLError as e:
+                    log.warning("%s failed for %s: %s", source.name, label, e)
+                    print(f"    Warning: {source.name} unreachable ({e})")
+                    fetched = []
+                except Exception as e:
+                    log.exception("%s error for %s", source.name, label)
+                    print(f"    Warning: {source.name} error ({e})")
+                    fetched = []
+                for r in fetched:
+                    r["fetched_from"] = source.name
+                if not records:
+                    records = fetched
+                elif fetched:
+                    # Gap-fill: add entities earlier sources don't know.
+                    # Both name AND id must be unknown — a lagging source
+                    # listing a renamed entity under its old name generates
+                    # the same id and would overwrite the current record
+                    # (rename shadow: Follow Through -> Scare, v0.107.1).
+                    have = {r["name"].lower() for r in records}
+                    have_ids = {r["id"] for r in records}
+                    extra = [r for r in fetched
+                             if r["name"].lower() not in have
+                             and r["id"] not in have_ids]
+                    if extra:
+                        print(f"    {source.name} filled {len(extra)} missing {label}")
+                        records.extend(extra)
+                    # Field-level gap-fill: adopt this source's text for
+                    # records earlier sources left blank (e.g. cards whose
+                    # primary text is an unrenderable template)
+                    by_name = {r["name"].lower(): r for r in fetched}
+                    filled = 0
+                    for r in records:
+                        sec = by_name.get(r["name"].lower())
+                        if sec and not r.get("description") and sec.get("description"):
+                            r["description"] = sec["description"]
+                            if not r.get("description_upgraded") and sec.get("description_upgraded"):
+                                r["description_upgraded"] = sec["description_upgraded"]
+                            filled += 1
+                    if filled:
+                        print(f"    {source.name} filled text for {filled} {label}")
+
+            if not records:
+                log.warning("No %s from any source — keeping existing data", label)
+                print(f"    Warning: no {label} from any source — keeping existing data")
+                print("    Try 'spirescope update --save-only' instead.")
+                continue
+            # Guard: don't overwrite large dataset with empty/tiny result
+            existing = _existing_count(filename)
+            if existing > 20 and len(records) < existing * 0.1:
+                log.warning("Sources returned %d %s vs %d existing — possible format change, skipping", len(records), label, existing)
+                print(f"    Warning: sources returned only {len(records)} {label} vs {existing} existing, skipping overwrite")
+                continue
+            merged = _merge_with_existing(filename, records)
+            count = _save_json(filename, merged)
+            print(f"    Saved {count} {label} ({len(records)} fetched)")
     else:
         print("  Save-only mode: skipping wiki fetch\n")
 

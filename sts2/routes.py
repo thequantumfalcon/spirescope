@@ -175,7 +175,7 @@ async def sitemap_xml(request: Request):
 @router.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     from sts2.knowledge import get_last_updated
-    from sts2.updater import get_update_info
+    from sts2.updater import get_data_update_info, get_update_info
     a = _app()
     progress = await a._get_progress()
     runs = await a._get_runs()
@@ -223,6 +223,9 @@ async def index(request: Request):
         "last_updated": last_updated, "data_age_days": data_age_days,
         "data_status": a.kb.get_data_status(skip_last_updated=True),
         "update_info": get_update_info(), "undiscovered_cards": undiscovered,
+        "data_update_info": get_data_update_info(),
+        "data_updated_msg": request.query_params.get("data_updated", ""),
+        "csrf_token": a.generate_csrf_token(),
     })
 
 
@@ -1594,3 +1597,25 @@ async def admin_patches_assign(request: Request,
             "error_message": "Unknown patch or empty build id.",
         }, status_code=400)
     return RedirectResponse("/admin/patches?assigned=1", status_code=303)
+
+
+@router.post("/data-update/install", response_class=HTMLResponse)
+async def data_update_install(request: Request, csrf_token: str = Form("")):
+    """One-click install of a pending data bundle, then hot-reload the KB."""
+    from fastapi.responses import RedirectResponse
+
+    from sts2.updater import install_data_update
+    a = _app()
+    if not a.validate_csrf_token(csrf_token):
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 403,
+            "error_message": "Invalid form submission. Please go back and try again.",
+        }, status_code=403)
+    ok, message = await asyncio.to_thread(install_data_update)
+    if not ok:
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 500,
+            "error_message": message,
+        }, status_code=500)
+    await a._refresh_data()
+    return RedirectResponse("/?data_updated=1", status_code=303)

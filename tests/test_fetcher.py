@@ -436,6 +436,7 @@ class TestRunFetcher:
         })
         with patch("sts2.fetcher.DATA_DIR", tmp_path), \
              patch("sts2.fetcher._fetch_with_retry", return_value=tiny_html), \
+             patch("sts2.sources.WikiggSource._fetch_modules", return_value={}), \
              patch("sts2.fetcher.time.sleep"), \
              patch("sts2.config.SAVE_DIR", tmp_path):
             run_fetcher(save_only=False)

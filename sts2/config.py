@@ -10,7 +10,41 @@ VERSION = "2.10.0"
 
 # Project paths
 PROJECT_ROOT = Path(__file__).parent
-DATA_DIR = PROJECT_ROOT / "data"
+# Data bundled with the package/executable (read-only in frozen builds)
+BUNDLED_DATA_DIR = PROJECT_ROOT / "data"
+
+
+def _find_data_dir() -> Path:
+    """Writable game-data directory.
+
+    Frozen builds extract to an ephemeral dir, so installed data updates
+    would vanish on restart — redirect to a dir next to the executable
+    (seeded from the bundled data by ensure_data_dir()).
+    """
+    env = os.environ.get("STS2_DATA_DIR")
+    if env:
+        return Path(env)
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).parent / "data"
+    return BUNDLED_DATA_DIR
+
+
+DATA_DIR = _find_data_dir()
+
+
+def ensure_data_dir() -> None:
+    """Seed DATA_DIR from the bundled data on first run (frozen builds)."""
+    if DATA_DIR == BUNDLED_DATA_DIR or (DATA_DIR / "cards.json").exists():
+        return
+    import shutil
+    try:
+        shutil.copytree(BUNDLED_DATA_DIR, DATA_DIR, dirs_exist_ok=True)
+    except OSError as exc:
+        # Fall back silently: knowledge loading tolerates missing files
+        import logging
+        logging.getLogger(__name__).error("Failed to seed data dir: %s", exc)
+
+
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 STATIC_DIR = PROJECT_ROOT / "static"
 
