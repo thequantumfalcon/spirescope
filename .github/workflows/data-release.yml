@@ -47,6 +47,7 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME}"
           gh release create "$TAG" \
+            --latest=false \
             --title "Game data ${TAG#data-}" \
             --notes "Game data bundle. Installed in-app via the data-update banner, or manually: extract over sts2/data/. See docs/DATA_MAINTENANCE.md." \
             "spirescope-data-${TAG}.tar.gz" "spirescope-data-${TAG}.sha256"
