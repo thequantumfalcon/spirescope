@@ -27,7 +27,7 @@
 <h2>Final Deck</h2>
 <div class="flex flex-wrap gap-xs mb-sm">
 {% for card_id in run.deck %}
-<a href="/cards/{{ card_id }}" class="tag tag-keyword card-link">{{ kb.id_to_name(card_id) }}</a>
+<a href="/cards/{{ card_id }}" class="tag tag-keyword card-link">{{ kb.id_to_name(card_id) }}{% if run.enchantments.get(card_id) %} <span class="text-accent" title="Enchanted: {{ kb.id_to_name(run.enchantments[card_id]) }}">&#10022; {{ kb.id_to_name(run.enchantments[card_id]) }}</span>{% endif %}</a>
 {% endfor %}
 </div>
 <a href="/deck?from_run={{ run.id }}" class="btn btn-sm btn-secondary">Analyze Deck</a>

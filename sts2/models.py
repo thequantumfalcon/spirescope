@@ -149,6 +149,7 @@ class RunHistory(BaseModel):
     timestamp: int = 0
     total_players: int = 1
     origin: str = "vanilla"  # save tree the run came from: vanilla | modded
+    enchantments: dict[str, str] = {}  # card_id -> enchantment id (final deck)
 
 
 class CurrentRun(BaseModel):
@@ -162,6 +163,7 @@ class CurrentRun(BaseModel):
     run_time: int = 0
     deck: list[str] = []
     deck_upgrades: list[bool] = []
+    deck_enchantments: list[str] = []  # parallel to deck: enchantment id or ""
     relics: list[str] = []
     potions: list[str] = []
     events_seen: list[str] = []

@@ -48,7 +48,7 @@
     <div class="flex flex-wrap gap-xs mb-sm">
     {% for card_id in run.deck %}
     <a href="/cards/{{ card_id }}" class="tag tag-keyword card-link">
-      {{ kb.id_to_name(card_id) }}{% if loop.index0 < run.deck_upgrades|length and run.deck_upgrades[loop.index0] %}<span class="text-green">+</span>{% endif %}
+      {{ kb.id_to_name(card_id) }}{% if loop.index0 < run.deck_upgrades|length and run.deck_upgrades[loop.index0] %}<span class="text-green">+</span>{% endif %}{% if loop.index0 < run.deck_enchantments|length and run.deck_enchantments[loop.index0] %}<span class="text-accent" title="{{ kb.id_to_name(run.deck_enchantments[loop.index0]) }}">&#10022;</span>{% endif %}
     </a>
     {% endfor %}
     </div>

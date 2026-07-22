@@ -95,6 +95,7 @@ async def _get_live_run(player: int = 0) -> CurrentRun:
         if log.get("deck"):
             merged["deck"] = log["deck"]
             merged["deck_upgrades"] = [False] * len(log["deck"])
+            merged["deck_enchantments"] = [""] * len(log["deck"])
         if log.get("gold", 0) > 0:
             merged["gold"] = log["gold"]
         if log.get("potions"):

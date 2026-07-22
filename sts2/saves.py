@@ -103,6 +103,9 @@ def get_current_run(player_index: int = 0) -> CurrentRun:
     deck_entries = [c for c in player.get("deck", []) if c.get("id")]
     deck = [c.get("id", "") for c in deck_entries]
     deck_upgrades = [(c.get("upgrade_count") or 0) > 0 for c in deck_entries]
+    deck_enchantments = [
+        (c.get("enchantment") or {}).get("id", "") for c in deck_entries
+    ]
     relics = [r.get("id", "") for r in player.get("relics", []) if r.get("id")]
     potions = [p.get("id", "") for p in player.get("potions", []) if p.get("id")]
 
@@ -146,6 +149,7 @@ def get_current_run(player_index: int = 0) -> CurrentRun:
         run_time=data.get("run_time", 0),
         deck=deck,
         deck_upgrades=deck_upgrades,
+        deck_enchantments=deck_enchantments,
         relics=relics,
         potions=potions,
         events_seen=data.get("events_seen", []),
@@ -288,6 +292,11 @@ def get_run_history() -> list[RunHistory]:
             char_key = player.get("character_id") or player.get("character", "")
             character = CHARACTER_IDS.get(char_key, char_key or "Unknown")
             deck = [c.get("id", "") for c in player.get("deck", []) if c.get("id")]
+            enchantments = {
+                c["id"]: (c.get("enchantment") or {}).get("id", "")
+                for c in player.get("deck", [])
+                if c.get("id") and (c.get("enchantment") or {}).get("id")
+            }
             relics = [r.get("id", "") for r in player.get("relics", []) if r.get("id")]
 
             # Parse floor history
@@ -355,6 +364,7 @@ def get_run_history() -> list[RunHistory]:
                 timestamp=timestamp,
                 total_players=len(players),
                 origin=origin,
+                enchantments=enchantments,
             ))
         except Exception as e:
             log.warning("Failed to parse run file %s: %s", run_file.name, e)
