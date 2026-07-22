@@ -5,6 +5,16 @@
   {% if selected_result %}<input type="hidden" name="result" value="{{ selected_result }}">{% endif %}
   {% if selected_ascension is defined and selected_ascension is not none %}<input type="hidden" name="ascension" value="{{ selected_ascension }}">{% endif %}
 
+  {% if selected_scope is defined and current_patch_name() %}
+  <label class="text-sm text-muted" for="scope-select">Scope</label>
+  <select id="scope-select" name="scope" class="select-input" data-auto-submit>
+    <option value="current" {% if selected_scope == 'current' %}selected{% endif %}>Current patch ({{ current_patch_name() }})</option>
+    <option value="all" {% if selected_scope != 'current' %}selected{% endif %}>All time</option>
+  </select>
+  {% if scope_expanded %}<span class="text-sm text-muted">(no {{ current_patch_name() }} runs yet — showing all)</span>{% endif %}
+  <span class="filter-divider"></span>
+  {% endif %}
+
   {% if available_versions %}
   <label class="text-sm text-muted" for="version-select">Version</label>
   <select id="version-select" name="version" class="select-input" data-auto-submit>

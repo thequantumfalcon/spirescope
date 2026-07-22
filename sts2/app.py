@@ -67,6 +67,12 @@ templates.env.globals["theme_init_hash"] = _THEME_INIT_HASH
 templates.env.globals["logo_hash"] = _LOGO_HASH
 templates.env.globals["hero_bg_hash"] = _HERO_BG_HASH
 templates.env.globals["version"] = VERSION
+from sts2 import patches as _patches  # noqa: E402
+
+templates.env.globals["changed_in"] = _patches.changed_in
+templates.env.globals["current_patch_name"] = (
+    lambda: (_patches.current_patch() or {}).get("patch", "")
+)
 templates.env.globals["deck_js_hash"] = _DECK_JS_HASH
 templates.env.globals["collections_js_hash"] = _COLLECTIONS_JS_HASH
 templates.env.globals["shortcuts_js_hash"] = _SHORTCUTS_JS_HASH

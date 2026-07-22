@@ -12,6 +12,7 @@
     <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span>
     {% if card.tier %}<span class="tag" style="background:var(--bg3);color:var(--yellow);border:1px solid var(--border);font-size:1rem">{{ card.tier }}-Tier</span>{% endif %}
     {% if card.source == 'mod' %}<span class="tag tag-mod">Mod</span>{% elif card.source == 'discovered' %}<span class="tag tag-discovered">Discovered</span>{% endif %}
+    {% if changed_patch %}<span class="tag tag-keyword" title="Reworked or rebalanced in {{ changed_patch }}">Changed in {{ changed_patch }}</span>{% endif %}
   </h1>
   <p class="text-muted">{{ card.character }} &bull; {{ card.id }}</p>
 </div>
@@ -19,6 +20,23 @@
 <div class="detail-desc">{{ card.description }}</div>
 {% if card.description_upgraded %}
 <div class="detail-desc card-win"><strong class="text-green">Upgraded:</strong> {{ card.description_upgraded }}</div>
+{% endif %}
+
+{% if era_split %}
+<h2>Before / after {{ era_split.patch }}</h2>
+<div class="stat-grid">
+  {% for side, label in [(era_split.before, 'Before'), (era_split.after, 'After')] %}
+  <div class="stat-box">
+    {% if side.insufficient %}
+    <div class="num text-muted">&ndash;</div>
+    <div class="label">{{ label }}: insufficient sample ({{ side.n }} runs)</div>
+    {% else %}
+    <div class="num">{{ side.win_rate }}%</div>
+    <div class="label">{{ label }} win rate ({{ side.n }} runs{% if side.pick_rate is not none %}, picked {{ side.pick_rate }}%{% endif %})</div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
 {% endif %}
 
 {% if card_stats and (card_stats.picked or card_stats.skipped or card_stats.won or card_stats.lost) %}

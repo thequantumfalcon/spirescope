@@ -6,6 +6,7 @@
 
 {# Build a suffix string to carry version/time filters across character/result/ascension links #}
 {% set vt = "" %}
+{% if selected_scope and selected_scope != 'current' %}{% set vt = vt ~ "&scope=" ~ selected_scope %}{% endif %}
 {% if selected_version %}{% set vt = vt ~ "&version=" ~ selected_version %}{% endif %}
 {% if selected_origin %}{% set vt = vt ~ "&origin=" ~ selected_origin %}{% endif %}
 {% if selected_from %}{% set vt = vt ~ "&from=" ~ selected_from %}{% endif %}

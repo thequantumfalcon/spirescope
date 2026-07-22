@@ -46,13 +46,19 @@ def _resolve_preset(preset: str | None) -> str | None:
 
 def _filter_runs(runs: list, *, version: str | None = None,
                  date_from: str | None = None, date_to: str | None = None,
-                 origin: str | None = None) -> list:
-    """Filter runs by game version, date range, and/or save-tree origin.
+                 origin: str | None = None, scope: str | None = None) -> list:
+    """Filter runs by game version, date range, save-tree origin, and/or
+    patch-era scope ("current" = runs from the newest patch in the manifest).
 
     Runs with timestamp=0 (unknown) are excluded by any date filter.
     """
     if version:
         runs = [r for r in runs if r.build_id == version]
+    if scope == "current":
+        from sts2.patches import current_patch, era_of
+        current = (current_patch() or {}).get("patch", "")
+        if current:
+            runs = [r for r in runs if era_of(r.build_id) == current]
     if origin in ("vanilla", "modded"):
         runs = [r for r in runs if r.origin == origin]
     from_date = _parse_date(date_from)
@@ -308,11 +314,18 @@ async def card_detail(request: Request, card_id: str = Path(max_length=200)):
                 enemies_faced[enc]["total_damage"] += floor.damage_taken
     top_enemies = sorted(enemies_faced.items(),
                          key=lambda x: -x[1]["fights"])[:6]
+    from sts2.analytics import compute_era_split
+    from sts2.patches import changed_in
+    changed_patch = changed_in(card_id)
+    era_split = None
+    if changed_patch:
+        era_split = compute_era_split(await a._get_runs(), card_id, changed_patch)
     return a.templates.TemplateResponse(request, "card_detail.html", {
         "card": card, "synergies": synergies, "strategy": strategy,
         "card_stats": card_stats,
         "card_run_wins": card_run_wins, "card_run_total": card_run_total,
         "community_tips": community_tips, "top_enemies": top_enemies, "kb": a.kb,
+        "changed_patch": changed_patch, "era_split": era_split,
     })
 
 
@@ -348,10 +361,17 @@ async def relic_detail(request: Request, relic_id: str = Path(max_length=200)):
     relic_synergies.sort(key=lambda x: -x["weight"])
     # Archetypes mentioning this relic
     relic_archetypes = a.kb.find_relic_archetypes(relic.name)
+    from sts2.analytics import compute_era_split
+    from sts2.patches import changed_in
+    changed_patch = changed_in(relic_id)
+    era_split = None
+    if changed_patch:
+        era_split = compute_era_split(await a._get_runs(), relic_id, changed_patch)
     return a.templates.TemplateResponse(request, "relic_detail.html", {
         "relic": relic, "relic_runs": relic_runs, "community_tips": community_tips,
         "relic_synergies": relic_synergies[:6], "relic_archetypes": relic_archetypes,
         "kb": a.kb,
+        "changed_patch": changed_patch, "era_split": era_split,
     })
 
 
@@ -443,7 +463,8 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
                date_from: str = Query(None, alias="from", max_length=10),
                date_to: str = Query(None, alias="to", max_length=10),
                preset: str = Query(None, max_length=10),
-               origin: str = Query(None, max_length=10)):
+               origin: str = Query(None, max_length=10),
+               scope: str = Query("current", max_length=10)):
     a = _app()
     run_list = await a._get_runs()
 
@@ -454,10 +475,18 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
             date_from = p_from
             date_to = None
 
-    # Version/time/origin filters apply before character/result/ascension
+    # Version/time/origin/scope filters apply before character/result/ascension
     filtered = _filter_runs(run_list, version=version,
                             date_from=date_from, date_to=date_to,
-                            origin=origin)
+                            origin=origin, scope=scope)
+    scope_expanded = False
+    if scope == "current" and not filtered and run_list:
+        # No runs on the current patch yet — fall back to all-time with a
+        # notice rather than rendering an empty page
+        scope_expanded = True
+        filtered = _filter_runs(run_list, version=version,
+                                date_from=date_from, date_to=date_to,
+                                origin=origin)
 
     if character:
         filtered = [r for r in filtered if r.character == character]
@@ -482,6 +511,7 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
         "available_origins": available_origins, "selected_origin": origin,
         "selected_from": date_from or "", "selected_to": date_to or "",
         "selected_preset": selected_preset,
+        "selected_scope": scope, "scope_expanded": scope_expanded,
     })
 
 
@@ -692,7 +722,8 @@ async def analytics(request: Request,
                     date_from: str = Query(None, alias="from", max_length=10),
                     date_to: str = Query(None, alias="to", max_length=10),
                     preset: str = Query(None, max_length=10),
-                    origin: str = Query(None, max_length=10)):
+                    origin: str = Query(None, max_length=10),
+                    scope: str = Query("current", max_length=10)):
     from sts2.analytics import analyze_run_patterns, compute_analytics, compute_boss_matchups
     a = _app()
     all_runs = await a._get_runs()
@@ -707,13 +738,22 @@ async def analytics(request: Request,
             date_from = p_from
             date_to = None
 
-    has_filters = version or date_from or date_to or origin
+    # Current-patch default scope; fall back to all-time when the player has
+    # no runs on the current patch yet (empty dashboard helps nobody, and the
+    # all-time path stays on the analytics cache)
+    scope_expanded = False
+    if scope == "current" and not _filter_runs(all_runs, scope="current"):
+        scope_expanded = True
+        scope = "all"
+
+    has_filters = version or date_from or date_to or origin or scope == "current"
 
     if has_filters:
         # Bypass cache — compute analytics on filtered subset
         filtered = _filter_runs(all_runs, version=version,
                                 date_from=date_from, date_to=date_to,
-                                origin=origin)
+                                origin=origin,
+                                scope="current" if scope == "current" else None)
         if ascension is not None:
             filtered = [r for r in filtered if r.ascension == ascension]
         progress = await a._get_progress()
@@ -747,6 +787,7 @@ async def analytics(request: Request,
         "available_origins": available_origins, "selected_origin": origin,
         "selected_from": date_from or "", "selected_to": date_to or "",
         "selected_preset": selected_preset,
+        "selected_scope": scope, "scope_expanded": scope_expanded,
         "tilt": tilt, "anti_patterns": anti_patterns,
     })
 

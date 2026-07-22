@@ -104,3 +104,23 @@ def changed_in(entity_id: str) -> str:
             if entity_id in changed.get(kind, []):
                 return entry.get("patch", "")
     return ""
+
+
+def current_patch() -> dict | None:
+    """The newest patch entry (manifest is ordered oldest first)."""
+    patches = load_patches()
+    return patches[-1] if patches else None
+
+
+def era_of(build_id: str) -> str:
+    """Patch-era name for a build_id, or "unmapped"."""
+    entry = resolve_build(build_id)
+    return entry.get("patch", "unmapped") if entry else "unmapped"
+
+
+def era_index(patch_name: str) -> int:
+    """Position of a patch in the chronology (-1 for unknown/unmapped)."""
+    for i, entry in enumerate(load_patches()):
+        if entry.get("patch") == patch_name:
+            return i
+    return -1

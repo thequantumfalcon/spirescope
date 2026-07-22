@@ -948,3 +948,48 @@ def compute_boss_matchups(runs: list[RunHistory], kb=None) -> list[dict]:
 
     results.sort(key=lambda x: x["fights"], reverse=True)
     return results
+
+
+def compute_era_split(runs: list, entity_id: str, patch_name: str) -> dict | None:
+    """Pre/post comparison for an entity around the patch that changed it.
+
+    Partitions runs into before/after the named patch by patch era
+    (unmapped-era runs are excluded — no guessing). Sides with fewer than
+    10 runs report insufficient sample instead of misleading percentages.
+    """
+    from sts2.patches import era_index, era_of
+    pivot = era_index(patch_name)
+    if pivot < 0:
+        return None
+    before_runs, after_runs = [], []
+    for r in runs:
+        idx = era_index(era_of(r.build_id))
+        if idx < 0:
+            continue
+        (after_runs if idx >= pivot else before_runs).append(r)
+
+    def _side(side_runs: list) -> dict:
+        with_entity = [r for r in side_runs
+                       if entity_id in r.deck or entity_id in r.relics]
+        n = len(with_entity)
+        offered = picked = 0
+        for r in side_runs:
+            for f in r.floors:
+                if entity_id in f.cards_offered:
+                    offered += 1
+                    if f.card_picked == entity_id:
+                        picked += 1
+        if n < 10:
+            return {"n": n, "insufficient": True}
+        wins = sum(1 for r in with_entity if r.win)
+        return {
+            "n": n, "insufficient": False,
+            "win_rate": round(wins / n * 100, 1),
+            "pick_rate": round(picked / offered * 100, 1) if offered else None,
+        }
+
+    result = {"patch": patch_name,
+              "before": _side(before_runs), "after": _side(after_runs)}
+    if result["before"]["n"] == 0 and result["after"]["n"] == 0:
+        return None
+    return result
