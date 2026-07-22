@@ -54,3 +54,10 @@ Cards additionally accept: `mp_only` (bool), `branch` ("main" | "beta" |
 string), `tags` (list of strings). Relics, potions, and enemies accept
 `branch`, `introduced`, `last_changed`. All are optional — v1 mod files load
 unchanged.
+
+## Mod namespace (`mod_id`)
+
+Add a top-level `"mod_id": "my-mod"` to a mod file and its entities are
+registered under namespaced ids (`mod:my-mod:CARD_NAME`), which can never
+collide with base-game ids or other mods. Files without `mod_id` keep their
+ids as written (legacy behavior).

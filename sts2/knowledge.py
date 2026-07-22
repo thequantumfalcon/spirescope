@@ -166,7 +166,21 @@ class KnowledgeBase:
                 log.warning("Skipping malformed mod file %s: %s", mod_file.name, exc)
                 continue
             mod_name = data.get("mod_name", mod_file.stem)
+            # Namespace plumbing for installed-mod ingestion: a file that
+            # declares mod_id gets its entities registered as
+            # mod:<modid>:<entity> so they can never collide with base ids
+            # or other mods. Files without mod_id keep their ids (legacy).
+            mod_id = str(data.get("mod_id", "")).strip()
+
+            def _ns(record: dict) -> dict:
+                rid = record.get("id", "")
+                if mod_id and rid and not rid.startswith("mod:"):
+                    record = dict(record)
+                    record["id"] = f"mod:{mod_id}:{rid}"
+                return record
+
             for d in data.get("cards", []):
+                d = _ns(d)
                 try:
                     card = Card(**d, source="mod")
                     if card.id in existing_card_ids:
@@ -177,6 +191,7 @@ class KnowledgeBase:
                 except Exception as exc:
                     log.warning("Mod %s: skipping malformed card: %s", mod_name, exc)
             for d in data.get("relics", []):
+                d = _ns(d)
                 try:
                     relic = Relic(**d, source="mod")
                     if relic.id in existing_relic_ids:
@@ -187,6 +202,7 @@ class KnowledgeBase:
                 except Exception as exc:
                     log.warning("Mod %s: skipping malformed relic: %s", mod_name, exc)
             for d in data.get("potions", []):
+                d = _ns(d)
                 try:
                     potion = Potion(**d, source="mod")
                     if potion.id in existing_potion_ids:
@@ -196,6 +212,7 @@ class KnowledgeBase:
                 except Exception as exc:
                     log.warning("Mod %s: skipping malformed potion: %s", mod_name, exc)
             for d in data.get("enemies", []):
+                d = _ns(d)
                 try:
                     enemy = Enemy(**d, source="mod")
                     if enemy.id in existing_enemy_ids:

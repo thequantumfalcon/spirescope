@@ -161,3 +161,19 @@ def test_knowledge_base_loads_v2_data():
     diadem = next(r for r in kb.relics if r.id == "RELIC.DIAMOND_DIADEM")
     assert diadem.last_changed == "v0.109.0"
     assert isinstance(kb.badges, list)
+
+
+def test_mod_namespace_plumbing(tmp_path, monkeypatch):
+    """A mod file declaring mod_id gets namespaced entity ids (P7)."""
+    import sts2.knowledge as knowledge
+    (tmp_path / "spicy.json").write_text(json.dumps({
+        "mod_name": "Spicy Mod", "mod_id": "spicy",
+        "cards": [{"id": "CARD.HOT", "name": "Hot", "character": "Ironclad",
+                    "cost": "1", "type": "Attack", "rarity": "Common"}],
+        "relics": [{"id": "RELIC.PEPPER", "name": "Pepper"}],
+    }))
+    monkeypatch.setattr(knowledge, "MODS_DIR", tmp_path)
+    kb = knowledge.KnowledgeBase()
+    assert kb.get_card_by_id("mod:spicy:CARD.HOT").name == "Hot"
+    assert kb.get_card_by_id("mod:spicy:CARD.HOT").source == "mod"
+    assert kb.get_relic_by_id("mod:spicy:RELIC.PEPPER").name == "Pepper"
