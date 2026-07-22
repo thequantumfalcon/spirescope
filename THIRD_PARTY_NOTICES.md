@@ -66,7 +66,7 @@ project. Bundled data is derived from:
 
 | Source | License / Terms | Use |
 |---|---|---|
-| [slaythespire.wiki.gg](https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2) | CC BY-SA 4.0 (wiki.gg standard) | Primary canonical source for cards, relics, potions, events, patch notes |
+| [slaythespire.wiki.gg](https://slaythespire.wiki.gg/) | CC BY-SA 4.0 (wiki.gg standard) | Primary canonical source for cards, relics, potions, events, patch notes |
 | [slaythespire2.gg](https://slaythespire2.gg/) | Scraped under their robots.txt permission. Disallowed paths (`/api/`, `/admin/`, `/analysis/`, `/planner/`) are never requested. We identify ourselves with a project-named User-Agent. Their AI-train opt-out is respected — this project is not training models. | Cross-reference data for cards, relics, potions, events |
 | [sts2.untapped.gg](https://sts2.untapped.gg/) | Public reference; not actively scraped | Tertiary cross-reference |
 | Reddit public JSON (e.g. r/slaythespire2) | Reddit User Agreement; non-commercial reads with rate-limiting | Community tips in the `/community` view |

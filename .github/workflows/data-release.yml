@@ -36,10 +36,11 @@ jobs:
       - name: Package data bundle
         run: |
           TAG="${GITHUB_REF_NAME}"
+          # TAG already starts with "data-", so the asset is spirescope-data-vX.Y.Z.tar.gz
           tar --exclude='data/mods' --exclude='data/.fetcher_keys.json' \
-            -czf "spirescope-data-${TAG}.tar.gz" -C sts2 data
-          sha256sum "spirescope-data-${TAG}.tar.gz" > "spirescope-data-${TAG}.sha256"
-          cat "spirescope-data-${TAG}.sha256"
+            -czf "spirescope-${TAG}.tar.gz" -C sts2 data
+          sha256sum "spirescope-${TAG}.tar.gz" > "spirescope-${TAG}.sha256"
+          cat "spirescope-${TAG}.sha256"
 
       - name: Create release
         env:
@@ -49,5 +50,5 @@ jobs:
           gh release create "$TAG" \
             --latest=false \
             --title "Game data ${TAG#data-}" \
-            --notes "Game data bundle. Installed in-app via the data-update banner, or manually: extract over sts2/data/. See docs/DATA_MAINTENANCE.md." \
-            "spirescope-data-${TAG}.tar.gz" "spirescope-data-${TAG}.sha256"
+            --notes "Game data bundle. Installed in-app via the data-update banner, or manually: extract inside sts2/ (the tarball contains a data/ directory). See docs/DATA_MAINTENANCE.md." \
+            "spirescope-${TAG}.tar.gz" "spirescope-${TAG}.sha256"

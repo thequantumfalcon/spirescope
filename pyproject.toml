@@ -5,7 +5,7 @@ description = "Spirescope — a local web dashboard for Slay the Spire 2. Card/r
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"
-authors = [{name = "Thomas Albrecht", email = "thequantumfalcon@users.noreply.github.com"}]
+authors = [{name = "The Quantum Falcon", email = "thequantumfalcon@users.noreply.github.com"}]
 keywords = ["slay-the-spire", "slay-the-spire-2", "dashboard", "deck-analysis", "live-tracking", "companion-app"]
 classifiers = [
     "Development Status :: 4 - Beta",

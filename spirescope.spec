@@ -37,11 +37,11 @@ if sys.platform == "win32":
         kids=[
             StringFileInfo([
                 StringTable("040904B0", [
-                    StringStruct("CompanyName", "Thomas Albrecht"),
+                    StringStruct("CompanyName", "The Quantum Falcon"),
                     StringStruct("FileDescription", "Spirescope - Slay the Spire 2 companion dashboard"),
                     StringStruct("FileVersion", VERSION),
                     StringStruct("InternalName", "Spirescope"),
-                    StringStruct("LegalCopyright", "Copyright (c) Thomas Albrecht"),
+                    StringStruct("LegalCopyright", "Copyright (c) The Quantum Falcon"),
                     StringStruct("OriginalFilename", "Spirescope.exe"),
                     StringStruct("ProductName", "Spirescope"),
                     StringStruct("ProductVersion", VERSION),

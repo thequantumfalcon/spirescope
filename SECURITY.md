@@ -2,7 +2,10 @@
 
 Please do not report security vulnerabilities through public GitHub issues.
 
-Instead, email thequantumfalcon@users.noreply.github.com with:
+Instead, use GitHub's private vulnerability reporting:
+<https://github.com/thequantumfalcon/spirescope/security/advisories/new>
+
+Include:
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact

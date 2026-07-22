@@ -174,10 +174,11 @@ def main():
         open_browser = _should_open_browser(args)
         if open_browser:
             threading.Timer(1.5, lambda: webbrowser.open(url)).start()
-        print(f"\n  Spirescope {_get_version()} starting at {url}")
+        # flush so the banner reaches redirected/supervised logs immediately
+        print(f"\n  Spirescope {_get_version()} starting at {url}", flush=True)
         if getattr(sys, "frozen", False) and not open_browser:
             print("  Browser auto-open is disabled for the packaged build by default.")
-            print("  Open the URL above manually, or launch with '--browser'.")
+            print("  Open the URL above manually, or launch with '--browser'.", flush=True)
         if HOST not in ("127.0.0.1", "localhost", "::1"):
             print("  WARNING: Spirescope is designed for single-user local use.")
             print("  Binding to a public address exposes it without authentication.\n")

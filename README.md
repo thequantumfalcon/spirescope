@@ -22,7 +22,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — all 598 cards with filters and search" width="80%">
+  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — all 645 cards with filters and search" width="80%">
 </p>
 
 ## Features
@@ -104,7 +104,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Download (No Python Required)
 
-**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`, leave the console window open, then open `http://127.0.0.1:8000` in your browser. Release archives also ship with `.sha256` checksum files.
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`, leave the console window open, then open `http://127.0.0.1:8000` in your browser. A macOS build ([Spirescope-macos.zip](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-macos.zip)) is also attached to each release. All archives ship with `.sha256` checksum files.
 
 Windows may still show a SmartScreen or reputation warning because the build is unsigned. SpireScope is open source, local-only by default, and the packaged release avoids the usual UPX-compressed hidden-window profile that tends to trigger extra false positives.
 
@@ -113,9 +113,12 @@ If you're cautious about unsigned Windows apps, that's fair. Grab SpireScope fro
 ### From Source
 
 ```bash
+python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e .
 spirescope
 ```
+
+(The venv matters: modern Python installs — macOS Homebrew, Debian 12+, Ubuntu 23.04+ — refuse system-wide `pip install` per PEP 668.)
 
 Or run directly:
 
@@ -282,9 +285,9 @@ sts2/
   updater.py         # Auto-update checker
   watcher.py         # File watcher with debounce + polling fallback
   data/              # JSON game data + mods
-  templates/         # Jinja2 HTML templates (22 templates)
+  templates/         # Jinja2 HTML templates (32 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 654 tests (pytest + pytest-asyncio)
+tests/               # 707 tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements
@@ -298,7 +301,7 @@ SpireScope is a fan-made project and is not affiliated with, endorsed by, or ass
 
 ## Acknowledgments
 
-Card, relic, potion, and event data is derived from the community wiki at [slaythespire.wiki.gg](https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2), available under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), and from the [slaythespire2.gg](https://slaythespire2.gg/) reference site (scraped with their robots.txt permission, identified by a project-named User-Agent). Strategy guides for the Epochs system reference notes by NeonLightsMedia. UI typography uses [Cinzel](https://fonts.google.com/specimen/Cinzel) by Natanael Gama under the SIL Open Font License 1.1. Full third-party attributions are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Card, relic, potion, and event data is derived from the community wiki at [slaythespire.wiki.gg](https://slaythespire.wiki.gg/), available under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), and from the [slaythespire2.gg](https://slaythespire2.gg/) reference site (scraped with their robots.txt permission, identified by a project-named User-Agent). Strategy guides for the Epochs system reference notes by NeonLightsMedia. UI typography uses [Cinzel](https://fonts.google.com/specimen/Cinzel) by Natanael Gama under the SIL Open Font License 1.1. Full third-party attributions are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## License
 

@@ -39,10 +39,15 @@ jobs:
           cd dist
           zip -r Spirescope-${{ github.ref_name }}-macos.zip Spirescope/
           cp Spirescope-${{ github.ref_name }}-macos.zip Spirescope-macos.zip
+          for z in Spirescope-${{ github.ref_name }}-macos.zip Spirescope-macos.zip; do
+            shasum -a 256 "$z" > "$z.sha256"
+          done
 
       - name: Upload to existing release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             dist/Spirescope-${{ github.ref_name }}-macos.zip
+            dist/Spirescope-${{ github.ref_name }}-macos.zip.sha256
             dist/Spirescope-macos.zip
+            dist/Spirescope-macos.zip.sha256

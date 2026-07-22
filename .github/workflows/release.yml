@@ -51,7 +51,9 @@ jobs:
           foreach ($path in @($tagZip, $latestZip)) {
             $hash = (Get-FileHash $path -Algorithm SHA256).Hash.ToLower()
             $name = Split-Path $path -Leaf
-            Set-Content -Path "$path.sha256" -Value "$hash  $name" -Encoding ascii
+            # LF line ending — Set-Content writes CRLF, which breaks
+            # `shasum -c` / `sha256sum -c` on the resulting file
+            [System.IO.File]::WriteAllText("$path.sha256", "$hash  $name`n")
           }
         shell: pwsh
 
@@ -75,7 +77,8 @@ jobs:
           footer = '\n\n---\n\n### Download\n\n'
           footer += '**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)**'
           footer += ' — extract the zip, open the \`Spirescope\` folder, double-click \`Spirescope.exe\`.\n\n'
-          footer += 'GitHub is the only official download source. Use the release assets here and the attached checksum file.'
+          footer += 'GitHub is the only official download source. Use the release assets here and the attached checksum file.\n\n'
+          footer += 'The versioned and unversioned zips are identical; the unversioned names exist so the latest-download URL stays stable.'
           notes = header + body + footer
           with open('RELEASE_NOTES.md', 'w', encoding='utf-8') as f:
               f.write(notes)
