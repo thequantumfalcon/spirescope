@@ -1,6 +1,33 @@
 # Changelog
 
-## v2.9.8
+## v2.10.0
+
+> Supersedes the unreleased v2.9.8 tag: its release build failed CI because a
+> starlette update changed route introspection after the tag was cut. The fix
+> lands here together with two v3.0-arc features that were already complete
+> and gated.
+
+### Added
+
+- **Merged run history across vanilla and modded save trees** — game v0.108.0
+  copies unmodded saves into the modded save dir on first modded launch, which
+  silently truncated history to whichever tree was fresher. All save dirs of
+  the active profile now merge with content-hash dedupe; runs carry an
+  `origin` (vanilla/modded) shown as a filter on Runs/Analytics and a chip on
+  run detail. `STS2_SAVE_DIR` accepts an `os.pathsep`-separated list.
+- **Patch manifest + schema v2** — new `sts2/data/patches.json` maps run
+  `build_id`s to named patch eras (seeded v0.107.0–v0.109.0 with
+  wiki-verified changed-entity lists). Unknown build ids surface at
+  `/admin/patches` for one-click assignment — nothing is guessed. Entity
+  records gain optional `branch` / `introduced` / `last_changed` (+ card
+  `mp_only`, `tags`; epoch `status: deprecated`; new badges.json), all
+  backward-compatible.
+
+### Fixed
+
+- **CI broken by starlette dependency drift** — newer FastAPI represents
+  `include_router()` as a nested entry instead of flattening into
+  `app.routes`; the SSE route-registration test now walks both shapes.
 
 ### Data
 
