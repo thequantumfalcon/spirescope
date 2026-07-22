@@ -1,5 +1,7 @@
 """Tests for the FastAPI routes."""
 
+import sys
+
 from sts2.app import _ADMIN_TOKEN, _rate_limit_store, generate_csrf_token
 
 
@@ -1266,7 +1268,7 @@ async def test_cli_help():
     """CLI --help should print usage."""
     import subprocess
     result = subprocess.run(
-        ["python", "-m", "sts2", "--help"],
+        [sys.executable, "-m", "sts2", "--help"],
         capture_output=True, text=True, timeout=10,
     )
     assert result.returncode == 0
@@ -1279,7 +1281,7 @@ async def test_cli_version():
     """CLI --version should print version."""
     import subprocess
     result = subprocess.run(
-        ["python", "-m", "sts2", "--version"],
+        [sys.executable, "-m", "sts2", "--version"],
         capture_output=True, text=True, timeout=10,
     )
     assert result.returncode == 0
@@ -1290,7 +1292,7 @@ async def test_cli_unknown_command():
     """CLI unknown command should exit with error."""
     import subprocess
     result = subprocess.run(
-        ["python", "-m", "sts2", "foobar"],
+        [sys.executable, "-m", "sts2", "foobar"],
         capture_output=True, text=True, timeout=10,
     )
     assert result.returncode != 0

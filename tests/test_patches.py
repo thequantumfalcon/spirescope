@@ -78,7 +78,7 @@ def test_shipped_manifest_ids_exist_in_data():
     from sts2.config import DATA_DIR
     known = set()
     for fname in ("cards.json", "relics.json", "enemies.json"):
-        known |= {i["id"] for i in json.loads((DATA_DIR / fname).read_text())}
+        known |= {i["id"] for i in json.loads((DATA_DIR / fname).read_text(encoding="utf-8"))}
     for p in patch_manifest.load_patches():
         for kind in ("cards", "relics", "enemies"):
             for eid in p["changed"][kind]:

@@ -1,6 +1,7 @@
 """Tests for Spirescope v2.0 features: analytics, import/export, coaching,
 aggregation, mod loading, CSV export, API pagination, theme, CSP, rate limiter."""
 import json
+import sys
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
@@ -796,7 +797,7 @@ class TestCLI:
     def test_cli_help_lists_new_commands(self):
         import subprocess
         result = subprocess.run(
-            ["python", "-m", "sts2", "--help"],
+            [sys.executable, "-m", "sts2", "--help"],
             capture_output=True, text=True, timeout=10,
         )
         assert "export" in result.stdout
@@ -965,7 +966,7 @@ class TestNoBrowserFlag:
     def test_help_shows_no_browser(self):
         import subprocess
         result = subprocess.run(
-            ["python", "-m", "sts2", "--help"],
+            [sys.executable, "-m", "sts2", "--help"],
             capture_output=True, text=True, timeout=10,
         )
         assert "--no-browser" in result.stdout
