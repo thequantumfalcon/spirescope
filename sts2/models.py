@@ -119,6 +119,7 @@ class RunHistory(BaseModel):
     build_id: str = ""
     timestamp: int = 0
     total_players: int = 1
+    origin: str = "vanilla"  # save tree the run came from: vanilla | modded
 
 
 class CurrentRun(BaseModel):

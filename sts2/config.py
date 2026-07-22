@@ -15,19 +15,26 @@ TEMPLATES_DIR = PROJECT_ROOT / "templates"
 STATIC_DIR = PROJECT_ROOT / "static"
 
 
-def _find_save_dir() -> Path:
-    """Auto-detect the STS2 save directory across platforms.
+def _find_save_dirs() -> list[Path]:
+    """Auto-detect ALL STS2 save directories for the active profile.
 
     STS2 stores modded saves in a separate directory tree:
       Vanilla: steam/<id>/profile1/saves/
       Modded:  steam/<id>/modded/profile1/saves/
 
-    When both exist, prefer whichever contains more recent run data.
+    Since game v0.108.0 a first modded launch copies vanilla saves into the
+    modded tree, so run history is split across both. All save dirs belonging
+    to the same steam id + profile name are returned together (freshest tree
+    first) so history can be merged; other profiles are excluded — they are
+    separate players and merging them would conflate their stats.
+
+    STS2_SAVE_DIR overrides detection and accepts an os.pathsep-separated
+    list of directories.
     """
     # Environment variable override
     env_dir = os.environ.get("STS2_SAVE_DIR")
     if env_dir:
-        return Path(env_dir)
+        return [Path(p) for p in env_dir.split(os.pathsep) if p]
 
     # Platform-specific AppData location
     if sys.platform == "win32":
@@ -50,38 +57,48 @@ def _find_save_dir() -> Path:
             sts2_dir = proton_base
 
     if not sts2_dir.exists():
-        return sts2_dir / "saves"  # Return plausible path even if missing
+        return [sts2_dir / "saves"]  # Return plausible path even if missing
 
-    # Walk steam/<id>/ to find vanilla and modded save dirs
+    # Walk steam/<id>/ grouping vanilla+modded save dirs per profile
     steam_dir = sts2_dir / "steam"
-    candidates: list[Path] = []
+    groups: dict[tuple[str, str], list[Path]] = {}
     if steam_dir.exists():
         for steam_id_dir in steam_dir.iterdir():
             if not steam_id_dir.is_dir():
                 continue
-            # Check vanilla profiles: steam/<id>/profile*/saves/
+            # Vanilla profiles: steam/<id>/profile*/saves/
             for profile_dir in sorted(steam_id_dir.iterdir()):
                 if profile_dir.is_dir() and profile_dir.name.startswith("profile"):
                     saves = profile_dir / "saves"
                     if saves.exists():
-                        candidates.append(saves)
-            # Check modded profiles: steam/<id>/modded/profile*/saves/
+                        groups.setdefault(
+                            (steam_id_dir.name, profile_dir.name), []
+                        ).append(saves)
+            # Modded profiles: steam/<id>/modded/profile*/saves/
             modded_dir = steam_id_dir / "modded"
             if modded_dir.exists():
                 for profile_dir in sorted(modded_dir.iterdir()):
                     if profile_dir.is_dir() and profile_dir.name.startswith("profile"):
                         saves = profile_dir / "saves"
                         if saves.exists():
-                            candidates.append(saves)
+                            groups.setdefault(
+                                (steam_id_dir.name, profile_dir.name), []
+                            ).append(saves)
 
-    if not candidates:
-        return sts2_dir / "saves"
+    if not groups:
+        return [sts2_dir / "saves"]
 
-    if len(candidates) == 1:
-        return candidates[0]
+    # Active profile = the group holding the most recent run data
+    active = max(
+        groups.values(),
+        key=lambda dirs: max(_save_dir_freshness(d) for d in dirs),
+    )
+    return sorted(active, key=_save_dir_freshness, reverse=True)
 
-    # Multiple save dirs found — prefer the one with more recent history
-    return max(candidates, key=_save_dir_freshness)
+
+def _find_save_dir() -> Path:
+    """The freshest save directory (live current_run reads come from here)."""
+    return _find_save_dirs()[0]
 
 
 def _save_dir_freshness(save_dir: Path) -> float:
@@ -136,7 +153,8 @@ def _find_game_dir() -> Path:
 
 
 # Game paths (auto-detected)
-SAVE_DIR = _find_save_dir()
+SAVE_DIRS = _find_save_dirs()
+SAVE_DIR = SAVE_DIRS[0]
 GAME_INSTALL_DIR = _find_game_dir()
 MODS_DIR = _find_mods_dir()
 

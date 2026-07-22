@@ -45,13 +45,16 @@ def _resolve_preset(preset: str | None) -> str | None:
 
 
 def _filter_runs(runs: list, *, version: str | None = None,
-                 date_from: str | None = None, date_to: str | None = None) -> list:
-    """Filter runs by game version and/or date range.
+                 date_from: str | None = None, date_to: str | None = None,
+                 origin: str | None = None) -> list:
+    """Filter runs by game version, date range, and/or save-tree origin.
 
     Runs with timestamp=0 (unknown) are excluded by any date filter.
     """
     if version:
         runs = [r for r in runs if r.build_id == version]
+    if origin in ("vanilla", "modded"):
+        runs = [r for r in runs if r.origin == origin]
     from_date = _parse_date(date_from)
     if from_date:
         from_ts = int(datetime(from_date.year, from_date.month, from_date.day,
@@ -436,7 +439,8 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
                version: str = Query(None, max_length=100),
                date_from: str = Query(None, alias="from", max_length=10),
                date_to: str = Query(None, alias="to", max_length=10),
-               preset: str = Query(None, max_length=10)):
+               preset: str = Query(None, max_length=10),
+               origin: str = Query(None, max_length=10)):
     a = _app()
     run_list = await a._get_runs()
 
@@ -447,9 +451,10 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
             date_from = p_from
             date_to = None
 
-    # Version/time filters apply before character/result/ascension
+    # Version/time/origin filters apply before character/result/ascension
     filtered = _filter_runs(run_list, version=version,
-                            date_from=date_from, date_to=date_to)
+                            date_from=date_from, date_to=date_to,
+                            origin=origin)
 
     if character:
         filtered = [r for r in filtered if r.character == character]
@@ -463,6 +468,7 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
     wins = sum(1 for r in filtered if r.win)
     ascension_levels = sorted({r.ascension for r in run_list})
     available_versions = sorted({r.build_id for r in run_list if r.build_id}, reverse=True)
+    available_origins = sorted({r.origin for r in run_list})
     selected_preset = preset if preset in ("7d", "30d", "90d", "all") else ""
     return a.templates.TemplateResponse(request, "runs.html", {
         "runs": filtered, "kb": a.kb, "characters": CHARACTERS,
@@ -470,6 +476,7 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
         "selected_ascension": ascension, "ascension_levels": ascension_levels,
         "total_runs": total, "total_wins": wins, "csrf_token": a.generate_csrf_token(),
         "available_versions": available_versions, "selected_version": version,
+        "available_origins": available_origins, "selected_origin": origin,
         "selected_from": date_from or "", "selected_to": date_to or "",
         "selected_preset": selected_preset,
     })
@@ -681,12 +688,14 @@ async def analytics(request: Request,
                     version: str = Query(None, max_length=100),
                     date_from: str = Query(None, alias="from", max_length=10),
                     date_to: str = Query(None, alias="to", max_length=10),
-                    preset: str = Query(None, max_length=10)):
+                    preset: str = Query(None, max_length=10),
+                    origin: str = Query(None, max_length=10)):
     from sts2.analytics import analyze_run_patterns, compute_analytics, compute_boss_matchups
     a = _app()
     all_runs = await a._get_runs()
     ascension_levels = sorted({r.ascension for r in all_runs})
     available_versions = sorted({r.build_id for r in all_runs if r.build_id}, reverse=True)
+    available_origins = sorted({r.origin for r in all_runs})
 
     # Resolve preset into date range
     if preset and preset != "all":
@@ -695,12 +704,13 @@ async def analytics(request: Request,
             date_from = p_from
             date_to = None
 
-    has_filters = version or date_from or date_to
+    has_filters = version or date_from or date_to or origin
 
     if has_filters:
         # Bypass cache — compute analytics on filtered subset
         filtered = _filter_runs(all_runs, version=version,
-                                date_from=date_from, date_to=date_to)
+                                date_from=date_from, date_to=date_to,
+                                origin=origin)
         if ascension is not None:
             filtered = [r for r in filtered if r.ascension == ascension]
         progress = await a._get_progress()
@@ -731,6 +741,7 @@ async def analytics(request: Request,
         "selected_ascension": ascension, "ascension_levels": ascension_levels,
         "run_patterns": run_patterns, "boss_matchups": boss_matchups,
         "available_versions": available_versions, "selected_version": version,
+        "available_origins": available_origins, "selected_origin": origin,
         "selected_from": date_from or "", "selected_to": date_to or "",
         "selected_preset": selected_preset,
         "tilt": tilt, "anti_patterns": anti_patterns,

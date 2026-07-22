@@ -1,12 +1,28 @@
 """Save file reader for STS2 progress, run history, and current run."""
+import hashlib
 import json
 import logging
 from pathlib import Path
 
-from sts2.config import CHARACTER_IDS, SAVE_DIR
+from sts2.config import CHARACTER_IDS, SAVE_DIR, SAVE_DIRS
 from sts2.models import CurrentRun, PlayerProgress, RunFloor, RunHistory
 
 log = logging.getLogger(__name__)
+
+
+def _save_origin(save_dir: Path) -> str:
+    """Which save tree a directory belongs to: 'modded' or 'vanilla'."""
+    return "modded" if "modded" in save_dir.parts else "vanilla"
+
+
+def _history_search_dirs() -> list[tuple[Path, str]]:
+    """(save_dir, origin) pairs to merge run history from, freshest first.
+
+    When SAVE_DIR has been repointed (tests patch it; SAVE_DIRS untouched),
+    honor it alone to preserve single-dir semantics.
+    """
+    dirs = SAVE_DIRS if SAVE_DIRS and SAVE_DIRS[0] == SAVE_DIR else [SAVE_DIR]
+    return [(d, _save_origin(d)) for d in dirs]
 
 
 def _read_json(path: Path) -> dict | None:
@@ -218,13 +234,47 @@ def get_progress() -> PlayerProgress | None:
 
 
 def get_run_history() -> list[RunHistory]:
-    """Read all completed run history files."""
-    history_dir = SAVE_DIR / "history"
-    if not history_dir.exists():
-        return []
+    """Read all completed run history files, merged across save trees.
+
+    Since game v0.108.0 a first modded launch copies vanilla saves into the
+    modded tree, so the same run file (same stem, same bytes) can exist in
+    both — those collapse to one run. Same stem with different bytes (rare
+    divergent edit) keeps both, disambiguated as "<stem>@<origin>".
+    """
+    entries: list[tuple[Path, str, str]] = []  # (run_file, run_id, origin)
+    first_digest: dict[str, str] = {}  # stem -> sha256 of first-seen file
+    used_ids: set[str] = set()
+    for save_dir, origin in _history_search_dirs():
+        history_dir = save_dir / "history"
+        if not history_dir.exists():
+            continue
+        for run_file in history_dir.glob("*.run"):
+            try:
+                digest = hashlib.sha256(run_file.read_bytes()).hexdigest()
+            except OSError as e:
+                log.warning("Failed to read run file %s: %s", run_file.name, e)
+                continue
+            stem = run_file.stem
+            if stem not in first_digest:
+                first_digest[stem] = digest
+                run_id = stem
+            elif first_digest[stem] == digest:
+                continue  # identical copy in the other tree — one run
+            else:
+                run_id = f"{stem}@{origin}"
+                while run_id in used_ids:
+                    run_id += "+"
+                log.warning(
+                    "Run %s diverged between save trees; keeping both (id %s)",
+                    stem, run_id,
+                )
+            used_ids.add(run_id)
+            entries.append((run_file, run_id, origin))
 
     runs = []
-    for run_file in sorted(history_dir.glob("*.run"), reverse=True):
+    for run_file, run_id, origin in sorted(
+        entries, key=lambda e: e[0].name, reverse=True
+    ):
         try:
             data = _read_json(run_file)
             if not data:
@@ -290,7 +340,7 @@ def get_run_history() -> list[RunHistory]:
                     timestamp = 0
 
             runs.append(RunHistory(
-                id=run_file.stem,
+                id=run_id,
                 character=character,
                 win=data.get("win", False),
                 ascension=data.get("ascension", 0),
@@ -304,6 +354,7 @@ def get_run_history() -> list[RunHistory]:
                 build_id=data.get("build_id", ""),
                 timestamp=timestamp,
                 total_players=len(players),
+                origin=origin,
             ))
         except Exception as e:
             log.warning("Failed to parse run file %s: %s", run_file.name, e)

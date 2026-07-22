@@ -15,6 +15,16 @@
   </select>
   {% endif %}
 
+  {% if available_origins and available_origins|length > 1 %}
+  <label class="text-sm text-muted" for="origin-select">Saves</label>
+  <select id="origin-select" name="origin" class="select-input" data-auto-submit>
+    <option value="">All</option>
+    {% for o in available_origins %}
+    <option value="{{ o }}" {% if selected_origin == o %}selected{% endif %}>{{ o|capitalize }}</option>
+    {% endfor %}
+  </select>
+  {% endif %}
+
   <span class="filter-divider"></span>
   <span class="text-sm text-muted">Period</span>
   <button type="submit" name="preset" value="7d" class="btn btn-sm {% if selected_preset == '7d' %}active{% endif %}">7d</button>
