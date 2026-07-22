@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block page_id %}settings{% endblock %}
+{% block title %}{{ t("settings.title") }}{% endblock %}
+{% block content %}
+<h1>{{ t("settings.title") }}</h1>
+
+{% if saved %}<p class="win">{{ t("settings.saved") }}</p>{% endif %}
+
+<form method="post" action="/settings/language" class="mt-md">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label class="text-sm text-muted" for="language-select">{{ t("settings.language") }}</label>
+  <select id="language-select" name="language" class="select-input">
+    {% for lang in languages %}
+    <option value="{{ lang.code }}" {% if lang.code == current_language %}selected{% endif %}>{{ lang.name }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-sm">{{ t("settings.save") }}</button>
+</form>
+<p class="text-sm text-muted mt-md">Game data (card and relic text) remains in English until a licensed localized source exists.</p>
+{% endblock %}

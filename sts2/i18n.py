@@ -63,3 +63,45 @@ def get_translator(code: str = ""):
         return node if isinstance(node, str) else key
 
     return t
+
+
+def _settings_path():
+    from sts2.config import DATA_DIR
+    return DATA_DIR / "settings.json"
+
+
+def get_language() -> str:
+    """Active UI language: STS2_LANG env wins, else persisted setting, else en."""
+    env = os.environ.get("STS2_LANG")
+    if env:
+        return env
+    try:
+        return json.loads(_settings_path().read_text(encoding="utf-8")).get("language", "en")
+    except (OSError, json.JSONDecodeError):
+        return "en"
+
+
+def set_language(code: str) -> bool:
+    """Persist the UI language choice. Only known locales are accepted."""
+    if not (_LOCALES_DIR / f"{code}.json").exists():
+        return False
+    path = _settings_path()
+    try:
+        settings = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        settings = {}
+    settings["language"] = code
+    try:
+        path.write_text(json.dumps(settings, indent=2) + "\n", encoding="utf-8")
+    except OSError:
+        return False
+    return True
+
+
+def available_languages() -> list[dict]:
+    """[{code, name}] for every locale file present."""
+    langs = []
+    for p in sorted(_LOCALES_DIR.glob("*.json")):
+        meta = _load_locale(p.stem).get("_meta", {})
+        langs.append({"code": p.stem, "name": meta.get("language", p.stem)})
+    return langs

@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "繁體中文",
+    "code": "zht",
+    "direction": "ltr",
+    "review": "draft — pending human review before release"
+  },
+  "nav": {
+    "live_run": "即時戰局",
+    "cards": "卡牌",
+    "relics": "遺物",
+    "potions": "藥水",
+    "enemies": "敵人",
+    "events": "事件",
+    "deck_analyzer": "牌組分析",
+    "run_history": "冒險紀錄",
+    "analytics": "數據分析",
+    "records": "成就紀錄",
+    "collections": "收藏",
+    "epochs": "紀元",
+    "community": "社群",
+    "guide": "指南",
+    "search_placeholder": "搜尋卡牌、遺物、敵人…",
+    "stop": "停止",
+    "prophecy": "預言",
+    "hypothesis": "假設",
+    "graveyard": "墓園",
+    "search": "搜尋"
+  },
+  "common": {
+    "no_data": "沒有資料",
+    "loading": "載入中…",
+    "error": "發生錯誤",
+    "floor": "樓層",
+    "hp": "生命",
+    "gold": "金幣",
+    "cards": "卡牌",
+    "win": "勝利",
+    "loss": "敗北",
+    "wins": "勝場",
+    "losses": "敗場",
+    "win_rate": "勝率"
+  },
+  "settings": {
+    "title": "設定",
+    "language": "語言",
+    "save": "儲存",
+    "saved": "設定已儲存。"
+  }
+}

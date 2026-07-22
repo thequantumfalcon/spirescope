@@ -68,7 +68,9 @@ templates.env.globals["logo_hash"] = _LOGO_HASH
 templates.env.globals["hero_bg_hash"] = _HERO_BG_HASH
 templates.env.globals["version"] = VERSION
 from sts2 import patches as _patches  # noqa: E402
+from sts2.i18n import get_language, get_translator  # noqa: E402
 
+templates.env.globals["t"] = get_translator(get_language())
 templates.env.globals["changed_in"] = _patches.changed_in
 templates.env.globals["current_patch_name"] = (
     lambda: (_patches.current_patch() or {}).get("patch", "")

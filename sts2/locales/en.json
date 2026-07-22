@@ -20,7 +20,11 @@
     "community": "Community",
     "guide": "Guide",
     "search_placeholder": "Search cards, relics, enemies...",
-    "stop": "Stop"
+    "stop": "Stop",
+    "prophecy": "Prophecy",
+    "hypothesis": "Hypothesis",
+    "graveyard": "Graveyard",
+    "search": "Search"
   },
   "common": {
     "no_data": "No data available",
@@ -35,5 +39,11 @@
     "wins": "Wins",
     "losses": "Losses",
     "win_rate": "Win Rate"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "save": "Save",
+    "saved": "Settings saved."
   }
 }

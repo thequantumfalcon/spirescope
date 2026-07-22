@@ -110,3 +110,50 @@ def test_deprecated_epochs_never_suggested():
     suggestable = [e for e in (active, dead)
                    if e.id not in obtained and e.status != "deprecated"]
     assert suggestable == [active]
+
+
+# ── P10: i18n language persistence + fallback ──
+
+def test_i18n_zht_translates_and_falls_back():
+    from sts2.i18n import get_translator
+    t = get_translator("zht")
+    assert t("nav.cards") == "卡牌"
+    assert t("settings.language") == "語言"
+    # Missing key falls back to English, then to the key itself
+    assert t("nav.live_run") == "即時戰局"
+    assert t("no.such.key") == "no.such.key"
+
+
+def test_language_persistence_round_trip(tmp_path, monkeypatch):
+    from sts2 import i18n
+    monkeypatch.delenv("STS2_LANG", raising=False)
+    monkeypatch.setattr(i18n, "_settings_path", lambda: tmp_path / "settings.json")
+    assert i18n.get_language() == "en"
+    assert i18n.set_language("zht") is True
+    assert i18n.get_language() == "zht"
+    assert i18n.set_language("klingon") is False  # unknown locale rejected
+    assert i18n.get_language() == "zht"
+    # env var wins over the persisted setting
+    monkeypatch.setenv("STS2_LANG", "en")
+    assert i18n.get_language() == "en"
+
+
+def test_available_languages_lists_locales():
+    from sts2.i18n import available_languages
+    codes = {lang["code"] for lang in available_languages()}
+    assert {"en", "zht"} <= codes
+
+
+async def test_settings_page_renders_in_zht(client):
+    from sts2.app import templates
+    from sts2.i18n import get_translator
+    old = templates.env.globals["t"]
+    templates.env.globals["t"] = get_translator("zht")
+    try:
+        resp = await client.get("/settings")
+    finally:
+        templates.env.globals["t"] = old
+    assert resp.status_code == 200
+    assert "設定" in resp.text  # zh-TW chrome
+    assert "語言" in resp.text
+    assert "卡牌" in resp.text  # nav in zh-TW too

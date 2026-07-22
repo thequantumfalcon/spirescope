@@ -195,10 +195,17 @@ def install_data_update() -> tuple[bool, str]:
             for leftover in (staging, backup):
                 shutil.rmtree(leftover, ignore_errors=True)
             shutil.copytree(root, staging)
-            # Preserve local-only files (mods dir, fetcher baseline)
-            mods = DATA_DIR / "mods"
-            if mods.exists() and not (staging / "mods").exists():
-                shutil.copytree(mods, staging / "mods")
+            # Preserve local-only content: anything present locally that the
+            # bundle doesn't ship (mods dir, fetcher baseline, aggregate
+            # stats, user settings) carries over; bundle wins for its files.
+            for item in DATA_DIR.iterdir():
+                target = staging / item.name
+                if target.exists():
+                    continue
+                if item.is_dir():
+                    shutil.copytree(item, target)
+                else:
+                    shutil.copy2(item, target)
             DATA_DIR.rename(backup)
             try:
                 staging.rename(DATA_DIR)

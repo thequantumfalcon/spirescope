@@ -26,26 +26,26 @@
     </a>
     <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
     <div class="nav-links">
-      <a href="/live" class="live-link" {% if p == '/live' %}aria-current="page"{% endif %}>Live Run</a>
-      <a href="/cards" {% if p.startswith('/cards') %}aria-current="page"{% endif %}>Cards</a>
-      <a href="/relics" {% if p.startswith('/relics') %}aria-current="page"{% endif %}>Relics</a>
-      <a href="/potions" {% if p == '/potions' %}aria-current="page"{% endif %}>Potions</a>
-      <a href="/enemies" {% if p.startswith('/enemies') %}aria-current="page"{% endif %}>Enemies</a>
-      <a href="/events" {% if p == '/events' %}aria-current="page"{% endif %}>Events</a>
-      <a href="/deck" {% if p.startswith('/deck') %}aria-current="page"{% endif %}>Deck Analyzer</a>
-      <a href="/runs" {% if p.startswith('/runs') %}aria-current="page"{% endif %}>Run History</a>
-      <a href="/analytics" {% if p == '/analytics' %}aria-current="page"{% endif %}>Analytics</a>
-      <a href="/records" {% if p == '/records' %}aria-current="page"{% endif %}>Records</a>
-      <a href="/prophecy" {% if p == '/prophecy' %}aria-current="page"{% endif %}>Prophecy</a>
-      <a href="/hypothesis" {% if p.startswith('/hypothesis') %}aria-current="page"{% endif %}>Hypothesis</a>
-      <a href="/graveyard" {% if p == '/graveyard' %}aria-current="page"{% endif %}>Graveyard</a>
-      <a href="/collections" {% if p == '/collections' %}aria-current="page"{% endif %}>Collections</a>
-      <a href="/epochs" {% if p == '/epochs' %}aria-current="page"{% endif %}>Epochs</a>
-      <a href="/community" {% if p == '/community' %}aria-current="page"{% endif %}>Community</a>
-      <a href="/guide" {% if p == '/guide' %}aria-current="page"{% endif %}>Guide</a>
+      <a href="/live" class="live-link" {% if p == '/live' %}aria-current="page"{% endif %}>{{ t("nav.live_run") }}</a>
+      <a href="/cards" {% if p.startswith('/cards') %}aria-current="page"{% endif %}>{{ t("nav.cards") }}</a>
+      <a href="/relics" {% if p.startswith('/relics') %}aria-current="page"{% endif %}>{{ t("nav.relics") }}</a>
+      <a href="/potions" {% if p == '/potions' %}aria-current="page"{% endif %}>{{ t("nav.potions") }}</a>
+      <a href="/enemies" {% if p.startswith('/enemies') %}aria-current="page"{% endif %}>{{ t("nav.enemies") }}</a>
+      <a href="/events" {% if p == '/events' %}aria-current="page"{% endif %}>{{ t("nav.events") }}</a>
+      <a href="/deck" {% if p.startswith('/deck') %}aria-current="page"{% endif %}>{{ t("nav.deck_analyzer") }}</a>
+      <a href="/runs" {% if p.startswith('/runs') %}aria-current="page"{% endif %}>{{ t("nav.run_history") }}</a>
+      <a href="/analytics" {% if p == '/analytics' %}aria-current="page"{% endif %}>{{ t("nav.analytics") }}</a>
+      <a href="/records" {% if p == '/records' %}aria-current="page"{% endif %}>{{ t("nav.records") }}</a>
+      <a href="/prophecy" {% if p == '/prophecy' %}aria-current="page"{% endif %}>{{ t("nav.prophecy") }}</a>
+      <a href="/hypothesis" {% if p.startswith('/hypothesis') %}aria-current="page"{% endif %}>{{ t("nav.hypothesis") }}</a>
+      <a href="/graveyard" {% if p == '/graveyard' %}aria-current="page"{% endif %}>{{ t("nav.graveyard") }}</a>
+      <a href="/collections" {% if p == '/collections' %}aria-current="page"{% endif %}>{{ t("nav.collections") }}</a>
+      <a href="/epochs" {% if p == '/epochs' %}aria-current="page"{% endif %}>{{ t("nav.epochs") }}</a>
+      <a href="/community" {% if p == '/community' %}aria-current="page"{% endif %}>{{ t("nav.community") }}</a>
+      <a href="/guide" {% if p == '/guide' %}aria-current="page"{% endif %}>{{ t("nav.guide") }}</a>
       <form class="search-form" action="/search" method="get">
-        <input type="search" name="q" placeholder="Search cards, relics, enemies..." value="{{ query|default('') }}" maxlength="200">
-        <button type="submit">Search</button>
+        <input type="search" name="q" placeholder="{{ t('nav.search_placeholder') }}" value="{{ query|default('') }}" maxlength="200">
+        <button type="submit">{{ t("nav.search") }}</button>
       </form>
     </div>
     <button class="stop-btn" aria-label="Stop SpireScope">Stop</button>
@@ -56,7 +56,8 @@
   </main>
   <footer>
     <span>SpireScope v{{ version }}</span> &middot;
-    <a href="https://github.com/thequantumfalcon/spirescope">GitHub</a>
+    <a href="https://github.com/thequantumfalcon/spirescope">GitHub</a> &middot;
+    <a href="/settings">{{ t("settings.title") }}</a>
   </footer>
   <div id="shortcut-overlay" class="shortcut-overlay" hidden>
     <div class="shortcut-overlay-content">

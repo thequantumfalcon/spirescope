@@ -1680,3 +1680,37 @@ async def data_update_install(request: Request, csrf_token: str = Form("")):
         }, status_code=500)
     await a._refresh_data()
     return RedirectResponse("/?data_updated=1", status_code=303)
+
+
+@router.get("/settings", response_class=HTMLResponse)
+async def settings_page(request: Request):
+    from sts2.i18n import available_languages, get_language
+    a = _app()
+    return a.templates.TemplateResponse(request, "settings.html", {
+        "languages": available_languages(),
+        "current_language": get_language(),
+        "saved": request.query_params.get("saved", ""),
+        "csrf_token": a.generate_csrf_token(),
+    })
+
+
+@router.post("/settings/language", response_class=HTMLResponse)
+async def settings_language(request: Request,
+                            language: str = Form("", max_length=10),
+                            csrf_token: str = Form("")):
+    from fastapi.responses import RedirectResponse
+
+    from sts2.i18n import get_translator, set_language
+    a = _app()
+    if not a.validate_csrf_token(csrf_token):
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 403,
+            "error_message": "Invalid form submission. Please go back and try again.",
+        }, status_code=403)
+    if not set_language(language.strip()):
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 400, "error_message": "Unknown language.",
+        }, status_code=400)
+    # Re-register the translator so the change applies without restart
+    a.templates.env.globals["t"] = get_translator(language.strip())
+    return RedirectResponse("/settings?saved=1", status_code=303)
