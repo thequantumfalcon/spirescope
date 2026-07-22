@@ -1,5 +1,45 @@
 # Changelog
 
+## v3.0.0
+
+The Relevance Arc: spirescope stays current with STS2's patch cadence and
+turns balance churn into analytics no wiki or in-game Bestiary can offer
+(personal history × patch era).
+
+### Added
+
+- **Multi-source data pipeline** — primary slaythespire2.gg (RSC), secondary
+  slaythespire.wiki.gg (MediaWiki API Lua modules), tertiary save discovery.
+  Primary wins per entity; secondary fills missing entities and blank text;
+  rename shadows guarded; per-entity provenance stamps move only on content
+  change. Decision record: docs/DATA_SOURCES.md.
+- **Decoupled data delivery** — `data-v*` tags publish sha256-verified data
+  bundles; `serve` startup detects newer bundles and installs them in one
+  click with atomic swap + knowledge-base hot reload. Frozen builds keep a
+  writable data dir next to the executable. Maintainer loop:
+  docs/DATA_MAINTENANCE.md (≤24h after any patch).
+- **Patch-era analytics** — runs resolve build ids to named patch eras;
+  Runs/Analytics default to current-patch scope with an all-time toggle
+  (auto-expands when no current-patch runs exist); card/relic pages show
+  "Changed in <patch>" markers and before/after win-rate + pick-rate
+  comparisons with an insufficient-sample guard (n<10).
+- **Enchantment visibility** — live tracker and run history show enchanted
+  cards with the enchantment's name (verified against real save data).
+- **Branch awareness** — runs badge main/beta via the patch manifest; branch
+  filter on Runs/Analytics; "Beta only" chips on beta-branch entities.
+- **Badges** — earned badges (bronze/silver/gold tiers) parsed from
+  progress.save and shown on Records; badges.json seeded with 11 observed
+  badges and auto-discovery on update.
+- **Epoch deprecation** — deprecated epochs render distinctly and are never
+  suggested; 8 epochs missing from the dataset added from real save data
+  (57 total, matching the game).
+- **Mod namespace** — mod files can declare `mod_id` for collision-proof
+  `mod:<modid>:<entity>` ids (groundwork for Steam Workshop ingestion).
+- **zh-TW UI (draft)** — persisted language setting (/settings), navigation
+  chrome externalized; Traditional Chinese locale pending human review.
+- **New-character day-one playbook** — docs/NEW_CHARACTER_PLAYBOOK.md,
+  dry-run verified end-to-end.
+
 ## v2.10.0
 
 > Supersedes the unreleased v2.9.8 tag: its release build failed CI because a
