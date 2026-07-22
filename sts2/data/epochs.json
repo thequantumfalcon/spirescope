@@ -5,7 +5,9 @@
     "category": "core",
     "character": "",
     "requirement": "Finish your very first run",
-    "unlocks": ["Neow (Ancient)"],
+    "unlocks": [
+      "Neow (Ancient)"
+    ],
     "unlock_type": "ancient"
   },
   {
@@ -14,7 +16,9 @@
     "category": "character",
     "character": "Silent",
     "requirement": "Play one run with Ironclad",
-    "unlocks": ["Silent (Character)"],
+    "unlocks": [
+      "Silent (Character)"
+    ],
     "unlock_type": "character"
   },
   {
@@ -23,7 +27,9 @@
     "category": "character",
     "character": "Regent",
     "requirement": "Play one run with Silent",
-    "unlocks": ["Regent (Character)"],
+    "unlocks": [
+      "Regent (Character)"
+    ],
     "unlock_type": "character"
   },
   {
@@ -32,7 +38,9 @@
     "category": "character",
     "character": "Necrobinder",
     "requirement": "Play one run with Regent",
-    "unlocks": ["Necrobinder (Character)"],
+    "unlocks": [
+      "Necrobinder (Character)"
+    ],
     "unlock_type": "character"
   },
   {
@@ -41,7 +49,9 @@
     "category": "character",
     "character": "Defect",
     "requirement": "Play one run with Necrobinder",
-    "unlocks": ["Defect (Character)"],
+    "unlocks": [
+      "Defect (Character)"
+    ],
     "unlock_type": "character"
   },
   {
@@ -50,7 +60,11 @@
     "category": "character",
     "character": "Ironclad",
     "requirement": "Beat Act 1 with Ironclad",
-    "unlocks": ["Molten Fist", "Dominate", "Cruelty"],
+    "unlocks": [
+      "Molten Fist",
+      "Dominate",
+      "Cruelty"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -59,7 +73,11 @@
     "category": "character",
     "character": "Ironclad",
     "requirement": "Beat Act 2 with Ironclad",
-    "unlocks": ["Red Skull", "Paper Phrog", "Ruined Helmet"],
+    "unlocks": [
+      "Red Skull",
+      "Paper Phrog",
+      "Ruined Helmet"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -68,7 +86,11 @@
     "category": "character",
     "character": "Ironclad",
     "requirement": "Beat Act 3 with Ironclad",
-    "unlocks": ["Blood", "Ashwater", "Soldier's Stew"],
+    "unlocks": [
+      "Blood",
+      "Ashwater",
+      "Soldier's Stew"
+    ],
     "unlock_type": "potions"
   },
   {
@@ -77,7 +99,11 @@
     "category": "character",
     "character": "Ironclad",
     "requirement": "Kill 15 Elites with Ironclad",
-    "unlocks": ["Cinder", "Drum of Battle", "Pact's End"],
+    "unlocks": [
+      "Cinder",
+      "Drum of Battle",
+      "Pact's End"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -86,7 +112,11 @@
     "category": "character",
     "character": "Ironclad",
     "requirement": "Kill 15 Bosses with Ironclad",
-    "unlocks": ["Self-Forming Clay", "Charon's Ashes", "Demon Tongue"],
+    "unlocks": [
+      "Self-Forming Clay",
+      "Charon's Ashes",
+      "Demon Tongue"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -95,7 +125,11 @@
     "category": "character",
     "character": "Ironclad",
     "requirement": "Beat Ascension 1 with Ironclad",
-    "unlocks": ["Blood Wall", "Inferno", "Tear Asunder"],
+    "unlocks": [
+      "Blood Wall",
+      "Inferno",
+      "Tear Asunder"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -104,7 +138,11 @@
     "category": "character",
     "character": "Silent",
     "requirement": "Beat Act 1 with Silent",
-    "unlocks": ["Snakebite", "Bubble Bubble", "Accelerant"],
+    "unlocks": [
+      "Snakebite",
+      "Bubble Bubble",
+      "Accelerant"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -113,7 +151,11 @@
     "category": "character",
     "character": "Silent",
     "requirement": "Beat Act 2 with Silent",
-    "unlocks": ["Tingsha", "Tough Bandages", "Paper Krane"],
+    "unlocks": [
+      "Tingsha",
+      "Tough Bandages",
+      "Paper Krane"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -122,7 +164,11 @@
     "category": "character",
     "character": "Silent",
     "requirement": "Beat Act 3 with Silent",
-    "unlocks": ["Poison", "Cunning", "Ghost in a Jar"],
+    "unlocks": [
+      "Poison",
+      "Cunning",
+      "Ghost in a Jar"
+    ],
     "unlock_type": "potions"
   },
   {
@@ -131,7 +177,11 @@
     "category": "character",
     "character": "Silent",
     "requirement": "Kill 15 Bosses with Silent",
-    "unlocks": ["Snecko Skull", "Twisted Funnel", "Helical Dart"],
+    "unlocks": [
+      "Snecko Skull",
+      "Twisted Funnel",
+      "Helical Dart"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -140,7 +190,11 @@
     "category": "character",
     "character": "Silent",
     "requirement": "Kill 15 Elites with Silent",
-    "unlocks": ["Reflex", "Hand Trick", "Master Planner"],
+    "unlocks": [
+      "Reflex",
+      "Hand Trick",
+      "Master Planner"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -149,7 +203,11 @@
     "category": "character",
     "character": "Silent",
     "requirement": "Beat Ascension 1 with Silent",
-    "unlocks": ["Hidden Daggers", "Phantom Blades", "Blade of Ink"],
+    "unlocks": [
+      "Hidden Daggers",
+      "Phantom Blades",
+      "Blade of Ink"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -158,7 +216,11 @@
     "category": "character",
     "character": "Regent",
     "requirement": "Beat Act 1 with Regent",
-    "unlocks": ["Spoils of Battle", "Furnace", "Sword Sage"],
+    "unlocks": [
+      "Spoils of Battle",
+      "Furnace",
+      "Sword Sage"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -167,7 +229,11 @@
     "category": "character",
     "character": "Regent",
     "requirement": "Beat Act 2 with Regent",
-    "unlocks": ["Fencing Manual", "Galactic Dust", "Lunar Pastry"],
+    "unlocks": [
+      "Fencing Manual",
+      "Galactic Dust",
+      "Lunar Pastry"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -176,7 +242,11 @@
     "category": "character",
     "character": "Regent",
     "requirement": "Beat Act 3 with Regent",
-    "unlocks": ["Star", "King's Courage", "Cosmic Concoction"],
+    "unlocks": [
+      "Star",
+      "King's Courage",
+      "Cosmic Concoction"
+    ],
     "unlock_type": "potions"
   },
   {
@@ -185,7 +255,11 @@
     "category": "character",
     "character": "Regent",
     "requirement": "Kill 15 Bosses with Regent",
-    "unlocks": ["Regalite", "Mini Regent", "Orange Dough"],
+    "unlocks": [
+      "Regalite",
+      "Mini Regent",
+      "Orange Dough"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -194,7 +268,11 @@
     "category": "character",
     "character": "Regent",
     "requirement": "Kill 15 Elites with Regent",
-    "unlocks": ["BEGONE!", "Supermassive", "Arsenal"],
+    "unlocks": [
+      "BEGONE!",
+      "Supermassive",
+      "Arsenal"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -203,7 +281,11 @@
     "category": "character",
     "character": "Regent",
     "requirement": "Beat Ascension 1 with Regent",
-    "unlocks": ["Patter", "Lunar Blast", "Heavenly Drill"],
+    "unlocks": [
+      "Patter",
+      "Lunar Blast",
+      "Heavenly Drill"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -212,7 +294,11 @@
     "category": "character",
     "character": "Necrobinder",
     "requirement": "Beat Act 1 with Necrobinder",
-    "unlocks": ["Scourge", "Countdown", "Oblivion"],
+    "unlocks": [
+      "Scourge",
+      "Countdown",
+      "Oblivion"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -221,7 +307,11 @@
     "category": "character",
     "character": "Necrobinder",
     "requirement": "Beat Act 2 with Necrobinder",
-    "unlocks": ["Bone Flute", "Funerary Mask", "Book Repair Knife"],
+    "unlocks": [
+      "Bone Flute",
+      "Funerary Mask",
+      "Book Repair Knife"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -230,7 +320,11 @@
     "category": "character",
     "character": "Necrobinder",
     "requirement": "Beat Act 3 with Necrobinder",
-    "unlocks": ["Potion of Doom", "Bone Brew", "Pot of Ghouls"],
+    "unlocks": [
+      "Potion of Doom",
+      "Bone Brew",
+      "Pot of Ghouls"
+    ],
     "unlock_type": "potions"
   },
   {
@@ -239,7 +333,11 @@
     "category": "character",
     "character": "Necrobinder",
     "requirement": "Kill 15 Bosses with Necrobinder",
-    "unlocks": ["Ivory Tile", "Big Hat", "Bookmark"],
+    "unlocks": [
+      "Ivory Tile",
+      "Big Hat",
+      "Bookmark"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -248,7 +346,11 @@
     "category": "character",
     "character": "Necrobinder",
     "requirement": "Kill 15 Elites with Necrobinder",
-    "unlocks": ["Afterlife", "Calcify", "Sacrifice"],
+    "unlocks": [
+      "Afterlife",
+      "Calcify",
+      "Sacrifice"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -257,7 +359,11 @@
     "category": "character",
     "character": "Necrobinder",
     "requirement": "Beat Ascension 1 with Necrobinder",
-    "unlocks": ["Sculpting Strike", "Veilpiercer", "Banshee's Cry"],
+    "unlocks": [
+      "Sculpting Strike",
+      "Veilpiercer",
+      "Banshee's Cry"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -266,7 +372,11 @@
     "category": "character",
     "character": "Defect",
     "requirement": "Beat Act 1 with Defect",
-    "unlocks": ["Loop", "Null", "Consuming Shadow"],
+    "unlocks": [
+      "Loop",
+      "Null",
+      "Consuming Shadow"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -275,7 +385,11 @@
     "category": "character",
     "character": "Defect",
     "requirement": "Beat Act 2 with Defect",
-    "unlocks": ["Data Disk", "Symbiotic Virus", "Metronome"],
+    "unlocks": [
+      "Data Disk",
+      "Symbiotic Virus",
+      "Metronome"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -284,7 +398,11 @@
     "category": "character",
     "character": "Defect",
     "requirement": "Beat Act 3 with Defect",
-    "unlocks": ["Focus", "Potion of Capacity", "Essence of Darkness"],
+    "unlocks": [
+      "Focus",
+      "Potion of Capacity",
+      "Essence of Darkness"
+    ],
     "unlock_type": "potions"
   },
   {
@@ -293,7 +411,11 @@
     "category": "character",
     "character": "Defect",
     "requirement": "Kill 15 Bosses with Defect",
-    "unlocks": ["Gold-Plated Cables", "Emotion Chip", "Power Cell"],
+    "unlocks": [
+      "Gold-Plated Cables",
+      "Emotion Chip",
+      "Power Cell"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -302,7 +424,11 @@
     "category": "character",
     "character": "Defect",
     "requirement": "Kill 15 Elites with Defect",
-    "unlocks": ["Barrage", "Smokestack", "Flak Cannon"],
+    "unlocks": [
+      "Barrage",
+      "Smokestack",
+      "Flak Cannon"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -311,7 +437,11 @@
     "category": "character",
     "character": "Defect",
     "requirement": "Beat Ascension 1 with Defect",
-    "unlocks": ["TURBO", "Scavenge", "Heelix Drill"],
+    "unlocks": [
+      "TURBO",
+      "Scavenge",
+      "Heelix Drill"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -320,7 +450,9 @@
     "category": "ancient",
     "character": "",
     "requirement": "Play a run with every character",
-    "unlocks": ["Orobas (Ancient)"],
+    "unlocks": [
+      "Orobas (Ancient)"
+    ],
     "unlock_type": "ancient"
   },
   {
@@ -329,7 +461,9 @@
     "category": "ancient",
     "character": "",
     "requirement": "Encounter all other Ancients in the game",
-    "unlocks": ["Darv (Ancient)"],
+    "unlocks": [
+      "Darv (Ancient)"
+    ],
     "unlock_type": "ancient"
   },
   {
@@ -338,7 +472,9 @@
     "category": "act",
     "character": "",
     "requirement": "Accumulate score across runs",
-    "unlocks": ["Underdocks (Alternate Act 1)"],
+    "unlocks": [
+      "Underdocks (Alternate Act 1)"
+    ],
     "unlock_type": "act"
   },
   {
@@ -347,7 +483,9 @@
     "category": "act",
     "character": "",
     "requirement": "Accumulate score across runs",
-    "unlocks": ["Alternate Act 2 path"],
+    "unlocks": [
+      "Alternate Act 2 path"
+    ],
     "unlock_type": "act"
   },
   {
@@ -356,7 +494,10 @@
     "category": "mode",
     "character": "",
     "requirement": "Beat Act 3 three separate times",
-    "unlocks": ["Custom Game Mode", "Seeded Runs"],
+    "unlocks": [
+      "Custom Game Mode",
+      "Seeded Runs"
+    ],
     "unlock_type": "mode"
   },
   {
@@ -365,7 +506,9 @@
     "category": "mode",
     "character": "",
     "requirement": "Beat Act 3 at least once with all five characters",
-    "unlocks": ["Daily Climb mode"],
+    "unlocks": [
+      "Daily Climb mode"
+    ],
     "unlock_type": "mode"
   },
   {
@@ -374,7 +517,11 @@
     "category": "score",
     "character": "",
     "requirement": "Accumulate score across runs",
-    "unlocks": ["Automation", "Catastrophe", "Entropy"],
+    "unlocks": [
+      "Automation",
+      "Catastrophe",
+      "Entropy"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -383,7 +530,11 @@
     "category": "score",
     "character": "",
     "requirement": "Accumulate score across runs",
-    "unlocks": ["Prep Time", "Eternal Armor", "Jackpot"],
+    "unlocks": [
+      "Prep Time",
+      "Eternal Armor",
+      "Jackpot"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -392,7 +543,11 @@
     "category": "score",
     "character": "",
     "requirement": "Accumulate score across runs",
-    "unlocks": ["Prowess", "Rend", "Beat Down"],
+    "unlocks": [
+      "Prowess",
+      "Rend",
+      "Beat Down"
+    ],
     "unlock_type": "cards"
   },
   {
@@ -401,7 +556,11 @@
     "category": "score",
     "character": "",
     "requirement": "Accumulate score across runs",
-    "unlocks": ["Reptile Trinket", "Unsettling Lamp", "Intimidating Helmet"],
+    "unlocks": [
+      "Reptile Trinket",
+      "Unsettling Lamp",
+      "Intimidating Helmet"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -410,7 +569,11 @@
     "category": "score",
     "character": "",
     "requirement": "Accumulate score across runs",
-    "unlocks": ["Book of Five Rings", "Kusarigama", "Ice Cream"],
+    "unlocks": [
+      "Book of Five Rings",
+      "Kusarigama",
+      "Ice Cream"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -419,7 +582,11 @@
     "category": "score",
     "character": "",
     "requirement": "Accumulate score across runs",
-    "unlocks": ["Miniature Cannon", "Tungsten Ron", "White Star"],
+    "unlocks": [
+      "Miniature Cannon",
+      "Tungsten Ron",
+      "White Star"
+    ],
     "unlock_type": "relics"
   },
   {
@@ -428,7 +595,11 @@
     "category": "score",
     "character": "",
     "requirement": "Accumulate score across runs",
-    "unlocks": ["Beetle Juice", "Mazaleth's Gift", "Droplet of Precognition"],
+    "unlocks": [
+      "Beetle Juice",
+      "Mazaleth's Gift",
+      "Droplet of Precognition"
+    ],
     "unlock_type": "potions"
   },
   {
@@ -437,7 +608,91 @@
     "category": "score",
     "character": "",
     "requirement": "Accumulate score across runs",
-    "unlocks": ["Splash", "Anointed", "Calamity"],
+    "unlocks": [
+      "Splash",
+      "Anointed",
+      "Calamity"
+    ],
     "unlock_type": "cards"
+  },
+  {
+    "id": "ACT3_B_EPOCH",
+    "name": "Act3 B Epoch",
+    "category": "",
+    "character": "",
+    "requirement": "",
+    "unlocks": [],
+    "unlock_type": "",
+    "source": "discovered"
+  },
+  {
+    "id": "COLORLESS4_EPOCH",
+    "name": "Colorless4 Epoch",
+    "category": "",
+    "character": "",
+    "requirement": "",
+    "unlocks": [],
+    "unlock_type": "",
+    "source": "discovered"
+  },
+  {
+    "id": "RELIC4_EPOCH",
+    "name": "Relic4 Epoch",
+    "category": "",
+    "character": "",
+    "requirement": "",
+    "unlocks": [],
+    "unlock_type": "",
+    "source": "discovered"
+  },
+  {
+    "id": "EVENT3_EPOCH",
+    "name": "Event3 Epoch",
+    "category": "",
+    "character": "",
+    "requirement": "",
+    "unlocks": [],
+    "unlock_type": "",
+    "source": "discovered"
+  },
+  {
+    "id": "COLORLESS5_EPOCH",
+    "name": "Colorless5 Epoch",
+    "category": "",
+    "character": "",
+    "requirement": "",
+    "unlocks": [],
+    "unlock_type": "",
+    "source": "discovered"
+  },
+  {
+    "id": "EVENT1_EPOCH",
+    "name": "Event1 Epoch",
+    "category": "",
+    "character": "",
+    "requirement": "",
+    "unlocks": [],
+    "unlock_type": "",
+    "source": "discovered"
+  },
+  {
+    "id": "RELIC5_EPOCH",
+    "name": "Relic5 Epoch",
+    "category": "",
+    "character": "",
+    "requirement": "",
+    "unlocks": [],
+    "unlock_type": "",
+    "source": "discovered"
+  },
+  {
+    "id": "EVENT2_EPOCH",
+    "name": "Event2 Epoch",
+    "category": "",
+    "character": "",
+    "requirement": "",
+    "unlocks": [],
+    "unlock_type": "",
+    "source": "discovered"
   }
 ]
