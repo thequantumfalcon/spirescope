@@ -36,8 +36,8 @@ jobs:
       - name: Package data bundle
         run: |
           TAG="${GITHUB_REF_NAME}"
-          tar -czf "spirescope-data-${TAG}.tar.gz" -C sts2 data \
-            --exclude='data/mods' --exclude='data/.fetcher_keys.json'
+          tar --exclude='data/mods' --exclude='data/.fetcher_keys.json' \
+            -czf "spirescope-data-${TAG}.tar.gz" -C sts2 data
           sha256sum "spirescope-data-${TAG}.tar.gz" > "spirescope-data-${TAG}.sha256"
           cat "spirescope-data-${TAG}.sha256"
 
