@@ -19,7 +19,7 @@ def _add(char: str, names: list[str], rarity: str):
 # ── IRONCLAD ──
 _add("Ironclad", ["Strike", "Defend", "Bash"], "Starter")
 _add("Ironclad", [
-    "Anger", "Armaments", "Blood Wall", "Bloodletting", "Body Slam",
+    "Anger", "Armaments", "Blood Wall", "Body Slam",
     "Breakthrough", "Cinder", "Havoc", "Headbutt", "Iron Wave",
     "Molten Fist", "Perfected Strike", "Pommel Strike", "Setup Strike",
     "Shrug It Off", "Sword Boomerang", "Thunderclap", "Tremble",
@@ -27,22 +27,26 @@ _add("Ironclad", [
 ], "Common")
 _add("Ironclad", [
     "Ashen Strike", "Battle Trance", "Bludgeon", "Bully", "Burning Pact",
-    "Demonic Shield", "Dismantle", "Dominate", "Drum of Battle", "Evil Eye",
+    "Demonic Shield", "Dismantle", "Drum of Battle", "Evil Eye",
     "Expect a Fight", "Feel No Pain", "Fight Me!", "Flame Barrier",
     "Forgotten Ritual", "Grapple", "Hemokinesis", "Howl from Beyond",
     "Infernal Blade", "Inferno", "Inflame", "Juggling", "Pillage", "Rage",
     "Rampage", "Rupture", "Second Wind", "Spite", "Stampede", "Stomp",
-    "Stone Armor", "Taunt", "Unrelenting", "Uppercut", "Vicious", "Whirlwind",
+    "Stone Armor", "Unrelenting", "Uppercut", "Vicious", "Whirlwind",
 ], "Uncommon")
 _add("Ironclad", [
     "Aggression", "Barricade", "Brand", "Cascade", "Colossus",
-    "Conflagration", "Crimson Mantle", "Cruelty", "Dark Embrace",
+    "Conflagration", "Crimson Mantle", "Dark Embrace",
     "Demon Form", "Feed", "Fiend Fire", "Hellraiser", "Impervious",
     "Juggernaut", "Mangle", "Offering", "One-Two Punch", "Pact's End",
     "Primal Force", "Pyre", "Stoke", "Tank", "Tear Asunder", "Thrash",
     "Unmovable",
 ], "Rare")
 _add("Ironclad", ["Break", "Corruption"], "Ancient")
+# v0.109.0 rarity changes (wiki Lua module still stale)
+_add("Ironclad", ["Taunt"], "Common")
+_add("Ironclad", ["Bloodletting", "Cruelty"], "Uncommon")
+_add("Ironclad", ["Dominate"], "Rare")
 
 # ── SILENT ──
 _add("Silent", ["Strike", "Defend", "Neutralize", "Survivor"], "Starter")
@@ -56,16 +60,16 @@ _add("Silent", [
 _add("Silent", [
     "Accuracy", "Backstab", "Blur", "Bouncing Flask", "Bubble Bubble",
     "Calculated Gamble", "Dash", "Escape Plan", "Expertise", "Expose",
-    "Finisher", "Flanking", "Flechettes", "Follow Through", "Footwork",
+    "Finisher", "Flechettes", "Footwork",
     "Hand Trick", "Haze", "Hidden Daggers", "Infinite Blades", "Leg Sweep",
     "Memento Mori", "Mirage", "Noxious Fumes", "Outbreak", "Phantom Blades",
     "Pinpoint", "Pounce", "Precise Cut", "Reflex", "Skewer",
-    "Speedster", "Strangle", "Tactician", "Up My Sleeve", "Well-Laid Plans",
+    "Speedster", "Strangle", "Tactician", "Up My Sleeve",
 ], "Uncommon")
 # Predator moved Uncommon -> Common in v0.106.0 (wiki Lua module still stale)
 _add("Silent", ["Predator"], "Common")
 _add("Silent", [
-    "Abrasive", "Accelerant", "Adrenaline", "Afterimage", "Assassinate",
+    "Abrasive", "Adrenaline", "Afterimage", "Assassinate",
     "Blade of Ink", "Bullet Time", "Burst", "Corrosive Wave", "Echoing Slash",
     "Envenom", "Fan of Knives", "Grand Finale", "Knife Trap", "Malaise",
     "Master Planner", "Murder", "Nightmare", "Serpent Form", "Shadow Step",
@@ -73,6 +77,11 @@ _add("Silent", [
     "Tools of the Trade", "Tracking",
 ], "Rare")
 _add("Silent", ["Suppress", "Wraith Form"], "Ancient")
+# Patch overrides: Scare (renamed from Follow Through, v0.107.1);
+# Flanking Uncommon -> Rare (v0.108.0); Accelerant Rare -> Uncommon and
+# Well-Laid Plans Uncommon -> Rare (v0.109.0)
+_add("Silent", ["Scare", "Accelerant"], "Uncommon")
+_add("Silent", ["Flanking", "Well-Laid Plans"], "Rare")
 
 # ── DEFECT ──
 _add("Defect", ["Strike", "Defend", "Dualcast", "Zap"], "Starter")
@@ -94,12 +103,14 @@ _add("Defect", [
 _add("Defect", [
     "Adaptive Strike", "All for One", "Buffer", "Consuming Shadow", "Coolant",
     "Creative AI", "Defragment", "Echo Form", "Flak Cannon",
-    "Genetic Algorithm", "Helix Drill", "Hyperbeam", "Ice Lance", "Ignition",
+    "Genetic Algorithm", "Helix Drill", "Hyperbeam", "Ice Lance",
     "Machine Learning", "Meteor Strike", "Modded", "Multi-Cast", "Rainbow",
     "Reboot", "Shatter", "Signal Boost", "Spinner", "Supercritical",
     "Trash to Treasure", "Voltaic",
 ], "Rare")
 _add("Defect", ["Biased Cognition", "Quadcast"], "Ancient")
+# Ignition Rare -> Uncommon in v0.108.0
+_add("Defect", ["Ignition"], "Uncommon")
 
 # ── NECROBINDER ──
 _add("Necrobinder", ["Strike", "Defend", "Bodyguard", "Unleash"], "Starter")
@@ -244,8 +255,9 @@ def main(dry_run: bool | None = None):
         char = card["character"]
         name = card["name"]
 
-        # Remove Deprecated Card
-        if name == "Deprecated Card":
+        # Remove Deprecated Card and entries renamed away by patches
+        # (Follow Through -> Scare in v0.107.1; the old row lingers via merge)
+        if name in ("Deprecated Card", "Follow Through"):
             changes.append(f"REMOVED: {name} ({card['id']})")
             deprecated_removed = True
             continue

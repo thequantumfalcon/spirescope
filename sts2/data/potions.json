@@ -363,7 +363,7 @@
     "id": "POTION.FOUL_POTION",
     "name": "Foul Potion",
     "rarity": "Event",
-    "description": "Deal 12 damage to EVERYONE. Can be thrown at the Merchant for Gold instead."
+    "description": "Deal 12 damage to ALL players and enemies. Can be thrown at the Merchant for 100 Gold instead."
   },
   {
     "id": "POTION.GLOWWATER_POTION",
@@ -382,5 +382,11 @@
     "name": "Deprecated Potion",
     "rarity": "None",
     "description": "This potion has been removed from the game."
+  },
+  {
+    "id": "POTION.AMBERGRIS",
+    "name": "Ambergris",
+    "rarity": "Event",
+    "description": "Heal for 50% of your Max HP. If used in combat, take an extra turn."
   }
 ]

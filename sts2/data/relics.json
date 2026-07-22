@@ -200,7 +200,7 @@
     "name": "Book of Five Rings",
     "character": "Shared",
     "rarity": "Common",
-    "description": "Every 5 cards you add to your Deck, heal 15 HP."
+    "description": "Every 5 cards you add to your Deck, heal 20 HP."
   },
   {
     "id": "RELIC.BOOKMARK",
@@ -431,7 +431,7 @@
     "name": "Diamond Diadem",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Whenever you play 2 or fewer cards in a turn, take half damage from enemies."
+    "description": "Start combat with 20 Block. Your Block is not removed at the start of your next turn."
   },
   {
     "id": "RELIC.DINGY_RUG",
@@ -445,14 +445,14 @@
     "name": "Distinguished Cape",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, lose 9 Max HP. Add 3 Apparitions to your Deck."
+    "description": "Upon pickup, add 2 random Curses and 3 Apparitions to your Deck."
   },
   {
     "id": "RELIC.DIVINE_DESTINY",
     "name": "Divine Destiny",
     "character": "Event",
     "rarity": "Starter",
-    "description": "At the start of each combat, gain 6 Star."
+    "description": "At the start of each combat, gain 7 Star."
   },
   {
     "id": "RELIC.DIVINE_RIGHT",
@@ -564,7 +564,7 @@
     "name": "Fiddle",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "At the start of each turn, draw 2 additional cards. You may not draw cards during your turn."
+    "description": "At the start of each turn, draw 3 additional cards. You may not draw cards during your turn."
   },
   {
     "id": "RELIC.FORGOTTEN_SOUL",
@@ -746,7 +746,7 @@
     "name": "History Course",
     "character": "Event",
     "rarity": "Event",
-    "description": "At the start of your turn, play a copy of your last played Attack or Skill."
+    "description": "At the start of your turn, play a copy of your last played Attack."
   },
   {
     "id": "RELIC.HORN_CLEAT",
@@ -802,7 +802,7 @@
     "name": "Jeweled Mask",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "At the start of combat put a random Power from your Draw Pile into your Hand, it's free to play."
+    "description": "At the start of each combat, put a random Power from your Draw Pile into your Hand. It's free to play this combat."
   },
   {
     "id": "RELIC.JEWELRY_BOX",
@@ -1262,7 +1262,7 @@
   {
     "id": "RELIC.PAELS_TOOTH",
     "name": "Pael's Tooth",
-    "character": "Shared",
+    "character": "Event",
     "rarity": "Ancient",
     "description": "Upon pickup, remove 5 cards from your Deck. After each combat, randomly add 1 back Upgraded."
   },
@@ -1473,7 +1473,7 @@
     "id": "RELIC.RED_MASK",
     "name": "Red Mask",
     "character": "Shared",
-    "rarity": "Uncommon",
+    "rarity": "Common",
     "description": "At the start of each combat, apply 1 Weak to ALL enemies."
   },
   {
@@ -1628,7 +1628,7 @@
     "name": "Sere Talon",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, add 2 random Curses and 3 [purple]Wishes[/purple] to your Deck."
+    "description": "Upon pickup, lose 9 Max HP. Add 3 [purple]Wishes[/purple] to your Deck."
   },
   {
     "id": "RELIC.SHOVEL",
@@ -1901,7 +1901,7 @@
     "name": "Toy Box",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, obtain 4 Wax Relics. Every 3 combats, your left-most Wax Relic will melt away."
+    "description": "Upon pickup, obtain 5 Wax Relics. Every 3 combats, your left-most Wax Relic will melt away."
   },
   {
     "id": "RELIC.TRI_BOOMERANG",
@@ -2161,5 +2161,26 @@
     "character": "Shared",
     "rarity": "",
     "description": ""
+  },
+  {
+    "id": "RELIC.DOWSING_ROD",
+    "name": "Dowsing Rod",
+    "character": "Event",
+    "rarity": "Ancient",
+    "description": "Upon pickup, add 1 Dowsing to your Deck."
+  },
+  {
+    "id": "RELIC.FISHING_ROD",
+    "name": "Fishing Rod",
+    "character": "Event",
+    "rarity": "Ancient",
+    "description": "Every 3 normal combats, Upgrade a random card in your Deck."
+  },
+  {
+    "id": "RELIC.NEOWS_SACRIFICE",
+    "name": "Neow's Sacrifice",
+    "character": "Event",
+    "rarity": "Ancient",
+    "description": "Upon pickup, procure 1 Ambergris and add 1 Guilty to your Deck."
   }
 ]

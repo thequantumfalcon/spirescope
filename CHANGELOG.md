@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.9.8
+
+### Data
+
+- **Game data refreshed to STS2 v0.109.0** (2026-07-22) — 646 cards (+46), 312 relics (+3), 65 potions (+1). Adds v0.107.x–v0.109.0 content: relics Fishing Rod, Dowsing Rod, Neow's Sacrifice; cards Dowsing, Abundance, Tutor, Scare; potion Ambergris. Reworked texts picked up for Diamond Diadem, Mirage, Well-Laid Plans, Expertise, Eidolon, Pillar of Creation, and others.
+- **Rarity corrections (wiki-patch-note-verified)** — Taunt→Common, Bloodletting→Uncommon, Cruelty→Uncommon, Dominate→Rare, Accelerant→Uncommon, Well-Laid Plans→Rare (all v0.109.0); Flanking→Rare, Ignition→Uncommon (v0.108.0); Scare replaces Follow Through (renamed in v0.107.1; stale entry removed).
+
+### Fixed
+
+- **Fetcher RSC extraction broken by site markup drift** — `_extract_from_rsc_payloads` truncated every `self.__next_f.push()` payload at the first `]` (card text contains `[gold]` markup) and joined stream chunks with `\n`, corrupting JSON objects the site now splits mid-token across push() calls. The pipeline silently fell back to HTML grid-scraping, recovering only 477/626 cards and dropping Abundance entirely. Payload strings are now matched directly and chunks joined without separator before decoding.
+- **Bracket-balanced extraction skipped when flat pass found anything** — cards whose text contains braces (110 of 626) were invisible to the flat regex and never reached the balanced pass. Both passes now always run (seen-ids dedupe the overlap).
+- **Upgraded descriptions silently stale** — site renamed `upgradedDescription` → `descriptionUpgraded`; the old field read returned empty and the merge kept pre-rework text. Both names accepted now.
+- **Unrenderable site template tokens leaking into descriptions** — RSC text embeds `{Energy:energyIcons(2)}`-style tokens; value-carrying energy/star tokens are now rendered ("2 Energy"), and token forms with no resolvable value (`diff()`, `choose(...)`, conditionals) blank the field so the merge preserves curated text.
+- **`sts2.config.VERSION` stale at 2.9.3** — synced to release version (was drifting since v2.9.4; affects update-check comparisons and the fetcher User-Agent).
+
 ## v2.9.7
 
 ### Fixed

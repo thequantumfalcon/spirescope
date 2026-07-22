@@ -11,6 +11,8 @@
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
 
+**Game data:** current through STS2 **v0.109.0** (refreshed 2026-07-22). Refresh anytime with `python -m sts2 update`.
+
 <p align="center">
   <img src="docs/screenshot-dashboard.png" alt="SpireScope Dashboard — your runs, your stats, your data" width="80%">
 </p>

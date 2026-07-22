@@ -23,6 +23,12 @@ _PREFIXED_ENERGY_RE = re.compile(r"(\d+)\[energy:\d+\]")
 _PREFIXED_STAR_RE = re.compile(r"(\d+)\[star:\d+\]")
 _ENERGY_RE = re.compile(r"\[energy:(\d+)\]")
 _STAR_RE = re.compile(r"\[star:(\d+)\]")
+# RSC payload template tokens: {Energy:energyIcons(2)} carries its value and
+# renders as "2 Energy"; other {Name:...} templates (diff(), choose(...),
+# plural/cond forms) carry no resolvable value and cannot be rendered.
+_TOKEN_ENERGY_RE = re.compile(r"\{\w+:energyIcons\((\d+)\)\}")
+_TOKEN_STAR_RE = re.compile(r"\{\w+:starIcons\((\d+)\)\}")
+_UNRESOLVED_TOKEN_RE = re.compile(r"\{\w+:")
 
 
 def _clean_description(desc: str) -> str:
@@ -33,7 +39,12 @@ def _clean_description(desc: str) -> str:
     # Handle "[energy:2]" -> "2 Energy" (no preceding digit)
     desc = _ENERGY_RE.sub(lambda m: f"{m.group(1)} Energy", desc)
     desc = _STAR_RE.sub(lambda m: f"{m.group(1)} Star", desc)
+    desc = _TOKEN_ENERGY_RE.sub(lambda m: f"{m.group(1)} Energy", desc)
+    desc = _TOKEN_STAR_RE.sub(lambda m: f"{m.group(1)} Star", desc)
     desc = _COLOR_RE.sub("", desc)
+    # RSC text encodes line breaks as a literal backslash-n two-character
+    # sequence after JSON decoding; normalize before whitespace collapse.
+    desc = desc.replace("\\n", " ")
     # Collapse all internal whitespace (including embedded newlines from RSC
     # payload structure and double-spaces left by stripped icons) into single
     # spaces. CLAUDE.md data-hygiene protocol forbids both. Regression: v2.2.1
@@ -152,24 +163,25 @@ def _extract_from_rsc_payloads(html: str, category: str, results: list, seen_ids
     arguments may contain JSON objects with escaped quotes.  We extract
     all push() string content, unescape it, then scan for category matches.
     """
-    # Find all self.__next_f.push() call arguments
-    push_pattern = re.compile(r'self\.__next_f\.push\(\s*\[(.*?)\]\s*\)', re.DOTALL)
-    # Collect all string content from push payloads
-    all_content = []
-    for m in push_pattern.finditer(html):
-        payload = m.group(1)
-        # Extract string literals from the array argument
-        str_pattern = re.compile(r'"((?:[^"\\]|\\.)*)"', re.DOTALL)
-        for sm in str_pattern.finditer(payload):
-            try:
-                decoded = sm.group(1).encode().decode("unicode_escape")
-            except (UnicodeDecodeError, ValueError):
-                decoded = sm.group(1)
-            all_content.append(decoded)
-
-    combined = "\n".join(all_content)
-    if not combined:
+    # Match the push() string literal directly rather than locating the
+    # array's closing "]" first — card text contains "]" (e.g. [gold]
+    # markup), so any pattern that scans for the array bracket truncates
+    # the payload at the first markup tag.
+    chunk_pattern = re.compile(
+        r'self\.__next_f\.push\(\s*\[\d+,\s*"((?:[^"\\]|\\.)*)"\s*\]\s*\)',
+        re.DOTALL,
+    )
+    raw_chunks = [m.group(1) for m in chunk_pattern.finditer(html)]
+    if not raw_chunks:
         return
+    # Chunks are one continuous stream: the site splits JSON objects
+    # mid-token across push() calls, so join with no separator BEFORE
+    # decoding (an escape sequence can straddle a chunk boundary).
+    combined_raw = "".join(raw_chunks)
+    try:
+        combined = combined_raw.encode().decode("unicode_escape")
+    except (UnicodeDecodeError, ValueError):
+        combined = combined_raw
 
     # Now search the decoded content for JSON objects with matching category.
     # Try both flat and bracket-balanced extraction.
@@ -190,8 +202,8 @@ def _extract_from_rsc_payloads(html: str, category: str, results: list, seen_ids
         except (json.JSONDecodeError, ValueError):
             continue
 
-    if results:
-        return
+    # Attempt 2 always runs: objects whose text contains braces are
+    # invisible to the flat pattern (seen_ids dedupes the overlap).
 
     # Attempt 2: bracket-balanced extraction for nested objects
     # Find positions of category marker, then expand outward to find balanced {}
@@ -373,6 +385,10 @@ def _scrape_cards(html: str) -> list[dict]:
 
         # Extract keywords from description
         desc = _clean_description(obj.get("description", ""))
+        # A description with unresolved template tokens cannot be rendered;
+        # blank it so _merge_with_existing keeps the curated existing text.
+        if _UNRESOLVED_TOKEN_RE.search(desc):
+            desc = ""
         keywords = _extract_keywords(desc)
 
         card_type = obj.get("cardType", "Skill")
@@ -381,7 +397,12 @@ def _scrape_cards(html: str) -> list[dict]:
                      "Status": "Status", "Curse": "Curse"}
         card_type = type_map.get(card_type, card_type)
 
-        desc_upgraded = _clean_description(obj.get("upgradedDescription", ""))
+        # Site renamed upgradedDescription -> descriptionUpgraded; accept both.
+        desc_upgraded = _clean_description(
+            obj.get("descriptionUpgraded") or obj.get("upgradedDescription", "")
+        )
+        if _UNRESOLVED_TOKEN_RE.search(desc_upgraded):
+            desc_upgraded = ""
 
         cards.append({
             "id": game_id,
