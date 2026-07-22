@@ -57,3 +57,5 @@ docs/demo.gif
 
 # Claude
 .claude/
+sts2/data/settings.json
+sts2/data/community_aggregate.json
