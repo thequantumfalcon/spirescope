@@ -3417,8 +3417,8 @@
     "cost": "2",
     "type": "Power",
     "rarity": "Rare",
-    "description": "Whenever you draw a card containing âStrikeâ, it is played against a random enemy.",
-    "description_upgraded": "Whenever you draw a card containing âStrikeâ, it is played against a random enemy.",
+    "description": "Whenever you draw a card containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d, it is played against a random enemy.",
+    "description_upgraded": "Whenever you draw a card containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d, it is played against a random enemy.",
     "keywords": [
       "Draw"
     ]
@@ -3622,8 +3622,8 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 6 damage. Deals 2 additional damage for ALL your cards containing âStrikeâ.",
-    "description_upgraded": "Deal 6 damage. Deals 3 additional damage for ALL your cards containing âStrikeâ.",
+    "description": "Deal 6 damage. Deals 2 additional damage for ALL your cards containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d.",
+    "description_upgraded": "Deal 6 damage. Deals 3 additional damage for ALL your cards containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d.",
     "keywords": []
   },
   {
@@ -7022,21 +7022,6 @@
       "Draw"
     ],
     "last_changed": "v0.107.1"
-  },
-  {
-    "id": "CARD.PREPARE",
-    "name": "Prepare",
-    "character": "Silent",
-    "cost": "1",
-    "type": "Skill",
-    "rarity": "Common",
-    "description": "Discard 2 cards. Next turn, gain 2 Energy.",
-    "description_upgraded": "Discard 2 cards. Next turn, gain 3 Energy.",
-    "keywords": [
-      "Discard"
-    ],
-    "tier": "",
-    "source": "patch-0.100.0"
   },
   {
     "id": "CARD.PREPARED",

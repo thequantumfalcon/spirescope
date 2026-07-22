@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
   <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/thequantumfalcon/spirescope/badges/tests.json" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-84%25-yellowgreen" alt="Coverage: 84%">
+  <img src="https://img.shields.io/badge/coverage-77%25-yellowgreen" alt="Coverage: 77%">
 </p>
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
@@ -27,6 +27,16 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ## Features
 
+### Current With Every Patch (v3.0)
+
+- **Self-updating game data** — a multi-source pipeline (slaythespire2.gg primary, slaythespire.wiki.gg secondary, save-file discovery third) keeps cards, relics, and potions current; on startup the app offers new data bundles for one-click, checksum-verified install — no app update needed.
+- **Patch-era analytics** — every run resolves to a named patch era. Default views scope to the current patch with an all-time toggle; reworked cards and relics carry "Changed in ..." markers with before/after win-rate and pick-rate comparisons (sample-size guarded).
+- **Enchantment display** — enchanted cards show their enchantment in the live tracker and run history.
+- **Main vs beta awareness** — runs badge their game branch; beta-only content is chipped; filter analytics by branch.
+- **Merged save history** — vanilla and modded save trees merge into one deduplicated history (the game copies saves between them since v0.108.0); runs carry a vanilla/modded origin filter.
+- **Badges** — earned badges with bronze/silver/gold tiers on the Records page.
+- **UI language setting** — locale files under `sts2/locales/` (a Traditional Chinese draft ships pending review; contributions welcome).
+
 ### Browse & Research
 
 - **Card Browser** — All cards across 5 characters with filters by character, type, rarity, cost, and keyword. Paginated (30 per page).
@@ -42,7 +52,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Run History** — Floor-by-floor breakdown with HP tracking, card picks, cards offered (what you rejected), potions gained, monsters fought, gold per floor, and damage taken. Visual HP timeline chart. Import/export runs as JSON or standalone HTML.
 - **Run Comparison** — Side-by-side comparison of two runs with deck diff, relic diff, and stat comparison
 - **Collections** — Track card/relic discovery progress with ascension filtering
-- **Epochs** — Track all 49 epoch unlock requirements, see what's locked/unlocked, filter by category and character
+- **Epochs** — Track all 57 epoch unlock requirements, see what's locked/unlocked, filter by category and character; deprecated epochs are marked and never suggested
 - **Co-op Support** — Track any player in a multiplayer run via `?player=N`
 
 ### Analyze & Compete

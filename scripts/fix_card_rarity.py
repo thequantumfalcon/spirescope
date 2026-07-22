@@ -256,8 +256,10 @@ def main(dry_run: bool | None = None):
         name = card["name"]
 
         # Remove Deprecated Card and entries renamed away by patches
-        # (Follow Through -> Scare in v0.107.1; the old row lingers via merge)
-        if name in ("Deprecated Card", "Follow Through"):
+        # (Follow Through -> Scare in v0.107.1; the old row lingers via
+        # merge). "Prepare" (Silent) is absent from both data sources —
+        # removed from the game; distinct from "Prepared".
+        if name in ("Deprecated Card", "Follow Through", "Prepare"):
             changes.append(f"REMOVED: {name} ({card['id']})")
             deprecated_removed = True
             continue
