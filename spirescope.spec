@@ -59,6 +59,7 @@ a = Analysis(
         ('sts2/data', 'sts2/data'),
         ('sts2/templates', 'sts2/templates'),
         ('sts2/static', 'sts2/static'),
+        ('sts2/locales', 'sts2/locales'),
     ],
     hiddenimports=[
         'uvicorn.logging',
