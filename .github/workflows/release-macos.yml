@@ -34,6 +34,31 @@ jobs:
       - name: Strip dist-info metadata
         run: find dist/Spirescope -name "*.dist-info" -type d -exec rm -rf {} +
 
+      - name: Smoke-test the built app
+        # Rule: validate the artifact users receive, not just the source tree.
+        # Packaging silently drops files the dev env has (issue #5: locales
+        # were missing, so every nav item rendered as "nav.cards").
+        run: |
+          cd dist/Spirescope
+          STS2_PORT=8899 SPIRESCOPE_CHECK_UPDATES=0 ./Spirescope serve --no-browser &
+          for i in $(seq 1 30); do
+            sleep 2
+            curl -sf -o /dev/null http://127.0.0.1:8899/ && break
+          done
+          html=$(curl -sf http://127.0.0.1:8899/)
+          # i18n-exclusive assertion: this placeholder only exists when a
+          # locale file resolved. Plain words like "Cards" also appear in
+          # hardcoded page content, so they pass even on a broken build.
+          echo "$html" | grep -q 'placeholder="Search cards' || { echo "::error::i18n strings did not resolve in the packaged build"; exit 1; }
+          if echo "$html" | grep -qE '>(nav|common|settings)\.[a-z_]+<'; then
+            echo "::error::raw i18n keys rendered in the packaged build"
+            exit 1
+          fi
+          curl -sf -o /dev/null http://127.0.0.1:8899/cards
+          curl -sf -o /dev/null http://127.0.0.1:8899/settings
+          echo "smoke test passed: real strings rendered, key pages 200"
+          pkill -f "Spirescope serve" || true
+
       - name: Create zip archive
         run: |
           cd dist

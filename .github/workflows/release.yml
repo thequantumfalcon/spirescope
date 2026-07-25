@@ -38,6 +38,31 @@ jobs:
           if (Test-Path README_DIST.txt) { Copy-Item README_DIST.txt dist/Spirescope/README.txt }
         shell: pwsh
 
+      - name: Smoke-test the built app
+        # Rule: validate the artifact users receive, not just the source tree.
+        # Packaging silently drops files the dev env has (issue #5: locales
+        # were missing, so every nav item rendered as "nav.cards").
+        run: |
+          $env:STS2_PORT = "8899"
+          $env:SPIRESCOPE_CHECK_UPDATES = "0"
+          $proc = Start-Process -FilePath "dist\Spirescope\Spirescope.exe" -ArgumentList "serve","--no-browser" -PassThru
+          $html = $null
+          foreach ($i in 1..30) {
+            Start-Sleep -Seconds 2
+            try { $html = (Invoke-WebRequest -Uri "http://127.0.0.1:8899/" -UseBasicParsing).Content; break } catch {}
+          }
+          if (-not $html) { Stop-Process -Id $proc.Id -Force; throw "app did not start" }
+          # i18n-exclusive assertion: this placeholder only exists when a
+          # locale file resolved. Plain words like "Cards" also appear in
+          # hardcoded page content, so they pass even on a broken build.
+          if ($html -notmatch 'placeholder="Search cards') { Stop-Process -Id $proc.Id -Force; throw "i18n strings did not resolve in the packaged build" }
+          if ($html -match '>(nav|common|settings)\.[a-z_]+<') { Stop-Process -Id $proc.Id -Force; throw "raw i18n keys rendered in the packaged build" }
+          Invoke-WebRequest -Uri "http://127.0.0.1:8899/cards" -UseBasicParsing | Out-Null
+          Invoke-WebRequest -Uri "http://127.0.0.1:8899/settings" -UseBasicParsing | Out-Null
+          Write-Host "smoke test passed: real strings rendered, key pages 200"
+          Stop-Process -Id $proc.Id -Force
+        shell: pwsh
+
       - name: Create zip archives
         run: |
           Compress-Archive -Path dist/Spirescope -DestinationPath dist/Spirescope-${{ github.ref_name }}-windows.zip

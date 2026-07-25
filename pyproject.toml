@@ -1,6 +1,6 @@
 [project]
 name = "spirescope"
-version = "3.0.1"
+version = "3.0.2"
 description = "Spirescope — a local web dashboard for Slay the Spire 2. Card/relic/enemy lookup, deck analysis, live run tracking, and strategy guides."
 readme = "README.md"
 license = {text = "MIT"}
@@ -64,6 +64,8 @@ addopts = "-m 'not browser'"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+# Build output: gitignored, but editor LSPs still try to index it
+extend-exclude = ["dist", "build", ".venv_build"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]

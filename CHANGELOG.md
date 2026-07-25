@@ -1,5 +1,28 @@
 # Changelog
 
+## v3.0.2
+
+### Fixed
+
+- **Packaged builds showed template keys instead of text** ([#5]) — the
+  Windows and macOS builds of v3.0.0 and v3.0.1 rendered `nav.cards`,
+  `nav.live_run` and the rest of the navigation as raw translation keys,
+  because `sts2/locales/` was added for the language setting but never
+  bundled by the PyInstaller spec. Running from source was unaffected,
+  which is why it slipped through. Fixed by [@mattkuo] in [#6].
+
+### Added
+
+- **Guards so this class of bug cannot ship again** — a test asserts every
+  non-code directory under `sts2/` appears in the PyInstaller spec (it fails
+  loudly if a new resource directory is forgotten), and both release
+  workflows now launch the packaged application and assert that real strings
+  render before any archive is published.
+
+[#5]: https://github.com/thequantumfalcon/spirescope/issues/5
+[#6]: https://github.com/thequantumfalcon/spirescope/pull/6
+[@mattkuo]: https://github.com/mattkuo
+
 ## v3.0.1
 
 ### Fixed
