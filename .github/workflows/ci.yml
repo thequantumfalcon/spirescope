@@ -71,3 +71,26 @@ jobs:
           destination_dir: .
           keep_files: true
           commit_message: "Update test badge"
+
+  browser:
+    # Playwright suite: the only tests that exercise the actual JS/CSS
+    # (theme persistence, mobile nav, search, contrast). Separate job so a
+    # browser download never slows the main matrix.
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev,browser]"
+
+      - name: Install Chromium
+        run: playwright install --with-deps chromium
+
+      - name: Run browser tests
+        run: pytest -m browser -q
