@@ -79,7 +79,7 @@ def _filter_runs(runs: list, *, version: str | None = None,
     return runs
 
 
-async def _get_live_run(player: int = 0) -> CurrentRun:
+async def _get_live_run(player: int | None = None) -> CurrentRun:
     """Get the best available live run data, merging save + log sources.
 
     Save provides: HP, relics, floors, deck_upgrades, run_time, events_seen.
@@ -1064,7 +1064,7 @@ async def guide(request: Request):
 
 
 @router.get("/live", response_class=HTMLResponse)
-async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
+async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
     import logging
     _log = logging.getLogger(__name__)
     a = _app()
@@ -1273,7 +1273,7 @@ async def live_run(request: Request, player: int = Query(0, ge=0, le=3)):
 
 
 @router.get("/overlay", response_class=HTMLResponse)
-async def overlay(request: Request, player: int = Query(0, ge=0, le=3)):
+async def overlay(request: Request, player: int = Query(None, ge=0, le=3)):
     """Minimal overlay for OBS browser source or always-on-top second monitor."""
     a = _app()
     run = await _get_live_run(player)
@@ -1401,7 +1401,7 @@ async def api_analytics(version: str = Query(None, max_length=100),
 
 
 @router.get("/api/live")
-async def api_live_run(player: int = Query(0, ge=0, le=3)):
+async def api_live_run(player: int = Query(None, ge=0, le=3)):
     run = await _get_live_run(player)
     return run.model_dump()
 
@@ -1413,7 +1413,7 @@ _sse_active = 0
 
 
 @router.get("/api/live/stream")
-async def live_stream(player: int = Query(0, ge=0, le=3)):
+async def live_stream(player: int = Query(None, ge=0, le=3)):
     global _sse_active
     # Atomic check-and-reserve. Increment is done INSIDE the generator's try
     # block (paired with the finally decrement) so a pre-stream client

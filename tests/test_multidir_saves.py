@@ -176,3 +176,92 @@ def test_filter_runs_by_origin(tmp_path):
     assert [r.id for r in _filter_runs(runs, origin="modded")] == ["2000"]
     assert [r.id for r in _filter_runs(runs, origin="vanilla")] == ["1000"]
     assert len(_filter_runs(runs, origin=None)) == 2
+
+
+# ── co-op: the local player, not the host (issue #4) ──
+
+def _coop_run(host_id: str, guest_id: str) -> str:
+    """Run JSON where the HOST is players[0] and the guest played Defect."""
+    return json.dumps({
+        "win": True, "ascension": 3, "seed": "COOP1", "build_id": "v0.109.0",
+        "players": [
+            {"id": int(host_id), "character": "CHARACTER.NECROBINDER",
+             "deck": [{"id": "CARD.REAP"}], "relics": [{"id": "RELIC.HOST"}]},
+            {"id": int(guest_id), "character": "CHARACTER.DEFECT",
+             "deck": [{"id": "CARD.ZAP"}], "relics": [{"id": "RELIC.GUEST"}]},
+        ],
+        "map_point_history": [],
+    })
+
+
+def _steam_saves(tmp_path, steam_id: str):
+    saves = tmp_path / "SlayTheSpire2" / "steam" / steam_id / "profile1" / "saves"
+    (saves / "history").mkdir(parents=True)
+    return saves
+
+
+def test_coop_history_uses_local_player_not_host(tmp_path):
+    """Guest running SpireScope must see their own run, not the host's."""
+    saves = _steam_saves(tmp_path, "76561190000000002")
+    (saves / "history" / "1000.run").write_text(
+        _coop_run("76561190000000001", "76561190000000002"))
+    with patch("sts2.saves.SAVE_DIR", saves):
+        runs = get_run_history()
+    assert runs[0].character == "Defect"        # guest, not host's Necrobinder
+    assert runs[0].deck == ["CARD.ZAP"]
+    assert runs[0].relics == ["RELIC.GUEST"]
+    assert runs[0].total_players == 2
+
+
+def test_coop_history_when_local_player_is_host(tmp_path):
+    saves = _steam_saves(tmp_path, "76561190000000001")
+    (saves / "history" / "1000.run").write_text(
+        _coop_run("76561190000000001", "76561190000000002"))
+    with patch("sts2.saves.SAVE_DIR", saves):
+        runs = get_run_history()
+    assert runs[0].character == "Necrobinder"
+    assert runs[0].deck == ["CARD.REAP"]
+
+
+def test_unidentifiable_save_dir_falls_back_to_first_player(tmp_path):
+    """No steam id in the path (custom STS2_SAVE_DIR) keeps prior behavior."""
+    history = tmp_path / "history"
+    history.mkdir()
+    (history / "1000.run").write_text(
+        _coop_run("76561190000000001", "76561190000000002"))
+    with patch("sts2.saves.SAVE_DIR", tmp_path):
+        runs = get_run_history()
+    assert runs[0].character == "Necrobinder"
+
+
+def test_local_steam_id_parsing(tmp_path):
+    from sts2.config import local_steam_id
+    saves = _steam_saves(tmp_path, "76561190000000009")
+    assert local_steam_id(saves) == "76561190000000009"
+    assert local_steam_id(tmp_path / "some" / "other" / "path") == ""
+    # modded tree keeps the id in the same position
+    modded = tmp_path / "steam" / "76561190000000009" / "modded" / "profile1" / "saves"
+    assert local_steam_id(modded) == "76561190000000009"
+
+
+def test_current_run_defaults_to_local_player(tmp_path):
+    from sts2.saves import get_current_run
+    saves = _steam_saves(tmp_path, "76561190000000002")
+    (saves / "current_run.save").write_text(json.dumps({
+        "players": [
+            {"id": 76561190000000001, "character_id": "CHARACTER.NECROBINDER",
+             "current_hp": 10, "max_hp": 80, "deck": [{"id": "CARD.REAP"}],
+             "relics": [], "potions": []},
+            {"id": 76561190000000002, "character_id": "CHARACTER.DEFECT",
+             "current_hp": 55, "max_hp": 70, "deck": [{"id": "CARD.ZAP"}],
+             "relics": [], "potions": []},
+        ],
+        "current_act_index": 0, "run_time": 100,
+    }))
+    with patch("sts2.saves.SAVE_DIR", saves):
+        auto = get_current_run()
+        explicit_host = get_current_run(player_index=0)
+    assert auto.character == "Defect" and auto.current_hp == 55
+    assert auto.player_index == 1
+    # ?player=N still selects by seat, so co-op spectating keeps working
+    assert explicit_host.character == "Necrobinder" and explicit_host.current_hp == 10

@@ -4,7 +4,7 @@ import json
 import logging
 from pathlib import Path
 
-from sts2.config import CHARACTER_IDS, SAVE_DIR, SAVE_DIRS
+from sts2.config import CHARACTER_IDS, SAVE_DIR, SAVE_DIRS, local_steam_id
 from sts2.models import CurrentRun, PlayerProgress, RunFloor, RunHistory
 
 log = logging.getLogger(__name__)
@@ -35,13 +35,30 @@ def _read_json(path: Path) -> dict | None:
     return None
 
 
-def _get_player(players: list[dict], index: int = 0) -> dict:
-    """Get a player by index from the player list. Falls back to first player."""
+def local_player_index(players: list[dict]) -> int:
+    """Index of the machine owner in a run's player list.
+
+    Co-op saves list players in lobby order, so the host lands at [0] and the
+    local player can be anywhere — reading [0] blindly reports a teammate's
+    deck, character, and stats as the user's own. Match on the SteamID64 from
+    the save path instead, falling back to 0 when it's unavailable (solo
+    runs, custom save dirs, tests).
+    """
+    steam_id = local_steam_id(SAVE_DIR)
+    if steam_id:
+        for i, player in enumerate(players):
+            if str(player.get("id", "")) == steam_id:
+                return i
+    return 0
+
+
+def _get_player(players: list[dict], index: int | None = None) -> dict:
+    """Get a player by index; index=None means the local player (see above)."""
     if not players:
         return {}
-    if 0 <= index < len(players):
-        return players[index]
-    return players[0]
+    if index is None:
+        index = local_player_index(players)
+    return players[index] if 0 <= index < len(players) else players[0]
 
 
 def _get_player_stats(player_stats: list[dict], player: dict) -> dict:
@@ -54,8 +71,12 @@ def _get_player_stats(player_stats: list[dict], player: dict) -> dict:
     return {}
 
 
-def get_current_run(player_index: int = 0) -> CurrentRun:
-    """Read the current active run, if any. Use player_index for co-op."""
+def get_current_run(player_index: int | None = None) -> CurrentRun:
+    """Read the current active run, if any.
+
+    player_index=None tracks the local player (correct default for co-op);
+    pass an explicit index to watch a specific seat via ?player=N.
+    """
     # Prefer live save files; fall back to backups (picking most recent)
     data = None
     for fname in ("current_run.save", "current_run_mp.save"):
@@ -94,6 +115,8 @@ def get_current_run(player_index: int = 0) -> CurrentRun:
 
     players = data.get("players", [])
     total_players = len(players)
+    if player_index is None:
+        player_index = local_player_index(players)
     player = _get_player(players, player_index)
     character = CHARACTER_IDS.get(
         player.get("character_id", player.get("character", "")),

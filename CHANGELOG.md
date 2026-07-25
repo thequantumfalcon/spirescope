@@ -1,5 +1,25 @@
 # Changelog
 
+## v3.0.1
+
+### Fixed
+
+- **Co-op runs showed the host's data instead of your own** ([#4]) — save
+  files list players in lobby order, so the host is always `players[0]`, and
+  run history read that slot unconditionally. A guest joining someone else's
+  session saw the host's character, deck, relics, and per-floor stats
+  reported as their own, which silently skewed every downstream analytic
+  (per-character win rates, card pick rates, deck analysis). SpireScope now
+  identifies the local player by the SteamID64 in the save path and matches
+  it against the run's player list, falling back to the previous behavior
+  when the path carries no id (solo runs, custom `STS2_SAVE_DIR`). The live
+  tracker defaults to the local player too; `?player=N` still selects a
+  specific seat for watching teammates. Verified against a 98-run corpus in
+  which 67 runs had been misattributed — all 98 now resolve to the correct
+  player, character and full deck.
+
+[#4]: https://github.com/thequantumfalcon/spirescope/issues/4
+
 ## v3.0.0
 
 The Relevance Arc: spirescope stays current with STS2's patch cadence and

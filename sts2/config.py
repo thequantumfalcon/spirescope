@@ -6,7 +6,7 @@ from pathlib import Path
 # Single source of truth for the version fallback (used when importlib.metadata
 # can't find the package, e.g. in PyInstaller bundles). Keep in sync with
 # pyproject.toml [project] version.
-VERSION = "3.0.0"
+VERSION = "3.0.1"
 
 # Project paths
 PROJECT_ROOT = Path(__file__).parent
@@ -150,6 +150,23 @@ def _save_dir_freshness(save_dir: Path) -> float:
     except OSError:
         pass
     return newest
+
+
+def local_steam_id(save_dir: Path | None = None) -> str:
+    """SteamID64 of the local player, parsed from the save-dir path.
+
+    Saves live under .../SlayTheSpire2/steam/<steamid64>/profile*/saves, so
+    the directory itself identifies whose machine this is. Used to pick the
+    right player out of a co-op run's player list. Returns "" when the path
+    doesn't carry an id (custom STS2_SAVE_DIR, Proton layouts, tests).
+    """
+    parts = (save_dir or SAVE_DIR).parts
+    for i, part in enumerate(parts):
+        if part == "steam" and i + 1 < len(parts):
+            candidate = parts[i + 1]
+            if candidate.isdigit():
+                return candidate
+    return ""
 
 
 def _find_mods_dir() -> Path:
