@@ -106,9 +106,16 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 **[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`, leave the console window open, then open `http://127.0.0.1:8000` in your browser. A macOS build ([Spirescope-macos.zip](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-macos.zip)) is also attached to each release. All archives ship with `.sha256` checksum files.
 
-Windows may still show a SmartScreen or reputation warning because the build is unsigned. SpireScope is open source, local-only by default, and the packaged release avoids the usual UPX-compressed hidden-window profile that tends to trigger extra false positives.
+> **Windows may warn you, or block the file outright** ("contains a virus or
+> potentially unwanted software"). This is a false positive on unsigned
+> PyInstaller apps — the packaging format, not the contents. **[Read
+> docs/ANTIVIRUS.md](docs/ANTIVIRUS.md)** for why it happens, how to verify
+> the download yourself with the published SHA-256, and how to run from
+> source instead if you'd rather not touch the executable at all.
 
-If you're cautious about unsigned Windows apps, that's fair. Grab SpireScope from this repo's Releases page, check the `.sha256` file, and look through the source, tests, and changelog here before you run it.
+SpireScope is open source, local-only by default, and the packaged release avoids the UPX-compressed hidden-window profile that triggers extra false positives. Builds are produced only by GitHub Actions from tagged commits in this repository, and GitHub Releases is the only official download source.
+
+If you're cautious about unsigned Windows apps, that's fair — and running from source (below) sidesteps the issue entirely.
 
 ### From Source
 

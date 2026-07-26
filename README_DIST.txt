@@ -1,6 +1,18 @@
 Spirescope - Slay the Spire 2 Companion Dashboard
 ==================================================
 
+IF WINDOWS BLOCKED THIS FILE:
+
+  Windows may flag Spirescope.exe as a virus. It is a false positive that
+  affects unsigned Python applications packaged with PyInstaller - the
+  packaging format is what gets flagged, not the contents.
+
+  Verify the download yourself: compare the included .sha256 file with
+  Get-FileHash .\Spirescope-windows.zip -Algorithm SHA256
+
+  Full explanation, plus how to allow it or run from source instead:
+  https://github.com/thequantumfalcon/spirescope/blob/master/docs/ANTIVIRUS.md
+
 HOW TO RUN:
 
   1. Double-click Spirescope.exe
