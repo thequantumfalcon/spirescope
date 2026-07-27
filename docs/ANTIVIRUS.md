@@ -64,7 +64,12 @@ Then open <http://127.0.0.1:8000>. Requires Python 3.11 or newer.
 ## Option 3 — Wait for signed builds
 
 Code signing is the only thing that removes these warnings permanently.
-It's a paid certificate; see the maintainer note below for status.
+
+SpireScope has applied to the [SignPath Foundation](https://signpath.org/),
+a nonprofit that provides free code signing to open source projects. If
+accepted, release binaries will be signed automatically in CI — the private
+key is held in SignPath's HSM and the certificate is issued in SignPath
+Foundation's name. This page will be updated when signed builds ship.
 
 ## How to satisfy yourself it's safe
 

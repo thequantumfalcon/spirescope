@@ -267,6 +267,21 @@ SpireScope auto-detects both vanilla and modded paths and uses whichever has mor
 - Input validation on all query parameters
 - Anti-manipulation caps on aggregate stats merging
 
+## Code signing
+
+Windows release builds are currently **unsigned**, which is why Windows
+Defender and SmartScreen may flag the download — a false positive on the
+packaging format rather than the contents. See
+[docs/ANTIVIRUS.md](docs/ANTIVIRUS.md) to verify a download yourself or run
+from source instead.
+
+SpireScope has applied to the [SignPath Foundation](https://signpath.org/),
+which provides free code signing for open source projects. If the
+application is accepted, release binaries will be signed automatically in
+CI, with the private key held in SignPath's HSM and the certificate issued
+in SignPath Foundation's name. This section will be updated when signed
+builds ship.
+
 ## Project Structure
 
 ```
