@@ -230,7 +230,7 @@ PORT = _parse_port()
 SYNC_URL = os.environ.get("STS2_SYNC_URL", "")
 SYNC_API_KEY = os.environ.get("STS2_SYNC_KEY", "")
 
-# Community sources: "all", "reddit", "steam", or comma-separated (e.g. "reddit,steam")
+# Community sources: "all" or "steam" (Reddit retired — it removed public JSON access)
 COMMUNITY_SOURCES = os.environ.get("STS2_COMMUNITY_SOURCES", "all")
 
 # Characters

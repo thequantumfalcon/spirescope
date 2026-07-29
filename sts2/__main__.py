@@ -19,7 +19,7 @@ Usage: spirescope [command] [options]
 Commands:
   serve         Start the web dashboard (default)
   update        Fetch latest game data from the wiki
-  community     Fetch community tips from Reddit and Steam
+  community     Fetch community tips from Steam
   export        Export aggregate stats to JSON file
   reset-stats   Delete aggregate stats file
   sync-up       Upload local aggregate stats to sync service

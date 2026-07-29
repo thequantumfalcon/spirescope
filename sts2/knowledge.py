@@ -58,7 +58,7 @@ class KnowledgeBase:
         self.epochs: list[Epoch] = []
         self.badges: list[Badge] = []
 
-        # Community data from Reddit
+        # Community data from Steam
         self.community_tips: dict[str, list[str]] = {}  # name_lower -> tips
         self.meta_posts: list[dict] = []
 

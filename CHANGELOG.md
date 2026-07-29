@@ -1,5 +1,38 @@
 # Changelog
 
+## Unreleased
+
+### Removed
+
+- **Reddit community source retired.** Reddit removed unauthenticated access
+  to its public JSON endpoints, which now return HTTP 403 for every request.
+  The scraper's error handling classified this as a transient network
+  failure, so `spirescope community` reported a soft skip and silently
+  produced no Reddit data. Restoring it would require OAuth credentials,
+  which conflicts with the project's no-accounts design. Steam remains and
+  is unaffected; the community view, tier lists, and per-entity tips all
+  continue to work from Steam guides.
+
+### Fixed
+
+- **Wrong Steam AppID broke Linux and Steam Deck detection.** Save- and
+  log-directory discovery built Proton prefix paths from AppID `2832040`,
+  which belongs to a different game; Slay the Spire 2 is `2868840`. Auto
+  detection could never have succeeded under Proton.
+- **Two card rarities were wrong for six patch cycles.** Colossus shipped as
+  Rare and Acrobatics as Common; both changed to Uncommon in STS2 v0.103.0.
+  The scraper had them right — the hardcoded canonicalizer map was
+  overwriting correct data.
+- **Mojibake in card text.** Hellraiser and Perfected Strike displayed
+  corrupted quote characters in their descriptions.
+- **Missing patch entry.** `patches.json` lacked v0.109.1 (2026-07-25), so
+  runs on the live build resolved to "unmapped" and were silently excluded
+  from the current-patch scope, branch filter, and era comparisons.
+- **Documentation corrections.** The README advertised a "Strategy Memory"
+  feature that was unreachable dead code, and listed per-IP rate limiting
+  without noting it is skipped on loopback binds — the shipped default.
+- **CI actions** moved off the deprecated Node 20 runtime.
+
 ## v3.0.2
 
 ### Fixed

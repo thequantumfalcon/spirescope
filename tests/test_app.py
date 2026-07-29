@@ -1071,12 +1071,6 @@ async def test_community_extract_tier_ratings():
     assert ratings["defend"] == ["A"]
 
 
-async def test_community_is_sts2_post():
-    """STS2 post detection should work for both subreddits."""
-    from sts2.community import _is_sts2_post
-    assert _is_sts2_post({"subreddit": "slaythespire2", "title": "any", "selftext": "", "flair": ""})
-    assert _is_sts2_post({"subreddit": "slaythespire", "title": "STS2 tier list", "selftext": "", "flair": ""})
-    assert not _is_sts2_post({"subreddit": "slaythespire", "title": "best ironclad cards", "selftext": "", "flair": ""})
 
 
 async def test_community_extract_tips():
@@ -1110,7 +1104,7 @@ async def test_card_detail_passes_community_tips(client):
         resp = await client.get(f"/cards/{card.id}")
     if resp.status_code == 200:
         assert "Community Tips" in resp.text
-        assert "Reddit" in resp.text
+        assert "Steam" in resp.text
 
 
 async def test_relic_detail_passes_community_tips(client):
@@ -1158,7 +1152,7 @@ async def test_community_page_with_meta_posts(client):
 
     from sts2.app import kb as _kb
     mock_posts = [
-        {"title": "Best Ironclad Cards Tier List", "url": "https://reddit.com/r/test/1",
+        {"title": "Best Ironclad Cards Tier List", "url": "https://steamcommunity.com/app/2868840/guides/1",
          "score": 150, "comments": 42, "type": "tier_list", "date": 1700000000},
     ]
     with patch.object(_kb, "meta_posts", mock_posts):
@@ -1195,7 +1189,7 @@ async def test_enemy_detail_community_tips(client):
         resp = await client.get(f"/enemies/{enemy.id}")
     if resp.status_code == 200:
         assert "Community Tips" in resp.text
-        assert "Reddit" in resp.text
+        assert "Steam" in resp.text
 
 
 async def test_analytics_cache_returns_same_object():

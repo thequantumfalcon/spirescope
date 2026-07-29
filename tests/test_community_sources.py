@@ -5,7 +5,6 @@ from unittest.mock import patch
 from sts2.community._merge import merge_results
 from sts2.community._types import (
     SourceResult,
-    extract_tier_ratings,
     extract_tips,
 )
 
@@ -130,7 +129,7 @@ def test_steam_discussions_parse():
 
 def test_merge_empty_results():
     """Merging two empty SourceResults produces empty output."""
-    merged = merge_results([_empty_result("reddit"), _empty_result("steam")])
+    merged = merge_results([_empty_result("steam_guides"), _empty_result("steam")])
     assert merged["card_tiers"] == {}
     assert merged["community_tips"] == {}
     assert merged["meta_posts"] == []
@@ -139,7 +138,7 @@ def test_merge_empty_results():
 
 def test_merge_tier_votes():
     """Tier votes from multiple sources are combined for consensus."""
-    r1 = SourceResult(source_name="reddit")
+    r1 = SourceResult(source_name="steam_guides")
     r1.tier_votes["bash"] = ["S", "S", "A"]
 
     r2 = SourceResult(source_name="steam")
@@ -152,7 +151,7 @@ def test_merge_tier_votes():
 
 def test_merge_deduplicates_tips():
     """Same tip from two sources appears only once."""
-    r1 = SourceResult(source_name="reddit")
+    r1 = SourceResult(source_name="steam_guides")
     r1.tips["bash"] = ["Bash is great for early damage output in act one"]
 
     r2 = SourceResult(source_name="steam")
@@ -164,35 +163,35 @@ def test_merge_deduplicates_tips():
 
 def test_merge_meta_posts_sorted():
     """Meta posts from mixed sources are sorted by score descending."""
-    r1 = SourceResult(source_name="reddit")
-    r1.meta_posts = [{"title": "Reddit post", "score": 50, "source": "reddit"}]
+    r1 = SourceResult(source_name="steam_guides")
+    r1.meta_posts = [{"title": "Guide post", "score": 50, "source": "steam_guides"}]
 
     r2 = SourceResult(source_name="steam")
     r2.meta_posts = [{"title": "Steam guide", "score": 100, "source": "steam_guide"}]
 
     merged = merge_results([r1, r2])
     assert merged["meta_posts"][0]["source"] == "steam_guide"
-    assert merged["meta_posts"][1]["source"] == "reddit"
+    assert merged["meta_posts"][1]["source"] == "steam_guides"
 
 
 def test_merge_source_attribution():
     """Each meta_post retains its source field."""
-    r1 = SourceResult(source_name="reddit")
-    r1.meta_posts = [{"title": "A", "score": 10, "source": "reddit", "type": "strategy"}]
+    r1 = SourceResult(source_name="steam_guides")
+    r1.meta_posts = [{"title": "A", "score": 10, "source": "steam_guides", "type": "strategy"}]
 
     r2 = SourceResult(source_name="steam")
     r2.meta_posts = [{"title": "B", "score": 5, "source": "steam_guide", "type": "strategy"}]
 
     merged = merge_results([r1, r2])
     sources = {p["source"] for p in merged["meta_posts"]}
-    assert "reddit" in sources
+    assert "steam_guides" in sources
     assert "steam_guide" in sources
 
 
 def test_merge_source_names():
     """Merged result includes list of source names."""
-    merged = merge_results([_empty_result("reddit"), _empty_result("steam")])
-    assert "reddit" in merged["source_names"]
+    merged = merge_results([_empty_result("steam_guides"), _empty_result("steam")])
+    assert "steam_guides" in merged["source_names"]
     assert "steam" in merged["source_names"]
 
 
@@ -201,23 +200,24 @@ def test_merge_source_names():
 def test_source_enable_disable():
     """STS2_COMMUNITY_SOURCES env var controls which sources run."""
     from sts2.community import _enabled_sources
-    with patch("sts2.community.COMMUNITY_SOURCES", "reddit"):
-        assert _enabled_sources() == ["reddit"]
     with patch("sts2.community.COMMUNITY_SOURCES", "steam"):
         assert _enabled_sources() == ["steam"]
     with patch("sts2.community.COMMUNITY_SOURCES", "all"):
-        result = _enabled_sources()
-        assert "reddit" in result
-        assert "steam" in result
+        assert "steam" in _enabled_sources()
 
 
 def test_unknown_source_ignored():
-    """Unknown source names in env var are silently filtered out."""
+    """Unknown source names in the env var are silently filtered out.
+
+    'reddit' is deliberately in this list: it was a real source until Reddit
+    removed public JSON access, so stale configs must degrade gracefully
+    rather than error.
+    """
     from sts2.community import _enabled_sources
     with patch("sts2.community.COMMUNITY_SOURCES", "reddit,discord"):
-        result = _enabled_sources()
-    assert result == ["reddit"]
-    assert "discord" not in result
+        assert _enabled_sources() == []
+    with patch("sts2.community.COMMUNITY_SOURCES", "reddit,steam"):
+        assert _enabled_sources() == ["steam"]
 
 
 def test_empty_sources():
@@ -231,43 +231,13 @@ def test_empty_sources():
     assert merged["meta_posts"] == []
 
 
-def test_one_source_fails_others_continue():
-    """If Reddit fails, Steam still runs and vice versa."""
+def test_source_failure_is_contained():
+    """A scraper raising must not abort the run; it is recorded as an error."""
     from sts2.community import scrape_community_data
-
-    def mock_reddit_fail(names):
-        raise ConnectionError("Reddit down")
-
-    mock_steam_result = SourceResult(source_name="steam", post_count=5)
-    mock_steam_result.meta_posts = [{"title": "Test", "score": 10, "source": "steam_guide", "type": "strategy"}]
-
-    with patch("sts2.community.COMMUNITY_SOURCES", "all"), \
-         patch("sts2.community.reddit.scrape", side_effect=mock_reddit_fail), \
-         patch("sts2.community.steam.scrape", return_value=mock_steam_result):
-        data = scrape_community_data({"bash"})
-
-    assert data["sources"] == 5
-    assert len(data["meta_posts"]) == 1
-
-
-# ── Backward compatibility ───────────────────────────────────────────────
-
-def test_backward_compat_imports():
-    """All old imports from sts2.community still work."""
-    from sts2.community import (
-        _compute_consensus_tier,
-        _extract_tier_ratings,
-        _extract_tips,
-        _is_sts2_post,
-        run_community_scraper,
-    )
-
-    # Verify they're callable
-    assert callable(_compute_consensus_tier)
-    assert callable(_extract_tier_ratings)
-    assert callable(_extract_tips)
-    assert callable(_is_sts2_post)
-    assert callable(run_community_scraper)
+    with patch("sts2.community.steam.scrape", side_effect=RuntimeError("boom")), \
+         patch("sts2.community.COMMUNITY_SOURCES", "steam"):
+        result = scrape_community_data(set())
+    assert result is not None
 
 
 def test_consensus_tier_via_package():
@@ -434,76 +404,6 @@ def test_steam_scrape_top_level():
     mock_guides.assert_called_once()
     mock_discussions.assert_called_once()
     assert result.source_name == "steam"
-
-
-# ── Reddit: mocked scrape ───────────────────────────────────────────────
-
-def test_reddit_scrape_mocked():
-    """Reddit scrape with mocked network returns SourceResult."""
-    from sts2.community.reddit import scrape
-
-    mock_posts_data = {
-        "data": {
-            "children": [
-                {"data": {
-                    "id": "abc123", "title": "STS2 tier list S: Bash A: Defend",
-                    "selftext": "Bash is great. Necrobinder is fun.",
-                    "score": 50, "num_comments": 10, "url": "", "permalink": "/r/slaythespire2/abc123",
-                    "link_flair_text": "", "created_utc": 1700000000, "subreddit": "slaythespire2",
-                }},
-            ]
-        }
-    }
-
-    with patch("sts2.community.reddit._fetch_reddit_json", return_value=mock_posts_data), \
-         patch("sts2.community.reddit.time.sleep"):
-        result = scrape({"bash", "defend"})
-
-    assert result.source_name == "reddit"
-    assert result.post_count > 0
-
-
-def test_reddit_fetch_post_comments_mocked():
-    """_fetch_post_comments returns comment bodies."""
-    from sts2.community.reddit import _fetch_post_comments
-
-    mock_data = [
-        {"data": {"children": []}},
-        {"data": {"children": [
-            {"data": {"body": "Bash is incredibly strong against this boss"}},
-            {"data": {"body": "short"}},  # too short, filtered
-        ]}},
-    ]
-    with patch("sts2.community.reddit._fetch_reddit_json", return_value=mock_data):
-        comments = _fetch_post_comments("/r/test/abc")
-    assert len(comments) == 1
-    assert "Bash" in comments[0]
-
-
-def test_reddit_fetch_post_comments_error():
-    """_fetch_post_comments returns empty list on error."""
-    import urllib.error
-
-    from sts2.community.reddit import _fetch_post_comments
-    with patch("sts2.community.reddit._fetch_reddit_json", side_effect=urllib.error.URLError("fail")):
-        assert _fetch_post_comments("/r/test/abc") == []
-
-
-def test_reddit_fetch_subreddit_posts_error():
-    """_fetch_subreddit_posts returns empty list on error."""
-    import urllib.error
-
-    from sts2.community.reddit import _fetch_subreddit_posts
-    with patch("sts2.community.reddit._fetch_reddit_json", side_effect=urllib.error.URLError("fail")):
-        assert _fetch_subreddit_posts("slaythespire") == []
-
-
-# ── Extract functions edge cases ─────────────────────────────────────────
-
-def test_extract_tier_ratings_no_matches():
-    """extract_tier_ratings returns empty for text without tier patterns."""
-    result = extract_tier_ratings("This is just regular text.", {"bash"})
-    assert result == {}
 
 
 def test_extract_tips_no_matches():

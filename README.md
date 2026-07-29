@@ -73,7 +73,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Card Regret Analysis** — Cards you pick in losses but skip in wins, helping identify bad picks
 - **Win Streak Tracker** — Prominent current win streak display on the home page
 - **Next Epoch Suggestions** — Upcoming epochs you haven't unlocked yet with requirements and rewards
-- **Community Meta** — Tier lists and strategy posts from Reddit and Steam, community-voted card tiers, aggregate player stats with import/export
+- **Community Meta** — Tier lists and strategy guides from the Steam community, community-voted card tiers, aggregate player stats with import/export
 - **Global Search** — Fuzzy search with "Did you mean?" suggestions across all entities
 
 ### Advanced Analytics (v2.9.3)
@@ -197,7 +197,7 @@ spirescope serve --browser     # Force opening browser automatically
 spirescope serve --no-browser  # Start without opening browser
 spirescope update       # Fetch latest data from the wiki + saves
 spirescope update --save-only  # Discover from saves only (no network)
-spirescope community    # Fetch community data from Reddit and Steam
+spirescope community    # Fetch community data from Steam
 spirescope export       # Export aggregate stats to JSON file
 spirescope reset-stats  # Delete aggregate stats file
 spirescope sync-up      # Upload local aggregate stats to sync service
@@ -215,7 +215,7 @@ spirescope --version    # Show version
 | `STS2_MODS_DIR` | Path to mods directory (JSON files) | `sts2/data/mods/` |
 | `STS2_HOST` | Server bind address | `127.0.0.1` |
 | `STS2_PORT` | Server port | `8000` |
-| `STS2_COMMUNITY_SOURCES` | Community sources: `all`, `reddit`, `steam` | `all` |
+| `STS2_COMMUNITY_SOURCES` | Community sources: `all`, `steam` | `all` |
 | `STS2_SYNC_URL` | Sync service URL (opt-in) | Disabled |
 | `STS2_SYNC_KEY` | API key for sync service | None |
 | `SPIRESCOPE_API_KEY` | Optional API key for rate limit bypass | None |
@@ -289,11 +289,10 @@ sts2/
   app.py             # FastAPI app, middleware, security headers
   routes.py          # All route handlers
   analytics.py       # Run analytics computation
-  community/         # Multi-source community data (Reddit + Steam)
+  community/         # Community data (Steam)
     __init__.py      # Orchestrator + re-exports
     _types.py        # Shared types, extraction functions
     _merge.py        # Weighted merge logic
-    reddit.py        # Reddit data fetcher (public JSON API)
     steam.py         # Steam data fetcher (reviews, guides, discussions)
   aggregate.py       # Aggregate stats computation and merging
   config.py          # Auto-detected paths and settings

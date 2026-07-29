@@ -1,4 +1,4 @@
-"""Community data scraper: pull tier lists, tips, and meta from Reddit and Steam.
+"""Community data scraper: pull tier lists, tips, and meta from Steam.
 
 Usage: python -m sts2 community
 """
@@ -21,7 +21,6 @@ from ._types import (
 from ._types import (
     extract_tips as _extract_tips,
 )
-from .reddit import _is_sts2_post
 
 log = logging.getLogger(__name__)
 
@@ -39,12 +38,11 @@ __all__ = [
     "_compute_consensus_tier",
     "_extract_tier_ratings",
     "_extract_tips",
-    "_is_sts2_post",
     "_load_cached_community_data",
 ]
 
 # Default: all sources enabled. Override with STS2_COMMUNITY_SOURCES env var.
-_KNOWN_SOURCES = {"reddit", "steam"}
+_KNOWN_SOURCES = {"steam"}
 
 
 def _enabled_sources() -> list[str]:
@@ -73,15 +71,6 @@ def scrape_community_data(existing_names: set[str] = None) -> dict:
     print("\n  Spirescope Community Data Collector")
     print("  ===================================\n")
     print(f"  Sources: {', '.join(enabled)}\n")
-
-    if "reddit" in enabled:
-        try:
-            from .reddit import scrape as scrape_reddit
-            results.append(scrape_reddit(existing_names))
-        except Exception as e:
-            log.warning("Reddit scraper failed: %s", e)
-            print(f"  [Reddit] Failed: {e}")
-            results.append(SourceResult(source_name="reddit", errors=[str(e)]))
 
     if "steam" in enabled:
         try:
