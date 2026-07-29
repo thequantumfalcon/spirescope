@@ -3103,7 +3103,7 @@
     "character": "Ironclad",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Rare",
+    "rarity": "Uncommon",
     "description": "Gain 4 Block. You receive 50% less damage from Vulnerable enemies this turn.",
     "description_upgraded": "Gain 7 Block. You receive 50% less damage from Vulnerable enemies this turn.",
     "keywords": [
@@ -3417,8 +3417,8 @@
     "cost": "2",
     "type": "Power",
     "rarity": "Rare",
-    "description": "Whenever you draw a card containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d, it is played against a random enemy.",
-    "description_upgraded": "Whenever you draw a card containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d, it is played against a random enemy.",
+    "description": "Whenever you draw a card containing “Strike”, it is played against a random enemy.",
+    "description_upgraded": "Whenever you draw a card containing “Strike”, it is played against a random enemy.",
     "keywords": [
       "Draw"
     ]
@@ -3622,8 +3622,8 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 6 damage. Deals 2 additional damage for ALL your cards containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d.",
-    "description_upgraded": "Deal 6 damage. Deals 3 additional damage for ALL your cards containing \u00e2\u0080\u009cStrike\u00e2\u0080\u009d.",
+    "description": "Deal 6 damage. Deals 2 additional damage for ALL your cards containing “Strike”.",
+    "description_upgraded": "Deal 6 damage. Deals 3 additional damage for ALL your cards containing “Strike”.",
     "keywords": []
   },
   {
@@ -6259,7 +6259,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Common",
+    "rarity": "Uncommon",
     "description": "Draw 3 cards. Discard 1 card.",
     "description_upgraded": "Draw 4 cards. Discard 1 card.",
     "keywords": [

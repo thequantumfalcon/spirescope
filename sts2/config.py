@@ -84,7 +84,7 @@ def _find_save_dirs() -> list[Path]:
     if sys.platform == "linux":
         proton_base = (
             Path.home() / ".local" / "share" / "Steam" / "steamapps"
-            / "compatdata" / "2832040" / "pfx" / "drive_c" / "users"
+            / "compatdata" / "2868840" / "pfx" / "drive_c" / "users"
             / "steamuser" / "AppData" / "Local" / "SlayTheSpire2"
         )
         if proton_base.exists():

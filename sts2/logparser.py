@@ -16,7 +16,7 @@ elif sys.platform == "linux":
     # in sts2/config.py so the log poller and save watcher see the same install.
     _proton_base = (
         Path.home() / ".local" / "share" / "Steam" / "steamapps"
-        / "compatdata" / "2832040" / "pfx" / "drive_c" / "users"
+        / "compatdata" / "2868840" / "pfx" / "drive_c" / "users"
         / "steamuser" / "AppData" / "Local" / "SlayTheSpire2"
     )
     if _proton_base.exists():

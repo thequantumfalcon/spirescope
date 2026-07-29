@@ -35,7 +35,7 @@ _add("Ironclad", [
     "Stone Armor", "Unrelenting", "Uppercut", "Vicious", "Whirlwind",
 ], "Uncommon")
 _add("Ironclad", [
-    "Aggression", "Barricade", "Brand", "Cascade", "Colossus",
+    "Aggression", "Barricade", "Brand", "Cascade",
     "Conflagration", "Crimson Mantle", "Dark Embrace",
     "Demon Form", "Feed", "Fiend Fire", "Hellraiser", "Impervious",
     "Juggernaut", "Mangle", "Offering", "One-Two Punch", "Pact's End",
@@ -43,6 +43,11 @@ _add("Ironclad", [
     "Unmovable",
 ], "Rare")
 _add("Ironclad", ["Break", "Corruption"], "Ancient")
+# v0.103.0 rarity changes — the map had these wrong until the 2026-07-27
+# staleness audit; wiki.gg confirms both are Uncommon.
+_add("Ironclad", ["Colossus"], "Uncommon")
+_add("Silent", ["Acrobatics"], "Uncommon")
+
 # v0.109.0 rarity changes (wiki Lua module still stale)
 _add("Ironclad", ["Taunt"], "Common")
 _add("Ironclad", ["Bloodletting", "Cruelty"], "Uncommon")
@@ -51,7 +56,7 @@ _add("Ironclad", ["Dominate"], "Rare")
 # ── SILENT ──
 _add("Silent", ["Strike", "Defend", "Neutralize", "Survivor"], "Starter")
 _add("Silent", [
-    "Acrobatics", "Anticipate", "Backflip", "Blade Dance",
+    "Anticipate", "Backflip", "Blade Dance",
     "Cloak and Dagger", "Dagger Spray", "Dagger Throw", "Deadly Poison",
     "Deflect", "Dodge and Roll", "Flick-Flack", "Leading Strike",
     "Piercing Wail", "Poisoned Stab", "Prepared", "Ricochet", "Slice",

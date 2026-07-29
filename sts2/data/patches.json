@@ -104,5 +104,18 @@
         "MONSTER.TORCH_HEAD_AMALGAM"
       ]
     }
+  },
+  {
+    "patch": "v0.109.1",
+    "date": "2026-07-25",
+    "branch": "beta",
+    "build_ids": [
+      "v0.109.1"
+    ],
+    "changed": {
+      "cards": [],
+      "relics": [],
+      "enemies": []
+    }
   }
 ]
