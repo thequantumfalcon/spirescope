@@ -21,5 +21,5 @@ Expected response time: 48 hours.
 
 ## Scope
 
-SpireScope is a local-only tool. CSRF, rate limiting, and CSP are in scope.
+SpireScope is a local-only tool. CSRF and CSP are in scope. Rate limiting is in scope only for non-loopback binds (`STS2_HOST`); it is intentionally skipped on loopback, where the server is single-user.
 The opt-in sync service is in scope. Game data accuracy is out of scope.

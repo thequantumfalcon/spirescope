@@ -84,7 +84,6 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Anti-Pattern Detection** — Named recurring mistakes: "The Hoarder" (unused potions), "The Greedy Builder" (oversized decks), "The Coward" (skipping elites).
 - **Deck Health Score** — Synergy graph analysis scoring deck coherence from 0-100. Identifies orphan cards with zero synergy connections.
 - **Archetype Drift** — Alerts when your card picks drift away from your deck's archetype mid-run.
-- **Strategy Memory** — Tracks which strategies you use over time. Frequently-used strategies glow bright; forgotten ones fade.
 - **Cascade Map** — Click any card in a completed run to see its downstream impact: how damage, fight length, and HP changed after picking it.
 - **Prophecy Engine** — Pre-run predictions based on your history: win probability, danger zone floors, and strategic recommendations.
 - **Autopsy Report** — When you die, 5 diagnostic agents analyze what went wrong AND what went right. Causal chain narrative + exculpatory findings.
@@ -258,7 +257,7 @@ SpireScope auto-detects both vanilla and modded paths and uses whichever has mor
 
 - CSRF protection on all POST forms
 - Content-Security-Policy, X-Frame-Options, Referrer-Policy, X-Content-Type-Options
-- Per-IP rate limiting (60 req/min) with automatic memory cleanup
+- Per-IP rate limiting (60 req/min) when bound to a non-loopback address via `STS2_HOST`; skipped on loopback, where the server is single-user
 - Admin-token-gated reload endpoint (constant-time comparison)
 - SSE connection cap (10 concurrent) with 5-minute idle timeout
 - Jinja2 auto-escaping on all user-reflected input

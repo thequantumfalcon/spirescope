@@ -68,12 +68,18 @@ the existing characters. Basic → Starter mapping applies.
 ```json
 {
   "character": "<Name>",
-  "overview": "…",
-  "core_mechanics": ["…"],
-  "beginner_tips": ["…"],
+  "description": "One-paragraph overview of the character's identity.",
+  "starting_relic": "<Relic Name>",
+  "starting_relic_effect": "What the starting relic does.",
+  "general_tips": ["…", "…"],
   "archetypes": [
-    {"name": "<Archetype>", "cards": ["CARD.X", "CARD.Y"],
-     "description": "…", "priority": "high"}
+    {
+      "name": "<Archetype>",
+      "description": "…",
+      "strategy": "How the archetype is played.",
+      "key_cards": ["CARD.X", "CARD.Y"],
+      "key_relics": ["RELIC.Z"]
+    }
   ]
 }
 ```
