@@ -1,0 +1,28 @@
+version: 2
+updates:
+  # The release workflows build and publish executables that users download, so
+  # a compromised or vulnerable action is a supply-chain problem for them, not
+  # just for CI.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "ci"
+    labels:
+      - dependencies
+
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "deps"
+    labels:
+      - dependencies
+    groups:
+      dev-dependencies:
+        patterns:
+          - pytest*
+          - ruff
+          - mypy

@@ -16,7 +16,7 @@ pytest -q
 - **Python 3.11+** required
 - Run `python -m sts2` to start the dev server at http://127.0.0.1:8000
 - Run `python -m sts2 update` to fetch fresh game data
-- Run `python -m sts2 community` to pull community data from Reddit and Steam
+- Run `python -m sts2 community` to pull community data from Steam
 - Run `pytest -q --tb=short` before submitting changes
 
 ## Project Layout
@@ -28,11 +28,10 @@ sts2/
   routes.py          # All route handlers
   analytics.py       # Run analytics computation
   aggregate.py       # Aggregate stats computation and merging
-  community/         # Multi-source community data (Reddit + Steam)
+  community/         # Community data sourcing
     __init__.py      # Orchestrator + re-exports
     _types.py        # Shared types, extraction functions
     _merge.py        # Weighted merge logic
-    reddit.py        # Reddit data fetcher (public JSON API)
     steam.py         # Steam data fetcher (reviews, guides, discussions)
   config.py          # Auto-detected paths and settings
   fetcher.py         # Data fetcher (wiki + save file discovery)

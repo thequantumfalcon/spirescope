@@ -15,6 +15,43 @@
 
 ### Fixed
 
+- **The Community page returned HTTP 500 for anyone with aggregate stats.**
+  The card table sorted a mapping of `{wins, total}` dictionaries by value,
+  which Python cannot order, so every visit errored once an aggregate existed
+  — the state produced by `spirescope export`, importing a friend's stats, or
+  `sync-down`. "Top Cards by Win Rate" had never rendered. Character win rate
+  also divided by a zero total, and the rank filter ran after the top-10 slice,
+  so the table could come back short.
+- **Combat statistics counted the wrong floors.** A "fight" was any floor where
+  you lost HP, so fights won without taking damage were dropped from every
+  denominator while events that cost HP were counted as combats. Deadliest
+  Encounters, Encounter Danger grades, kill rates, damage-by-act and the
+  per-run combat count were all computed from that number.
+- **The live tracker overwrote save data with partial log data.** The log only
+  records cards obtained from card rewards, so starters, Neow, shop and event
+  cards are invisible to it, its gold never accounts for spending, and its
+  floor counts from the start of the act. Those values replaced the save's,
+  which produced wrong card counts and gold on `/live` and `/overlay` and could
+  trigger false "no defensive cards" coaching alerts.
+- **A single curse disabled deck archetype detection.** Any curse made the deck
+  read as two characters and fall back to "Mixed", silently removing "Detected
+  Archetypes" and "Cards to Look For" from `/deck` and from live coaching.
+- **"No AoE" was reported for every deck.** The check looked for a keyword that
+  no card carries; it now reads the card text.
+- **`spirescope update` re-corrupted card and relic text.** Unicode escapes were
+  decoded in a way that routed UTF-8 through latin-1, mangling quotes and
+  dashes. Three relic descriptions shipped corrupted and are repaired.
+- **Archetype drift alerts were nondeterministic.** Ties were broken by hash
+  order, so the banner could appear or vanish between restarts on identical
+  data.
+- **A non-ASCII token returned HTTP 500 instead of 403** on the admin
+  endpoints, and in the rate limiter it raised before the request was counted.
+- **Docker deployments could not save settings.** The data directory was owned
+  by root while the app ran as an unprivileged user, so writes failed silently
+  and the language switcher rejected its own offered locale.
+- **CI reported success when tests errored.** The workflow discarded pytest's
+  exit code and re-derived the result by pattern-matching its summary, which
+  does not account for collection or fixture errors.
 - **Wrong Steam AppID broke Linux and Steam Deck detection.** Save- and
   log-directory discovery built Proton prefix paths from AppID `2832040`,
   which belongs to a different game; Slay the Spire 2 is `2868840`. Auto
