@@ -38,6 +38,12 @@ _RE_LOST_ENCOUNTER = re.compile(r"\[INFO\] (CHARACTER\.\w+) fought (ENCOUNTER\.\
 _RE_WROTE_SAVE = re.compile(r"\[INFO\] Wrote \d+ bytes to path=.*?\\(current_run(?:_mp)?\.save)")
 _RE_SAVED_HISTORY = re.compile(r"\[INFO\] Saved run history: (\d+)\.run")
 _RE_LOBBY_DISCONNECT = re.compile(r"\[INFO\] \[RunLobby\] Disconnected\. Reason: (\w+)")
+# Unmatched on real logs: a full v0.103.2 session emitted no
+# MapSelectionSynchronizer lines at all (0 hits over 1367 lines, while the
+# neighbouring preload pattern hit 83), so state.floor stays 0 in practice.
+# The live view takes floor from the save, which is authoritative and
+# cumulative, so this only ever supplemented. Left in place in case other
+# builds emit it; do not make anything depend on it without re-measuring.
 _RE_MOVING = re.compile(r"\[DEBUG\] \[MapSelectionSynchronizer\] Moving to coordinate MapCoord \((\d+), (\d+)\)")
 _RE_ROOM_PRELOAD = re.compile(r"\[INFO\] Preloading '(.+?)' assets")
 _RE_EPOCH = re.compile(r"\[INFO\] Epoch obtained for completing Act (\d+)")

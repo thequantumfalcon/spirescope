@@ -33,27 +33,35 @@ jobs:
       - name: Run tests
         id: tests
         run: |
-          output=$(pytest -q --tb=short 2>&1) || true
+          set +e
+          output=$(pytest -q --tb=short 2>&1)
+          rc=$?
+          set -e
           echo "$output"
           passed=$(echo "$output" | grep -oP '\d+(?= passed)' | tail -1)
           failed=$(echo "$output" | grep -oP '\d+(?= failed)' | tail -1)
+          errors=$(echo "$output" | grep -oP '\d+(?= error)' | tail -1)
           echo "passed=${passed:-0}" >> "$GITHUB_OUTPUT"
           echo "failed=${failed:-0}" >> "$GITHUB_OUTPUT"
-          if [ "${failed:-0}" != "0" ] && [ -n "$failed" ]; then
-            exit 1
-          fi
-          if [ -z "$passed" ]; then
-            exit 1
-          fi
+          echo "errors=${errors:-0}" >> "$GITHUB_OUTPUT"
+          # Honour pytest's own exit code. The summary greps drive the badge,
+          # but they cannot be the gate: pytest reports collection and fixture
+          # failures as "N errors", which matches neither "passed" nor
+          # "failed", so a run that errored out used to leave this step green.
+          exit $rc
 
       - name: Generate badge
         if: matrix.python-version == '3.12' && github.ref == 'refs/heads/master'
         run: |
           passed=${{ steps.tests.outputs.passed }}
           failed=${{ steps.tests.outputs.failed }}
+          errors=${{ steps.tests.outputs.errors }}
           if [ "$failed" != "0" ] && [ -n "$failed" ]; then
             color="red"
             message="${passed} passing, ${failed} failing"
+          elif [ "$errors" != "0" ] && [ -n "$errors" ]; then
+            color="red"
+            message="${passed} passing, ${errors} errors"
           else
             color="brightgreen"
             message="${passed} passing"

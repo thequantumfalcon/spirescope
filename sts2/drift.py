@@ -47,8 +47,12 @@ def detect_drift_alert(trajectory):
     if not early_archs or not late_archs:
         return None
 
-    early_dominant = max(set(early_archs), key=early_archs.count)
-    late_dominant = max(set(late_archs), key=late_archs.count)
+    # sorted(), not set(): iterating a set of strings is ordered by randomized
+    # hashes, so on a tie the "dominant" archetype changed between processes and
+    # the drift banner appeared or vanished on identical data. Ties now break
+    # alphabetically and the result is stable across restarts.
+    early_dominant = max(sorted(set(early_archs)), key=early_archs.count)
+    late_dominant = max(sorted(set(late_archs)), key=late_archs.count)
 
     if early_dominant != late_dominant:
         return f"Deck started as {early_dominant} but drifted toward {late_dominant}"

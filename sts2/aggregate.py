@@ -87,15 +87,24 @@ def _scale_subcounts(d: dict, scale: float) -> dict:
             out[key] = vals
             continue
         scaled = {}
+        any_nonzero = False
         for subkey, subval in vals.items():
             # Exclude bools — they're technically int but should not aggregate.
             if isinstance(subval, bool):
                 scaled[subkey] = subval
             elif isinstance(subval, (int, float)):
-                scaled[subkey] = int(subval * scale) if isinstance(subval, int) else subval * scale
+                # round, not int: truncation sends every counter below 1/scale
+                # to zero, which deletes real low-sample data instead of
+                # down-weighting it.
+                scaled[subkey] = round(subval * scale) if isinstance(subval, int) else subval * scale
+                any_nonzero = any_nonzero or scaled[subkey] != 0
             else:
                 scaled[subkey] = subval
-        out[key] = scaled
+                any_nonzero = True
+        # An entry scaled to all-zeros carries no information; keeping it would
+        # accumulate dead keys in the aggregate file across every merge.
+        if any_nonzero:
+            out[key] = scaled
     return out
 
 

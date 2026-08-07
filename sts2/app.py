@@ -103,6 +103,20 @@ def generate_csrf_token() -> str:
 templates.env.globals["csrf"] = generate_csrf_token
 
 
+def tokens_equal(provided: str, expected: str) -> bool:
+    """Constant-time token compare that tolerates hostile input.
+
+    compare_digest raises TypeError on non-ASCII str, and every caller here
+    feeds it a request header. That turned a 403 into a 500, and in the
+    rate-limit middleware it raised before the request was recorded, so a peer
+    could stay unthrottled by sending a non-ASCII key. A non-ASCII token can
+    never equal these hex/ASCII secrets, so rejecting it early is equivalent.
+    """
+    if not provided or not provided.isascii():
+        return False
+    return secrets.compare_digest(provided, expected)
+
+
 def validate_csrf_token(token: str) -> bool:
     """Validate an HMAC-signed CSRF token and check it's not expired.
 
@@ -119,7 +133,7 @@ def validate_csrf_token(token: str) -> bool:
         return False
     msg = struct.pack(">Q", ts)
     expected = hmac.new(_CSRF_SECRET, msg, hashlib.sha256).hexdigest()
-    return hmac.compare_digest(sig, expected)
+    return tokens_equal(sig, expected)
 
 _ADMIN_TOKEN = os.environ.get("SPIRESCOPE_ADMIN_TOKEN", secrets.token_hex(32))
 if not os.environ.get("SPIRESCOPE_ADMIN_TOKEN"):
@@ -247,7 +261,7 @@ async def rate_limit(request: Request, call_next):
     _api_key = os.environ.get("SPIRESCOPE_API_KEY")
     if _api_key:
         provided = request.headers.get("x-api-key", "")
-        if provided and secrets.compare_digest(provided, _api_key):
+        if tokens_equal(provided, _api_key):
             return await call_next(request)
 
     if ip not in _rate_limit_store:

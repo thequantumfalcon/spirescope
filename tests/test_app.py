@@ -1051,7 +1051,8 @@ async def test_compute_analytics_damage_by_act():
     from sts2.analytics import compute_analytics
     from sts2.models import RunFloor, RunHistory
 
-    floors = [RunFloor(floor=i, damage_taken=5) for i in range(1, 6)]
+    floors = [RunFloor(floor=i, damage_taken=5, type="monster",
+                       encounter=f"ENCOUNTER.TEST_{i}") for i in range(1, 6)]
     runs = [RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], floors=floors)]
     result = compute_analytics(runs)
     assert "Act 1" in result["damage_by_act"]
@@ -1746,33 +1747,50 @@ async def test_get_live_run_save_active():
 
 
 async def test_get_live_run_merge_both_active():
-    """When both save and log are active, merge: save HP + log deck/gold."""
+    """The log supplements the save; it must never overwrite it.
+
+    The log only sees cards obtained from card rewards, so its deck is always a
+    strict subset of the real one (a full run logs a couple of entries), its
+    gold never accounts for spending, and its floor is act-relative while the
+    save's is cumulative. Letting any of those win produced a live tracker that
+    reported 2 cards and inflated gold for a 13-card deck.
+    """
     from unittest.mock import AsyncMock, patch
 
     from sts2.models import CurrentRun
     from sts2.routes import _get_live_run
 
+    full_deck = ["CARD.STRIKE"] * 4 + ["CARD.DEFEND"] * 4 + ["CARD.BEAM_CELL", "CARD.TEMPEST"]
     save_run = CurrentRun(active=True, character="Defect", current_hp=60,
                           max_hp=80, gold=50, act=1, floor=3,
+                          deck=full_deck,
+                          deck_upgrades=[False] * len(full_deck),
+                          deck_enchantments=[""] * len(full_deck),
+                          potions=["POTION.FIRE_POTION"],
                           relics=["RELIC.CRACKED_CORE"])
     log_state = {"active": True, "character": "Defect", "current_hp": 0,
-                 "max_hp": 0, "gold": 120, "act": 1, "floor": 5,
+                 "max_hp": 0, "gold": 120, "act": 2, "floor": 5,
                  "deck": ["CARD.BEAM_CELL", "CARD.TEMPEST"],
-                 "potions": ["POTION.POWER_POTION"]}
+                 "potions": ["POTION.POWER_POTION"],
+                 "encounters_won": ["ENCOUNTER.JAW_WORM"]}
     with patch("sts2.routes.asyncio.to_thread", new_callable=AsyncMock,
                return_value=save_run), \
            patch("sts2.app._poll_game_log_once", new_callable=AsyncMock), \
          patch("sts2.app._log_run_state", log_state):
         result = await _get_live_run()
-    # Save provides HP and relics
+    # Save owns HP, relics, and everything it records.
     assert result.current_hp == 60
     assert result.max_hp == 80
     assert "RELIC.CRACKED_CORE" in result.relics
-    # Log provides fresher deck, gold, potions, floor
-    assert result.deck == ["CARD.BEAM_CELL", "CARD.TEMPEST"]
-    assert result.gold == 120
-    assert result.potions == ["POTION.POWER_POTION"]
-    assert result.floor == 5
+    # The save's complete deck survives the log's partial one.
+    assert result.deck == full_deck
+    assert len(result.deck_upgrades) == len(full_deck)
+    assert result.gold == 50
+    assert result.potions == ["POTION.FIRE_POTION"]
+    assert result.floor == 3
+    # The log still contributes what the save cannot.
+    assert result.act == 2
+    assert result.encounters_won == ["ENCOUNTER.JAW_WORM"]
 
 
 async def test_get_live_run_log_only():

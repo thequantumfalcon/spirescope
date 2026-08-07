@@ -19,26 +19,26 @@ def _make_runs():
                    deck=["CARD.BASH", "CARD.STRIKE"], relics=["RELIC.BURNING_BLOOD"],
                    run_time=1200, killed_by="",
                    floors=[
-                       RunFloor(floor=1, current_hp=70, max_hp=80, damage_taken=10, encounter="ENEMY.JAW_WORM",
+                       RunFloor(floor=1, current_hp=70, max_hp=80, damage_taken=10, type="monster", encounter="ENCOUNTER.JAW_WORM",
                                 cards_offered=["CARD.BASH", "CARD.STRIKE"], card_picked="CARD.BASH"),
-                       RunFloor(floor=5, current_hp=50, max_hp=80, damage_taken=20, encounter="ENEMY.GREMLIN"),
-                       RunFloor(floor=10, current_hp=40, max_hp=80, damage_taken=10, encounter="ENEMY.SENTRIES"),
+                       RunFloor(floor=5, current_hp=50, max_hp=80, damage_taken=20, type="monster", encounter="ENCOUNTER.GREMLIN"),
+                       RunFloor(floor=10, current_hp=40, max_hp=80, damage_taken=10, type="monster", encounter="ENCOUNTER.SENTRIES"),
                    ]),
         RunHistory(id="r2", character="Ironclad", win=False, ascension=5,
                    deck=["CARD.BASH"], relics=["RELIC.BURNING_BLOOD"],
-                   run_time=600, killed_by="ENEMY.HEXAGHOST",
+                   run_time=600, killed_by="ENCOUNTER.HEXAGHOST",
                    floors=[
-                       RunFloor(floor=1, current_hp=60, max_hp=80, damage_taken=20, encounter="ENEMY.JAW_WORM"),
-                       RunFloor(floor=5, current_hp=30, max_hp=80, damage_taken=30, encounter="ENEMY.GREMLIN"),
-                       RunFloor(floor=8, current_hp=0, max_hp=80, damage_taken=30, encounter="ENEMY.HEXAGHOST"),
+                       RunFloor(floor=1, current_hp=60, max_hp=80, damage_taken=20, type="monster", encounter="ENCOUNTER.JAW_WORM"),
+                       RunFloor(floor=5, current_hp=30, max_hp=80, damage_taken=30, type="monster", encounter="ENCOUNTER.GREMLIN"),
+                       RunFloor(floor=8, current_hp=0, max_hp=80, damage_taken=30, type="monster", encounter="ENCOUNTER.HEXAGHOST"),
                    ]),
         RunHistory(id="r3", character="Silent", win=True, ascension=10,
                    deck=["CARD.NEUTRALIZE", "CARD.STRIKE"], relics=["RELIC.RING_OF_THE_SNAKE"],
                    run_time=1500,
                    floors=[
-                       RunFloor(floor=1, current_hp=65, max_hp=70, damage_taken=5, encounter="ENEMY.JAW_WORM"),
-                       RunFloor(floor=10, current_hp=50, max_hp=70, damage_taken=15, encounter="ENEMY.LAGAVULIN"),
-                       RunFloor(floor=20, current_hp=45, max_hp=70, damage_taken=5, encounter="ENEMY.CHAMP"),
+                       RunFloor(floor=1, current_hp=65, max_hp=70, damage_taken=5, type="monster", encounter="ENCOUNTER.JAW_WORM"),
+                       RunFloor(floor=10, current_hp=50, max_hp=70, damage_taken=15, type="monster", encounter="ENCOUNTER.LAGAVULIN"),
+                       RunFloor(floor=20, current_hp=45, max_hp=70, damage_taken=5, type="monster", encounter="ENCOUNTER.CHAMP"),
                    ]),
     ]
 
@@ -736,14 +736,25 @@ class TestAnalyzeDeckBugFix:
         assert "error" in analysis
 
     def test_aoe_weakness_detected(self):
+        """Fires for single-target decks and stays silent for AoE decks.
+
+        The old version selected cards lacking an "AoE" keyword — which no card
+        has — so it asserted a condition that was true for every possible deck
+        and certified the bug it was meant to catch.
+        """
         from sts2.app import kb as _kb
-        # Find cards without AoE keyword
-        non_aoe_cards = [c for c in _kb.cards
-                         if "AoE" not in c.keywords and c.type == "Attack"][:5]
-        if non_aoe_cards:
-            analysis = _kb.analyze_deck([c.id for c in non_aoe_cards])
-            has_aoe_weakness = any("AoE" in w for w in analysis.get("weaknesses", []))
-            assert has_aoe_weakness
+
+        def has_aoe_warning(cards):
+            analysis = _kb.analyze_deck([c.id for c in cards])
+            return any("AoE" in w for w in analysis.get("weaknesses", []))
+
+        single_target = [c for c in _kb.cards
+                         if c.type == "Attack" and "all enemies" not in (c.description or "").lower()][:5]
+        aoe_cards = [c for c in _kb.cards
+                     if "all enemies" in (c.description or "").lower()][:5]
+        assert single_target and aoe_cards, "shipped data lost its AoE/single-target split"
+        assert has_aoe_warning(single_target)
+        assert not has_aoe_warning(aoe_cards)
 
     def test_draw_weakness_detected(self):
         from sts2.app import kb as _kb
@@ -1386,3 +1397,141 @@ class TestCardRegret:
         # CARD.BAD should be in most_picked_in_losses
         loss_pick_cards = [c["card"] for c in cr["most_picked_in_losses"]]
         assert "CARD.BAD" in loss_pick_cards
+
+
+class TestAuditRegressions:
+    """Value-level guards for defects that a green suite previously allowed.
+
+    Each of these fails against the pre-fix code, which is the only property
+    that makes a regression test worth having.
+    """
+
+    def test_community_page_renders_with_real_aggregate(self, tmp_path):
+        """dictsort(by='value') on {wins,total} dicts made /community a hard 500."""
+        import json
+        from unittest.mock import patch
+
+        from fastapi.testclient import TestClient
+
+        agg = {"run_count": 12,
+               "character_stats": {"Ironclad": {"wins": 3, "total": 12},
+                                   "Silent": {"wins": 0, "total": 0}},
+               "card_win_rates": {"CARD.STRIKE": {"wins": 6, "total": 10},
+                                  "CARD.DEFEND": {"wins": 9, "total": 9},
+                                  "CARD.BASH": {"wins": 0, "total": 0}},
+               "card_pick_rates": {}, "relic_win_rates": {}, "ascension_stats": {}}
+        path = tmp_path / "aggregate.json"
+        path.write_text(json.dumps(agg), encoding="utf-8")
+        from sts2.app import app
+        with patch("sts2.aggregate._aggregate_storage_path", return_value=path):
+            resp = TestClient(app).get("/community")
+        assert resp.status_code == 200
+        # Ranked by rate, and the zero-total rows must not divide by zero.
+        assert resp.text.index("Defend") < resp.text.index("Strike")
+
+    def test_combat_stats_ignore_events_and_count_clean_wins(self):
+        """The denominator is fights, not floors that happened to cost HP."""
+        from sts2.analytics import compute_analytics
+        from sts2.models import RunFloor, RunHistory
+
+        floors = [
+            # A fight won without taking a hit — must still count.
+            RunFloor(floor=1, type="monster", encounter="ENCOUNTER.JAW_WORM", turns=3, damage_taken=0),
+            RunFloor(floor=2, type="monster", encounter="ENCOUNTER.JAW_WORM", turns=4, damage_taken=10),
+            # An event that cost HP — must NOT count as a fight.
+            RunFloor(floor=3, type="event", encounter="EVENT.LANTERN", turns=0, damage_taken=59),
+            # Real saves leave some fights typed "unknown"; the id still says so.
+            RunFloor(floor=4, type="unknown", encounter="ENCOUNTER.TUNNELER", turns=6, damage_taken=27),
+        ]
+        runs = [RunHistory(id="r1", timestamp=1, character="Ironclad", win=False,
+                           deck=["CARD.STRIKE"], floors=floors)]
+        stats = compute_analytics(runs)
+        assert stats["damage_by_act"]["Act 1"]["total_floors"] == 3
+        assert not [e for e in stats["deadly_encounters"] if e["id"].startswith("EVENT.")]
+        jaw = [e for e in stats["deadly_encounters"] if e["id"] == "ENCOUNTER.JAW_WORM"]
+        assert jaw and jaw[0]["avg_damage"] == 5.0  # (0 + 10) / 2, not 10 / 1
+
+    def test_win_trend_reads_oldest_to_newest(self):
+        """An improving player must see a rising line, not a falling one."""
+        from sts2.analytics import compute_analytics
+        from sts2.models import RunFloor, RunHistory
+
+        runs = [RunHistory(id=str(i), timestamp=1700000000 + i * 86400,
+                           character="Ironclad", win=(i >= 5), deck=["CARD.STRIKE"],
+                           floors=[RunFloor(floor=1, type="monster",
+                                            encounter="ENCOUNTER.X", turns=2, damage_taken=5)])
+                for i in range(10)]
+        runs.reverse()  # get_run_history() returns newest-first
+        trend = compute_analytics(runs)["win_trend"]
+        assert trend[0]["win_rate"] < trend[-1]["win_rate"]
+        assert [p["run"] for p in trend] == sorted(p["run"] for p in trend)
+
+    def test_curse_does_not_disable_archetype_detection(self):
+        """One curse used to make the deck read as "Mixed" and drop archetypes."""
+        from sts2.app import kb as _kb
+
+        deck = [c.id for c in _kb.cards
+                if c.character == "Ironclad" and c.rarity in ("Common", "Uncommon")][:6]
+        assert deck, "shipped data has no Ironclad cards"
+        curse = next((c.id for c in _kb.cards if c.character == "Curse"), None)
+        assert curse, "shipped data has no curse to test with"
+        assert _kb.analyze_deck(deck)["character"] == "Ironclad"
+        assert _kb.analyze_deck(deck + [curse])["character"] == "Ironclad"
+
+    def test_non_ascii_token_is_rejected_not_crashed(self):
+        """compare_digest raises TypeError on non-ASCII, turning 403 into 500."""
+        from sts2.app import _ADMIN_TOKEN, tokens_equal
+
+        assert tokens_equal(_ADMIN_TOKEN, _ADMIN_TOKEN) is True
+        assert tokens_equal("tökén", _ADMIN_TOKEN) is False
+        assert tokens_equal("", _ADMIN_TOKEN) is False
+
+    def test_unicode_escapes_decode_without_mangling_literals(self):
+        """encode().decode('unicode_escape') round-tripped UTF-8 through latin-1."""
+        from sts2.fetcher import _decode_unicode_escapes
+
+        bs = chr(92)
+        assert _decode_unicode_escapes(bs + "u201cStrike" + bs + "u201d") == "“Strike”"
+        assert _decode_unicode_escapes(bs + "ud83d" + bs + "ude00") == "\U0001f600"
+        # A literal non-ASCII character must survive untouched.
+        assert _decode_unicode_escapes("“Strike”") == "“Strike”"
+
+    def test_shipped_data_is_free_of_mojibake(self):
+        """Guards the data itself: C1 control chars mean a latin-1 round-trip."""
+        import json
+
+        from sts2.config import DATA_DIR
+
+        for name in ("cards.json", "relics.json", "potions.json", "enemies.json"):
+            path = DATA_DIR / name
+            if not path.exists():
+                continue
+            for entry in json.loads(path.read_text(encoding="utf-8")):
+                if not isinstance(entry, dict):
+                    continue
+                for key, value in entry.items():
+                    if isinstance(value, str):
+                        bad = [c for c in value if 0x80 <= ord(c) <= 0x9F]
+                        assert not bad, f"{name} {entry.get('id')}.{key} is mojibake: {value!r}"
+
+    def test_drift_dominant_archetype_is_deterministic(self):
+        """max(set(...)) broke ties by hash order, so the banner flickered."""
+        import os
+        import subprocess
+
+        # Must cross a process boundary: string hashing is randomised per
+        # interpreter, so repeating the call in-process cannot see the bug.
+        script = (
+            "from sts2.drift import detect_drift_alert;"
+            "t=[{'archetype':a} for a in "
+            "['Alpha','Beta','Gamma','Beta','Gamma','Alpha']];"
+            "print(detect_drift_alert(t))"
+        )
+        seen = set()
+        for seed in ("0", "1", "2", "3", "4"):
+            out = subprocess.run([sys.executable, "-c", script],
+                                 capture_output=True, text=True,
+                                 env={"PYTHONHASHSEED": seed, "PATH": os.environ.get("PATH", "")})
+            assert out.returncode == 0, out.stderr
+            seen.add(out.stdout.strip())
+        assert len(seen) == 1, f"drift verdict varies with hash seed: {seen}"

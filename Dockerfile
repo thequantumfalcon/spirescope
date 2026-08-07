@@ -7,8 +7,12 @@ COPY pyproject.toml README.md ./
 COPY sts2/ sts2/
 RUN pip install --no-cache-dir .
 
-# Non-root user for security
-RUN useradd --create-home appuser
+# Non-root user for security. /app must be writable by it: DATA_DIR resolves to
+# /app/sts2/data here (not frozen, no STS2_DATA_DIR), and that is where the
+# language setting, hypotheses and community aggregate are persisted. Left
+# root-owned, every write silently failed and the language switcher answered
+# 400 for a locale its own dropdown had just offered.
+RUN useradd --create-home appuser && chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8000

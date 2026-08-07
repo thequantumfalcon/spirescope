@@ -35,6 +35,32 @@ _TOKEN_STAR_RE = re.compile(r"\{\w+:starIcons\((\d+)\)\}")
 _UNRESOLVED_TOKEN_RE = re.compile(r"\{\w+:")
 
 
+# Matches a surrogate pair first so astral characters recombine, then any lone
+# \uXXXX escape.
+_UNICODE_ESCAPE_RE = re.compile(
+    r"\\u([dD][89abAB][0-9a-fA-F]{2})\\u([dD][c-fC-F][0-9a-fA-F]{2})"
+    r"|\\u([0-9a-fA-F]{4})")
+
+
+def _decode_unicode_escapes(text: str) -> str:
+    r"""Resolve \uXXXX escapes without touching literal non-ASCII text.
+
+    The obvious `text.encode().decode("unicode_escape")` round-trips UTF-8
+    bytes through latin-1, so every real non-ASCII character in the payload is
+    mangled — a curly quote (U+201C) came out as "â". That
+    shipped: three relic descriptions rendered "Cards containing
+    âStrikeâ". A previous cleanup repaired the
+    data file but not this function, so the next refresh reproduced it exactly.
+    """
+    def _replace(match):
+        high, low, solo = match.group(1), match.group(2), match.group(3)
+        if solo is not None:
+            return chr(int(solo, 16))
+        return chr(0x10000 + ((int(high, 16) - 0xD800) << 10) + (int(low, 16) - 0xDC00))
+
+    return _UNICODE_ESCAPE_RE.sub(_replace, text)
+
+
 def _clean_description(desc: str) -> str:
     """Strip wiki markup tags from descriptions, converting icons to text."""
     # Handle "6[star:1]" -> "6 Star" (digit before tag takes precedence)
@@ -182,10 +208,7 @@ def _extract_from_rsc_payloads(html: str, category: str, results: list, seen_ids
     # mid-token across push() calls, so join with no separator BEFORE
     # decoding (an escape sequence can straddle a chunk boundary).
     combined_raw = "".join(raw_chunks)
-    try:
-        combined = combined_raw.encode().decode("unicode_escape")
-    except (UnicodeDecodeError, ValueError):
-        combined = combined_raw
+    combined = _decode_unicode_escapes(combined_raw)
 
     # Now search the decoded content for JSON objects with matching category.
     # Try both flat and bracket-balanced extraction.

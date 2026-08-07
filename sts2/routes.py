@@ -5,7 +5,6 @@ import ipaddress
 import json
 import math
 import re
-import secrets
 import time
 from datetime import date, datetime, timedelta, timezone
 from xml.sax.saxutils import escape as xml_escape
@@ -82,9 +81,10 @@ def _filter_runs(runs: list, *, version: str | None = None,
 async def _get_live_run(player: int | None = None) -> CurrentRun:
     """Get the best available live run data, merging save + log sources.
 
-    Save provides: HP, relics, floors, deck_upgrades, run_time, events_seen.
-    Log provides: fresher deck, gold, potions, act, floor (updates mid-combat).
-    When both are active, merge log's fresher fields into save's complete state.
+    Save is authoritative for everything it records: HP, gold, deck (with
+    upgrades and enchantments), relics, potions, floors, run_time, events_seen.
+    Log contributes only act progression and encounters won — the fields it can
+    reconstruct completely. It is a supplement, never an override.
     """
     a = _app()
     await a._poll_game_log_once()
@@ -94,19 +94,15 @@ async def _get_live_run(player: int | None = None) -> CurrentRun:
     log_active = _log_run_state and _log_run_state.get("active")
 
     if run.active and log_active:
-        # Both sources — merge log's fresher data into save's complete state
+        # Both sources — the log may only add what the save cannot supply, it
+        # may never replace a field the save owns. The log sees a card only via
+        # "Obtained CARD.X from card reward", so starters, Neow, shop and event
+        # cards are unrepresentable (a real 20-card run logs 2); its gold is an
+        # accumulator with no spend events; its floor is act-relative where the
+        # save's is cumulative. The save is rewritten continuously during play
+        # (~100 writes per session), so it is fresh as well as complete.
         log = _log_run_state
         merged = run.model_dump()
-        if log.get("deck"):
-            merged["deck"] = log["deck"]
-            merged["deck_upgrades"] = [False] * len(log["deck"])
-            merged["deck_enchantments"] = [""] * len(log["deck"])
-        if log.get("gold", 0) > 0:
-            merged["gold"] = log["gold"]
-        if log.get("potions"):
-            merged["potions"] = log["potions"]
-        if log.get("floor", 0) > 0:
-            merged["floor"] = log["floor"]
         if log.get("act", 1) > merged.get("act", 1):
             merged["act"] = log["act"]
         if log.get("encounters_won"):
@@ -952,9 +948,22 @@ async def community(request: Request):
         if card.tier and card.tier in ("S", "A", "B", "C", "D", "F"):
             tier_cards.setdefault(card.tier, []).append(card)
     aggregate = load_aggregate()
+    # Rank here rather than in the template: card_win_rates maps id -> {wins,
+    # total}, and Jinja's dictsort(by='value') would try to order those dicts
+    # against each other, which raises TypeError. Filtering before the slice
+    # also keeps the top-10 list from rendering short.
+    top_cards = []
+    for card_id, cw in (aggregate.get("card_win_rates") or {}).items():
+        if not isinstance(cw, dict):
+            continue
+        total = cw.get("total", 0)
+        if not isinstance(total, (int, float)) or total < 5:
+            continue
+        top_cards.append((card_id, cw.get("wins", 0) / total * 100, total))
+    top_cards.sort(key=lambda c: (-c[1], -c[2], c[0]))
     return a.templates.TemplateResponse(request, "community.html", {
         "meta_posts": meta_posts, "tier_cards": tier_cards,
-        "aggregate": aggregate, "kb": a.kb,
+        "aggregate": aggregate, "kb": a.kb, "top_cards": top_cards[:10],
     })
 
 
@@ -1464,7 +1473,7 @@ async def live_stream(player: int = Query(None, ge=0, le=3)):
 async def reload_data(request: Request):
     a = _app()
     token = request.headers.get("X-Admin-Token", "")
-    if not token or not secrets.compare_digest(token, a._ADMIN_TOKEN):
+    if not a.tokens_equal(token, a._ADMIN_TOKEN):
         return PlainTextResponse("Unauthorized.", status_code=403)
     from sts2.knowledge import KnowledgeBase
     from sts2.patches import invalidate_cache
@@ -1486,7 +1495,7 @@ async def shutdown(request: Request):
     """
     a = _app()
     token = request.headers.get("X-Admin-Token", "")
-    has_valid_token = bool(token) and secrets.compare_digest(token, a._ADMIN_TOKEN)
+    has_valid_token = a.tokens_equal(token, a._ADMIN_TOKEN)
     if not has_valid_token:
         csrf = request.headers.get("X-CSRF-Token", "")
         if not _is_loopback_client(request) or not a.validate_csrf_token(csrf):
@@ -1605,7 +1614,7 @@ async def api_export_stats():
 async def api_reset_stats(request: Request):
     a = _app()
     token = request.headers.get("X-Admin-Token", "")
-    if not token or not secrets.compare_digest(token, a._ADMIN_TOKEN):
+    if not a.tokens_equal(token, a._ADMIN_TOKEN):
         return PlainTextResponse("Unauthorized.", status_code=403)
     from sts2.aggregate import reset_aggregate
     deleted = reset_aggregate()

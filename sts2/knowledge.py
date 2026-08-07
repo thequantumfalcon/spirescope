@@ -47,6 +47,13 @@ def _levenshtein(a: str, b: str) -> int:
     return prev[-1]
 
 
+# Card pools that are never drafted. Module-level so every consumer shares one
+# definition — analyze_deck previously excluded only Status, so a single curse
+# made the deck read as two characters and silently disabled archetype
+# detection.
+NON_DRAFTABLE = {"Status", "Curse", "Event", "Token", "Quest"}
+
+
 class KnowledgeBase:
     def __init__(self):
         self.cards: list[Card] = []
@@ -499,8 +506,7 @@ class KnowledgeBase:
         if not card or not card.keywords:
             return []
 
-        # Non-draftable pools — never offered as a synergy partner.
-        _NON_DRAFTABLE = {"Status", "Curse", "Event", "Token", "Quest"}
+        _NON_DRAFTABLE = NON_DRAFTABLE
 
         synergies = []
         for other in self.cards:
@@ -524,7 +530,8 @@ class KnowledgeBase:
             return {"error": "No valid cards found"}
 
         # Determine character
-        chars = set(c.character for c in cards if c.character not in ("Colorless", "Status"))
+        chars = set(c.character for c in cards
+                    if c.character != "Colorless" and c.character not in NON_DRAFTABLE)
         character = chars.pop() if len(chars) == 1 else "Mixed"
 
         # Filter out discovered/unknown-type cards for ratio checks
@@ -581,7 +588,11 @@ class KnowledgeBase:
             weaknesses.append("Few skills — limited defensive options")
         if not any(kw in keyword_freq for kw in ("Block", "Dexterity")):
             weaknesses.append("No Block generation — vulnerable to damage")
-        if "AoE" not in keyword_freq:
+        # No card carries an "AoE" keyword — the game never emits one and the
+        # fetcher does not derive one, so keying on keyword_freq made this
+        # weakness fire on every deck ever analysed. Read the card text, which
+        # is where the signal actually lives.
+        if not any("all enemies" in (c.description or "").lower() for c in cards):
             weaknesses.append("No AoE — vulnerable to multi-enemy fights")
         if "Draw" not in keyword_freq:
             weaknesses.append("No card draw — may stall in longer fights")

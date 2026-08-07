@@ -65,25 +65,22 @@
   <td class="char-{{ char|lower }}">{{ char }}</td>
   <td>{{ cs.total }}</td>
   <td class="win">{{ cs.wins }}</td>
-  <td><strong>{{ ((cs.wins / cs.total) * 100)|round(1) }}%</strong></td>
+  <td><strong>{{ ((cs.wins / cs.total * 100)|round(1)) if cs.total else 0 }}%</strong></td>
 </tr>
 {% endfor %}
 </table>
 {% endif %}
 
-{% if aggregate.card_win_rates %}
+{% if top_cards %}
 <h3 class="mt-md">Top Cards by Win Rate</h3>
 <table>
 <tr><th>Card</th><th>Win Rate</th><th>Appearances</th></tr>
-{% set sorted_cards = aggregate.card_win_rates|dictsort(by='value', reverse=true) %}
-{% for card_id, cw in sorted_cards[:10] %}
-{% if cw.total >= 5 %}
+{% for card_id, win_rate, total in top_cards %}
 <tr>
   <td><a href="/cards/{{ card_id }}">{{ kb.id_to_name(card_id) }}</a></td>
-  <td><strong>{{ ((cw.wins / cw.total) * 100)|round(1) }}%</strong></td>
-  <td>{{ cw.total }}</td>
+  <td><strong>{{ win_rate|round(1) }}%</strong></td>
+  <td>{{ total }}</td>
 </tr>
-{% endif %}
 {% endfor %}
 </table>
 {% endif %}

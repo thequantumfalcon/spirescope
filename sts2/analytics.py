@@ -21,6 +21,18 @@ def _estimate_act(floor: int) -> int:
     return 3
 
 
+def _is_combat(floor) -> bool:
+    """True if this floor was a fight.
+
+    Not `damage_taken > 0`: that erases fights won without taking a hit and
+    counts events that cost HP as combats. Not the floor type alone either —
+    real saves leave some fights typed "unknown" (observed: ENCOUNTER.TUNNELER
+    on an unknown-typed floor), so the encounter id is the reliable signal.
+    Events use an EVENT.* id and are excluded even when they cost HP.
+    """
+    return floor.type in ("monster", "elite", "boss") or floor.encounter.startswith("ENCOUNTER.")
+
+
 def _pearson_r(xs: list[float], ys: list[float]) -> float:
     """Compute Pearson correlation coefficient between two lists."""
     n = len(xs)
@@ -182,7 +194,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
     act_damage = defaultdict(list)
     for run in runs:
         for floor in run.floors:
-            if floor.damage_taken > 0:
+            if _is_combat(floor):
                 act_damage[_estimate_act(floor.floor)].append(floor.damage_taken)
 
     damage_by_act = {}
@@ -207,7 +219,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
     encounter_deaths = Counter()
     for run in runs:
         for floor in run.floors:
-            if floor.encounter and floor.damage_taken > 0:
+            if floor.encounter and _is_combat(floor):
                 encounter_damage[floor.encounter].append(floor.damage_taken)
         if run.killed_by:
             encounter_deaths[run.killed_by] += 1
@@ -260,9 +272,15 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
     # --- Win Rate Trend (rolling window) ---
     win_trend = []
     if total >= 5:
+        # get_run_history() returns newest-first, but this chart renders
+        # left-to-right as time advances and labels each point "run i+1", so it
+        # has to walk oldest-first — otherwise an improving player is shown a
+        # falling line. Sorted explicitly rather than assuming the caller's
+        # order, matching _group_sessions in behavior.py.
+        chronological = sorted(runs, key=lambda r: r.timestamp)
         window = min(10, max(3, total // 3))
         for i in range(window - 1, total):
-            chunk = runs[i - window + 1:i + 1]
+            chunk = chronological[i - window + 1:i + 1]
             chunk_wins = sum(1 for r in chunk if r.win)
             win_trend.append({
                 "run": i + 1,
@@ -388,7 +406,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
     act_turns: dict[int, list[int]] = {1: [], 2: [], 3: []}
     for run in runs:
         for floor in run.floors:
-            if floor.turns > 0 and floor.type in ("monster", "elite", "boss"):
+            if floor.turns > 0 and _is_combat(floor):
                 fight_turns.append(floor.turns)
                 if floor.type == "elite":
                     elite_turns.append(floor.turns)
@@ -422,7 +440,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
         for floor in run.floors:
             act = _estimate_act(floor.floor)
             if act in act_stats:
-                if floor.damage_taken > 0:
+                if _is_combat(floor):
                     act_stats[act]["damage"].append(floor.damage_taken)
                 if floor.card_picked:
                     act_stats[act]["cards_added"].append(1)
@@ -676,7 +694,7 @@ def analyze_run(run: RunHistory, kb=None) -> dict:
     """
     insights = []
     total_damage = sum(f.damage_taken for f in run.floors)
-    combat_floors = [f for f in run.floors if f.damage_taken > 0]
+    combat_floors = [f for f in run.floors if _is_combat(f)]
 
     # Deck size analysis
     if len(run.deck) > 30:

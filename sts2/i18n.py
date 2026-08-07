@@ -11,6 +11,7 @@ To add a new language:
 No templates are wrapped yet — this is infrastructure for future contributors.
 """
 import json
+import logging
 import os
 from pathlib import Path
 
@@ -94,6 +95,11 @@ def set_language(code: str) -> bool:
     try:
         path.write_text(json.dumps(settings, indent=2) + "\n", encoding="utf-8")
     except OSError:
+        # Callers turn False into "Unknown language.", which is the wrong story
+        # when the locale was fine and the data dir was simply unwritable —
+        # exactly the Docker case, where this failed silently for every user.
+        logging.getLogger(__name__).warning(
+            "Could not persist language choice to %s", path, exc_info=True)
         return False
     return True
 
