@@ -77,7 +77,8 @@ def _clean_description(desc: str) -> str:
     desc = desc.replace("\\n", " ")
     # Collapse all internal whitespace (including embedded newlines from RSC
     # payload structure and double-spaces left by stripped icons) into single
-    # spaces. CLAUDE.md data-hygiene protocol forbids both. Regression: v2.2.1
+    # spaces: shipped descriptions must be single-line and single-spaced, or
+    # they break layout wherever they are rendered inline. Regression: v2.2.1
     # fixed 269 newline descriptions, but the fix lived only in the data, not
     # in the fetcher — so each wiki refresh re-introduced them.
     desc = re.sub(r"\s+", " ", desc)
