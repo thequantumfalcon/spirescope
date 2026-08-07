@@ -1,10 +1,19 @@
 # -*- mode: python ; coding: utf-8 -*-
 """PyInstaller spec file for Spirescope."""
 
+import re
 import sys
+from pathlib import Path
 
-
-VERSION = "2.9.7"
+# Read the version from sts2/config.py rather than restating it. Hardcoded, it
+# silently fell six releases behind (2.9.7 while the app shipped 3.0.2) and
+# stamped that stale number into the Windows executable's file metadata, which
+# is what users see in file properties and what installers compare.
+_config_src = Path(SPECPATH, "sts2", "config.py").read_text(encoding="utf-8")
+_match = re.search(r'^VERSION\s*=\s*"([^"]+)"', _config_src, re.M)
+if not _match:
+    raise SystemExit("spirescope.spec: could not read VERSION from sts2/config.py")
+VERSION = _match.group(1)
 
 # Windows EXE version metadata (CompanyName / ProductName / FileVersion).
 # The win32 import branch only loads on Windows because the underlying

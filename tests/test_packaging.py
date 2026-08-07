@@ -64,3 +64,30 @@ def test_translator_never_returns_raw_key_for_shipped_keys(key):
     """A raw key reaching a template is the visible symptom of issue #5."""
     from sts2.i18n import get_translator
     assert get_translator("en")(key) != key
+
+
+def test_version_is_consistent_across_release_artifacts():
+    """pyproject, the app, and the PyInstaller spec must agree.
+
+    The spec used to restate the version as a literal and drifted six releases
+    behind (2.9.7 while the app shipped 3.0.2), stamping the stale number into
+    the Windows executable's file metadata. It now derives the value, and this
+    guards the other two.
+    """
+    import re
+
+    pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    config = (PKG / "config.py").read_text(encoding="utf-8")
+    spec = SPEC.read_text(encoding="utf-8")
+
+    pyproject_version = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.M)
+    config_version = re.search(r'^VERSION\s*=\s*"([^"]+)"', config, re.M)
+    assert pyproject_version and config_version
+    assert pyproject_version.group(1) == config_version.group(1), (
+        f"pyproject {pyproject_version.group(1)} != config {config_version.group(1)}")
+
+    # The spec must not reintroduce a hardcoded literal.
+    hardcoded = re.search(r'^VERSION\s*=\s*"([^"]+)"', spec, re.M)
+    assert hardcoded is None, (
+        f"spirescope.spec hardcodes VERSION={hardcoded.group(1)!r}; derive it instead")
+    assert "config.py" in spec, "spec no longer reads the version from config.py"

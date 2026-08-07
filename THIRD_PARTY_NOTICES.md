@@ -6,16 +6,45 @@ package metadata.
 
 ## Runtime Python dependencies
 
+Everything in this table is redistributed inside the packaged builds, so the
+list covers transitive dependencies as well as the six declared directly in
+`pyproject.toml`. Generated from the installed metadata of the build
+environment that produces the released binaries.
+
 | Package | License | Project |
 |---|---|---|
+| annotated-doc | MIT | https://github.com/fastapi/annotated-doc |
+| annotated-types | MIT | https://github.com/annotated-types/annotated-types |
+| anyio | MIT | https://github.com/agronholm/anyio |
+| click | BSD-3-Clause | https://github.com/pallets/click |
 | FastAPI | MIT | https://github.com/fastapi/fastapi |
-| Starlette | BSD-3-Clause | https://github.com/encode/starlette |
-| Uvicorn | BSD-3-Clause | https://github.com/encode/uvicorn |
+| h11 | MIT | https://github.com/python-hyper/h11 |
+| httptools | MIT | https://github.com/MagicStack/httptools |
+| idna | BSD-3-Clause | https://github.com/kjd/idna |
 | Jinja2 | BSD-3-Clause | https://github.com/pallets/jinja |
+| MarkupSafe | BSD-3-Clause | https://github.com/pallets/markupsafe |
 | Pydantic | MIT | https://github.com/pydantic/pydantic |
+| pydantic-core | MIT | https://github.com/pydantic/pydantic-core |
+| python-dotenv | BSD-3-Clause | https://github.com/theskumar/python-dotenv |
 | python-multipart | Apache-2.0 | https://github.com/Kludex/python-multipart |
+| PyYAML | MIT | https://github.com/yaml/pyyaml |
+| Starlette | BSD-3-Clause | https://github.com/encode/starlette |
+| typing-extensions | PSF-2.0 | https://github.com/python/typing_extensions |
+| typing-inspection | MIT | https://github.com/pydantic/typing-inspection |
+| Uvicorn | BSD-3-Clause | https://github.com/encode/uvicorn |
+| uvloop | MIT | https://github.com/MagicStack/uvloop |
 | watchdog | Apache-2.0 | https://github.com/gorakhargosh/watchdog |
-| httpx | BSD-3-Clause | https://github.com/encode/httpx |
+| watchfiles | MIT | https://github.com/samuelcolvin/watchfiles |
+| websockets | BSD-3-Clause | https://github.com/python-websockets/websockets |
+
+The packaged builds also embed an unmodified CPython runtime (PSF-2.0,
+https://github.com/python/cpython) together with the OpenSSL, liblzma, libmpdec
+and libzstd shared libraries it links against.
+
+## Build tooling
+
+| Package | License | Project |
+|---|---|---|
 | PyInstaller | GPL-2.0-or-later with bootloader exception | https://github.com/pyinstaller/pyinstaller |
 
 PyInstaller is GPL-2.0-or-later, but its standard bootloader-exception
@@ -29,6 +58,7 @@ the PyInstaller-produced binary is unmodified.
 | Package | License | Project |
 |---|---|---|
 | pytest | MIT | https://github.com/pytest-dev/pytest |
+| httpx | BSD-3-Clause | https://github.com/encode/httpx |
 | pytest-asyncio | Apache-2.0 | https://github.com/pytest-dev/pytest-asyncio |
 | pytest-playwright | Apache-2.0 | https://github.com/microsoft/playwright-pytest |
 | playwright (Python) | Apache-2.0 | https://github.com/microsoft/playwright-python |
@@ -69,7 +99,6 @@ project. Bundled data is derived from:
 | [slaythespire.wiki.gg](https://slaythespire.wiki.gg/) | CC BY-SA 4.0 (wiki.gg standard) | Primary canonical source for cards, relics, potions, events, patch notes |
 | [slaythespire2.gg](https://slaythespire2.gg/) | Scraped under their robots.txt permission. Disallowed paths (`/api/`, `/admin/`, `/analysis/`, `/planner/`) are never requested. We identify ourselves with a project-named User-Agent. Their AI-train opt-out is respected — this project is not training models. | Cross-reference data for cards, relics, potions, events |
 | [sts2.untapped.gg](https://sts2.untapped.gg/) | Public reference; not actively scraped | Tertiary cross-reference |
-| Reddit public JSON (e.g. r/slaythespire2) | Reddit User Agreement; non-commercial reads with rate-limiting | Community tips in the `/community` view |
 | Steam community pages | Valve ToS (public reading) | Steam guide highlights in the `/community` view |
 | NeonLightsMedia Epochs guide | Cited reference (not redistributed verbatim) | Epoch unlock requirement notes in `sts2/data/epochs.json` |
 

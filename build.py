@@ -70,6 +70,17 @@ def main():
     if readme_src.exists():
         shutil.copy2(readme_src, DIST / "README.txt")
 
+    # Stripping dist-info above also removes the bundled packages' LICENSE
+    # files, but BSD-3-Clause and Apache-2.0 both require the notice to travel
+    # with a binary redistribution. Ship the notices as plain files instead.
+    for name, dest in (("LICENSE", "LICENSE.txt"),
+                       ("THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.md")):
+        src = ROOT / name
+        if not src.exists():
+            print(f"Build failed: {name} is missing; it must ship with the binary.")
+            sys.exit(1)
+        shutil.copy2(src, DIST / dest)
+
     manifest = _write_sha256_manifest()
 
     print(f"\nBuild complete: {DIST}")
