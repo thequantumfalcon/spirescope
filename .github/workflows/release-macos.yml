@@ -69,7 +69,7 @@ jobs:
           done
 
       - name: Upload to existing release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             dist/Spirescope-${{ github.ref_name }}-macos.zip
