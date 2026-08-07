@@ -11,7 +11,7 @@
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
 
-**Game data:** current through STS2 **v0.109.1** (refreshed 2026-07-27). Refresh anytime with `python -m sts2 update`.
+**Game data:** current through STS2 **v0.109.1** (refreshed 2026-07-22). Refresh anytime with `python -m sts2 update`.
 
 <p align="center">
   <img src="docs/screenshot-dashboard.png" alt="SpireScope Dashboard — your runs, your stats, your data" width="80%">
@@ -22,7 +22,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — all 645 cards with filters and search" width="80%">
+  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — all 639 cards with filters and search" width="80%">
 </p>
 
 ## Features
@@ -255,7 +255,7 @@ SpireScope auto-detects both vanilla and modded paths and uses whichever has mor
 
 ## Security
 
-- CSRF protection on all POST forms
+- CSRF protection on every state-changing POST, including `/shutdown` (loopback alone is not treated as proof of intent)
 - Content-Security-Policy, X-Frame-Options, Referrer-Policy, X-Content-Type-Options
 - Per-IP rate limiting (60 req/min) when bound to a non-loopback address via `STS2_HOST`; skipped on loopback, where the server is single-user
 - Admin-token-gated reload endpoint (constant-time comparison)
@@ -307,7 +307,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (32 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 707 tests (pytest + pytest-asyncio)
+tests/               # 715 tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements

@@ -119,7 +119,12 @@ def merge_aggregate(existing: dict, imported: dict) -> dict:
     existing_count = existing.get("run_count", 0)
     imported_count = imported.get("run_count", 0)
     cap = max(existing_count * _MAX_IMPORT_FACTOR, _MIN_IMPORT_CAP)
+    sub_scale = 1.0
     if imported_count > cap:
+        # Scale the inner counters by the same factor the run_count was clamped
+        # by, or a 1M-run import sneaks 1M-weight sub-counts in under a capped
+        # run_count — the same leak the first-import path already closes.
+        sub_scale = cap / imported_count
         imported_count = cap
 
     merged = {"run_count": existing_count + imported_count}
@@ -130,6 +135,8 @@ def merge_aggregate(existing: dict, imported: dict) -> dict:
                   "character_stats", "ascension_stats"):
         ex = existing.get(field, {})
         im = imported.get(field, {})
+        if sub_scale < 1.0:
+            im = _scale_subcounts(im, sub_scale)
         merged_field = {k: dict(v) if isinstance(v, dict) else v for k, v in ex.items()}
         for key, vals in im.items():
             if not isinstance(vals, dict):

@@ -370,6 +370,9 @@ async def _refresh_data():
     log.info("Save files changed, refreshing data")
     _analytics_cache = {}
     _analytics_cache_time = {}
+    # A data-bundle install rewrites patches.json underneath us; without this
+    # the module-level manifest cache keeps serving the old eras until restart.
+    _patches.invalidate_cache()
     new_kb = await asyncio.to_thread(KnowledgeBase)
     new_progress = await asyncio.to_thread(get_progress)
     new_runs = await asyncio.to_thread(get_run_history)

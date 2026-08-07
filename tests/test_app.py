@@ -241,14 +241,22 @@ def test_is_loopback_client_helper():
     assert _is_loopback_client(SimpleNamespace(client=SimpleNamespace(host="8.8.8.8"))) is False
 
 
-async def test_shutdown_allows_loopback_client(client):
+async def test_shutdown_allows_loopback_client_with_csrf(client):
     from unittest.mock import patch
 
     timer = type("TimerStub", (), {"start": lambda self: None})()
     with patch("threading.Timer", return_value=timer):
-        resp = await client.post("/shutdown")
+        resp = await client.post("/shutdown",
+                                 headers={"X-CSRF-Token": generate_csrf_token()})
     assert resp.status_code == 200
     assert resp.json()["status"] == "shutting down"
+
+
+async def test_shutdown_rejects_loopback_without_csrf(client):
+    """A cross-site POST from a page the user visits arrives on loopback with
+    no CSRF token; it must not be able to kill the server."""
+    resp = await client.post("/shutdown")
+    assert resp.status_code == 403
 
 
 async def test_shutdown_rejects_non_loopback_without_token(client):
@@ -2692,7 +2700,8 @@ async def test_api_reset_stats_route_behavior(client):
 
 
 async def test_shutdown_route_behavior(client):
-    """POST /shutdown: 403 without auth from non-loopback, 200 with admin token, 200 from loopback."""
+    """POST /shutdown: 403 without auth from non-loopback, 200 with admin token,
+    200 from loopback only when the CSRF token is present."""
     from unittest.mock import patch
 
     # The handler does `import os; import threading` at call time and then
@@ -2721,8 +2730,12 @@ async def test_shutdown_route_behavior(client):
             assert resp_admin.status_code == 200
             assert resp_admin.json()["status"] == "shutting down"
 
-        # Loopback path (default test-client behavior) -> 200 without any token.
-        resp_loopback = await client.post("/shutdown")
+        # Loopback without a CSRF token -> 403 (cross-site POST shape).
+        assert (await client.post("/shutdown")).status_code == 403
+
+        # Loopback with the CSRF token nav.js sends -> 200.
+        resp_loopback = await client.post(
+            "/shutdown", headers={"X-CSRF-Token": generate_csrf_token()})
         assert resp_loopback.status_code == 200
         assert resp_loopback.json()["status"] == "shutting down"
 

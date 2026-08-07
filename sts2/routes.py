@@ -1467,6 +1467,8 @@ async def reload_data(request: Request):
     if not token or not secrets.compare_digest(token, a._ADMIN_TOKEN):
         return PlainTextResponse("Unauthorized.", status_code=403)
     from sts2.knowledge import KnowledgeBase
+    from sts2.patches import invalidate_cache
+    invalidate_cache()
     new_kb = await asyncio.to_thread(KnowledgeBase)
     a.kb = new_kb
     return {"status": "ok", "cards": len(a.kb.cards), "relics": len(a.kb.relics),
@@ -1475,12 +1477,20 @@ async def reload_data(request: Request):
 
 @router.post("/shutdown")
 async def shutdown(request: Request):
-    """Gracefully stop SpireScope. Requires admin token or a loopback client."""
+    """Gracefully stop SpireScope. Requires admin token, or a loopback client
+    presenting the CSRF token nav.js sends.
+
+    Loopback alone is not proof of intent: any page the user happens to visit
+    can fire a simple cross-site POST at 127.0.0.1 and it arrives here looking
+    local. CORS gates reading the response, not sending the request.
+    """
     a = _app()
     token = request.headers.get("X-Admin-Token", "")
     has_valid_token = bool(token) and secrets.compare_digest(token, a._ADMIN_TOKEN)
-    if not _is_loopback_client(request) and not has_valid_token:
-        return PlainTextResponse("Unauthorized.", status_code=403)
+    if not has_valid_token:
+        csrf = request.headers.get("X-CSRF-Token", "")
+        if not _is_loopback_client(request) or not a.validate_csrf_token(csrf):
+            return PlainTextResponse("Unauthorized.", status_code=403)
     import os
     import signal
     import threading

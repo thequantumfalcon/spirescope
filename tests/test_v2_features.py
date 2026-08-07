@@ -403,6 +403,20 @@ class TestAggregate:
         # Cap is max(5 * 2, 1000) = 1000
         assert result["run_count"] == 5 + 1000
 
+    def test_merge_cap_scales_subcounts(self):
+        """Clamping run_count is not enough: the inner counters carry the
+        weight the stats are actually computed from, so they must be scaled by
+        the same factor or a 1M-run import lands at full strength."""
+        from sts2.aggregate import merge_aggregate
+        existing = {"run_count": 100, "card_win_rates": {"strike": {"wins": 49, "total": 100}}}
+        imported = {"run_count": 1000000,
+                    "card_win_rates": {"strike": {"wins": 1000000, "total": 1000000}}}
+        result = merge_aggregate(existing, imported)
+        # Cap is max(100 * 2, 1000) = 1000, so the import contributes 1/1000th.
+        assert result["run_count"] == 1100
+        assert result["card_win_rates"]["strike"]["total"] == 100 + 1000
+        assert result["card_win_rates"]["strike"]["wins"] == 49 + 1000
+
     def test_reset_nonexistent(self):
         from sts2.aggregate import reset_aggregate
         with patch("sts2.aggregate._aggregate_storage_path") as mock_path:

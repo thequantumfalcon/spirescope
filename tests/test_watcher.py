@@ -142,3 +142,20 @@ class TestSaveChangedEvent:
         mock_kb.assert_called_once()
         assert app_mod._analytics_cache == {}
         assert app_mod._analytics_cache_time == {}
+
+    async def test_refresh_data_invalidates_patch_cache(self):
+        """A data-bundle install rewrites patches.json; if the manifest cache
+        survives the refresh, current-patch scoping and era comparisons keep
+        serving the old manifest until the process restarts."""
+        from sts2 import app as app_mod
+        from sts2 import patches as patch_manifest
+
+        patch_manifest.load_patches()
+        assert patch_manifest._cache is not None
+
+        with patch.object(app_mod, "KnowledgeBase"), \
+             patch.object(app_mod, "get_progress", return_value=None), \
+             patch.object(app_mod, "get_run_history", return_value=[]):
+            await app_mod._refresh_data()
+
+        assert patch_manifest._cache is None

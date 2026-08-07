@@ -368,3 +368,22 @@ def test_gap_fill_skips_rename_shadow(tmp_path, monkeypatch):
                               primary_result=primary,
                               secondary_result=secondary)
     assert [c["name"] for c in cards] == ["Scare"]
+
+
+def test_shipped_data_has_no_test_fixtures():
+    """Mock fixtures must never reach shipped data — they are searchable,
+    get live detail pages, and inflate the card totals.
+
+    Deliberately keyed on the MOCK id marker, not on empty rarity: 19 real
+    cards (Shiny Strike, Chrysalis, ...) ship with a blank rarity because the
+    wiki source has no value for them.
+    """
+    from sts2.config import DATA_DIR
+
+    for name in ("cards.json", "relics.json", "potions.json", "enemies.json"):
+        path = DATA_DIR / name
+        if not path.exists():
+            continue
+        entries = json.loads(path.read_text(encoding="utf-8"))
+        offenders = [e.get("id", "") for e in entries if "MOCK" in e.get("id", "").upper()]
+        assert not offenders, f"{name} ships test fixtures: {offenders}"
