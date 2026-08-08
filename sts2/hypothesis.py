@@ -2,15 +2,24 @@
 import json
 import time
 
-from sts2.config import DATA_DIR
+from sts2.config import state_path
 
-HYPOTHESES_FILE = DATA_DIR / "hypotheses.json"
+
+def _hypotheses_file():
+    """Resolved per call, not bound at import.
+
+    A module-level constant would freeze the path before tests or the state
+    migration could redirect it, and it is user-authored data, so it belongs in
+    STATE_DIR rather than the shipped data directory.
+    """
+    return state_path("hypotheses.json")
 
 
 def load_hypotheses():
-    if HYPOTHESES_FILE.exists():
+    path = _hypotheses_file()
+    if path.exists():
         try:
-            return json.loads(HYPOTHESES_FILE.read_text(encoding="utf-8"))
+            return json.loads(path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
             pass
     return {}
@@ -18,7 +27,7 @@ def load_hypotheses():
 
 def save_hypotheses(hypotheses):
     try:
-        HYPOTHESES_FILE.write_text(json.dumps(hypotheses, indent=2), encoding="utf-8")
+        _hypotheses_file().write_text(json.dumps(hypotheses, indent=2), encoding="utf-8")
     except OSError:
         pass
 

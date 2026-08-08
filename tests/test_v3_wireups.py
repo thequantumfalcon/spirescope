@@ -183,7 +183,7 @@ async def test_behavior_invoked_on_analytics_empty_runs(client):
 async def test_hypothesis_crud(client, tmp_path):
     """GET /hypothesis renders; POST create registers; POST delete removes."""
     hyp_file = tmp_path / "hypotheses.json"
-    with patch("sts2.hypothesis.HYPOTHESES_FILE", hyp_file), \
+    with patch("sts2.hypothesis._hypotheses_file", return_value=hyp_file), \
          patch("sts2.app._get_runs", new=AsyncMock(return_value=[])):
         # GET — list page renders.
         resp = await client.get("/hypothesis")

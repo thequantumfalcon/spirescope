@@ -14,13 +14,15 @@ _MIN_IMPORT_CAP = 1000
 
 
 def _aggregate_storage_path() -> Path:
-    """Resolve writable path for aggregate file."""
-    import sys
+    """Resolve writable path for the aggregate file.
 
-    from sts2.config import DATA_DIR
-    if getattr(sys, 'frozen', False):
-        return Path(sys.executable).parent / "community_aggregate.json"
-    return DATA_DIR / "community_aggregate.json"
+    Same location frozen or not: this is user state, and the executable's own
+    directory is not reliably writable (an app installed under /Applications or
+    Program Files is not). Frozen builds that already wrote next to the
+    executable are migrated by config.migrate_state_from_data_dir().
+    """
+    from sts2.config import state_path
+    return state_path("community_aggregate.json")
 
 
 def compute_aggregate_stats(runs: list[RunHistory]) -> dict:
