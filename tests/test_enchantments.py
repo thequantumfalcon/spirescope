@@ -273,6 +273,26 @@ async def test_settings_language_post_round_trip(client, tmp_path, monkeypatch):
     assert "saved=1" in resp.headers["location"]
 
 
+async def test_settings_tells_you_how_to_translate_game_text(client, monkeypatch):
+    """The page used to state that card text 'remains in English until a
+    licensed localized source exists', which stopped being true when the
+    localize command shipped. A user picking a language needs to be told
+    whether entity text follows, and what to run if it does not."""
+    from sts2 import routes
+
+    monkeypatch.setattr(routes, "_app", routes._app)
+    # chrome-only: no overlay generated for this locale yet
+    monkeypatch.setenv("STS2_LANG", "fr")
+    body = (await client.get("/settings")).text
+    assert "Only the interface is translated" in body
+    assert "spirescope localize" in body
+    # English needs no instructions
+    monkeypatch.setenv("STS2_LANG", "en")
+    body = (await client.get("/settings")).text
+    assert "shown in English" in body
+    assert "spirescope localize" not in body
+
+
 def test_ui_locale_read_failure_is_not_cached(tmp_path, monkeypatch):
     """Same rule as the content overlay: a locked or half-written locale file
     must not pin the UI to English for the life of the process."""

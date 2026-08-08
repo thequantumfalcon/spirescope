@@ -35,7 +35,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Main vs beta awareness** — runs badge their game branch; beta-only content is chipped; filter analytics by branch.
 - **Merged save history** — vanilla and modded save trees merge into one deduplicated history (the game copies saves between them since v0.108.0); runs carry a vanilla/modded origin filter.
 - **Badges** — earned badges with bronze/silver/gold tiers on the Records page.
-- **UI language setting** — switch languages under Settings. The interface ships in fourteen languages (English, Traditional Chinese, German, Spanish, Latin American Spanish, French, Italian, Japanese, Korean, Polish, Brazilian Portuguese, Russian, Thai, Turkish); the twelve newest are drafts pending native review. Entity names and descriptions can be translated too by dropping a `<lang>.json` overlay into `sts2/locales/content/` — search follows the active language, and anything untranslated falls back to English. Locale files live under `sts2/locales/`.
+- **Languages** — switch under Settings. The interface ships in fourteen languages; card, relic and enemy text can be translated too with one command. See [Languages](#languages).
 
 ### Browse & Research
 
@@ -164,6 +164,38 @@ Local builds also write `dist/SHA256SUMS.txt` for checksum verification.
 docker build -t spirescope .
 docker run -p 8000:8000 spirescope
 ```
+
+## Languages
+
+Pick a language under **Settings**. That translates the interface — navigation,
+buttons, labels. It ships in fourteen: English, Traditional Chinese, German,
+Spanish, Latin American Spanish, French, Italian, Japanese, Korean, Polish,
+Brazilian Portuguese, Russian, Thai and Turkish. English and Traditional
+Chinese are reviewed; the other twelve are drafts, and corrections from native
+speakers are welcome.
+
+Card, relic, potion, enemy and event text is separate, because that text
+belongs to the game. To see it in your language, run this once:
+
+```bash
+spirescope localize          # or: python -m sts2 localize
+```
+
+It reads the language files from the copy of Slay the Spire 2 already
+installed on your machine and writes them to `sts2/locales/content/`. Nothing
+is downloaded and nothing is sent anywhere; the game directory is only read
+from, never written to. Restart Spirescope and card text follows your language
+setting, with search matching the translated names.
+
+```bash
+spirescope localize --list          # which languages your install offers
+spirescope localize --lang de,ja    # only these
+```
+
+A standard installation offers thirteen languages besides English. Because the
+text comes from your own install, it stays in step with whatever game version
+you have rather than going stale. Anything the game does not translate — and
+any card added since your installed version — stays in English.
 
 ## Why SpireScope?
 

@@ -1708,11 +1708,14 @@ async def data_update_install(request: Request, csrf_token: str = Form("")):
 
 @router.get("/settings", response_class=HTMLResponse)
 async def settings_page(request: Request):
-    from sts2.i18n import available_languages, get_language
+    from sts2.i18n import available_languages, get_language, load_content_overlay
     a = _app()
+    current = get_language()
     return a.templates.TemplateResponse(request, "settings.html", {
         "languages": available_languages(),
-        "current_language": get_language(),
+        "current_language": current,
+        # Whether card/relic/enemy text is translated too, or only the chrome
+        "content_translated": bool(load_content_overlay(current)),
         "saved": request.query_params.get("saved", ""),
         "csrf_token": a.generate_csrf_token(),
     })
