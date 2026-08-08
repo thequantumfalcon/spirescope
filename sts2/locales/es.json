@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "Español (España)",
+    "code": "es",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08 from official game terms, native review pending"
+  },
+  "nav": {
+    "live_run": "Partida en vivo",
+    "cards": "Cartas",
+    "relics": "Reliquias",
+    "potions": "Pociones",
+    "enemies": "Enemigos",
+    "events": "Eventos",
+    "deck_analyzer": "Análisis de mazo",
+    "run_history": "Historial de partidas",
+    "analytics": "Estadísticas",
+    "records": "Récords",
+    "collections": "Colecciones",
+    "epochs": "Épocas",
+    "community": "Comunidad",
+    "guide": "Guía",
+    "search_placeholder": "Buscar cartas, reliquias, enemigos…",
+    "stop": "Detener",
+    "prophecy": "Profecía",
+    "hypothesis": "Hipótesis",
+    "graveyard": "Cementerio",
+    "search": "Buscar"
+  },
+  "common": {
+    "no_data": "No hay datos",
+    "loading": "Cargando…",
+    "error": "Se ha producido un error",
+    "floor": "Piso",
+    "hp": "PV",
+    "gold": "Oro",
+    "cards": "Cartas",
+    "win": "Victoria",
+    "loss": "Derrota",
+    "wins": "Victorias",
+    "losses": "Derrotas",
+    "win_rate": "Porcentaje de victorias"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "language": "Idioma",
+    "save": "Guardar",
+    "saved": "Ajustes guardados."
+  }
+}

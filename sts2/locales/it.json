@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "Italiano",
+    "code": "it",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08 from official game terms, native review pending"
+  },
+  "nav": {
+    "live_run": "Partita in corso",
+    "cards": "Carte",
+    "relics": "Reliquie",
+    "potions": "Pozioni",
+    "enemies": "Nemici",
+    "events": "Eventi",
+    "deck_analyzer": "Analisi del mazzo",
+    "run_history": "Storico partite",
+    "analytics": "Statistiche",
+    "records": "Record",
+    "collections": "Collezioni",
+    "epochs": "Epoche",
+    "community": "Comunità",
+    "guide": "Guida",
+    "search_placeholder": "Cerca carte, reliquie, nemici…",
+    "stop": "Interrompi",
+    "prophecy": "Profezia",
+    "hypothesis": "Ipotesi",
+    "graveyard": "Cimitero",
+    "search": "Cerca"
+  },
+  "common": {
+    "no_data": "Nessun dato",
+    "loading": "Caricamento…",
+    "error": "Si è verificato un errore",
+    "floor": "Piano",
+    "hp": "PV",
+    "gold": "Oro",
+    "cards": "Carte",
+    "win": "Vittoria",
+    "loss": "Sconfitta",
+    "wins": "Vittorie",
+    "losses": "Sconfitte",
+    "win_rate": "Percentuale di vittorie"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "language": "Lingua",
+    "save": "Salva",
+    "saved": "Impostazioni salvate."
+  }
+}

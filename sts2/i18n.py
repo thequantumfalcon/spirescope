@@ -13,10 +13,23 @@ No templates are wrapped yet — this is infrastructure for future contributors.
 import json
 import logging
 import os
+import re
 from pathlib import Path
+
+_CODE_RE = re.compile(r"[a-z]{2,8}")
 
 _LOCALES_DIR = Path(__file__).parent / "locales"
 _cache: dict[str, dict] = {}
+_content_cache: dict[str, dict] = {}
+
+
+def is_valid_code(code: str) -> bool:
+    """A locale code is a bare 2-8 letter tag — never a path fragment.
+
+    Without this, 'content/de' resolves to the content-overlay directory
+    and persists as a language nobody can select back out of.
+    """
+    return bool(_CODE_RE.fullmatch(code or ""))
 
 
 def _load_locale(code: str) -> dict:
@@ -66,6 +79,38 @@ def get_translator(code: str = ""):
     return t
 
 
+def load_content_overlay(code: str = "") -> dict:
+    """Official game-text overlay for a locale (sts2/locales/content/<code>.json).
+
+    Returns {} for English, unknown codes, and unreadable files — callers
+    treat an empty overlay as "render the shipped English data".
+    """
+    if not code:
+        code = get_language()
+    if not is_valid_code(code):
+        return {}
+    if code in _content_cache:
+        return _content_cache[code]
+    path = _LOCALES_DIR / "content" / f"{code}.json"
+    if code == "en" or not path.exists():
+        _content_cache[code] = {}
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        # Never cache a read failure: a transient lock (AV scan, partial
+        # write) would otherwise pin this locale to English until restart.
+        logging.getLogger(__name__).warning(
+            "Could not load content overlay %s", path, exc_info=True)
+        return {}
+    if not isinstance(data, dict):
+        logging.getLogger(__name__).warning(
+            "Content overlay %s is not an object, ignoring", path)
+        data = {}
+    _content_cache[code] = data
+    return data
+
+
 def _settings_path():
     from sts2.config import state_path
     return state_path("settings.json")
@@ -84,7 +129,7 @@ def get_language() -> str:
 
 def set_language(code: str) -> bool:
     """Persist the UI language choice. Only known locales are accepted."""
-    if not (_LOCALES_DIR / f"{code}.json").exists():
+    if not is_valid_code(code) or not (_LOCALES_DIR / f"{code}.json").exists():
         return False
     path = _settings_path()
     try:

@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "ไทย",
+    "code": "th",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08 from official game terms, native review pending"
+  },
+  "nav": {
+    "live_run": "การเล่นสด",
+    "cards": "การ์ด",
+    "relics": "เครื่องราง",
+    "potions": "ยา",
+    "enemies": "อสูร",
+    "events": "เหตุการณ์",
+    "deck_analyzer": "วิเคราะห์เด็ค",
+    "run_history": "ประวัติการเดินทาง",
+    "analytics": "สถิติ",
+    "records": "บันทึกสถิติ",
+    "collections": "คอลเลกชัน",
+    "epochs": "ยุค",
+    "community": "ชุมชน",
+    "guide": "คู่มือ",
+    "search_placeholder": "ค้นหาการ์ด เครื่องราง อสูร…",
+    "stop": "หยุด",
+    "prophecy": "คำพยากรณ์",
+    "hypothesis": "สมมติฐาน",
+    "graveyard": "สุสาน",
+    "search": "ค้นหา"
+  },
+  "common": {
+    "no_data": "ไม่มีข้อมูล",
+    "loading": "กำลังโหลด…",
+    "error": "เกิดข้อผิดพลาด",
+    "floor": "ชั้น",
+    "hp": "HP",
+    "gold": "ทอง",
+    "cards": "การ์ด",
+    "win": "ชนะ",
+    "loss": "แพ้",
+    "wins": "ชนะ",
+    "losses": "แพ้",
+    "win_rate": "อัตราชนะ"
+  },
+  "settings": {
+    "title": "การตั้งค่า",
+    "language": "ภาษา",
+    "save": "บันทึก",
+    "saved": "บันทึกการตั้งค่าแล้ว"
+  }
+}

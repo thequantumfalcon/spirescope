@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "Deutsch",
+    "code": "de",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08, native review pending"
+  },
+  "nav": {
+    "live_run": "Laufender Run",
+    "cards": "Karten",
+    "relics": "Relikte",
+    "potions": "Tränke",
+    "enemies": "Gegner",
+    "events": "Ereignisse",
+    "deck_analyzer": "Deck-Analyse",
+    "run_history": "Run-Verlauf",
+    "analytics": "Statistiken",
+    "records": "Rekorde",
+    "collections": "Sammlungen",
+    "epochs": "Epochen",
+    "community": "Community",
+    "guide": "Guide",
+    "search_placeholder": "Karten, Relikte, Gegner suchen …",
+    "stop": "Stopp",
+    "prophecy": "Prophezeiung",
+    "hypothesis": "Hypothese",
+    "graveyard": "Friedhof",
+    "search": "Suchen"
+  },
+  "common": {
+    "no_data": "Keine Daten verfügbar",
+    "loading": "Lädt …",
+    "error": "Etwas ist schiefgelaufen",
+    "floor": "Etage",
+    "hp": "LP",
+    "gold": "Gold",
+    "cards": "Karten",
+    "win": "Sieg",
+    "loss": "Niederlage",
+    "wins": "Siege",
+    "losses": "Niederlagen",
+    "win_rate": "Siegesrate"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprache",
+    "save": "Speichern",
+    "saved": "Einstellungen gespeichert."
+  }
+}

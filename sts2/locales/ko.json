@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "한국어",
+    "code": "ko",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08 from official game terms, native review pending"
+  },
+  "nav": {
+    "live_run": "실시간 플레이",
+    "cards": "카드",
+    "relics": "유물",
+    "potions": "포션",
+    "enemies": "몬스터",
+    "events": "이벤트",
+    "deck_analyzer": "덱 분석",
+    "run_history": "도전 기록",
+    "analytics": "통계",
+    "records": "기록",
+    "collections": "컬렉션",
+    "epochs": "에포크",
+    "community": "커뮤니티",
+    "guide": "가이드",
+    "search_placeholder": "카드, 유물, 몬스터 검색…",
+    "stop": "중지",
+    "prophecy": "예언",
+    "hypothesis": "가설",
+    "graveyard": "무덤",
+    "search": "검색"
+  },
+  "common": {
+    "no_data": "데이터 없음",
+    "loading": "불러오는 중…",
+    "error": "오류가 발생했습니다",
+    "floor": "층",
+    "hp": "체력",
+    "gold": "골드",
+    "cards": "카드",
+    "win": "승리",
+    "loss": "패배",
+    "wins": "승",
+    "losses": "패",
+    "win_rate": "승률"
+  },
+  "settings": {
+    "title": "설정",
+    "language": "언어",
+    "save": "저장",
+    "saved": "설정이 저장되었습니다."
+  }
+}

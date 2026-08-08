@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "Français",
+    "code": "fr",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08 from official game terms, native review pending"
+  },
+  "nav": {
+    "live_run": "Partie en cours",
+    "cards": "Cartes",
+    "relics": "Reliques",
+    "potions": "Potions",
+    "enemies": "Ennemis",
+    "events": "Événements",
+    "deck_analyzer": "Analyse de deck",
+    "run_history": "Historique",
+    "analytics": "Statistiques",
+    "records": "Records",
+    "collections": "Collections",
+    "epochs": "Époques",
+    "community": "Communauté",
+    "guide": "Guide",
+    "search_placeholder": "Rechercher cartes, reliques, ennemis…",
+    "stop": "Arrêter",
+    "prophecy": "Prophétie",
+    "hypothesis": "Hypothèse",
+    "graveyard": "Cimetière",
+    "search": "Rechercher"
+  },
+  "common": {
+    "no_data": "Aucune donnée",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue",
+    "floor": "Étage",
+    "hp": "PV",
+    "gold": "Or",
+    "cards": "Cartes",
+    "win": "Victoire",
+    "loss": "Défaite",
+    "wins": "Victoires",
+    "losses": "Défaites",
+    "win_rate": "Taux de victoire"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "save": "Enregistrer",
+    "saved": "Paramètres enregistrés."
+  }
+}

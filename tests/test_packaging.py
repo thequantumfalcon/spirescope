@@ -36,7 +36,11 @@ def test_spec_bundles_every_runtime_resource_dir():
     spec = SPEC.read_text(encoding="utf-8")
     missing = [
         name for name in _resource_dirs()
+        # Either the whole directory is bundled, or its files are listed
+        # individually with it as their destination (which sts2/locales
+        # does, to keep the user-built content/ subdirectory out).
         if f"'sts2/{name}', 'sts2/{name}'" not in spec
+        and f", 'sts2/{name}')" not in spec
     ]
     assert not missing, (
         f"sts2/{{{','.join(missing)}}} exist but are not bundled in "
@@ -57,6 +61,40 @@ def test_locales_present_and_parseable():
     for path in locales:
         data = json.loads(path.read_text(encoding="utf-8"))
         assert "nav" in data, f"{path.name} missing nav section"
+
+
+def test_spec_never_bundles_user_content_overlays():
+    """sts2/locales/content holds text built from the user's own game copy.
+    Bundling the locales directory wholesale swept it into the exe, which
+    would redistribute it; the spec must list the UI files individually."""
+    spec = (PKG.parent / "spirescope.spec").read_text(encoding="utf-8")
+    assert "('sts2/locales', 'sts2/locales')" not in spec, \
+        "spec bundles sts2/locales recursively, which includes content/"
+    assert "sts2/locales').glob('*.json')" in spec
+
+
+def test_content_overlays_are_clean_and_have_a_ui_locale():
+    """Content overlays are user-supplied and not shipped, but when one is
+    present it renders straight onto entity pages — so unresolved markup or
+    a missing UI locale would be visible. Vacuous on a clean checkout."""
+    import json
+    import re
+
+    overlays = sorted((PKG / "locales" / "content").glob("*.json"))
+    residue = re.compile(r"\{[A-Za-z]+[:}]|\[/?(?:gold|blue|red|green)\]|@[A-Z][ES]\b")
+    for path in overlays:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        assert (PKG / "locales" / f"{path.name}").exists(), \
+            f"{path.stem} has content but no UI locale file"
+        dirty = []
+        for family, entries in data.items():
+            if family == "_meta" or not isinstance(entries, dict):
+                continue
+            for eid, entry in entries.items():
+                for field, value in entry.items():
+                    if isinstance(value, str) and residue.search(value):
+                        dirty.append(f"{path.name}:{eid}.{field}: {value!r}")
+        assert not dirty, "unrendered markup in overlays:\n" + "\n".join(dirty[:5])
 
 
 @pytest.mark.parametrize("key", ["nav.cards", "nav.live_run", "settings.title"])

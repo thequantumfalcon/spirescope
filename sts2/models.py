@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class Card(BaseModel):
     id: str
     name: str
+    name_en: str = ""  # English name, kept when a locale overlay renames this entity
     character: str  # Ironclad, Silent, Defect, Necrobinder, Regent, Colorless, Curse, Status
     cost: str  # "0", "1", "2", "3", "X", "Unplayable"
     type: str  # Attack, Skill, Power, Status, Curse
@@ -27,6 +28,7 @@ class Card(BaseModel):
 class Relic(BaseModel):
     id: str
     name: str
+    name_en: str = ""  # English name, kept when a locale overlay renames this entity
     character: str = "Shared"  # Character-specific or Shared
     rarity: str = ""  # Starter, Common, Uncommon, Rare, Boss, Event, Shop
     description: str = ""
@@ -41,6 +43,7 @@ class Relic(BaseModel):
 class Potion(BaseModel):
     id: str
     name: str
+    name_en: str = ""  # English name, kept when a locale overlay renames this entity
     rarity: str = ""  # Common, Uncommon, Rare
     description: str = ""
     source: str = "base"
@@ -54,6 +57,7 @@ class Potion(BaseModel):
 class Enemy(BaseModel):
     id: str
     name: str
+    name_en: str = ""  # English name, kept when a locale overlay renames this entity
     act: list[str] = []  # Which acts they appear in
     type: str = ""  # normal, elite, boss
     hp_range: str = ""  # e.g. "40-44" or "250"
@@ -81,6 +85,7 @@ class EventChoice(BaseModel):
 class Event(BaseModel):
     id: str
     name: str
+    name_en: str = ""  # English name, kept when a locale overlay renames this entity
     act: list[str] = []
     description: str = ""
     choices: list[EventChoice] = []
