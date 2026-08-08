@@ -18,7 +18,9 @@
     "name": "Amethyst Aubergine",
     "character": "Shared",
     "rarity": "Common",
-    "description": "Enemies drop 15 additional Gold."
+    "description": "Enemies drop 15 additional Gold.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.ANCHOR",
@@ -53,7 +55,9 @@
     "name": "Art of War",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "If you do not play any Attacks during your turn, gain an additional 1 Energy next turn."
+    "description": "If you do not play any type:Attack during your turn, gain an additional 1 Energy next turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.ASTROLABE",
@@ -88,7 +92,9 @@
     "name": "Beautiful Bracelet",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, choose 3 cards in your Deck. Enchant them with [purple]Swift[/purple] 3."
+    "description": "Upon pickup, choose 4 cards in your Deck. Enchant them with Swift 2.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.BELLOWS",
@@ -186,7 +192,9 @@
     "name": "Bone Tea",
     "character": "Event",
     "rarity": "Event",
-    "description": "At the start of the next combats, Upgrade your starting hand."
+    "description": "At the start of the next combat, Upgrade your starting hand.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.BOOK_REPAIR_KNIFE",
@@ -228,7 +236,9 @@
     "name": "Bowler Hat",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "Gain 25% additional Gold."
+    "description": "Gain 25% additional Gold.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.BREAD",
@@ -270,7 +280,9 @@
     "name": "Burning Sticks",
     "character": "Shared",
     "rarity": "Shop",
-    "description": "The first time each combat you Exhaust a Skill, add a copy of it into your Hand."
+    "description": "The first time each combat you Exhaust a type:Skill, add a copy of it into your Hand.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.BYRDPIP",
@@ -291,7 +303,9 @@
     "name": "Candelabra",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "At the start of your 2nd turn, gain 2 Energy."
+    "description": "At the start of your 2nd turn, gain 1 Energy 1 Energy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.CAPTAINS_WHEEL",
@@ -319,7 +333,9 @@
     "name": "Chandelier",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "At the start of your 3rd turn, gain 3 Energy."
+    "description": "At the start of your 3rd turn, gain 1 Energy 1 Energy 1 Energy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.CHARONS_ASHES",
@@ -346,8 +362,10 @@
     "id": "RELIC.CIRCLET",
     "name": "Circlet",
     "character": "Shared",
-    "rarity": "None",
-    "description": "It's a circlet."
+    "rarity": "Special",
+    "description": "It's a circlet.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.CLAWS",
@@ -375,7 +393,9 @@
     "name": "Crossbow",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "At the start of your turn, add a random Attack into your Hand. It's free to play this turn."
+    "description": "At the start of your turn, add a random type:Attack into your Hand. It's free to play this turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.CURSED_KETTLE",
@@ -389,7 +409,9 @@
     "name": "Cursed Pearl",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, receive Greed. Gain 333 Gold."
+    "description": "Upon pickup, receive Greed. Gain 333 Gold.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.DARKSTONE_PERIAPT",
@@ -410,14 +432,18 @@
     "name": "Daughter of the Wind",
     "character": "Event",
     "rarity": "Event",
-    "description": "Whenever you play an Attack, gain 1 Block."
+    "description": "Whenever you play an type:Attack, gain 1 Block.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.DELICATE_FROND",
     "name": "Delicate Frond",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "At the start of each combat, fill all empty potion slots with random potions."
+    "description": "At the start of each combat, fill all empty potions slots with random potions.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.DEMON_TONGUE",
@@ -431,15 +457,19 @@
     "name": "Diamond Diadem",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Start combat with 20 Block. Your Block is not removed at the start of your next turn.",
-    "last_changed": "v0.109.0"
+    "description": "Start combat with 20 Block. Your Block is not removed at the start of your 2nd turn.",
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.DINGY_RUG",
     "name": "Dingy Rug",
     "character": "Shared",
     "rarity": "Shop",
-    "description": "Card rewards can now contain Colorless cards."
+    "description": "Card rewards can now contain color:Colorless cards.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.DISTINGUISHED_CAPE",
@@ -454,14 +484,18 @@
     "name": "Divine Destiny",
     "character": "Event",
     "rarity": "Starter",
-    "description": "At the start of each combat, gain 7 Star."
+    "description": "At the start of each combat, gain 7 Star.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.DIVINE_RIGHT",
     "name": "Divine Right",
     "character": "Regent",
     "rarity": "Starter",
-    "description": "At the start of each combat, gain 3 Star."
+    "description": "At the start of each combat, gain 3 Star.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.DOLLYS_MIRROR",
@@ -475,7 +509,9 @@
     "name": "Dragon Fruit",
     "character": "Shared",
     "rarity": "Shop",
-    "description": "Whenever you gain Gold, raise your Max HP by 1."
+    "description": "Whenever you gain Gold, raise your Max HP by 1.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.DREAM_CATCHER",
@@ -503,21 +539,27 @@
     "name": "Ectoplasm",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "You can no longer gain Gold. Gain 1 Energy at the start of each turn."
+    "description": "You can no longer gain Gold. Gain 1 Energy at the start of each turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.ELECTRIC_SHRYMP",
     "name": "Electric Shrymp",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, Enchant a Skill with [purple]Imbued[/purple]."
+    "description": "Upon pickup, Enchant a type:Skill with Imbued.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.EMBER_TEA",
     "name": "Ember Tea",
     "character": "Event",
     "rarity": "Event",
-    "description": "At the start of the next combats, gain 2 Strength."
+    "description": "At the start of the next 5 combats, gain 2 Strength.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.EMOTION_CHIP",
@@ -566,8 +608,10 @@
     "name": "Fiddle",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "At the start of each turn, draw 3 additional cards. You may not draw cards during your turn.",
-    "last_changed": "v0.109.0"
+    "description": "At the start of each turn, draw 2 additional cards. You may not draw cards during your turn.",
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.FORGOTTEN_SOUL",
@@ -588,14 +632,18 @@
     "name": "Fresnel Lens",
     "character": "Shared",
     "rarity": "Event",
-    "description": "Whenever you add a card that gains Block to your Deck, Enchant it with [purple]Nimble[/purple] 2."
+    "description": "Whenever you add a card that gains Block to your Deck, Enchant it with Nimble 2.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.FROZEN_EGG",
     "name": "Frozen Egg",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "Whenever you add a Power into your Deck, Upgrade it."
+    "description": "Whenever you add a type:Power into your Deck, Upgrade it.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.FUNERARY_MASK",
@@ -609,14 +657,18 @@
     "name": "Fur Coat",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, mark 7 random combats. Enemies in those rooms have 1 HP."
+    "description": "Upon pickup, mark 8 random combats. Enemies in those rooms have 1 HP.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.GALACTIC_DUST",
     "name": "Galactic Dust",
     "character": "Regent",
     "rarity": "Uncommon",
-    "description": "For every 10 1 Star spent, gain 10 Block."
+    "description": "For every 10 Star spent, gain 10 Block.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.GAMBLING_CHIP",
@@ -630,7 +682,9 @@
     "name": "Game Piece",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "Whenever you play a Power, draw 1 card."
+    "description": "Whenever you play a type:Power, draw 1 card.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.GHOST_SEED",
@@ -658,7 +712,9 @@
     "name": "Glitter",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Enchant all card rewards with [purple]Glam[/purple]."
+    "description": "Enchant all card rewards with Glam.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.GLOWING_ORB",
@@ -672,7 +728,9 @@
     "name": "Gnarled Hammer",
     "character": "Shared",
     "rarity": "Shop",
-    "description": "Upon pickup, Enchant up to 3 Attacks with [purple]Sharp[/purple] 3."
+    "description": "Upon pickup, Enchant up to 3 type:Attack with Sharp 3.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.GOLD_PLATED_CABLES",
@@ -693,7 +751,9 @@
     "name": "Golden Pearl",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, gain 150 Gold."
+    "description": "Upon pickup, gain 150 Gold.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.GORGET",
@@ -735,7 +795,9 @@
     "name": "Hefty Tablet",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, choose 1 of 3 Rare cards to add to your Deck, and add 1 Injury to your Deck."
+    "description": "Choose 1 of 3 Rare cards to add to your Deck. Add 1 Injury to your Deck.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.HELICAL_DART",
@@ -749,8 +811,10 @@
     "name": "History Course",
     "character": "Event",
     "rarity": "Event",
-    "description": "At the start of your turn, play a copy of your last played Attack.",
-    "last_changed": "v0.109.0"
+    "description": "At the start of your turn, play a copy of your last played type:Attack.",
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.HORN_CLEAT",
@@ -771,7 +835,9 @@
     "name": "Infused Core",
     "character": "Event",
     "rarity": "Starter",
-    "description": "At the start of each combat, Channel 3 Lightning. Lightning deals 1 additional damage."
+    "description": "At the start of each combat, Channel 3 Lightning. Lightning Orbs deal 1 additional damage.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.INK_BOTTLE",
@@ -785,7 +851,9 @@
     "name": "Intimidating Helmet",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "Whenever you play a card that costs 2 Energy or more, gain 4 Block."
+    "description": "Whenever you play a card that costs 1 Energy 1 Energy or more, gain 4 Block.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.IRON_CLUB",
@@ -806,7 +874,9 @@
     "name": "Jeweled Mask",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "At the start of each combat, put a random Power from your Draw Pile into your Hand. It's free to play this combat."
+    "description": "At the start of each combat put a random type:Power from your Draw Pile into your Hand. It's free to play this combat.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.JEWELRY_BOX",
@@ -834,21 +904,27 @@
     "name": "Kifuda",
     "character": "Shared",
     "rarity": "Shop",
-    "description": "Upon pickup, Enchant up to 3 cards with [purple]Adroit[/purple]."
+    "description": "Upon pickup, Enchant up to 3 cards with Adroit.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.KUNAI",
     "name": "Kunai",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "Every time you play 3 Attacks in a single turn, gain 1 Dexterity."
+    "description": "Every time you play 3 type:Attack in a single turn, gain 1 Dexterity.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.KUSARIGAMA",
     "name": "Kusarigama",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "Every time you play 3 Attacks in a single turn, deal 6 damage to a random enemy."
+    "description": "Every time you play 3 type:Attack in a single turn, deal 6 damage to a random enemy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.LANTERN",
@@ -869,7 +945,9 @@
     "name": "Lasting Candy",
     "character": "Event",
     "rarity": "Uncommon",
-    "description": "Every other combat, your card rewards gain an additional Power."
+    "description": "Every other combat, your card rewards gain an additional type:Power.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.LAVA_LAMP",
@@ -890,7 +968,9 @@
     "name": "Lead Paperweight",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, choose 1 of 2 Colorless cards to add to your Deck."
+    "description": "Upon pickup, choose 1 of 2 color:Colorless cards to add to your Deck.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.LEAFY_POULTICE",
@@ -918,7 +998,9 @@
     "name": "Letter Opener",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "Every time you play 3 Skills in a single turn, deal 5 damage to ALL enemies."
+    "description": "Every time you play 3 type:Skill in a single turn, deal 5 damage to ALL enemies.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.LIZARD_TAIL",
@@ -953,21 +1035,27 @@
     "name": "Lost Wisp",
     "character": "Event",
     "rarity": "Event",
-    "description": "Whenever you play a Power, deal 8 damage to ALL enemies."
+    "description": "Whenever you play a type:Power, deal 8 damage to ALL enemies.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.LUCKY_FYSH",
     "name": "Lucky Fysh",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "Whenever you add a card to your Deck, gain 15 Gold."
+    "description": "Whenever you add a card to your Deck, gain 15 Gold.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.LUNAR_PASTRY",
     "name": "Lunar Pastry",
     "character": "Regent",
     "rarity": "Rare",
-    "description": "At the end of your turn, gain 1 Star."
+    "description": "At the end of your turn, gain 1 Star.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.MANGO",
@@ -988,14 +1076,18 @@
     "name": "Massive Scroll",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, choose 1 of 3 Multiplayer Cards to add to your Deck."
+    "description": "Upon pickup, choose 1 of 3 multiplayer:True to add to your Deck.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.MAW_BANK",
     "name": "Maw Bank",
     "character": "Event",
     "rarity": "Event",
-    "description": "Whenever you climb a floor, gain 12 Gold. No longer works when you spend any Gold at the shop."
+    "description": "Whenever you climb a floor, gain 12 Gold. No longer works when you spend any Gold at the shop.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.MEAL_TICKET",
@@ -1052,14 +1144,18 @@
     "name": "Mini Regent",
     "character": "Regent",
     "rarity": "Rare",
-    "description": "The first time you spend 1 Star each turn, gain 1 Strength."
+    "description": "The first time you spend 1 Star each turn, gain 1 Strength.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.MINIATURE_CANNON",
     "name": "Miniature Cannon",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "Upgraded Attacks deal 3 additional damage."
+    "description": "Upgraded type:Attack deal 3 additional damage.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.MINIATURE_TENT",
@@ -1073,7 +1169,9 @@
     "name": "Molten Egg",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "Whenever you add an Attack card to your Deck, Upgrade it."
+    "description": "Whenever you add an type:Attack card to your Deck, Upgrade it.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.MR_STRUGGLES",
@@ -1087,14 +1185,18 @@
     "name": "Mummified Hand",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "Whenever you play a Power, a random card in your Hand is free to play that turn."
+    "description": "Whenever you play a type:Power, a random card in your Hand is free to play that turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.MUSIC_BOX",
     "name": "Music Box",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Create an Ethereal copy of the first Attack you play each turn."
+    "description": "Create an Ethereal copy of the first type:Attack you play each turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.MYSTERIOUS_COCOON",
@@ -1108,7 +1210,9 @@
     "name": "Mystic Lighter",
     "character": "Shared",
     "rarity": "Shop",
-    "description": "Enchanted Attacks deal 9 additional damage."
+    "description": "Enchanted type:Attack deal 9 additional damage.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.NEOWS_TALISMAN",
@@ -1143,7 +1247,9 @@
     "name": "Nunchaku",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "Every time you play 10 Attacks, gain 1 Energy."
+    "description": "Every time you play 10 type:Attack, gain 1 Energy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.NUTRITIOUS_OYSTER",
@@ -1157,7 +1263,9 @@
     "name": "Nutritious Soup",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, Enchant all Strikes in your Deck with [purple]Tezcatara's Ember[/purple]."
+    "description": "Upon pickup, Enchant all Strikes in your Deck with Tezcatara's Ember.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.ODDLY_SMOOTH_STONE",
@@ -1171,14 +1279,18 @@
     "name": "Old Coin",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "Upon pickup, gain 300 Gold."
+    "description": "Upon pickup, gain 300 Gold.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.ORANGE_DOUGH",
     "name": "Orange Dough",
     "character": "Regent",
     "rarity": "Rare",
-    "description": "At the start of each combat, add 2 random Colorless cards into your Hand."
+    "description": "At the start of each combat, add 2 random color:Colorless cards into your Hand.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.ORICHALCUM",
@@ -1199,7 +1311,9 @@
     "name": "Ornamental Fan",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "Every time you play 3 Attacks in a single turn, gain 4 Block."
+    "description": "Every time you play 3 type:Attack in a single turn, gain 4 Block.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.ORRERY",
@@ -1220,7 +1334,9 @@
     "name": "Pael's Claw",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, Enchant all Defends with [purple]Goopy[/purple]."
+    "description": "Upon pickup, Enchant all Defends with Goopy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.PAELS_EYE",
@@ -1241,7 +1357,9 @@
     "name": "Pael's Growth",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, Enchant a card with [purple]Clone[/purple]."
+    "description": "Upon pickup, Enchant a card with Clone.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.PAELS_HORN",
@@ -1262,7 +1380,9 @@
     "name": "Pael's Tears",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "If you end your turn with unspent 1 Energy, gain an additional 2 Energy next turn."
+    "description": "If you end your turn with unspent 1 Energy, gain an additional 1 Energy 1 Energy next turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.PAELS_TOOTH",
@@ -1325,7 +1445,9 @@
     "name": "Pen Nib",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "Every 10th Attack you play deals double damage."
+    "description": "Every 10th type:Attack you play deals double damage.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.PENDULUM",
@@ -1339,7 +1461,9 @@
     "name": "Permafrost",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "The first time you play a Power each combat, gain 7 Block."
+    "description": "The first time you play a type:Power each combat, gain 7 Block.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.PETRIFIED_TOAD",
@@ -1416,7 +1540,9 @@
     "name": "Precarious Shears",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, remove 2 cards from your Deck and lose 16 HP."
+    "description": "Upon pickup, remove 2 cards from your Deck and take 16 damage.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.PRECISE_SCISSORS",
@@ -1451,7 +1577,9 @@
     "name": "Punch Dagger",
     "character": "Shared",
     "rarity": "Shop",
-    "description": "Upon pickup, Enchant an Attack with [purple]Momentum[/purple] 5."
+    "description": "Upon pickup, Enchant an type:Attack with Momentum 5.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.RADIANT_PEARL",
@@ -1465,14 +1593,18 @@
     "name": "Rainbow Ring",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "The first time you play an Attack, Skill, and Power each turn, gain 1 Strength and 1 Dexterity."
+    "description": "The first time you play an type:Attack, type:Skill, and type:Power each turn, gain 1 Strength and 1 Dexterity.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.RAZOR_TOOTH",
     "name": "Razor Tooth",
     "character": "Event",
     "rarity": "Rare",
-    "description": "Every time you play an Attack or Skill, Upgrade it for the remainder of combat."
+    "description": "Every time you play an type:Attack or type:Skill, Upgrade it for the remainder of combat.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.RED_MASK",
@@ -1507,7 +1639,9 @@
     "name": "Regalite",
     "character": "Regent",
     "rarity": "Uncommon",
-    "description": "Whenever you create a card, gain 2 Block."
+    "description": "The first time you create a card each turn, gain 6 Block.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.REPTILE_TRINKET",
@@ -1542,7 +1676,9 @@
     "name": "Ripple Basin",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "If you did not play any Attacks during your turn, gain 4 Block."
+    "description": "If you did not play any type:Attack during your turn, gain 4 Block.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.ROYAL_POISON",
@@ -1556,7 +1692,9 @@
     "name": "Royal Stamp",
     "character": "Shared",
     "rarity": "Shop",
-    "description": "Upon pickup, choose an Attack or Skill in your Deck to Enchant with [purple]Royally Approved[/purple]."
+    "description": "Upon pickup, choose an type:Attack or type:Skill in your Deck to Enchant with Royally Approved.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.RUINED_HELMET",
@@ -1606,7 +1744,9 @@
     "name": "Scroll Boxes",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, choose 1 of 2 packs of cards to add to your Deck."
+    "description": "Choose 1 of 2 packs of cards to add to your Deck.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.SEA_GLASS",
@@ -1620,7 +1760,9 @@
     "name": "Seal of Gold",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "At the start of your turn, spend 5 Gold to gain 1 Energy."
+    "description": "At the start of your turn, spend 3 Gold to gain 1 Energy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.SELF_FORMING_CLAY",
@@ -1634,8 +1776,10 @@
     "name": "Sere Talon",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, lose 9 Max HP. Add 3 [purple]Wishes[/purple] to your Deck.",
-    "last_changed": "v0.109.0"
+    "description": "Upon pickup, lose 9 Max HP. Add 3 Wishes to your Deck.",
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.SHOVEL",
@@ -1649,14 +1793,18 @@
     "name": "Shuriken",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "Every time you play 3 Attacks in a single turn, gain 1 Strength."
+    "description": "Every time you play 3 type:Attack in a single turn, gain 1 Strength.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.SIGNET_RING",
     "name": "Signet Ring",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, gain 999 Gold."
+    "description": "Upon pickup, gain 888 Gold.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.SILVER_CRUCIBLE",
@@ -1719,7 +1867,9 @@
     "name": "Spiked Gauntlets",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Gain 1 Energy at the start of each turn. Powers cost 1 more 1 Energy."
+    "description": "Gain 1 Energy at the start of each turn. type:Power cost 1 more 1 Energy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.STONE_CALENDAR",
@@ -1733,7 +1883,9 @@
     "name": "Stone Cracker",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "At the start of each combat, Upgrade 2 random cards in your Draw Pile for the rest of combat."
+    "description": "At the start of combat, Upgrade 2 random cards in your Draw Pile for the rest of combat.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.STONE_HUMIDIFIER",
@@ -1873,14 +2025,18 @@
     "name": "Toasty Mittens",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "At the start of your turn, Exhaust the top card of your Draw Pile and gain 1 Strength."
+    "description": "At the start of your turn, Exhaust 1 card from your Hand and gain 1 Strength.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.TOOLBOX",
     "name": "Toolbox",
     "character": "Shared",
     "rarity": "Shop",
-    "description": "At the start of each combat, choose 1 of 3 random Colorless cards and add the chosen card into your Hand."
+    "description": "At the start of each combat, choose 1 of 3 random color:Colorless cards and add the chosen card into your Hand.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.TOUCH_OF_OROBAS",
@@ -1901,7 +2057,9 @@
     "name": "Toxic Egg",
     "character": "Shared",
     "rarity": "Rare",
-    "description": "Whenever you add a Skill into your Deck, Upgrade it."
+    "description": "Whenever you add a type:Skill into your Deck, Upgrade it.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.TOY_BOX",
@@ -1916,7 +2074,9 @@
     "name": "Tri-Boomerang",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Choose 3 Attacks in your Deck. Enchant them with [purple]Instinct[/purple]."
+    "description": "Choose 3 type:Attack in your Deck. Enchant them with Instinct.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.TUNGSTEN_ROD",
@@ -1930,7 +2090,9 @@
     "name": "Tuning Fork",
     "character": "Shared",
     "rarity": "Uncommon",
-    "description": "Every time you play 10 Skills, gain 7 Block."
+    "description": "Every time you play 10 type:Skill, gain 7 Block.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.TWISTED_FUNNEL",
@@ -1986,7 +2148,9 @@
     "name": "Venerable Tea Set",
     "character": "Shared",
     "rarity": "Common",
-    "description": "Whenever you enter a Rest Site, start the next combat with an additional 2 Energy."
+    "description": "Whenever you enter a Rest Site, start the next combat with an additional 1 Energy 1 Energy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.VENERABLE_TEA_SET_FAKE",
@@ -2028,21 +2192,27 @@
     "name": "War Hammer",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Whenever you kill an Elite, Upgrade 4 random cards."
+    "description": "Whenever you kill an Elites, Upgrade 4 random cards.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.WAR_PAINT",
     "name": "War Paint",
     "character": "Shared",
     "rarity": "Common",
-    "description": "Upon pickup, Upgrade 2 random Skills."
+    "description": "Upon pickup, Upgrade 2 random type:Skill.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.WHETSTONE",
     "name": "Whetstone",
     "character": "Shared",
     "rarity": "Common",
-    "description": "Upon pickup, Upgrade 2 random Attacks."
+    "description": "Upon pickup, Upgrade 2 random type:Attack.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.WHISPERING_EARRING",
@@ -2070,7 +2240,9 @@
     "name": "Wing Charm",
     "character": "Shared",
     "rarity": "Shop",
-    "description": "A random card in each card reward is Enchanted with [purple]Swift[/purple] 1."
+    "description": "A random card in each card reward is Enchanted with Swift 1.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.WONGO_CUSTOMER_APPRECIATION_BADGE",
@@ -2120,8 +2292,10 @@
     "name": "Silken Tress",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, lose all Gold. Enchant all cards in the first card reward with [purple]Glam[/purple].",
-    "introduced": "beta-2026-06-19"
+    "description": "Upon pickup, lose all Gold. Enchant all cards in your first card reward with Glam.",
+    "introduced": "beta-2026-06-19",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "RELIC.WINGED_BOOTS",
@@ -2194,8 +2368,10 @@
     "name": "Neow's Sacrifice",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, procure 1 Ambergris and add 1 Guilty to your Deck.",
+    "description": "Upon pickup, procure 1 Ambergris and 1 Guilty to your Deck.",
     "introduced": "v0.109.0",
-    "branch": "beta"
+    "branch": "beta",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   }
 ]

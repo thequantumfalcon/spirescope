@@ -117,8 +117,8 @@
       "Draw"
     ],
     "description_upgraded": "Gain 3 Energy. Draw 3 cards. Lose 1 Max HP.",
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BYRD_SWOOP",
@@ -400,7 +400,9 @@
     "rarity": "Rare",
     "description": "Deal 20 damage. If Fatal, gain 20 Gold.",
     "description_upgraded": "Deal 25 damage. If Fatal, gain 25 Gold.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.HIDDEN_CACHE",
@@ -411,7 +413,9 @@
     "rarity": "Common",
     "description": "Gain 1 Star. Next turn, gain 3 Star.",
     "keywords": [],
-    "description_upgraded": "Gain 1 Star. Next turn, gain 4 Star."
+    "description_upgraded": "Gain 1 Star. Next turn, gain 4 Star.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.HIDDEN_GEM",
@@ -420,11 +424,13 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Rare",
-    "description": "A random card without Replay in your Draw Pile gains Replay 2.",
-    "description_upgraded": "A random card without Replay in your Draw Pile gains Replay 3.",
+    "description": "A random card in your Draw Pile without Replay gains Replay 2.",
+    "description_upgraded": "A random card in your Draw Pile without Replay gains Replay 3.",
     "keywords": [
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.HUDDLE_UP",
@@ -433,12 +439,14 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "ALL players draw 2 cards. Exhaust.",
-    "description_upgraded": "ALL players draw 3 cards. Exhaust.",
+    "description": "ALL allies draw 2 cards. Exhaust.",
+    "description_upgraded": "ALL allies draw 3 cards. Exhaust.",
     "keywords": [
       "Exhaust",
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.IMPALE",
@@ -497,9 +505,11 @@
     "cost": "3",
     "type": "Attack",
     "rarity": "Rare",
-    "description": "Deal 25 damage. Add 3 random 01 Energy cards into your Hand.",
-    "description_upgraded": "Deal 30 damage. Add 3 random Upgraded 01 Energy cards into your Hand.",
-    "keywords": []
+    "description": "Deal 25 damage. Add 3 random 0 Energy cards into your Hand.",
+    "description_upgraded": "Deal 30 damage. Add 3 random Upgraded 0 Energy cards into your Hand.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.KNOCKDOWN",
@@ -782,15 +792,15 @@
     "cost": "3",
     "type": "Skill",
     "rarity": "Event",
-    "description": "Gain 15 Block. Next turn, draw 2 cards and gain 2 Energy. Exhaust.",
-    "description_upgraded": "Gain 17 Block. Next turn, draw 3 cards and gain 3 Energy. Exhaust.",
+    "description": "Gain 16 Block. Next turn, draw 2 cards and gain 2 Energy. Exhaust.",
+    "description_upgraded": "Gain 18 Block. Next turn, draw 3 cards and gain 3 Energy. Exhaust.",
     "keywords": [
       "Block",
       "Exhaust",
       "Draw"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.REND",
@@ -800,8 +810,10 @@
     "type": "Attack",
     "rarity": "Rare",
     "description": "Deal 15 damage. Deals 5 additional damage for each unique debuff on the enemy.",
-    "description_upgraded": "Deal 15 damage. Deals 8 additional damage for each unique debuff on the enemy.",
-    "keywords": []
+    "description_upgraded": "Deal 18 damage. Deals 8 additional damage for each unique debuff on the enemy.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.RESTLESSNESS",
@@ -1004,9 +1016,11 @@
     "cost": "2",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "At the end of 3 turns, deal 3 damage to ALL enemies.",
-    "description_upgraded": "At the end of 3 turns, deal 13 damage to ALL enemies.",
-    "keywords": []
+    "description": "At the end of 3 turns, deal 40 damage to ALL enemies.",
+    "description_upgraded": "At the end of 3 turns, deal 50 damage to ALL enemies.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.THE_GAMBIT",
@@ -1078,24 +1092,26 @@
     "type": "Status",
     "rarity": "Status",
     "description": "Unplayable. Ethereal. Whenever you draw this card, lose 1 Energy.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. Ethereal. Whenever you draw this card, lose 1 Energy.",
     "keywords": [
       "Ethereal",
       "Draw"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.VOLLEY",
     "name": "Volley",
     "character": "Colorless",
-    "cost": "0",
+    "cost": "Unplayable",
     "type": "Attack",
     "rarity": "Uncommon",
     "description": "Deal 10 damage to a random enemy X times.",
     "description_upgraded": "Deal 14 damage to a random enemy X times.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.WASTE_AWAY",
@@ -1105,10 +1121,10 @@
     "type": "Status",
     "rarity": "Token",
     "description": "Gain 1 less 1 Energy per turn.",
-    "description_upgraded": "",
+    "description_upgraded": "Gain 1 less 1 Energy per turn.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.WHISTLE",
@@ -1136,10 +1152,12 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. Ethereal. Eternal.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. Ethereal. Eternal.",
     "keywords": [
       "Ethereal"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BAD_LUCK",
@@ -1149,8 +1167,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, lose 13 HP. Eternal.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, lose 13 HP. Eternal.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CLUMSY",
@@ -1160,10 +1180,12 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. Ethereal.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. Ethereal.",
     "keywords": [
       "Ethereal"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CURSE_OF_THE_BELL",
@@ -1173,8 +1195,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. Eternal.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Unplayable. Eternal.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.DEBT",
@@ -1184,8 +1208,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, lose 10 Gold.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, lose 10 Gold.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.DECAY",
@@ -1195,8 +1221,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, take 2 damage.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, take 2 damage.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.DOUBT",
@@ -1206,10 +1234,12 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, gain 1 Weak.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, gain 1 Weak.",
     "keywords": [
       "Weak"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.ENTHRALLED",
@@ -1219,8 +1249,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "If this is in your Hand, it must be played before other cards. Eternal.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "If this is in your Hand, it must be played before other cards. Eternal.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.FOLLY",
@@ -1229,12 +1261,14 @@
     "cost": "Unplayable",
     "type": "Curse",
     "rarity": "Curse",
-    "description": "Unplayable. Innate. Ethereal. Eternal.",
-    "description_upgraded": "",
+    "description": "Unplayable. Ethereal. Innate. Eternal.",
+    "description_upgraded": "Unplayable. Ethereal. Innate. Eternal.",
     "keywords": [
       "Ethereal",
       "Innate"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.GREED",
@@ -1244,8 +1278,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. Eternal.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Unplayable. Eternal.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.GUILTY",
@@ -1255,8 +1291,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. Removed from your Deck after 5 combats.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Unplayable. Removed from your Deck after 5 combats.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.INJURY",
@@ -1266,8 +1304,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Unplayable.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.NORMALITY",
@@ -1277,8 +1317,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. You cannot play more than 3 cards this turn.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Unplayable. You cannot play more than 3 cards this turn.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.POOR_SLEEP",
@@ -1288,10 +1330,12 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. Retain.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. Retain.",
     "keywords": [
       "Retain"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.REGRET",
@@ -1301,8 +1345,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, lose 1 HP for each card in your Hand.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, lose 1 HP for each card in your Hand.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SHAME",
@@ -1312,8 +1358,10 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, gain 1 Frail.",
-    "description_upgraded": "",
-    "keywords": []
+    "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, gain 1 Frail.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SPORE_MIND",
@@ -1323,10 +1371,12 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Exhaust.",
-    "description_upgraded": "",
+    "description_upgraded": "Exhaust.",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.WRITHE",
@@ -1336,10 +1386,12 @@
     "type": "Curse",
     "rarity": "Curse",
     "description": "Unplayable. Innate.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. Innate.",
     "keywords": [
       "Innate"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.ADAPTIVE_STRIKE",
@@ -1348,11 +1400,13 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Rare",
-    "description": "Deal 18 damage. Add a 01 Energy copy of this card into your Discard Pile.",
-    "description_upgraded": "Deal 23 damage. Add a 01 Energy copy of this card into your Discard Pile.",
+    "description": "Deal 18 damage. Add a 0 Energy copy of this card into your Discard Pile.",
+    "description_upgraded": "Deal 23 damage. Add a 0 Energy copy of this card into your Discard Pile.",
     "keywords": [
       "Discard"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.ALL_FOR_ONE",
@@ -1361,12 +1415,14 @@
     "type": "Attack",
     "rarity": "Rare",
     "energy": "",
-    "description": "Deal 10 damage. Put ALL 01 Energy cards from your Discard Pile into your Hand.",
+    "description": "Deal 10 damage. Put ALL 0 Energy cards from your Discard Pile into your Hand.",
     "keywords": [
       "Discard"
     ],
     "cost": "2",
-    "description_upgraded": "Deal 14 damage. Put ALL 01 Energy cards from your Discard Pile into your Hand."
+    "description_upgraded": "Deal 14 damage. Put ALL 0 Energy cards from your Discard Pile into your Hand.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BALL_LIGHTNING",
@@ -1415,11 +1471,13 @@
     "cost": "1",
     "type": "Power",
     "rarity": "Ancient",
-    "description": "Gain 4 Focus. At the start of your turn, lose 1 Focus.",
-    "description_upgraded": "Gain 5 Focus. At the start of your turn, lose 1 Focus.",
+    "description": "Gain 5 Focus. At the start of your turn, lose 1 Focus.",
+    "description_upgraded": "Gain 6 Focus. At the start of your turn, lose 1 Focus.",
     "keywords": [
       "Focus"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BOOST_AWAY",
@@ -1747,9 +1805,11 @@
     "cost": "2",
     "type": "Power",
     "rarity": "Uncommon",
-    "description": "The first time you play a 01 Energy Attack each turn, return it to your Hand.",
-    "description_upgraded": "The first time you play a 01 Energy Attack each turn, return it to your Hand.",
-    "keywords": []
+    "description": "The first time you play a 0 Energy Attack each turn, return it to your Hand.",
+    "description_upgraded": "The first time you play a 0 Energy Attack each turn, return it to your Hand.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.FIGHT_THROUGH",
@@ -1814,12 +1874,14 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Rare",
-    "description": "Gain 3 Block. Permanently increase this card's Block by 3. Exhaust.",
-    "description_upgraded": "Gain 3 Block. Permanently increase this card's Block by 4. Exhaust.",
+    "description": "Gain 1 Block. Permanently increase this card's Block by 3. Exhaust.",
+    "description_upgraded": "Gain 1 Block. Permanently increase this card's Block by 4. Exhaust.",
     "keywords": [
       "Block",
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.GLACIER",
@@ -1939,10 +2001,12 @@
     "rarity": "Rare",
     "description": "Deal 30 damage to ALL enemies. Lose 3 Focus.",
     "description_upgraded": "Deal 38 damage to ALL enemies. Lose 3 Focus.",
-    "keywords": [],
+    "keywords": [
+      "Focus"
+    ],
     "last_changed": "v0.109.0",
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.ICE_LANCE",
@@ -1981,11 +2045,13 @@
     "cost": "1",
     "type": "Power",
     "rarity": "Uncommon",
-    "description": "The first time you draw a Status each turn, draw 2 cards.",
-    "description_upgraded": "The first time you draw a Status each turn, draw 3 cards.",
+    "description": "The first time you draw a Status card each turn, draw 2 cards.",
+    "description_upgraded": "The first time you draw a Status card each turn, draw 3 cards.",
     "keywords": [
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.LEAP",
@@ -2073,22 +2139,26 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 11 damage. Reduce this card's cost to 0 1 Energy.",
-    "description_upgraded": "Deal 15 damage. Reduce this card's cost to 0 1 Energy.",
-    "keywords": []
+    "description": "Deal 11 damage. Reduce this card's cost to 0 Energy.",
+    "description_upgraded": "Deal 15 damage. Reduce this card's cost to 0 Energy.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.MULTI_CAST",
     "name": "Multi-Cast",
     "character": "Defect",
-    "cost": "0",
+    "cost": "Unplayable",
     "type": "Skill",
     "rarity": "Rare",
     "description": "Evoke your rightmost Orb X times.",
     "description_upgraded": "Evoke your rightmost Orb X+1 times.",
     "keywords": [
       "Evoke"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.NULL",
@@ -2171,11 +2241,13 @@
     "cost": "3",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "Deal 9 damage twice. Channel 2 Glass.",
-    "description_upgraded": "Deal 12 damage twice. Channel 2 Glass.",
+    "description": "Deal 10 damage twice. Channel 2 Glass.",
+    "description_upgraded": "Deal 13 damage twice. Channel 2 Glass.",
     "keywords": [
       "Channel"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.ROCKET_PUNCH",
@@ -2184,11 +2256,13 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "Deal 13 damage. Draw 1 card. Whenever you create a Status, reduce this card's cost to 0 1 Energy until played.",
-    "description_upgraded": "Deal 14 damage. Draw 2 cards. Whenever you create a Status, reduce this card's cost to 0 1 Energy until played.",
+    "description": "Deal 13 damage. Draw 1 card. Whenever you create a Status, reduce this card's cost by 1 Energy until played.",
+    "description_upgraded": "Deal 14 damage. Draw 2 cards. Whenever you create a Status, reduce this card's cost by 1 Energy until played.",
     "keywords": [
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SCRAPE",
@@ -2197,13 +2271,15 @@
     "type": "Attack",
     "rarity": "Uncommon",
     "energy": "",
-    "description": "Deal 7 damage. Draw 4 cards. Discard all cards drawn this way that do not cost 0 1 Energy.",
+    "description": "Deal 7 damage. Draw 4 cards. Discard all cards drawn this way that do not cost 0 Energy.",
     "keywords": [
       "Draw",
       "Discard"
     ],
     "cost": "1",
-    "description_upgraded": "Deal 10 damage. Draw 5 cards. Discard all cards drawn this way that do not cost 0 1 Energy."
+    "description_upgraded": "Deal 10 damage. Draw 5 cards. Discard all cards drawn this way that do not cost 0 Energy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SHADOW_SHIELD",
@@ -2328,10 +2404,12 @@
     "cost": "3",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "Deal 26 damage. If this kills an enemy, gain 1 Energy.",
-    "description_upgraded": "Deal 34 damage. If this kills an enemy, gain 1 Energy.",
+    "description": "Deal 26 damage. If this kills an enemy, gain 3 Energy.",
+    "description_upgraded": "Deal 34 damage. If this kills an enemy, gain 3 Energy.",
     "keywords": [],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SUPERCRITICAL",
@@ -2366,12 +2444,13 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Gain 2 Focus this turn for each unique Orb you have. Exhaust.",
-    "description_upgraded": "Gain 2 Focus this turn for each unique Orb you have.",
+    "description": "Gain 2 Focus this turn for each unique Orb you have.",
+    "description_upgraded": "Gain 3 Focus this turn for each unique Orb you have.",
     "keywords": [
-      "Exhaust",
       "Focus"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SYNTHESIS",
@@ -2380,15 +2459,17 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "Deal 14 damage. The next Power you play costs 0 1 Energy.",
+    "description": "Deal 14 damage. The next Power you play costs 0 Energy.",
     "keywords": [],
-    "description_upgraded": "Deal 20 damage. The next Power you play costs 0 1 Energy."
+    "description_upgraded": "Deal 20 damage. The next Power you play costs 0 Energy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.TEMPEST",
     "name": "Tempest",
     "character": "Defect",
-    "cost": "0",
+    "cost": "Unplayable",
     "type": "Skill",
     "rarity": "Uncommon",
     "description": "Channel X Lightning.",
@@ -2396,7 +2477,9 @@
     "keywords": [
       "Channel",
       "Lightning"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.TESLA_COIL",
@@ -2432,12 +2515,14 @@
     "cost": "1",
     "type": "Power",
     "rarity": "Rare",
-    "description": "Whenever you create a Status, Channel 1 random Orb.",
-    "description_upgraded": "Whenever you create a Status, Channel 1 random Orb.",
+    "description": "Whenever you create a Status card, Channel 1 random Orb.",
+    "description_upgraded": "Whenever you create a Status card, Channel 1 random Orb.",
     "keywords": [
       "Channel"
     ],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.UPROAR",
@@ -2509,8 +2594,8 @@
       "Exhaust",
       "Innate"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.APPARITION_EVENT",
@@ -2526,8 +2611,8 @@
       "Ethereal",
       "Intangible"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BYRD_SWOOP_EVENT",
@@ -2656,11 +2741,11 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Event",
-    "description": "Deal 5 damage twice. Increase the damage of ALL Maul cards by 1 this combat.",
-    "description_upgraded": "Deal 6 damage twice. Increase the damage of ALL Maul cards by 2 this combat.",
+    "description": "Deal 5 damage twice. Increase the damage of ALL Maul cards by 2 this combat.",
+    "description_upgraded": "Deal 6 damage twice. Increase the damage of ALL Maul cards by 3 this combat.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.METAMORPHOSIS",
@@ -2689,8 +2774,8 @@
       "Discard"
     ],
     "description_upgraded": "Deal 14 damage. Put up to 3 cards from your Discard Pile into your Hand. Exhaust.",
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.PECK",
@@ -2771,7 +2856,7 @@
     "id": "CARD.WHISTLE_EVENT",
     "name": "Whistle",
     "character": "Event",
-    "cost": "3",
+    "cost": "2",
     "type": "Attack",
     "rarity": "Event",
     "description": "Deal 33 damage. Stun the enemy. Exhaust.",
@@ -2779,8 +2864,8 @@
     "keywords": [
       "Exhaust"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.WISH_EVENT",
@@ -2795,8 +2880,8 @@
       "Exhaust",
       "Draw"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.AGGRESSION",
@@ -3025,11 +3110,13 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 18 damage. Exhaust 1 card at random.",
-    "description_upgraded": "Deal 24 damage. Exhaust 1 card at random.",
+    "description": "Deal 18 damage. Exhaust a random card in your Hand.",
+    "description_upgraded": "Deal 24 damage. Exhaust a random card in your Hand.",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.COLOSSUS",
@@ -3066,11 +3153,13 @@
     "cost": "3",
     "type": "Power",
     "rarity": "Ancient",
-    "description": "Skills cost 0 1 Energy. Whenever you play a Skill, Exhaust it.",
+    "description": "Skills cost 0 Energy. Whenever you play a Skill, Exhaust it.",
     "keywords": [
       "Exhaust"
     ],
-    "description_upgraded": "Skills cost 0 1 Energy. Whenever you play a Skill, Exhaust it."
+    "description_upgraded": "Skills cost 0 Energy. Whenever you play a Skill, Exhaust it.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CRIMSON_MANTLE",
@@ -3081,9 +3170,11 @@
     "rarity": "Rare",
     "description": "At the start of your turn, lose 1 HP and gain 7 Block.",
     "description_upgraded": "At the start of your turn, lose 1 HP and gain 10 Block.",
-    "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "keywords": [
+      "Block"
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CRUELTY",
@@ -3190,13 +3281,15 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Draw 2 cards. When this card is Exhausted, gain 2 Energy.",
-    "description_upgraded": "Draw 2 cards. When this card is Exhausted, gain 3 Energy.",
+    "description": "Draw 2 cards. When this card is Exhausted, gain 2 Energy",
+    "description_upgraded": "Draw 2 cards. When this card is Exhausted, gain 3 Energy",
     "keywords": [
       "Exhaust",
       "Draw"
     ],
-    "last_changed": "v0.107.1"
+    "last_changed": "v0.107.1",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.EVIL_EYE",
@@ -3311,10 +3404,12 @@
     "type": "Attack",
     "rarity": "Uncommon",
     "description": "Deal 7 damage. Whenever you gain Block this turn, deal 5 damage to the enemy.",
-    "description_upgraded": "",
+    "description_upgraded": "Deal 9 damage. Whenever you gain Block this turn, deal 7 damage to the enemy.",
     "keywords": [
       "Block"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.HAVOC",
@@ -3452,11 +3547,13 @@
     "cost": "2",
     "type": "Power",
     "rarity": "Rare",
-    "description": "Whenever you gain Block, deal 6 damage to a random enemy.",
-    "description_upgraded": "Whenever you gain Block, deal 8 damage to a random enemy.",
+    "description": "Whenever you gain Block, deal 5 damage to a random enemy.",
+    "description_upgraded": "Whenever you gain Block, deal 7 damage to a random enemy.",
     "keywords": [
       "Block"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.JUGGLING",
@@ -3476,11 +3573,13 @@
     "cost": "3",
     "type": "Attack",
     "rarity": "Rare",
-    "description": "Deal 15 damage. Enemy loses 10 Strength this turn.",
-    "description_upgraded": "Deal 20 damage. Enemy loses 15 Strength this turn.",
+    "description": "Deal 20 damage. Enemy loses 10 Strength this turn.",
+    "description_upgraded": "Deal 26 damage. Enemy loses 15 Strength this turn.",
     "keywords": [
       "Strength"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.MOLTEN_FIST",
@@ -3533,8 +3632,10 @@
     "type": "Skill",
     "rarity": "Rare",
     "description": "This turn, your next Attack is played an extra time.",
-    "description_upgraded": "This turn, your next Attack is played an extra time.",
-    "keywords": []
+    "description_upgraded": "This turn, your next 2 Attacks are played an extra time.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.PACTS_END",
@@ -3543,11 +3644,13 @@
     "cost": "0",
     "type": "Attack",
     "rarity": "Rare",
-    "description": "If you have 3 or more cards in your Exhaust Pile, deal 17 damage to ALL enemies.",
-    "description_upgraded": "If you have 3 or more cards in your Exhaust Pile, deal 23 damage to ALL enemies.",
+    "description": "If you have 3 or more cards in your Exhaust Pile, deal 18 damage to ALL enemies.",
+    "description_upgraded": "If you have 3 or more cards in your Exhaust Pile, deal 24 damage to ALL enemies.",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.PERFECTED_STRIKE",
@@ -3669,9 +3772,11 @@
     "rarity": "Common",
     "description": "Deal 7 damage. Gain 3 Strength this turn.",
     "description_upgraded": "Deal 9 damage. Gain 4 Strength this turn.",
-    "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "keywords": [
+      "Strength"
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SHRUG_IT_OFF",
@@ -3788,10 +3893,13 @@
     "rarity": "Common",
     "description": "Gain 6 Block. Apply 1 Vulnerable.",
     "description_upgraded": "Gain 7 Block. Apply 2 Vulnerable.",
-    "keywords": [],
+    "keywords": [
+      "Block",
+      "Vulnerable"
+    ],
     "last_changed": "v0.109.0",
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.TEAR_ASUNDER",
@@ -3889,9 +3997,11 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "Deal 14 damage. The next Attack you play costs 0 1 Energy.",
-    "description_upgraded": "Deal 20 damage. The next Attack you play costs 0 1 Energy.",
-    "keywords": []
+    "description": "Deal 14 damage. The next Attack you play costs 0 Energy.",
+    "description_upgraded": "Deal 20 damage. The next Attack you play costs 0 Energy.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.UPPERCUT",
@@ -3925,12 +4035,14 @@
     "id": "CARD.WHIRLWIND",
     "name": "Whirlwind",
     "character": "Ironclad",
-    "cost": "0",
+    "cost": "Unplayable",
     "type": "Attack",
     "rarity": "Uncommon",
     "description": "Deal 5 damage to ALL enemies X times.",
     "description_upgraded": "Deal 8 damage to ALL enemies X times.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.AFTERLIFE",
@@ -4051,12 +4163,14 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Enemy loses 3 HP. Add 3 Souls into your Draw Pile.",
-    "description_upgraded": "Enemy loses 4 HP. Add 4 Souls into your Draw Pile.",
+    "description": "Enemy loses 3 HP. Add 3 Soul into your Draw Pile.",
+    "description_upgraded": "Enemy loses 4 HP. Add 4 Soul into your Draw Pile.",
     "keywords": [
       "Draw",
       "Soul"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CLEANSE",
@@ -4105,10 +4219,12 @@
     "type": "Attack",
     "rarity": "Uncommon",
     "description": "Deal 8 damage. Deals 4 additional damage for each card drawn during your turn.",
-    "description_upgraded": "Deal 8 damage. Deals 6 additional damage for each card drawn during your turn.",
+    "description_upgraded": "Deal 9 damage. Deals 6 additional damage for each card drawn during your turn.",
     "keywords": [
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.DEATHS_DOOR",
@@ -4236,17 +4352,19 @@
     "id": "CARD.DIRGE",
     "name": "Dirge",
     "character": "Necrobinder",
-    "cost": "0",
+    "cost": "Unplayable",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Summon 3 X times. Add X Souls into your Draw Pile. Exhaust.",
-    "description_upgraded": "Summon 4 X times. Add X Souls+ into your Draw Pile. Exhaust.",
+    "description": "Summon 3 X times. Add X Soul into your Draw Pile. Exhaust.",
+    "description_upgraded": "Summon 4 X times. Add X Soul+ into your Draw Pile. Exhaust.",
     "keywords": [
       "Exhaust",
       "Draw",
       "Summon",
       "Soul"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.DRAIN_POWER",
@@ -4282,13 +4400,15 @@
     "cost": "2",
     "type": "Skill",
     "rarity": "Rare",
-    "description": "Play ALL Ethereal cards in your Exhaust Pile. Exhaust.",
-    "description_upgraded": "Play ALL Ethereal cards in your Exhaust Pile. Exhaust.",
+    "description": "Play all Ethereal cards in your Exhaust pile. Exhaust.",
+    "description_upgraded": "Play all Ethereal cards in your Exhaust pile. Exhaust.",
     "keywords": [
       "Exhaust",
       "Ethereal"
     ],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.END_OF_DAYS",
@@ -4319,14 +4439,16 @@
     "id": "CARD.ERADICATE",
     "name": "Eradicate",
     "character": "Necrobinder",
-    "cost": "0",
+    "cost": "Unplayable",
     "type": "Attack",
     "rarity": "Rare",
     "description": "Retain. Deal 11 damage X times.",
     "description_upgraded": "Retain. Deal 14 damage X times.",
     "keywords": [
       "Retain"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.FEAR",
@@ -4362,9 +4484,11 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Osty deals 12 damage. This card costs 0 1 Energy if Osty has attacked this turn.",
+    "description": "Osty deals 12 damage. This card costs 0 Energy if Osty has attacked this turn.",
     "keywords": [],
-    "description_upgraded": "Osty deals 16 damage. This card costs 0 1 Energy if Osty has attacked this turn."
+    "description_upgraded": "Osty deals 16 damage. This card costs 0 Energy if Osty has attacked this turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.FORBIDDEN_GRIMOIRE",
@@ -4388,7 +4512,9 @@
     "keywords": [
       "Strength"
     ],
-    "description_upgraded": ""
+    "description_upgraded": "Lose 1 Strength. Gain 1 Energy at the start of each turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.GLIMPSE_BEYOND",
@@ -4642,8 +4768,10 @@
     "type": "Attack",
     "rarity": "Ancient",
     "description": "Osty deals 10 damage. Deals additional damage equal to Osty's Max HP.",
-    "description_upgraded": "Osty deals 10 damage. Deals additional damage equal to Osty's Max HP.",
-    "keywords": []
+    "description_upgraded": "Osty deals 15 damage. Deals additional damage equal to Osty's Max HP.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.PULL_AGGRO",
@@ -4770,12 +4898,14 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Rare",
-    "description": "Retain. If Osty is alive, he dies and you gain Block equal to double his Max HP.",
-    "description_upgraded": "Retain. If Osty is alive, he dies and you gain Block equal to double his Max HP.",
+    "description": "Retain. If Osty is alive, he dies and you gain Block equal to triple his Max HP.",
+    "description_upgraded": "Retain. If Osty is alive, he dies and you gain Block equal to triple his Max HP.",
     "keywords": [
       "Block",
       "Retain"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SCOURGE",
@@ -4971,8 +5101,10 @@
     "type": "Attack",
     "rarity": "Rare",
     "description": "Osty deals 25 damage. Deals 5 additional damage for ALL your other Osty Attacks.",
-    "description_upgraded": "Osty deals 25 damage. Deals 6 additional damage for ALL your other Osty Attacks.",
-    "keywords": []
+    "description_upgraded": "Osty deals 30 damage. Deals 6 additional damage for ALL your other Osty Attacks.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.STRIKE_NECROBINDER",
@@ -4992,11 +5124,13 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Rare",
-    "description": "Deal 4 damage. Permanently increase this card's damage by 4. Exhaust.",
-    "description_upgraded": "Deal 4 damage. Permanently increase this card's damage by 5. Exhaust.",
+    "description": "Deal 13 damage. Permanently increase this card's damage by 5. Exhaust.",
+    "description_upgraded": "Deal 13 damage. Permanently increase this card's damage by 7. Exhaust.",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.TIMES_UP",
@@ -5033,10 +5167,10 @@
     "type": "Attack",
     "rarity": "Starter",
     "description": "Osty deals 6 damage. Deals additional damage equal to Osty's current HP.",
-    "description_upgraded": "Osty deals 6 damage. Deals additional damage equal to Osty's current HP.",
+    "description_upgraded": "Osty deals 9 damage. Deals additional damage equal to Osty's current HP.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.WISP",
@@ -5059,10 +5193,10 @@
     "type": "Quest",
     "rarity": "Quest",
     "description": "Unplayable. Can be hatched at a Rest Site.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. Can be hatched at a Rest Site.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.LANTERN_KEY_QUEST",
@@ -5072,10 +5206,10 @@
     "type": "Quest",
     "rarity": "Quest",
     "description": "Unplayable. Unlocks a special event in the next Act.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. Unlocks a special event in the next Act.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SPOILS_MAP_QUEST",
@@ -5085,10 +5219,10 @@
     "type": "Quest",
     "rarity": "Quest",
     "description": "Unplayable. Marks a site of 600 extra Gold in the next Act.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. Marks a site of 600 extra Gold in the next Act.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.ALIGNMENT",
@@ -5144,8 +5278,10 @@
     "type": "Attack",
     "rarity": "Rare",
     "description": "Deal 5 damage. Forge 5. Forges an additional 5 for every other time you've hit the enemy this turn.",
-    "description_upgraded": "Deal 7 damage. Forge 5. Forges an additional 7 for every other time you've hit the enemy this turn.",
-    "keywords": []
+    "description_upgraded": "Deal 7 damage. Forge 7. Forges an additional 7 for every other time you've hit the enemy this turn.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BIG_BANG",
@@ -5159,7 +5295,9 @@
       "Exhaust",
       "Draw"
     ],
-    "description_upgraded": "Innate. Draw 1 card. Gain 1 Energy. Gain 1 Star. Forge 5. Exhaust."
+    "description_upgraded": "Innate. Draw 1 card. Gain 1 Energy. Gain 1 Star. Forge 5. Exhaust.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BLACK_HOLE",
@@ -5170,7 +5308,9 @@
     "rarity": "Uncommon",
     "description": "Whenever you spend or gain 1 Star, deal 3 damage to ALL enemies.",
     "keywords": [],
-    "description_upgraded": "Whenever you spend or gain 1 Star, deal 4 damage to ALL enemies."
+    "description_upgraded": "Whenever you spend or gain 1 Star, deal 4 damage to ALL enemies.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BOMBARDMENT",
@@ -5218,11 +5358,13 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Choose 2 cards in your Draw Pile to Transform into Minion Dive Bombs.",
+    "description": "Choose 2 cards in your Draw Pile to Transform into Minion Dive Bomb.",
     "keywords": [
       "Draw"
     ],
-    "description_upgraded": "Choose 2 cards in your Draw Pile to Transform into Minion Dive Bombs+."
+    "description_upgraded": "Choose 2 cards in your Draw Pile to Transform into Minion Dive Bomb+.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CELESTIAL_MIGHT",
@@ -5242,11 +5384,13 @@
     "cost": "1",
     "type": "Power",
     "rarity": "Uncommon",
-    "description": "Whenever you spend 1 Star, gain 2 Block for each 1 Star spent.",
-    "description_upgraded": "Whenever you spend 1 Star, gain 3 Block for each 1 Star spent.",
+    "description": "Whenever you spend 1 Star , gain 2 Block for each 1 Star spent.",
+    "description_upgraded": "Whenever you spend 1 Star , gain 3 Block for each 1 Star spent.",
     "keywords": [
       "Block"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CLOAK_OF_STARS",
@@ -5309,7 +5453,9 @@
     "keywords": [
       "Retain"
     ],
-    "description_upgraded": "Next turn, gain 1 Energy and 2 Star. Retain your Hand this turn."
+    "description_upgraded": "Next turn, gain 1 Energy and 2 Star. Retain your Hand this turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.COSMIC_INDIFFERENCE",
@@ -5346,7 +5492,9 @@
     "rarity": "Common",
     "description": "Deal 8 damage. Deals 2 additional damage for ALL your cards that have a 1 Star cost.",
     "keywords": [],
-    "description_upgraded": "Deal 8 damage. Deals 3 additional damage for ALL your cards that have a 1 Star cost."
+    "description_upgraded": "Deal 8 damage. Deals 3 additional damage for ALL your cards that have a 1 Star cost.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CRUSH_UNDER",
@@ -5355,11 +5503,13 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 7 damage to ALL enemies. All enemies lose 1 Strength this turn.",
-    "description_upgraded": "Deal 8 damage to ALL enemies. All enemies lose 2 Strength this turn.",
+    "description": "Deal 8 damage to ALL enemies. All enemies lose 1 Strength this turn.",
+    "description_upgraded": "Deal 9 damage to ALL enemies. All enemies lose 2 Strength this turn.",
     "keywords": [
       "Strength"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.DECISIONS_DECISIONS",
@@ -5491,7 +5641,9 @@
     "keywords": [
       "Block"
     ],
-    "description_upgraded": "Gain 11 Block. Gain 1 Star."
+    "description_upgraded": "Gain 11 Block. Gain 1 Star.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.GENESIS",
@@ -5502,7 +5654,9 @@
     "rarity": "Rare",
     "description": "At the start of your turn, gain 2 Star.",
     "keywords": [],
-    "description_upgraded": "At the start of your turn, gain 3 Star."
+    "description_upgraded": "At the start of your turn, gain 3 Star.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.GLIMMER",
@@ -5525,10 +5679,12 @@
     "type": "Skill",
     "rarity": "Common",
     "description": "Gain 11 Block. Next turn, gain 5 Block.",
-    "description_upgraded": "Gain 13 Block. Next turn, gain 2 Block.",
-    "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "description_upgraded": "Gain 13 Block. Next turn, gain 7 Block.",
+    "keywords": [
+      "Block"
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.GLOW",
@@ -5537,11 +5693,13 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Common",
-    "description": "Gain 1 Star. Draw 1 card. Next turn, draw 1 card.",
+    "description": "Gain 1 Star. Draw 1 card. Next turn, draw 1 card",
     "keywords": [
       "Draw"
     ],
-    "description_upgraded": "Gain 2 Star. Draw 1 card. Next turn, draw 1 card."
+    "description_upgraded": "Gain 2 Star. Draw 1 card. Next turn, draw 1 card",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.GUIDING_STAR",
@@ -5571,12 +5729,14 @@
     "id": "CARD.HEAVENLY_DRILL",
     "name": "Heavenly Drill",
     "character": "Regent",
-    "cost": "0",
+    "cost": "Unplayable",
     "type": "Attack",
     "rarity": "Rare",
     "description": "Deal 8 damage X times. Double X if it's 4 or more.",
     "description_upgraded": "Deal 10 damage X times. Double X if it's 4 or more.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.HEGEMONY",
@@ -5649,7 +5809,9 @@
     "rarity": "Uncommon",
     "description": "Deal 30 damage. If this kills an enemy, gain 5 Star.",
     "description_upgraded": "Deal 38 damage. If this kills an enemy, gain 5 Star.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.KNOW_THY_PLACE",
@@ -5846,12 +6008,14 @@
     "cost": "1",
     "type": "Power",
     "rarity": "Uncommon",
-    "description": "The first time you create a card each turn, gain 5 Block.",
-    "description_upgraded": "The first time you create a card each turn, gain 7 Block.",
+    "description": "Whenever you create a card, gain 2 Block.",
+    "description_upgraded": "Whenever you create a card, gain 3 Block.",
     "keywords": [
       "Block"
     ],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.PROPHESIZE",
@@ -5886,7 +6050,9 @@
     "rarity": "Uncommon",
     "description": "Deal 3 damage to ALL enemies for each 1 Star gained this turn.",
     "keywords": [],
-    "description_upgraded": "Deal 4 damage to ALL enemies for each 1 Star gained this turn."
+    "description_upgraded": "Deal 4 damage to ALL enemies for each 1 Star gained this turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.REFINE_BLADE",
@@ -5935,7 +6101,9 @@
     "rarity": "Rare",
     "description": "At the end of combat, gain 30 Gold.",
     "description_upgraded": "At the end of combat, gain 40 Gold.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SEEKING_EDGE",
@@ -5970,7 +6138,9 @@
     "description_upgraded": "Deal 11 damage. Gain 2 Star. Put this card on top of your Draw Pile.",
     "keywords": [
       "Draw"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SOLAR_STRIKE",
@@ -5981,7 +6151,9 @@
     "rarity": "Common",
     "description": "Deal 9 damage. Gain 1 Star.",
     "keywords": [],
-    "description_upgraded": "Deal 10 damage. Gain 2 Star."
+    "description_upgraded": "Deal 10 damage. Gain 2 Star.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SPECTRUM_SHIFT",
@@ -6036,9 +6208,11 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Put Sovereign Blade into your Hand from anywhere. Forge 8.",
-    "description_upgraded": "Put Sovereign Blade into your Hand from anywhere. Forge 11.",
-    "keywords": []
+    "description": "Forge 8. Put Sovereign Blade into your Hand from anywhere.",
+    "description_upgraded": "Forge 11. Put Sovereign Blade into your Hand from anywhere.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SUPERMASSIVE",
@@ -6069,9 +6243,11 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Gain 6 Vigor.",
-    "description_upgraded": "Gain 8 Vigor.",
-    "keywords": []
+    "description": "Gain 7 Vigor.",
+    "description_upgraded": "Gain 10 Vigor.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.THE_SEALED_THRONE",
@@ -6082,7 +6258,9 @@
     "rarity": "Ancient",
     "description": "Whenever you play a card, gain 1 Star.",
     "description_upgraded": "Whenever you play a card, gain 1 Star.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.THE_SMITH",
@@ -6119,8 +6297,8 @@
     "description": "Gain 2 Star.",
     "keywords": [],
     "description_upgraded": "Gain 3 Star.",
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.VOID_FORM",
@@ -6168,11 +6346,13 @@
     "type": "Power",
     "rarity": "Uncommon",
     "description": "Poison is triggered 1 additional time.",
-    "description_upgraded": "Poison is triggered 2 additional time.",
+    "description_upgraded": "Poison is triggered 2 additional times.",
     "keywords": [
       "Poison"
     ],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.ACCURACY",
@@ -6181,11 +6361,13 @@
     "cost": "1",
     "type": "Power",
     "rarity": "Uncommon",
-    "description": "Shivs deal 4 additional damage.",
-    "description_upgraded": "Shivs deal 6 additional damage.",
+    "description": "Shiv deal 4 additional damage.",
+    "description_upgraded": "Shiv deal 6 additional damage.",
     "keywords": [
       "Shiv"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.ACROBATICS",
@@ -6293,12 +6475,14 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Common",
-    "description": "Add 3 Shivs into your Hand. Exhaust.",
-    "description_upgraded": "Add 4 Shivs into your Hand. Exhaust.",
+    "description": "Add 3 Shiv into your Hand. Exhaust.",
+    "description_upgraded": "Add 4 Shiv into your Hand. Exhaust.",
     "keywords": [
       "Exhaust",
       "Shiv"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BLADE_OF_INK",
@@ -6307,11 +6491,13 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Rare",
-    "description": "Add 2 [purple]Inky[/purple] Shivs into your Hand.",
-    "description_upgraded": "Add 3 [purple]Inky[/purple] Shivs into your Hand.",
+    "description": "Add 2 Inky Shiv into your Hand.",
+    "description_upgraded": "Add 3 Inky Shiv into your Hand.",
     "keywords": [
       "Shiv"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BLUR",
@@ -6373,8 +6559,10 @@
     "type": "Skill",
     "rarity": "Rare",
     "description": "This turn, your next Skill is played an extra time.",
-    "description_upgraded": "This turn, your next Skill is played an extra time.",
-    "keywords": []
+    "description_upgraded": "This turn, your next 2 Skills are played an extra time.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CALCULATED_GAMBLE",
@@ -6520,7 +6708,9 @@
     "rarity": "Rare",
     "description": "Deal 10 damage to ALL enemies. Repeat this effect for each enemy killed.",
     "description_upgraded": "Deal 13 damage to ALL enemies. Repeat this effect for each enemy killed.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.ENVENOM",
@@ -6588,11 +6778,13 @@
     "cost": "2",
     "type": "Power",
     "rarity": "Rare",
-    "description": "Shivs now hit ALL enemies. Add 4 Shivs into your Hand.",
-    "description_upgraded": "Shivs now hit ALL enemies. Add 1 Shivs into your Hand.",
+    "description": "Shiv now hit ALL enemies. Add 4 Shiv into your Hand.",
+    "description_upgraded": "Shiv now hit ALL enemies. Add 5 Shiv into your Hand.",
     "keywords": [
       "Shiv"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.FINISHER",
@@ -6612,10 +6804,12 @@
     "cost": "2",
     "type": "Skill",
     "rarity": "Rare",
-    "description": "The enemy takes double attack damage from other players this turn.",
-    "description_upgraded": "The enemy takes double attack damage from other players this turn.",
+    "description": "The enemy takes double damage from other players this turn.",
+    "description_upgraded": "The enemy takes double damage from other players this turn.",
     "keywords": [],
-    "last_changed": "v0.108.0"
+    "last_changed": "v0.108.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.FLECHETTES",
@@ -6682,14 +6876,17 @@
     "id": "CARD.HAZE",
     "name": "Haze",
     "character": "Silent",
-    "cost": "3",
+    "cost": "2",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Sly. Apply 4 Poison to ALL enemies.",
-    "description_upgraded": "Sly. Apply 6 Poison to ALL enemies.",
+    "description": "Apply 4 Poison and 1 Weak to ALL enemies.",
+    "description_upgraded": "Apply 6 Poison and 2 Weak to ALL enemies.",
     "keywords": [
+      "Weak",
       "Poison"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.HIDDEN_DAGGERS",
@@ -6698,12 +6895,14 @@
     "cost": "0",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Discard 2 cards. Add 2 Shivs into your Hand.",
-    "description_upgraded": "Discard 2 cards. Add 2 Shivs+ into your Hand.",
+    "description": "Discard 2 cards. Add 2 Shiv into your Hand.",
+    "description_upgraded": "Discard 2 cards. Add 2 Shiv+ into your Hand.",
     "keywords": [
       "Shiv",
       "Discard"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.INFINITE_BLADES",
@@ -6739,11 +6938,13 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 3 damage. Add 2 Shivs into your Hand.",
-    "description_upgraded": "Deal 6 damage. Add 2 Shivs into your Hand.",
+    "description": "Deal 3 damage. Add 2 Shiv into your Hand.",
+    "description_upgraded": "Deal 6 damage. Add 2 Shiv into your Hand.",
     "keywords": [
       "Shiv"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.LEG_SWEEP",
@@ -6763,7 +6964,7 @@
     "id": "CARD.MALAISE",
     "name": "Malaise",
     "character": "Silent",
-    "cost": "0",
+    "cost": "Unplayable",
     "type": "Skill",
     "rarity": "Rare",
     "description": "Enemy loses X Strength. Apply X Weak. Exhaust.",
@@ -6772,7 +6973,9 @@
       "Strength",
       "Weak",
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.MASTER_PLANNER",
@@ -6793,10 +6996,12 @@
     "type": "Attack",
     "rarity": "Uncommon",
     "description": "Deal 9 damage. Deals 4 additional damage for each card discarded this turn.",
-    "description_upgraded": "Deal 9 damage. Deals 5 additional damage for each card discarded this turn.",
+    "description_upgraded": "Deal 11 damage. Deals 5 additional damage for each card discarded this turn.",
     "keywords": [
       "Discard"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.MIRAGE",
@@ -6805,10 +7010,15 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Next turn, gain 1 Energy.",
-    "description_upgraded": "Next turn, gain 2 Energy.",
-    "keywords": [],
-    "last_changed": "v0.109.0"
+    "description": "Gain Block equal to Poison on ALL enemies.",
+    "description_upgraded": "Gain Block equal to Poison on ALL enemies.",
+    "keywords": [
+      "Block",
+      "Poison"
+    ],
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.MURDER",
@@ -6868,15 +7078,17 @@
     "id": "CARD.OUTBREAK",
     "name": "Outbreak",
     "character": "Silent",
-    "cost": "1",
-    "type": "Power",
+    "cost": "3",
+    "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Whenever you apply Poison, deal 4 damage to ALL enemies.",
-    "description_upgraded": "Whenever you apply Poison, deal 5 damage to ALL enemies.",
+    "description": "Apply 9 Poison to ALL enemies. Poison triggers immediately.",
+    "description_upgraded": "Apply 12 Poison to ALL enemies. Poison triggers immediately.",
     "keywords": [
       "Poison"
     ],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.PHANTOM_BLADES",
@@ -6885,12 +7097,14 @@
     "cost": "1",
     "type": "Power",
     "rarity": "Uncommon",
-    "description": "Shivs gain Retain. The first Shiv you play each turn deals 9 additional damage.",
-    "description_upgraded": "Shivs gain Retain. The first Shiv you play each turn deals 12 additional damage.",
+    "description": "Shiv gain Retain. The first Shiv you play each turn deals 9 additional damage.",
+    "description_upgraded": "Shiv gain Retain. The first Shiv you play each turn deals 12 additional damage.",
     "keywords": [
       "Retain",
       "Shiv"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.PIERCING_WAIL",
@@ -6996,22 +7210,6 @@
     "keywords": []
   },
   {
-    "id": "CARD.FOLLOW_THROUGH",
-    "name": "Scare",
-    "character": "Silent",
-    "cost": "0",
-    "type": "Skill",
-    "rarity": "Uncommon",
-    "description": "Apply 1 Weak to ALL enemies. Exhaust.",
-    "description_upgraded": "Apply 1 Weak to ALL enemies.",
-    "keywords": [
-      "Weak",
-      "Exhaust"
-    ],
-    "last_changed": "v0.107.1",
-    "introduced": "v0.107.1"
-  },
-  {
     "id": "CARD.SERPENT_FORM",
     "name": "Serpent Form",
     "character": "Silent",
@@ -7052,12 +7250,14 @@
     "id": "CARD.SKEWER",
     "name": "Skewer",
     "character": "Silent",
-    "cost": "0",
+    "cost": "Unplayable",
     "type": "Attack",
     "rarity": "Uncommon",
     "description": "Deal 8 damage X times.",
     "description_upgraded": "Deal 11 damage X times.",
-    "keywords": []
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SLICE",
@@ -7251,17 +7451,19 @@
     "cost": "2",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Add 3 Shivs into your Hand. Reduce this card's cost by 1.",
-    "description_upgraded": "Add 4 Shivs into your Hand. Reduce this card's cost by 1.",
+    "description": "Add 3 Shiv into your Hand. Reduce this card's cost by 1.",
+    "description_upgraded": "Add 4 Shiv into your Hand. Reduce this card's cost by 1.",
     "keywords": [
       "Shiv"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.WELL_LAID_PLANS",
     "name": "Well-Laid Plans",
     "character": "Silent",
-    "cost": "1",
+    "cost": "2",
     "type": "Power",
     "rarity": "Rare",
     "description": "At the end of your turn, you no longer discard your Hand.",
@@ -7269,7 +7471,9 @@
     "keywords": [
       "Discard"
     ],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.WRAITH_FORM",
@@ -7293,10 +7497,10 @@
     "type": "Status",
     "rarity": "Status",
     "description": "At the end of your turn, if this is in your Hand, lose 6 HP.",
-    "description_upgraded": "",
+    "description_upgraded": "At the end of your turn, if this is in your Hand, lose 6 HP.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.BURN",
@@ -7306,10 +7510,10 @@
     "type": "Status",
     "rarity": "Status",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, take 2 damage.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, take 2 damage.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.DAZED",
@@ -7319,12 +7523,12 @@
     "type": "Status",
     "rarity": "Status",
     "description": "Unplayable. Ethereal.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. Ethereal.",
     "keywords": [
       "Ethereal"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.DEBRIS",
@@ -7334,12 +7538,12 @@
     "type": "Status",
     "rarity": "Status",
     "description": "Exhaust.",
-    "description_upgraded": "",
+    "description_upgraded": "Exhaust.",
     "keywords": [
       "Exhaust"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.FRANTIC_ESCAPE",
@@ -7349,10 +7553,10 @@
     "type": "Status",
     "rarity": "Status",
     "description": "Get farther away. Increase Sandpit by 1. Increase the cost of this card by 1.",
-    "description_upgraded": "",
+    "description_upgraded": "Get farther away. Increase Sandpit by 1. Increase the cost of this card by 1.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.INFECTION",
@@ -7362,10 +7566,10 @@
     "type": "Status",
     "rarity": "Status",
     "description": "Unplayable. At the end of your turn, if this is in your Hand, take 3 damage.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, take 3 damage.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SLIMED",
@@ -7375,13 +7579,13 @@
     "type": "Status",
     "rarity": "Status",
     "description": "Draw 1 card. Exhaust.",
-    "description_upgraded": "",
+    "description_upgraded": "Draw 1 card. Exhaust.",
     "keywords": [
       "Exhaust",
       "Draw"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SOOT",
@@ -7391,10 +7595,10 @@
     "type": "Status",
     "rarity": "Status",
     "description": "Unplayable.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.TOXIC",
@@ -7404,12 +7608,12 @@
     "type": "Status",
     "rarity": "Status",
     "description": "At the end of your turn, if this is in your Hand, take 5 damage. Exhaust.",
-    "description_upgraded": "",
+    "description_upgraded": "At the end of your turn, if this is in your Hand, take 5 damage. Exhaust.",
     "keywords": [
       "Exhaust"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.WOUND",
@@ -7419,10 +7623,10 @@
     "type": "Status",
     "rarity": "Status",
     "description": "Unplayable.",
-    "description_upgraded": "",
+    "description_upgraded": "Unplayable.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.DISINTEGRATION_TOKEN",
@@ -7431,11 +7635,11 @@
     "cost": "Unplayable",
     "type": "Status",
     "rarity": "Token",
-    "description": "At the end of your turn, take 6 damage.",
-    "description_upgraded": "",
+    "description": "At the end of your turn, take 6/7/8 damage.",
+    "description_upgraded": "At the end of your turn, take 6/7/8 damage.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.GIANT_ROCK_TOKEN",
@@ -7456,12 +7660,12 @@
     "type": "Status",
     "rarity": "Token",
     "description": "Draw 1 fewer card each turn.",
-    "description_upgraded": "",
+    "description_upgraded": "Draw 1 fewer card each turn.",
     "keywords": [
       "Draw"
     ],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.MINION_DIVE_BOMB_TOKEN",
@@ -7513,9 +7717,11 @@
     "rarity": "Token",
     "description": "Deal 4 damage. Exhaust.",
     "description_upgraded": "Deal 6 damage. Exhaust.",
-    "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "keywords": [
+      "Exhaust"
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SLOTH_TOKEN",
@@ -7525,10 +7731,10 @@
     "type": "Status",
     "rarity": "Token",
     "description": "You cannot play more than 3 cards each turn.",
-    "description_upgraded": "",
+    "description_upgraded": "You cannot play more than 3 cards each turn.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SOUL",
@@ -7553,9 +7759,11 @@
     "rarity": "Token",
     "description": "Retain. Deal 10 damage.",
     "description_upgraded": "Retain. Deal 10 damage.",
-    "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "keywords": [
+      "Retain"
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SWEEPING_GAZE_TOKEN",
@@ -7578,9 +7786,11 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "Deal 14 damage. The next Skill you play costs 0 1 Energy.",
-    "description_upgraded": "Deal 20 damage. The next Skill you play costs 0 1 Energy.",
-    "keywords": []
+    "description": "Deal 14 damage. The next Skill you play costs 0 Energy.",
+    "description_upgraded": "Deal 20 damage. The next Skill you play costs 0 Energy.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.WITHER",
@@ -7589,11 +7799,11 @@
     "cost": "Unplayable",
     "type": "Status",
     "rarity": "Status",
-    "description": "Unplayable. At the end of your turn, if this is in your Hand, take 2 damage.",
-    "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, take 3 damage.",
+    "description": "Unplayable. At the end of your turn, if this is in your Hand, take 3 damage.",
+    "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, take 6 damage.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CHRYSALIS",
@@ -7769,12 +7979,12 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "Deal 10 damage. Increase this card's damage by 15 this combat and give it to a random ally.",
-    "description_upgraded": "Deal 10 damage. Increase this card's damage by 25 this combat and give it to a random ally.",
+    "description": "Deal 10 damage. Increase this card's damage by 10 this combat and give it to a random ally.",
+    "description_upgraded": "Deal 10 damage. Increase this card's damage by 15 this combat and give it to a random ally.",
     "keywords": [],
     "last_changed": "v0.109.0",
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.TRAINING_STRIKE",
@@ -7855,9 +8065,11 @@
     "cost": "1",
     "type": "Power",
     "rarity": "Rare",
-    "description": "EVERYONE'S 0 1 Energy Attacks deal 3 additional damage.",
-    "description_upgraded": "EVERYONE'S 0 1 Energy Attacks deal 4 additional damage.",
-    "keywords": []
+    "description": "EVERYONE'S 0 energy Attacks deal 3 additional damage.",
+    "description_upgraded": "EVERYONE'S 0 energy Attacks deal 4 additional damage.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.SCAVENGE",
@@ -7894,27 +8106,27 @@
     "type": "Skill",
     "rarity": "Event",
     "description": "Choose 1 of 3 Powers to add into your Hand. It's free to play this turn. Exhaust.",
-    "description_upgraded": "Choose 1 of 3 upgraded Powers to add into your Hand. It's free to play this turn. Exhaust.",
+    "description_upgraded": "Choose 1 of 3 Powers to add into your Hand. It's free to play this turn. Exhaust.",
     "keywords": [
       "Exhaust"
     ],
     "introduced": "v0.109.0",
     "branch": "beta",
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.MAD_SCIENCE_EVENT",
     "name": "Mad Science",
     "character": "Event",
     "cost": "1",
-    "type": "Attack",
+    "type": "Power",
     "rarity": "Event",
     "description": "Powers cost 1 Energy less.",
     "description_upgraded": "Innate Powers cost 1 Energy less.",
     "keywords": [],
-    "fetched_from": "slaythespire2.gg",
-    "fetched_at": "2026-07-22"
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.OUTMANEUVER_EVENT",
@@ -7947,12 +8159,14 @@
     "cost": "12",
     "type": "Attack",
     "rarity": "Rare",
-    "description": "Deal 60 damage. Costs 1 less 1 Energy for each card Exhausted this combat by ANYONE.",
-    "description_upgraded": "Deal 72 damage. Costs 1 less 1 Energy for each card Exhausted this combat by ANYONE.",
+    "description": "Deal 60 damage. Costs 1 Energy less for each card Exhausted this combat by ANYONE.",
+    "description_upgraded": "Deal 72 damage. Costs 1 Energy less for each card Exhausted this combat by ANYONE.",
     "keywords": [
       "Exhaust"
     ],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.OUTRAGE",
@@ -8015,10 +8229,12 @@
     "type": "Skill",
     "rarity": "Uncommon",
     "description": "Whenever other players deal attack damage this turn, apply that much Doom. Exhaust.",
-    "description_upgraded": "",
+    "description_upgraded": "Whenever other players deal attack damage this turn, apply that much Doom.",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.VEILPIERCER",
@@ -8027,11 +8243,13 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Uncommon",
-    "description": "Deal 10 damage. The next Ethereal card you play costs 0 1 Energy.",
-    "description_upgraded": "Deal 13 damage. The next Ethereal card you play costs 0 1 Energy.",
+    "description": "Deal 10 damage. The next Ethereal card you play costs 0 Energy.",
+    "description_upgraded": "Deal 13 damage. The next Ethereal card you play costs 0 Energy.",
     "keywords": [
       "Ethereal"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.DOWSING_QUEST",
@@ -8040,11 +8258,13 @@
     "cost": "Unplayable",
     "type": "Quest",
     "rarity": "Quest",
-    "description": "Unplayable. After entering 5 more ? rooms, transforms into an Abundance.",
-    "description_upgraded": "",
+    "description": "Unplayable. After entering 5 more ? rooms, transforms into Abundance.",
+    "description_upgraded": "Unplayable. After entering 5 more ? rooms, transforms into Abundance.",
     "keywords": [],
     "introduced": "v0.109.0",
-    "branch": "beta"
+    "branch": "beta",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CONSTELLATION",
@@ -8091,11 +8311,13 @@
     "cost": "0",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Gain 9 1 Star. Exhaust.",
-    "description_upgraded": "Retain. Gain 9 1 Star. Exhaust.",
+    "description": "Gain 9 Star. Exhaust.",
+    "description_upgraded": "Retain. Gain 9 Star. Exhaust.",
     "keywords": [
       "Exhaust"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.TUTOR",
@@ -8120,12 +8342,14 @@
     "cost": "2",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Add 2 Shivs to ALL player's Hands.",
-    "description_upgraded": "Add 2 Shivs to ALL player's Hands.",
+    "description": "Add 2 Shiv to ALL players Hands.",
+    "description_upgraded": "Add 2 Shiv to ALL players Hands.",
     "keywords": [
       "Shiv"
     ],
-    "last_changed": "v0.109.0"
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.CONCOCT",
@@ -8134,12 +8358,13 @@
     "cost": "0",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Choose another player. Whenever their Attacks deal unblocked damage this turn, they apply 3 Poison.",
-    "description_upgraded": "Choose another player. Whenever their Attacks deal unblocked damage this turn, they apply 4 Poison.",
+    "description": "Choose another player. Whenever their attacks deal damage this turn, they apply 3 Poison",
+    "description_upgraded": "Choose another player. Whenever their attacks deal damage this turn, they apply 4 Poison",
     "keywords": [
-      "Block",
       "Poison"
-    ]
+    ],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "CARD.FADE",
@@ -8165,5 +8390,18 @@
     "description": "Sly. Gain 1 Energy.",
     "description_upgraded": "Sly. Gain 2 Energy.",
     "keywords": []
+  },
+  {
+    "id": "CARD.SCARE",
+    "name": "Sidestep",
+    "character": "Silent",
+    "cost": "0",
+    "type": "Skill",
+    "rarity": "Uncommon",
+    "description": "Next turn, gain 1 Energy.",
+    "description_upgraded": "Next turn, gain 2 Energy.",
+    "keywords": [],
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   }
 ]
