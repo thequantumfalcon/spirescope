@@ -1,6 +1,13 @@
 Spirescope - Slay the Spire 2 Companion Dashboard
 ==================================================
 
+This file ships with both the Windows and macOS builds. Follow the section
+for your platform.
+
+--------------------------------------------------------------------------
+WINDOWS
+--------------------------------------------------------------------------
+
 IF WINDOWS BLOCKED THIS FILE:
 
   Windows may flag Spirescope.exe as a virus. It is a false positive that
@@ -19,6 +26,36 @@ HOW TO RUN:
   2. Leave the console window open while Spirescope is running
   3. Open http://127.0.0.1:8000 in your browser
 
+--------------------------------------------------------------------------
+macOS
+--------------------------------------------------------------------------
+
+MACOS WILL REFUSE TO OPEN THIS UNTIL YOU CLEAR THE QUARANTINE FLAG:
+
+  This build is not signed or notarized, so Gatekeeper blocks it. You may
+  see "cannot be opened because the developer cannot be verified", or "is
+  damaged and can't be opened" - the download is not damaged, it just
+  carries the quarantine attribute your browser attached.
+
+  Verify the download first, then clear the attribute:
+
+    shasum -a 256 -c Spirescope-macos.zip.sha256
+    xattr -dr com.apple.quarantine Spirescope
+
+  Only do this for software you have chosen to trust and whose checksum
+  you have confirmed.
+
+HOW TO RUN:
+
+  1. Open Terminal in this folder
+  2. Run:  ./Spirescope
+  3. Leave the terminal window open while Spirescope is running
+  4. Open http://127.0.0.1:8000 in your browser
+
+--------------------------------------------------------------------------
+BOTH PLATFORMS
+--------------------------------------------------------------------------
+
 OPTIONAL:
 
   - To auto-open the browser, launch with --browser
@@ -34,11 +71,16 @@ FEATURES:
 
 NOTES:
 
-  - Requires Slay the Spire 2 installed on this PC for save file features
-    (card/relic/enemy lookup works without it)
-  - Windows may still warn because this build is unsigned; verify the release
-    with the included .sha256 checksum file if you want an integrity check
+  - Requires Slay the Spire 2 installed on this machine for save file
+    features (card/relic/enemy lookup works without it)
   - Packaged builds do not auto-check GitHub for updates by default
-  - Click the red "Stop" button in the nav bar, or close the browser tab
+  - To stop the server, click the red "Stop" button in the nav bar, or
+    close the console/terminal window. Closing only the browser tab leaves
+    it running.
+  - Your settings, community stats and saved hypotheses are stored outside
+    this folder, so refreshing game data or replacing this build will not
+    discard them
   - Default address: http://127.0.0.1:8000
   - To change the port, set STS2_PORT environment variable before launching
+  - LICENSE.txt and THIRD_PARTY_NOTICES.md in this folder cover this build
+    and the open-source components it bundles

@@ -32,7 +32,15 @@
     setText('.live-relics', (d.relics || []).length);
     setText('.live-potions', (d.potions || []).length);
     var fill = document.querySelector('.hp-fill');
-    if (fill && d.max_hp > 0) fill.style.width = (d.current_hp / d.max_hp * 100) + '%';
+    if (fill && d.max_hp > 0) {
+      var pct = d.current_hp / d.max_hp * 100;
+      fill.style.width = pct + '%';
+      // Unlike live.js this view never reloads on floor change, so the class
+      // baked in at render time would otherwise stay for the whole run — a
+      // healed player kept a red bar on stream. Thresholds match overlay.html.
+      var tone = pct > 60 ? 'hp-healthy' : (pct > 30 ? 'hp-warning' : 'hp-critical');
+      fill.className = 'hp-fill ' + tone;
+    }
   };
   var errorTimer = null;
   es.onerror = function() {

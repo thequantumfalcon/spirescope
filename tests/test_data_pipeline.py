@@ -387,3 +387,32 @@ def test_shipped_data_has_no_test_fixtures():
         entries = json.loads(path.read_text(encoding="utf-8"))
         offenders = [e.get("id", "") for e in entries if "MOCK" in e.get("id", "").upper()]
         assert not offenders, f"{name} ships test fixtures: {offenders}"
+
+
+def test_shipped_descriptions_are_clean():
+    """DATA_MAINTENANCE.md states tests enforce this; this is that test.
+
+    Descriptions must be single-line, single-spaced, and free of unresolved
+    "{Name:...}" template tokens. The fetcher normalises all three, but nothing
+    checked the result that actually ships, so a regression in _clean_description
+    would only surface as broken layout on a live page.
+    """
+    import re
+
+    from sts2.config import DATA_DIR
+
+    token = re.compile(r"\{\w+:")
+    offenders = []
+    for name in ("cards.json", "relics.json", "potions.json", "events.json"):
+        path = DATA_DIR / name
+        if not path.exists():
+            continue
+        for entry in json.loads(path.read_text(encoding="utf-8")):
+            if not isinstance(entry, dict):
+                continue
+            for key, value in entry.items():
+                if not isinstance(value, str) or "description" not in key:
+                    continue
+                if "\n" in value or "  " in value or token.search(value):
+                    offenders.append(f"{name}:{entry.get('id')}.{key}: {value!r}")
+    assert not offenders, "unclean shipped descriptions:\n" + "\n".join(offenders[:10])

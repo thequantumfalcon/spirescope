@@ -38,15 +38,18 @@
   <div class="header">
     <div class="live-dot"></div>
     <span class="char char-{{ run.character|lower }}">{{ run.character }}</span>
-    <span class="stat">Floor {{ run.current_floor }}</span>
+    <span class="stat live-floor">Floor {{ run.floor }}</span>
+    <span class="stat live-act">Act {{ run.act }}</span>
     <span class="stat">{{ (run.run_time / 60)|int }}m</span>
   </div>
 
   {% set hp_pct = (run.current_hp / run.max_hp * 100)|int if run.max_hp else 0 %}
   <div class="stats">
-    <span class="stat"><b>{{ run.current_hp }}/{{ run.max_hp }}</b> HP</span>
-    <span class="stat"><b>{{ run.gold }}</b> Gold</span>
-    <span class="stat"><b>{{ run.deck|length }}</b> Cards</span>
+    <span class="stat"><b class="live-hp">{{ run.current_hp }}/{{ run.max_hp }}</b> HP</span>
+    <span class="stat"><b class="live-gold">{{ run.gold }}</b> Gold</span>
+    <span class="stat"><b class="live-cards">{{ run.deck|length }}</b> Cards</span>
+    <span class="stat"><b class="live-relics">{{ run.relics|length }}</b> Relics</span>
+    <span class="stat"><b class="live-potions">{{ run.potions|length }}</b> Potions</span>
   </div>
 
   <div class="hp-bar">
