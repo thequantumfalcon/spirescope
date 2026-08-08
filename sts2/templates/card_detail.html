@@ -105,7 +105,7 @@
 {% if strategy %}
 <h2>{{ card.character }} Strategy</h2>
 {% for arch in strategy.archetypes %}
-{% if card.name in arch.key_cards %}
+{% if (card.name_en or card.name) in arch.key_cards %}
 <div class="archetype">
   <h3>{{ arch.name }}</h3>
   <p>{{ arch.description }}</p>

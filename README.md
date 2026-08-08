@@ -35,7 +35,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Main vs beta awareness** — runs badge their game branch; beta-only content is chipped; filter analytics by branch.
 - **Merged save history** — vanilla and modded save trees merge into one deduplicated history (the game copies saves between them since v0.108.0); runs carry a vanilla/modded origin filter.
 - **Badges** — earned badges with bronze/silver/gold tiers on the Records page.
-- **UI language setting** — switch languages under Settings; Traditional Chinese ships for the UI chrome, with locale files under `sts2/locales/` open for more strings and languages.
+- **UI language setting** — switch languages under Settings. The interface ships in fourteen languages (English, Traditional Chinese, German, Spanish, Latin American Spanish, French, Italian, Japanese, Korean, Polish, Brazilian Portuguese, Russian, Thai, Turkish); the twelve newest are drafts pending native review. Entity names and descriptions can be translated too by dropping a `<lang>.json` overlay into `sts2/locales/content/` — search follows the active language, and anything untranslated falls back to English. Locale files live under `sts2/locales/`.
 
 ### Browse & Research
 
@@ -214,6 +214,9 @@ spirescope update --save-only  # Discover from saves only (no network)
 spirescope community    # Fetch community data from Steam
 spirescope export       # Export aggregate stats to JSON file
 spirescope reset-stats  # Delete aggregate stats file
+spirescope localize --list        # List languages your game install offers
+spirescope localize               # Translate card/relic text from your install
+spirescope localize --lang de,ja  # ...only these languages
 spirescope sync-up      # Upload local aggregate stats to sync service
 spirescope sync-down    # Download and merge community stats from sync service
 spirescope --help       # Show usage
@@ -223,7 +226,7 @@ spirescope --version    # Show version
 ## Configuration
 
 | Variable | Description | Default |
-|----------|-------------|---------|
+| -------- | ----------- | ------- |
 | `STS2_SAVE_DIR` | Path to your STS2 save directory | Auto-detected |
 | `STS2_GAME_DIR` | Path to STS2 game install | Auto-detected |
 | `STS2_MODS_DIR` | Path to mods directory (JSON files) | `sts2/data/mods/` |
@@ -250,7 +253,7 @@ SpireScope auto-detects both vanilla and modded paths and uses whichever has mor
 ## API Endpoints
 
 | Endpoint | Method | Description |
-|----------|--------|-------------|
+| -------- | ------ | ----------- |
 | `/api/search?q=` | GET | Search all entities |
 | `/api/cards/{card_id}` | GET | Card details + stats (JSON) |
 | `/api/runs` | GET | Run history (JSON, filterable by character/result) |
@@ -288,16 +291,12 @@ packaging format rather than the contents. See
 [docs/ANTIVIRUS.md](docs/ANTIVIRUS.md) to verify a download yourself or run
 from source instead.
 
-SpireScope has applied to the [SignPath Foundation](https://signpath.org/),
-which provides free code signing for open source projects. If the
-application is accepted, release binaries will be signed automatically in
-CI, with the private key held in SignPath's HSM and the certificate issued
-in SignPath Foundation's name. This section will be updated when signed
-builds ship.
+Every release publishes a `SHA256SUMS.txt` alongside the binaries, so a
+download can be checked against the checksum the build produced.
 
 ## Project Structure
 
-```
+```text
 sts2/
   __main__.py        # CLI entry point
   app.py             # FastAPI app, middleware, security headers

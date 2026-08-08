@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "Português (Brasil)",
+    "code": "pt",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08 from official game terms, native review pending"
+  },
+  "nav": {
+    "live_run": "Partida ao vivo",
+    "cards": "Cartas",
+    "relics": "Relíquias",
+    "potions": "Poções",
+    "enemies": "Inimigos",
+    "events": "Eventos",
+    "deck_analyzer": "Análise de deck",
+    "run_history": "Histórico de partidas",
+    "analytics": "Estatísticas",
+    "records": "Recordes",
+    "collections": "Coleções",
+    "epochs": "Épocas",
+    "community": "Comunidade",
+    "guide": "Guia",
+    "search_placeholder": "Buscar cartas, relíquias, inimigos…",
+    "stop": "Parar",
+    "prophecy": "Profecia",
+    "hypothesis": "Hipótese",
+    "graveyard": "Cemitério",
+    "search": "Buscar"
+  },
+  "common": {
+    "no_data": "Nenhum dado",
+    "loading": "Carregando…",
+    "error": "Ocorreu um erro",
+    "floor": "Andar",
+    "hp": "PV",
+    "gold": "Ouro",
+    "cards": "Cartas",
+    "win": "Vitória",
+    "loss": "Derrota",
+    "wins": "Vitórias",
+    "losses": "Derrotas",
+    "win_rate": "Taxa de vitórias"
+  },
+  "settings": {
+    "title": "Configurações",
+    "language": "Idioma",
+    "save": "Salvar",
+    "saved": "Configurações salvas."
+  }
+}

@@ -85,11 +85,61 @@ def _parse_lua_table(content: str) -> dict[str, dict]:
 
 def _strip_wiki_templates(s: str) -> str:
     """Render `{{C2|Dowsing}}` / `{{P|Ambergris||2}}` wiki templates to the
-    entity name (first non-empty argument after the template name)."""
+    entity name (first non-empty argument after the template name).
+
+    A trailing digit argument is a 1-based form index into the preceding
+    arguments: `{{C|Apparition|Apparitions|2}}` renders "Apparitions".
+    When the indexed slot is empty (`{{P|Ambergris||2}}`), fall back to the
+    first non-empty argument.
+    """
     def _pick(m):
-        args = [a for a in m.group(1).split("|")[1:] if a]
-        return args[0] if args else ""
-    return re.sub(r"\{\{([^{}]*)\}\}", _pick, s)
+        raw = [a.strip() for a in m.group(1).split("|")[1:]]
+        args = [a for a in raw if a]
+        if not args:
+            return ""
+        # Trailing empty fields are wiki sloppiness ("{{C|A|B|2|}}"), so the
+        # index is the last non-empty argument. isascii() guards int(): "²"
+        # is isdigit() but not parseable, and would abort the whole scrape.
+        last = args[-1]
+        if len(args) >= 2 and last.isascii() and last.isdigit():
+            idx = int(last) - 1
+            forms = raw[:raw.index(last)] if last in raw else raw[:-1]
+            if 0 <= idx < len(forms) and forms[idx]:
+                return forms[idx]
+        return args[0]
+
+    # Templates nest ("{{P|{{C|Foo}}|2}}"); the character class only matches
+    # the innermost one, so re-run until the text stops changing.
+    for _ in range(8):
+        rendered = re.sub(r"\{\{([^{}]*)\}\}", _pick, s)
+        if rendered == s:
+            break
+        s = rendered
+    return s
+
+
+# Icon tokens the wiki modules actually emit, counted across the live card,
+# relic and potion data: @CE @DE @IE @SE @NE (energy, one per character),
+# @ST (star) and @Gold. A run repeats the token to encode its value, unless
+# a digit precedes it, in which case the digit is the value.
+_ICON_RUN_RE = re.compile(r"(?:(\d+)[ \t]*)?((?:@[A-Z]E)+|(?:@ST)+)")
+
+
+def _convert_icon_runs(s: str) -> str:
+    """Render icon runs to text ("1 @CE" -> "1 Energy", "@ST@ST" -> "2 Star").
+
+    Shared by card text and relic descriptions. A digit binds to a run only
+    on the same line, so "Deal 3\\n@CE@CE" does not read as "Deal 3 Energy".
+    """
+    def _render(m):
+        count, run = m.group(1), m.group(2)
+        unit = "Energy" if run.endswith("E") else "Star"
+        return f"{count or len(run) // 3} {unit}"
+
+    s = _ICON_RUN_RE.sub(_render, s)
+    s = s.replace("@Gold", "Gold")
+    # Runs of different units sit flush against each other in the source
+    return re.sub(r"\b(Energy|Star|Gold)(\d)", r"\1 \2", s)
 
 
 def _split_wiki_text(text: str) -> tuple[str, str]:
@@ -108,10 +158,7 @@ def _split_wiki_text(text: str) -> tuple[str, str]:
         # Icon runs (per-character codes: @IE, @CE, ...). A preceding digit
         # is the value and the icon is just the unit ("1 @CE" -> "1 Energy");
         # bare runs encode the value by repetition ("@IE@IE" -> "2 Energy").
-        s = re.sub(r"(\d+)\s*(?:@[A-Z]E)+", r"\1 Energy", s)
-        s = re.sub(r"(\d+)\s*(?:@[A-Z]S)+", r"\1 Star", s)
-        s = re.sub(r"(?:@[A-Z]E)+", lambda m: f"{len(m.group(0)) // 3} Energy", s)
-        s = re.sub(r"(?:@[A-Z]S)+", lambda m: f"{len(m.group(0)) // 3} Star", s)
+        s = _convert_icon_runs(s)
         s = s.replace("<br>", " ").replace("<br/>", " ").replace("<br />", " ")
         s = re.sub(r"\$(\w[\w' -]*)", r"\1", s)
         return _strip_wiki_templates(s)
@@ -209,10 +256,11 @@ class WikiggSource:
                     "name": name,
                     "character": str(fields.get("Character", "")) or "Shared",
                     "rarity": _WIKI_RARITY_MAP.get(rarity, rarity),
-                    "description": _clean_description(_strip_wiki_templates(
-                        re.sub(r"\$(\w[\w' -]*)", r"\1",
-                               str(fields.get("Description", "")))
-                    )),
+                    # Same pipeline as cards and potions: relic text carries
+                    # <br> breaks too, which an inline copy of the steps had
+                    # been dropping
+                    "description": _clean_description(
+                        _split_wiki_text(str(fields.get("Description", "")))[0]),
                 })
         return sorted(relics, key=lambda r: (r["character"], r["name"]))
 

@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "Türkçe",
+    "code": "tr",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08 from official game terms, native review pending"
+  },
+  "nav": {
+    "live_run": "Canlı Oyun",
+    "cards": "Kartlar",
+    "relics": "Kalıntılar",
+    "potions": "İksirler",
+    "enemies": "Yaratıklar",
+    "events": "Olaylar",
+    "deck_analyzer": "Deste Analizi",
+    "run_history": "Oyun Geçmişi",
+    "analytics": "İstatistikler",
+    "records": "Rekorlar",
+    "collections": "Koleksiyonlar",
+    "epochs": "Çağlar",
+    "community": "Topluluk",
+    "guide": "Rehber",
+    "search_placeholder": "Kart, kalıntı, yaratık ara…",
+    "stop": "Durdur",
+    "prophecy": "Kehanet",
+    "hypothesis": "Hipotez",
+    "graveyard": "Mezarlık",
+    "search": "Ara"
+  },
+  "common": {
+    "no_data": "Veri yok",
+    "loading": "Yükleniyor…",
+    "error": "Bir hata oluştu",
+    "floor": "Kat",
+    "hp": "Can",
+    "gold": "Altın",
+    "cards": "Kartlar",
+    "win": "Galibiyet",
+    "loss": "Mağlubiyet",
+    "wins": "Galibiyetler",
+    "losses": "Mağlubiyetler",
+    "win_rate": "Kazanma Oranı"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "language": "Dil",
+    "save": "Kaydet",
+    "saved": "Ayarlar kaydedildi."
+  }
+}

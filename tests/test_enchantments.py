@@ -144,6 +144,188 @@ def test_available_languages_lists_locales():
     assert {"en", "zht"} <= codes
 
 
+# ── content overlays: official game text swapped in at KB load ──
+
+def _stub_content_locale(tmp_path, monkeypatch, code, payload):
+    """Point i18n at a temp locales dir holding one content overlay."""
+    import json as _json
+
+    from sts2 import i18n
+    locales = tmp_path / "locales"
+    (locales / "content").mkdir(parents=True)
+    # locale file must exist for set_language/available_languages semantics
+    (locales / f"{code}.json").write_text(
+        _json.dumps({"_meta": {"language": code}, "nav": {"cards": "x"}}),
+        encoding="utf-8")
+    (locales / "content" / f"{code}.json").write_text(
+        _json.dumps(payload), encoding="utf-8")
+    monkeypatch.setattr(i18n, "_LOCALES_DIR", locales)
+    monkeypatch.setattr(i18n, "_cache", {})
+    monkeypatch.setattr(i18n, "_content_cache", {})
+    monkeypatch.setenv("STS2_LANG", code)
+
+
+def test_content_overlay_translates_kb_and_search(tmp_path, monkeypatch):
+    from sts2.knowledge import KnowledgeBase
+    _stub_content_locale(tmp_path, monkeypatch, "ja", {
+        "cards": {"CARD.BASH": {"name": "バッシュ", "description": "テスト説明"}},
+    })
+    kb = KnowledgeBase()
+    bash = next(c for c in kb.cards if c.id == "CARD.BASH")
+    assert bash.name == "バッシュ"
+    assert bash.description == "テスト説明"
+    # untranslated entities keep English (per-entity fallback)
+    strike = next(c for c in kb.cards if c.id == "CARD.STRIKE_IRONCLAD")
+    assert strike.name == "Strike"
+    # search index was built from overlaid names
+    results = kb.search("バッシュ")
+    assert any(c.id == "CARD.BASH" for c in results["cards"])
+
+
+def test_content_overlay_absent_is_noop(tmp_path, monkeypatch):
+    from sts2 import i18n
+    monkeypatch.setenv("STS2_LANG", "en")
+    monkeypatch.setattr(i18n, "_content_cache", {})
+    from sts2.knowledge import KnowledgeBase
+    kb = KnowledgeBase()
+    bash = next(c for c in kb.cards if c.id == "CARD.BASH")
+    assert bash.name == "Bash"
+
+
+def test_overlay_keeps_english_name_for_english_keyed_joins(tmp_path, monkeypatch):
+    """community.json and strategy.json are keyed by English names, so a
+    translated entity must remember its English name or community tips and
+    archetype detection silently vanish in every non-English locale."""
+    from sts2.knowledge import KnowledgeBase
+    _stub_content_locale(tmp_path, monkeypatch, "ja", {
+        "cards": {"CARD.BASH": {"name": "バッシュ"}},
+    })
+    kb = KnowledgeBase()
+    bash = next(c for c in kb.cards if c.id == "CARD.BASH")
+    assert bash.name == "バッシュ" and bash.name_en == "Bash"
+    assert kb.english_name(bash) == "Bash"
+    # untranslated entities report their own name
+    strike = next(c for c in kb.cards if c.id == "CARD.STRIKE_IRONCLAD")
+    assert kb.english_name(strike) == strike.name
+
+
+def test_overlay_ignores_malformed_entries(tmp_path, monkeypatch):
+    """setattr bypasses pydantic validation, so a bad overlay value would
+    only detonate later inside index building — and KnowledgeBase() runs at
+    app import, taking the whole server down for that locale."""
+    from sts2.knowledge import KnowledgeBase
+    _stub_content_locale(tmp_path, monkeypatch, "ja", {
+        "cards": {
+            "CARD.BASH": {"name": ["not", "a", "string"]},
+            "CARD.STRIKE_IRONCLAD": "not an object",
+        },
+        "relics": "not an object",
+    })
+    kb = KnowledgeBase()  # must not raise
+    assert next(c for c in kb.cards if c.id == "CARD.BASH").name == "Bash"
+
+
+def test_overlay_read_failure_is_not_cached(tmp_path, monkeypatch):
+    """A transient read error must not pin the locale to English until the
+    process restarts."""
+    from sts2 import i18n
+    _stub_content_locale(tmp_path, monkeypatch, "ja", {
+        "cards": {"CARD.BASH": {"name": "バッシュ"}},
+    })
+    target = tmp_path / "locales" / "content" / "ja.json"
+    real_read = i18n.Path.read_text
+
+    def flaky(self, *a, **kw):
+        if self == target:
+            raise OSError("locked by another process")
+        return real_read(self, *a, **kw)
+
+    monkeypatch.setattr(i18n.Path, "read_text", flaky)
+    assert i18n.load_content_overlay("ja") == {}
+    monkeypatch.setattr(i18n.Path, "read_text", real_read)
+    assert i18n.load_content_overlay("ja")["cards"]["CARD.BASH"]["name"] == "バッシュ"
+
+
+async def test_settings_language_post_round_trip(client, tmp_path, monkeypatch):
+    """No test exercised this route, so a NameError in it shipped green.
+
+    Covers the whole handler: CSRF rejection, unknown-locale rejection, and
+    the success path that swaps the translator and rebuilds the KB.
+    """
+    from sts2 import i18n
+    from sts2.app import generate_csrf_token
+    monkeypatch.setattr(i18n, "_settings_path", lambda: tmp_path / "settings.json")
+
+    resp = await client.post("/settings/language",
+                             data={"language": "zht", "csrf_token": "bad"})
+    assert resp.status_code == 403
+
+    resp = await client.post(
+        "/settings/language",
+        data={"language": "klingon", "csrf_token": generate_csrf_token()})
+    assert resp.status_code == 400
+
+    resp = await client.post(
+        "/settings/language",
+        data={"language": "zht", "csrf_token": generate_csrf_token()},
+        follow_redirects=False)
+    assert resp.status_code == 303
+    assert "saved=1" in resp.headers["location"]
+
+
+def test_ui_locale_read_failure_is_not_cached(tmp_path, monkeypatch):
+    """Same rule as the content overlay: a locked or half-written locale file
+    must not pin the UI to English for the life of the process."""
+    import json as _json
+
+    from sts2 import i18n
+    locales = tmp_path / "locales"
+    locales.mkdir()
+    (locales / "en.json").write_text(_json.dumps({"nav": {"cards": "Cards"}}),
+                                     encoding="utf-8")
+    target = locales / "xx.json"
+    target.write_text(_json.dumps({"nav": {"cards": "Kort"}}), encoding="utf-8")
+    monkeypatch.setattr(i18n, "_LOCALES_DIR", locales)
+    monkeypatch.setattr(i18n, "_cache", {})
+    real_read = i18n.Path.read_text
+
+    def flaky(self, *a, **kw):
+        if self == target:
+            raise OSError("locked by another process")
+        return real_read(self, *a, **kw)
+
+    monkeypatch.setattr(i18n.Path, "read_text", flaky)
+    assert i18n._load_locale("xx") == {}
+    monkeypatch.setattr(i18n.Path, "read_text", real_read)
+    assert i18n._load_locale("xx")["nav"]["cards"] == "Kort"
+
+
+async def test_api_reload_clears_the_analytics_cache(client):
+    """Analytics caches display names for 60s, so a reload that skips it keeps
+    serving pre-reload names — the same defect the language switch fixes."""
+    from sts2 import app as app_module
+
+    app_module._analytics_cache["sentinel"] = {"stale": True}
+    app_module._analytics_cache_time["sentinel"] = 1.0
+    resp = await client.post("/api/reload",
+                             headers={"X-Admin-Token": app_module._ADMIN_TOKEN})
+    assert resp.status_code == 200
+    assert "sentinel" not in app_module._analytics_cache
+    assert "sentinel" not in app_module._analytics_cache_time
+
+
+def test_language_codes_reject_path_fragments(tmp_path, monkeypatch):
+    """'content/de' is 10 chars and resolves to the overlay directory, so it
+    would persist as a language the settings page cannot represent."""
+    from sts2 import i18n
+    monkeypatch.delenv("STS2_LANG", raising=False)
+    monkeypatch.setattr(i18n, "_settings_path", lambda: tmp_path / "settings.json")
+    for bad in ("content/de", "content\\de", "../config", "DE", "e n"):
+        assert i18n.set_language(bad) is False
+        assert i18n.load_content_overlay(bad) == {}
+    assert i18n.set_language("zht") is True
+
+
 async def test_settings_page_renders_in_zht(client):
     from sts2.app import templates
     from sts2.i18n import get_translator

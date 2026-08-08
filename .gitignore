@@ -10,6 +10,7 @@ build/
 # Virtual environments
 .venv/
 .venv_build/
+.venv_build.*/
 venv/
 env/
 
@@ -59,3 +60,7 @@ docs/demo.gif
 .claude/
 sts2/data/settings.json
 sts2/data/community_aggregate.json
+
+# Locale content overlays are supplied by the user (see sts2/i18n.py):
+# entity name/description translations are not redistributed with the app.
+sts2/locales/content/

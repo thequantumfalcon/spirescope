@@ -68,6 +68,92 @@ def test_wiki_text_keywords_and_templates():
     assert _strip_char_suffix("Well-Laid Plans") == "Well-Laid Plans"
 
 
+def test_wiki_template_form_index_picks_plural():
+    """`{{C|sing|plural|2}}` must render the indexed form (Distinguished Cape
+    regression: '3 Apparitions' became '3 Apparition' in the 2026-08 scrape)."""
+    out = _strip_wiki_templates("add 3 {{C|Apparition|Apparitions|2}} to your Deck")
+    assert out == "add 3 Apparitions to your Deck"
+    # index pointing at an empty slot falls back to the first non-empty arg
+    assert _strip_wiki_templates("{{P|Potion-Shaped Rock||2}}") == "Potion-Shaped Rock"
+    # a bare numeric template name is not a form index
+    assert _strip_wiki_templates("obtain {{2|potions|Potion}}") == "obtain potions"
+
+
+def test_wiki_templates_survive_exotic_input():
+    """A superscript digit is isdigit() but not int()-parseable; unhandled it
+    aborted the whole scrape from inside the re.sub callback."""
+    assert _strip_wiki_templates("deal {{C|damage|²}}") == "deal damage"
+    # trailing empty field must not defeat the form index
+    assert _strip_wiki_templates("{{C|A|B|2|}}") == "B"
+    # nested templates render fully rather than leaving literal braces
+    assert _strip_wiki_templates("{{P|{{C|Foo}}|2}}") == "Foo"
+
+
+RELIC_LUA_FIXTURE = '''
+local all_data = {
+  ["Sozu"] = {
+    Description = "Gain @CE at the start of each turn. You can no longer obtain {{2|potions|Potion}}.",
+    Rarity = "Ancient"
+  }
+}
+'''
+
+
+def test_wikigg_relics_convert_icon_runs():
+    """Relic descriptions must get the same @-icon rendering as card text
+    (regression: 28 relics shipped '@CE' verbatim in the 2026-08 scrape)."""
+    src = WikiggSource()
+    with patch.object(WikiggSource, "_fetch_modules",
+                      return_value={"Module:Relics/StS2 data": RELIC_LUA_FIXTURE}):
+        relics = src.fetch_relics()
+    assert relics[0]["description"] == (
+        "Gain 1 Energy at the start of each turn. You can no longer obtain potions.")
+
+
+def test_icon_runs_cover_the_tokens_the_wiki_actually_emits():
+    """Token vocabulary counted across the live card/relic/potion modules:
+    @CE @DE @IE @SE @NE (energy), @ST (star), @Gold. An earlier pattern was
+    written for an invented "@?S" star token, so @ST and @Gold passed through
+    verbatim and 58 shipped descriptions read "gain @ST@ST@ST".
+    """
+    from sts2.sources import _convert_icon_runs
+    for token in ("@CE", "@DE", "@IE", "@SE", "@NE"):
+        assert _convert_icon_runs(f"Gain {token}.") == "Gain 1 Energy."
+    assert _convert_icon_runs("gain @ST@ST@ST.") == "gain 3 Star."
+    assert _convert_icon_runs("Gain 300 @Gold.") == "Gain 300 Gold."
+    # a digit prefix is the value; repetition is the value without one
+    assert _convert_icon_runs("Gain 2 @CE") == "Gain 2 Energy"
+    assert _convert_icon_runs("Gain @CE@CE") == "Gain 2 Energy"
+    # runs of different units sit flush together in the source
+    assert _convert_icon_runs("Gain @CE@ST now") == "Gain 1 Energy 1 Star now"
+    # the digit prefix must not reach across a line break
+    assert _convert_icon_runs("Deal 3\n@CE@CE") == "Deal 3\n2 Energy"
+
+
+def test_merge_preserves_curated_categories(tmp_path, monkeypatch):
+    """Sources file Curse/Status/Token/Event/Quest cards under Colorless; a
+    scrape must never overwrite these app-curated categories (regression:
+    the 2026-08 scrape flattened all 76 pseudo-category cards to Colorless)."""
+    from sts2 import fetcher
+    monkeypatch.setattr(fetcher, "DATA_DIR", tmp_path)
+    existing = [
+        _card("Guilty", character="Curse"),
+        _card("Burn", character="Status"),
+        _card("Alpha", character="Colorless"),
+    ]
+    (tmp_path / "cards.json").write_text(json.dumps(existing))
+    incoming = [
+        _card("Guilty", character="Colorless", description="new guilty text"),
+        _card("Burn", character="Colorless"),
+        _card("Alpha", character="Ironclad"),
+    ]
+    merged = {c["name"]: c for c in fetcher._merge_with_existing("cards.json", incoming)}
+    assert merged["Guilty"]["character"] == "Curse"
+    assert merged["Guilty"]["description"] == "new guilty text"  # other fields still update
+    assert merged["Burn"]["character"] == "Status"
+    assert merged["Alpha"]["character"] == "Ironclad"  # real characters still update
+
+
 def test_wikigg_fetch_cards_from_fixture():
     src = WikiggSource()
     with patch.object(WikiggSource, "_fetch_modules",
@@ -389,6 +475,25 @@ def test_shipped_data_has_no_test_fixtures():
         assert not offenders, f"{name} ships test fixtures: {offenders}"
 
 
+def test_shipped_enemies_all_validate():
+    """Every shipped enemy must construct as an Enemy model. KnowledgeBase
+    skips malformed entries with only a warning, so a shape regression
+    (e.g. int acts instead of 'Act N' strings) silently drops enemies."""
+    from sts2.config import DATA_DIR
+    from sts2.models import Enemy
+
+    path = DATA_DIR / "enemies.json"
+    entries = json.loads(path.read_text(encoding="utf-8"))
+    bad = []
+    for d in entries:
+        try:
+            Enemy(**d)
+        except Exception as exc:
+            bad.append(f"{d.get('id')}: {exc}")
+    assert not bad, "malformed shipped enemies:\n" + "\n".join(bad[:5])
+    assert len(entries) >= 184
+
+
 def test_shipped_descriptions_are_clean():
     """DATA_MAINTENANCE.md states tests enforce this; this is that test.
 
@@ -401,7 +506,11 @@ def test_shipped_descriptions_are_clean():
 
     from sts2.config import DATA_DIR
 
-    token = re.compile(r"\{\w+:")
+    # Every markup form any source emits: template tokens, colour tags, the
+    # @-icon vocabulary, and <br> breaks. Written against what the modules
+    # actually contain — a narrower guess let 58 descriptions ship with raw
+    # "@ST" and "@Gold" while this test stayed green.
+    token = re.compile(r"\{\w+:|\[/?(?:gold|blue|red|green)\]|@[A-Za-z]|<br\s*/?>")
     offenders = []
     for name in ("cards.json", "relics.json", "potions.json", "events.json"):
         path = DATA_DIR / name

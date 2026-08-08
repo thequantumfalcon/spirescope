@@ -55,7 +55,10 @@ NON_DRAFTABLE = {"Status", "Curse", "Event", "Token", "Quest"}
 
 
 class KnowledgeBase:
-    def __init__(self):
+    def __init__(self, language: str = ""):
+        # Explicit language beats the ambient setting: the caller that just
+        # persisted a new choice must not re-resolve it (STS2_LANG wins there)
+        self.language = language
         self.cards: list[Card] = []
         self.relics: list[Relic] = []
         self.potions: list[Potion] = []
@@ -86,6 +89,9 @@ class KnowledgeBase:
         self._load_mods()
         self._load_community_data()
         self._discover_from_saves()
+        # After discovery so save-discovered entities are translated too,
+        # and after mods so a mod's own naming still wins.
+        self._apply_content_overlay()
         self._build_indexes()
 
     def _load_json(self, filename: str) -> list[dict]:
@@ -157,6 +163,50 @@ class KnowledgeBase:
                 self.badges.append(Badge(**d))
             except Exception as exc:
                 log.warning("Skipping malformed badge %s: %s", d.get("id", "?"), exc)
+
+    def _apply_content_overlay(self):
+        """Swap entity names/descriptions for the active locale's official
+        game text (sts2/locales/content/<lang>.json).
+
+        The English name is preserved in name_en, because several joins
+        (community tips, strategy archetypes) are keyed by English names.
+        Mod-supplied entities keep their own text. Runs before
+        _build_indexes so search matches the translated names.
+        """
+        from sts2.i18n import load_content_overlay
+        try:
+            overlay = load_content_overlay(self.language)
+        except Exception as exc:  # never let a locale file stop startup
+            log.warning("Content overlay unavailable: %s", exc)
+            return
+        for family, models in (("cards", self.cards), ("relics", self.relics),
+                               ("potions", self.potions),
+                               ("enemies", self.enemies),
+                               ("events", self.events)):
+            entries = overlay.get(family)
+            if not isinstance(entries, dict) or not entries:
+                continue
+            for model in models:
+                if getattr(model, "source", "") == "mod":
+                    continue
+                entry = entries.get(model.id)
+                if not isinstance(entry, dict):
+                    continue
+                for field in ("name", "description", "description_upgraded"):
+                    value = entry.get(field)
+                    # setattr bypasses pydantic validation, so a malformed
+                    # overlay value would only detonate later in indexing
+                    if not isinstance(value, str) or not value:
+                        continue
+                    if not hasattr(model, field):
+                        continue
+                    if field == "name" and not model.name_en:
+                        model.name_en = model.name
+                    setattr(model, field, value)
+
+    def english_name(self, model) -> str:
+        """Name to use for joins against English-keyed data."""
+        return getattr(model, "name_en", "") or model.name
 
     def _load_mods(self):
         """Load mod data from JSON files in the mods directory."""
@@ -243,7 +293,11 @@ class KnowledgeBase:
             pass
 
     def get_community_tips(self, entity_name: str) -> list[str]:
-        """Get community tips for an entity by name."""
+        """Get community tips for an entity by name.
+
+        community.json is keyed by the English names the scraper saw, so
+        callers pass the English name of a translated entity.
+        """
         return self.community_tips.get(entity_name.lower().strip(), [])
 
     def _discover_from_saves(self):
@@ -555,7 +609,7 @@ class KnowledgeBase:
         if strategy:
             for arch in strategy.archetypes:
                 arch_cards = set(name.lower() for name in arch.key_cards)
-                deck_names = set(c.name.lower() for c in cards)
+                deck_names = set(self.english_name(c).lower() for c in cards)
                 overlap = arch_cards & deck_names
                 if len(overlap) >= 2:
                     detected_archetypes.append({
@@ -652,7 +706,7 @@ class KnowledgeBase:
         for cid in card_ids:
             card = self.get_card_by_id(cid)
             if card:
-                deck_names.add(card.name.lower())
+                deck_names.add(self.english_name(card).lower())
 
         best = {"name": "Custom", "confidence": 0, "matching_cards": []}
         for arch in strategy.archetypes:

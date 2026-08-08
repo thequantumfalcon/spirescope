@@ -11,6 +11,11 @@ from pathlib import Path
 # would silently bypass the rate-limiter and break those tests.
 os.environ["STS2_HOST"] = "0.0.0.0"
 
+# Pin the suite to English: KnowledgeBase now applies the persisted UI
+# language's content overlay, so without this a developer who picked German
+# in Settings would fail every English-name assertion locally.
+os.environ["STS2_LANG"] = "en"
+
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient

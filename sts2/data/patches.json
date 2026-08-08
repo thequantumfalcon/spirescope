@@ -32,7 +32,7 @@
     ],
     "changed": {
       "cards": [
-        "CARD.FOLLOW_THROUGH",
+        "CARD.SCARE",
         "CARD.PREDATOR",
         "CARD.DRUM_OF_BATTLE",
         "CARD.REFLECT"
@@ -137,7 +137,7 @@
         "CARD.PACTS_END",
         "CARD.HAZE",
         "CARD.OUTBREAK",
-        "CARD.FOLLOW_THROUGH",
+        "CARD.SCARE",
         "CARD.MIRAGE",
         "CARD.WELL_LAID_PLANS",
         "CARD.ECHOING_SLASH",

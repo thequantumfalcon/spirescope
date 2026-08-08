@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "Polski",
+    "code": "pl",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08 from official game terms, native review pending"
+  },
+  "nav": {
+    "live_run": "Trwająca wyprawa",
+    "cards": "Karty",
+    "relics": "Artefakty",
+    "potions": "Mikstury",
+    "enemies": "Wrogowie",
+    "events": "Zdarzenia",
+    "deck_analyzer": "Analiza talii",
+    "run_history": "Historia wypraw",
+    "analytics": "Statystyki",
+    "records": "Rekordy",
+    "collections": "Kolekcje",
+    "epochs": "Epoki",
+    "community": "Społeczność",
+    "guide": "Poradnik",
+    "search_placeholder": "Szukaj kart, artefaktów, wrogów…",
+    "stop": "Zatrzymaj",
+    "prophecy": "Przepowiednia",
+    "hypothesis": "Hipoteza",
+    "graveyard": "Cmentarz",
+    "search": "Szukaj"
+  },
+  "common": {
+    "no_data": "Brak danych",
+    "loading": "Ładowanie…",
+    "error": "Wystąpił błąd",
+    "floor": "Piętro",
+    "hp": "PŻ",
+    "gold": "Złoto",
+    "cards": "Karty",
+    "win": "Zwycięstwo",
+    "loss": "Porażka",
+    "wins": "Zwycięstwa",
+    "losses": "Porażki",
+    "win_rate": "Odsetek zwycięstw"
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "language": "Język",
+    "save": "Zapisz",
+    "saved": "Zapisano ustawienia."
+  }
+}

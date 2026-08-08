@@ -68,7 +68,13 @@ a = Analysis(
         ('sts2/data', 'sts2/data'),
         ('sts2/templates', 'sts2/templates'),
         ('sts2/static', 'sts2/static'),
-        ('sts2/locales', 'sts2/locales'),
+        # UI strings only. sts2/locales/content holds translations built from
+        # the user's own game install (spirescope localize) and must never be
+        # bundled: it is that machine's copy of the game's text, not ours to
+        # redistribute. Listed file-by-file because naming the directory
+        # would sweep content/ in with it.
+        *[(str(p), 'sts2/locales')
+          for p in sorted(Path('sts2/locales').glob('*.json'))],
     ],
     hiddenimports=[
         'uvicorn.logging',

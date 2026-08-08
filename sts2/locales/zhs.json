@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "简体中文",
+    "code": "zhs",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08, native review pending"
+  },
+  "nav": {
+    "live_run": "即时战局",
+    "cards": "卡牌",
+    "relics": "遗物",
+    "potions": "药水",
+    "enemies": "敌人",
+    "events": "事件",
+    "deck_analyzer": "牌组分析",
+    "run_history": "冒险纪录",
+    "analytics": "数据分析",
+    "records": "个人纪录",
+    "collections": "收藏",
+    "epochs": "纪元",
+    "community": "社区",
+    "guide": "指南",
+    "search_placeholder": "搜索卡牌、遗物、敌人…",
+    "stop": "停止",
+    "prophecy": "预言",
+    "hypothesis": "假设",
+    "graveyard": "墓园",
+    "search": "搜索"
+  },
+  "common": {
+    "no_data": "没有数据",
+    "loading": "加载中…",
+    "error": "出现错误",
+    "floor": "楼层",
+    "hp": "生命",
+    "gold": "金币",
+    "cards": "卡牌",
+    "win": "胜利",
+    "loss": "失败",
+    "wins": "胜场",
+    "losses": "败场",
+    "win_rate": "胜率"
+  },
+  "settings": {
+    "title": "设置",
+    "language": "语言",
+    "save": "保存",
+    "saved": "设置已保存。"
+  }
+}

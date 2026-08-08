@@ -39,7 +39,9 @@
     "id": "POTION.ENERGY_POTION",
     "name": "Energy Potion",
     "rarity": "Common",
-    "description": "Gain 2 Energy."
+    "description": "Gain 1 Energy 1 Energy.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "POTION.EXPLOSIVE_AMPOULE",
@@ -93,7 +95,9 @@
     "id": "POTION.STAR_POTION",
     "name": "Star Potion",
     "rarity": "Common",
-    "description": "Gain 1 Star."
+    "description": "Gain 3 Star",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "POTION.STRENGTH_POTION",
@@ -153,7 +157,9 @@
     "id": "POTION.LIQUID_MEMORIES",
     "name": "Liquid Memories",
     "rarity": "Rare",
-    "description": "Put a card from your Discard Pile into your Hand. It's free to play this turn."
+    "description": "Put a card from your Discard Pile into your Hand. It costs 0 Energy this turn.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "POTION.BLESSING_OF_THE_FORGE",
@@ -362,20 +368,26 @@
   {
     "id": "POTION.FOUL_POTION",
     "name": "Foul Potion",
-    "rarity": "Event",
-    "description": "Deal 12 damage to ALL players and enemies. Can be thrown at the Merchant for 100 Gold instead."
+    "rarity": "Special",
+    "description": "Deal 12 damage to EVERYONE. Can be thrown at the Merchant for 100 Gold instead.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "POTION.GLOWWATER_POTION",
     "name": "Glowwater Potion",
-    "rarity": "Event",
-    "description": "Exhaust your Hand. Draw 10 cards."
+    "rarity": "Special",
+    "description": "Exhaust your Hand. Draw 10 cards.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "POTION.POTION_SHAPED_ROCK",
     "name": "Potion-Shaped Rock",
-    "rarity": "Token",
-    "description": "Deal 15 damage."
+    "rarity": "Special",
+    "description": "Deal 15 damage.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   },
   {
     "id": "POTION.DEPRECATED_POTION",
@@ -386,9 +398,11 @@
   {
     "id": "POTION.AMBERGRIS",
     "name": "Ambergris",
-    "rarity": "Event",
-    "description": "Heal for 50% of your Max HP. If used in combat, take an extra turn.",
+    "rarity": "Special",
+    "description": "Heal for 50% of your max HP. If used in combat, take an extra turn.",
     "introduced": "v0.109.0",
-    "branch": "beta"
+    "branch": "beta",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-08-08"
   }
 ]

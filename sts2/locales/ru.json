@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "language": "Русский",
+    "code": "ru",
+    "direction": "ltr",
+    "review": "drafted 2026-08-08 from official game terms, native review pending"
+  },
+  "nav": {
+    "live_run": "Текущая вылазка",
+    "cards": "Карты",
+    "relics": "Реликвии",
+    "potions": "Зелья",
+    "enemies": "Враги",
+    "events": "События",
+    "deck_analyzer": "Анализ колоды",
+    "run_history": "История вылазок",
+    "analytics": "Статистика",
+    "records": "Рекорды",
+    "collections": "Коллекции",
+    "epochs": "Эпохи",
+    "community": "Сообщество",
+    "guide": "Руководство",
+    "search_placeholder": "Поиск карт, реликвий, врагов…",
+    "stop": "Стоп",
+    "prophecy": "Пророчество",
+    "hypothesis": "Гипотеза",
+    "graveyard": "Кладбище",
+    "search": "Поиск"
+  },
+  "common": {
+    "no_data": "Нет данных",
+    "loading": "Загрузка…",
+    "error": "Произошла ошибка",
+    "floor": "Этаж",
+    "hp": "ОЗ",
+    "gold": "Золото",
+    "cards": "Карты",
+    "win": "Победа",
+    "loss": "Поражение",
+    "wins": "Победы",
+    "losses": "Поражения",
+    "win_rate": "Процент побед"
+  },
+  "settings": {
+    "title": "Настройки",
+    "language": "Язык",
+    "save": "Сохранить",
+    "saved": "Настройки сохранены."
+  }
+}

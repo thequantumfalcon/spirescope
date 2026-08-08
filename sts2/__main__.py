@@ -22,6 +22,7 @@ Commands:
   community     Fetch community tips from Steam
   export        Export aggregate stats to JSON file
   reset-stats   Delete aggregate stats file
+  localize      Build translated card/relic text from your game install
   sync-up       Upload local aggregate stats to sync service
   sync-down     Download and merge community stats from sync service
 
@@ -29,6 +30,8 @@ Options:
     --browser     With 'serve': force opening browser automatically
   --save-only   With 'update': skip wiki, only discover from save files
   --no-browser  With 'serve': don't open browser automatically
+  --lang CODES  With 'localize': comma-separated languages (default: all)
+  --list        With 'localize': list languages your game install offers
   --help, -h    Show this help message
   --version, -V Show version
 
@@ -131,6 +134,37 @@ def main():
             print("Aggregate stats file deleted.")
         else:
             print("No aggregate stats file found.")
+        return
+
+    if command == "localize":
+        from sts2.localize import LocalizeError, available_languages, run
+        try:
+            if "--list" in sys.argv:
+                langs = available_languages()
+                print("Languages available from your game install:")
+                print("  " + ", ".join(langs) if langs
+                      else "  none (is the game installed?)")
+                return
+            wanted = None
+            if "--lang" in sys.argv:
+                idx = sys.argv.index("--lang")
+                if idx + 1 >= len(sys.argv):
+                    print("--lang needs a value, e.g. --lang de,ja")
+                    sys.exit(1)
+                wanted = [c.strip() for c in sys.argv[idx + 1].split(",") if c.strip()]
+            print("Reading localization from your game install...")
+            written = run(langs=wanted)
+        except LocalizeError as exc:
+            print(f"Could not build translations: {exc}")
+            sys.exit(1)
+        if not written:
+            print("No translations were produced.")
+            return
+        print(f"Wrote {len(written)} translation file(s) to "
+              f"{written[0].parent}:")
+        for path in written:
+            print(f"  {path.stem}  ({path.stat().st_size // 1024} KB)")
+        print("Pick a language under Settings to use them.")
         return
 
     if command == "sync-up":

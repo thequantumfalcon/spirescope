@@ -3,6 +3,7 @@ import asyncio
 import hashlib
 import ipaddress
 import json
+import logging
 import math
 import re
 import time
@@ -304,7 +305,7 @@ async def card_detail(request: Request, card_id: str = Path(max_length=200)):
     runs_with_card = [r for r in await a._get_runs() if card_id in r.deck]
     card_run_wins = sum(1 for r in runs_with_card if r.win)
     card_run_total = len(runs_with_card)
-    community_tips = a.kb.get_community_tips(card.name)
+    community_tips = a.kb.get_community_tips(a.kb.english_name(card))
     # Enemies faced in runs containing this card
     enemies_faced: dict[str, dict] = {}
     for run in runs_with_card:
@@ -352,7 +353,7 @@ async def relic_detail(request: Request, relic_id: str = Path(max_length=200)):
             "error_code": 404, "error_message": f"Relic '{relic_id[:100]}' not found.",
         }, status_code=404)
     relic_runs = [r for r in await a._get_runs() if relic_id in r.relics]
-    community_tips = a.kb.get_community_tips(relic.name)
+    community_tips = a.kb.get_community_tips(a.kb.english_name(relic))
     # Relic synergy — other relics commonly found in winning runs with this one
     relic_synergies = []
     analytics = await a._get_analytics()
@@ -363,7 +364,7 @@ async def relic_detail(request: Request, relic_id: str = Path(max_length=200)):
             relic_synergies.append({"id": edge["source"], "weight": edge["weight"]})
     relic_synergies.sort(key=lambda x: -x["weight"])
     # Archetypes mentioning this relic
-    relic_archetypes = a.kb.find_relic_archetypes(relic.name)
+    relic_archetypes = a.kb.find_relic_archetypes(a.kb.english_name(relic))
     from sts2.analytics import compute_era_split
     from sts2.patches import changed_in
     changed_patch = changed_in(relic_id)
@@ -422,7 +423,7 @@ async def enemy_detail(request: Request, enemy_id: str = Path(max_length=200)):
         enemy_fight_stats = progress.enemy_stats.get(enemy_id, {})
         if not encounter_stats:
             encounter_stats = enemy_fight_stats
-    community_tips = a.kb.get_community_tips(enemy.name)
+    community_tips = a.kb.get_community_tips(a.kb.english_name(enemy))
     counter_cards = a.kb.get_counter_cards(enemy)
     analytics = await a._get_analytics()
     danger = analytics.get("encounter_danger", {}).get(enemy_id, None)
@@ -1480,6 +1481,10 @@ async def reload_data(request: Request):
     invalidate_cache()
     new_kb = await asyncio.to_thread(KnowledgeBase)
     a.kb = new_kb
+    # Analytics bakes entity names into its cached payload, so a reload that
+    # leaves it in place serves the old names for the rest of the TTL
+    a._analytics_cache.clear()
+    a._analytics_cache_time.clear()
     return {"status": "ok", "cards": len(a.kb.cards), "relics": len(a.kb.relics),
             "potions": len(a.kb.potions), "enemies": len(a.kb.enemies)}
 
@@ -1719,17 +1724,34 @@ async def settings_language(request: Request,
                             csrf_token: str = Form("")):
     from fastapi.responses import RedirectResponse
 
-    from sts2.i18n import get_translator, set_language
+    from sts2.i18n import get_language, get_translator, set_language
+    from sts2.knowledge import KnowledgeBase
     a = _app()
     if not a.validate_csrf_token(csrf_token):
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 403,
             "error_message": "Invalid form submission. Please go back and try again.",
         }, status_code=403)
-    if not set_language(language.strip()):
+    code = language.strip()
+    previous = get_language()
+    if not set_language(code):
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400, "error_message": "Unknown language.",
         }, status_code=400)
     # Re-register the translator so the change applies without restart
-    a.templates.env.globals["t"] = get_translator(language.strip())
+    a.templates.env.globals["t"] = get_translator(code)
+    if code != previous:
+        # Rebuild the knowledge base so content overlays (translated
+        # card/relic text) apply to models and search indexes. The code is
+        # passed explicitly: resolving it again would let STS2_LANG win and
+        # leave translated chrome over untranslated content.
+        try:
+            a.kb = await asyncio.to_thread(KnowledgeBase, code)
+        except Exception:
+            logging.getLogger(__name__).exception(
+                "Could not rebuild the knowledge base for language %s", code)
+        else:
+            # Analytics bakes entity names into its cached payload
+            a._analytics_cache.clear()
+            a._analytics_cache_time.clear()
     return RedirectResponse("/settings?saved=1", status_code=303)

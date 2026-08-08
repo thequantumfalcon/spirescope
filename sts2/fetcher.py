@@ -14,6 +14,10 @@ log = logging.getLogger(__name__)
 # Per-entity provenance fields (set at merge time when content changes)
 _PROVENANCE_FIELDS = ("fetched_from", "fetched_at")
 
+# App-curated pseudo-categories; sources file these cards under Colorless,
+# so a scrape must never overwrite them (see _merge_with_existing)
+_CURATED_CHARACTERS = {"Curse", "Status", "Token", "Event", "Quest"}
+
 WIKI_BASE = "https://slaythespire2.gg"
 # Per their robots.txt: general scraping is permitted; /api, /admin,
 # /analysis, /planner are disallowed and we never request them.
@@ -581,6 +585,11 @@ def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "i
                 old_v = old.get(k)
                 # Only preserve old value when new is empty/None and old has content
                 if v in (None, "") and old_v not in (None, ""):
+                    continue
+                # Pseudo-categories (Curse/Status/Token/Event/Quest) are app-curated;
+                # no source can express them (the wiki files these cards under
+                # Colorless), so a source may never overwrite one
+                if k == "character" and old_v in _CURATED_CHARACTERS:
                     continue
                 if merged.get(k) != v:
                     changed = True
