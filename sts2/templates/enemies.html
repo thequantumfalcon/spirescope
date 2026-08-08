@@ -25,7 +25,7 @@
   <h3>{{ enemy.name }}
     <span class="tag {% if enemy.type == 'boss' %}tag-attack{% elif enemy.type == 'elite' %}tag-power{% else %}tag-skill{% endif %}">{{ enemy.type }}</span>
   </h3>
-  <p>{{ enemy.act|join(', ') }} &bull; HP: {{ enemy.hp_range }}</p>
+  <p>{{ enemy.act|join(', ') }}{% if enemy.hp_range %} &bull; HP: {{ enemy.hp_range }}{% endif %}</p>
   {% if enemy.tips %}<p class="text-sm text-green">{{ enemy.tips[0] }}</p>{% endif %}
 </a>
 {% endfor %}

@@ -50,7 +50,7 @@
 {% for enemy in results.enemies %}
 <a href="/enemies/{{ enemy.id }}" class="card card-link">
   <h3>{{ enemy.name }} <span class="tag tag-{{ enemy.type }}">{{ enemy.type }}</span></h3>
-  <p>{{ enemy.act|join(', ') }} &bull; HP: {{ enemy.hp_range }}</p>
+  <p>{{ enemy.act|join(', ') }}{% if enemy.hp_range %} &bull; HP: {{ enemy.hp_range }}{% endif %}</p>
 </a>
 {% endfor %}
 </div>
