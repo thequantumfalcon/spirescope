@@ -1535,3 +1535,91 @@ class TestAuditRegressions:
             assert out.returncode == 0, out.stderr
             seen.add(out.stdout.strip())
         assert len(seen) == 1, f"drift verdict varies with hash seed: {seen}"
+
+
+class TestSecondPassRegressions:
+    """Defects found in the follow-up audit sweep. Each fails before its fix."""
+
+    def test_overlay_exposes_the_selectors_its_script_updates(self):
+        """The OBS overlay was frozen: overlay.js targeted classes the template
+        never rendered, so every SSE tick was a silent no-op, and it printed
+        run.current_floor, a field CurrentRun does not have."""
+        import re
+        from unittest.mock import AsyncMock, patch
+
+        from fastapi.testclient import TestClient
+
+        from sts2.models import CurrentRun
+
+        run = CurrentRun(active=True, character="Ironclad", current_hp=74, max_hp=80,
+                         gold=137, act=2, floor=23, run_time=1830,
+                         deck=["CARD.STRIKE"] * 10, relics=["RELIC.VAJRA"],
+                         potions=["POTION.FIRE_POTION"])
+        with patch("sts2.routes._get_live_run", new=AsyncMock(return_value=run)):
+            from sts2.app import app
+            html = TestClient(app).get("/overlay").text
+
+        for cls in ("live-hp", "live-gold", "live-cards", "live-relics",
+                    "live-potions", "live-floor", "live-act", "hp-fill"):
+            assert re.search(r'class="[^"]*\b' + cls + r'\b', html), f"missing .{cls}"
+        assert "Floor 23" in html
+        assert "current_floor" not in html
+
+    def test_overlay_script_targets_only_selectors_that_exist(self):
+        """Guards the pairing directly, so drift in either file is caught."""
+        import re
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parent.parent
+        js = (root / "sts2" / "static" / "overlay.js").read_text(encoding="utf-8")
+        template = (root / "sts2" / "templates" / "overlay.html").read_text(encoding="utf-8")
+        targeted = set(re.findall(r"setText\('\.([a-z-]+)'", js))
+        assert targeted, "overlay.js stopped using setText — update this guard"
+        for cls in targeted:
+            assert cls in template, f"overlay.js writes .{cls}, absent from overlay.html"
+
+    def test_boss_beaten_in_a_losing_run_still_counts_as_a_win(self):
+        """Wins were credited only when the whole run was won, so a boss cleared
+        in act 1 of a run that later died scored as a fight with neither."""
+        from sts2.analytics import compute_boss_matchups
+        from sts2.app import kb as _kb
+        from sts2.models import RunFloor, RunHistory
+
+        bosses = [e.id for e in _kb.enemies
+                  if e.type == "boss" and e.id.startswith("ENCOUNTER.")]
+        assert len(bosses) >= 2, "shipped data has too few bosses to test"
+        early, fatal = bosses[0], bosses[1]
+
+        def floor(enc, dmg):
+            return RunFloor(floor=17, type="boss", encounter=enc, turns=5, damage_taken=dmg)
+
+        runs = [RunHistory(id="a", timestamp=1, character="Ironclad", win=False,
+                           killed_by=fatal, deck=["CARD.STRIKE"],
+                           floors=[floor(early, 10), floor(fatal, 40)])]
+        by_boss = {m["boss"]: m for m in compute_boss_matchups(runs, _kb)}
+        assert by_boss[early]["wins"] == 1
+        assert by_boss[early]["losses"] == 0
+        assert by_boss[early]["win_rate"] == 100
+        assert by_boss[fatal]["losses"] == 1
+        assert by_boss[fatal]["wins"] == 0
+
+    def test_counter_cards_are_absent_rather_than_generic(self):
+        """A fallback recommended the same eight Colorless cards for any enemy
+        with no matching text, under a heading claiming they counter *that*
+        enemy's patterns. No signal must mean no claim."""
+        import collections
+
+        from sts2.app import kb as _kb
+
+        signatures = collections.Counter()
+        for enemy in _kb.enemies:
+            cards = _kb.get_counter_cards(enemy)
+            if cards:
+                signatures[tuple(c.id for c in cards)] += 1
+        total = len(_kb.enemies)
+        assert total > 50, "shipped enemy data looks truncated"
+        if signatures:
+            _, largest = signatures.most_common(1)[0]
+            assert largest < total * 0.5, (
+                f"{largest}/{total} enemies share one counter-card set — "
+                "the generic fallback is back")

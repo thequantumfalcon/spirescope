@@ -926,27 +926,37 @@ def compute_boss_matchups(runs: list[RunHistory], kb=None) -> list[dict]:
     # Collect per-boss per-character stats from floor data
     stats: dict[tuple[str, str], dict] = {}  # (encounter_id, character) -> {wins, losses, total_damage, fights}
 
+    def _entry(key):
+        return stats.setdefault(
+            key, {"wins": 0, "losses": 0, "total_damage": 0, "fights": 0})
+
     for run in runs:
         boss_floors = [f for f in run.floors if f.encounter in boss_ids]
-        for floor in boss_floors:
-            key = (floor.encounter, run.character)
-            if key not in stats:
-                stats[key] = {"wins": 0, "losses": 0, "total_damage": 0, "fights": 0}
-            stats[key]["fights"] += 1
-            stats[key]["total_damage"] += floor.damage_taken
-            # If the run was a win, every boss floor was cleared
-            if run.win:
-                stats[key]["wins"] += 1
-
-        # Loss: only the killing boss gets a loss
+        # Beating a boss is a win against that boss even if the run later ends.
+        # Crediting a win only when the whole run was won left every act-1 and
+        # act-2 boss cleared in a losing run counted as a fight with neither a
+        # win nor a loss, so bosses beaten every time rendered 0 / 0 / 0%.
+        fatal_floor = None
         if not run.win and run.killed_by in boss_ids:
-            key = (run.killed_by, run.character)
-            if key not in stats:
-                stats[key] = {"wins": 0, "losses": 0, "total_damage": 0, "fights": 0}
-            stats[key]["losses"] += 1
-            # Death counts as a fight if floor data didn't record it
-            if stats[key]["fights"] == 0:
-                stats[key]["fights"] = 1
+            for floor in reversed(boss_floors):
+                if floor.encounter == run.killed_by:
+                    fatal_floor = floor
+                    break
+
+        for floor in boss_floors:
+            entry = _entry((floor.encounter, run.character))
+            entry["fights"] += 1
+            entry["total_damage"] += floor.damage_taken
+            if floor is fatal_floor:
+                entry["losses"] += 1
+            else:
+                entry["wins"] += 1
+
+        # Killed by a boss the floor data never recorded: count it anyway.
+        if not run.win and run.killed_by in boss_ids and fatal_floor is None:
+            entry = _entry((run.killed_by, run.character))
+            entry["losses"] += 1
+            entry["fights"] += 1
 
     results = []
     for (boss_id, character), s in stats.items():

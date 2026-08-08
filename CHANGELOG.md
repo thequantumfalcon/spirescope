@@ -1,6 +1,18 @@
 # Changelog
 
-## Unreleased
+## v3.0.3
+
+### Changed
+
+- **User data now lives outside the game-data directory.** Settings, community
+  aggregate stats, saved hypotheses and mods move to a per-user location
+  (`%APPDATA%\SpireScope`, `~/Library/Application Support/SpireScope`, or
+  `$XDG_DATA_HOME/SpireScope`), overridable with `STS2_STATE_DIR`. They
+  previously sat inside the directory that `python -m sts2 update` and
+  data-bundle installs replace wholesale, so a data refresh could discard them.
+  Existing files are moved automatically on first run; nothing needs doing.
+
+### Fixed
 
 ### Removed
 
@@ -15,6 +27,21 @@
 
 ### Fixed
 
+- **The OBS overlay never updated.** Its script wrote to element classes the
+  overlay template did not render, so every live tick was a silent no-op and
+  the numbers froze at whatever they were when the page loaded — only the HP
+  bar's width moved, while the text beside it and its colour stayed put. The
+  floor readout was also permanently blank, printing a field that does not
+  exist on a run.
+- **Boss matchups showed 0 wins for bosses you always beat.** A win was only
+  credited when the entire run was won, so every act 1 and act 2 boss cleared
+  in a run that later ended counted as a fight with neither a win nor a loss —
+  producing rows reading `0 wins / 0 losses / 0%` next to a fight count.
+- **Enemy pages recommended the same eight cards for most enemies.** When an
+  enemy's text gave no signal, a generic fallback recommended an identical
+  Colourless set under a heading promising counters to that enemy's patterns —
+  which covered 136 of 184 enemies. Pages with no real signal now omit the
+  section instead of asserting a relationship that does not exist.
 - **The Community page returned HTTP 500 for anyone with aggregate stats.**
   The card table sorted a mapping of `{wins, total}` dictionaries by value,
   which Python cannot order, so every visit errored once an aggregate existed

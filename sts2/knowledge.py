@@ -730,8 +730,15 @@ class KnowledgeBase:
             need_keywords["Block"] = need_keywords.get("Block", 0) + 0.5
 
         if not need_keywords:
-            # Generic fallback: recommend Block + damage
-            need_keywords = {"Block": 1.0, "Strength": 0.5}
+            # Nothing in this enemy's text implies a counter. The generic
+            # Block+Strength fallback that used to run here scored identically
+            # for every such enemy, so 136 of 184 enemy pages rendered the same
+            # eight Colorless cards under a heading promising counters to *this*
+            # enemy's patterns. Most of those enemies carry only the
+            # "Auto-discovered from save data" placeholder tip, so there is
+            # genuinely no signal — say nothing rather than assert a
+            # relationship that does not exist.
+            return []
 
         # Score each card
         scored: list[tuple[float, Card]] = []
