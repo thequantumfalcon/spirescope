@@ -110,8 +110,45 @@ def _scale_subcounts(d: dict, scale: float) -> dict:
     return out
 
 
+_COUNTER_FIELDS = ("card_pick_rates", "card_win_rates", "relic_win_rates",
+                   "character_stats", "ascension_stats")
+
+
+def _sanitise_import(imported: dict) -> dict:
+    """Drop anything that is not a numeric counter before it can be persisted.
+
+    json.loads succeeding is not validation. A sync server or a hand-crafted
+    /api/import/stats body could put a string, null or nested object where a
+    count belongs; the merge stored it verbatim, and every later read of the
+    community page then failed on it. Accepting bad input is recoverable —
+    persisting it is not, since the bad value outlives the request.
+    """
+    clean: dict = {"run_count": 0}
+    count = imported.get("run_count", 0)
+    if isinstance(count, bool) or not isinstance(count, (int, float)):
+        raise ValueError("run_count must be a number")
+    clean["run_count"] = max(0, int(count))
+
+    for field in _COUNTER_FIELDS:
+        source = imported.get(field)
+        if not isinstance(source, dict):
+            continue
+        kept: dict = {}
+        for key, values in source.items():
+            if not isinstance(key, str) or not isinstance(values, dict):
+                continue
+            numeric = {k: v for k, v in values.items()
+                       if isinstance(k, str) and not isinstance(v, bool)
+                       and isinstance(v, (int, float)) and v >= 0}
+            if numeric:
+                kept[key] = numeric
+        clean[field] = kept
+    return clean
+
+
 def merge_aggregate(existing: dict, imported: dict) -> dict:
     """Weighted merge with anti-manipulation cap."""
+    imported = _sanitise_import(imported)
     if not existing or existing.get("run_count", 0) == 0:
         # Apply min-cap even on first import — prevents a malicious first file
         # from seeding massive bogus stats that then anchor the future cap.
