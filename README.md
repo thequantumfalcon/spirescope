@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
   <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/thequantumfalcon/spirescope/badges/tests.json" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-77%25-yellowgreen" alt="Coverage: 77%">
+  <img src="https://img.shields.io/badge/coverage-79%25-yellowgreen" alt="Coverage: 79%">
 </p>
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
@@ -89,7 +89,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Autopsy Report** — When you die, 5 diagnostic agents analyze what went wrong AND what went right. Causal chain narrative + exculpatory findings.
 - **Hypothesis Lab** — Register strategic beliefs (*"Skipping elites helps"*) and test them with Bayesian statistics across your runs.
 - **Rivalry Seeds** — Export your run, share the seed with a friend, import their run, and see a floor-by-floor decision diff.
-- **Run Integrity** — SHA-256 Merkle chain proves a run is unmodified. Share your hash to verify achievements.
+- **Run Integrity** — SHA-256 Merkle chain over a run's floors, shown on the run detail page, so an exported run can be checked against the hash it was published with.
 
 ### Customize & Extend
 
@@ -321,7 +321,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (32 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 732 tests (pytest + pytest-asyncio)
+tests/               # 733 tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements
