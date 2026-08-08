@@ -1527,11 +1527,17 @@ class TestAuditRegressions:
             "['Alpha','Beta','Gamma','Beta','Gamma','Alpha']];"
             "print(detect_drift_alert(t))"
         )
+        # Windows: Path.home() (hit when sts2.config imports) has no fallback
+        # when USERPROFILE/HOMEDRIVE are stripped, unlike POSIX's pwd lookup.
+        passthrough = {k: os.environ[k]
+                       for k in ("PATH", "SYSTEMROOT", "USERPROFILE",
+                                 "HOMEDRIVE", "HOMEPATH")
+                       if k in os.environ}
         seen = set()
         for seed in ("0", "1", "2", "3", "4"):
             out = subprocess.run([sys.executable, "-c", script],
                                  capture_output=True, text=True,
-                                 env={"PYTHONHASHSEED": seed, "PATH": os.environ.get("PATH", "")})
+                                 env={"PYTHONHASHSEED": seed, **passthrough})
             assert out.returncode == 0, out.stderr
             seen.add(out.stdout.strip())
         assert len(seen) == 1, f"drift verdict varies with hash seed: {seen}"
