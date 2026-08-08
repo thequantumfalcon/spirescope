@@ -273,6 +273,47 @@ async def test_settings_language_post_round_trip(client, tmp_path, monkeypatch):
     assert "saved=1" in resp.headers["location"]
 
 
+def test_ui_locale_read_failure_is_not_cached(tmp_path, monkeypatch):
+    """Same rule as the content overlay: a locked or half-written locale file
+    must not pin the UI to English for the life of the process."""
+    import json as _json
+
+    from sts2 import i18n
+    locales = tmp_path / "locales"
+    locales.mkdir()
+    (locales / "en.json").write_text(_json.dumps({"nav": {"cards": "Cards"}}),
+                                     encoding="utf-8")
+    target = locales / "xx.json"
+    target.write_text(_json.dumps({"nav": {"cards": "Kort"}}), encoding="utf-8")
+    monkeypatch.setattr(i18n, "_LOCALES_DIR", locales)
+    monkeypatch.setattr(i18n, "_cache", {})
+    real_read = i18n.Path.read_text
+
+    def flaky(self, *a, **kw):
+        if self == target:
+            raise OSError("locked by another process")
+        return real_read(self, *a, **kw)
+
+    monkeypatch.setattr(i18n.Path, "read_text", flaky)
+    assert i18n._load_locale("xx") == {}
+    monkeypatch.setattr(i18n.Path, "read_text", real_read)
+    assert i18n._load_locale("xx")["nav"]["cards"] == "Kort"
+
+
+async def test_api_reload_clears_the_analytics_cache(client):
+    """Analytics caches display names for 60s, so a reload that skips it keeps
+    serving pre-reload names — the same defect the language switch fixes."""
+    from sts2 import app as app_module
+
+    app_module._analytics_cache["sentinel"] = {"stale": True}
+    app_module._analytics_cache_time["sentinel"] = 1.0
+    resp = await client.post("/api/reload",
+                             headers={"X-Admin-Token": app_module._ADMIN_TOKEN})
+    assert resp.status_code == 200
+    assert "sentinel" not in app_module._analytics_cache
+    assert "sentinel" not in app_module._analytics_cache_time
+
+
 def test_language_codes_reject_path_fragments(tmp_path, monkeypatch):
     """'content/de' is 10 chars and resolves to the overlay directory, so it
     would persist as a language the settings page cannot represent."""

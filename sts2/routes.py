@@ -1481,6 +1481,10 @@ async def reload_data(request: Request):
     invalidate_cache()
     new_kb = await asyncio.to_thread(KnowledgeBase)
     a.kb = new_kb
+    # Analytics bakes entity names into its cached payload, so a reload that
+    # leaves it in place serves the old names for the rest of the TTL
+    a._analytics_cache.clear()
+    a._analytics_cache_time.clear()
     return {"status": "ok", "cards": len(a.kb.cards), "relics": len(a.kb.relics),
             "potions": len(a.kb.potions), "enemies": len(a.kb.enemies)}
 

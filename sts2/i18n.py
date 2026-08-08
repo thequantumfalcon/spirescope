@@ -42,7 +42,11 @@ def _load_locale(code: str) -> dict:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
-        data = {}
+        # Not cached: a transient lock (virus scanner, partial write) would
+        # otherwise leave this locale untranslated until the process restarts
+        logging.getLogger(__name__).warning(
+            "Could not load locale %s", path, exc_info=True)
+        return {}
     _cache[code] = data
     return data
 
