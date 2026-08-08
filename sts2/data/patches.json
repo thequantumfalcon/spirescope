@@ -117,5 +117,51 @@
       "relics": [],
       "enemies": []
     }
+  },
+  {
+    "patch": "v0.110.0",
+    "date": "2026-07-31",
+    "branch": "beta",
+    "build_ids": [
+      "v0.110.0"
+    ],
+    "changed": {
+      "cards": [
+        "CARD.ABUNDANCE_EVENT",
+        "CARD.RELAX",
+        "CARD.WHISTLE",
+        "CARD.WHISTLE_EVENT",
+        "CARD.MAUL",
+        "CARD.MAUL_EVENT",
+        "CARD.MANGLE",
+        "CARD.PACTS_END",
+        "CARD.HAZE",
+        "CARD.OUTBREAK",
+        "CARD.FOLLOW_THROUGH",
+        "CARD.MIRAGE",
+        "CARD.WELL_LAID_PLANS",
+        "CARD.ECHOING_SLASH",
+        "CARD.TERRAFORMING",
+        "CARD.PILLAR_OF_CREATION",
+        "CARD.CRUSH_UNDER",
+        "CARD.EIDOLON",
+        "CARD.SACRIFICE",
+        "CARD.THE_SCYTHE",
+        "CARD.BIASED_COGNITION",
+        "CARD.REFRACT",
+        "CARD.ROCKET_PUNCH",
+        "CARD.SYNCHRONIZE"
+      ],
+      "relics": [
+        "RELIC.TOASTY_MITTENS",
+        "RELIC.SEAL_OF_GOLD",
+        "RELIC.BEAUTIFUL_BRACELET",
+        "RELIC.FUR_COAT",
+        "RELIC.SIGNET_RING",
+        "RELIC.FIDDLE",
+        "RELIC.REGALITE"
+      ],
+      "enemies": []
+    }
   }
 ]
