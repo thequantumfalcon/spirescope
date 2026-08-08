@@ -61,6 +61,33 @@ spirescope
 
 Then open <http://127.0.0.1:8000>. Requires Python 3.11 or newer.
 
+## macOS — Gatekeeper blocks the build outright
+
+This is a different problem from the Windows one, and it is not a heuristic
+false positive: the macOS build is neither signed with an Apple Developer ID
+nor notarized, so Gatekeeper refuses it by policy. Depending on how you open
+it you will see "cannot be opened because the developer cannot be verified",
+"is damaged and can't be opened", or nothing happening at all. The "damaged"
+wording is misleading — the download is intact, it simply carries the
+quarantine attribute your browser attached.
+
+Verify the download against the published `.sha256` first, then clear the
+attribute once:
+
+```bash
+shasum -a 256 -c Spirescope-macos.zip.sha256
+unzip Spirescope-macos.zip
+xattr -dr com.apple.quarantine Spirescope
+cd Spirescope && ./Spirescope
+```
+
+`xattr -dr` removes the quarantine flag recursively. Only do this for software
+you have chosen to trust and whose checksum you have confirmed.
+
+Notarizing properly requires a paid Apple Developer Program membership, which
+this project does not currently hold. Running from source (Option 2 above)
+avoids the issue entirely on macOS.
+
 ## Option 3 — Wait for signed builds
 
 Code signing is the only thing that removes these warnings permanently.
@@ -70,6 +97,9 @@ a nonprofit that provides free code signing to open source projects. If
 accepted, release binaries will be signed automatically in CI — the private
 key is held in SignPath's HSM and the certificate is issued in SignPath
 Foundation's name. This page will be updated when signed builds ship.
+
+Note that SignPath covers Windows Authenticode signing only; it does not
+address macOS Gatekeeper, which needs Apple notarization separately.
 
 ## How to satisfy yourself it's safe
 

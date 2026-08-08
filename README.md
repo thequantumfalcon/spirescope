@@ -114,6 +114,20 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 SpireScope is open source, local-only by default, and the packaged release avoids the UPX-compressed hidden-window profile that triggers extra false positives. Builds are produced only by GitHub Actions from tagged commits in this repository, and GitHub Releases is the only official download source.
 
+> **macOS will refuse to run the download until you clear the quarantine
+> flag.** The build is not signed or notarized, so Gatekeeper blocks it —
+> depending on how you open it you'll see "cannot be opened because the
+> developer cannot be verified", "is damaged and can't be opened", or simply
+> nothing at all. After extracting, run this once:
+>
+> ```bash
+> xattr -dr com.apple.quarantine /path/to/Spirescope
+> ```
+>
+> Then launch `./Spirescope` from that folder. Only do this for downloads you
+> have verified — check the published `.sha256` first. If you'd rather not,
+> [running from source](#from-source) works on macOS with no quarantine issue.
+
 If you're cautious about unsigned Windows apps, that's fair — and running from source (below) sidesteps the issue entirely.
 
 ### From Source
