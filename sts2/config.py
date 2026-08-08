@@ -45,6 +45,95 @@ def ensure_data_dir() -> None:
         logging.getLogger(__name__).error("Failed to seed data dir: %s", exc)
 
 
+def _find_state_dir() -> Path:
+    """Writable directory for state the *user* creates, not shipped data.
+
+    Kept separate from DATA_DIR because the two have opposite lifecycles:
+    DATA_DIR is refreshed wholesale by `sts2 update` and by data-bundle
+    installs, which replace files. Anything of the user's living there is
+    collateral — a bundle install used to discard hand-assigned patch
+    mappings, and in Docker the shipped data dir is not even writable.
+    """
+    env = os.environ.get("STS2_STATE_DIR")
+    if env:
+        return Path(env)
+    if sys.platform == "win32":
+        base = Path(os.environ.get("APPDATA") or Path.home() / "AppData" / "Roaming")
+    elif sys.platform == "darwin":
+        base = Path.home() / "Library" / "Application Support"
+    else:
+        base = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+    return base / "SpireScope"
+
+
+STATE_DIR = _find_state_dir()
+
+# Files that belong to the user rather than to the shipped dataset. Named here
+# so the migration below and the modules that own them cannot drift apart.
+_STATE_FILES = ("settings.json", "community_aggregate.json", "hypotheses.json")
+
+
+def state_path(name: str) -> Path:
+    """Absolute path for a user-state file, creating STATE_DIR on demand."""
+    try:
+        STATE_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        import logging
+        logging.getLogger(__name__).warning(
+            "Could not create state directory %s", STATE_DIR, exc_info=True)
+    return STATE_DIR / name
+
+
+def migrate_state_from_data_dir() -> list[str]:
+    """Move pre-3.0.3 user state out of the shipped data directory.
+
+    Earlier versions wrote settings, community stats, hypotheses and mods into
+    DATA_DIR. Existing installs must not silently lose them, so move rather
+    than ignore, and never overwrite something already in the new location.
+    Returns the names moved, for logging and tests.
+    """
+    import shutil
+    moved = []
+    # Frozen builds also used to write beside the executable.
+    sources = [DATA_DIR]
+    if getattr(sys, "frozen", False):
+        sources.append(Path(sys.executable).parent)
+    for source in sources:
+        for name in _STATE_FILES:
+            old = source / name
+            new = STATE_DIR / name
+            if not old.exists() or new.exists():
+                continue
+            try:
+                STATE_DIR.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(old), str(new))
+                moved.append(name)
+            except OSError:
+                import logging
+                logging.getLogger(__name__).warning(
+                    "Could not migrate %s to %s", name, STATE_DIR, exc_info=True)
+    # mods/ is not purely user state: the package ships it with a README
+    # explaining the format. Move only files the user added, and never the
+    # directory itself, or a source checkout loses a tracked file.
+    old_mods = DATA_DIR / "mods"
+    new_mods = STATE_DIR / "mods"
+    if old_mods.is_dir():
+        for mod_file in sorted(old_mods.iterdir()):
+            if not mod_file.is_file() or mod_file.name == "README.md":
+                continue
+            if (new_mods / mod_file.name).exists():
+                continue
+            try:
+                new_mods.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(mod_file), str(new_mods / mod_file.name))
+                moved.append(f"mods/{mod_file.name}")
+            except OSError:
+                import logging
+                logging.getLogger(__name__).warning(
+                    "Could not migrate %s to %s", mod_file.name, new_mods, exc_info=True)
+    return moved
+
+
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 STATIC_DIR = PROJECT_ROOT / "static"
 
@@ -176,7 +265,9 @@ def _find_mods_dir() -> Path:
         return Path(env)
     if getattr(sys, 'frozen', False):
         return Path(sys.executable).parent / "mods"
-    return DATA_DIR / "mods"
+    # User-authored content, so it lives with the user's state rather than in
+    # the shipped data dir that `sts2 update` replaces wholesale.
+    return STATE_DIR / "mods"
 
 
 def _find_game_dir() -> Path:

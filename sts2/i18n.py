@@ -67,8 +67,8 @@ def get_translator(code: str = ""):
 
 
 def _settings_path():
-    from sts2.config import DATA_DIR
-    return DATA_DIR / "settings.json"
+    from sts2.config import state_path
+    return state_path("settings.json")
 
 
 def get_language() -> str:

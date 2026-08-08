@@ -19,7 +19,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from sts2.analytics import compute_analytics
-from sts2.config import SAVE_DIR, STATIC_DIR, TEMPLATES_DIR, VERSION, ensure_data_dir
+from sts2.config import (
+    SAVE_DIR,
+    STATIC_DIR,
+    TEMPLATES_DIR,
+    VERSION,
+    ensure_data_dir,
+    migrate_state_from_data_dir,
+)
 from sts2.knowledge import KnowledgeBase
 from sts2.saves import get_progress, get_run_history
 
@@ -83,6 +90,12 @@ templates.env.globals["live_js_hash"] = _LIVE_JS_HASH
 
 # Frozen builds: seed the writable data dir from bundled data before loading
 ensure_data_dir()
+# Installs from before the data/state split kept settings, community stats,
+# hypotheses and mods inside the data dir. Move them out once, before anything
+# reads them, so upgrading users keep their data instead of appearing reset.
+_migrated = migrate_state_from_data_dir()
+if _migrated:
+    log.info("Migrated user state out of the data directory: %s", ", ".join(_migrated))
 kb = KnowledgeBase()
 
 _CSRF_SECRET = secrets.token_bytes(32)

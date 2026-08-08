@@ -91,3 +91,77 @@ def test_version_is_consistent_across_release_artifacts():
     assert hardcoded is None, (
         f"spirescope.spec hardcodes VERSION={hardcoded.group(1)!r}; derive it instead")
     assert "config.py" in spec, "spec no longer reads the version from config.py"
+
+
+class TestStateDirSplit:
+    """User state must live outside the shipped data directory.
+
+    DATA_DIR is replaced wholesale by `sts2 update` and by data-bundle
+    installs. Anything of the user's kept there is collateral damage — which is
+    how hand-assigned patch mappings used to be discarded on update.
+    """
+
+    def test_state_dir_is_not_inside_the_package_or_data_dir(self):
+        from sts2.config import BUNDLED_DATA_DIR, DATA_DIR, PROJECT_ROOT, STATE_DIR
+
+        assert PROJECT_ROOT not in STATE_DIR.parents
+        assert BUNDLED_DATA_DIR not in STATE_DIR.parents
+        assert STATE_DIR != DATA_DIR
+
+    def test_user_state_files_resolve_into_state_dir(self, tmp_path, monkeypatch):
+        import sts2.config as cfg
+
+        monkeypatch.setattr(cfg, "STATE_DIR", tmp_path / "state")
+        from sts2.aggregate import _aggregate_storage_path
+        from sts2.hypothesis import _hypotheses_file
+        from sts2.i18n import _settings_path
+
+        for resolver in (_settings_path, _hypotheses_file, _aggregate_storage_path):
+            assert (tmp_path / "state") in resolver().parents, resolver.__name__
+
+    def test_migration_moves_existing_state_without_overwriting(self, tmp_path, monkeypatch):
+        """An upgrading user keeps their stats; a newer file is never clobbered."""
+        import json
+
+        import sts2.config as cfg
+
+        data_dir = tmp_path / "data"
+        state_dir = tmp_path / "state"
+        (data_dir / "mods").mkdir(parents=True)
+        (data_dir / "mods" / "my_mod.json").write_text("{}", encoding="utf-8")
+        # Ships with the package — must survive, or a source checkout loses a
+        # tracked file the first time the app runs.
+        (data_dir / "mods" / "README.md").write_text("mod format docs", encoding="utf-8")
+        (data_dir / "settings.json").write_text('{"language": "en"}', encoding="utf-8")
+        (data_dir / "community_aggregate.json").write_text('{"run_count": 42}', encoding="utf-8")
+        # Already migrated, with different content — must survive untouched.
+        state_dir.mkdir()
+        (state_dir / "hypotheses.json").write_text('{"kept": true}', encoding="utf-8")
+        (data_dir / "hypotheses.json").write_text('{"stale": true}', encoding="utf-8")
+
+        monkeypatch.setattr(cfg, "DATA_DIR", data_dir)
+        monkeypatch.setattr(cfg, "STATE_DIR", state_dir)
+        moved = cfg.migrate_state_from_data_dir()
+
+        assert set(moved) == {"settings.json", "community_aggregate.json", "mods/my_mod.json"}
+        assert json.loads((state_dir / "community_aggregate.json").read_text())["run_count"] == 42
+        assert (state_dir / "mods" / "my_mod.json").exists()
+        assert not (data_dir / "settings.json").exists()
+        # The shipped README stays put and is never copied into user state.
+        assert (data_dir / "mods" / "README.md").exists()
+        assert not (state_dir / "mods" / "README.md").exists()
+        # The pre-existing file wins; the stale copy stays put rather than
+        # silently replacing newer state.
+        assert json.loads((state_dir / "hypotheses.json").read_text()) == {"kept": True}
+
+    def test_migration_is_idempotent(self, tmp_path, monkeypatch):
+        import sts2.config as cfg
+
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "settings.json").write_text("{}", encoding="utf-8")
+        monkeypatch.setattr(cfg, "DATA_DIR", data_dir)
+        monkeypatch.setattr(cfg, "STATE_DIR", tmp_path / "state")
+
+        assert cfg.migrate_state_from_data_dir() == ["settings.json"]
+        assert cfg.migrate_state_from_data_dir() == []
