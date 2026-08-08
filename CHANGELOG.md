@@ -1,5 +1,49 @@
 # Changelog
 
+## v3.0.4
+
+### Added
+
+- **Translated card, relic, potion, enemy, and event text** — not just the UI
+  chrome. `spirescope localize` reads the localization the game already
+  ships with and builds overlays for every language your install offers
+  (thirteen, on a standard Steam copy); `--list` shows them and `--lang
+  de,ja` narrows the set. The text is never downloaded or redistributed: it
+  comes from your own installed copy, so it always matches the version you
+  are playing instead of a bundled snapshot that goes stale on the next
+  balance patch. Search follows the active language, untranslated entries
+  fall back to English per entity, and mods still override everything.
+  Descriptions are stored as templates with the numbers held separately, so
+  each one is aligned against the English text to recover its values;
+  anything that cannot be resolved cleanly is left in English rather than
+  shown half-rendered.
+- **UI translations for twelve more languages** — German, Spanish (European
+  and Latin American), French, Italian, Japanese, Korean, Polish, Brazilian
+  Portuguese, Russian, Thai, and Turkish — joining English and Traditional
+  Chinese. These are drafts pending native review.
+
+### Fixed
+
+- **Patch 0.110 card and relic text.** All ~31 items rebalanced or reworked
+  in v0.110.0 now show current text (Mangle 20 damage, Haze and Sidestep
+  reworks, Outbreak/Echoing Slash rarity swaps, and the rest), verified
+  line-by-line against the official patch notes.
+- **The renamed Scare card had the wrong internal id.** The entry shipped as
+  `CARD.FOLLOW_THROUGH`, an id the game never emits, so save files, live
+  tracking, and community stats silently failed to match it. It is now
+  `CARD.SCARE` (the game's actual internal key) named Sidestep, matching
+  what saves record.
+- **Data refresh no longer destroys curated categories.** A wiki scrape
+  flattened all 76 Curse/Status/Token/Event/Quest cards into Colorless
+  (the wiki cannot express these app-curated categories); the merge now
+  protects them.
+- **Relic descriptions no longer leak icon markup.** 28 relics scraped from
+  the wiki shipped raw `@CE`-style icon codes ("Gain an additional @CE...");
+  relic text now gets the same icon rendering as card text ("1 Energy").
+- **Wiki pluralization templates render correctly.** `{{C|sing|plural|2}}`
+  picks the indexed form, so "3 Apparitions" no longer degrades to
+  "3 Apparition".
+
 ## v3.0.3
 
 ### Changed
