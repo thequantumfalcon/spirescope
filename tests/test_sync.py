@@ -30,7 +30,7 @@ class TestUploadStats:
         mock_resp.__exit__ = MagicMock(return_value=False)
 
         with patch("sts2.sync.SYNC_URL", "https://example.com"), \
-             patch("urllib.request.urlopen", return_value=mock_resp) as mock_open:
+             patch("sts2.sync._open", return_value=mock_resp) as mock_open:
             result = upload_stats({"run_count": 5})
 
         assert result == response_data
@@ -40,14 +40,14 @@ class TestUploadStats:
 
     def test_http_error(self):
         with patch("sts2.sync.SYNC_URL", "https://example.com"), \
-             patch("urllib.request.urlopen",
+             patch("sts2.sync._open",
                    side_effect=HTTPError("url", 500, "Internal Server Error", {}, None)):
             with pytest.raises(SyncError, match="500"):
                 upload_stats({"run_count": 5})
 
     def test_connection_error(self):
         with patch("sts2.sync.SYNC_URL", "https://example.com"), \
-             patch("urllib.request.urlopen",
+             patch("sts2.sync._open",
                    side_effect=URLError("Connection refused")):
             with pytest.raises(SyncError, match="Connection failed"):
                 upload_stats({"run_count": 5})
@@ -69,7 +69,7 @@ class TestDownloadStats:
         mock_resp.__exit__ = MagicMock(return_value=False)
 
         with patch("sts2.sync.SYNC_URL", "https://example.com"), \
-             patch("urllib.request.urlopen", return_value=mock_resp):
+             patch("sts2.sync._open", return_value=mock_resp):
             result = download_stats()
 
         assert result == response_data
@@ -81,7 +81,7 @@ class TestDownloadStats:
         mock_resp.__exit__ = MagicMock(return_value=False)
 
         with patch("sts2.sync.SYNC_URL", "https://example.com"), \
-             patch("urllib.request.urlopen", return_value=mock_resp):
+             patch("sts2.sync._open", return_value=mock_resp):
             with pytest.raises(SyncError, match="Invalid aggregate format"):
                 download_stats()
 
@@ -92,13 +92,13 @@ class TestDownloadStats:
         mock_resp.__exit__ = MagicMock(return_value=False)
 
         with patch("sts2.sync.SYNC_URL", "https://example.com"), \
-             patch("urllib.request.urlopen", return_value=mock_resp):
+             patch("sts2.sync._open", return_value=mock_resp):
             with pytest.raises(SyncError, match="too large"):
                 download_stats()
 
     def test_http_error(self):
         with patch("sts2.sync.SYNC_URL", "https://example.com"), \
-             patch("urllib.request.urlopen",
+             patch("sts2.sync._open",
                    side_effect=HTTPError("url", 404, "Not Found", {}, None)):
             with pytest.raises(SyncError, match="404"):
                 download_stats()
@@ -116,7 +116,7 @@ class TestHeaders:
 
         with patch("sts2.sync.SYNC_URL", "https://example.com"), \
              patch("sts2.sync.SYNC_API_KEY", "secret-key-123"), \
-             patch("urllib.request.urlopen", return_value=mock_resp) as mock_open:
+             patch("sts2.sync._open", return_value=mock_resp) as mock_open:
             download_stats()
 
         req = mock_open.call_args[0][0]
@@ -131,7 +131,7 @@ class TestHeaders:
 
         with patch("sts2.sync.SYNC_URL", "https://example.com"), \
              patch("sts2.sync.SYNC_API_KEY", ""), \
-             patch("urllib.request.urlopen", return_value=mock_resp) as mock_open:
+             patch("sts2.sync._open", return_value=mock_resp) as mock_open:
             download_stats()
 
         req = mock_open.call_args[0][0]
@@ -174,3 +174,71 @@ class TestValidateUrl:
         ]):
             with pytest.raises(ValueError, match="private|loopback"):
                 _validate_url("https://evil.example.com/sync")
+
+
+class TestRedirectValidation:
+    """urlopen follows 3xx, and only the configured URL was ever validated —
+    so one Location header voided every check in _validate_url."""
+
+    def _handler(self):
+        from sts2.sync import _ValidatingRedirectHandler
+        return _ValidatingRedirectHandler()
+
+    def _req(self, url="https://sync.example.com/api/v1/aggregate"):
+        import urllib.request
+
+        from sts2.sync import _headers
+        return urllib.request.Request(url, headers=_headers(), method="GET")
+
+    def test_redirect_into_loopback_is_rejected(self):
+        import pytest
+        with pytest.raises(ValueError):
+            self._handler().redirect_request(
+                self._req(), None, 302, "Found", {}, "https://127.0.0.1:8000/health")
+
+    def test_redirect_to_cloud_metadata_is_rejected(self):
+        import pytest
+        with pytest.raises(ValueError):
+            self._handler().redirect_request(
+                self._req(), None, 302, "Found", {},
+                "https://169.254.169.254/latest/meta-data/")
+
+    def test_redirect_to_private_lan_is_rejected(self):
+        import pytest
+        with pytest.raises(ValueError):
+            self._handler().redirect_request(
+                self._req(), None, 302, "Found", {}, "https://192.168.1.1/setup.cgi")
+
+    def test_redirect_downgrade_to_http_is_rejected(self):
+        import pytest
+        with pytest.raises(ValueError):
+            self._handler().redirect_request(
+                self._req(), None, 302, "Found", {}, "http://sync.example.com/x")
+
+    def test_api_key_is_not_forwarded_to_another_origin(self):
+        from unittest.mock import patch
+        with patch("sts2.sync.SYNC_API_KEY", "SECRET-KEY"):
+            req = self._req()
+            assert req.headers.get("X-api-key") == "SECRET-KEY"
+            with patch("sts2.sync._validate_url", return_value="ok"):
+                new = self._handler().redirect_request(
+                    req, None, 302, "Found", {}, "https://other.example.net/x")
+        assert new is not None
+        assert not any(k.lower() == "x-api-key" for k in new.headers)
+
+    def test_api_key_survives_a_same_origin_redirect(self):
+        from unittest.mock import patch
+        with patch("sts2.sync.SYNC_API_KEY", "SECRET-KEY"):
+            req = self._req()
+            with patch("sts2.sync._validate_url", return_value="ok"):
+                new = self._handler().redirect_request(
+                    req, None, 302, "Found", {}, "https://sync.example.com/moved")
+        assert new is not None
+        assert any(k.lower() == "x-api-key" for k in new.headers)
+
+    def test_carrier_grade_nat_is_rejected(self):
+        import pytest
+
+        from sts2.sync import _validate_url
+        with pytest.raises(ValueError):
+            _validate_url("https://100.64.0.1/api")
