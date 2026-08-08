@@ -16,5 +16,11 @@
   </select>
   <button type="submit" class="btn btn-sm">{{ t("settings.save") }}</button>
 </form>
-<p class="text-sm text-muted mt-md">Game data (card and relic text) remains in English until a licensed localized source exists.</p>
+{% if current_language == "en" %}
+<p class="text-sm text-muted mt-md">Card, relic and enemy text is shown in English.</p>
+{% elif content_translated %}
+<p class="text-sm text-muted mt-md">Card, relic and enemy text is translated. Entries the game does not translate stay in English.</p>
+{% else %}
+<p class="text-sm text-muted mt-md">Only the interface is translated. To translate card, relic and enemy text as well, run <code>spirescope localize</code> once — it builds the text from the Slay the Spire 2 files already on your machine.</p>
+{% endif %}
 {% endblock %}
