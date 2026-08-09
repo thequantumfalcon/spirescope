@@ -37,7 +37,7 @@
   <div class="stat-box"><div class="num">{{ total_potions }}</div><div class="label">Potions</div></div>
   <div class="stat-box"><div class="num">{{ total_enemies }}</div><div class="label">Enemies</div></div>
   {% if progress %}
-  <div class="stat-box"><div class="num">{{ (progress.total_playtime / 60)|int }}m</div><div class="label">Playtime</div></div>
+  <div class="stat-box" title="From the game's own playtime counter in your save. Steam measures how long the application was open, including menus and idle time, so Steam usually reads higher."><div class="num">{{ progress.total_playtime|playtime }}</div><div class="label">Playtime</div></div>
   <div class="stat-box"><div class="num">{{ progress.discovered_cards|length }}</div><div class="label">Cards Seen</div></div>
   {% endif %}
   {% if current_streak and current_streak > 1 %}
@@ -64,7 +64,7 @@
     <h3 class="char-{{ char|lower }}">{{ char }}</h3>
     {% if progress and progress.character_stats.get(char) %}
     {% set cs = progress.character_stats[char] %}
-    <p>{{ cs.wins }}W / {{ cs.losses }}L &bull; {{ (cs.playtime / 60)|int }}m played</p>
+    <p>{{ cs.wins }}W / {{ cs.losses }}L &bull; {{ cs.playtime|playtime }} played</p>
     {% if cs.best_streak %}<p class="text-sm text-muted">Best streak: {{ cs.best_streak }}{% if cs.current_streak %} (current: {{ cs.current_streak }}){% endif %}</p>{% endif %}
     {% if cs.max_ascension %}<p class="text-sm text-muted">Max ascension: {{ cs.max_ascension }}</p>{% endif %}
     {% if cs.fastest_win and cs.fastest_win > 0 %}<p class="text-sm text-muted">Fastest win: {{ (cs.fastest_win / 60)|int }}m</p>{% endif %}

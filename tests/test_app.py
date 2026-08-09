@@ -2802,3 +2802,34 @@ async def test_every_state_changing_route_refuses_unauthenticated_requests(clien
         if resp.status_code < 400:
             unguarded.append(f"{verb} {probe} -> {resp.status_code}")
     assert not unguarded, "state-changing routes accepted an unauthenticated request: " + ", ".join(unguarded)
+
+
+def test_playtime_filter_reads_like_steam():
+    """Playtime came from the save in seconds, was divided by 60, and printed
+    with an "m" suffix — so a 53-hour save rendered "3220m". That is the same
+    quantity Steam shows as ~54 hours, but it reads as a disagreement.
+    """
+    from sts2.app import _format_playtime
+
+    assert _format_playtime(193235) == "53h 40m"   # the real save that prompted this
+    assert _format_playtime(3600) == "1h 0m"
+    assert _format_playtime(90) == "1m"            # under an hour: no "0h" prefix
+    assert _format_playtime(0) == "0m"
+    # Never raise on a missing or malformed counter.
+    assert _format_playtime(None) == "0m"
+    assert _format_playtime("nonsense") == "0m"
+    assert _format_playtime(-5) == "0m"
+
+
+async def test_dashboard_renders_playtime_in_hours(client):
+    """End-to-end: the tile must not show a bare minute count again."""
+    import re
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import PlayerProgress
+
+    progress = PlayerProgress(total_playtime=193235)
+    with patch("sts2.app._get_progress", new=AsyncMock(return_value=progress)):
+        html = (await client.get("/")).text
+    assert "53h 40m" in html
+    assert not re.search(r">\s*3220m\s*<", html)
