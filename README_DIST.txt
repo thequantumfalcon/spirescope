@@ -23,8 +23,10 @@ IF WINDOWS BLOCKED THIS FILE:
 HOW TO RUN:
 
   1. Double-click Spirescope.exe
-  2. Leave the console window open while Spirescope is running
-  3. Open http://127.0.0.1:8000 in your browser
+  2. Your browser opens automatically
+  3. Leave the console window open while Spirescope is running -
+     closing it stops the app
+     (If the browser does not open, go to http://127.0.0.1:8000 yourself)
 
 --------------------------------------------------------------------------
 macOS
@@ -49,8 +51,10 @@ HOW TO RUN:
 
   1. Open Terminal in this folder
   2. Run:  ./Spirescope
-  3. Leave the terminal window open while Spirescope is running
-  4. Open http://127.0.0.1:8000 in your browser
+  3. Your browser opens automatically
+  4. Leave the terminal window open while Spirescope is running -
+     closing it stops the app
+     (If the browser does not open, go to http://127.0.0.1:8000 yourself)
 
 --------------------------------------------------------------------------
 BOTH PLATFORMS
@@ -58,8 +62,8 @@ BOTH PLATFORMS
 
 OPTIONAL:
 
-  - To auto-open the browser, launch with --browser
-  - Or set SPIRESCOPE_OPEN_BROWSER=1 before launching
+  - To stop the browser opening automatically, launch with --no-browser
+    or set SPIRESCOPE_OPEN_BROWSER=0
 
 FEATURES:
 

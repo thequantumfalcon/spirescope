@@ -189,9 +189,25 @@ def test_should_open_browser_default_source():
 
 
 def test_should_open_browser_default_frozen():
+    """A packaged build must open the browser too.
+
+    The default used to be "source yes, frozen no", which is inverted relative
+    to who runs each: the exe is what a player double-clicks, and it left them
+    staring at a console telling them to type a URL. The antivirus mitigation
+    is the visible console, not this.
+    """
     with patch.object(sys, "frozen", True, create=True), \
          patch.dict("os.environ", {}, clear=False):
-        assert _should_open_browser([]) is False
+        assert _should_open_browser([]) is True
+
+
+def test_should_open_browser_frozen_respects_opt_outs():
+    """Flipping the default must not remove the ways to turn it off."""
+    with patch.object(sys, "frozen", True, create=True):
+        with patch.dict("os.environ", {}, clear=False):
+            assert _should_open_browser(["--no-browser"]) is False
+        with patch.dict("os.environ", {"SPIRESCOPE_OPEN_BROWSER": "0"}, clear=False):
+            assert _should_open_browser([]) is False
 
 
 def test_should_open_browser_env_override():

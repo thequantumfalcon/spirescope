@@ -86,7 +86,15 @@ def _should_open_browser(args: list[str]) -> bool:
     if env_override is not None:
         return env_override
 
-    return not getattr(sys, "frozen", False)
+    # Open the browser by default everywhere, packaged builds included.
+    # Frozen builds used to be excluded, which inverted the default relative to
+    # who runs them: the packaged exe is what a player double-clicks, and it
+    # greeted them with a console window telling them to go type a URL, while
+    # the source run — used by developers, who need it least — opened it.
+    # The antivirus mitigation documented in docs/ANTIVIRUS.md is the *visible
+    # console* (avoiding the hidden-window profile), which is unchanged here.
+    # `--no-browser` and SPIRESCOPE_OPEN_BROWSER=0 still opt out.
+    return True
 
 
 def main():
@@ -210,9 +218,17 @@ def main():
             threading.Timer(1.5, lambda: webbrowser.open(url)).start()
         # flush so the banner reaches redirected/supervised logs immediately
         print(f"\n  Spirescope {_get_version()} starting at {url}", flush=True)
-        if getattr(sys, "frozen", False) and not open_browser:
-            print("  Browser auto-open is disabled for the packaged build by default.")
-            print("  Open the URL above manually, or launch with '--browser'.", flush=True)
+        if open_browser:
+            # The console stays open on purpose (see docs/ANTIVIRUS.md), so say
+            # why — a black window with a log line in it reads like something
+            # went wrong to anyone who just double-clicked the icon.
+            print("  Opening your browser now. If nothing happens, open the URL above.")
+            print("  Keep this window open while you use Spirescope; closing it stops the app.",
+                  flush=True)
+        else:
+            print("  Browser auto-open is turned off. Open the URL above manually.")
+            print("  Keep this window open while you use Spirescope; closing it stops the app.",
+                  flush=True)
         if HOST not in ("127.0.0.1", "localhost", "::1"):
             print("  WARNING: Spirescope is designed for single-user local use.")
             print("  Binding to a public address exposes it without authentication.\n")
