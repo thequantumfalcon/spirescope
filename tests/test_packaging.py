@@ -203,3 +203,30 @@ class TestStateDirSplit:
 
         assert cfg.migrate_state_from_data_dir() == ["settings.json"]
         assert cfg.migrate_state_from_data_dir() == []
+
+
+def test_changelog_has_no_bare_at_mentions():
+    """Release notes are generated from CHANGELOG.md by .github/workflows/release.yml,
+    and GitHub auto-links @name in a release body to that account.
+
+    v3.0.4's notes described a data bug involving raw "@CE"-style icon codes.
+    One of the two occurrences was outside backticks, so GitHub linked it to the
+    real, unrelated account github.com/ce, listed them as a contributor on the
+    release page, and notified them. Anything resembling a handle must stay
+    inside code formatting.
+    """
+    import re
+
+    text = (PROJECT_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    # Strip the forms GitHub will not turn into an accidental mention:
+    # fenced blocks, inline code, and explicit markdown links — a deliberate
+    # credit like "[@mattkuo]" or "[@mattkuo](https://github.com/mattkuo)" is
+    # exactly what we want to keep.
+    cleaned = re.sub(r"```.*?```", "", text, flags=re.S)
+    cleaned = re.sub(r"`[^`\n]*`", "", cleaned)
+    cleaned = re.sub(r"\[@[A-Za-z][A-Za-z0-9-]*\](\([^)]*\)|:[^\n]*)?", "", cleaned)
+    mentions = re.findall(r"(?<![\w/])@([A-Za-z][A-Za-z0-9-]{0,38})", cleaned)
+    assert not mentions, (
+        "bare @mentions in CHANGELOG.md would be auto-linked in the generated "
+        f"release notes and notify those accounts: {sorted(set(mentions))}. "
+        "Wrap them in backticks.")
