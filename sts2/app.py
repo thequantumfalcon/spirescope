@@ -9,6 +9,7 @@ import os
 import re
 import secrets
 import struct
+import sys
 import time
 
 from fastapi import FastAPI, Request
@@ -74,6 +75,16 @@ templates.env.globals["theme_init_hash"] = _THEME_INIT_HASH
 templates.env.globals["logo_hash"] = _LOGO_HASH
 templates.env.globals["hero_bg_hash"] = _HERO_BG_HASH
 templates.env.globals["version"] = VERSION
+# How to invoke the CLI, phrased for whoever is actually reading the page.
+# Packaged builds have neither Python nor a `spirescope` entry point on PATH,
+# so telling that reader to run `python -m sts2 update` is an instruction they
+# cannot follow — they have the executable they double-clicked and nothing else.
+# Taken from the running executable rather than hardcoded, because the macOS
+# build is named `Spirescope` with no extension.
+from sts2.__main__ import _program_name  # noqa: E402
+
+templates.env.globals["is_frozen"] = getattr(sys, "frozen", False)
+templates.env.globals["cli"] = _program_name()
 from sts2 import patches as _patches  # noqa: E402
 from sts2.i18n import get_language, get_translator  # noqa: E402
 

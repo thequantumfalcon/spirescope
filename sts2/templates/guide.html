@@ -26,10 +26,20 @@
 
 <h2 id="getting-started">Getting Started</h2>
 <div class="card mb-md">
+{% if is_frozen %}
+  <p>You are already running it. Double-click <code>Spirescope.exe</code> any time
+  to start the dashboard — it opens your browser at
+  <code>http://127.0.0.1:8000</code> and keeps a console window open while it
+  serves. Closing that window stops the app.</p>
+  <p class="text-sm text-muted mt-sm">The commands below are run the same way:
+  open the folder containing <code>Spirescope.exe</code>, then run
+  <code>Spirescope.exe update</code> (and so on) from a terminal there.</p>
+{% else %}
   <p>Install SpireScope and start the dashboard:</p>
   <pre><code>pip install -e .
 spirescope</code></pre>
-  <p class="text-sm text-muted mt-sm">Or run directly with <code>python -m sts2</code>. Source installs open your browser automatically at <code>http://127.0.0.1:8000</code>. The packaged Windows build keeps a console window open and serves the same local address by default.</p>
+  <p class="text-sm text-muted mt-sm">Or run directly with <code>python -m sts2</code>. It opens your browser automatically at <code>http://127.0.0.1:8000</code>; the packaged build does the same and additionally keeps a console window open, which stops the app when closed.</p>
+{% endif %}
 </div>
 
 <h2 id="save-files">Save File Setup</h2>
@@ -46,9 +56,9 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 <h2 id="updating-data">Updating Data</h2>
 <div class="card mb-md">
   <p>SpireScope ships with baked-in game data. To fetch the latest cards, relics, and potions from the wiki:</p>
-  <pre><code>spirescope update</code></pre>
+  <pre><code>{{ cli }} update</code></pre>
   <p class="mt-sm">If you don't have internet access or just want to discover new entities from your save files:</p>
-  <pre><code>spirescope update --save-only</code></pre>
+  <pre><code>{{ cli }} update --save-only</code></pre>
   <p class="text-sm text-muted mt-sm">You can also hot-reload data without restarting by calling <code>POST /api/reload</code> with header <code>X-Admin-Token: YOUR_TOKEN</code>. Set <code>SPIRESCOPE_ADMIN_TOKEN</code> env var or enable debug logging to see the auto-generated token.</p>
 </div>
 
@@ -106,7 +116,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 <h2 id="community">Community Data</h2>
 <div class="card mb-md">
   <p>Fetch community tips and meta posts from the Steam community:</p>
-  <pre><code>spirescope community</code></pre>
+  <pre><code>{{ cli }} community</code></pre>
   <p class="text-sm text-muted mt-sm">Community tips appear on card, relic, and enemy detail pages. Meta posts appear on the Community page.</p>
 </div>
 
@@ -233,7 +243,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 <h2 id="troubleshooting">Troubleshooting</h2>
 <div class="card mb-md">
   <p><strong>"No save files found"</strong> &mdash; Set <code>STS2_SAVE_DIR</code> to point to your saves directory. Make sure you've launched STS2 at least once.</p>
-  <p class="mt-sm"><strong>Empty card/relic lists</strong> &mdash; Run <code>spirescope update</code> to fetch data from the wiki.</p>
+  <p class="mt-sm"><strong>Empty card/relic lists</strong> &mdash; Run <code>{{ cli }} update</code> to fetch data from the wiki.</p>
   <p class="mt-sm"><strong>Live run not updating</strong> &mdash; The game must be running with an active run. Check that your save directory is correct.</p>
   <p class="mt-sm"><strong>Port already in use</strong> &mdash; Set <code>STS2_PORT=8001</code> (or any free port) before starting.</p>
   <p class="mt-sm"><strong>Rate limited (429)</strong> &mdash; The server limits to 60 requests per minute per IP. Wait a moment and try again.</p>
