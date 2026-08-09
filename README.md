@@ -103,7 +103,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Download (No Python Required)
 
-**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)** — extract the zip, open the `Spirescope` folder, double-click `Spirescope.exe`, leave the console window open, then open `http://127.0.0.1:8000` in your browser. A macOS build ([Spirescope-macos.zip](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-macos.zip)) is also attached to each release. All archives ship with `.sha256` checksum files.
+**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)** — extract the zip, open the `Spirescope` folder and double-click `Spirescope.exe`. Your browser opens automatically; leave the console window open while you use it, since closing it stops the app. (If the browser doesn't open, go to `http://127.0.0.1:8000` yourself.) A macOS build ([Spirescope-macos.zip](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-macos.zip)) is also attached to each release. All archives ship with `.sha256` checksum files.
 
 > **Windows may warn you, or block the file outright** ("contains a virus or
 > potentially unwanted software"). This is a false positive on unsigned
@@ -269,7 +269,7 @@ spirescope --version    # Show version
 | `STS2_SYNC_KEY` | API key for sync service | None |
 | `SPIRESCOPE_API_KEY` | Optional API key for rate limit bypass | None |
 | `SPIRESCOPE_ADMIN_TOKEN` | Token for `/api/reload` and `/api/reset/stats` | Auto-generated |
-| `SPIRESCOPE_OPEN_BROWSER` | `1`/`0` override for browser auto-open on `serve` | Source: enabled, frozen build: disabled |
+| `SPIRESCOPE_OPEN_BROWSER` | `1`/`0` override for browser auto-open on `serve` | Enabled |
 | `SPIRESCOPE_CHECK_UPDATES` | `1`/`0` override for automatic GitHub update checks | Source: enabled, frozen build: disabled |
 | `STS2_CORS_ORIGINS` | Comma-separated CORS allowed origins | Localhost only |
 
