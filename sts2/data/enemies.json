@@ -6,7 +6,7 @@
       "Act 3"
     ],
     "type": "boss",
-    "hp_range": "",
+    "hp_range": "512",
     "patterns": [
       "Applies Wither status and Withering Presence power; moveset balanced across characters (per 0.106.0)."
     ],
@@ -472,14 +472,14 @@
     "id": "MONSTER.DECIMILLIPEDE",
     "name": "Decimillipede",
     "type": "elite",
-    "hp": "",
     "description": "",
     "tips": [
       "Elite with three segments (40-46 HP each). All three moves are always in play \u2014 one per segment. When a segment dies, it revives with 25 HP if another segment lives. Strong AoE check; kill all segments before Reattach triggers."
     ],
     "act": [
       "Act 2"
-    ]
+    ],
+    "hp_range": "40-46"
   },
   {
     "id": "ENCOUNTER.DECIMILLIPEDE_ELITE",
@@ -2226,14 +2226,14 @@
     "id": "MONSTER.TOADPOLES",
     "name": "Toadpoles",
     "type": "normal",
-    "hp": "",
     "description": "",
     "tips": [
       "Normal enemy in Act 1 Underdocks (21-25 HP each). Cycle: Whirl (7 dmg), Spiken (gains 2 Thorns), Spike Spit (3x3 dmg). Watch for Thorns \u2014 time attacks to avoid hitting into Spiken turns."
     ],
     "act": [
       "Act 1"
-    ]
+    ],
+    "hp_range": ""
   },
   {
     "id": "ENCOUNTER.TOADPOLES_NORMAL",
