@@ -39,7 +39,7 @@ Commands:
   sync-down     Download and merge community stats from sync service
 
 Options:
-    --browser     With 'serve': force opening browser automatically
+  --browser     With 'serve': force opening browser automatically
   --save-only   With 'update': skip wiki, only discover from save files
   --no-browser  With 'serve': don't open browser automatically
   --lang CODES  With 'localize': comma-separated languages (default: all)
@@ -48,7 +48,7 @@ Options:
   --version, -V Show version
 
 Environment:
-    SPIRESCOPE_OPEN_BROWSER  1/0 override for auto-opening browser on 'serve'
+  SPIRESCOPE_OPEN_BROWSER  1/0 override for auto-opening browser on 'serve'
   STS2_SYNC_URL   Sync service URL (required for sync-up/sync-down)
   STS2_SYNC_KEY   Optional API key for sync service authentication
 """

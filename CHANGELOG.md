@@ -25,6 +25,17 @@
   outside code formatting, so it was auto-linked to a real user with no
   connection to this project. The published notes are corrected and the
   changelog can no longer reintroduce it.
+- **The app no longer tells you to run commands you do not have.** Every
+  command shown in the interface was written for a source checkout, so a
+  player who downloaded the executable was told to run `python -m sts2
+  community` — with no Python installed and no `spirescope` on PATH. The
+  Community, home, Settings and Guide pages now show `Spirescope.exe
+  community` (and so on) in packaged builds, and `--help` reports the
+  executable it was actually launched as.
+- **The guide described the old browser behaviour.** It contrasted source
+  installs opening a browser against the packaged build only keeping a console
+  window open, which stopped being true once packaged builds began opening the
+  browser too.
 
 ### Internal
 
