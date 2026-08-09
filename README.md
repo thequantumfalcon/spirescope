@@ -272,6 +272,9 @@ spirescope --version    # Show version
 | `SPIRESCOPE_OPEN_BROWSER` | `1`/`0` override for browser auto-open on `serve` | Enabled |
 | `SPIRESCOPE_CHECK_UPDATES` | `1`/`0` override for automatic GitHub update checks | Source: enabled, frozen build: disabled |
 | `STS2_CORS_ORIGINS` | Comma-separated CORS allowed origins | Localhost only |
+| `STS2_LANG` | Interface language code, e.g. `de` (see [Languages](#languages)) | Settings choice, else `en` |
+| `STS2_STATE_DIR` | Your settings, stats and saved hypotheses | `%APPDATA%\SpireScope`, `~/Library/Application Support/SpireScope`, or `$XDG_DATA_HOME/SpireScope` |
+| `STS2_DATA_DIR` | Game data directory (cards, relics, enemies) | Bundled data; beside the executable in packaged builds |
 
 ### Save File Location
 
@@ -334,6 +337,10 @@ sts2/
   app.py             # FastAPI app, middleware, security headers
   routes.py          # All route handlers
   analytics.py       # Run analytics computation
+  i18n.py            # Interface translation, content overlays
+  localize.py        # Builds translated game text from your install
+  sources.py         # Data source adapters for the update pipeline
+  patches.py         # Patch manifest: what each game version changed
   community/         # Community data (Steam)
     __init__.py      # Orchestrator + re-exports
     _types.py        # Shared types, extraction functions
@@ -349,10 +356,13 @@ sts2/
   sync.py            # Aggregate sync client (upload/download)
   updater.py         # Auto-update checker
   watcher.py         # File watcher with debounce + polling fallback
+  graveyard.py, prophecy.py, hypothesis.py, rivalry.py, cascade.py,
+  ghost.py, drift.py, spectral.py, integrity.py, diagnosis.py,
+  behavior.py, risk.py    # The advanced analytics modules
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (32 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 780 tests (pytest + pytest-asyncio)
+tests/               # 786 tests (pytest + pytest-asyncio)
 ```
 
 ## Requirements

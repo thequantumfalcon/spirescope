@@ -11,6 +11,7 @@
     <li><a href="#getting-started">Getting Started</a></li>
     <li><a href="#save-files">Save File Setup</a></li>
     <li><a href="#updating-data">Updating Data</a></li>
+    <li><a href="#languages">Languages</a></li>
     <li><a href="#pages">Page Tour</a></li>
     <li><a href="#live">Live Run Tracking</a></li>
     <li><a href="#deck">Deck Analyzer</a></li>
@@ -62,6 +63,14 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
   <p class="text-sm text-muted mt-sm">You can also hot-reload data without restarting by calling <code>POST /api/reload</code> with header <code>X-Admin-Token: YOUR_TOKEN</code>. Set <code>SPIRESCOPE_ADMIN_TOKEN</code> env var or enable debug logging to see the auto-generated token.</p>
 </div>
 
+<h2 id="languages">Languages</h2>
+<div class="card mb-md">
+  <p>Pick a language under <a href="/settings">Settings</a>. That translates the interface &mdash; navigation, buttons, and labels &mdash; and ships in fourteen languages. English and Traditional Chinese are reviewed; the rest are drafts, and corrections are welcome.</p>
+  <p class="mt-sm">Card, relic, potion, enemy, and event text is separate, because that text belongs to the game. To see it in your language, run this once:</p>
+  <pre><code>{{ cli }} localize</code></pre>
+  <p class="text-sm text-muted mt-sm">It reads the language files from the copy of Slay the Spire 2 already installed on this machine &mdash; nothing is downloaded, and the game folder is only read from. Restart Spirescope afterwards and card text follows your language setting, with search matching the translated names. Use <code>{{ cli }} localize --list</code> to see what your install offers, or <code>{{ cli }} localize --lang de,ja</code> for just a few. Anything the game does not translate stays in English.</p>
+</div>
+
 <h2 id="pages">Page Tour</h2>
 <div class="card mb-md">
   <p><strong>Cards</strong> &mdash; Browse all cards with filters by character, type, rarity, cost, and keyword. Click any card for synergies, stats, and community tips.</p>
@@ -73,6 +82,8 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
   <p><strong>Run History</strong> &mdash; All completed runs with floor-by-floor breakdown, HP timeline chart, card picks, cards offered (what you rejected), potions gained, monsters fought, gold per floor, and damage taken. Filter by character, result, ascension, game version, or time range. Export as JSON or standalone HTML. Select two runs to compare side-by-side.</p>
   <p><strong>Analytics</strong> &mdash; Aggregate statistics across all your runs: win rates, character performance, card pick rates, boss matchups, per-character relic tiers, card pick heatmap, and more. Filter by ascension level, game version, or time range.</p>
   <p><strong>Records</strong> &mdash; Personal records: fastest win, highest ascension, best streak, biggest/smallest deck, flawless bosses, per-character breakdowns.</p>
+  <p><strong>Collections</strong> &mdash; How much of the game you have discovered: cards, relics, potions, and events you have encountered, each with a completion percentage and an overall total. Status and Curse cards are excluded, since they are not collectable.</p>
+  <p><strong>Epochs</strong> &mdash; Every epoch with its unlock condition and what it unlocks, filterable by category and character, showing which you have already obtained and when.</p>
   <p><strong>Community</strong> &mdash; Community tier lists and meta discussion from the Steam community.</p>
 </div>
 
