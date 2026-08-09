@@ -79,6 +79,27 @@ from sts2.i18n import get_language, get_translator  # noqa: E402
 
 templates.env.globals["t"] = get_translator(get_language())
 templates.env.globals["changed_in"] = _patches.changed_in
+
+
+def _format_playtime(seconds) -> str:
+    """Seconds -> "53h 40m", the way Steam presents playtime.
+
+    The dashboard used to divide by 60 and print the result with an "m"
+    suffix, so a 53-hour save read "3220m". That is the same quantity Steam
+    shows as roughly 54 hours, but nobody performs that division at a glance,
+    and it reads as though the two disagree.
+    """
+    try:
+        total = int(seconds or 0)
+    except (TypeError, ValueError):
+        return "0m"
+    if total < 0:
+        total = 0
+    hours, minutes = divmod(total // 60, 60)
+    return f"{hours}h {minutes}m" if hours else f"{minutes}m"
+
+
+templates.env.filters["playtime"] = _format_playtime
 templates.env.globals["current_patch_name"] = (
     lambda: (_patches.current_patch() or {}).get("patch", "")
 )
