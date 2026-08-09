@@ -618,10 +618,17 @@ class TestTheme:
         from sts2.config import STATIC_DIR
         css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
         assert '[data-theme="light"]' in css
-        # Check critical overrides
-        assert "--regent: #7f6012" in css  # WCAG-safe regent color
-        assert "--silent: #15753c" in css   # WCAG-safe silent color
-        assert "--ironclad: #c0392b" in css # WCAG-safe ironclad color
+        # The light theme must override the character and status colours, but
+        # pin the names rather than the hex values: the old version hardcoded
+        # three literals and annotated them "WCAG-safe" when --ironclad
+        # #c0392b actually measured 4.30:1 on --bg3. Contrast is verified for
+        # real, across every colour and background, in
+        # test_theme_text_colours_meet_wcag_aa.
+        import re
+        block = re.search(r'\[data-theme="light"\]\s*\{([^}]+)\}', css)
+        assert block, "no light theme block"
+        for name in ("--regent", "--silent", "--ironclad", "--yellow", "--red"):
+            assert f"{name}:" in block.group(1), f"light theme does not override {name}"
 
     def test_css_card_bg_not_circular(self):
         from sts2.config import STATIC_DIR
@@ -944,21 +951,25 @@ class TestWCAGContrast:
 
     LIGHT_BG = "#f5f0e8"
     # All text/accent colors from [data-theme="light"] CSS block
-    WCAG_AA_PAIRS = [
-        ("--text", "#2a1f14"),
-        ("--text2", "#6b5d4f"),
-        ("--gold", "#7a5c1a"),
-        ("--ironclad", "#c0392b"),
-        ("--silent", "#15753c"),
-        ("--regent", "#7f6012"),
-        ("--red", "#b91c1c"),
-        ("--green", "#14753a"),
-    ]
+    # Read from the stylesheet rather than restated here. The hardcoded
+    # version listed 8 of 17 colours and omitted --yellow, which shipped at
+    # 4.07:1 — the list itself was the blind spot.
+    @staticmethod
+    def _light_colours() -> list[tuple[str, str]]:
+        import re
+
+        from sts2.config import STATIC_DIR
+        css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
+        block = re.search(r'\[data-theme="light"\]\s*\{([^}]+)\}', css)
+        assert block, "no light theme block"
+        found = re.findall(r"--([\w-]+):\s*(#[0-9a-fA-F]{6})", block.group(1))
+        skip = {"bg", "bg2", "bg3", "border", "card-bg", "nav-bg", "accent2"}
+        return [(f"--{n}", v) for n, v in found if n not in skip]
 
     def test_all_text_colors_pass_wcag_aa(self):
         """All light-theme text/accent colors must have >= 4.5:1 contrast on bg."""
         failures = []
-        for name, color in self.WCAG_AA_PAIRS:
+        for name, color in self._light_colours():
             ratio = _contrast_ratio(color, self.LIGHT_BG)
             if ratio < 4.5:
                 failures.append(f"{name} ({color}): {ratio:.2f}:1 < 4.5:1")
@@ -979,7 +990,7 @@ class TestWCAGContrast:
         match = re.search(r'\[data-theme="light"\]\s*\{([^}]+)\}', css)
         assert match, "No [data-theme='light'] block in CSS"
         block = match.group(1)
-        for name, expected_color in self.WCAG_AA_PAIRS:
+        for name, expected_color in self._light_colours():
             assert expected_color in block, f"{name}: {expected_color} not found in light theme CSS"
 
 

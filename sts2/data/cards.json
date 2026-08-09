@@ -33,7 +33,11 @@
     "cost": "2",
     "type": "Skill",
     "rarity": "Ancient",
-    "description": "Innate. Upgrade ALL your cards. Exhaust."
+    "description": "Innate. Upgrade ALL your cards. Exhaust.",
+    "keywords": [
+      "Exhaust",
+      "Innate"
+    ]
   },
   {
     "id": "CARD.APPARITION",
@@ -42,7 +46,12 @@
     "cost": "1",
     "type": "Skill",
     "rarity": "Ancient",
-    "description": "Ethereal. Gain 1 Intangible. Exhaust."
+    "description": "Ethereal. Gain 1 Intangible. Exhaust.",
+    "keywords": [
+      "Exhaust",
+      "Ethereal",
+      "Intangible"
+    ]
   },
   {
     "id": "CARD.AUTOMATION",
@@ -238,7 +247,9 @@
     "rarity": "Event",
     "description": "Reduce the cost of ALL cards in your Hand to 1 this turn. Exhaust.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [
+      "Exhaust"
+    ]
   },
   {
     "id": "CARD.ENTROPY",
@@ -305,7 +316,10 @@
     "cost": "0",
     "type": "Skill",
     "rarity": "Event",
-    "description": "Gain 5 Strength this turn."
+    "description": "Gain 5 Strength this turn.",
+    "keywords": [
+      "Strength"
+    ]
   },
   {
     "id": "CARD.FINESSE",
@@ -457,7 +471,9 @@
     "rarity": "Common",
     "description": "Deal 6 damage. Apply 2 Poison.",
     "description_upgraded": "",
-    "keywords": []
+    "keywords": [
+      "Poison"
+    ]
   },
   {
     "id": "CARD.IMPATIENCE",
@@ -630,7 +646,10 @@
     "cost": "Unplayable",
     "type": "Status",
     "rarity": "Status",
-    "description": "Draw 1 fewer card each turn."
+    "description": "Draw 1 fewer card each turn.",
+    "keywords": [
+      "Draw"
+    ]
   },
   {
     "id": "CARD.MINION_DIVE_BOMB",
@@ -639,7 +658,10 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Token",
-    "description": "Deal 13 damage. Exhaust."
+    "description": "Deal 13 damage. Exhaust.",
+    "keywords": [
+      "Exhaust"
+    ]
   },
   {
     "id": "CARD.MINION_SACRIFICE",
@@ -648,7 +670,11 @@
     "cost": "0",
     "type": "Skill",
     "rarity": "Token",
-    "description": "Gain 9 Block. Exhaust."
+    "description": "Gain 9 Block. Exhaust.",
+    "keywords": [
+      "Block",
+      "Exhaust"
+    ]
   },
   {
     "id": "CARD.MINION_STRIKE",
@@ -657,7 +683,11 @@
     "cost": "0",
     "type": "Attack",
     "rarity": "Token",
-    "description": "Deal 7 damage. Draw 1 card. Exhaust."
+    "description": "Deal 7 damage. Draw 1 card. Exhaust.",
+    "keywords": [
+      "Exhaust",
+      "Draw"
+    ]
   },
   {
     "id": "CARD.NOSTALGIA",
@@ -973,7 +1003,9 @@
     "rarity": "Event",
     "energy": "",
     "description": "Deal 10 damage. Apply 2 Vulnerable.",
-    "keywords": [],
+    "keywords": [
+      "Vulnerable"
+    ],
     "cost": "1"
   },
   {
@@ -996,7 +1028,11 @@
     "cost": "0",
     "type": "Attack",
     "rarity": "Token",
-    "description": "Ethereal. Osty deals 10 damage to a random enemy. Exhaust."
+    "description": "Ethereal. Osty deals 10 damage to a random enemy. Exhaust.",
+    "keywords": [
+      "Exhaust",
+      "Ethereal"
+    ]
   },
   {
     "id": "CARD.TAG_TEAM",
@@ -1133,7 +1169,10 @@
     "cost": "3",
     "type": "Attack",
     "rarity": "Ancient",
-    "description": "Deal 33 damage. Stun the enemy. Exhaust."
+    "description": "Deal 33 damage. Stun the enemy. Exhaust.",
+    "keywords": [
+      "Exhaust"
+    ]
   },
   {
     "id": "CARD.WISH",
@@ -1142,7 +1181,11 @@
     "cost": "0",
     "type": "Skill",
     "rarity": "Ancient",
-    "description": "Put a card from your Draw Pile into your Hand. Exhaust."
+    "description": "Put a card from your Draw Pile into your Hand. Exhaust.",
+    "keywords": [
+      "Exhaust",
+      "Draw"
+    ]
   },
   {
     "id": "CARD.ASCENDERS_BANE",
@@ -3446,8 +3489,8 @@
     "cost": "2",
     "type": "Power",
     "rarity": "Rare",
-    "description": "Whenever you draw a card containing “Strike”, it is played against a random enemy.",
-    "description_upgraded": "Whenever you draw a card containing “Strike”, it is played against a random enemy.",
+    "description": "Whenever you draw a card containing \u201cStrike\u201d, it is played against a random enemy.",
+    "description_upgraded": "Whenever you draw a card containing \u201cStrike\u201d, it is played against a random enemy.",
     "keywords": [
       "Draw"
     ]
@@ -3659,8 +3702,8 @@
     "cost": "2",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 6 damage. Deals 2 additional damage for ALL your cards containing “Strike”.",
-    "description_upgraded": "Deal 6 damage. Deals 3 additional damage for ALL your cards containing “Strike”.",
+    "description": "Deal 6 damage. Deals 2 additional damage for ALL your cards containing \u201cStrike\u201d.",
+    "description_upgraded": "Deal 6 damage. Deals 3 additional damage for ALL your cards containing \u201cStrike\u201d.",
     "keywords": []
   },
   {

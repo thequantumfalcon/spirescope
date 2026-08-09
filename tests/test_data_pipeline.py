@@ -537,3 +537,34 @@ def test_enemy_hp_uses_one_field_name():
     assert not stray, f"entries use 'hp' instead of 'hp_range': {stray}"
     missing_field = [e.get("id") for e in entries if "hp_range" not in e]
     assert not missing_field, f"entries have no hp_range field at all: {missing_field}"
+
+
+def test_gap_filled_description_re_derives_keywords(tmp_path, monkeypatch):
+    """Keywords are derived from the description, so text arriving via gap-fill
+    must re-derive them or the card ships as a synergy orphan the deck
+    analyser cannot see."""
+    cards = _run_orchestrator(
+        tmp_path, monkeypatch,
+        primary_result=[_card("Blank", description="", keywords=[])],
+        secondary_result=[_card("Blank", description="Gain 5 Block. Exhaust.")],
+    )
+    blank = next(c for c in cards if c["name"] == "Blank")
+    assert blank["description"] == "Gain 5 Block. Exhaust."
+    assert set(blank["keywords"]) == {"Block", "Exhaust"}
+
+
+def test_gap_fill_adopts_upgraded_text_even_when_primary_had_a_description(
+        tmp_path, monkeypatch):
+    """The upgraded-text fill used to be nested inside the "no description"
+    branch, so a card whose primary text existed never picked up the
+    secondary's upgraded text."""
+    cards = _run_orchestrator(
+        tmp_path, monkeypatch,
+        primary_result=[_card("Both", description="Deal 6 damage.",
+                              description_upgraded="")],
+        secondary_result=[_card("Both", description="Deal 6 damage.",
+                                description_upgraded="Deal 9 damage.")],
+    )
+    both = next(c for c in cards if c["name"] == "Both")
+    assert both["description"] == "Deal 6 damage."
+    assert both["description_upgraded"] == "Deal 9 damage."

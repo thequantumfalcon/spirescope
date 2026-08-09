@@ -20,10 +20,16 @@
   /* Dark gothic fantasy palette */
   --bg: #0c0a0e; --bg2: #151015; --bg3: #1e1620; --border: #3a2a1a;
   --text: #e8dcc8; --text2: #938880;
-  --gold: #c9a55c; --crimson: #d15858; --bronze: #a0784c; --copper: #a0784c;
+  /* --crimson and --bronze are used as text colours and measured 4.41:1 and
+     4.44:1 on --bg3, just under WCAG AA. Nudged lighter to clear 4.5:1 on all
+     three dark backgrounds. --copper keeps its value: it is only ever a
+     background or border, where the text ratio does not apply. */
+  --gold: #c9a55c; --crimson: #d95b5b; --bronze: #a67c4f; --copper: #a0784c;
   --accent: #c9a55c; --accent2: #8B1A1A;
-  --red: #d44d3f; --green: #4a9e5c; --yellow: #d4a857; --orange: #c97b2a;
-  --ironclad: #e74c3c; --silent: #2ecc71; --defect: #3498db; --necrobinder: #a563c0; --regent: #f1c40f;
+  /* --red and --necrobinder read 4.14:1 and 4.32:1 on --bg3 as text; nudged
+     lighter to clear WCAG AA on all three dark backgrounds. */
+  --red: #e75344; --green: #4a9e5c; --yellow: #d4a857; --orange: #c97b2a;
+  --ironclad: #e74c3c; --silent: #2ecc71; --defect: #3498db; --necrobinder: #ad67c9; --regent: #f1c40f;
   --card-bg: rgba(30,22,20,0.8);
   --nav-bg: rgba(18,14,16,0.92);
   --radius: 8px;
@@ -40,8 +46,12 @@
   --border: #d1c4b0; --text: #2a1f14; --text2: #6b5d4f;
   --gold: #7a5c1a; --crimson: #8b2020; --bronze: #6b5030; --copper: #6b5030;
   --accent: #7a5c1a; --accent2: #7a5c1a;
-  --red: #b91c1c; --green: #14753a; --yellow: #92700c; --orange: #a0580a;
-  --ironclad: #c0392b; --silent: #15753c; --defect: #2563eb; --necrobinder: #7e22ce; --regent: #7f6012;
+  /* --yellow darkened from #92700c: that measured 4.07:1 on --bg and only
+     3.66:1 on --bg3, below the 4.5:1 WCAG AA needs for body text. This clears
+     4.5:1 on all three light backgrounds while staying distinct from --gold
+     and --regent. */
+  --red: #b91c1c; --green: #14753a; --yellow: #7d5f00; --orange: #935009;
+  --ironclad: #b03427; --silent: #15753c; --defect: #225bd8; --necrobinder: #7e22ce; --regent: #7f6012;
   --card-bg: rgba(0,0,0,0.04);
   --nav-bg: rgba(250,246,239,0.92);
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);

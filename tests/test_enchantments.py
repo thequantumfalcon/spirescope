@@ -101,15 +101,29 @@ def test_discover_badges_from_saves(tmp_path):
                       "requirement": "", "source": "discovered"}]
 
 
-def test_deprecated_epochs_never_suggested():
-    from sts2.models import Epoch
-    active = Epoch(id="EPOCH.A", name="A")
-    dead = Epoch(id="EPOCH.B", name="B", status="deprecated")
-    # mirror the routes.py suggestion predicate
-    obtained = set()
-    suggestable = [e for e in (active, dead)
-                   if e.id not in obtained and e.status != "deprecated"]
-    assert suggestable == [active]
+async def test_deprecated_epochs_never_suggested(client):
+    """Drive the real home-page route rather than a copy of its predicate.
+
+    The previous version rebuilt the filter inline and asserted against its own
+    list comprehension, so deleting the guard in routes.py left it green while
+    the home page started recommending epochs that can no longer be earned.
+    """
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import Epoch, PlayerProgress
+
+    active = Epoch(id="EPOCH.ACTIVE", name="Still Earnable", requirement="Win a run")
+    dead = Epoch(id="EPOCH.DEAD", name="Retired Epoch", requirement="Cannot be earned",
+                 status="deprecated")
+    progress = PlayerProgress(epochs=[{"id": "EPOCH.OTHER", "state": "revealed"}])
+
+    from sts2.app import kb as _kb
+    with patch.object(_kb, "epochs", [dead, active]), \
+         patch("sts2.app._get_progress", new=AsyncMock(return_value=progress)):
+        html = (await client.get("/")).text
+
+    assert "Still Earnable" in html, "an earnable epoch should be suggested"
+    assert "Retired Epoch" not in html, "a deprecated epoch must never be suggested"
 
 
 # ── P10: i18n language persistence + fallback ──

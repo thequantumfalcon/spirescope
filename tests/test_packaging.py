@@ -230,3 +230,51 @@ def test_changelog_has_no_bare_at_mentions():
         "bare @mentions in CHANGELOG.md would be auto-linked in the generated "
         f"release notes and notify those accounts: {sorted(set(mentions))}. "
         "Wrap them in backticks.")
+
+
+@pytest.mark.parametrize("theme", ["dark", "light"])
+def test_theme_text_colours_meet_wcag_aa(theme):
+    """Every variable used as a text colour, on every background of its theme.
+
+    The browser suite's check listed 8 of 17 colours by hand and omitted
+    --yellow, which shipped at 4.07:1 on --bg and 3.66:1 on --bg3. Enumerating
+    from the stylesheet covers a newly added colour without anyone remembering
+    to extend a list.
+
+    Only variables that actually appear in a `color:` declaration are checked —
+    AA's 4.5:1 applies to text. --accent2, for instance, measures 1.90:1 but is
+    only ever a background, so holding it to a text ratio would be wrong.
+    """
+    import re
+
+    css = (PROJECT_ROOT / "sts2" / "static" / "style.css").read_text(encoding="utf-8")
+    selector = r":root" if theme == "dark" else r'\[data-theme="light"\]'
+    block = re.search(selector + r"\s*\{(.*?)\}", css, re.S)
+    assert block, f"{theme} theme block not found"
+    colours = dict(re.findall(r"--([\w-]+):\s*(#[0-9a-fA-F]{6})", block.group(1)))
+    backgrounds = {k: v for k, v in colours.items() if k in ("bg", "bg2", "bg3")}
+    assert len(backgrounds) == 3, f"expected three {theme} backgrounds, got {backgrounds}"
+
+    used_as_text = set(re.findall(r"(?<!-)\bcolor:\s*var\(--([\w-]+)\)", css))
+    assert used_as_text, "no text colours found — the usage scan is broken"
+
+    def luminance(value):
+        parts = [int(value[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+        chan = [c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4 for c in parts]
+        return 0.2126 * chan[0] + 0.7152 * chan[1] + 0.0722 * chan[2]
+
+    def ratio(fg, bg):
+        a, b = luminance(fg), luminance(bg)
+        hi, lo = max(a, b), min(a, b)
+        return (hi + 0.05) / (lo + 0.05)
+
+    failures = []
+    for name, fg in colours.items():
+        if name not in used_as_text or name in backgrounds:
+            continue
+        for bg_name, bg in backgrounds.items():
+            r = ratio(fg, bg)
+            if r < 4.5:
+                failures.append(f"--{name} {fg} on --{bg_name} {bg} = {r:.2f}:1")
+    assert not failures, (
+        f"{theme} theme text below WCAG AA (4.5:1):\n  " + "\n  ".join(failures))
