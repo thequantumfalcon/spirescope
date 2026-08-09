@@ -11,10 +11,22 @@ if sys.stdout is None:
 if sys.stderr is None:
     sys.stderr = open(os.devnull, "w")
 
+def _program_name() -> str:
+    """How the reader invoked this, so the help text matches their situation.
+
+    A packaged build has no `spirescope` entry point on PATH and no Python;
+    printing "Usage: spirescope" tells that reader to run something they do
+    not have.
+    """
+    if getattr(sys, "frozen", False):
+        return os.path.basename(sys.executable)
+    return "spirescope"
+
+
 USAGE = """\
 Spirescope - Slay the Spire 2 companion dashboard
 
-Usage: spirescope [command] [options]
+Usage: {prog} [command] [options]
 
 Commands:
   serve         Start the web dashboard (default)
@@ -101,7 +113,7 @@ def main():
     args = sys.argv[1:]
 
     if "--help" in args or "-h" in args:
-        print(USAGE)
+        print(USAGE.format(prog=_program_name()))
         return
 
     if "--version" in args or "-V" in args:
@@ -239,7 +251,7 @@ def main():
         return
 
     print(f"Unknown command: {command}\n")
-    print(USAGE)
+    print(USAGE.format(prog=_program_name()))
     sys.exit(1)
 
 if __name__ == "__main__":

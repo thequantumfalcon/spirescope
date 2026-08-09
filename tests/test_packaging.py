@@ -5,6 +5,7 @@ added to the PyInstaller spec, so every packaged v3.0.0/v3.0.1 build
 rendered raw translation keys ("nav.cards") in the navigation. Source runs
 were fine, which is exactly why source-only testing missed it.
 """
+import re
 from pathlib import Path
 
 import pytest
@@ -278,3 +279,54 @@ def test_theme_text_colours_meet_wcag_aa(theme):
                 failures.append(f"--{name} {fg} on --{bg_name} {bg} = {r:.2f}:1")
     assert not failures, (
         f"{theme} theme text below WCAG AA (4.5:1):\n  " + "\n  ".join(failures))
+
+
+# ── CLI instructions must match how the reader actually runs the app ──
+
+def test_ui_never_hardcodes_a_source_only_command():
+    """A packaged reader has no Python and no `spirescope` on PATH.
+
+    Telling them to run `python -m sts2 community` is an instruction they
+    cannot follow: they have the executable they double-clicked. Commands
+    shown in the UI go through the `cli` global instead, so they read
+    correctly for whoever is looking at the page. The guide is exempt only
+    inside its explicit source-install branch, which is guarded separately.
+    """
+    source_only = re.compile(r"<code>(?:python -m sts2|spirescope)\s+\w")
+    offenders = []
+    for path in sorted((PKG / "templates").glob("*.html")):
+        text = path.read_text(encoding="utf-8")
+        if path.name == "guide.html":
+            continue
+        for line in text.splitlines():
+            if source_only.search(line):
+                offenders.append(f"{path.name}: {line.strip()[:90]}")
+    assert not offenders, (
+        "UI shows a command a packaged user cannot run:\n  " + "\n  ".join(offenders))
+
+
+def test_guide_offers_both_invocations():
+    """The guide keeps source instructions, but only behind is_frozen."""
+    text = (PKG / "templates" / "guide.html").read_text(encoding="utf-8")
+    assert "{% if is_frozen %}" in text, "guide no longer branches on build type"
+    assert "{{ cli }} update" in text, "guide hardcodes the update command"
+    assert "{{ cli }} community" in text, "guide hardcodes the community command"
+    # the pip/source lines must sit in the else branch, not the frozen one
+    frozen_branch = text.split("{% if is_frozen %}")[1].split("{% else %}")[0]
+    assert "pip install" not in frozen_branch
+    assert "python -m sts2" not in frozen_branch
+
+
+def test_cli_global_matches_the_running_form(monkeypatch):
+    """The `cli` template global names the executable in frozen builds."""
+    import importlib
+    import sys as _sys
+
+    monkeypatch.setattr(_sys, "frozen", True, raising=False)
+    monkeypatch.setattr(_sys, "executable", r"C:\x\Spirescope.exe", raising=False)
+    from sts2 import __main__ as entry
+    importlib.reload(entry)
+    assert entry._program_name() == "Spirescope.exe"
+    monkeypatch.delattr(_sys, "frozen", raising=False)
+    importlib.reload(entry)
+    assert entry._program_name() == "spirescope"
