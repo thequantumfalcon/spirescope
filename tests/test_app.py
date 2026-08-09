@@ -2760,3 +2760,45 @@ async def test_shutdown_route_behavior(client):
     # SIGTERM lambda must never have run, even though Timer was scheduled twice.
     assert not mock_kill.called
     assert mock_timer.call_count == 2  # admin-token success + loopback success.
+
+
+async def test_every_state_changing_route_refuses_unauthenticated_requests(client):
+    """No POST/PUT/PATCH/DELETE may act without a CSRF or admin token.
+
+    A route that mutates state without one can be triggered by any web page the
+    user happens to visit — browsers will send cross-site requests to
+    127.0.0.1. This enumerates the routes off the app rather than listing them,
+    so a newly added endpoint is covered automatically instead of being missed.
+    """
+    from sts2.app import app
+
+    mutating = {"POST", "PUT", "PATCH", "DELETE"}
+    found: list[tuple[str, str]] = []
+
+    def walk(container):
+        for route in getattr(container, "routes", None) or []:
+            verbs = (getattr(route, "methods", None) or set()) & mutating
+            if verbs and getattr(route, "path", None):
+                found.extend((route.path, v) for v in sorted(verbs))
+            # include_router() wraps routes in _IncludedRouter, whose .routes is
+            # None — without this the walk finds nothing and passes vacuously.
+            if getattr(route, "original_router", None) is not None:
+                walk(route.original_router)
+            elif hasattr(route, "routes"):
+                walk(route)
+
+    walk(app)
+    assert found, "route enumeration found nothing — the walk is broken, not the app"
+
+    unguarded = []
+    for path, verb in sorted(set(found)):
+        probe = (path.replace("{hyp_id}", "h1").replace("{run_id}", "1")
+                     .replace("{card_id}", "CARD.STRIKE"))
+        if "{" in probe:
+            continue  # unresolved path param; cannot construct a real request
+        resp = await client.request(verb, probe)
+        # 422 means the body shape was rejected before any auth check ran, so it
+        # is not evidence of a guard — but it is also not an accepted mutation.
+        if resp.status_code < 400:
+            unguarded.append(f"{verb} {probe} -> {resp.status_code}")
+    assert not unguarded, "state-changing routes accepted an unauthenticated request: " + ", ".join(unguarded)

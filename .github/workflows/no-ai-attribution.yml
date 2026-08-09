@@ -13,6 +13,12 @@ on:
   pull_request:
     branches: ['**']
 
+# This job only checks out and greps, and it runs on every push and every pull
+# request including from forks. State it explicitly rather than inheriting the
+# repository default, which is read today but is a setting that can change.
+permissions:
+  contents: read
+
 jobs:
   scan:
     name: Scan for AI attribution

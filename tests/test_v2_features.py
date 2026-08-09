@@ -1629,3 +1629,121 @@ class TestSecondPassRegressions:
             assert largest < total * 0.5, (
                 f"{largest}/{total} enemies share one counter-card set — "
                 "the generic fallback is back")
+
+
+class TestAdvancedAnalyticsValues:
+    """Value-level coverage for the seven "Advanced Analytics" modules.
+
+    These were the least-tested code in the repo despite being the headline
+    features: every existing reference was a mock asserting `mock.called`, so
+    all seven could be replaced by constant-returning stubs simultaneously and
+    the suite stayed green. Each test below asserts a computed value and
+    contrasts two different inputs, so a constant return fails.
+    """
+
+    @staticmethod
+    def _floor(n, enc="ENCOUNTER.X", dmg=5, hp=70, gold=100, pick="", turns=3):
+        return RunFloor(floor=n, type="monster", encounter=enc, turns=turns,
+                        damage_taken=dmg, current_hp=hp, max_hp=80, gold=gold,
+                        card_picked=pick)
+
+    @classmethod
+    def _run(cls, rid, win, ts, floors, deck=None, potions=None):
+        return RunHistory(id=rid, timestamp=ts, character="Ironclad", win=win,
+                          ascension=5, run_time=1200, deck=deck or ["CARD.STRIKE"] * 10,
+                          relics=["RELIC.BURNING_BLOOD"], potions=potions or [],
+                          floors=floors)
+
+    def test_graveyard_epitaph_varies_with_the_run(self):
+        from sts2.app import kb as _kb
+        from sts2.graveyard import generate_epitaph
+
+        deep = self._run("a", False, 1, [self._floor(i) for i in range(1, 25)],
+                         deck=["CARD.STRIKE"] * 28)
+        shallow = self._run("b", False, 2, [self._floor(1)], deck=["CARD.STRIKE"] * 10)
+        first, second = generate_epitaph(deep, _kb), generate_epitaph(shallow, _kb)
+        assert first and second
+        assert first != second, "epitaph does not depend on the run"
+
+    def test_tilt_detection_separates_a_slump_from_a_streak(self):
+        from sts2.behavior import detect_tilt
+
+        losing = [self._run(str(i), False, 1700000000 + i * 600,
+                            [self._floor(j) for j in range(1, 5)]) for i in range(6)]
+        winning = [self._run(str(i), True, 1700000000 + i * 600,
+                             [self._floor(j) for j in range(1, 30)]) for i in range(6)]
+        slump, streak = detect_tilt(losing), detect_tilt(winning)
+        assert slump["tilting"] is True
+        assert slump["consecutive_losses"] == 6
+        assert slump["session_avg_floor"] == 4.0
+        assert streak["tilting"] is False
+        assert streak["consecutive_losses"] == 0
+        assert streak["session_avg_floor"] > slump["session_avg_floor"]
+
+    def test_prophecy_win_probability_is_the_empirical_rate(self):
+        from sts2.prophecy import generate_prophecy
+
+        half = [self._run(str(i), i % 2 == 0, 1700000000 + i * 600,
+                          [self._floor(j) for j in range(1, 20)]) for i in range(8)]
+        allwin = [self._run(str(i), True, 1700000000 + i * 600,
+                            [self._floor(j) for j in range(1, 20)]) for i in range(8)]
+        p_half, p_all = generate_prophecy("Ironclad", 5, half), generate_prophecy("Ironclad", 5, allwin)
+        assert p_half["available"] is True
+        assert p_half["sample_size"] == 8
+        assert p_half["win_probability"] == 50.0
+        assert p_all["win_probability"] == 100.0
+
+    def test_ghost_picks_the_better_run_and_signs_the_deltas(self):
+        from sts2.ghost import compute_splits, find_ghost_run
+
+        best = self._run("best", True, 1, [self._floor(i, hp=80, gold=100 + i * 10)
+                                           for i in range(1, 11)])
+        worse = self._run("worse", True, 2, [self._floor(i, hp=50, gold=50)
+                                             for i in range(1, 11)])
+        ghost = find_ghost_run("Ironclad", 5, [best, worse])
+        assert ghost is not None and ghost.id == "best"
+
+        behind = self._run("cur", False, 3, [self._floor(i, hp=60, gold=80)
+                                             for i in range(1, 6)])
+        splits = compute_splits(behind, ghost)
+        assert splits, "no splits computed"
+        assert splits[0]["hp_delta"] == -20
+        assert splits[0]["ahead"] is False
+
+    def test_cascade_contrasts_before_and_after_a_pick(self):
+        from sts2.app import kb as _kb
+        from sts2.cascade import trace_card_impact
+
+        run = self._run("c", False, 4, [self._floor(1, dmg=20, pick="CARD.BASH"),
+                                        self._floor(2, dmg=5), self._floor(3, dmg=5)])
+        impact = trace_card_impact(run, "CARD.BASH", _kb)
+        assert impact["card_id"] == "CARD.BASH"
+        assert impact["picked_floor"] == 1
+        assert impact["floors_survived_after"] == 3
+        assert impact["post_avg_damage"] == 10.0
+
+    def test_drift_trajectory_tracks_every_floor_and_its_pick(self):
+        from sts2.app import kb as _kb
+        from sts2.drift import compute_archetype_drift
+
+        run = self._run("d", False, 5, [self._floor(1, pick="CARD.BASH"),
+                                        self._floor(2), self._floor(3)])
+        trajectory = compute_archetype_drift(run, _kb)
+        assert len(trajectory) == 3
+        assert [t["floor"] for t in trajectory] == [1, 2, 3]
+        assert trajectory[0]["card_added"] == "CARD.BASH"
+        assert trajectory[1]["card_added"] == ""
+
+    def test_spectral_health_scores_a_coherent_deck_above_an_incoherent_one(self):
+        from sts2.app import kb as _kb
+        from sts2.spectral import deck_spectral_health
+
+        coherent = [c.id for c in _kb.cards if "Block" in (c.keywords or [])][:6]
+        orphans = [c.id for c in _kb.cards if not c.keywords][:5]
+        seed = [c.id for c in _kb.cards if c.keywords][:1]
+        assert len(coherent) == 6 and len(orphans) == 5, "shipped data changed shape"
+        good = deck_spectral_health(coherent, _kb)
+        bad = deck_spectral_health(seed + orphans, _kb)
+        assert good["health_score"] > bad["health_score"]
+        assert good["orphans"] == []
+        assert bad["orphans"], "orphan detection found nothing in a deck of unlinked cards"

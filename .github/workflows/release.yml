@@ -33,11 +33,6 @@ jobs:
           Get-ChildItem -Path dist/Spirescope -Recurse -Filter "*.dist-info" -Directory | Remove-Item -Recurse -Force
         shell: pwsh
 
-      - name: Copy distribution README
-        run: |
-          if (Test-Path README_DIST.txt) { Copy-Item README_DIST.txt dist/Spirescope/README.txt }
-        shell: pwsh
-
       - name: Smoke-test the built app
         # Rule: validate the artifact users receive, not just the source tree.
         # Packaging silently drops files the dev env has (issue #5: locales
@@ -61,6 +56,31 @@ jobs:
           Invoke-WebRequest -Uri "http://127.0.0.1:8899/settings" -UseBasicParsing | Out-Null
           Write-Host "smoke test passed: real strings rendered, key pages 200"
           Stop-Process -Id $proc.Id -Force
+        shell: pwsh
+
+      - name: Stage distribution files
+        # Runs AFTER the smoke test on purpose. Two things this fixes, both
+        # verified missing from the published v3.0.3 and v3.0.4 zips:
+        #
+        # 1. The smoke test runs the app from dist/Spirescope, and a frozen
+        #    build seeds its data dir next to the executable — so a data/
+        #    directory of runtime state was being swept into the release. A
+        #    fresh install re-seeds it from the bundled copy on first run, so
+        #    removing it here is safe and keeps runtime state out of the zip.
+        # 2. "Strip dist-info" above also deletes the bundled packages' LICENSE
+        #    files, and BSD-3-Clause and Apache-2.0 both require the notice to
+        #    accompany a binary redistribution. build.py does this already, but
+        #    this workflow calls PyInstaller directly and never runs build.py.
+        run: |
+          if (Test-Path dist/Spirescope/data) { Remove-Item -Recurse -Force dist/Spirescope/data }
+          Copy-Item LICENSE dist/Spirescope/LICENSE.txt
+          Copy-Item THIRD_PARTY_NOTICES.md dist/Spirescope/THIRD_PARTY_NOTICES.md
+          Copy-Item README_DIST.txt dist/Spirescope/README.txt
+          foreach ($f in @("LICENSE.txt","THIRD_PARTY_NOTICES.md","README.txt")) {
+            if (-not (Test-Path "dist/Spirescope/$f")) { throw "$f missing from the distribution" }
+          }
+          if (Test-Path dist/Spirescope/data) { throw "runtime data/ still present in the distribution" }
+          Write-Host "staged: LICENSE.txt, THIRD_PARTY_NOTICES.md, README.txt; runtime data/ removed"
         shell: pwsh
 
       - name: Create zip archives

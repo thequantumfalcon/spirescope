@@ -38,7 +38,7 @@
   (the wiki cannot express these app-curated categories); the merge now
   protects them.
 - **Relic descriptions no longer leak icon markup.** 28 relics scraped from
-  the wiki shipped raw `@CE`-style icon codes ("Gain an additional @CE...");
+  the wiki shipped raw `@CE`-style icon codes ("Gain an additional `@CE`...");
   relic text now gets the same icon rendering as card text ("1 Energy").
 - **Wiki pluralization templates render correctly.** `{{C|sing|plural|2}}`
   picks the indexed form, so "3 Apparitions" no longer degrades to
