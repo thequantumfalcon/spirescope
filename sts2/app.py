@@ -79,9 +79,12 @@ templates.env.globals["version"] = VERSION
 # Packaged builds have neither Python nor a `spirescope` entry point on PATH,
 # so telling that reader to run `python -m sts2 update` is an instruction they
 # cannot follow — they have the executable they double-clicked and nothing else.
+# Taken from the running executable rather than hardcoded, because the macOS
+# build is named `Spirescope` with no extension.
+from sts2.__main__ import _program_name  # noqa: E402
+
 templates.env.globals["is_frozen"] = getattr(sys, "frozen", False)
-templates.env.globals["cli"] = (
-    "Spirescope.exe" if getattr(sys, "frozen", False) else "spirescope")
+templates.env.globals["cli"] = _program_name()
 from sts2 import patches as _patches  # noqa: E402
 from sts2.i18n import get_language, get_translator  # noqa: E402
 

@@ -317,16 +317,23 @@ def test_guide_offers_both_invocations():
     assert "python -m sts2" not in frozen_branch
 
 
-def test_cli_global_matches_the_running_form(monkeypatch):
-    """The `cli` template global names the executable in frozen builds."""
-    import importlib
+@pytest.mark.parametrize("exe_name", ["Spirescope.exe", "Spirescope"])
+def test_cli_names_the_running_executable(monkeypatch, exe_name):
+    """Frozen builds report their own binary, whatever it is called.
+
+    The name is read from sys.executable rather than hardcoded: the Windows
+    build is Spirescope.exe and the macOS build is Spirescope, so a literal
+    would be wrong on one of them. The path is built with os.path.join so the
+    test means the same thing on a Linux CI runner as on Windows.
+    """
+    import os
     import sys as _sys
 
-    monkeypatch.setattr(_sys, "frozen", True, raising=False)
-    monkeypatch.setattr(_sys, "executable", r"C:\x\Spirescope.exe", raising=False)
     from sts2 import __main__ as entry
-    importlib.reload(entry)
-    assert entry._program_name() == "Spirescope.exe"
+
+    monkeypatch.setattr(_sys, "frozen", True, raising=False)
+    monkeypatch.setattr(_sys, "executable", os.path.join("anywhere", exe_name))
+    assert entry._program_name() == exe_name
+
     monkeypatch.delattr(_sys, "frozen", raising=False)
-    importlib.reload(entry)
     assert entry._program_name() == "spirescope"
