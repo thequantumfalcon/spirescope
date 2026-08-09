@@ -525,3 +525,15 @@ def test_shipped_descriptions_are_clean():
                 if "\n" in value or "  " in value or token.search(value):
                     offenders.append(f"{name}:{entry.get('id')}.{key}: {value!r}")
     assert not offenders, "unclean shipped descriptions:\n" + "\n".join(offenders[:10])
+
+
+def test_enemy_hp_uses_one_field_name():
+    """Every template reads `hp_range`; two entries carried `hp` instead, so
+    any value in them could never render. Keep the schema single-valued."""
+    from sts2.config import DATA_DIR
+
+    entries = json.loads((DATA_DIR / "enemies.json").read_text(encoding="utf-8"))
+    stray = [e.get("id") for e in entries if "hp" in e]
+    assert not stray, f"entries use 'hp' instead of 'hp_range': {stray}"
+    missing_field = [e.get("id") for e in entries if "hp_range" not in e]
+    assert not missing_field, f"entries have no hp_range field at all: {missing_field}"
