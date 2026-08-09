@@ -1,5 +1,39 @@
 # Changelog
 
+## v3.0.5
+
+### Fixed
+
+- **Release downloads now include the license notices.** The zips shipped
+  without `LICENSE.txt` or `THIRD_PARTY_NOTICES.md`. The build script copies
+  them, but the release workflows never called it — they invoke PyInstaller
+  directly and strip package metadata themselves, which also removes the
+  bundled libraries' own licence files. BSD-3-Clause and Apache-2.0 both
+  require the notice to travel with a binary, so v3.0.3 and v3.0.4 went out
+  without them. The workflows now stage the notices and fail rather than
+  publish without them.
+- **Release downloads no longer carry a stray `data` folder.** The build's
+  own smoke test starts the app, which seeds a data directory beside the
+  executable, and that runtime state was being swept into the archive. A fresh
+  install re-creates it from the bundled copy on first run.
+- **Aeonglass has its HP.** The value was missing because the wiki was
+  unreachable when the entry was last touched; it is 512. Two enemies also
+  stored HP under a field name nothing reads, so their values could never have
+  displayed — Decimillipede now shows 40-46.
+- **Release notes no longer link an unrelated GitHub account.** The v3.0.4
+  notes described raw `@CE`-style icon codes in relic text, and one mention sat
+  outside code formatting, so it was auto-linked to a real user with no
+  connection to this project. The published notes are corrected and the
+  changelog can no longer reintroduce it.
+
+### Internal
+
+- Value-level tests for the seven advanced-analytics modules, which previously
+  could all be replaced with stubs while the suite stayed green.
+- A guard asserting every state-changing route refuses an unauthenticated
+  request, so a newly added endpoint is covered automatically.
+- The attribution-scanning workflow declares read-only permissions.
+
 ## v3.0.4
 
 ### Added
