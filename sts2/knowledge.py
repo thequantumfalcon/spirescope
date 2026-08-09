@@ -222,6 +222,14 @@ class KnowledgeBase:
             except (json.JSONDecodeError, OSError) as exc:
                 log.warning("Skipping malformed mod file %s: %s", mod_file.name, exc)
                 continue
+            # Parsing is not validation: a file that is valid JSON but not an
+            # object (a bare list, a string) reached .get() and took the whole
+            # app down at import with an AttributeError, before any page could
+            # render. A hand-authored mod is exactly where that happens.
+            if not isinstance(data, dict):
+                log.warning("Skipping mod file %s: top level is %s, expected an object",
+                            mod_file.name, type(data).__name__)
+                continue
             mod_name = data.get("mod_name", mod_file.stem)
             # Namespace plumbing for installed-mod ingestion: a file that
             # declares mod_id gets its entities registered as
@@ -236,7 +244,24 @@ class KnowledgeBase:
                     record["id"] = f"mod:{mod_id}:{rid}"
                 return record
 
-            for d in data.get("cards", []):
+            def _records(key: str, _data=data, _name=mod_name) -> list:
+                """Entity list for `key`, or empty if the file got the shape wrong.
+
+                A string here would otherwise iterate character by character
+                and hand each one to _ns(), which then fails on .get().
+                """
+                value = _data.get(key, [])
+                if not isinstance(value, list):
+                    log.warning("Mod %s: %r is %s, expected a list",
+                                _name, key, type(value).__name__)
+                    return []
+                good = [r for r in value if isinstance(r, dict)]
+                if len(good) != len(value):
+                    log.warning("Mod %s: dropped %d non-object entries under %r",
+                                _name, len(value) - len(good), key)
+                return good
+
+            for d in _records("cards"):
                 d = _ns(d)
                 try:
                     card = Card(**d, source="mod")
@@ -247,7 +272,7 @@ class KnowledgeBase:
                     self.cards.append(card)
                 except Exception as exc:
                     log.warning("Mod %s: skipping malformed card: %s", mod_name, exc)
-            for d in data.get("relics", []):
+            for d in _records("relics"):
                 d = _ns(d)
                 try:
                     relic = Relic(**d, source="mod")
@@ -258,7 +283,7 @@ class KnowledgeBase:
                     self.relics.append(relic)
                 except Exception as exc:
                     log.warning("Mod %s: skipping malformed relic: %s", mod_name, exc)
-            for d in data.get("potions", []):
+            for d in _records("potions"):
                 d = _ns(d)
                 try:
                     potion = Potion(**d, source="mod")
@@ -268,7 +293,7 @@ class KnowledgeBase:
                     self.potions.append(potion)
                 except Exception as exc:
                     log.warning("Mod %s: skipping malformed potion: %s", mod_name, exc)
-            for d in data.get("enemies", []):
+            for d in _records("enemies"):
                 d = _ns(d)
                 try:
                     enemy = Enemy(**d, source="mod")

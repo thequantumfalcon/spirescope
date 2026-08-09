@@ -8,7 +8,10 @@ To add a new language:
 2. Translate the values (not the keys)
 3. Set STS2_LANG=<code> environment variable
 
-No templates are wrapped yet — this is infrastructure for future contributors.
+The shared navigation chrome (base.html) and the settings page are wrapped;
+most page bodies are not, so contributions there are welcome. Entity text —
+card, relic, enemy and event names and descriptions — is translated
+separately, from the player's own game install, via `python -m sts2 localize`.
 """
 import json
 import logging

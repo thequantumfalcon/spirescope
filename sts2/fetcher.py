@@ -808,11 +808,24 @@ def run_fetcher(save_only: bool = False):
                     filled = 0
                     for r in records:
                         sec = by_name.get(r["name"].lower())
-                        if sec and not r.get("description") and sec.get("description"):
+                        if not sec:
+                            continue
+                        if not r.get("description") and sec.get("description"):
                             r["description"] = sec["description"]
-                            if not r.get("description_upgraded") and sec.get("description_upgraded"):
-                                r["description_upgraded"] = sec["description_upgraded"]
+                            # Keywords are derived FROM the description, so a
+                            # record whose text arrives here keeps whatever it
+                            # had — usually nothing — and ships as a synergy
+                            # orphan invisible to the deck analyser.
+                            if "keywords" in r:
+                                r["keywords"] = _extract_keywords(r["description"])
                             filled += 1
+                        # Independent of the above: a record can have primary
+                        # text but no upgraded text. Nesting this inside the
+                        # description branch meant the secondary's upgraded
+                        # text was dropped whenever the primary supplied a
+                        # description.
+                        if not r.get("description_upgraded") and sec.get("description_upgraded"):
+                            r["description_upgraded"] = sec["description_upgraded"]
                     if filled:
                         print(f"    {source.name} filled text for {filled} {label}")
 

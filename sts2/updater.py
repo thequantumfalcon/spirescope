@@ -149,6 +149,47 @@ def get_data_update_info() -> dict | None:
     return _data_update
 
 
+def _merge_local_build_ids(local_patches, staged_patches) -> None:
+    """Carry hand-assigned build_id -> patch mappings across a bundle install.
+
+    The bundle ships patches.json, and the staging rule is "bundle wins for its
+    own files", so /admin/patches assignments were discarded on every data
+    update — silently changing which runs count as current-patch and therefore
+    the win rates shown. Build ids are user knowledge the bundle cannot know,
+    so they are unioned back in; everything else still comes from the bundle.
+    """
+    if not local_patches.exists() or not staged_patches.exists():
+        return
+    try:
+        local = json.loads(local_patches.read_text(encoding="utf-8"))
+        staged = json.loads(staged_patches.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        log.warning("Could not merge local patch assignments: %s", exc)
+        return
+    if not isinstance(local, list) or not isinstance(staged, list):
+        return
+    local_ids = {p.get("patch"): p.get("build_ids") or []
+                 for p in local if isinstance(p, dict)}
+    carried = 0
+    for entry in staged:
+        if not isinstance(entry, dict):
+            continue
+        mine = [b for b in local_ids.get(entry.get("patch"), []) if isinstance(b, str)]
+        if not mine:
+            continue
+        existing = entry.setdefault("build_ids", [])
+        for build_id in mine:
+            if build_id not in existing:
+                existing.append(build_id)
+                carried += 1
+    if carried:
+        try:
+            staged_patches.write_text(json.dumps(staged, indent=2) + "\n", encoding="utf-8")
+            log.info("Carried %d local build-id assignment(s) into the new patch manifest", carried)
+        except OSError as exc:
+            log.warning("Could not write merged patch manifest: %s", exc)
+
+
 def install_data_update() -> tuple[bool, str]:
     """Download, sha256-verify, and atomically install the pending bundle.
 
@@ -206,6 +247,7 @@ def install_data_update() -> tuple[bool, str]:
                     shutil.copytree(item, target)
                 else:
                     shutil.copy2(item, target)
+            _merge_local_build_ids(DATA_DIR / "patches.json", staging / "patches.json")
             DATA_DIR.rename(backup)
             try:
                 staging.rename(DATA_DIR)
