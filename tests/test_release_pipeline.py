@@ -120,26 +120,32 @@ class TestSingleReleasePublisher:
             else:
                 assert contents != "write", f"{job_id} must not hold contents: write"
 
-    def test_macos_failure_does_not_block_windows_publish(self):
-        """The documented tradeoff: publish requires build-windows to
-        succeed but tolerates build-macos failing, so a macOS-only problem
-        can't hold the Windows archive (most users) hostage."""
+    def test_every_platform_build_is_required(self):
+        """Publishing is all-or-nothing.
+
+        Tolerating a macOS failure so the Windows archive could still ship
+        was the earlier choice, and it pairs badly with immutable releases:
+        assets cannot be added to a published immutable release, so a flaky
+        runner would leave that version permanently Windows-only and force a
+        version burn. Re-running the failed job is the cheaper failure.
+        """
         workflow = _load_workflow(RELEASE_YML)
         jobs = _jobs(workflow)
         [publisher_id] = _publishing_jobs(jobs)
-        condition = str(jobs[publisher_id].get("if", ""))
-        assert "always()" in condition
-        assert "needs.build-windows.result == 'success'" in condition
-        # And must NOT hard-require build-macos success the same way -- that
-        # would reintroduce "one bad platform blocks the whole release".
-        assert "needs.build-macos.result == 'success'" not in condition
+        condition = " ".join(str(jobs[publisher_id].get("if", "")).split())
+        for job in ("gate", "build-windows", "build-macos"):
+            assert f"needs.{job}.result == 'success'" in condition, (
+                f"publish does not require {job}")
 
-    def test_macos_failure_is_surfaced_not_silent(self):
-        """A macOS build failure must produce a visible warning, not just a
-        quietly Windows-only release."""
-        text = RELEASE_YML.read_text(encoding="utf-8")
-        assert "::warning::" in text
-        assert "macos" in text.lower()
+    def test_a_partial_release_cannot_be_published(self):
+        """Both builds succeeding is not proof both produced assets."""
+        workflow = _load_workflow(RELEASE_YML)
+        jobs = _jobs(workflow)
+        [publisher_id] = _publishing_jobs(jobs)
+        guards = [s for s in jobs[publisher_id]["steps"]
+                  if "assets before publishing" in (s.get("name") or "")]
+        assert guards, "nothing verifies both platforms' assets are present"
+        assert "exit 1" in guards[0]["run"], "the guard warns instead of stopping"
 
 
 class TestTagBuildsRunTheRealGates:
@@ -406,3 +412,70 @@ class TestWorkflowYamlIsWellFormed:
         workflow = _load_workflow(WORKFLOWS_DIR / name)
         assert isinstance(workflow, dict)
         assert "jobs" in workflow
+
+
+class TestReleaseIsAllOrNothing:
+    """A partial release cannot be corrected once immutable releases are on:
+    assets cannot be added after publication, so a flaky macOS runner would
+    leave that version permanently Windows-only and force a version burn.
+    Publishing is therefore gated on every build, and on the assets actually
+    being present.
+    """
+
+    @staticmethod
+    def _release():
+        return _load_workflow(RELEASE_YML)
+
+    def test_publish_requires_every_build(self):
+        publish = self._release()["jobs"]["publish"]
+        assert set(publish["needs"]) == {"gate", "build-windows", "build-macos"}
+        condition = " ".join(publish["if"].split())
+        for job in ("gate", "build-windows", "build-macos"):
+            assert f"needs.{job}.result == 'success'" in condition, (
+                f"publish does not require {job} to have succeeded")
+
+    def test_publish_never_runs_on_a_dry_run(self):
+        condition = " ".join(self._release()["jobs"]["publish"]["if"].split())
+        assert "github.event_name == 'push'" in condition, (
+            "the manual dry-run path could reach the publishing job")
+
+    def test_missing_platform_assets_stop_the_release(self):
+        steps = self._release()["jobs"]["publish"]["steps"]
+        guard = [s for s in steps
+                 if "assets before publishing" in (s.get("name") or "")]
+        assert guard, "no step verifies both platforms' assets are present"
+        body = guard[0]["run"]
+        assert "*windows*" in body and "*macos*" in body
+        assert "exit 1" in body, "the guard warns instead of stopping"
+
+    def test_release_action_fails_on_unmatched_files(self):
+        steps = self._release()["jobs"]["publish"]["steps"]
+        create = [s for s in steps if "action-gh-release" in (s.get("uses") or "")]
+        assert create, "no release-creating step found"
+        assert create[0]["with"]["fail_on_unmatched_files"] is True
+
+
+class TestDryRunPathExists:
+    """A tag push must not be the first time any of this executes."""
+
+    def test_workflow_dispatch_is_available(self):
+        import yaml
+        with open(RELEASE_YML,
+                  encoding="utf-8") as fh:
+            data = yaml.safe_load(fh)
+        triggers = data.get(True) or data.get("on")
+        assert "workflow_dispatch" in triggers
+
+    def test_version_gate_is_skipped_without_a_tag(self):
+        import yaml
+        with open(RELEASE_YML,
+                  encoding="utf-8") as fh:
+            data = yaml.safe_load(fh)
+        checked = 0
+        for job in ("build-windows", "build-macos"):
+            for step in data["jobs"][job]["steps"]:
+                if "tag matches the version" in (step.get("name") or ""):
+                    checked += 1
+                    assert step.get("if") == "github.event_name == 'push'", (
+                        f"{job}'s version gate would fail a tagless dry run")
+        assert checked == 2, "expected a version gate in each build job"

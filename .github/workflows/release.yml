@@ -19,23 +19,37 @@ name: Release
 #   build-macos     -> build + package only. Produce artifacts via
 #                       actions/upload-artifact; never touch the release.
 #   publish         -> the ONLY job with contents:write and the ONLY caller
-#                       of action-gh-release. needs both builds, downloads
-#                       whatever artifacts exist, creates the release once.
+#                       of action-gh-release. Requires both builds, refuses
+#                       to run without both platforms' assets, and creates
+#                       the release exactly once.
 #
-# Deliberate tradeoff: `publish` requires build-windows to have succeeded,
-# but not build-macos. A macOS-only failure (a flaky runner, an Xcode/
-# Gatekeeper quirk, anything not related to the actual code) would otherwise
-# block shipping the Windows build too -- most users are on Windows, and
-# there is no reason a macOS CI hiccup should hold their release hostage.
-# `publish` uses `if: always()` plus an explicit result check to still run
-# when build-macos failed, and posts a visible `::warning::` (not a silent
-# drop) plus a note in the release body when that happens. The race and the
-# immutable-release risk are fixed either way, because there is exactly one
-# job, gated on both builds finishing, that ever calls action-gh-release.
+# Every build is a hard prerequisite of `publish`, macOS included. Letting a
+# macOS failure through so the Windows archive could still ship was tempting
+# -- most users are on Windows -- but it pairs badly with immutable releases:
+# assets cannot be added to a published immutable release, so a flaky macOS
+# runner would leave that version permanently Windows-only and force a
+# version burn to correct it. Re-running the failed job and publishing once
+# is the cheaper failure, so a partial release is simply not reachable.
+#
+# `workflow_dispatch` runs gate + both builds and stops there, uploading
+# artifacts without creating anything. That exists so the pipeline can be
+# rehearsed before a real tag: without it, a tag push is the first time any
+# of this executes for real.
 
 on:
   push:
     tags: ["v*"]
+  # Dry run: exercise the gate and both platform builds without publishing
+  # anything. The version-vs-tag check and the publish job are both skipped,
+  # so this can be run from a branch at any time — it is the only way to
+  # prove the pipeline end to end before a real tag exists, and a real tag is
+  # otherwise the first time any of it executes.
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build and upload artifacts without creating a release"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -78,9 +92,11 @@ jobs:
         # Four releases (v2.9.4-v2.9.7) shipped binaries whose reported version
         # did not match their tag. Fail before building rather than publish a
         # mislabelled artifact.
+        # Skipped on a dry run, which has no tag to compare against.
+        if: github.event_name == 'push'
         run: |
           import os, re, sys
-          tag = os.environ["TAG"].lstrip("v")
+          tag = os.environ["TAG"].removeprefix("v")
           src = open("sts2/config.py", encoding="utf-8").read()
           version = re.search(r'^VERSION\s*=\s*"([^"]+)"', src, re.M).group(1)
           if tag != version:
@@ -244,9 +260,11 @@ jobs:
         # Four releases (v2.9.4-v2.9.7) shipped binaries whose reported version
         # did not match their tag. Fail before building rather than publish a
         # mislabelled artifact.
+        # Skipped on a dry run, which has no tag to compare against.
+        if: github.event_name == 'push'
         run: |
           import os, re, sys
-          tag = os.environ["TAG"].lstrip("v")
+          tag = os.environ["TAG"].removeprefix("v")
           src = open("sts2/config.py", encoding="utf-8").read()
           version = re.search(r'^VERSION\s*=\s*"([^"]+)"', src, re.M).group(1)
           if tag != version:
@@ -367,12 +385,21 @@ jobs:
           if-no-files-found: error
 
   publish:
-    # The only job that touches the release. needs both builds so it can
-    # download and assemble both platforms' assets in one place -- but see
-    # the `if:` below and the top-of-file comment for why build-macos is not
-    # a hard requirement the way gate and build-windows are.
+    # The only job that touches the release. Every prerequisite is a hard
+    # requirement: a partial release is not recoverable once immutable
+    # releases are on, because assets cannot be added after publication, so
+    # a flaky macOS runner would otherwise leave v<x> permanently
+    # Windows-only and force a version burn to correct it. Re-running the
+    # failed job and publishing once is the cheaper failure.
+    #
+    # Skipped entirely on workflow_dispatch: that path exists to rehearse the
+    # gate and the builds, never to publish.
     needs: [gate, build-windows, build-macos]
-    if: always() && needs.gate.result == 'success' && needs.build-windows.result == 'success'
+    if: >-
+      github.event_name == 'push'
+      && needs.gate.result == 'success'
+      && needs.build-windows.result == 'success'
+      && needs.build-macos.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -403,21 +430,23 @@ jobs:
         # all (see the job's `if:` above). A missing download here must not
         # fail this job -- it's how a Windows-only release stays possible.
         id: download_macos
-        continue-on-error: true
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: macos-release-assets
           path: release-assets
 
-      - name: Check whether macOS assets are present
-        id: mac_check
+      - name: Require both platforms' assets before publishing
+        # publish only runs when both builds succeeded, so absent assets mean
+        # a build reported success without producing them. Publishing a
+        # partial release is unrecoverable under immutable releases, so stop.
         run: |
-          if ls release-assets/*macos* >/dev/null 2>&1; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::macOS build did not produce assets for this release (build-macos result: ${{ needs.build-macos.result }}). Publishing the Windows build only -- this is not silent: see this warning and the note added to the release body."
-          fi
+          for pattern in '*windows*' '*macos*'; do
+            if ! ls release-assets/$pattern >/dev/null 2>&1; then
+              echo "::error::no assets matching $pattern were downloaded; refusing to publish a partial release"
+              exit 1
+            fi
+          done
+          echo "both platforms' assets present"
 
       - name: Extract release notes from CHANGELOG
         id: changelog
@@ -425,7 +454,7 @@ jobs:
           python -c "
           import re, os
           tag = os.environ['TAG']
-          version = tag.lstrip('v')
+          version = tag.removeprefix('v')
           with open('CHANGELOG.md', encoding='utf-8') as f:
               text = f.read()
           # Extract section for this version
@@ -453,21 +482,11 @@ jobs:
           TAG: ${{ github.ref_name }}
         shell: bash
 
-      - name: Note missing macOS build in the release body
-        if: steps.mac_check.outputs.present != 'true'
-        run: |
-          {
-            echo ""
-            echo ""
-            echo "---"
-            echo ""
-            echo "**Note:** the macOS build did not complete for this release, so no macOS download is attached. Only the Windows build is available above; check the workflow run logs for the macOS failure."
-          } >> RELEASE_NOTES.md
-        shell: bash
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3
         with:
           files: release-assets/*
-          fail_on_unmatched_files: false
+          # A named file that is not there means the release would be
+          # incomplete; fail rather than publish it.
+          fail_on_unmatched_files: true
           body_path: RELEASE_NOTES.md
