@@ -3,13 +3,12 @@ name = "spirescope"
 dynamic = ["version"]
 description = "Spirescope — a local web dashboard for Slay the Spire 2. Card/relic/enemy lookup, deck analysis, live run tracking, and strategy guides."
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.11"
 authors = [{name = "The Quantum Falcon", email = "thequantumfalcon@users.noreply.github.com"}]
 keywords = ["slay-the-spire", "slay-the-spire-2", "dashboard", "deck-analysis", "live-tracking", "companion-app"]
 classifiers = [
     "Development Status :: 4 - Beta",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -101,8 +100,8 @@ extend-exclude = ["dist", "build", ".venv_build"]
 select = ["E", "F", "W", "I"]
 ignore = ["E402", "E501"]
 
-# Non-blocking in CI for now (~95 existing errors, see ci.yml). Config kept
-# minimal until the backlog is cleared: no strictness flags beyond defaults.
+# Blocking in CI (see ci.yml): the error backlog is cleared and stays at zero.
+# Config kept minimal for now: no strictness flags beyond defaults.
 [tool.mypy]
 python_version = "3.11"
 warn_unused_ignores = true

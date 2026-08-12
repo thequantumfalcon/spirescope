@@ -1,5 +1,6 @@
 """Build Spirescope into a standalone executable."""
 import hashlib
+import os
 import shutil
 import subprocess
 import sys
@@ -51,7 +52,45 @@ def _write_sha256_manifest() -> Path:
     return manifest
 
 
+# Files that are deliberately not part of the published project. A build
+# runs against the working tree, so anything sitting here gets swept into the
+# artifact — PyInstaller bundles the package as it finds it, and setuptools
+# can exclude package *data* but not discovered Python modules.
+_FORBIDDEN_IN_ARTIFACTS = (
+    "sts2/risk.py",
+    "sts2/diagnosis.py",
+    "sts2/data/pheromones.json",
+    "sts2/data/hypotheses.json",
+    "sts2/data/.fetcher_keys.json",
+)
+
+
+def _refuse_dirty_tree():
+    """Stop before building if the tree holds files that must not ship.
+
+    Keep this in step with the "Private modules" section of .gitignore and
+    the exclusion list in .dockerignore.
+    """
+    present = [name for name in _FORBIDDEN_IN_ARTIFACTS if (ROOT / name).exists()]
+    overlays = ROOT / "sts2" / "locales" / "content"
+    if overlays.is_dir() and any(overlays.iterdir()):
+        present.append("sts2/locales/content/ (game text built from your install)")
+    if not present:
+        return
+    print("Refusing to build: the working tree contains files that must not "
+          "ship in an artifact:")
+    for name in present:
+        print(f"  - {name}")
+    print("\nBuild from a clean checkout instead, e.g.:")
+    print("  git archive HEAD | tar -x -C <empty dir>   # then build there")
+    print("Set SPIRESCOPE_ALLOW_DIRTY_BUILD=1 to override for a local-only "
+          "build you will not distribute.")
+    sys.exit(1)
+
+
 def main():
+    if os.environ.get("SPIRESCOPE_ALLOW_DIRTY_BUILD") != "1":
+        _refuse_dirty_tree()
     _ensure_venv()
     venv_python = _get_venv_python()
 

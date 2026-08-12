@@ -652,15 +652,25 @@ async def strategy(request: Request, character: str = Path(max_length=50)):
 # A friend's exported run has nowhere else to live: the import route used to
 # render it once and discard it, so it could never be selected for /runs/compare
 # (which only ever resolved ids against local save history). This is a bounded,
-# in-memory, session-scoped holding pen so an imported run can be picked for
-# comparison from the Runs page. Lost on process restart by design — that is
-# the advertised contract ("available for comparison during your session"),
-# not a substitute for saving the file.
+# in-memory holding pen so an imported run can be picked for comparison from
+# the Runs page. Lost on process restart by design — that is the advertised
+# contract, not a substitute for saving the file.
+#
+# Scope, stated plainly: this is process-wide, not per browser session. Every
+# client of one server shares it. That is acceptable only because Spirescope
+# is a single-user local dashboard — on a loopback bind the one user IS the
+# process, and on a network bind every client has already presented the same
+# STS2_AUTH_TOKEN, so there is no privilege boundary between them to cross.
+# Ids are namespaced and length-capped so an imported run can neither collide
+# with nor shadow a local run id.
 # ---------------------------------------------------------------------------
 
 _imported_runs: dict[str, tuple[float, RunHistory]] = {}
 _IMPORTED_MAX = 20
 _IMPORTED_TTL = 4 * 60 * 60  # 4 hours, in seconds
+# The compare route caps each id query parameter at 200 characters; keep the
+# stored id inside that with room for the "imported-" prefix.
+_IMPORTED_ID_MAX_LEN = 180
 
 
 def _evict_imported_runs(now: float | None = None) -> None:
@@ -681,6 +691,10 @@ def _store_imported_run(run: RunHistory) -> str:
     now = time.monotonic()
     _evict_imported_runs(now)
     safe_id = re.sub(r'[^\w\-.]', '_', run.id)
+    # Cap the id so it always fits the compare route's own length limit;
+    # a longer one could be listed on the Runs page but never selected,
+    # because the query parameter would be rejected before lookup.
+    safe_id = safe_id[:_IMPORTED_ID_MAX_LEN]
     imported_id = f"imported-{safe_id}"
     _imported_runs[imported_id] = (now, run)
     while len(_imported_runs) > _IMPORTED_MAX:

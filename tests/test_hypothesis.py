@@ -71,7 +71,7 @@ class TestEvaluateHypotheses:
         assert h["runs_tested"] == 20
         assert h["runs_matching"] == 10 and h["wins_matching"] == 9
         assert h["runs_not_matching"] == 10 and h["wins_not_matching"] == 1
-        assert h["verdict"] == "confirmed"
+        assert h["verdict"] == "supported"
         assert h["prob_effect"] > 0.95
         assert h["effect_size"] > 0.5
 
@@ -146,7 +146,7 @@ class TestHypothesisPage:
             resp = await client.get("/hypothesis")
         assert resp.status_code == 200
         assert "P(better)" in resp.text
-        assert "confirmed" in resp.text
+        assert "supported" in resp.text
 
     async def test_delete_form_asks_for_confirmation(self, client, tmp_path, monkeypatch):
         import sts2.config as cfg

@@ -35,7 +35,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Main vs beta awareness** — runs badge their game branch; beta-only content is chipped; filter analytics by branch.
 - **Merged save history** — vanilla and modded save trees merge into one deduplicated history (the game copies saves between them since v0.108.0); runs carry a vanilla/modded origin filter.
 - **Badges** — earned badges with bronze/silver/gold tiers on the Records page.
-- **Languages** — switch under Settings. The interface ships in fifteen languages; card, relic and enemy text can be translated too with one command. See [Languages](#languages).
+- **Languages** — switch under Settings. Navigation and settings are translated into fifteen languages (most page bodies are still English); card, relic and enemy text can be translated too with one command. See [Languages](#languages).
 
 ### Browse & Research
 
@@ -86,7 +86,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Archetype Drift** — Alerts when your card picks drift away from your deck's archetype mid-run.
 - **Cascade Map** — Open a completed run to see, for each card you picked, how damage taken, fight length, and HP changed afterwards. Observational before/after comparison — later floors are harder, so it shows what happened after a pick, not what the pick caused.
 - **Prophecy Engine** — Pre-run predictions based on your history: win probability, danger zone floors, and strategic recommendations. Shown on the home page and graded against the outcome on the run detail page.
-- **Hypothesis Lab** — Register strategic beliefs (*"Skipping elites helps"*) and test them with a Beta-Binomial model across your runs: posterior win rates per arm and the probability the belief holds.
+- **Hypothesis Lab** — Register strategic beliefs (*"Skipping elites helps"*) and test them with a Beta-Binomial model across your runs: posterior win rates per arm and the probability your history leans that way. An association in your own runs, not a controlled result.
 - **Rivalry Seeds** — Export your run, share the seed with a friend, import their run, and compare decisions against your own attempt on that seed.
 - **Run Integrity** — SHA-256 checksum over a run's complete record, shown on the run detail page and embedded in every export; imports are re-checked against it. Tamper evidence, not proof of authorship.
 
@@ -195,8 +195,9 @@ mount your save directory read-only (see the commented examples in
 
 ## Languages
 
-Pick a language under **Settings**. That translates the interface — navigation,
-buttons, labels. It ships in fifteen: English, Simplified Chinese,
+Pick a language under **Settings**. That translates the shared chrome —
+navigation, buttons and the settings page. Most page bodies are still English;
+contributions there are welcome. It ships in fifteen: English, Simplified Chinese,
 Traditional Chinese, German, Spanish, Latin American Spanish, French,
 Italian, Japanese, Korean, Polish, Brazilian Portuguese, Russian, Thai and
 Turkish. English and Traditional Chinese are reviewed; the others are
@@ -401,7 +402,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (32 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 948 tests (pytest + pytest-asyncio), +15 Playwright browser tests
+tests/               # pytest + pytest-asyncio, plus 15 Playwright browser tests
 ```
 
 ## Requirements

@@ -65,7 +65,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <h2 id="languages">Languages</h2>
 <div class="card mb-md">
-  <p>Pick a language under <a href="/settings">Settings</a>. That translates the interface &mdash; navigation, buttons, and labels &mdash; and ships in fourteen languages. English and Traditional Chinese are reviewed; the rest are drafts, and corrections are welcome.</p>
+  <p>Pick a language under <a href="/settings">Settings</a>. That translates the shared chrome &mdash; navigation, buttons and the settings page &mdash; and ships in fifteen languages. Most page bodies are still English. English and Traditional Chinese are reviewed; the rest are drafts, and corrections are welcome.</p>
   <p class="mt-sm">Card, relic, potion, enemy, and event text is separate, because that text belongs to the game. To see it in your language, run this once:</p>
   <pre><code>{{ cli }} localize</code></pre>
   <p class="text-sm text-muted mt-sm">It reads the language files from the copy of Slay the Spire 2 already installed on this machine &mdash; nothing is downloaded, and the game folder is only read from. Restart Spirescope afterwards and card text follows your language setting, with search matching the translated names. Use <code>{{ cli }} localize --list</code> to see what your install offers, or <code>{{ cli }} localize --lang de,ja</code> for just a few. Anything the game does not translate stays in English.</p>
@@ -204,7 +204,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <div class="card mb-md">
   <h3>Hypothesis Lab</h3>
-  <p>Test your strategic beliefs with data. Register a hypothesis like "skipping elites helps" and SpireScope tracks qualifying runs, updates Bayesian probabilities, and delivers a verdict: confirmed, refuted, or inconclusive.</p>
+  <p>Test your strategic beliefs with data. Register a hypothesis like "skipping elites helps" and SpireScope splits your runs into a matching and a non-matching arm, compares their win rates with a Beta-Binomial model, and reports whether your history supports it, contradicts it, or is inconclusive. It measures an association in your own runs — character, ascension, patch and your own improvement all sit inside the comparison — so treat it as a lean, not a proof.</p>
 </div>
 
 <div class="card mb-md">

@@ -144,3 +144,35 @@ async def test_unknown_imported_id_404s_cleanly(client):
         resp = await client.get("/runs/compare?a=local-404&b=imported-does-not-exist")
     assert resp.status_code == 404
     assert "not found" in resp.text.lower()
+
+
+def test_imported_id_always_fits_the_compare_route_limit():
+    """A long source id produced a stored id the compare route's own
+    max_length would reject, so the run could be listed on the Runs page but
+    never actually selected."""
+    from sts2.models import RunHistory
+    from sts2.routes import _IMPORTED_ID_MAX_LEN, _imported_runs, _store_imported_run
+
+    _imported_runs.clear()
+    long_id = "x" * 500
+    stored = _store_imported_run(RunHistory(id=long_id, character="Ironclad",
+                                            win=False))
+    assert len(stored) <= 200, "stored id exceeds the compare query limit"
+    assert stored.startswith("imported-")
+    assert len(stored) == len("imported-") + _IMPORTED_ID_MAX_LEN
+    _imported_runs.clear()
+
+
+def test_imported_ids_cannot_shadow_a_local_run_id():
+    """Namespacing keeps an imported run from resolving in place of a local
+    one with the same id."""
+    from sts2.models import RunHistory
+    from sts2.routes import _get_imported_run, _imported_runs, _store_imported_run
+
+    _imported_runs.clear()
+    stored = _store_imported_run(RunHistory(id="local-1", character="Ironclad",
+                                            win=False))
+    assert stored != "local-1"
+    assert _get_imported_run("local-1") is None
+    assert _get_imported_run(stored) is not None
+    _imported_runs.clear()

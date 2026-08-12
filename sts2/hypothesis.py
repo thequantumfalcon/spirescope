@@ -153,10 +153,16 @@ def _finalise_verdict(hyp: dict) -> None:
     hyp["posterior_not_matching"] = round(posterior_other, 3)
     hyp["effect_size"] = round(posterior_match - posterior_other, 3)
     hyp["prob_effect"] = round(prob, 3)
+    # "supported"/"contradicted", not "confirmed"/"refuted": this compares
+    # two arms of your own history with nothing held constant — character,
+    # ascension, patch, improving skill over time, and choices that travel
+    # together all sit inside the comparison, and every page view is another
+    # look at the same accumulating data. The arithmetic is sound; the claim
+    # it licenses is association, not proof.
     if prob >= _DECISION_THRESHOLD:
-        hyp["verdict"] = "confirmed"
+        hyp["verdict"] = "supported"
     elif prob <= 1 - _DECISION_THRESHOLD:
-        hyp["verdict"] = "refuted"
+        hyp["verdict"] = "contradicted"
     else:
         hyp["verdict"] = "inconclusive"
 

@@ -420,3 +420,26 @@ def test_browser_fixture_aligns_host_with_its_loopback_bind():
         "browser fixture no longer pins STS2_HOST to loopback; every page "
         "request will be refused by the auth middleware")
     assert "old_host" in text, "browser fixture does not restore STS2_HOST"
+
+
+def test_local_build_refuses_a_tree_holding_unshippable_files():
+    """A build runs against the working tree, so private modules sitting in
+    it get swept into the artifact — PyInstaller bundles the package as it
+    finds it, and setuptools can exclude package data but not discovered
+    Python modules. The local build script must stop rather than produce a
+    distributable containing them.
+    """
+    text = (PROJECT_ROOT / "build_exe.py").read_text(encoding="utf-8")
+    assert "_refuse_dirty_tree" in text
+    for name in ("sts2/risk.py", "sts2/diagnosis.py",
+                 "sts2/data/.fetcher_keys.json"):
+        assert name in text, f"build guard does not cover {name}"
+
+
+def test_dockerignore_covers_the_private_set():
+    """The Dockerfile copies sts2/ wholesale, so anything not excluded here
+    lands in a locally built image and stays importable."""
+    ignored = (PROJECT_ROOT / ".dockerignore").read_text(encoding="utf-8")
+    for name in ("sts2/risk.py", "sts2/diagnosis.py",
+                 "sts2/data/.fetcher_keys.json", "sts2/locales/content/"):
+        assert name in ignored, f".dockerignore does not exclude {name}"

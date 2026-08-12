@@ -14,7 +14,8 @@ IF WINDOWS BLOCKED THIS FILE:
   affects unsigned Python applications packaged with PyInstaller - the
   packaging format is what gets flagged, not the contents.
 
-  Verify the download yourself: compare the included .sha256 file with
+  Verify the download yourself: compare the .sha256 file published beside
+  the zip on the release page with
   Get-FileHash .\Spirescope-windows.zip -Algorithm SHA256
 
   Full explanation, plus how to allow it or run from source instead:

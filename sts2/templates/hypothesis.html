@@ -3,7 +3,7 @@
 {% block title %}Hypothesis Lab{% endblock %}
 {% block content %}
 <h1>Hypothesis Lab</h1>
-<p class="text-muted mb-md">Register a strategic belief and have it tested against your run history. Runs are split into a matching and a non-matching arm and their win rates compared with a Beta-Binomial model (uniform prior). A verdict needs at least 3 runs in each arm and 95% posterior probability in one direction.</p>
+<p class="text-muted mb-md">Register a strategic belief and have it tested against your run history. Runs are split into a matching and a non-matching arm and their win rates compared with a Beta-Binomial model (uniform prior). A verdict needs at least 3 runs in each arm and 95% posterior probability in one direction. This is an association in your own history, not a controlled result: character, ascension, patch, and your own improvement over time all sit inside the comparison, so read &quot;supported&quot; as &quot;your runs lean this way&quot;, not &quot;proven&quot;.</p>
 
 <h2 class="mt-md">Register New Hypothesis</h2>
 <form action="/hypothesis/create" method="post" class="mb-lg">
@@ -33,7 +33,7 @@
 {% if hypotheses %}
 <h2 class="mt-md">Active Hypotheses</h2>
 {% for hyp_id, h in hypotheses.items() %}
-<div class="card mb-md" style="border-left: 3px solid {% if h.verdict == 'confirmed' %}var(--green){% elif h.verdict == 'refuted' %}var(--crimson){% else %}var(--gold){% endif %};">
+<div class="card mb-md" style="border-left: 3px solid {% if h.verdict == 'supported' %}var(--green){% elif h.verdict == 'contradicted' %}var(--crimson){% else %}var(--gold){% endif %};">
   <p><strong>{{ h.text }}</strong></p>
   <p class="text-sm text-muted">
     Condition: <code>{{ h.condition_type }}</code>
@@ -41,7 +41,7 @@
   </p>
   <div class="stat-grid mt-sm" style="grid-template-columns:repeat(5,1fr)">
     <div class="stat-box">
-      <div class="num {% if h.verdict == 'confirmed' %}text-green{% elif h.verdict == 'refuted' %}text-red{% else %}text-muted{% endif %}">{{ h.verdict }}</div>
+      <div class="num {% if h.verdict == 'supported' %}text-green{% elif h.verdict == 'contradicted' %}text-red{% else %}text-muted{% endif %}">{{ h.verdict }}</div>
       <div class="label">Verdict</div>
     </div>
     <div class="stat-box"><div class="num">{{ h.runs_tested }}</div><div class="label">Runs Tested</div></div>
