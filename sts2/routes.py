@@ -16,7 +16,7 @@ from pydantic import ValidationError
 from starlette.responses import StreamingResponse
 
 from sts2.config import CHARACTERS
-from sts2.models import CurrentRun
+from sts2.models import CurrentRun, RunHistory
 from sts2.saves import get_current_run
 
 router = APIRouter()
@@ -587,6 +587,69 @@ async def strategy(request: Request, character: str = Path(max_length=50)):
     })
 
 
+# ---------------------------------------------------------------------------
+# Imported-run store — Rivalry Seeds
+#
+# A friend's exported run has nowhere else to live: the import route used to
+# render it once and discard it, so it could never be selected for /runs/compare
+# (which only ever resolved ids against local save history). This is a bounded,
+# in-memory, session-scoped holding pen so an imported run can be picked for
+# comparison from the Runs page. Lost on process restart by design — that is
+# the advertised contract ("available for comparison during your session"),
+# not a substitute for saving the file.
+# ---------------------------------------------------------------------------
+
+_imported_runs: dict[str, tuple[float, RunHistory]] = {}
+_IMPORTED_MAX = 20
+_IMPORTED_TTL = 4 * 60 * 60  # 4 hours, in seconds
+
+
+def _evict_imported_runs(now: float | None = None) -> None:
+    """Drop imported-store entries older than the TTL."""
+    now = time.monotonic() if now is None else now
+    expired = [k for k, (ts, _run) in _imported_runs.items() if now - ts > _IMPORTED_TTL]
+    for k in expired:
+        del _imported_runs[k]
+
+
+def _store_imported_run(run: RunHistory) -> str:
+    """Stash an imported run under a namespaced id (so it can't collide with
+    a locally-saved run's id), then evict expired entries and, if still over
+    the cap, the oldest entry by import time. Re-importing the same run's id
+    lands on the same namespaced id and overwrites the existing entry, which
+    refreshes its TTL clock.
+    """
+    now = time.monotonic()
+    _evict_imported_runs(now)
+    safe_id = re.sub(r'[^\w\-.]', '_', run.id)
+    imported_id = f"imported-{safe_id}"
+    _imported_runs[imported_id] = (now, run)
+    while len(_imported_runs) > _IMPORTED_MAX:
+        oldest_id = min(_imported_runs, key=lambda k: _imported_runs[k][0])
+        del _imported_runs[oldest_id]
+    return imported_id
+
+
+def _get_imported_run(run_id: str):
+    """Look up a namespaced id in the imported-run store, respecting TTL.
+    Returns the stored RunHistory, or None if absent/expired."""
+    _evict_imported_runs()
+    entry = _imported_runs.get(run_id)
+    return entry[1] if entry else None
+
+
+async def _resolve_run(run_id: str):
+    """Resolve a run id against the session-scoped imported store first
+    (respecting TTL), then fall back to local run history. Compare is the
+    only reachable place an imported run can be selected against anything,
+    so this is what lets /runs/compare accept an imported id on either side.
+    """
+    run = _get_imported_run(run_id)
+    if run is not None:
+        return run
+    return await _app()._get_run_by_id(run_id)
+
+
 @router.get("/runs", response_class=HTMLResponse)
 async def runs(request: Request, character: str = Query(None, max_length=50),
                result: str = Query(None, max_length=10),
@@ -638,6 +701,10 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
     available_origins = sorted({r.origin for r in run_list})
     available_branches = sorted({b for b in (branch_of(r.build_id) for r in run_list) if b})
     selected_preset = preset if preset in ("7d", "30d", "90d", "all") else ""
+    # Imported-this-session runs (Rivalry Seeds): newest import first.
+    _evict_imported_runs()
+    imported_runs = sorted(_imported_runs.items(), key=lambda kv: kv[1][0], reverse=True)
+    imported_runs = [(iid, run) for iid, (_ts, run) in imported_runs]
     return a.templates.TemplateResponse(request, "runs.html", {
         "runs": filtered, "kb": a.kb, "characters": CHARACTERS,
         "selected_character": character, "selected_result": result,
@@ -650,6 +717,7 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
         "selected_preset": selected_preset,
         "selected_scope": scope, "scope_expanded": scope_expanded,
         "branch_of": branch_of,
+        "imported_runs": imported_runs,
     })
 
 
@@ -665,13 +733,15 @@ async def compare_runs(request: Request,
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400, "error_message": "Select two runs to compare.",
         }, status_code=400)
-    run_a = await a._get_run_by_id(a_id)
-    run_b = await a._get_run_by_id(b_id)
+    run_a = await _resolve_run(a_id)
+    run_b = await _resolve_run(b_id)
     if not run_a or not run_b:
         missing = a_id if not run_a else b_id
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Run '{missing[:100]}' not found.",
         }, status_code=404)
+    a_imported = _get_imported_run(a_id) is not None
+    b_imported = _get_imported_run(b_id) is not None
     deck_a, deck_b = Counter(run_a.deck), Counter(run_b.deck)
     all_cards = sorted(set(deck_a) | set(deck_b))
     deck_diff = [{"id": c, "name": a.kb.id_to_name(c),
@@ -703,6 +773,7 @@ async def compare_runs(request: Request,
         "deck_diff": deck_diff, "relic_diff": relic_diff,
         "stats_a": run_stats(run_a), "stats_b": run_stats(run_b),
         "rivalry_diff": rivalry_diff,
+        "a_imported": a_imported, "b_imported": b_imported,
     })
 
 
@@ -886,6 +957,10 @@ async def import_run(request: Request, file: UploadFile = File(...),
         # No digest, or one from a different canonicalization version — an old
         # export is not evidence of tampering, just unverifiable.
         integrity_check = "absent"
+    # Rivalry Seeds: keep the parsed run in the session-scoped imported store
+    # so it can be picked from the Runs page for comparison against a local
+    # run. This route itself still only ever renders it transiently.
+    _store_imported_run(run)
     run_analysis = analyze_run(run, kb=a.kb)
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "run_analysis": run_analysis, "kb": a.kb, "imported": True,

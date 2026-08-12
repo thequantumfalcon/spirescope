@@ -3,7 +3,7 @@
 {% block title %}Run {{ run.id if run else 'Not Found' }}{% endblock %}
 {% block content %}
 {% if run %}
-{% if imported %}<div class="card card-caution mb-md"><p>This is an imported run — it is not saved locally.</p></div>{% endif %}
+{% if imported %}<div class="card card-caution mb-md"><p>This is an imported run — it stays available for comparison during your session (not saved locally). <a href="/runs">Go to Run History</a> to select it against one of your own runs.</p></div>{% endif %}
 <p class="breadcrumb"><a href="/runs">Run History</a> &rsaquo; {{ run.id }}</p>
 <h1>
   <span class="result {{ 'win' if run.win else 'loss' }}">{{ 'VICTORY' if run.win else 'DEFEAT' }}</span>

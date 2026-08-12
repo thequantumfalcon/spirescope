@@ -11,6 +11,7 @@
     <h2>
       <span class="result {{ 'win' if run_a.win else 'loss' }}">{{ 'WIN' if run_a.win else 'LOSS' }}</span>
       <span class="char-{{ run_a.character|lower }}">{{ run_a.character }}</span>
+      {% if a_imported %}<span class="tag tag-keyword">Imported</span>{% endif %}
     </h2>
     <p class="text-muted">A{{ run_a.ascension }} &bull; Seed: {{ run_a.seed }} &bull; {{ (run_a.run_time / 60)|int }}m</p>
   </div>
@@ -18,6 +19,7 @@
     <h2>
       <span class="result {{ 'win' if run_b.win else 'loss' }}">{{ 'WIN' if run_b.win else 'LOSS' }}</span>
       <span class="char-{{ run_b.character|lower }}">{{ run_b.character }}</span>
+      {% if b_imported %}<span class="tag tag-keyword">Imported</span>{% endif %}
     </h2>
     <p class="text-muted">A{{ run_b.ascension }} &bull; Seed: {{ run_b.seed }} &bull; {{ (run_b.run_time / 60)|int }}m</p>
   </div>

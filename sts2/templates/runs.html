@@ -50,10 +50,12 @@
   </form>
 </div>
 
-{% if runs %}
+{% if runs or imported_runs %}
 <div class="flex items-center gap-sm mb-sm">
   <button id="compare-btn" class="btn btn-sm" disabled>Compare Selected</button>
 </div>
+{% endif %}
+{% if runs %}
 {% for run in runs %}
 <div class="run-item-row flex items-center gap-sm">
   <input type="checkbox" class="compare-check" data-run-id="{{ run.id }}" aria-label="Select {{ run.id }} for comparison">
@@ -71,6 +73,23 @@
 {% endfor %}
 {% else %}
 <p class="text-muted">No run history found. Complete some runs to see them here!</p>
+{% endif %}
+
+{% if imported_runs %}
+<h2 class="mt-lg">Imported this session</h2>
+<p class="text-muted text-sm mb-sm">Runs imported via Rivalry Seeds — held in memory for comparison this session only, not saved to disk.</p>
+{% for imported_id, irun in imported_runs %}
+<div class="run-item-row flex items-center gap-sm">
+  <input type="checkbox" class="compare-check" data-run-id="{{ imported_id }}" aria-label="Select {{ imported_id }} for comparison">
+  <span class="run-item" style="flex:1">
+    <span class="result {{ 'win' if irun.win else 'loss' }} run-result-min-w">{{ 'WIN' if irun.win else 'LOSS' }}</span>
+    <span class="char-{{ irun.character|lower }} run-char-min-w">{{ irun.character }}</span>
+    <span class="text-muted">A{{ irun.ascension }}</span>
+    <span class="text-muted">Seed: {{ irun.seed }}</span>
+    <span class="tag tag-keyword ml-auto">Imported</span>
+  </span>
+</div>
+{% endfor %}
 {% endif %}
 <script src="/static/compare.js?v={{ compare_js_hash }}"></script>
 {% endblock %}
