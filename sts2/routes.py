@@ -688,6 +688,12 @@ async def import_run(request: Request, file: UploadFile = File(...),
         }, status_code=413)
     try:
         data = json.loads(contents)
+        # A top-level array is valid JSON; .get() on it was an unhandled 500.
+        if not isinstance(data, dict):
+            return a.templates.TemplateResponse(request, "error.html", {
+                "error_code": 400,
+                "error_message": "Invalid file: expected a JSON object.",
+            }, status_code=400)
         if data.get("format_version") != 1:
             return a.templates.TemplateResponse(request, "error.html", {
                 "error_code": 400,
@@ -1643,8 +1649,16 @@ async def api_import_stats(request: Request, file: UploadFile = File(...),
     except (json.JSONDecodeError, RecursionError):
         return PlainTextResponse("Invalid JSON.", status_code=400)
     existing = load_aggregate()
-    merged = merge_aggregate(existing, imported)
-    save_aggregate(merged)
+    try:
+        merged = merge_aggregate(existing, imported)
+    except ValueError as exc:
+        # Includes Infinity/NaN counters: json.loads accepts them, the
+        # sanitiser rejects them, and this used to surface as a 500.
+        return PlainTextResponse(f"Invalid aggregate file: {exc}", status_code=400)
+    if not save_aggregate(merged):
+        return PlainTextResponse(
+            "Import processed but could not be persisted (too large or "
+            "storage unwritable).", status_code=500)
     return {"status": "ok", "run_count": merged.get("run_count", 0)}
 
 

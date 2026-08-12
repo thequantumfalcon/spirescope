@@ -462,6 +462,87 @@ async def security_headers(request: Request, call_next):
 
 
 # ---------------------------------------------------------------------------
+# Request body size limit
+# ---------------------------------------------------------------------------
+
+# Largest legitimate upload is the 1 MB run import (as multipart, with
+# encoding overhead). Everything else is small forms.
+_MAX_REQUEST_BODY_BYTES = 2 * 1024 * 1024
+
+
+class _BodyTooLarge(StarletteHTTPException):
+    """413 as an HTTPException subclass: FastAPI wraps generic exceptions
+    raised during form parsing into a 400 ("error parsing the body") but
+    re-raises HTTPException as-is, so this reaches the 413 handler intact."""
+
+    def __init__(self):
+        super().__init__(status_code=413, detail="Request body too large.")
+
+
+class BodySizeLimitMiddleware:
+    """Reject oversized request bodies before any route code parses them.
+
+    The per-route caps (1 MB run import, 500 KB stats import) are checked
+    only after Starlette has parsed — and potentially spooled to temp disk —
+    the complete multipart body, so a huge upload did all its damage before
+    the check ran. Pure ASGI (not BaseHTTPMiddleware) so a declared
+    Content-Length is rejected before a single body byte is read, and
+    chunked bodies are counted as they stream.
+    """
+
+    def __init__(self, app, max_bytes: int = _MAX_REQUEST_BODY_BYTES):
+        self.app = app
+        self.max_bytes = max_bytes
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        for name, value in scope.get("headers") or ():
+            if name == b"content-length":
+                try:
+                    declared = int(value)
+                except ValueError:
+                    declared = self.max_bytes + 1
+                if declared > self.max_bytes:
+                    return await self._reject(send)
+        received = 0
+        response_started = False
+
+        async def counting_receive():
+            nonlocal received
+            message = await receive()
+            if message["type"] == "http.request":
+                received += len(message.get("body", b""))
+                if received > self.max_bytes:
+                    raise _BodyTooLarge()
+            return message
+
+        async def tracking_send(message):
+            nonlocal response_started
+            if message["type"] == "http.response.start":
+                response_started = True
+            await send(message)
+
+        try:
+            await self.app(scope, counting_receive, tracking_send)
+        except _BodyTooLarge:
+            if response_started:
+                raise
+            await self._reject(send)
+
+    @staticmethod
+    async def _reject(send):
+        await send({"type": "http.response.start", "status": 413,
+                    "headers": [(b"content-type", b"text/plain; charset=utf-8")]})
+        await send({"type": "http.response.body",
+                    "body": b"Request body too large."})
+
+
+# Added last = outermost: the cheapest rejection runs before any other work.
+app.add_middleware(BodySizeLimitMiddleware)
+
+
+# ---------------------------------------------------------------------------
 # Exception handlers
 # ---------------------------------------------------------------------------
 

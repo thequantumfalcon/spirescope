@@ -19,17 +19,19 @@ def load_hypotheses():
     path = _hypotheses_file()
     if path.exists():
         try:
-            return json.loads(path.read_text(encoding="utf-8"))
+            data = json.loads(path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
-            pass
+            return {}
+        # Anything but an object is corrupt state; every caller iterates
+        # .items() and would 500 on a top-level array.
+        if isinstance(data, dict):
+            return data
     return {}
 
 
-def save_hypotheses(hypotheses):
-    try:
-        _hypotheses_file().write_text(json.dumps(hypotheses, indent=2), encoding="utf-8")
-    except OSError:
-        pass
+def save_hypotheses(hypotheses) -> bool:
+    from sts2.persist import write_json_atomic
+    return write_json_atomic(_hypotheses_file(), hypotheses)
 
 
 def register_hypothesis(hyp_id, text, condition_type, params):

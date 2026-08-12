@@ -144,7 +144,9 @@ def main():
         runs = get_run_history()
         print(f"Found {len(runs)} runs, computing stats...")
         stats = compute_aggregate_stats(runs)
-        save_aggregate(stats)
+        if not save_aggregate(stats):
+            print("Could not write the aggregate stats file (too large or unwritable).")
+            sys.exit(1)
         print(f"Exported aggregate stats from {stats.get('run_count', 0)} runs.")
         return
 
@@ -212,7 +214,10 @@ def main():
             print(f"Downloaded stats from {remote.get('run_count', 0)} runs.")
             existing = load_aggregate()
             merged = merge_aggregate(existing, remote)
-            save_aggregate(merged)
+            if not save_aggregate(merged):
+                print("Merged, but the result could not be persisted "
+                      "(too large or unwritable).")
+                sys.exit(1)
             print(f"Merged. Local aggregate now has {merged.get('run_count', 0)} runs.")
         except SyncError as e:
             print(f"Sync failed: {e}")

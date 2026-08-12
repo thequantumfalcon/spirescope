@@ -312,10 +312,17 @@ class KnowledgeBase:
             return
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
-            self.community_tips = data.get("community_tips", {})
-            self.meta_posts = data.get("meta_posts", [])
         except (json.JSONDecodeError, OSError):
-            pass
+            return
+        # Valid-but-wrong JSON (a top-level array) used to raise here and take
+        # KnowledgeBase construction — and with it application import — down.
+        if not isinstance(data, dict):
+            log.warning("community.json is not an object, ignoring")
+            return
+        tips = data.get("community_tips", {})
+        posts = data.get("meta_posts", [])
+        self.community_tips = tips if isinstance(tips, dict) else {}
+        self.meta_posts = posts if isinstance(posts, list) else []
 
     def get_community_tips(self, entity_name: str) -> list[str]:
         """Get community tips for an entity by name.

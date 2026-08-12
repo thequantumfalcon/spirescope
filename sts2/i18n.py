@@ -129,9 +129,12 @@ def get_language() -> str:
     if env:
         return env
     try:
-        return json.loads(_settings_path().read_text(encoding="utf-8")).get("language", "en")
+        settings = json.loads(_settings_path().read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return "en"
+    # A settings.json holding valid-but-wrong JSON (e.g. []) used to raise
+    # here — during application import, taking the whole app down with it.
+    return settings.get("language", "en") if isinstance(settings, dict) else "en"
 
 
 def set_language(code: str) -> bool:
@@ -143,17 +146,16 @@ def set_language(code: str) -> bool:
         settings = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         settings = {}
+    if not isinstance(settings, dict):
+        # Same valid-but-wrong-JSON hole as get_language: settings[] made this
+        # a TypeError 500. The file is corrupt state, not user prose — replace.
+        settings = {}
     settings["language"] = code
-    try:
-        path.write_text(json.dumps(settings, indent=2) + "\n", encoding="utf-8")
-    except OSError:
-        # Callers turn False into "Unknown language.", which is the wrong story
-        # when the locale was fine and the data dir was simply unwritable —
-        # exactly the Docker case, where this failed silently for every user.
-        logging.getLogger(__name__).warning(
-            "Could not persist language choice to %s", path, exc_info=True)
-        return False
-    return True
+    from sts2.persist import write_json_atomic
+    # Callers turn False into "Unknown language.", which is the wrong story
+    # when the locale was fine and the state dir was simply unwritable —
+    # exactly the Docker case, where this failed silently for every user.
+    return write_json_atomic(path, settings)
 
 
 def available_languages() -> list[dict]:
