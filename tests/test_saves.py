@@ -319,6 +319,19 @@ class TestGetProgress:
         assert jaw_worm["Ironclad"]["wins"] == 8
         assert jaw_worm["Ironclad"]["losses"] == 0
 
+    def test_oversized_progress_file_is_skipped(self, tmp_path, caplog):
+        """A corrupt/hostile progress.save must not be loaded unbounded."""
+        save_file = tmp_path / "progress.save"
+        save_file.write_text(json.dumps(MOCK_PROGRESS))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path), \
+             patch("sts2.saves._MAX_SAVE_FILE_SIZE", 10), \
+             caplog.at_level("WARNING", logger="sts2.saves"):
+            progress = get_progress()
+
+        assert progress is None
+        assert "progress.save" in caplog.text
+
 
 class TestGetRunHistory:
     def test_no_history_dir(self, tmp_path):
@@ -387,6 +400,39 @@ class TestGetRunHistory:
         assert runs[0].id == "run_002"
         assert runs[2].id == "run_000"
 
+    def test_oversized_run_file_is_skipped(self, tmp_path, caplog):
+        """A corrupt/hostile .run file must not be loaded unbounded."""
+        history_dir = tmp_path / "history"
+        history_dir.mkdir()
+        run_file = history_dir / "big.run"
+        run_file.write_text(json.dumps(MOCK_RUN_HISTORY))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path), \
+             patch("sts2.saves._MAX_SAVE_FILE_SIZE", 10), \
+             caplog.at_level("WARNING", logger="sts2.saves"):
+            runs = get_run_history()
+
+        assert runs == []
+        assert "big.run" in caplog.text
+
+    def test_run_history_reads_file_bytes_only_once(self, tmp_path):
+        """Regression: run files used to be read twice — once via
+        read_bytes() for the sha256 digest, once via _read_json() for the
+        JSON body. The JSON parse must now reuse the bytes already read for
+        the digest instead of re-opening the file."""
+        history_dir = tmp_path / "history"
+        history_dir.mkdir()
+        run_file = history_dir / "run_001.run"
+        run_file.write_text(json.dumps(MOCK_RUN_HISTORY))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path), \
+             patch("sts2.saves._read_json") as mock_read_json:
+            runs = get_run_history()
+
+        mock_read_json.assert_not_called()
+        assert len(runs) == 1
+        assert runs[0].id == "run_001"
+
 
 class TestProgressEpochs:
     def test_progress_includes_epochs(self, tmp_path):
@@ -408,3 +454,51 @@ class TestProgressEpochs:
         assert progress.epochs[0]["id"] == "NEOW_EPOCH"
         assert progress.epochs[0]["state"] == "revealed"
         assert progress.epochs[1]["state"] == "not_obtained"
+
+
+class TestCurrentRunMultiTree:
+    """Live tracking follows the freshest tree, and carries ascension."""
+
+    @staticmethod
+    def _write_live(save_dir, ascension, hp, save_time):
+        import json as _json
+        save_dir.mkdir(parents=True, exist_ok=True)
+        (save_dir / "current_run.save").write_text(_json.dumps({
+            "ascension": ascension,
+            "save_time": save_time,
+            "players": [{"id": "1", "character_id": "CHARACTER.IRONCLAD",
+                         "current_hp": hp, "max_hp": 80,
+                         "deck": [], "relics": [], "potions": []}],
+            "map_point_history": [],
+        }), encoding="utf-8")
+
+    def test_current_run_carries_ascension(self, tmp_path):
+        from unittest.mock import patch
+
+        from sts2.saves import get_current_run
+        self._write_live(tmp_path, 12, 55, 100)
+        with patch("sts2.saves.SAVE_DIR", tmp_path):
+            run = get_current_run()
+        assert run.active is True
+        assert run.ascension == 12
+
+    def test_freshest_tree_wins(self, tmp_path):
+        """A newer write in the modded tree must beat a stale vanilla file —
+        live tracking used to watch only the startup-selected tree."""
+        import os
+        from unittest.mock import patch
+
+        from sts2.saves import get_current_run
+        vanilla = tmp_path / "vanilla" / "saves"
+        modded = tmp_path / "modded" / "saves"
+        self._write_live(vanilla, 3, 70, 100)
+        self._write_live(modded, 9, 20, 200)
+        old = (vanilla / "current_run.save")
+        newer = (modded / "current_run.save")
+        os.utime(old, (1_000_000, 1_000_000))
+        os.utime(newer, (2_000_000, 2_000_000))
+        with patch("sts2.saves.SAVE_DIR", vanilla), \
+             patch("sts2.saves.SAVE_DIRS", [vanilla, modded]):
+            run = get_current_run()
+        assert run.ascension == 9
+        assert run.current_hp == 20

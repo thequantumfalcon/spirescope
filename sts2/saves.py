@@ -9,6 +9,8 @@ from sts2.models import CurrentRun, PlayerProgress, RunFloor, RunHistory
 
 log = logging.getLogger(__name__)
 
+_MAX_SAVE_FILE_SIZE = 20 * 1024 * 1024  # 20 MB — a corrupt/hostile save must not balloon memory
+
 
 def _save_origin(save_dir: Path) -> str:
     """Which save tree a directory belongs to: 'modded' or 'vanilla'."""
@@ -77,36 +79,51 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
     player_index=None tracks the local player (correct default for co-op);
     pass an explicit index to watch a specific seat via ?player=N.
     """
-    # Prefer live save files; fall back to backups (picking most recent)
+    # Prefer live save files across EVERY detected tree, taking the most
+    # recently written one — the tree that was freshest at startup is not
+    # necessarily where the player is now (switching between vanilla and
+    # modded play mid-session used to leave live tracking watching the
+    # inactive tree). Same patched-SAVE_DIR escape hatch as history search.
+    search_dirs = SAVE_DIRS if SAVE_DIRS and SAVE_DIRS[0] == SAVE_DIR else [SAVE_DIR]
     data = None
-    for fname in ("current_run.save", "current_run_mp.save"):
-        data = _read_json(SAVE_DIR / fname)
-        if data:
-            break
+    best_mtime = -1.0
+    for save_dir in search_dirs:
+        for fname in ("current_run.save", "current_run_mp.save"):
+            path = save_dir / fname
+            try:
+                mtime = path.stat().st_mtime
+            except OSError:
+                continue
+            if mtime <= best_mtime:
+                continue
+            candidate = _read_json(path)
+            if candidate:
+                data, best_mtime = candidate, mtime
 
     if not data:
-        # No live file — check backups, pick the most recently saved.
-        # Only use a backup if the run hasn't already finished (i.e. its
-        # start_time doesn't appear as a history file).
-        history_dir = SAVE_DIR / "history"
-        history_starts: set[str] = set()
-        if history_dir.exists():
-            history_starts = {p.stem for p in history_dir.iterdir() if p.suffix == ".run"}
+        # No live file — check backups across trees, pick the most recently
+        # saved. Only use a backup if the run hasn't already finished (i.e.
+        # its start_time doesn't appear as a history file in its own tree).
         best, best_time = None, 0
-        for fname in ("current_run.save.backup", "current_run_mp.save.backup"):
-            candidate = _read_json(SAVE_DIR / fname)
-            if not candidate:
-                continue
-            start = str(candidate.get("start_time", ""))
-            if start in history_starts:
-                continue  # This run already finished
-            try:
-                save_time = int(candidate.get("save_time") or 0)
-            except (TypeError, ValueError):
-                save_time = 0
-            if save_time > best_time:
-                best = candidate
-                best_time = save_time
+        for save_dir in search_dirs:
+            history_dir = save_dir / "history"
+            history_starts: set[str] = set()
+            if history_dir.exists():
+                history_starts = {p.stem for p in history_dir.iterdir() if p.suffix == ".run"}
+            for fname in ("current_run.save.backup", "current_run_mp.save.backup"):
+                candidate = _read_json(save_dir / fname)
+                if not candidate:
+                    continue
+                start = str(candidate.get("start_time", ""))
+                if start in history_starts:
+                    continue  # This run already finished
+                try:
+                    save_time = int(candidate.get("save_time") or 0)
+                except (TypeError, ValueError):
+                    save_time = 0
+                if save_time > best_time:
+                    best = candidate
+                    best_time = save_time
         if best:
             data = best
 
@@ -161,9 +178,17 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
                 card_picked=card_picked,
             ))
 
+    try:
+        ascension = int(data.get("ascension") or 0)
+    except (TypeError, ValueError):
+        ascension = 0
+
     return CurrentRun(
         active=True,
         character=character,
+        # Ghost comparison centers its window here; the field used to be
+        # missing entirely, pinning every comparison to ascension 0.
+        ascension=ascension,
         current_hp=player.get("current_hp", 0),
         max_hp=player.get("max_hp", 0),
         gold=player.get("gold", 0),
@@ -184,7 +209,15 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
 
 def get_progress() -> PlayerProgress | None:
     """Read player progress from progress.save."""
-    data = _read_json(SAVE_DIR / "progress.save")
+    path = SAVE_DIR / "progress.save"
+    try:
+        if path.stat().st_size > _MAX_SAVE_FILE_SIZE:
+            log.warning("Skipping oversized progress file %s (> %d bytes)",
+                        path, _MAX_SAVE_FILE_SIZE)
+            return None
+    except OSError:
+        pass
+    data = _read_json(path)
     if not data:
         return None
 
@@ -277,7 +310,7 @@ def get_run_history() -> list[RunHistory]:
     both — those collapse to one run. Same stem with different bytes (rare
     divergent edit) keeps both, disambiguated as "<stem>@<origin>".
     """
-    entries: list[tuple[Path, str, str]] = []  # (run_file, run_id, origin)
+    entries: list[tuple[Path, str, str, bytes]] = []  # (run_file, run_id, origin, raw)
     first_digest: dict[str, str] = {}  # stem -> sha256 of first-seen file
     used_ids: set[str] = set()
     for save_dir, origin in _history_search_dirs():
@@ -286,7 +319,12 @@ def get_run_history() -> list[RunHistory]:
             continue
         for run_file in history_dir.glob("*.run"):
             try:
-                digest = hashlib.sha256(run_file.read_bytes()).hexdigest()
+                if run_file.stat().st_size > _MAX_SAVE_FILE_SIZE:
+                    log.warning("Skipping oversized run file %s (> %d bytes)",
+                                run_file.name, _MAX_SAVE_FILE_SIZE)
+                    continue
+                raw = run_file.read_bytes()
+                digest = hashlib.sha256(raw).hexdigest()
             except OSError as e:
                 log.warning("Failed to read run file %s: %s", run_file.name, e)
                 continue
@@ -305,14 +343,14 @@ def get_run_history() -> list[RunHistory]:
                     stem, run_id,
                 )
             used_ids.add(run_id)
-            entries.append((run_file, run_id, origin))
+            entries.append((run_file, run_id, origin, raw))
 
     runs = []
-    for run_file, run_id, origin in sorted(
+    for run_file, run_id, origin, raw in sorted(
         entries, key=lambda e: e[0].name, reverse=True
     ):
         try:
-            data = _read_json(run_file)
+            data = json.loads(raw)
             if not data:
                 continue
 

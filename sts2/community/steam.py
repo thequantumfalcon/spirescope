@@ -25,6 +25,7 @@ _REVIEWS_URL = (
 )
 _GUIDES_URL = f"https://steamcommunity.com/app/{_APP_ID}/guides/"
 _DISCUSSIONS_URL = f"https://steamcommunity.com/app/{_APP_ID}/discussions/"
+_MAX_RESPONSE_SIZE = 10_000_000  # 10 MB
 
 
 def _fetch_url(url: str, retries: int = 1) -> str | None:
@@ -33,7 +34,11 @@ def _fetch_url(url: str, retries: int = 1) -> str | None:
         try:
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
             with urllib.request.urlopen(req, timeout=30) as resp:
-                return resp.read().decode("utf-8", errors="replace")
+                body = resp.read(_MAX_RESPONSE_SIZE + 1)
+                if len(body) > _MAX_RESPONSE_SIZE:
+                    raise urllib.error.URLError(
+                        f"Response too large (> {_MAX_RESPONSE_SIZE} bytes)")
+                return body.decode("utf-8", errors="replace")
         except (urllib.error.URLError, OSError) as e:
             if attempt < retries:
                 log.warning("Steam fetch failed (attempt %d/%d): %s", attempt + 1, retries + 1, e)

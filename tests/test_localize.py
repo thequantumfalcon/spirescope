@@ -112,6 +112,60 @@ def test_relative_file_base_offsets_are_honoured(tmp_path):
     assert localize.read_localization(game)["eng"]["cards"]["BASH.title"] == "Bash"
 
 
+def test_truncated_pck_is_reported_as_corrupt(tmp_path):
+    """A struct.error from a short read must surface as LocalizeError, not
+    an uncaught traceback."""
+    game = _build_pck(tmp_path, {
+        "localization/eng/cards.json": _loc({"BASH.title": "Bash"}),
+    })
+    pck = game / "SlayTheSpire2.pck"
+    pck.write_bytes(pck.read_bytes()[:_HEADER_SIZE])  # header only, no directory
+    with pytest.raises(localize.LocalizeError, match="corrupt or truncated"):
+        localize.read_localization(game)
+
+
+def test_implausible_directory_count_is_rejected(tmp_path):
+    game = _build_pck(tmp_path, {
+        "localization/eng/cards.json": _loc({"BASH.title": "Bash"}),
+    })
+    pck = game / "SlayTheSpire2.pck"
+    raw = bytearray(pck.read_bytes())
+    dir_offset, = struct.unpack("<Q", raw[32:40])
+    struct.pack_into("<I", raw, dir_offset, 0xFFFFFFFF)  # absurd entry count
+    pck.write_bytes(bytes(raw))
+    with pytest.raises(localize.LocalizeError, match="implausible"):
+        localize.read_localization(game)
+
+
+def test_implausible_path_length_is_rejected(tmp_path):
+    game = _build_pck(tmp_path, {
+        "localization/eng/cards.json": _loc({"BASH.title": "Bash"}),
+    })
+    pck = game / "SlayTheSpire2.pck"
+    raw = bytearray(pck.read_bytes())
+    dir_offset, = struct.unpack("<Q", raw[32:40])
+    struct.pack_into("<I", raw, dir_offset + 4, 0xFFFFFFF0)  # absurd plen
+    pck.write_bytes(bytes(raw))
+    with pytest.raises(localize.LocalizeError, match="path length"):
+        localize.read_localization(game)
+
+
+def test_out_of_range_entry_offset_is_rejected(tmp_path):
+    game = _build_pck(tmp_path, {
+        "localization/eng/cards.json": _loc({"BASH.title": "Bash"}),
+    })
+    pck = game / "SlayTheSpire2.pck"
+    raw = bytearray(pck.read_bytes())
+    dir_offset, = struct.unpack("<Q", raw[32:40])
+    path = b"localization/eng/cards.json"
+    pad = (-len(path)) % 4
+    off_field = dir_offset + 4 + len(path) + pad
+    struct.pack_into("<Q", raw, off_field, 10_000_000_000)  # way past EOF
+    pck.write_bytes(bytes(raw))
+    with pytest.raises(localize.LocalizeError, match="offset"):
+        localize.read_localization(game)
+
+
 def test_unknown_language_lists_what_is_available(tmp_path, monkeypatch):
     game = _build_pck(tmp_path, {
         "localization/eng/cards.json": _loc({"BASH.title": "Bash"}),

@@ -22,6 +22,7 @@ WIKI_BASE = "https://slaythespire2.gg"
 # Per their robots.txt: general scraping is permitted; /api, /admin,
 # /analysis, /planner are disallowed and we never request them.
 _SCRAPE_DELAY = 1.0  # seconds between wiki requests to avoid hammering
+_MAX_RESPONSE_SIZE = 10_000_000  # 10 MB — a wiki page should never be this large
 
 # Markup tags used in wiki descriptions: [gold]...[/gold], [blue], [red], etc.
 _COLOR_RE = re.compile(r"\[/?(?:gold|blue|red|green)\]")
@@ -102,7 +103,11 @@ def _fetch_page(path: str) -> str:
     url = f"{WIKI_BASE}{path}"
     req = urllib.request.Request(url, headers={"User-Agent": _get_user_agent()})
     with urllib.request.urlopen(req, timeout=30) as resp:
-        return resp.read().decode("utf-8")
+        body = resp.read(_MAX_RESPONSE_SIZE + 1)
+        if len(body) > _MAX_RESPONSE_SIZE:
+            raise urllib.error.URLError(
+                f"Response for {path} too large (> {_MAX_RESPONSE_SIZE} bytes)")
+        return body.decode("utf-8")
 
 
 def _extract_json_objects(html: str, category: str) -> list[dict]:

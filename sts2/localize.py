@@ -76,38 +76,55 @@ def read_localization(game_dir=None) -> dict:
             f"No SlayTheSpire2.pck under {game_dir}. Point STS2_GAME_DIR at "
             "the game's install directory.")
     out: dict = {}
-    with open(pck, "rb") as f:
-        if f.read(4) != b"GDPC":
-            raise LocalizeError(f"{pck} is not a Godot archive")
-        f.read(4)                                    # pack format version
-        f.read(12)                                   # engine version
-        flags, file_base = struct.unpack("<IQ", f.read(12))
-        dir_offset, = struct.unpack("<Q", f.read(8))
-        f.seek(dir_offset)
-        count, = struct.unpack("<I", f.read(4))
-        wanted = []
-        for _ in range(count):
-            plen, = struct.unpack("<I", f.read(4))
-            path = f.read(plen).rstrip(b"\x00").decode("utf-8", "replace")
-            offset, size = struct.unpack("<2Q", f.read(16))
-            f.read(16)                               # md5
-            entry_flags, = struct.unpack("<I", f.read(4))
-            if entry_flags & 1:                      # encrypted: never touch
-                continue
-            parts = path.split("/")
-            if (len(parts) != 3 or parts[0] != "localization"
-                    or not parts[2].endswith(".json")
-                    or parts[2][:-5] not in _WANTED):
-                continue
-            wanted.append((parts[1], parts[2][:-5],
-                           file_base + offset if flags & 2 else offset, size))
-        for lang, table, offset, size in wanted:
-            f.seek(offset)
-            try:
-                out.setdefault(lang, {})[table] = json.loads(
-                    f.read(size).decode("utf-8"))
-            except (UnicodeDecodeError, json.JSONDecodeError):
-                log.warning("Skipping unreadable %s/%s", lang, table)
+    file_size = pck.stat().st_size
+    try:
+        with open(pck, "rb") as f:
+            if f.read(4) != b"GDPC":
+                raise LocalizeError(f"{pck} is not a Godot archive")
+            f.read(4)                                    # pack format version
+            f.read(12)                                   # engine version
+            flags, file_base = struct.unpack("<IQ", f.read(12))
+            dir_offset, = struct.unpack("<Q", f.read(8))
+            f.seek(dir_offset)
+            count, = struct.unpack("<I", f.read(4))
+            # Each directory entry is at least plen(4) + offset/size(16) +
+            # md5(16) + flags(4) bytes; a count that couldn't fit in what's
+            # left of the file is corrupt, not just a lot of entries.
+            if count > (file_size - f.tell()) // 40:
+                raise LocalizeError(f"{pck} directory entry count is implausible")
+            wanted = []
+            for _ in range(count):
+                plen, = struct.unpack("<I", f.read(4))
+                if not (0 < plen <= 4096):
+                    raise LocalizeError(f"{pck} has an implausible path length")
+                raw = f.read(plen)
+                if len(raw) != plen:
+                    raise LocalizeError(f"{pck} is a corrupt or truncated pack file")
+                path = raw.rstrip(b"\x00").decode("utf-8", "replace")
+                offset, size = struct.unpack("<2Q", f.read(16))
+                f.read(16)                               # md5
+                entry_flags, = struct.unpack("<I", f.read(4))
+                if entry_flags & 1:                      # encrypted: never touch
+                    continue
+                parts = path.split("/")
+                if (len(parts) != 3 or parts[0] != "localization"
+                        or not parts[2].endswith(".json")
+                        or parts[2][:-5] not in _WANTED):
+                    continue
+                real_offset = file_base + offset if flags & 2 else offset
+                if not (0 <= real_offset <= file_size and size <= file_size - real_offset):
+                    raise LocalizeError(
+                        f"{pck} has an out-of-range offset/size for {path}")
+                wanted.append((parts[1], parts[2][:-5], real_offset, size))
+            for lang, table, offset, size in wanted:
+                f.seek(offset)
+                try:
+                    out.setdefault(lang, {})[table] = json.loads(
+                        f.read(size).decode("utf-8"))
+                except (UnicodeDecodeError, json.JSONDecodeError):
+                    log.warning("Skipping unreadable %s/%s", lang, table)
+    except struct.error as ex:
+        raise LocalizeError(f"{pck} is a corrupt or truncated pack file") from ex
     if "eng" not in out:
         raise LocalizeError(f"No English localization found in {pck}")
     return out

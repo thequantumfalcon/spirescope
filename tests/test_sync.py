@@ -242,3 +242,24 @@ class TestRedirectValidation:
         from sts2.sync import _validate_url
         with pytest.raises(ValueError):
             _validate_url("https://100.64.0.1/api")
+
+
+class TestInvalidUrlSurfacesAsSyncError:
+    """A malformed STS2_SYNC_URL was a raw ValueError traceback: the CLI
+    catches SyncError only."""
+
+    def test_upload_wraps_validation_error(self, monkeypatch):
+        import pytest
+
+        import sts2.sync as sync
+        monkeypatch.setattr(sync, "SYNC_URL", "not a url")
+        with pytest.raises(sync.SyncError, match="Invalid sync URL"):
+            sync.upload_stats({"run_count": 1})
+
+    def test_download_wraps_validation_error(self, monkeypatch):
+        import pytest
+
+        import sts2.sync as sync
+        monkeypatch.setattr(sync, "SYNC_URL", "http://example.com")  # not https
+        with pytest.raises(sync.SyncError, match="Invalid sync URL"):
+            sync.download_stats()
