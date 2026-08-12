@@ -883,7 +883,6 @@ class TestSSEIntegration:
     async def test_sse_delivers_event_data(self):
         """SSE generator should yield valid JSON data events."""
         import asyncio
-
         from types import SimpleNamespace
 
         from sts2.routes import live_stream

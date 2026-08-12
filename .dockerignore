@@ -15,7 +15,7 @@ venv/
 tests/
 *.md
 !README.md
-LICENSE
+!THIRD_PARTY_NOTICES.md
 Dockerfile
 .pytest_cache/
 .coverage

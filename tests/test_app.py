@@ -1964,7 +1964,6 @@ async def test_watch_saves_polling_fallback():
             raise asyncio.CancelledError
 
     import asyncio
-
     from unittest.mock import MagicMock
     mock_dir = MagicMock()
     mock_dir.exists.return_value = False
