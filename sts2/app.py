@@ -14,9 +14,10 @@ import sys
 import time
 
 from fastapi import FastAPI, Request
-from fastapi.exceptions import StarletteHTTPException
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError, StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse, RedirectResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -699,6 +700,17 @@ async def check_host(request: Request, call_next):
 _LOG_SANITIZE_RE = re.compile(r"[\x00-\x1f\x7f]")
 
 
+def _wants_json(request: Request) -> bool:
+    """API paths get JSON errors; pages get the HTML error template.
+
+    Hand-written /api handlers returned a JSON envelope, but anything raised
+    past them — request validation, an unknown /api path, an unhandled
+    exception — fell through to the HTML page, so a JSON client parsing an
+    error got a document instead.
+    """
+    return request.url.path.startswith("/api/")
+
+
 @app.exception_handler(StarletteHTTPException)
 async def http_error_handler(request: Request, exc: StarletteHTTPException):
     messages = {
@@ -710,16 +722,37 @@ async def http_error_handler(request: Request, exc: StarletteHTTPException):
         422: "Invalid request parameters.",
         429: "Too many requests.",
     }
+    message = exc.detail if isinstance(getattr(exc, "detail", None), str) else None
+    message = message or messages.get(exc.status_code, "Something went wrong.")
+    if _wants_json(request):
+        return JSONResponse({"error": message, "status": exc.status_code},
+                            status_code=exc.status_code)
     return templates.TemplateResponse(request, "error.html", {
         "error_code": exc.status_code,
         "error_message": messages.get(exc.status_code, "Something went wrong."),
     }, status_code=exc.status_code)
 
 
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(request: Request, exc: RequestValidationError):
+    """FastAPI's own 422 shape ({"detail": [...]}) is not this app's error
+    envelope; API clients should see one shape from every failure."""
+    if _wants_json(request):
+        return JSONResponse({"error": "Invalid request parameters.", "status": 422,
+                             "detail": jsonable_encoder(exc.errors())},
+                            status_code=422)
+    return templates.TemplateResponse(request, "error.html", {
+        "error_code": 422, "error_message": "Invalid request parameters.",
+    }, status_code=422)
+
+
 @app.exception_handler(Exception)
 async def global_error_handler(request: Request, exc: Exception):
     safe_path = _LOG_SANITIZE_RE.sub("", str(request.url.path))[:200]
     log.exception("Unhandled error on %s", safe_path)
+    if _wants_json(request):
+        return JSONResponse({"error": "Something went wrong. Please try again.",
+                             "status": 500}, status_code=500)
     return templates.TemplateResponse(request, "error.html", {
         "error_code": 500,
         "error_message": "Something went wrong. Please try again.",

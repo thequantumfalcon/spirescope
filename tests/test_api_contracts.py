@@ -147,3 +147,29 @@ async def test_api_export_stats_has_schema_version(client):
     data = resp.json()
     assert data["schema_version"] == 1
     assert "run_count" in data
+
+
+class TestErrorEnvelopeIsUniform:
+    """Hand-written /api errors used the envelope, but anything raised past
+    them fell through to the HTML error page — a JSON client parsing a
+    failure got a document instead."""
+
+    async def test_unknown_api_path_returns_json(self, client):
+        resp = await client.get("/api/no-such-endpoint")
+        assert resp.status_code == 404
+        assert resp.headers["content-type"].startswith("application/json")
+        assert resp.json()["status"] == 404
+        assert "error" in resp.json()
+
+    async def test_request_validation_error_returns_json_envelope(self, client):
+        # ascension is validated 0..20 by the route signature.
+        resp = await client.get("/api/analytics?ascension=999")
+        assert resp.status_code == 422
+        assert resp.headers["content-type"].startswith("application/json")
+        body = resp.json()
+        assert body["status"] == 422 and "error" in body
+
+    async def test_page_routes_still_render_html_errors(self, client):
+        resp = await client.get("/no-such-page")
+        assert resp.status_code == 404
+        assert resp.headers["content-type"].startswith("text/html")

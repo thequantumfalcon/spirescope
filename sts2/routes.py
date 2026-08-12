@@ -141,9 +141,14 @@ async def _compute_live_run(player: int | None = None) -> CurrentRun:
             merged["act"] = log["act"]
         if log.get("encounters_won"):
             merged["encounters_won"] = log["encounters_won"]
-        # Combat telemetry exists only in the log.
-        merged["cards_played"] = log.get("cards_played", [])
-        merged["extra_turns"] = log.get("extra_turns", 0)
+        # Combat telemetry exists only in the log, and in co-op the log
+        # interleaves both players — select the seat this view is watching
+        # rather than reporting one merged total as if it were theirs.
+        seat = merged.get("player_index", 0) or 0
+        by_player = log.get("cards_played_by_player") or {}
+        turns_by_player = log.get("extra_turns_by_player") or {}
+        merged["cards_played"] = by_player.get(seat, log.get("cards_played", []))
+        merged["extra_turns"] = turns_by_player.get(seat, log.get("extra_turns", 0))
         merged["elites_defeated"] = log.get("elites_defeated", 0)
         return CurrentRun(**merged)
 
@@ -849,9 +854,13 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
             all_runs = await a._get_runs()
             autopsy = diagnose_run(run, a.kb, all_runs)
         except ImportError:
+            # Expected in the public build: the module is not shipped.
             pass
         except Exception:
-            pass
+            # A real failure must leave a trace. Swallowing it silently made
+            # a regression indistinguishable from the feature being absent.
+            logging.getLogger(__name__).warning(
+                "Autopsy generation failed for run %s", run.id, exc_info=True)
     # Tamper-evidence: SHA-256 over the run's complete canonical record.
     # Same digest = identical record; it is a checksum, not a signature.
     from sts2.integrity import compute_run_digest

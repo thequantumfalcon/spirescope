@@ -353,3 +353,50 @@ class TestLogTailerPoll:
 
         result = tailer.poll()
         assert result is None  # run ended, no active state
+
+
+class TestCombatTelemetryFidelity:
+    """The card pattern captured a bare word, so every dotted card id
+    collapsed to 'CARD'; and the player number was discarded, so in co-op a
+    partner's plays were attributed to whoever the page was watching."""
+
+    @staticmethod
+    def _tailer(tmp_path, lines):
+        from sts2.logparser import LogTailer
+        log_file = tmp_path / "godot.log"
+        log_file.write_text("[INFO] [StartRunLobby] Local player 0 is ready\n"
+                            + "".join(line + "\n" for line in lines),
+                            encoding="utf-8")
+        t = LogTailer(log_path=log_file)
+        t.poll()
+        return t
+
+    def test_full_dotted_card_id_is_captured(self, tmp_path):
+        t = self._tailer(tmp_path, ["[INFO] Player 0 playing card CARD.BASH",
+                                    "[INFO] Player 0 playing card CARD.STRIKE"])
+        assert t.state.cards_played_by_player[0] == ["CARD.BASH", "CARD.STRIKE"]
+
+    def test_plays_are_attributed_per_player(self, tmp_path):
+        t = self._tailer(tmp_path, ["[INFO] Player 0 playing card CARD.BASH",
+                                    "[INFO] Player 1 playing card CARD.NEUTRALIZE",
+                                    "[INFO] Player 1 playing card CARD.SURVIVOR"])
+        assert t.state.cards_played_by_player[0] == ["CARD.BASH"]
+        assert t.state.cards_played_by_player[1] == ["CARD.NEUTRALIZE",
+                                                     "CARD.SURVIVOR"]
+        # Each seat reports only its own plays.
+        assert t.state.to_dict(0)["cards_played"] == ["CARD.BASH"]
+        assert t.state.to_dict(1)["cards_played"] == ["CARD.NEUTRALIZE",
+                                                      "CARD.SURVIVOR"]
+
+    def test_extra_turns_are_attributed_per_player(self, tmp_path):
+        t = self._tailer(tmp_path, [
+            "[INFO] Player 1 (REGENT) is taking an extra turn",
+            "[INFO] Player 1 (REGENT) is taking an extra turn"])
+        assert t.state.to_dict(0)["extra_turns"] == 0
+        assert t.state.to_dict(1)["extra_turns"] == 2
+
+    def test_per_player_lists_stay_bounded(self, tmp_path):
+        t = self._tailer(tmp_path, ["[INFO] Player 0 playing card CARD.STRIKE"] * 600)
+        played = t.state.cards_played_by_player[0]
+        assert len(played) == t.state._cards_played_cap
+        assert played[-1] == "CARD.STRIKE"

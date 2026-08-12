@@ -70,8 +70,12 @@ _RE_NEOW_EVENT = re.compile(r"\[VERYDEBUG\] \[EventSynchronizer\] Event EVENT\.N
 # Combat telemetry — surfaces signal the godot.log emits but the parser
 # previously ignored. Enables turn-by-turn analytics without requiring the
 # STS2MCP mod.
-_RE_PLAYING_CARD = re.compile(r"\[INFO\] Player \d+ playing card (\w+)")
-_RE_EXTRA_TURN = re.compile(r"\[INFO\] Player \d+ \([A-Z]+\) is taking an extra turn")
+# Card ids are dotted (CARD.BASH), so a bare \w+ captured only "CARD" —
+# every play recorded the same meaningless token. The player number is
+# captured too: in co-op the log interleaves both players, and attributing
+# a teammate's plays to whoever the page is watching is simply wrong.
+_RE_PLAYING_CARD = re.compile(r"\[INFO\] Player (\d+) playing card ([\w.]+)")
+_RE_EXTRA_TURN = re.compile(r"\[INFO\] Player (\d+) \([A-Z]+\) is taking an extra turn")
 _RE_ELITES_DEFEATED = re.compile(r"\[INFO\] Elites Defeated: (\d+)/\d+")
 
 # Character ID mapping
@@ -104,14 +108,16 @@ class LogRunState:
         self.events_seen: list[str] = []
         self.total_players = 1
         self.run_started = False
-        # Combat telemetry captured from godot.log. cards_played is bounded
-        # to prevent unbounded memory growth on long runs (O(n) copy per SSE poll).
-        self.cards_played: list[str] = []
+        # Combat telemetry captured from godot.log, kept per player because
+        # a co-op log interleaves both. Each list is bounded to prevent
+        # unbounded memory growth on long runs (O(n) copy per SSE poll).
+        self.cards_played_by_player: dict[int, list[str]] = {}
         self._cards_played_cap = 500
-        self.extra_turns = 0
+        self.extra_turns_by_player: dict[int, int] = {}
+        # Run-wide, not per player: the game emits a cumulative count.
         self.elites_defeated = 0
 
-    def to_dict(self) -> dict:
+    def to_dict(self, player_index: int = 0) -> dict:
         """Convert to dict compatible with CurrentRun.model_dump().
 
         Combat telemetry (cards_played, extra_turns, elites_defeated) is
@@ -119,6 +125,12 @@ class LogRunState:
         through to API/SSE payloads while save-file-only paths just leave
         the defaults. Before the fields were declared, pydantic silently
         dropped them here and no consumer ever saw them.
+
+        Telemetry is reported for `player_index`, and the full per-player
+        breakdown rides along under keys CurrentRun does not declare so
+        callers that know which seat they are watching can select. Reporting
+        one merged total attributed a co-op partner's plays to whoever the
+        page happened to be showing.
         """
         return {
             "active": self.active,
@@ -138,9 +150,12 @@ class LogRunState:
             "floors": [],
             "player_index": 0,
             "total_players": self.total_players,
-            "cards_played": list(self.cards_played),
-            "extra_turns": self.extra_turns,
+            "cards_played": list(self.cards_played_by_player.get(player_index, [])),
+            "extra_turns": self.extra_turns_by_player.get(player_index, 0),
             "elites_defeated": self.elites_defeated,
+            "cards_played_by_player": {p: list(v) for p, v
+                                       in self.cards_played_by_player.items()},
+            "extra_turns_by_player": dict(self.extra_turns_by_player),
         }
 
 
@@ -402,15 +417,20 @@ class LogTailer:
         # Card played in combat
         m = _RE_PLAYING_CARD.search(line)
         if m:
-            self.state.cards_played.append(m.group(1))
-            # Cap the list to prevent unbounded growth on long runs.
-            if len(self.state.cards_played) > self.state._cards_played_cap:
-                self.state.cards_played = self.state.cards_played[-self.state._cards_played_cap:]
+            player = int(m.group(1))
+            played = self.state.cards_played_by_player.setdefault(player, [])
+            played.append(m.group(2))
+            # Cap each list to prevent unbounded growth on long runs.
+            if len(played) > self.state._cards_played_cap:
+                del played[:-self.state._cards_played_cap]
             return True
 
         # Extra turn triggered (Regent / Heel / etc.)
-        if _RE_EXTRA_TURN.search(line):
-            self.state.extra_turns += 1
+        m = _RE_EXTRA_TURN.search(line)
+        if m:
+            player = int(m.group(1))
+            self.state.extra_turns_by_player[player] = (
+                self.state.extra_turns_by_player.get(player, 0) + 1)
             return True
 
         # Elites defeated counter — game emits cumulative count
