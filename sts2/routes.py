@@ -847,26 +847,19 @@ async def records(request: Request):
 
 @router.get("/hypothesis", response_class=HTMLResponse)
 async def hypothesis_list(request: Request):
-    """List + manage Bayesian-style hypotheses tested against run history."""
-    from sts2.hypothesis import load_hypotheses, save_hypotheses, update_hypothesis
+    """List + manage hypotheses tested against run history.
+
+    Strictly read-only: evaluation is a pure computation over a snapshot of
+    run history, run off the event loop, and nothing is written. The old
+    version reset and rewrote the hypotheses file once per run x hypothesis
+    on every GET — thousands of synchronous event-loop-blocking writes.
+    """
+    from sts2.hypothesis import evaluate_hypotheses, load_hypotheses
     a = _app()
     runs = await a._get_runs()
     hyps = load_hypotheses()
-    # Re-evaluate all hypotheses fresh against current run history so the page
-    # is idempotent and never double-counts.
-    for h in hyps.values():
-        h["runs_tested"] = 0
-        h["runs_matching"] = 0
-        h["runs_not_matching"] = 0
-        h["wins_matching"] = 0
-        h["wins_not_matching"] = 0
-        h["verdict"] = "insufficient_data"
-        h.pop("effect_size", None)
-    save_hypotheses(hyps)
-    for run in runs:
-        for hyp_id in list(hyps):
-            update_hypothesis(hyp_id, run)
-    hyps = load_hypotheses()
+    if hyps:
+        hyps = await asyncio.to_thread(evaluate_hypotheses, hyps, list(runs))
     return a.templates.TemplateResponse(request, "hypothesis.html", {
         "hypotheses": hyps,
         "csrf_token": a.generate_csrf_token(),

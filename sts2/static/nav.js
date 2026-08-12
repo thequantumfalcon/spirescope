@@ -33,14 +33,28 @@
       fetch('/shutdown', {
         method: 'POST',
         headers: { 'X-CSRF-Token': token }
-      }).then(function() {
-        document.body.innerHTML =
-          '<h1 class="shutdown-msg">SpireScope stopped. You can close this tab.</h1>';
+      }).then(function(response) {
+        // fetch resolves on 403/500 too — only report success when it is one.
+        if (response.ok) {
+          document.body.innerHTML =
+            '<h1 class="shutdown-msg">SpireScope stopped. You can close this tab.</h1>';
+        } else {
+          window.alert('Could not stop SpireScope (HTTP ' + response.status + ').');
+        }
       }).catch(function() {
-        // Network error or 403 — leave page intact so user knows something failed
+        // True network error — leave the page intact so the user can retry.
       });
     });
   }
+  // Confirmation for destructive forms. Delegated here because the CSP
+  // (script-src 'self') blocks inline onsubmit handlers.
+  document.addEventListener('submit', function(e) {
+    var form = e.target;
+    if (form.classList && form.classList.contains('js-confirm')) {
+      var msg = form.getAttribute('data-confirm') || 'Are you sure?';
+      if (!window.confirm(msg)) e.preventDefault();
+    }
+  });
   // Copy seed button
   var cs = document.querySelector('.copy-seed');
   if (cs) {
