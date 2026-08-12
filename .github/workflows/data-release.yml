@@ -10,9 +10,18 @@ permissions:
 jobs:
   package:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
 
       - name: Validate data files
         run: |
@@ -32,6 +41,30 @@ jobs:
               sys.exit(f"cards.json suspiciously small ({len(cards)})")
           print(f"OK: {len(cards)} cards")
           EOF
+
+      - name: Verify the tag date matches sts2/data/last_updated.txt
+        # A mismatched tag means clients' local-vs-remote date comparison in
+        # check_for_data_update() never resolves to "up to date", so they
+        # re-offer this same bundle forever. Fail the release before it ships.
+        run: |
+          import os, re, sys, pathlib
+          tag = os.environ["TAG"]
+          m = re.fullmatch(r"data-v(\d{4})\.(\d{2})\.(\d{2})", tag)
+          if not m:
+              print(f"::error::tag {tag!r} is not in data-vYYYY.MM.DD form")
+              sys.exit(1)
+          tag_date = f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
+          stamp = pathlib.Path("sts2/data/last_updated.txt").read_text(encoding="utf-8").strip()[:10]
+          if tag_date != stamp:
+              print(f"::error::tag date {tag_date} does not match last_updated.txt ({stamp})")
+              sys.exit(1)
+          print(f"tag and last_updated.txt agree: {tag_date}")
+        shell: python
+        env:
+          TAG: ${{ github.ref_name }}
+
+      - name: Run data pipeline tests
+        run: python -m pytest tests/test_data_pipeline.py -q
 
       - name: Package data bundle
         run: |
