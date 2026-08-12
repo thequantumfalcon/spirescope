@@ -1,5 +1,116 @@
 # Changelog
 
+## v3.1.0
+
+### Security
+
+- **Network binds now require authentication.** Binding to anything but
+  loopback (including the documented Docker setup) used to serve your entire
+  run history, live state, exports, and every settings/import action to any
+  client that could reach the port — CSRF tokens prove a request came from a
+  page, not who sent it, and every page handed one out. `serve` now refuses a
+  non-loopback bind unless `STS2_AUTH_TOKEN` is set, and every request must
+  present it (header, or `?token=` once per browser, then a signed cookie).
+  Loopback use stays zero-config. `STS2_ALLOW_UNAUTHENTICATED=1` is the
+  explicit opt-out for trusted reverse-proxy setups.
+- **Admin endpoints are disabled until a token is configured.** The
+  auto-generated admin token was logged at startup, which put a live
+  credential into console and container logs.
+- **Request bodies are capped before parsing.** Upload size checks used to
+  run only after the whole multipart body was parsed and spooled to disk.
+  A 2 MB request cap now rejects oversized bodies up front, and every
+  local/upstream input is bounded: save files, the game-install `.pck`
+  reader, wiki/Steam fetches, and data-bundle downloads and extraction.
+- **Imported data is validated as data, not just as JSON.** A top-level
+  array in a settings, community, hypotheses, aggregate, or imported-run
+  file used to crash pages (or the whole app at startup); `Infinity`
+  counters crashed the stats import and could persist as nonstandard JSON.
+  Every loader now shape-checks, rejects non-finite numbers, enforces
+  counter invariants (wins ≤ total, picks ≤ offers), and reports — instead
+  of silently skipping — a failed persist.
+
+### Fixed
+
+- **Ghost Run Comparison is actually visible now.** The splits were computed
+  on every live view and then discarded — nothing rendered them — and the
+  comparison was always anchored to ascension 0 because the live run never
+  carried its ascension. The live page now shows the splits and summary,
+  updates them over SSE without a reload, and matches the ghost to your
+  real ascension.
+- **The Graveyard shows your newest deaths.** It selected the oldest 50, so
+  once you had 50 losses no new death ever appeared.
+- **Run Integrity now checks something.** The digest omitted whether you
+  won, what killed you, and the run's length — two runs differing only in
+  those produced the same hash while the page promised byte-for-byte
+  identity. The digest now covers the complete run record, exports embed
+  it, imports verify it, and the page reports verified/mismatch honestly:
+  it is tamper evidence, not proof of authorship.
+- **Rivalry Seeds works end to end.** Imported runs are kept for the
+  session (bounded, 4 hours) and can be selected on the Runs page for
+  comparison against your own attempt — previously an imported run
+  vanished after one view and could not be compared at all.
+- **Hypothesis Lab is Bayesian for real.** The old "posterior" was
+  0.5 + effect/2. Verdicts now come from an exact Beta-Binomial posterior
+  comparison of the two arms' win rates (95% threshold, minimum 3 runs per
+  arm), and the page shows the posterior effect and P(better). A page view
+  also no longer rewrites the hypotheses file thousands of times — reads
+  are pure and write nothing.
+- **Live tracking follows the tree you're playing in.** Change detection
+  and the live run watched only whichever save tree was freshest at
+  startup; switching between vanilla and modded play mid-session left the
+  dashboard blind. Combat telemetry from the game log (cards played, extra
+  turns, elites defeated) also survives into the API now instead of being
+  silently dropped.
+- **The Cascade Map tells the truth.** The acquisition floor no longer
+  counts as "after the pick", tiny windows are skipped instead of compared
+  against zero, repeated picks get their own rows, the promised HP
+  trajectory exists, and the UI says plainly that this is an observational
+  before/after split — later floors are harder regardless of the pick.
+- **Deck health spans its promised 0-100.** The connectivity component was
+  silently halved (ideal decks capped at 90), "Synergy Edges" was a
+  keyword-weighted sum that could display 1.0, and the eigensolver stopped
+  before converging on larger decks.
+- **Prophecy does what the guide says.** The home page shows a prophecy for
+  your latest character plus a tilt warning when one fires, and the run
+  detail page grades the prophecy against the outcome.
+- **The deck-save dialog names your character.** It used to derive the
+  "character" from a card id and offer "Deck name (saving as BASH)".
+- **pip installs work.** Wheels shipped without templates, static assets,
+  data, or locales, so `pip install` produced a package that could not even
+  import. Wheels and sdists now carry every runtime resource, and CI
+  installs the built wheel to prove it.
+- **Data updates can't destroy your dataset.** The updater's swap had a
+  crash window that left no live data and could then delete the only
+  backup; installs are now staged, locked, fsynced, validated as a complete
+  dataset before promotion, and recoverable at startup.
+- **Docker keeps your state.** The compose file publishes on loopback only,
+  keeps settings/stats in a named volume, and documents read-only save
+  mounts; the image healthcheck now reflects readiness (card data loaded),
+  not just liveness.
+- **Accessibility.** The shortcuts overlay is a real dialog (focus trap,
+  Escape, visible "?" trigger), the nav toggle exposes its state, motion
+  respects `prefers-reduced-motion`, the page language follows your
+  language setting, and the project site's download button finally passes
+  WCAG AA contrast.
+- **The Stop button reports failures.** It said "SpireScope stopped" even
+  when the server refused the request.
+
+### Internal
+
+- Dependencies are locked with hashes and CI installs from the lock;
+  workflow actions are pinned to commit SHAs; PR runs hold read-only
+  tokens; releases ship an SBOM and build-provenance attestation.
+- CI adds Windows/macOS test legs, wheel-from-sdist install and Docker
+  smoke jobs, a pip-audit job, a branch-coverage floor, and a test badge
+  that can actually turn red.
+- SSE connections are capped per client, rate-limited at the handshake,
+  and share one poll per window instead of one per connection; caches got
+  single-flight locks and refresh generations; shutdown now stops the file
+  watchers it started.
+- The build script is `build_exe.py` (a root `build.py` shadowed PyPA's
+  `python -m build`), and the version is single-sourced from
+  `sts2/config.py`.
+
 ## v3.0.5
 
 ### Fixed
