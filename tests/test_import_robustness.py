@@ -53,6 +53,33 @@ class TestNonObjectJson:
         from sts2.hypothesis import load_hypotheses
         assert load_hypotheses() == {}
 
+    def test_load_hypotheses_drops_non_dict_entries(self, tmp_path, monkeypatch):
+        """A top-level object with non-dict entries (e.g. {"h1": "oops"})
+        used to pass the top-level guard and then crash evaluation, since
+        every downstream access assumes each entry is itself an object."""
+        import sts2.config as cfg
+        monkeypatch.setattr(cfg, "STATE_DIR", tmp_path)
+        (tmp_path / "hypotheses.json").write_text(
+            json.dumps({"h1": "oops", "h2": [1, 2], "h3": {"text": "ok"}}),
+            encoding="utf-8")
+        from sts2.hypothesis import load_hypotheses
+        assert load_hypotheses() == {"h3": {"text": "ok"}}
+
+    def test_get_language_survives_truthy_non_string_language(self, tmp_path, monkeypatch):
+        """settings.json={"language": ["de"]} used to raise during
+        application import: get_translator(get_language()) tried to use the
+        unhashable list as a cache key in _load_locale."""
+        import sts2.i18n as i18n
+        path = tmp_path / "settings.json"
+        path.write_text(json.dumps({"language": ["de"]}), encoding="utf-8")
+        monkeypatch.setattr(i18n, "_settings_path", lambda: path)
+        monkeypatch.delenv("STS2_LANG", raising=False)
+        assert i18n.get_language() == "en"
+        # The actual failure mode: app.py calls get_translator(get_language())
+        # at import time — this must not raise.
+        t = i18n.get_translator(i18n.get_language())
+        assert t("nav.cards")
+
     def test_load_aggregate_rejects_array(self, tmp_path, monkeypatch):
         import sts2.config as cfg
         monkeypatch.setattr(cfg, "STATE_DIR", tmp_path)
@@ -256,3 +283,50 @@ class TestPersistHelper:
         monkeypatch.setattr(persist.os, "fsync", boom)
         assert persist.write_json_atomic(path, {"clobbered": True}) is False
         assert json.loads(path.read_text(encoding="utf-8")) == {"kept": True}
+
+    def test_write_text_atomic_uses_unique_temp_name(self, tmp_path, monkeypatch):
+        """A single fixed ".tmp" name shared by every writer let two
+        concurrent writers to the same path collide on that temp file."""
+        from pathlib import Path
+
+        from sts2 import persist
+        path = tmp_path / "state.json"
+        seen = []
+        orig_replace = Path.replace
+
+        def spy_replace(self, target):
+            seen.append(self.name)
+            return orig_replace(self, target)
+
+        monkeypatch.setattr(Path, "replace", spy_replace)
+        assert persist.write_text_atomic(path, "a") is True
+        assert persist.write_text_atomic(path, "b") is True
+        assert len(seen) == 2
+        assert seen[0] != seen[1]
+
+    def test_concurrent_writers_to_same_path_all_succeed(self, tmp_path):
+        """Two threads writing the same path used to collide on the shared
+        fixed temp filename: one writer's rename would fail outright with
+        a PermissionError (Windows) rather than both writes completing."""
+        import threading
+
+        from sts2 import persist
+        path = tmp_path / "state.json"
+        results = []
+
+        def writer(n):
+            payload = json.dumps({"writer": n, "pad": "x" * 20000})
+            results.append(persist.write_text_atomic(path, payload))
+
+        threads = [threading.Thread(target=writer, args=(i,)) for i in range(8)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+
+        assert len(results) == 8
+        assert all(results), "every concurrent writer must complete"
+        # The file must be valid, complete JSON — not truncated or
+        # interleaved between two writers' content.
+        data = json.loads(path.read_text(encoding="utf-8"))
+        assert "writer" in data and "pad" in data

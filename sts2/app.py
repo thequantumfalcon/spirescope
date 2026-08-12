@@ -139,6 +139,23 @@ templates.env.globals["shortcuts_js_hash"] = _SHORTCUTS_JS_HASH
 templates.env.globals["compare_js_hash"] = _COMPARE_JS_HASH
 templates.env.globals["live_js_hash"] = _LIVE_JS_HASH
 
+# Repair a half-finished data swap FIRST. A process killed between the
+# live->backup and staging->live renames leaves no live dataset, and every
+# step below this line reads that directory: seeding would refill it from
+# the older bundled copy (making recovery think the live dir is fine and
+# abandon the newer backup), and KnowledgeBase would load whatever remained.
+# Recovery ran only on the later update-check path before this, which is
+# after the damage was already baked in.
+try:
+    from sts2.updater import recover_data_dir
+
+    if recover_data_dir():
+        log.warning("Restored the game data directory from its backup after "
+                    "an interrupted update")
+except Exception:
+    # Never let repair prevent startup; the app degrades on missing data.
+    log.debug("Data directory recovery check failed", exc_info=True)
+
 # Frozen builds: seed the writable data dir from bundled data before loading
 ensure_data_dir()
 # Installs from before the data/state split kept settings, community stats,

@@ -81,19 +81,34 @@ def _filter_runs(runs: list, *, version: str | None = None,
 
 _LIVE_MEMO_TTL = 2.5  # seconds; just under the SSE poll cadence
 _live_memo: dict = {}
+_live_memo_locks: dict = {}
 
 
 async def _get_live_run(player: int | None = None) -> CurrentRun:
     """Memoized live-run state: N concurrent SSE connections share one log
     poll and save read per window instead of each running its own 3-second
-    poll loop against the disk."""
+    poll loop against the disk.
+
+    Single-flight per player: without the lock, every connection that found
+    the entry cold started its own computation, which is exactly the
+    duplicated disk work the memo exists to prevent — the cache only helped
+    callers that arrived after one of them finished.
+    """
     now = time.monotonic()
     hit = _live_memo.get(player)
     if hit and now - hit[0] < _LIVE_MEMO_TTL:
         return hit[1]
-    run = await _compute_live_run(player)
-    _live_memo[player] = (time.monotonic(), run)
-    return run
+    lock = _live_memo_locks.get(player)
+    if lock is None:
+        lock = _live_memo_locks.setdefault(player, asyncio.Lock())
+    async with lock:
+        # Another caller may have filled it while we waited.
+        hit = _live_memo.get(player)
+        if hit and time.monotonic() - hit[0] < _LIVE_MEMO_TTL:
+            return hit[1]
+        run = await _compute_live_run(player)
+        _live_memo[player] = (time.monotonic(), run)
+        return run
 
 
 async def _compute_live_run(player: int | None = None) -> CurrentRun:
@@ -266,17 +281,36 @@ async def ready():
     """Readiness probe, distinct from /health.
 
     /health is pure liveness (process is up, always 200); it never blocks a
-    Docker HEALTHCHECK on data being loaded. /ready checks that the knowledge
-    base actually has usable card data — 200 once it does, 503 while it does
-    not (e.g. a fresh container with an empty/broken data mount), so an
+    Docker HEALTHCHECK on data being loaded. /ready reports whether the app
+    can actually serve — 200 once it can, 503 while it cannot, so an
     orchestrator can tell "process running" apart from "actually usable".
+
+    Checking cards alone was too shallow: a dataset with cards but no relics
+    or enemies, or an unwritable state directory, passed while most of the
+    app was broken.
     """
     a = _app()
-    cards = len(a.kb.cards)
-    if cards == 0:
-        return JSONResponse({"status": "not_ready", "reason": "no card data loaded"},
-                            status_code=503)
-    return {"status": "ready", "cards": cards, "version": VERSION}
+    families = {"cards": len(a.kb.cards), "relics": len(a.kb.relics),
+                "enemies": len(a.kb.enemies), "potions": len(a.kb.potions),
+                "events": len(a.kb.events)}
+    missing = [name for name, count in families.items() if count == 0]
+    if missing:
+        return JSONResponse(
+            {"status": "not_ready", "reason": f"no data loaded for: {', '.join(missing)}",
+             "families": families}, status_code=503)
+    # User state must be writable, or settings, hypotheses and imported stats
+    # all fail at the moment the user tries to use them.
+    try:
+        from sts2.config import state_path
+        probe = state_path(".readiness")
+        probe.write_text("ok", encoding="utf-8")
+        probe.unlink()
+    except OSError as exc:
+        return JSONResponse(
+            {"status": "not_ready", "reason": f"state directory not writable: {exc}",
+             "families": families}, status_code=503)
+    return {"status": "ready", "cards": families["cards"],
+            "families": families, "version": VERSION}
 
 
 @router.get("/robots.txt", response_class=PlainTextResponse)
@@ -1766,7 +1800,11 @@ async def reload_data(request: Request):
     new_kb = await asyncio.to_thread(KnowledgeBase)
     a.kb = new_kb
     # Analytics bakes entity names into its cached payload, so a reload that
-    # leaves it in place serves the old names for the rest of the TTL
+    # leaves it in place serves the old names for the rest of the TTL.
+    # Bumping the generation matters as much as clearing: a computation that
+    # started before this reload would otherwise finish afterwards and write
+    # its pre-reload result straight back into the cache we just emptied.
+    a._data_generation += 1
     a._analytics_cache.clear()
     a._analytics_cache_time.clear()
     return {"status": "ok", "cards": len(a.kb.cards), "relics": len(a.kb.relics),
@@ -2057,7 +2095,10 @@ async def settings_language(request: Request,
             logging.getLogger(__name__).exception(
                 "Could not rebuild the knowledge base for language %s", code)
         else:
-            # Analytics bakes entity names into its cached payload
+            # Analytics bakes entity names into its cached payload. Bump the
+            # generation too, or an in-flight computation started under the
+            # previous language repopulates the cache we just cleared.
+            a._data_generation += 1
             a._analytics_cache.clear()
             a._analytics_cache_time.clear()
     return RedirectResponse("/settings?saved=1", status_code=303)

@@ -236,3 +236,73 @@ class TestCacheRaces:
         assert app_module._analytics_cache == {}  # but nothing stale is cached
         app_module._analytics_cache = {}
         app_module._analytics_cache_time = {}
+
+
+class TestCacheGenerationOnReload:
+    """Clearing a cache is not enough on its own.
+
+    Both the admin reload and the language change cleared the analytics
+    cache without bumping the refresh generation, so a computation that
+    started beforehand could finish afterwards and write its stale result
+    into the cache that was just emptied.
+    """
+
+    async def test_reload_bumps_the_generation(self, client):
+        import sts2.app as app_module
+        before = app_module._data_generation
+        resp = await client.post("/api/reload",
+                                 headers={"X-Admin-Token": app_module._ADMIN_TOKEN})
+        assert resp.status_code == 200
+        assert app_module._data_generation > before
+
+    async def test_language_change_bumps_the_generation(self, client, monkeypatch):
+        import sts2.app as app_module
+        import sts2.config as cfg
+        monkeypatch.setattr(cfg, "STATE_DIR", __import__("pathlib").Path(
+            __import__("tempfile").mkdtemp()))
+        before = app_module._data_generation
+        from sts2.app import generate_csrf_token
+        # Must differ from the active language, or the route correctly skips
+        # the rebuild (and with it the cache clear) entirely.
+        resp = await client.post("/settings/language",
+                                 data={"language": "de",
+                                       "csrf_token": generate_csrf_token()},
+                                 follow_redirects=False)
+        assert resp.status_code == 303
+        assert app_module._data_generation > before
+
+
+class TestLiveMemoIsSingleFlight:
+    async def test_concurrent_cold_callers_compute_once(self, monkeypatch):
+        """The memo only ever helped callers that arrived after someone else
+        had finished; concurrent cold callers each did the disk work."""
+        import sts2.routes as routes
+        routes._live_memo.clear()
+        routes._live_memo_locks.clear()
+        calls = 0
+
+        async def slow_compute(player=None):
+            nonlocal calls
+            calls += 1
+            await asyncio.sleep(0.05)
+            return CurrentRun(active=False)
+
+        monkeypatch.setattr(routes, "_compute_live_run", slow_compute)
+        await asyncio.gather(*(routes._get_live_run(0) for _ in range(5)))
+        assert calls == 1
+        routes._live_memo.clear()
+        routes._live_memo_locks.clear()
+
+
+class TestReadinessDepth:
+    async def test_missing_family_is_not_ready(self, client, monkeypatch):
+        """Cards alone was too shallow: a dataset with cards but no relics or
+        enemies reported ready while most of the app was broken."""
+        from unittest.mock import MagicMock
+
+        import sts2.app as app_module
+        stub = MagicMock(cards=[1], relics=[], enemies=[1], potions=[1], events=[1])
+        monkeypatch.setattr(app_module, "kb", stub)
+        resp = await client.get("/ready")
+        assert resp.status_code == 503
+        assert "relics" in resp.json()["reason"]

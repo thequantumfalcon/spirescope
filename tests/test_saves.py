@@ -170,6 +170,25 @@ class TestGetCurrentRun:
             run = get_current_run()
             assert run.active is False
 
+    def test_oversized_current_run_file_is_skipped(self, tmp_path, caplog):
+        """A corrupt/hostile current_run.save must not be loaded unbounded.
+
+        Unlike progress.save and history .run files, current_run.save (and
+        current_run_mp.save, and their .backup files) go through the shared
+        _read_json() reader with no size guard of their own — the guard
+        belongs in the reader itself so every caller benefits.
+        """
+        save_file = tmp_path / "current_run.save"
+        save_file.write_text(json.dumps(MOCK_CURRENT_RUN))
+
+        with patch("sts2.saves.SAVE_DIR", tmp_path), \
+             patch("sts2.saves._MAX_SAVE_FILE_SIZE", 10), \
+             caplog.at_level("WARNING", logger="sts2.saves"):
+            run = get_current_run()
+
+        assert run.active is False
+        assert "current_run.save" in caplog.text
+
     def test_empty_players(self, tmp_path):
         save_file = tmp_path / "current_run.save"
         save_file.write_text(json.dumps({"players": []}))

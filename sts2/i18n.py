@@ -135,7 +135,14 @@ def get_language() -> str:
         return "en"
     # A settings.json holding valid-but-wrong JSON (e.g. []) used to raise
     # here — during application import, taking the whole app down with it.
-    return settings.get("language", "en") if isinstance(settings, dict) else "en"
+    if not isinstance(settings, dict):
+        return "en"
+    lang = settings.get("language", "en")
+    # A truthy non-string value (e.g. ["de"], 5) used to be returned as-is
+    # and flow unvalidated into locale loading — an unhashable value like a
+    # list then raised in _load_locale's cache lookup, taking application
+    # import down with it.
+    return lang if isinstance(lang, str) and is_valid_code(lang) else "en"
 
 
 def set_language(code: str) -> bool:

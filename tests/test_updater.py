@@ -4,6 +4,7 @@ import hashlib
 import io
 import json
 import os
+import shutil
 import tarfile
 import time
 import urllib.error
@@ -638,3 +639,41 @@ class TestDatasetShapeGate:
         source = inspect.getsource(updater._validate_loadable)
         for var in ("STS2_SAVE_DIR", "STS2_STATE_DIR", "STS2_MODS_DIR"):
             assert var in source, f"load probe does not isolate {var}"
+
+
+def test_recovery_runs_before_the_knowledge_base_loads(tmp_path):
+    """A crash between the two renames leaves no live data directory.
+
+    Recovery used to run only on the later update-check path, by which point
+    app import had already seeded and loaded from whatever was there — for a
+    frozen build the seed could even refill the live directory from the older
+    bundled copy, making recovery believe it was fine and abandon the newer
+    backup. It must therefore run before seeding, migration, and
+    KnowledgeBase construction. Checked in a subprocess because the ordering
+    under test is import-time.
+    """
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    repo = Path(__file__).resolve().parent.parent
+    live = tmp_path / "data"
+    backup = tmp_path / "data.backup"
+    shutil.copytree(repo / "sts2" / "data", backup)
+    assert not live.exists(), "the crash state is: live gone, backup intact"
+
+    env = dict(os.environ,
+               STS2_DATA_DIR=str(live), STS2_STATE_DIR=str(tmp_path / "state"),
+               STS2_SAVE_DIR=str(tmp_path / "saves"),
+               STS2_MODS_DIR=str(tmp_path / "mods"),
+               STS2_LOG_FILE=str(tmp_path / "none.log"),
+               STS2_LANG="en", SPIRESCOPE_CHECK_UPDATES="0")
+    result = subprocess.run(
+        [sys.executable, "-c",
+         "import sts2.app as a; print('CARDS', len(a.kb.cards))"],
+        env=env, cwd=str(repo), capture_output=True, text=True, timeout=300)
+
+    assert result.returncode == 0, result.stderr[-500:]
+    assert live.exists(), "live data directory was not restored"
+    loaded = int(result.stdout.split("CARDS")[1].split()[0])
+    assert loaded > 400, f"knowledge base loaded {loaded} cards after recovery"

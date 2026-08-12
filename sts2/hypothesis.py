@@ -8,10 +8,13 @@ subtracted two raw win rates and called 0.5 + effect/2 a "posterior" — no
 prior, no likelihood, no uncertainty.
 """
 import json
+import logging
 import math
 import time
 
 from sts2.config import state_path
+
+log = logging.getLogger(__name__)
 
 # A verdict requires at least this many runs in EACH arm, and 95% posterior
 # probability in one direction.
@@ -39,7 +42,18 @@ def load_hypotheses():
         # Anything but an object is corrupt state; every caller iterates
         # .items() and would 500 on a top-level array.
         if isinstance(data, dict):
-            return data
+            # A dict whose entries aren't themselves dicts is also corrupt
+            # state — every downstream field access (hyp["condition_type"],
+            # hyp["runs_matching"] = ...) assumes each entry is an object,
+            # and would crash evaluation. Drop the bad entries and degrade.
+            clean = {}
+            for hyp_id, hyp in data.items():
+                if isinstance(hyp, dict):
+                    clean[hyp_id] = hyp
+                else:
+                    log.warning("Dropping non-dict hypothesis entry %r in %s",
+                                hyp_id, path)
+            return clean
     return {}
 
 

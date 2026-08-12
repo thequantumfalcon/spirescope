@@ -30,6 +30,16 @@ def _history_search_dirs() -> list[tuple[Path, str]]:
 def _read_json(path: Path) -> dict | None:
     try:
         if path.exists():
+            # Callers that already check size themselves (get_progress,
+            # get_run_history) never hit this branch, since they return
+            # before reaching it — this only guards the paths that read
+            # straight through here with no size check of their own
+            # (current_run.save, current_run_mp.save, and their .backup
+            # files), which used to be loaded whole into memory unbounded.
+            if path.stat().st_size > _MAX_SAVE_FILE_SIZE:
+                log.warning("Skipping oversized file %s (> %d bytes)",
+                            path, _MAX_SAVE_FILE_SIZE)
+                return None
             with open(path, "r", encoding="utf-8") as f:
                 return json.load(f)
     except (json.JSONDecodeError, OSError) as e:
