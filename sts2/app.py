@@ -381,9 +381,10 @@ async def require_network_auth(request: Request, call_next):
     """
     if _is_loopback_bind():
         return await call_next(request)
-    # Liveness stays open (Docker healthchecks run in-container against the
-    # non-loopback bind); it serves no user data. Preflight carries no auth.
-    if request.method == "OPTIONS" or request.url.path == "/health":
+    # Liveness and readiness stay open (Docker healthchecks run in-container
+    # against the non-loopback bind); neither serves user data. Preflight
+    # carries no auth.
+    if request.method == "OPTIONS" or request.url.path in ("/health", "/ready"):
         return await call_next(request)
     auth_token = os.environ.get("STS2_AUTH_TOKEN", "")
     if not auth_token:

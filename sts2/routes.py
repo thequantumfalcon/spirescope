@@ -11,11 +11,11 @@ from datetime import date, datetime, timedelta, timezone
 from xml.sax.saxutils import escape as xml_escape
 
 from fastapi import APIRouter, File, Form, Path, Query, Request, UploadFile
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from pydantic import ValidationError
 from starlette.responses import StreamingResponse
 
-from sts2.config import CHARACTERS
+from sts2.config import CHARACTERS, VERSION
 from sts2.models import CurrentRun, RunHistory
 from sts2.saves import get_current_run
 
@@ -257,6 +257,24 @@ def _is_loopback_client(request: Request) -> bool:
 async def health():
     a = _app()
     return {"status": "ok", "cards": len(a.kb.cards)}
+
+
+@router.get("/ready")
+async def ready():
+    """Readiness probe, distinct from /health.
+
+    /health is pure liveness (process is up, always 200); it never blocks a
+    Docker HEALTHCHECK on data being loaded. /ready checks that the knowledge
+    base actually has usable card data — 200 once it does, 503 while it does
+    not (e.g. a fresh container with an empty/broken data mount), so an
+    orchestrator can tell "process running" apart from "actually usable".
+    """
+    a = _app()
+    cards = len(a.kb.cards)
+    if cards == 0:
+        return JSONResponse({"status": "not_ready", "reason": "no card data loaded"},
+                            status_code=503)
+    return {"status": "ready", "cards": cards, "version": VERSION}
 
 
 @router.get("/robots.txt", response_class=PlainTextResponse)
@@ -1591,11 +1609,32 @@ async def analyze_deck(request: Request):
 # JSON API
 # ---------------------------------------------------------------------------
 
+def _api_error(message: str, status_code: int, **extra) -> JSONResponse:
+    """Standardized JSON error envelope for /api/* handlers.
+
+    The app-wide StarletteHTTPException handler in app.py renders error.html
+    for every path, including /api/*, so API handlers must never raise
+    HTTPException or return a bare PlainTextResponse for an error — they
+    return this instead. Shape: {"error": <message>, "status": <code>},
+    plus any extra fields a specific endpoint wants to keep (e.g. card_id).
+    """
+    payload = {"error": message, "status": status_code}
+    payload.update(extra)
+    return JSONResponse(payload, status_code=status_code)
+
+
 @router.get("/api/analytics")
 async def api_analytics(version: str = Query(None, max_length=100),
                         date_from: str = Query(None, alias="from", max_length=10),
                         date_to: str = Query(None, alias="to", max_length=10),
                         ascension: int = Query(None, ge=0, le=20)):
+    """Computed analytics over run history.
+
+    Public contract: a top-level dict whose keys (overview, card_rankings,
+    relic_synergy_edges, encounter_danger, potion_stats, ...) are produced by
+    sts2.analytics.compute_analytics — see that module for the authoritative
+    key list. schema_version bumps only on a breaking change to this shape.
+    """
     a = _app()
     if version or date_from or date_to:
         from sts2.analytics import compute_analytics
@@ -1606,11 +1645,13 @@ async def api_analytics(version: str = Query(None, max_length=100),
             filtered = [r for r in filtered if r.ascension == ascension]
         progress = await a._get_progress()
         card_stats = progress.card_stats if progress else {}
-        return await asyncio.to_thread(compute_analytics, filtered, card_stats, a.kb)
-    return await a._get_analytics(ascension=ascension)
+        stats = await asyncio.to_thread(compute_analytics, filtered, card_stats, a.kb)
+    else:
+        stats = await a._get_analytics(ascension=ascension)
+    return {**stats, "schema_version": 1}
 
 
-@router.get("/api/live")
+@router.get("/api/live", response_model=CurrentRun)
 async def api_live_run(player: int = Query(None, ge=0, le=3)):
     run = await _get_live_run(player)
     return run.model_dump()
@@ -1635,8 +1676,7 @@ async def live_stream(request: Request, player: int = Query(None, ge=0, le=3)):
     # overflows — the generator will re-check on first yield.
     if (_sse_active >= _SSE_MAX_CONNECTIONS
             or _sse_by_client.get(client_ip, 0) >= _SSE_MAX_PER_CLIENT):
-        return PlainTextResponse("Too many live connections. Close another tab.",
-                                 status_code=429)
+        return _api_error("Too many live connections. Close another tab.", 429)
 
     async def event_generator():
         global _sse_active
@@ -1691,7 +1731,7 @@ async def reload_data(request: Request):
     a = _app()
     token = request.headers.get("X-Admin-Token", "")
     if not a.tokens_equal(token, a._ADMIN_TOKEN):
-        return PlainTextResponse("Unauthorized.", status_code=403)
+        return _api_error("Unauthorized.", 403)
     from sts2.knowledge import KnowledgeBase
     from sts2.patches import invalidate_cache
     invalidate_cache()
@@ -1733,10 +1773,7 @@ async def api_card(card_id: str = Path(max_length=200)):
     a = _app()
     card = a.kb.get_card_by_id(card_id)
     if not card:
-        # Match the JSON shape used by the success path so API clients
-        # can parse both responses uniformly.
-        from fastapi.responses import JSONResponse
-        return JSONResponse({"error": "Card not found.", "card_id": card_id}, status_code=404)
+        return _api_error("Card not found.", 404, card_id=card_id)
     progress = await a._get_progress()
     card_stats = progress.card_stats.get(card_id, {}) if progress else {}
     synergies = a.kb.find_synergies(card_id)
@@ -1760,6 +1797,13 @@ async def api_runs(character: str = Query(None, max_length=50), result: str = Qu
                    date_from: str = Query(None, alias="from", max_length=10),
                    date_to: str = Query(None, alias="to", max_length=10),
                    limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)):
+    """Paginated run history.
+
+    Public contract, top-level keys: schema_version (int), total (matching
+    runs before pagination), offset, limit, and runs — a page of full
+    RunHistory records (sts2.models.RunHistory.model_dump()), not a reduced
+    summary. schema_version bumps only on a breaking change to this shape.
+    """
     a = _app()
     run_list = await a._get_runs()
     filtered = _filter_runs(run_list, version=version,
@@ -1772,7 +1816,7 @@ async def api_runs(character: str = Query(None, max_length=50), result: str = Qu
         filtered = [r for r in filtered if not r.win]
     total = len(filtered)
     page = filtered[offset:offset + limit]
-    return {"total": total, "offset": offset, "limit": limit,
+    return {"schema_version": 1, "total": total, "offset": offset, "limit": limit,
             "runs": [r.model_dump() for r in page]}
 
 
@@ -1824,11 +1868,18 @@ async def api_search(q: str = Query("", max_length=200)):
 
 @router.get("/api/export/stats")
 async def api_export_stats():
+    """Aggregate community-style stats computed from local run history.
+
+    Public contract: a top-level dict whose keys (run_count, character_stats,
+    card_win_rates, ...) are produced by sts2.aggregate.compute_aggregate_stats
+    — see that module for the authoritative key list. schema_version bumps
+    only on a breaking change to this shape.
+    """
     from sts2.aggregate import compute_aggregate_stats
     a = _app()
     runs = await a._get_runs()
     stats = compute_aggregate_stats(runs)
-    return stats
+    return {**stats, "schema_version": 1}
 
 
 @router.post("/api/reset/stats")
@@ -1836,7 +1887,7 @@ async def api_reset_stats(request: Request):
     a = _app()
     token = request.headers.get("X-Admin-Token", "")
     if not a.tokens_equal(token, a._ADMIN_TOKEN):
-        return PlainTextResponse("Unauthorized.", status_code=403)
+        return _api_error("Unauthorized.", 403)
     from sts2.aggregate import reset_aggregate
     deleted = reset_aggregate()
     return {"status": "ok", "deleted": deleted}
@@ -1848,27 +1899,27 @@ async def api_import_stats(request: Request, file: UploadFile = File(...),
     from sts2.aggregate import load_aggregate, merge_aggregate, save_aggregate
     a = _app()
     if not a.validate_csrf_token(csrf_token):
-        return PlainTextResponse("Invalid CSRF token.", status_code=403)
+        return _api_error("Invalid CSRF token.", 403)
     contents = await file.read(512_001)
     if len(contents) > 512_000:
-        return PlainTextResponse("File too large (max 500 KB).", status_code=413)
+        return _api_error("File too large (max 500 KB).", 413)
     try:
         imported = json.loads(contents)
         if not isinstance(imported, dict) or "run_count" not in imported:
-            return PlainTextResponse("Invalid aggregate file.", status_code=400)
+            return _api_error("Invalid aggregate file.", 400)
     except (json.JSONDecodeError, RecursionError):
-        return PlainTextResponse("Invalid JSON.", status_code=400)
+        return _api_error("Invalid JSON.", 400)
     existing = load_aggregate()
     try:
         merged = merge_aggregate(existing, imported)
     except ValueError as exc:
         # Includes Infinity/NaN counters: json.loads accepts them, the
         # sanitiser rejects them, and this used to surface as a 500.
-        return PlainTextResponse(f"Invalid aggregate file: {exc}", status_code=400)
+        return _api_error(f"Invalid aggregate file: {exc}", 400)
     if not save_aggregate(merged):
-        return PlainTextResponse(
+        return _api_error(
             "Import processed but could not be persisted (too large or "
-            "storage unwritable).", status_code=500)
+            "storage unwritable).", 500)
     return {"status": "ok", "run_count": merged.get("run_count", 0)}
 
 
