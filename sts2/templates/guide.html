@@ -219,7 +219,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <div class="card mb-md">
   <h3>Run Integrity</h3>
-  <p>Every run gets a SHA-256 hash chain (Merkle root) that proves the run data is unmodified. Shown on the run detail page. Share your hash to verify achievements without trusting a central server.</p>
+  <p>Every run gets a SHA-256 checksum over its complete record, shown on the run detail page. Import a friend's exported run and Spirescope re-checks it against the checksum in the file, so you can tell whether it was edited after export. It's tamper evidence, not proof of authorship — anyone can recompute the checksum for a run they changed — so it doesn't verify achievements on its own.</p>
 </div>
 
 <h2 id="shortcuts">Keyboard Shortcuts</h2>

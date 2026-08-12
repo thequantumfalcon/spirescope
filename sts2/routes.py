@@ -599,11 +599,10 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
             pass
         except Exception:
             pass
-    # Tamper-evidence: SHA-256 Merkle chain over every floor decision.
-    # Same chain = same run, byte-for-byte. Shared hash lets two players
-    # confirm they're talking about the identical run.
-    from sts2.integrity import compute_merkle_root
-    integrity_hash = compute_merkle_root(run)
+    # Tamper-evidence: SHA-256 over the run's complete canonical record.
+    # Same digest = identical record; it is a checksum, not a signature.
+    from sts2.integrity import compute_run_digest
+    integrity_hash = compute_run_digest(run)
     # Cascade map: per-pick downstream impact (Δ damage, Δ turns vs pre-pick).
     # Helps identify which pick changed the run's trajectory.
     from sts2.cascade import trace_all_picks
@@ -639,7 +638,13 @@ async def export_run(run_id: str = Path(max_length=200)):
     if not run:
         return PlainTextResponse("Run not found.", status_code=404)
     from sts2.config import VERSION
+    from sts2.integrity import DIGEST_VERSION, compute_run_digest
+    # The digest travels with the export so an import can be checked against
+    # the record it was exported with (added keys keep format_version 1 —
+    # older importers ignore them).
     export_data = json.dumps({"spirescope_version": VERSION, "format_version": 1,
+                              "digest_version": DIGEST_VERSION,
+                              "integrity_digest": compute_run_digest(run),
                               "run": run.model_dump()}, indent=2)
     safe_id = re.sub(r'[^\w\-.]', '_', run.id)
     return PlainTextResponse(
@@ -727,9 +732,22 @@ async def import_run(request: Request, file: UploadFile = File(...),
                 "error_code": 400,
                 "error_message": "Run file has unreasonable per-floor list sizes.",
             }, status_code=400)
+    # Check the file against the digest it was exported with. verify_run is
+    # the integrity feature's read side; without this call the export-side
+    # digest proved nothing.
+    from sts2.integrity import DIGEST_VERSION, compute_run_digest, verify_run
+    expected_digest = data.get("integrity_digest", "")
+    if expected_digest and data.get("digest_version") == DIGEST_VERSION:
+        integrity_check = "verified" if verify_run(run, expected_digest) else "mismatch"
+    else:
+        # No digest, or one from a different canonicalization version — an old
+        # export is not evidence of tampering, just unverifiable.
+        integrity_check = "absent"
     run_analysis = analyze_run(run, kb=a.kb)
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "run_analysis": run_analysis, "kb": a.kb, "imported": True,
+        "integrity_hash": compute_run_digest(run),
+        "integrity_check": integrity_check,
     })
 
 

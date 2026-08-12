@@ -178,8 +178,11 @@
 
 {% if integrity_hash %}
 <h2 class="mt-lg">Run Integrity</h2>
-<p class="text-sm text-muted">SHA-256 Merkle chain over every floor decision. Same hash means same run, byte-for-byte — share it to prove a run hasn't been edited.</p>
+<p class="text-sm text-muted">SHA-256 checksum over this run's complete record. It's tamper evidence, not proof of authorship: a matching hash means two copies of the run are identical, but anyone can recompute the hash for a run they've edited.</p>
 <code class="tag tag-keyword run-integrity-hash">{{ integrity_hash }}</code>
+{% if integrity_check == 'verified' %}<p class="text-sm win mt-xs">✓ This imported run matches the checksum it was exported with.</p>
+{% elif integrity_check == 'mismatch' %}<p class="text-sm loss mt-xs">⚠ This run does not match the checksum in its file — it was edited after export, or exported by a different version.</p>
+{% elif integrity_check == 'absent' %}<p class="text-sm text-muted mt-xs">This file carried no checksum this app can verify (none present, or an older export format), so there's nothing to check against.</p>{% endif %}
 {% endif %}
 
 {% else %}
