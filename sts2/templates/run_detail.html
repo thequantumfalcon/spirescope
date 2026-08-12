@@ -18,6 +18,10 @@
   {% if not imported %}&bull; <a href="/runs/{{ run.id }}/export" class="btn btn-sm btn-secondary">Export JSON</a> <a href="/runs/{{ run.id }}/export/html" class="btn btn-sm btn-secondary">Export HTML</a>{% endif %}
 </p>
 
+{% if prophecy_grade %}
+<p class="text-sm text-muted">Prophecy said <strong>{{ prophecy_grade.predicted_win_prob }}%</strong> win chance for this setup; outcome: <strong class="{{ 'win' if prophecy_grade.actual_win else 'loss' }}">{{ 'won' if prophecy_grade.actual_win else 'lost' }}</strong>.</p>
+{% endif %}
+
 <div class="stat-grid mt-md">
   <div class="stat-box"><div class="num">{{ run.floors|length }}</div><div class="label">Floors</div></div>
   <div class="stat-box"><div class="num">{{ run.deck|length }}</div><div class="label">Cards</div></div>
@@ -140,7 +144,7 @@
 {% if drift_alert %}
 <div class="card card-caution mb-md"><p><strong>Drift detected:</strong> {{ drift_alert }}</p></div>
 {% endif %}
-<p class="text-sm text-muted">Floor-by-floor archetype classification as the deck grew. Drift between early and late dominant archetype is the danger sign.</p>
+<p class="text-sm text-muted">Approximate reconstruction: deck state is inferred floor-by-floor from pick events, so it can't distinguish starter copies from later duplicates and doesn't see removals or transforms. Floor-by-floor archetype classification as the deck grew — drift between early and late dominant archetype is the signal to watch.</p>
 <table class="comparison-table">
   <thead><tr><th>Floor</th><th>Archetype</th><th>Confidence</th><th>Deck Size</th><th>Card Added</th></tr></thead>
   <tbody>
@@ -159,9 +163,9 @@
 
 {% if cascade %}
 <h2 class="mt-lg">Cascade Map</h2>
-<p class="text-sm text-muted">Each card pick's downstream impact — change in damage-taken and combat length after the pick vs before. Negative damage delta = your damage taken dropped after that pick.</p>
+<p class="text-sm text-muted">Observational before/after comparison, not causal impact: later floors are harder regardless of what you pick, so this is what happened after the pick, not what the pick caused. Negative damage delta = your damage taken was lower after the pick than before.</p>
 <table class="comparison-table">
-  <thead><tr><th>Floor</th><th>Card</th><th>Δ Damage</th><th>Δ Turns</th><th>Impact</th></tr></thead>
+  <thead><tr><th>Floor</th><th>Card</th><th>Δ Damage</th><th>Δ Turns</th><th>Δ HP</th><th>Direction</th></tr></thead>
   <tbody>
   {% for c in cascade %}
     <tr>
@@ -169,6 +173,7 @@
       <td>{{ c.card_name }}</td>
       <td class="{% if c.damage_delta < 0 %}text-green{% elif c.damage_delta > 0 %}text-red{% endif %}">{{ c.damage_delta }}</td>
       <td>{{ c.turns_delta }}</td>
+      <td class="{% if c.hp_delta > 0 %}text-green{% elif c.hp_delta < 0 %}text-red{% endif %}">{{ c.hp_delta }}</td>
       <td><span class="tag tag-{% if c.impact == 'positive' %}skill{% elif c.impact == 'negative' %}attack{% else %}keyword{% endif %}">{{ c.impact }}</span></td>
     </tr>
   {% endfor %}

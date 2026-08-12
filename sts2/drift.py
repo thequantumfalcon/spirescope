@@ -1,8 +1,20 @@
-"""Archetype drift detection — track coherence within a single run."""
+"""Archetype drift detection — track coherence within a single run.
+
+This is an approximate reconstruction, not a verified deck history: deck
+state is inferred floor-by-floor from pick events only, so it cannot tell a
+starter copy of a card from a later duplicate, and it does not model card
+removals or transforms (Smith, campfire removal, etc.). Treat the trajectory
+as a best-effort estimate of what the deck looked like, not a ledger.
+"""
 
 
 def compute_archetype_drift(run, kb):
-    """Track archetype classification floor by floor during a run."""
+    """Track archetype classification floor by floor during a run.
+
+    Approximate reconstruction — see module docstring. Deck state is
+    inferred from pick events; it can't distinguish starters from later
+    duplicates of the same card, and it doesn't see removals or transforms.
+    """
     trajectory = []
     running_deck = list(run.deck[:10]) if hasattr(run, "deck") else []  # starter cards
 

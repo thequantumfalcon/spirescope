@@ -1731,16 +1731,28 @@ class TestAdvancedAnalyticsValues:
         assert splits[0]["ahead"] is False
 
     def test_cascade_contrasts_before_and_after_a_pick(self):
+        """Two combats on each side of the pick; the acquisition floor is
+        excluded from 'after', and a pick with no pre-pick combats is
+        skipped instead of compared against a fabricated zero baseline."""
         from sts2.app import kb as _kb
         from sts2.cascade import trace_card_impact
 
-        run = self._run("c", False, 4, [self._floor(1, dmg=20, pick="CARD.BASH"),
-                                        self._floor(2, dmg=5), self._floor(3, dmg=5)])
+        run = self._run("c", False, 4, [
+            self._floor(1, dmg=20), self._floor(2, dmg=20),
+            self._floor(3, dmg=99, pick="CARD.BASH"),
+            self._floor(4, dmg=5), self._floor(5, dmg=5)])
         impact = trace_card_impact(run, "CARD.BASH", _kb)
         assert impact["card_id"] == "CARD.BASH"
-        assert impact["picked_floor"] == 1
-        assert impact["floors_survived_after"] == 3
-        assert impact["post_avg_damage"] == 10.0
+        assert impact["picked_floor"] == 3
+        assert impact["pre_avg_damage"] == 20.0
+        assert impact["post_avg_damage"] == 5.0  # floor 3's 99 dmg excluded
+        assert impact["damage_delta"] == -15.0
+        assert "hp_delta" in impact
+
+        early = self._run("c2", False, 4, [
+            self._floor(1, dmg=20, pick="CARD.BASH"),
+            self._floor(2, dmg=5), self._floor(3, dmg=5)])
+        assert "error" in trace_card_impact(early, "CARD.BASH", _kb)
 
     def test_drift_trajectory_tracks_every_floor_and_its_pick(self):
         from sts2.app import kb as _kb

@@ -331,6 +331,26 @@ async def index(request: Request):
             data_age_days = (datetime.now(timezone.utc) - parsed).days
         except (ValueError, TypeError):
             pass
+
+    # Home-page prophecy: a compact preview, for the character of the most
+    # recent run (runs is newest-first), of what a full visit to /prophecy
+    # would show. Tilt: same session-momentum signal /analytics surfaces,
+    # shown here too since the home page is where a player lands first.
+    home_prophecy = None
+    tilt = None
+    if runs:
+        try:
+            from sts2.prophecy import generate_prophecy
+            latest_run = runs[0]
+            home_prophecy = generate_prophecy(latest_run.character, latest_run.ascension, runs)
+        except Exception:
+            logging.getLogger(__name__).debug("Home prophecy failed", exc_info=True)
+        try:
+            from sts2.behavior import detect_tilt
+            tilt = detect_tilt(runs)
+        except Exception:
+            logging.getLogger(__name__).debug("Home tilt detection failed", exc_info=True)
+
     return a.templates.TemplateResponse(request, "index.html", {
         "characters": CHARACTERS, "progress": progress, "recent_runs": runs[:5],
         "current_streak": current_streak, "streak_character": streak_character,
@@ -343,6 +363,7 @@ async def index(request: Request):
         "data_update_info": get_data_update_info(),
         "data_updated_msg": request.query_params.get("data_updated", ""),
         "csrf_token": a.generate_csrf_token(),
+        "home_prophecy": home_prophecy, "tilt": tilt,
     })
 
 
@@ -710,8 +731,9 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
     # Same digest = identical record; it is a checksum, not a signature.
     from sts2.integrity import compute_run_digest
     integrity_hash = compute_run_digest(run)
-    # Cascade map: per-pick downstream impact (Δ damage, Δ turns vs pre-pick).
-    # Helps identify which pick changed the run's trajectory.
+    # Cascade map: observational before/after comparison per pick (Δ damage,
+    # Δ turns, Δ HP vs the combats before the pick). Not causal — later
+    # floors are harder regardless of what you pick — see cascade.py.
     from sts2.cascade import trace_all_picks
     try:
         cascade = trace_all_picks(run, a.kb)
@@ -726,6 +748,19 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
     except Exception:
         drift_trajectory = []
         drift_alert = None
+    # Prophecy grade: apply the same historical-comparison prophecy this
+    # run's character+ascension would have gotten, then grade the outcome
+    # against it — excluding this run itself from its own comparison set.
+    # None when there isn't enough other history to have made a prophecy.
+    from sts2.prophecy import generate_prophecy, grade_prophecy
+    prophecy_grade = None
+    try:
+        history = await a._get_runs()
+        other_runs = [r for r in history if r.id != run.id]
+        run_prophecy = generate_prophecy(run.character, run.ascension, other_runs)
+        prophecy_grade = grade_prophecy(run_prophecy, run)
+    except Exception:
+        logging.getLogger(__name__).debug("Prophecy grading failed", exc_info=True)
     from sts2.patches import branch_of
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "kb": a.kb, "run_analysis": run_analysis,
@@ -734,6 +769,7 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
         "cascade": cascade,
         "drift_trajectory": drift_trajectory,
         "drift_alert": drift_alert,
+        "prophecy_grade": prophecy_grade,
         "run_branch": branch_of(run.build_id),
     })
 
@@ -1056,8 +1092,13 @@ async def graveyard(request: Request):
     try:
         from sts2.graveyard import generate_epitaph
         runs = await a._get_runs()
-        deaths = [r for r in runs if not r.win][-50:]
-        graves = [{"run": r, "epitaph": generate_epitaph(r, a.kb)} for r in reversed(deaths)]
+        # _get_runs() is newest-first (saves.py sorts run files by filename
+        # descending), so the newest 50 losses are the first 50, not the
+        # last 50 — [-50:] silently selected the 50 OLDEST losses once a
+        # player passed 50 total deaths, and new deaths never appeared.
+        # This slice is already newest-first, matching the display order.
+        deaths = [r for r in runs if not r.win][:50]
+        graves = [{"run": r, "epitaph": generate_epitaph(r, a.kb)} for r in deaths]
     except ImportError:
         graves = []
     return a.templates.TemplateResponse(request, "graveyard.html", {"graves": graves})
