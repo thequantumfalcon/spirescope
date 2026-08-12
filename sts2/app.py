@@ -21,7 +21,7 @@ from fastapi.templating import Jinja2Templates
 
 from sts2.analytics import compute_analytics
 from sts2.config import (
-    SAVE_DIR,
+    SAVE_DIRS,
     STATIC_DIR,
     TEMPLATES_DIR,
     VERSION,
@@ -63,8 +63,23 @@ async def _lifespan(application):
     check_for_update(templates.env.globals.get("version", "0.0.0"))
     check_for_data_update()
     await _prewarm_caches()
-    _watcher_task = asyncio.create_task(_watch_saves())  # noqa: F841
-    yield
+    watcher_task = asyncio.create_task(_watch_saves())
+    try:
+        yield
+    finally:
+        # Nothing used to run after yield: the watcher task was never
+        # cancelled and the watchdog observer threads were never stopped or
+        # joined, so shutdown relied on daemon threads dying with the process.
+        watcher_task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await watcher_task
+        for observer in _observers:
+            with contextlib.suppress(Exception):
+                observer.stop()
+        for observer in _observers:
+            with contextlib.suppress(Exception):
+                await asyncio.to_thread(observer.join, 2.0)
+        _observers.clear()
 
 
 app = FastAPI(title="Spirescope", lifespan=_lifespan)
@@ -89,6 +104,9 @@ from sts2 import patches as _patches  # noqa: E402
 from sts2.i18n import get_language, get_translator  # noqa: E402
 
 templates.env.globals["t"] = get_translator(get_language())
+# Callable, not a snapshot: <html lang> must follow a language change without
+# a process restart, and hardcoding lang="en" misdeclared every translated page.
+templates.env.globals["ui_lang"] = get_language
 templates.env.globals["changed_in"] = _patches.changed_in
 
 
@@ -246,25 +264,48 @@ _analytics_cache: dict = {}        # {None: {...}, 5: {...}, ...}
 _analytics_cache_time: dict = {}   # {None: float, 5: float, ...}
 _ANALYTICS_CACHE_TTL = 60.0
 
+# Single-flight locks: concurrent cold requests used to each run the same
+# computation. The generation counter closes the other race — a computation
+# that started before _refresh_data cleared the caches must not finish after
+# it and re-install pre-refresh data.
+_progress_lock = asyncio.Lock()
+_runs_lock = asyncio.Lock()
+_analytics_lock = asyncio.Lock()
+_data_generation = 0
+
 
 async def _get_progress():
     global _progress_cache, _progress_cache_time
     now = time.monotonic()
     # Use cache_time==0 (never populated) rather than cache is None — get_progress
     # returns None for "no save file" which is a valid cached value.
-    if _progress_cache_time == 0 or (now - _progress_cache_time) > _PROGRESS_CACHE_TTL:
-        _progress_cache = await asyncio.to_thread(get_progress)
-        _progress_cache_time = now
+    if _progress_cache_time != 0 and (now - _progress_cache_time) <= _PROGRESS_CACHE_TTL:
+        return _progress_cache
+    async with _progress_lock:
+        now = time.monotonic()
+        if _progress_cache_time == 0 or (now - _progress_cache_time) > _PROGRESS_CACHE_TTL:
+            generation = _data_generation
+            fresh = await asyncio.to_thread(get_progress)
+            if generation == _data_generation:
+                _progress_cache = fresh
+                _progress_cache_time = time.monotonic()
     return _progress_cache
 
 
 async def _get_runs():
     global _run_cache, _run_cache_by_id, _run_cache_time
     now = time.monotonic()
-    if _run_cache_time == 0 or (now - _run_cache_time) > _RUN_CACHE_TTL:
-        _run_cache = await asyncio.to_thread(get_run_history)
-        _run_cache_by_id = {r.id: r for r in _run_cache}
-        _run_cache_time = now
+    if _run_cache_time != 0 and (now - _run_cache_time) <= _RUN_CACHE_TTL:
+        return _run_cache
+    async with _runs_lock:
+        now = time.monotonic()
+        if _run_cache_time == 0 or (now - _run_cache_time) > _RUN_CACHE_TTL:
+            generation = _data_generation
+            fresh = await asyncio.to_thread(get_run_history)
+            if generation == _data_generation:
+                _run_cache = fresh
+                _run_cache_by_id = {r.id: r for r in fresh}
+                _run_cache_time = time.monotonic()
     return _run_cache
 
 
@@ -277,15 +318,24 @@ async def _get_analytics(ascension=None):
     global _analytics_cache, _analytics_cache_time
     now = time.monotonic()
     cache_time = _analytics_cache_time.get(ascension, 0)
-    if cache_time == 0 or (now - cache_time) > _ANALYTICS_CACHE_TTL:
+    if cache_time != 0 and (now - cache_time) <= _ANALYTICS_CACHE_TTL:
+        return _analytics_cache[ascension]
+    async with _analytics_lock:
+        cache_time = _analytics_cache_time.get(ascension, 0)
+        now = time.monotonic()
+        if cache_time != 0 and (now - cache_time) <= _ANALYTICS_CACHE_TTL:
+            return _analytics_cache[ascension]
+        generation = _data_generation
         runs = await _get_runs()
         if ascension is not None:
             runs = [r for r in runs if r.ascension == ascension]
         progress = await _get_progress()
         card_stats = progress.card_stats if progress else {}
-        _analytics_cache[ascension] = await asyncio.to_thread(compute_analytics, runs, card_stats, kb)
-        _analytics_cache_time[ascension] = now
-    return _analytics_cache[ascension]
+        result = await asyncio.to_thread(compute_analytics, runs, card_stats, kb)
+        if generation == _data_generation:
+            _analytics_cache[ascension] = result
+            _analytics_cache_time[ascension] = time.monotonic()
+        return result
 
 
 # ---------------------------------------------------------------------------
@@ -602,7 +652,10 @@ async def _refresh_data():
     """Reload KnowledgeBase, progress, and run caches from disk."""
     global kb, _progress_cache, _progress_cache_time
     global _run_cache, _run_cache_by_id, _run_cache_time
-    global _analytics_cache, _analytics_cache_time
+    global _analytics_cache, _analytics_cache_time, _data_generation
+    # Invalidate every computation currently in flight: whatever it read, it
+    # read before this refresh, and must not be cached after it.
+    _data_generation += 1
     log.info("Save files changed, refreshing data")
     _analytics_cache = {}
     _analytics_cache_time = {}
@@ -622,36 +675,52 @@ async def _refresh_data():
 
 
 def _check_mtime() -> float:
-    """Return the latest modification time across save files."""
+    """Latest modification time across save files in EVERY detected tree.
+
+    History merges the vanilla and modded trees, but change detection used
+    to watch only the tree that was freshest at startup — switching between
+    vanilla and modded play mid-session left the dashboard blind to the
+    active one.
+    """
     mtime = 0.0
-    progress_path = SAVE_DIR / "progress.save"
-    if progress_path.exists():
-        mtime = max(mtime, progress_path.stat().st_mtime)
-    history_dir = SAVE_DIR / "history"
-    if history_dir.exists():
-        mtime = max(mtime, history_dir.stat().st_mtime)
-        for run_file in history_dir.glob("*.run"):
-            try:
-                mtime = max(mtime, run_file.stat().st_mtime)
-            except OSError:
-                pass
+    for save_dir in SAVE_DIRS:
+        progress_path = save_dir / "progress.save"
+        if progress_path.exists():
+            mtime = max(mtime, progress_path.stat().st_mtime)
+        history_dir = save_dir / "history"
+        if history_dir.exists():
+            mtime = max(mtime, history_dir.stat().st_mtime)
+            for run_file in history_dir.glob("*.run"):
+                try:
+                    mtime = max(mtime, run_file.stat().st_mtime)
+                except OSError:
+                    pass
     return mtime
+
+
+# Observer handles kept for lifespan shutdown (stop + join).
+_observers: list = []
 
 
 async def _watch_saves():
     global _save_watcher_last_mtime
 
-    # Try watchdog for instant file-change detection
+    # Try watchdog for instant file-change detection — one observer per
+    # detected save tree, so vanilla and modded play both trigger refreshes.
     from sts2.watcher import start_observer
     loop = asyncio.get_running_loop()
-    observer = start_observer(SAVE_DIR, loop, _save_changed_event) if SAVE_DIR.exists() else None
-    use_polling = observer is None
+    for save_dir in SAVE_DIRS:
+        if save_dir.exists():
+            observer = start_observer(save_dir, loop, _save_changed_event)
+            if observer:
+                _observers.append(observer)
+    use_polling = not _observers
 
     while True:
         try:
             if use_polling:
                 await asyncio.sleep(10)
-                if not SAVE_DIR.exists():
+                if not any(d.exists() for d in SAVE_DIRS):
                     continue
                 mtime = _check_mtime()
                 changed = mtime > _save_watcher_last_mtime and _save_watcher_last_mtime > 0

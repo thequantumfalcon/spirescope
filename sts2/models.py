@@ -160,6 +160,7 @@ class RunHistory(BaseModel):
 class CurrentRun(BaseModel):
     active: bool = False
     character: str = ""
+    ascension: int = 0  # ghost comparison centers its window on this
     current_hp: int = 0
     max_hp: int = 0
     gold: int = 0
@@ -176,6 +177,12 @@ class CurrentRun(BaseModel):
     floors: list[RunFloor] = []
     player_index: int = 0
     total_players: int = 1
+    # Combat telemetry from the game log; pydantic silently dropped these
+    # before they were declared, so API/SSE consumers never saw them.
+    # Save-file-only paths simply leave the defaults.
+    cards_played: list[str] = []
+    extra_turns: int = 0
+    elites_defeated: int = 0
 
 
 class PlayerProgress(BaseModel):

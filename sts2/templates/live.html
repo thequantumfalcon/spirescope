@@ -13,11 +13,13 @@
   </div>
 </div>
 
+<div class="live-danger" aria-live="polite">
 {% if danger_level %}
 <div class="danger-banner danger-{{ danger_level }}" role="alert">
   {% if danger_level == 'critical' %}CRITICAL: {{ danger_pct }}% HP — find healing immediately!{% else %}WARNING: {{ danger_pct }}% HP — consider resting or using potions{% endif %}
 </div>
 {% endif %}
+</div>
 
 {% if coaching_alerts %}
 {% for alert in coaching_alerts %}
@@ -163,6 +165,25 @@
     {% endif %}
   </div>
 </div>
+
+{% if ghost_info %}
+<h2 class="mt-lg">Ghost Run Comparison</h2>
+<p class="text-sm text-muted">Splits against your best comparable {{ run.character }} run (ascension-matched when possible). Green means you're ahead on HP at that floor.</p>
+<div class="stat-grid ghost-summary">
+  <div class="stat-box">
+    <div class="num ghost-status {% if ghost_info.status == 'ahead' %}text-green{% elif ghost_info.status == 'behind' %}text-red{% endif %}">{{ ghost_info.status }}</div>
+    <div class="label">vs Ghost</div>
+  </div>
+  <div class="stat-box"><div class="num ghost-hp-delta {% if ghost_info.current_hp_delta > 0 %}text-green{% elif ghost_info.current_hp_delta < 0 %}text-red{% endif %}">{{ '%+d' % ghost_info.current_hp_delta }}</div><div class="label">HP Delta</div></div>
+  <div class="stat-box"><div class="num ghost-gold-delta">{{ '%+d' % ghost_info.current_gold_delta }}</div><div class="label">Gold Delta</div></div>
+  <div class="stat-box"><div class="num ghost-floors-ahead">{{ ghost_info.floors_ahead }}/{{ ghost_info.floors_ahead + ghost_info.floors_behind }}</div><div class="label">Floors Ahead</div></div>
+</div>
+<div class="ghost-splits mt-sm" aria-live="polite">
+  {% for s in ghost_splits %}
+  <span class="tag {% if s.ahead %}tag-skill{% else %}tag-attack{% endif %}">F{{ s.floor }}: {{ '%+d' % s.hp_delta }} HP</span>
+  {% endfor %}
+</div>
+{% endif %}
 
 {% if run.floors %}
 <h2 class="mt-lg">Floor History</h2>

@@ -26,6 +26,22 @@ elif sys.platform == "linux":
 
 LOG_FILE = _LOG_DIR / "godot.log"
 
+# How much of an existing log to parse at startup, and how much backlog a
+# single poll will read. godot.log grows for as long as the game runs;
+# reading it whole pinned startup and memory to the log's size.
+_INIT_TAIL_BYTES = 5 * 1024 * 1024
+_MAX_POLL_BYTES = 10 * 1024 * 1024
+
+
+def _resolve_log_path() -> Path:
+    """STS2_LOG_FILE overrides detection (tests, sandboxes, custom installs).
+
+    Resolved per call: the fixed import-time path meant a redirected
+    deployment silently tailed the host user's real log.
+    """
+    env = os.environ.get("STS2_LOG_FILE")
+    return Path(env) if env else LOG_FILE
+
 # Regex patterns for extracting game events
 _RE_OBTAINED_CARD = re.compile(r"\[INFO\] Obtained (CARD\.\w+) from card reward")
 _RE_OBTAINED_POTION = re.compile(r"\[INFO\] Obtained (POTION\.\w+) from potion reward")
@@ -98,11 +114,11 @@ class LogRunState:
     def to_dict(self) -> dict:
         """Convert to dict compatible with CurrentRun.model_dump().
 
-        Combat telemetry fields (cards_played, extra_turns, elites_defeated)
-        are extra signal the log carries that CurrentRun's Pydantic model
-        doesn't currently declare — they're returned for SSE consumers that
-        opt in via dict access. Adding them to CurrentRun would force model
-        bumps on every save-file-only path that doesn't have these signals.
+        Combat telemetry (cards_played, extra_turns, elites_defeated) is
+        declared on CurrentRun with defaults, so log-sourced state carries it
+        through to API/SSE payloads while save-file-only paths just leave
+        the defaults. Before the fields were declared, pydantic silently
+        dropped them here and no consumer ever saw them.
         """
         return {
             "active": self.active,
@@ -132,20 +148,29 @@ class LogTailer:
     """Tails the STS2 godot.log and maintains live run state."""
 
     def __init__(self, log_path: Path | None = None):
-        self.path = log_path or LOG_FILE
+        self.path = log_path or _resolve_log_path()
         self.state = LogRunState()
         self._offset = 0
         self._last_size = 0
         self._initialized = False
 
     def _parse_initial(self):
-        """Parse the entire log file to build initial state."""
+        """Parse the tail of the log file to build initial state.
+
+        Only the last _INIT_TAIL_BYTES are read: the current run's events are
+        by definition at the end, and an unbounded read pinned startup time
+        and memory to however large the log had grown.
+        """
         if not self.path.exists():
             return
         try:
+            size = self.path.stat().st_size
             with open(self.path, "r", encoding="utf-8", errors="replace") as f:
+                if size > _INIT_TAIL_BYTES:
+                    f.seek(size - _INIT_TAIL_BYTES)
+                    f.readline()  # skip the partial line the seek landed in
                 lines = f.readlines()
-            self._offset = self.path.stat().st_size
+            self._offset = size
             self._last_size = self._offset
 
             # Find the LAST run start (work backwards to find it)
@@ -213,6 +238,15 @@ class LogTailer:
 
         if current_size < self._last_size:
             # Log was rotated/truncated — re-parse from scratch
+            self._initialized = False
+            self._offset = 0
+            self._last_size = 0
+            return self.poll()
+
+        if current_size - self._offset > _MAX_POLL_BYTES:
+            # Pathological backlog (poller stalled for hours, or something
+            # else is writing the file). Treat like a rotation and re-anchor
+            # on the tail instead of reading it all into memory.
             self._initialized = False
             self._offset = 0
             self._last_size = 0

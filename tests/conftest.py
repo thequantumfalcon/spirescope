@@ -25,6 +25,11 @@ os.environ["SPIRESCOPE_ADMIN_TOKEN"] = "test-admin-token"
 # in Settings would fail every English-name assertion locally.
 os.environ["STS2_LANG"] = "en"
 
+# Keep the suite hermetic: without this the log tailer resolves godot.log
+# under the real APPDATA and live-run tests read whatever game session this
+# machine last played.
+os.environ["STS2_LOG_FILE"] = str(Path(__file__).parent / "_no_such_godot.log")
+
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
@@ -59,8 +64,11 @@ def pytest_configure(config):
 
 @pytest.fixture(autouse=True)
 def _clear_rate_limits():
-    """Clear rate limit store before every test to prevent cross-test 429s."""
+    """Clear rate limit store and the live-run memo before every test —
+    cross-test 429s and a 2.5s-stale CurrentRun both make tests flaky."""
     _rate_limit_store.clear()
+    from sts2.routes import _live_memo
+    _live_memo.clear()
 
 
 @pytest_asyncio.fixture(scope="module")

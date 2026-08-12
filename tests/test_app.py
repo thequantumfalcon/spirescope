@@ -1965,11 +1965,13 @@ async def test_watch_saves_polling_fallback():
 
     import asyncio
 
+    from unittest.mock import MagicMock
+    mock_dir = MagicMock()
+    mock_dir.exists.return_value = False
     with patch("sts2.watcher.start_observer", return_value=None), \
-         patch("sts2.app.SAVE_DIR") as mock_dir, \
+         patch("sts2.app.SAVE_DIRS", [mock_dir]), \
          patch("sts2.app.asyncio.sleep", side_effect=fake_sleep), \
          patch("sts2.app._check_mtime", return_value=0.0):
-        mock_dir.exists.return_value = False
         try:
             await _watch_saves()
         except asyncio.CancelledError:

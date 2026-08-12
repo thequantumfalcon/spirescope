@@ -79,13 +79,30 @@ def _filter_runs(runs: list, *, version: str | None = None,
     return runs
 
 
+_LIVE_MEMO_TTL = 2.5  # seconds; just under the SSE poll cadence
+_live_memo: dict = {}
+
+
 async def _get_live_run(player: int | None = None) -> CurrentRun:
+    """Memoized live-run state: N concurrent SSE connections share one log
+    poll and save read per window instead of each running its own 3-second
+    poll loop against the disk."""
+    now = time.monotonic()
+    hit = _live_memo.get(player)
+    if hit and now - hit[0] < _LIVE_MEMO_TTL:
+        return hit[1]
+    run = await _compute_live_run(player)
+    _live_memo[player] = (time.monotonic(), run)
+    return run
+
+
+async def _compute_live_run(player: int | None = None) -> CurrentRun:
     """Get the best available live run data, merging save + log sources.
 
     Save is authoritative for everything it records: HP, gold, deck (with
     upgrades and enchantments), relics, potions, floors, run_time, events_seen.
-    Log contributes only act progression and encounters won — the fields it can
-    reconstruct completely. It is a supplement, never an override.
+    Log contributes only act progression, encounters won, and the combat
+    telemetry only it can see — supplements, never overrides.
     """
     a = _app()
     await a._poll_game_log_once()
@@ -108,6 +125,10 @@ async def _get_live_run(player: int | None = None) -> CurrentRun:
             merged["act"] = log["act"]
         if log.get("encounters_won"):
             merged["encounters_won"] = log["encounters_won"]
+        # Combat telemetry exists only in the log.
+        merged["cards_played"] = log.get("cards_played", [])
+        merged["extra_turns"] = log.get("extra_turns", 0)
+        merged["elites_defeated"] = log.get("elites_defeated", 0)
         return CurrentRun(**merged)
 
     if run.active:
@@ -117,6 +138,92 @@ async def _get_live_run(player: int | None = None) -> CurrentRun:
         return CurrentRun(**_log_run_state)  # Log parser only
 
     return run  # No active run from either source
+
+
+def _hp_danger(run) -> tuple[str | None, int]:
+    """HP-threshold danger fallback: (level or None, HP % remaining).
+
+    One definition on purpose: /live used <20%/<40% while /overlay used
+    <=25%/<=50%, and /overlay's primary path displayed a risk percentage in
+    a template slot labelled "% HP". danger_pct is always HP remaining.
+    """
+    if not run.max_hp:
+        return None, 0
+    hp_pct = int(run.current_hp / run.max_hp * 100)
+    if hp_pct <= 25:
+        return "critical", hp_pct
+    if hp_pct <= 50:
+        return "warning", hp_pct
+    return None, hp_pct
+
+
+def _danger_assessment(run, kb) -> tuple[str | None, int]:
+    """Danger level + HP %, shared by /live, /overlay and the SSE payload.
+
+    Uses the compound-risk scorer when the private module is installed
+    (caution suppressed — banner-worthy levels only), HP thresholds
+    otherwise.
+    """
+    fallback_level, hp_pct = _hp_danger(run)
+    try:
+        from sts2.risk import compute_death_risk
+    except ImportError:
+        return fallback_level, hp_pct
+    try:
+        risk = compute_death_risk(run, kb)
+    except Exception:
+        logging.getLogger(__name__).debug("Risk scoring failed", exc_info=True)
+        return fallback_level, hp_pct
+    level = risk.get("level")
+    return (level if level in ("warning", "danger", "critical") else None), hp_pct
+
+
+def _counter_card_hints(run, kb) -> tuple[list, str]:
+    """Counter-card picks for the most recent known encounter."""
+    deck_set = set(run.deck)
+    for floor in reversed(run.floors or []):
+        enemy = kb.get_enemy_by_id(floor.encounter) if floor.encounter else None
+        if enemy:
+            raw = kb.get_counter_cards(enemy, limit=8)
+            filtered = [c for c in raw
+                        if c.character in (run.character, "Colorless")
+                        and c.id not in deck_set]
+            return filtered[:4], enemy.name
+    return [], ""
+
+
+def _synergy_pick_hints(run, kb) -> list[dict]:
+    """Synergy suggestions for the most recent card pick."""
+    deck_set = set(run.deck)
+    for floor in reversed(run.floors or []):
+        if floor.card_picked:
+            synergy_list = kb.find_synergies(floor.card_picked)
+            picked_card = kb.get_card_by_id(floor.card_picked)
+            picked_name = picked_card.name if picked_card else floor.card_picked
+            return [{"card_name": s.name, "picked_name": picked_name}
+                    for s in synergy_list if s.id not in deck_set][:4]
+    return []
+
+
+def _build_live_payload(run, all_runs) -> dict:
+    """SSE payload: run state plus the danger and ghost data the page shows,
+    so an HP change within a floor updates the banner and splits without a
+    reload. Enrichment is computed only when the run state changed."""
+    a = _app()
+    data = run.model_dump()
+    if run.active:
+        level, hp_pct = _danger_assessment(run, a.kb)
+        data["danger"] = {"level": level, "hp_pct": hp_pct}
+        try:
+            from sts2.ghost import compute_splits, find_ghost_run, ghost_summary
+            ghost = find_ghost_run(run.character, run.ascension, all_runs)
+            if ghost:
+                splits = compute_splits(run, ghost)
+                data["ghost"] = {"info": ghost_summary(splits),
+                                 "splits": splits[-5:]}
+        except Exception:
+            logging.getLogger(__name__).debug("Ghost payload failed", exc_info=True)
+    return data
 
 
 def _app():
@@ -1157,58 +1264,18 @@ async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
         except Exception:
             _log.debug("Coaching: analytics suggestions failed", exc_info=True)
 
-        # Compound risk scoring
-        try:
-            from sts2.risk import compute_death_risk
-            risk = compute_death_risk(run, a.kb)
-            # Only show danger banner for danger/critical, not caution
-            if risk["level"] in ("danger", "critical"):
-                danger_level = risk["level"]
-                danger_pct = int(run.current_hp / run.max_hp * 100) if run.max_hp else 0
-        except ImportError:
-            # Fallback: simple HP percentage
-            try:
-                if run.max_hp > 0:
-                    hp_pct = run.current_hp / run.max_hp
-                    danger_pct = int(hp_pct * 100)
-                    if hp_pct < 0.2:
-                        danger_level = "critical"
-                    elif hp_pct < 0.4:
-                        danger_level = "warning"
-            except Exception:
-                pass
-        except Exception:
-            _log.debug("Coaching: risk scoring failed", exc_info=True)
+        # Danger assessment (shared definition with /overlay and SSE)
+        danger_level, danger_pct = _danger_assessment(run, a.kb)
 
         # Counter-card suggestions (based on last combat encounter)
         try:
-            if run.floors:
-                deck_set = set(run.deck)
-                for floor in reversed(run.floors):
-                    enemy = a.kb.get_enemy_by_id(floor.encounter) if floor.encounter else None
-                    if enemy:
-                        raw_counters = a.kb.get_counter_cards(enemy, limit=8)
-                        filtered = [c for c in raw_counters
-                                    if c.character in (run.character, "Colorless")
-                                    and c.id not in deck_set]
-                        counter_cards = filtered[:4]
-                        last_enemy_name = enemy.name
-                        break
+            counter_cards, last_enemy_name = _counter_card_hints(run, a.kb)
         except Exception:
             _log.debug("Coaching: counter-cards failed", exc_info=True)
 
         # Synergy hints (based on last card picked)
         try:
-            if run.floors:
-                deck_set = set(run.deck)
-                for floor in reversed(run.floors):
-                    if floor.card_picked:
-                        synergy_list = a.kb.find_synergies(floor.card_picked)
-                        picked_card = a.kb.get_card_by_id(floor.card_picked)
-                        picked_name = picked_card.name if picked_card else floor.card_picked
-                        synergy_hints = [{"card_name": s.name, "picked_name": picked_name}
-                                         for s in synergy_list if s.id not in deck_set][:4]
-                        break
+            synergy_hints = _synergy_pick_hints(run, a.kb)
         except Exception:
             _log.debug("Coaching: synergy hints failed", exc_info=True)
 
@@ -1270,21 +1337,21 @@ async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
         except Exception:
             _log.debug("Coaching: boss prep failed", exc_info=True)
 
-    # Ghost run comparison
+    # Ghost run comparison. The window is centered on the live run's real
+    # ascension (the field used to be missing, so this always compared
+    # against ascension-0 ghosts), and failures are logged, not hidden.
     ghost_splits = []
     ghost_info = None
     if run.active:
         try:
             from sts2.ghost import compute_splits, find_ghost_run, ghost_summary
             all_runs = await a._get_runs()
-            ghost = find_ghost_run(run.character, getattr(run, "ascension", 0), all_runs)
+            ghost = find_ghost_run(run.character, run.ascension, all_runs)
             if ghost:
                 ghost_splits = compute_splits(run, ghost)
                 ghost_info = ghost_summary(ghost_splits)
-        except ImportError:
-            pass
         except Exception:
-            pass
+            _log.debug("Ghost comparison failed", exc_info=True)
 
     return a.templates.TemplateResponse(request, "live.html", {
         "run": run, "analysis": analysis, "kb": a.kb,
@@ -1310,20 +1377,20 @@ async def overlay(request: Request, player: int = Query(None, ge=0, le=3)):
     synergy_hints = []
     top_cards = []
     if run.active:
+        # Shared definition with /live and SSE. The old primary path put a
+        # risk percentage into the "% HP" template slot, so the same number
+        # meant risk with the private module installed and HP without it.
+        danger_level, danger_pct = _danger_assessment(run, a.kb)
+        # Counter cards and synergy hints were initialized empty and never
+        # computed here — the overlay sections could not ever render.
         try:
-            from sts2.risk import compute_death_risk
-            risk = compute_death_risk(run, a.kb)
-            danger_level = risk["level"] if risk["level"] != "safe" else None
-            danger_pct = int(100 - risk["win_probability"])
-        except ImportError:
-            if run.max_hp and run.current_hp:
-                danger_pct = int(run.current_hp / run.max_hp * 100)
-                if danger_pct <= 25:
-                    danger_level = "critical"
-                elif danger_pct <= 50:
-                    danger_level = "warning"
+            counter_cards, _ = _counter_card_hints(run, a.kb)
         except Exception:
-            pass
+            logging.getLogger(__name__).debug("Overlay counter-cards failed", exc_info=True)
+        try:
+            synergy_hints = _synergy_pick_hints(run, a.kb)
+        except Exception:
+            logging.getLogger(__name__).debug("Overlay synergy hints failed", exc_info=True)
         # Top cards by play count
         from collections import Counter as _Counter
         card_counts = _Counter(run.deck)
@@ -1433,43 +1500,54 @@ async def api_live_run(player: int = Query(None, ge=0, le=3)):
     return run.model_dump()
 
 
-# SSE connection tracking — atomic counter (safe in single-threaded asyncio)
+# SSE connection tracking — atomic counters (safe in single-threaded asyncio).
+# Global cap plus a per-client cap so one client cannot hold every slot.
 _SSE_MAX_CONNECTIONS = 10
+_SSE_MAX_PER_CLIENT = 3
 _SSE_IDLE_TIMEOUT = 300.0
 _sse_active = 0
+_sse_by_client: dict[str, int] = {}
 
 
 @router.get("/api/live/stream")
-async def live_stream(player: int = Query(None, ge=0, le=3)):
+async def live_stream(request: Request, player: int = Query(None, ge=0, le=3)):
     global _sse_active
+    client_ip = request.client.host if request.client else "unknown"
     # Atomic check-and-reserve. Increment is done INSIDE the generator's try
     # block (paired with the finally decrement) so a pre-stream client
     # disconnect can't leak a slot. The pre-check here only refuses obvious
     # overflows — the generator will re-check on first yield.
-    if _sse_active >= _SSE_MAX_CONNECTIONS:
+    if (_sse_active >= _SSE_MAX_CONNECTIONS
+            or _sse_by_client.get(client_ip, 0) >= _SSE_MAX_PER_CLIENT):
         return PlainTextResponse("Too many live connections. Close another tab.",
                                  status_code=429)
 
     async def event_generator():
         global _sse_active
-        # Re-check cap and reserve atomically when the body actually starts;
+        # Re-check caps and reserve atomically when the body actually starts;
         # this pairs with the `finally` decrement so disconnect cannot leak.
-        if _sse_active >= _SSE_MAX_CONNECTIONS:
+        if (_sse_active >= _SSE_MAX_CONNECTIONS
+                or _sse_by_client.get(client_ip, 0) >= _SSE_MAX_PER_CLIENT):
             yield "event: error\ndata: {\"reason\":\"too_many\"}\n\n"
             return
         _sse_active += 1
+        _sse_by_client[client_ip] = _sse_by_client.get(client_ip, 0) + 1
         try:
             last_hash = ""
             idle_since = time.monotonic()
             while True:
                 run = await _get_live_run(player)
-                data = run.model_dump()
-                data_json = json.dumps(data, sort_keys=True)
-                current_hash = hashlib.sha1(data_json.encode(), usedforsecurity=False).hexdigest()
+                # Hash the raw run state; danger/ghost are derived from it,
+                # so enrichment is only computed when something changed.
+                state_json = json.dumps(run.model_dump(), sort_keys=True)
+                current_hash = hashlib.sha1(state_json.encode(), usedforsecurity=False).hexdigest()
                 if current_hash != last_hash:
                     last_hash = current_hash
                     idle_since = time.monotonic()
-                    yield f"data: {data_json}\n\n"
+                    a = _app()
+                    all_runs = await a._get_runs()
+                    payload = _build_live_payload(run, all_runs)
+                    yield f"data: {json.dumps(payload, sort_keys=True)}\n\n"
                 elif time.monotonic() - idle_since > _SSE_IDLE_TIMEOUT:
                     yield "event: timeout\ndata: {}\n\n"
                     return
@@ -1481,6 +1559,11 @@ async def live_stream(player: int = Query(None, ge=0, le=3)):
                     pass
         finally:
             _sse_active -= 1
+            remaining = _sse_by_client.get(client_ip, 1) - 1
+            if remaining <= 0:
+                _sse_by_client.pop(client_ip, None)
+            else:
+                _sse_by_client[client_ip] = remaining
 
     return StreamingResponse(event_generator(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache",

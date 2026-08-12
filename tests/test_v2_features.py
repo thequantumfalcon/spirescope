@@ -884,9 +884,13 @@ class TestSSEIntegration:
         """SSE generator should yield valid JSON data events."""
         import asyncio
 
+        from types import SimpleNamespace
+
         from sts2.routes import live_stream
-        # Call the route handler directly to get the StreamingResponse
-        resp = await live_stream(player=0)
+        # Call the route handler directly to get the StreamingResponse.
+        # The handler now takes the request to enforce the per-client cap.
+        request = SimpleNamespace(client=SimpleNamespace(host="127.0.0.1"))
+        resp = await live_stream(request, player=0)
         assert resp.media_type == "text/event-stream"
         # Consume just the first event from the async generator
         body_gen = resp.body_iterator
