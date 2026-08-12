@@ -8,7 +8,7 @@ import math
 import re
 import time
 from datetime import date, datetime, timedelta, timezone
-from xml.sax.saxutils import escape as xml_escape
+from xml.sax.saxutils import escape as xml_escape  # nosec B406 — escaping output, never parsing XML
 
 from fastapi import APIRouter, File, Form, Path, Query, Request, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
@@ -119,6 +119,7 @@ async def _compute_live_run(player: int | None = None) -> CurrentRun:
         # accumulator with no spend events; its floor is act-relative where the
         # save's is cumulative. The save is rewritten continuously during play
         # (~100 writes per session), so it is fresh as well as complete.
+        assert _log_run_state is not None  # implied by log_active above
         log = _log_run_state
         merged = run.model_dump()
         if log.get("act", 1) > merged.get("act", 1):
@@ -135,6 +136,7 @@ async def _compute_live_run(player: int | None = None) -> CurrentRun:
         return run  # Save file only
 
     if log_active:
+        assert _log_run_state is not None  # implied by log_active above
         return CurrentRun(**_log_run_state)  # Log parser only
 
     return run  # No active run from either source
@@ -674,7 +676,7 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
                ascension: int = Query(None, ge=0, le=20),
                version: str = Query(None, max_length=100),
                date_from: str = Query(None, alias="from", max_length=10),
-               date_to: str = Query(None, alias="to", max_length=10),
+               date_to: str | None = Query(None, alias="to", max_length=10),
                preset: str = Query(None, max_length=10),
                origin: str = Query(None, max_length=10),
                scope: str = Query("current", max_length=10),
@@ -721,8 +723,8 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
     selected_preset = preset if preset in ("7d", "30d", "90d", "all") else ""
     # Imported-this-session runs (Rivalry Seeds): newest import first.
     _evict_imported_runs()
-    imported_runs = sorted(_imported_runs.items(), key=lambda kv: kv[1][0], reverse=True)
-    imported_runs = [(iid, run) for iid, (_ts, run) in imported_runs]
+    imported_runs_sorted = sorted(_imported_runs.items(), key=lambda kv: kv[1][0], reverse=True)
+    imported_runs = [(iid, run) for iid, (_ts, run) in imported_runs_sorted]
     return a.templates.TemplateResponse(request, "runs.html", {
         "runs": filtered, "kb": a.kb, "characters": CHARACTERS,
         "selected_character": character, "selected_result": result,
@@ -992,7 +994,7 @@ async def analytics(request: Request,
                     ascension: int = Query(None, ge=0, le=20),
                     version: str = Query(None, max_length=100),
                     date_from: str = Query(None, alias="from", max_length=10),
-                    date_to: str = Query(None, alias="to", max_length=10),
+                    date_to: str | None = Query(None, alias="to", max_length=10),
                     preset: str = Query(None, max_length=10),
                     origin: str = Query(None, max_length=10),
                     scope: str = Query("current", max_length=10),
@@ -1120,7 +1122,9 @@ async def hypothesis_create(request: Request,
         return PlainTextResponse("Invalid form submission.", status_code=403)
     if not text or condition_type not in ("elite_skip", "deck_size", "card_pick", "character"):
         return PlainTextResponse("Invalid hypothesis.", status_code=400)
-    hyp_id = hashlib.sha1(f"{text}{_t.time()}".encode()).hexdigest()[:12]
+    # Opaque id generation, not a security hash.
+    hyp_id = hashlib.sha1(f"{text}{_t.time()}".encode(),
+                          usedforsecurity=False).hexdigest()[:12]
     params: dict = {}
     if condition_type == "deck_size":
         try:
@@ -1341,7 +1345,7 @@ async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
     pick_suggestions = []
     danger_level = None
     danger_pct = 0
-    counter_cards = []
+    counter_cards: list = []
     last_enemy_name = ""
     synergy_hints = []
 
@@ -1507,7 +1511,7 @@ async def overlay(request: Request, player: int = Query(None, ge=0, le=3)):
     run = await _get_live_run(player)
     danger_level = None
     danger_pct = 0
-    counter_cards = []
+    counter_cards: list = []
     synergy_hints = []
     top_cards = []
     if run.active:
@@ -1588,6 +1592,8 @@ async def analyze_deck(request: Request):
     analysis = a.kb.analyze_deck(card_ids)
     selected_counts: dict[str, int] = {}
     for cid in card_ids:
+        if not isinstance(cid, str):
+            continue
         selected_counts[cid] = selected_counts.get(cid, 0) + 1
     # Deck health via spectral graph analysis: builds keyword-synergy graph,
     # computes algebraic connectivity + orphan list. Score 0-100, higher = more

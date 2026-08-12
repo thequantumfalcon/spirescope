@@ -1,5 +1,6 @@
 """The Graveyard — procedural epitaphs for dead runs."""
 import hashlib
+from typing import Any
 
 from sts2.models import RunHistory
 
@@ -24,7 +25,7 @@ def generate_epitaph(run: RunHistory, kb=None) -> str:
 
 def _collect_facts(run: RunHistory, kb) -> dict:
     """Extract notable facts from a run for epitaph generation."""
-    facts = {}
+    facts: dict[str, Any] = {}
     last_floor = run.floors[-1].floor if run.floors else 0
 
     # Potion hoarding

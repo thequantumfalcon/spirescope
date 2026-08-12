@@ -704,7 +704,8 @@ def _build_all():
     random.seed(42)
     card_keys = sorted({k[:-len(".description")] for k in eng["cards"]
                         if k.endswith(".description")})
-    sample = random.sample(card_keys, 20)
+    # Spot-check sampling, not cryptography.
+    sample = random.sample(card_keys, 20)  # nosec B311
     tokname_re = re.compile(r"\{([A-Za-z0-9_]+)[:}]")
     mismatches = []
     for key in sample:

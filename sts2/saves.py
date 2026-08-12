@@ -254,7 +254,7 @@ def get_progress() -> PlayerProgress | None:
             "lost": cs.get("times_lost", 0),
         }
 
-    encounter_stats = {}
+    encounter_stats: dict[str, dict[str, dict[str, int]]] = {}
     for es in data.get("encounter_stats", []):
         enc_id = es.get("encounter_id", "")
         if not enc_id:
@@ -268,7 +268,7 @@ def get_progress() -> PlayerProgress | None:
             }
 
     # Enemy stats (per-monster win/loss by character)
-    enemy_stats = {}
+    enemy_stats: dict[str, dict[str, dict[str, int]]] = {}
     for es in data.get("enemy_stats", []):
         enemy_id = es.get("enemy_id", "")
         if not enemy_id:

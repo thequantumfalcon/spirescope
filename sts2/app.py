@@ -750,7 +750,7 @@ async def _watch_saves():
 # Game log tailer — builds live run state from godot.log
 # ---------------------------------------------------------------------------
 
-_log_tailer = None  # type: ignore[assignment]
+_log_tailer = None
 _log_run_state: dict | None = None
 _log_poll_lock: asyncio.Lock | None = None
 

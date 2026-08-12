@@ -18,6 +18,7 @@ import logging
 import os
 import re
 from pathlib import Path
+from typing import Any
 
 _CODE_RE = re.compile(r"[a-z]{2,8}")
 
@@ -65,7 +66,7 @@ def get_translator(code: str = ""):
         """Look up a dotted key like 'nav.cards'. Falls back to English, then the key itself."""
         parts = key.split(".")
         # Try requested locale
-        node = locale
+        node: Any = locale
         for p in parts:
             if isinstance(node, dict) and p in node:
                 node = node[p]

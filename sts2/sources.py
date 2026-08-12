@@ -201,7 +201,8 @@ class WikiggSource:
                 f"{_WIKI_API}?{params}",
                 headers={"User-Agent": _get_user_agent()},
             )
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            # URL is always the hardcoded https wiki API — no file:/custom schemes.
+            with urllib.request.urlopen(req, timeout=30) as resp:  # nosec B310
                 body = resp.read(_MAX_RESPONSE_SIZE + 1)
                 if len(body) > _MAX_RESPONSE_SIZE:
                     raise urllib.error.URLError(

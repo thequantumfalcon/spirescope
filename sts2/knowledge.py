@@ -2,6 +2,7 @@
 import json
 import logging
 import re
+from typing import Any
 
 from sts2.config import DATA_DIR, MODS_DIR
 from sts2.models import (
@@ -405,7 +406,7 @@ class KnowledgeBase:
         except Exception:
             pass  # save files may not exist (e.g., CI)
 
-    def _build_indexes(self):
+    def _build_indexes(self) -> None:
         """Build O(1) lookup dicts and pre-tokenized search index."""
         for c in self.cards:
             self._cards_by_id[c.id] = c
@@ -519,8 +520,8 @@ class KnowledgeBase:
 
         return results
 
-    def get_cards(self, character: str = None, card_type: str = None,
-                  rarity: str = None, cost: str = None, keyword: str = None) -> list[Card]:
+    def get_cards(self, character: str | None = None, card_type: str | None = None,
+                  rarity: str | None = None, cost: str | None = None, keyword: str | None = None) -> list[Card]:
         """Filter cards by criteria."""
         result = self.cards
         if character:
@@ -539,7 +540,7 @@ class KnowledgeBase:
     def get_card_by_id(self, card_id: str) -> Card | None:
         return self._cards_by_id.get(card_id)
 
-    def get_relics(self, character: str = None, rarity: str = None) -> list[Relic]:
+    def get_relics(self, character: str | None = None, rarity: str | None = None) -> list[Relic]:
         result = self.relics
         if character:
             result = [r for r in result if r.character.lower() == character.lower() or r.character == "Shared"]
@@ -550,7 +551,7 @@ class KnowledgeBase:
     def get_relic_by_id(self, relic_id: str) -> Relic | None:
         return self._relics_by_id.get(relic_id)
 
-    def get_potions(self, rarity: str = None) -> list[Potion]:
+    def get_potions(self, rarity: str | None = None) -> list[Potion]:
         result = self.potions
         if rarity:
             result = [p for p in result if p.rarity.lower() == rarity.lower()]
@@ -559,7 +560,7 @@ class KnowledgeBase:
     def get_enemy_by_id(self, enemy_id: str) -> Enemy | None:
         return self._enemies_by_id.get(enemy_id)
 
-    def get_epochs(self, category: str = None, character: str = None) -> list[Epoch]:
+    def get_epochs(self, category: str | None = None, character: str | None = None) -> list[Epoch]:
         result = self.epochs
         if category:
             result = [e for e in result if e.category.lower() == category.lower()]
@@ -570,7 +571,7 @@ class KnowledgeBase:
     def get_epoch_by_id(self, epoch_id: str) -> Epoch | None:
         return self._epochs_by_id.get(epoch_id)
 
-    def get_enemies(self, act: str = None, enemy_type: str = None) -> list[Enemy]:
+    def get_enemies(self, act: str | None = None, enemy_type: str | None = None) -> list[Enemy]:
         result = self.enemies
         if act:
             result = [e for e in result if any(act.lower() in a.lower() for a in e.act)]
@@ -609,8 +610,8 @@ class KnowledgeBase:
 
     def analyze_deck(self, card_ids: list[str]) -> dict:
         """Analyze a deck composition."""
-        cards = [self.get_card_by_id(cid) for cid in card_ids]
-        cards = [c for c in cards if c is not None]
+        raw_cards = [self.get_card_by_id(cid) for cid in card_ids]
+        cards = [c for c in raw_cards if c is not None]
 
         if not cards:
             return {"error": "No valid cards found"}
@@ -740,7 +741,7 @@ class KnowledgeBase:
             if card:
                 deck_names.add(self.english_name(card).lower())
 
-        best = {"name": "Custom", "confidence": 0, "matching_cards": []}
+        best: dict[str, Any] = {"name": "Custom", "confidence": 0, "matching_cards": []}
         for arch in strategy.archetypes:
             arch_cards = set(name.lower() for name in arch.key_cards)
             overlap = arch_cards & deck_names
@@ -755,7 +756,7 @@ class KnowledgeBase:
         """Return data source status for the home page."""
         from sts2.config import SAVE_DIR
         save_exists = SAVE_DIR.exists() and (SAVE_DIR / "progress.save").exists()
-        status = {
+        status: dict[str, Any] = {
             "cards": len(self.cards),
             "relics": len(self.relics),
             "potions": len(self.potions),

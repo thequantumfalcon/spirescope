@@ -43,7 +43,7 @@ def _validate_url(url: str) -> str:
     if not hostname:
         raise ValueError("Sync URL has no hostname")
 
-    def _disallowed_reason(addr: ipaddress._BaseAddress) -> str | None:
+    def _disallowed_reason(addr: ipaddress.IPv4Address | ipaddress.IPv6Address) -> str | None:
         # Block private, loopback, reserved, multicast, link-local (cloud-
         # metadata 169.254.169.254 is link-local — must be explicit).
         if addr.is_loopback:

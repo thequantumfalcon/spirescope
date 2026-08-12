@@ -90,7 +90,7 @@ def _scale_subcounts(d: dict, scale: float) -> dict:
         if not isinstance(vals, dict):
             out[key] = vals
             continue
-        scaled = {}
+        scaled: dict = {}
         any_nonzero = False
         for subkey, subval in vals.items():
             # Exclude bools — they're technically int but should not aggregate.
@@ -176,7 +176,7 @@ def merge_aggregate(existing: dict, imported: dict) -> dict:
         imported_count = imported.get("run_count", 0)
         if imported_count > _MIN_IMPORT_CAP and imported_count > 0:
             scale = _MIN_IMPORT_CAP / imported_count
-            scaled = {"run_count": _MIN_IMPORT_CAP}
+            scaled: dict = {"run_count": _MIN_IMPORT_CAP}
             for field in ("card_pick_rates", "card_win_rates", "relic_win_rates",
                           "character_stats", "ascension_stats"):
                 scaled[field] = _scale_subcounts(imported.get(field, {}), scale)

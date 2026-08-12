@@ -62,7 +62,8 @@ def check_for_update(current_version: str) -> None:
                 _RELEASES_URL,
                 headers={"User-Agent": "Spirescope", "Accept": "application/vnd.github+json"},
             )
-            with urllib.request.urlopen(req, timeout=10) as resp:
+            # Hardcoded https GitHub API endpoints — no file:/custom schemes.
+            with urllib.request.urlopen(req, timeout=10) as resp:  # nosec B310
                 data = json.loads(resp.read().decode("utf-8"))
             tag = data.get("tag_name", "")
             if tag and _parse_version(tag) > _parse_version(current_version):
@@ -255,7 +256,8 @@ def _download_capped(url: str, dest: Path, max_bytes: int, hasher=None) -> None:
     """
     req = urllib.request.Request(url, headers={"User-Agent": "Spirescope"})
     total = 0
-    with urllib.request.urlopen(req, timeout=60) as resp, open(dest, "wb") as f:
+    # Asset URLs are origin-checked against https://github.com/ before this call.
+    with urllib.request.urlopen(req, timeout=60) as resp, open(dest, "wb") as f:  # nosec B310
         while True:
             chunk = resp.read(1 << 16)
             if not chunk:
@@ -337,7 +339,8 @@ def check_for_data_update() -> dict | None:
                 _RELEASES_LIST_URL,
                 headers={"User-Agent": "Spirescope", "Accept": "application/vnd.github+json"},
             )
-            with urllib.request.urlopen(req, timeout=10) as resp:
+            # Hardcoded https GitHub API endpoints — no file:/custom schemes.
+            with urllib.request.urlopen(req, timeout=10) as resp:  # nosec B310
                 releases = json.loads(resp.read().decode("utf-8"))
             local_date = _local_data_date()
             best = None

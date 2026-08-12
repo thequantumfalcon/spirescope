@@ -44,12 +44,9 @@ jobs:
         run: ruff check sts2/ tests/
 
       - name: Type check with mypy
-        # Non-blocking for now: ~95 existing errors across the codebase.
-        # Flip continue-on-error off once that backlog is cleared. One leg
-        # only -- there is nothing platform- or version-specific to catch
-        # twice.
+        # Backlog cleared -- blocking. One leg only -- there is nothing
+        # platform- or version-specific to catch twice.
         if: matrix.python-version == '3.12'
-        continue-on-error: true
         run: mypy sts2
 
       - name: Install coverage plugin

@@ -102,7 +102,8 @@ def _fetch_page(path: str) -> str:
     """Fetch a wiki page and return its HTML content."""
     url = f"{WIKI_BASE}{path}"
     req = urllib.request.Request(url, headers={"User-Agent": _get_user_agent()})
-    with urllib.request.urlopen(req, timeout=30) as resp:
+    # URL is always WIKI_BASE (hardcoded https) + path — no file:/custom schemes.
+    with urllib.request.urlopen(req, timeout=30) as resp:  # nosec B310
         body = resp.read(_MAX_RESPONSE_SIZE + 1)
         if len(body) > _MAX_RESPONSE_SIZE:
             raise urllib.error.URLError(
@@ -726,7 +727,7 @@ def _discover_events_from_saves() -> list[dict]:
     return list(discovered.values())
 
 
-def _fetch_with_retry(path: str, retries: int = 2) -> str:
+def _fetch_with_retry(path: str, retries: int = 2) -> str:  # type: ignore[return]
     """Fetch a wiki page with retry on network error."""
     for attempt in range(retries + 1):
         try:
@@ -881,7 +882,7 @@ def run_fetcher(save_only: bool = False):
     for f in sorted(DATA_DIR.glob("*.json")):
         try:
             data = json.loads(f.read_text(encoding="utf-8"))
-            count = len(data) if isinstance(data, list) else f"dict ({len(data)} keys)"
+            count = len(data) if isinstance(data, list) else f"dict ({len(data)} keys)"  # type: ignore[assignment]
             print(f"    {f.name}: {count} entries")
         except (json.JSONDecodeError, OSError) as exc:
             print(f"    {f.name}: ERROR reading ({exc})")

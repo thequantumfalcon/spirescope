@@ -87,10 +87,10 @@ _CHAR_MAP = {
 class LogRunState:
     """Mutable state built from log parsing."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         self.active = False
         self.character = ""
         self.deck: list[str] = []
