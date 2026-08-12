@@ -38,23 +38,23 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 _css_path = STATIC_DIR / "style.css"
-_CSS_HASH = hashlib.md5(_css_path.read_bytes()).hexdigest()[:8] if _css_path.exists() else "0"
+_CSS_HASH = hashlib.md5(_css_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _css_path.exists() else "0"
 _theme_init_path = STATIC_DIR / "theme-init.js"
-_THEME_INIT_HASH = hashlib.md5(_theme_init_path.read_bytes()).hexdigest()[:8] if _theme_init_path.exists() else "0"
+_THEME_INIT_HASH = hashlib.md5(_theme_init_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _theme_init_path.exists() else "0"
 _logo_path = STATIC_DIR / "logo.jpg"
-_LOGO_HASH = hashlib.md5(_logo_path.read_bytes()).hexdigest()[:8] if _logo_path.exists() else "0"
+_LOGO_HASH = hashlib.md5(_logo_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _logo_path.exists() else "0"
 _hero_bg_path = STATIC_DIR / "hero-bg.jpg"
-_HERO_BG_HASH = hashlib.md5(_hero_bg_path.read_bytes()).hexdigest()[:8] if _hero_bg_path.exists() else "0"
+_HERO_BG_HASH = hashlib.md5(_hero_bg_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _hero_bg_path.exists() else "0"
 _deck_js_path = STATIC_DIR / "deck.js"
-_DECK_JS_HASH = hashlib.md5(_deck_js_path.read_bytes()).hexdigest()[:8] if _deck_js_path.exists() else "0"
+_DECK_JS_HASH = hashlib.md5(_deck_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _deck_js_path.exists() else "0"
 _collections_js_path = STATIC_DIR / "collections.js"
-_COLLECTIONS_JS_HASH = hashlib.md5(_collections_js_path.read_bytes()).hexdigest()[:8] if _collections_js_path.exists() else "0"
+_COLLECTIONS_JS_HASH = hashlib.md5(_collections_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _collections_js_path.exists() else "0"
 _shortcuts_js_path = STATIC_DIR / "shortcuts.js"
-_SHORTCUTS_JS_HASH = hashlib.md5(_shortcuts_js_path.read_bytes()).hexdigest()[:8] if _shortcuts_js_path.exists() else "0"
+_SHORTCUTS_JS_HASH = hashlib.md5(_shortcuts_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _shortcuts_js_path.exists() else "0"
 _compare_js_path = STATIC_DIR / "compare.js"
-_COMPARE_JS_HASH = hashlib.md5(_compare_js_path.read_bytes()).hexdigest()[:8] if _compare_js_path.exists() else "0"
+_COMPARE_JS_HASH = hashlib.md5(_compare_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _compare_js_path.exists() else "0"
 _live_js_path = STATIC_DIR / "live.js"
-_LIVE_JS_HASH = hashlib.md5(_live_js_path.read_bytes()).hexdigest()[:8] if _live_js_path.exists() else "0"
+_LIVE_JS_HASH = hashlib.md5(_live_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _live_js_path.exists() else "0"
 
 
 @contextlib.asynccontextmanager

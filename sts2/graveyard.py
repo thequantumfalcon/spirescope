@@ -18,7 +18,7 @@ def generate_epitaph(run: RunHistory, kb=None) -> str:
     if not templates:
         return _fallback_epitaph(run)
 
-    seed = int(hashlib.md5(run.id.encode()).hexdigest()[:8], 16)
+    seed = int(hashlib.md5(run.id.encode(), usedforsecurity=False).hexdigest()[:8], 16)
     return templates[seed % len(templates)]
 
 
@@ -171,5 +171,5 @@ def _fallback_epitaph(run: RunHistory) -> str:
         f"{char}, floor {floor}. Gone but not forgotten.",
         f"Floor {floor}. The climb continues. Not for this one.",
     ]
-    seed = int(hashlib.md5(run.id.encode()).hexdigest()[:8], 16)
+    seed = int(hashlib.md5(run.id.encode(), usedforsecurity=False).hexdigest()[:8], 16)
     return fallbacks[seed % len(fallbacks)]
