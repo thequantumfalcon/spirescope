@@ -20,3 +20,16 @@ Dockerfile
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Never copy files that are deliberately kept out of the published repo.
+# The Dockerfile copies sts2/ wholesale, so without these a locally built
+# image carries the maintainer's private modules and working data, and they
+# stay importable inside the container. Keep this list in step with the
+# "Private modules" section of .gitignore.
+sts2/risk.py
+sts2/diagnosis.py
+sts2/data/pheromones.json
+sts2/data/hypotheses.json
+sts2/data/.fetcher_keys.json
+# Game text built from the user's own install — not ours to redistribute.
+sts2/locales/content/

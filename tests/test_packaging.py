@@ -402,3 +402,21 @@ def test_cli_names_the_running_executable(monkeypatch, exe_name):
 
     monkeypatch.delattr(_sys, "frozen", raising=False)
     assert entry._program_name() == "spirescope"
+
+
+def test_browser_fixture_aligns_host_with_its_loopback_bind():
+    """The browser suite must not be locked out by the auth middleware.
+
+    conftest sets STS2_HOST=0.0.0.0 so the rate-limiter engages, but the
+    request-auth middleware reads that same variable at request time. The
+    browser fixture serves on real loopback, so it must align the variable
+    with its socket or every navigation gets 401 while /health (exempt) still
+    answers — the fixture starts and all 15 tests fail on their first
+    assertion. That failure mode is invisible to `pytest -q`, which
+    deselects browser tests, so it is guarded here instead.
+    """
+    text = (PROJECT_ROOT / "tests" / "test_browser.py").read_text(encoding="utf-8")
+    assert 'os.environ["STS2_HOST"] = "127.0.0.1"' in text, (
+        "browser fixture no longer pins STS2_HOST to loopback; every page "
+        "request will be refused by the auth middleware")
+    assert "old_host" in text, "browser fixture does not restore STS2_HOST"

@@ -45,6 +45,17 @@ def live_server(tmp_path_factory):
     old_env = os.environ.get("STS2_SAVE_DIR")
     os.environ["STS2_SAVE_DIR"] = str(save_dir)
 
+    # conftest sets STS2_HOST=0.0.0.0 so the rate-limit tests see an active
+    # limiter, but the auth middleware reads the same variable at request time
+    # and would then demand a token for every page. This server really is on
+    # loopback, and the browser suite exists to exercise the zero-config
+    # loopback deployment a player actually runs, so align the variable with
+    # the socket for the fixture's lifetime. Without this every navigation
+    # gets 401 while /health (exempt) still answers, so the fixture starts and
+    # all 15 tests fail on their first assertion.
+    old_host = os.environ.get("STS2_HOST")
+    os.environ["STS2_HOST"] = "127.0.0.1"
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(("127.0.0.1", 0))
         port = s.getsockname()[1]
@@ -76,6 +87,10 @@ def live_server(tmp_path_factory):
         os.environ.pop("STS2_SAVE_DIR", None)
     else:
         os.environ["STS2_SAVE_DIR"] = old_env
+    if old_host is None:
+        os.environ.pop("STS2_HOST", None)
+    else:
+        os.environ["STS2_HOST"] = old_host
 
 
 class TestThemeToggle:
