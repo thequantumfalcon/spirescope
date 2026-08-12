@@ -3,7 +3,10 @@
   if (btn) {
     btn.addEventListener('click', function() {
       var links = btn.nextElementSibling;
-      if (links) links.classList.toggle('open');
+      if (links) {
+        var open = links.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
     });
   }
   var tb = document.querySelector('.theme-toggle');
