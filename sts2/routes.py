@@ -839,17 +839,22 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
     except Exception:
         drift_trajectory = []
         drift_alert = None
-    # Prophecy grade: apply the same historical-comparison prophecy this
-    # run's character+ascension would have gotten, then grade the outcome
-    # against it — excluding this run itself from its own comparison set.
-    # None when there isn't enough other history to have made a prophecy.
+    # Prophecy grade: the prophecy this run would have received BEFORE it was
+    # played, graded against what actually happened. Only runs that finished
+    # earlier may inform it — excluding just this run left every later run in
+    # the comparison set, so a historical "prediction" silently changed as new
+    # runs accumulated and was never the prediction anyone could have made.
+    # None when there is not enough prior history to have made a prophecy.
     from sts2.prophecy import generate_prophecy, grade_prophecy
     prophecy_grade = None
     try:
         history = await a._get_runs()
-        other_runs = [r for r in history if r.id != run.id]
-        run_prophecy = generate_prophecy(run.character, run.ascension, other_runs)
-        prophecy_grade = grade_prophecy(run_prophecy, run)
+        prior_runs = [r for r in history
+                      if r.id != run.id and r.timestamp and run.timestamp
+                      and r.timestamp < run.timestamp]
+        if prior_runs:
+            run_prophecy = generate_prophecy(run.character, run.ascension, prior_runs)
+            prophecy_grade = grade_prophecy(run_prophecy, run)
     except Exception:
         logging.getLogger(__name__).debug("Prophecy grading failed", exc_info=True)
     from sts2.patches import branch_of

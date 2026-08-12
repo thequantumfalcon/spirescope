@@ -224,9 +224,14 @@ async def test_index_hides_prophecy_and_tilt_when_no_run_history(client):
 
 async def test_run_detail_shows_prophecy_grade(client):
     run = RunHistory(id="graded-run", character="Ironclad", win=True, ascension=5,
+                     timestamp=5000,
                      floors=[RunFloor(floor=20, type="boss", current_hp=30, max_hp=80)])
+    # A grade needs history that predates the run — a prophecy computed from
+    # the run itself (or from later runs) is not a prediction.
+    earlier = RunHistory(id="earlier", character="Ironclad", win=False,
+                         ascension=5, timestamp=1000)
     with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=run)), \
-         patch("sts2.app._get_runs", new=AsyncMock(return_value=[run])), \
+         patch("sts2.app._get_runs", new=AsyncMock(return_value=[run, earlier])), \
          patch("sts2.prophecy.generate_prophecy") as mock_gen, \
          patch("sts2.prophecy.grade_prophecy") as mock_grade:
         mock_gen.return_value = {"available": True, "win_probability": 30.0, "avg_floor": 15.0}
@@ -240,3 +245,53 @@ async def test_run_detail_shows_prophecy_grade(client):
     assert mock_grade.called
     assert "Prophecy said" in resp.text
     assert "30.0%" in resp.text
+
+
+class TestProphecyUsesOnlyPriorRuns:
+    """A graded prophecy must be the prediction that was available BEFORE the
+    run, not one recomputed later from runs that had not happened yet.
+
+    Excluding only the run itself left every LATER run in the comparison set,
+    so the displayed historical prediction drifted as new runs accumulated.
+    """
+
+    @staticmethod
+    def _run(rid, ts, win, character="Ironclad"):
+        from sts2.models import RunHistory
+        return RunHistory(id=rid, character=character, win=win, ascension=0,
+                          timestamp=ts, deck=["CARD.STRIKE"])
+
+    async def test_later_runs_do_not_change_an_earlier_grade(self, client):
+        from unittest.mock import AsyncMock, patch
+
+        graded = self._run("target", 5000, False)
+        earlier = [self._run(f"e{i}", 1000 + i, i % 2 == 0) for i in range(8)]
+        later = [self._run(f"L{i}", 9000 + i, True) for i in range(20)]
+
+        async def render(history):
+            with patch("sts2.app._get_run_by_id",
+                       new=AsyncMock(return_value=graded)), \
+                 patch("sts2.app._get_runs",
+                       new=AsyncMock(return_value=history)):
+                return (await client.get("/runs/target")).text
+
+        without_future = await render(earlier + [graded])
+        with_future = await render(earlier + [graded] + later)
+
+        import re
+        pat = re.compile(r"Prophecy said <strong>([\d.]+)%")
+        a = pat.search(without_future)
+        b = pat.search(with_future)
+        assert a, "prophecy grade did not render for a run with prior history"
+        assert a.group(1) == b.group(1), (
+            "adding later runs changed an earlier run's displayed prophecy")
+
+    async def test_no_grade_without_prior_history(self, client):
+        from unittest.mock import AsyncMock, patch
+
+        first = self._run("first", 1000, False)
+        later = [self._run(f"L{i}", 9000 + i, True) for i in range(10)]
+        with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=first)), \
+             patch("sts2.app._get_runs", new=AsyncMock(return_value=[first] + later)):
+            html = (await client.get("/runs/first")).text
+        assert "Prophecy said" not in html
