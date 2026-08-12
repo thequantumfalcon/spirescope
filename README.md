@@ -152,7 +152,7 @@ Opens your browser at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 ```bash
 pip install -e ".[dev]"
-python build.py
+python build_exe.py
 ```
 
 Output: `dist/Spirescope/Spirescope.exe` — zip the entire `dist/Spirescope/` folder and share it.

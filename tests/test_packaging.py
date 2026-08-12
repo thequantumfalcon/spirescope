@@ -105,13 +105,14 @@ def test_translator_never_returns_raw_key_for_shipped_keys(key):
     assert get_translator("en")(key) != key
 
 
-def test_version_is_consistent_across_release_artifacts():
-    """pyproject, the app, and the PyInstaller spec must agree.
+def test_version_is_single_sourced():
+    """sts2/config.py owns the version; pyproject and the spec derive it.
 
     The spec used to restate the version as a literal and drifted six releases
     behind (2.9.7 while the app shipped 3.0.2), stamping the stale number into
-    the Windows executable's file metadata. It now derives the value, and this
-    guards the other two.
+    the Windows executable's file metadata. pyproject then carried its own
+    literal copy, which is the same drift waiting to happen — it now declares
+    the version dynamic and reads the config attribute.
     """
     import re
 
@@ -119,17 +120,81 @@ def test_version_is_consistent_across_release_artifacts():
     config = (PKG / "config.py").read_text(encoding="utf-8")
     spec = SPEC.read_text(encoding="utf-8")
 
-    pyproject_version = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.M)
     config_version = re.search(r'^VERSION\s*=\s*"([^"]+)"', config, re.M)
-    assert pyproject_version and config_version
-    assert pyproject_version.group(1) == config_version.group(1), (
-        f"pyproject {pyproject_version.group(1)} != config {config_version.group(1)}")
+    assert config_version, "sts2/config.py no longer defines VERSION"
 
-    # The spec must not reintroduce a hardcoded literal.
+    assert 'dynamic = ["version"]' in pyproject, (
+        "pyproject.toml no longer declares the version dynamic")
+    assert 'attr = "sts2.config.VERSION"' in pyproject, (
+        "pyproject.toml no longer derives the version from sts2.config")
+    literal = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.M)
+    assert literal is None, (
+        f"pyproject.toml restates version={literal.group(1)!r}; config.py owns it")
+
+    # The spec must not reintroduce a hardcoded literal either.
     hardcoded = re.search(r'^VERSION\s*=\s*"([^"]+)"', spec, re.M)
     assert hardcoded is None, (
         f"spirescope.spec hardcodes VERSION={hardcoded.group(1)!r}; derive it instead")
     assert "config.py" in spec, "spec no longer reads the version from config.py"
+
+
+def test_wheel_package_data_covers_every_resource_dir():
+    """Any non-code directory under sts2/ must be declared as package data.
+
+    Same bug class as issue #5 but through the other packaging channel: the
+    PyInstaller spec bundled every resource dir while wheels shipped none of
+    them, so `pip install spirescope` from a wheel produced a package whose
+    import failed on the missing static directory.
+    """
+    pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    section = re.search(
+        r"\[tool\.setuptools\.package-data\](.*?)(?=\n\[|\Z)", pyproject, re.S)
+    assert section, "pyproject.toml has no [tool.setuptools.package-data]"
+    missing = [
+        name for name in _resource_dirs()
+        if f'"{name}/' not in section.group(1)
+    ]
+    assert not missing, (
+        f"sts2/{{{','.join(missing)}}} exist but have no package-data pattern — "
+        f"wheels would ship without them")
+
+
+def test_wheel_never_bundles_user_content_overlays():
+    """locales/content is the user's own game text; wheels must not sweep it in.
+
+    The package-data pattern must stay file-scoped (locales/*.json) and the
+    exclude list must keep the content directory out, mirroring what
+    spirescope.spec does for frozen builds.
+    """
+    pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert '"locales/*.json"' in pyproject, (
+        "locales package-data no longer lists UI files individually")
+    assert '"locales/content/*"' in pyproject, (
+        "locales/content is no longer excluded from package data")
+
+
+def test_sdist_manifest_covers_every_resource_dir():
+    """MANIFEST.in must keep sdists complete and prune the content overlays."""
+    manifest = (PROJECT_ROOT / "MANIFEST.in").read_text(encoding="utf-8")
+    missing = [
+        name for name in _resource_dirs()
+        if f"sts2/{name}" not in manifest
+    ]
+    assert not missing, f"MANIFEST.in misses sts2/{{{','.join(missing)}}}"
+    assert "prune sts2/locales/content" in manifest
+
+
+def test_no_module_shadows_the_pypa_build_package():
+    """`python -m build` from the project root must reach PyPA's builder.
+
+    A root-level build.py used to shadow it: with the project root as cwd,
+    `python -m build` executed the PyInstaller script instead of building a
+    wheel. The executable-build script is build_exe.py precisely so the name
+    `build` stays free.
+    """
+    assert not (PROJECT_ROOT / "build.py").exists(), (
+        "build.py shadows PyPA's `python -m build`; keep it named build_exe.py")
+    assert (PROJECT_ROOT / "build_exe.py").exists()
 
 
 class TestStateDirSplit:

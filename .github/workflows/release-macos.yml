@@ -87,8 +87,8 @@ jobs:
         #    removing it here is safe and keeps runtime state out of the zip.
         # 2. "Strip dist-info" above also deletes the bundled packages' LICENSE
         #    files, and BSD-3-Clause and Apache-2.0 both require the notice to
-        #    accompany a binary redistribution. build.py does this already, but
-        #    this workflow calls PyInstaller directly and never runs build.py.
+        #    accompany a binary redistribution. build_exe.py does this already, but
+        #    this workflow calls PyInstaller directly and never runs build_exe.py.
         run: |
           rm -rf dist/Spirescope/data
           cp LICENSE dist/Spirescope/LICENSE.txt

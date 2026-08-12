@@ -19,15 +19,21 @@ def _get_venv_python() -> Path:
 
 
 def _ensure_venv():
-    """Create a clean venv with only Spirescope deps + PyInstaller."""
+    """Create (or re-sync) a venv with only Spirescope deps + PyInstaller.
+
+    The venv is reused across builds for speed, but dependencies are
+    re-installed every run: a reused venv with stale requirements is not a
+    clean build, and used to silently ship whatever was installed last time.
+    """
     venv_python = _get_venv_python()
     if venv_python.exists():
-        print("Build venv already exists, reusing.")
-        return
-    print("Creating clean build venv...")
-    venv.create(str(BUILD_VENV), with_pip=True)
+        print("Build venv already exists, syncing dependencies...")
+    else:
+        print("Creating clean build venv...")
+        venv.create(str(BUILD_VENV), with_pip=True)
     subprocess.run(
-        [str(venv_python), "-m", "pip", "install", "--quiet", ".", "pyinstaller>=6.0"],
+        [str(venv_python), "-m", "pip", "install", "--quiet", "--upgrade",
+         ".", "pyinstaller>=6.0"],
         cwd=str(ROOT), check=True,
     )
     print("Build venv ready.")

@@ -1,0 +1,18 @@
+# Sdist contents beyond Python sources. Wheels take their data files from
+# [tool.setuptools.package-data] in pyproject.toml; this manifest keeps sdists
+# complete so a wheel rebuilt from the sdist ships the same resources.
+include sts2/data/*.json
+include sts2/data/last_updated.txt
+include sts2/data/mods/README.md
+recursive-include sts2/templates *.html
+recursive-include sts2/static *
+include sts2/locales/*.json
+
+# Never ship: user-built game-text overlays (not ours to redistribute) and
+# local working files that .gitignore keeps out of the repo.
+prune sts2/locales/content
+exclude sts2/data/pheromones.json
+exclude sts2/data/hypotheses.json
+exclude sts2/data/.fetcher_keys.json
+exclude sts2/risk.py
+exclude sts2/diagnosis.py
