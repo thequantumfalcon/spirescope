@@ -42,6 +42,7 @@ dev = [
     "httpx>=0.24.0",
     "ruff>=0.4.0",
     "pyinstaller>=6.0",
+    "mypy>=1.0",
 ]
 browser = [
     "pytest-playwright>=0.4.0",
@@ -99,3 +100,9 @@ extend-exclude = ["dist", "build", ".venv_build"]
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
 ignore = ["E402", "E501"]
+
+# Non-blocking in CI for now (~95 existing errors, see ci.yml). Config kept
+# minimal until the backlog is cleared: no strictness flags beyond defaults.
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true

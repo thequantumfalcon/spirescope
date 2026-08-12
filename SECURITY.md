@@ -2,15 +2,19 @@
 
 Please do not report security vulnerabilities through public GitHub issues.
 
-Instead, use GitHub's private vulnerability reporting:
+Preferred: GitHub's private vulnerability reporting:
 <https://github.com/thequantumfalcon/spirescope/security/advisories/new>
+
+Fallback: if the link above is unavailable, email
+<thequantumfalcon@users.noreply.github.com> directly. Include "SECURITY"
+in the subject line.
 
 Include:
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact
 
-Expected response time: 48 hours.
+Reports (either channel) are acknowledged within 5 days.
 
 ## Supported Versions
 

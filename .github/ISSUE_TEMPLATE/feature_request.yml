@@ -3,8 +3,16 @@ description: Suggest a new feature or improvement
 labels: [enhancement]
 body:
   - type: textarea
-    label: What would you like?
-    placeholder: Describe the feature or improvement
+    id: feature
+    attributes:
+      label: What would you like?
+      placeholder: Describe the feature or improvement
+    validations:
+      required: true
   - type: textarea
-    label: Why is this useful?
-    placeholder: How would this help your workflow?
+    id: motivation
+    attributes:
+      label: Why is this useful?
+      placeholder: How would this help your workflow?
+    validations:
+      required: false

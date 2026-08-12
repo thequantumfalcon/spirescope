@@ -6,37 +6,72 @@ on:
   pull_request:
     branches: [master, main]
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Default to read-only. Jobs that genuinely need to write (publishing the test
+# badge) grant it themselves at the job level, and that job is gated so it
+# never even runs on pull_request events -- a PR run of this workflow never
+# holds a write-scoped token.
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: pip install -e ".[dev]"
+        run: |
+          pip install -r requirements-lock.txt
+          pip install -e . --no-deps
 
       - name: Lint with ruff
         run: ruff check sts2/ tests/
+
+      - name: Type check with mypy
+        # Non-blocking for now: ~95 existing errors across the codebase.
+        # Flip continue-on-error off once that backlog is cleared. One leg
+        # only -- there is nothing platform- or version-specific to catch
+        # twice.
+        if: matrix.python-version == '3.12'
+        continue-on-error: true
+        run: mypy sts2
+
+      - name: Install coverage plugin
+        # Not part of pyproject.toml's dev extra (and so not in the lock) --
+        # kept as a standalone, version-pinned install so only this one leg
+        # pays for it.
+        if: matrix.python-version == '3.12'
+        run: pip install "pytest-cov==7.1.0"
 
       - name: Run tests
         id: tests
         run: |
           set +e
-          output=$(pytest -q --tb=short 2>&1)
+          if [ "${{ matrix.python-version }}" == "3.12" ]; then
+            # Coverage gate: current measured branch coverage is 80%; fail
+            # under 78% to catch regressions with a little headroom. Only one
+            # leg carries this -- the other two stay plain pytest.
+            output=$(pytest -q --tb=short --cov=sts2 --cov-branch --cov-fail-under=78 2>&1)
+          else
+            output=$(pytest -q --tb=short 2>&1)
+          fi
           rc=$?
-          set -e
           echo "$output"
           passed=$(echo "$output" | grep -oP '\d+(?= passed)' | tail -1)
           failed=$(echo "$output" | grep -oP '\d+(?= failed)' | tail -1)
@@ -44,14 +79,14 @@ jobs:
           echo "passed=${passed:-0}" >> "$GITHUB_OUTPUT"
           echo "failed=${failed:-0}" >> "$GITHUB_OUTPUT"
           echo "errors=${errors:-0}" >> "$GITHUB_OUTPUT"
-          # Honour pytest's own exit code. The summary greps drive the badge,
-          # but they cannot be the gate: pytest reports collection and fixture
-          # failures as "N errors", which matches neither "passed" nor
-          # "failed", so a run that errored out used to leave this step green.
-          exit $rc
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          # Deliberately not `exit $rc` here. Badge generation below must run
+          # even when tests fail -- that's the only way the red badge is ever
+          # published (see the trailing "Fail job on test result" step, which
+          # is what actually gates this job on the test outcome).
 
       - name: Generate badge
-        if: matrix.python-version == '3.12' && github.ref == 'refs/heads/master'
+        if: matrix.python-version == '3.12' && github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: |
           passed=${{ steps.tests.outputs.passed }}
           failed=${{ steps.tests.outputs.failed }}
@@ -69,9 +104,52 @@ jobs:
           mkdir -p badges
           echo "{\"schemaVersion\":1,\"label\":\"tests\",\"message\":\"${message}\",\"color\":\"${color}\"}" > badges/tests.json
 
+      - name: Upload badge artifact
+        # Handoff to the publish-badge job below, which is the only job in
+        # this workflow that holds contents: write, and only runs on master
+        # pushes -- artifact upload/download needs no such permission.
+        if: matrix.python-version == '3.12' && github.ref == 'refs/heads/master' && github.event_name == 'push'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: test-badge
+          path: badges/tests.json
+          retention-days: 1
+
+      - name: Fail job on test result
+        # Runs regardless of what happened above so a failure earlier in this
+        # same leg (e.g. lint) still fails the job the normal way; this is
+        # what actually enforces the test result now that "Run tests" no
+        # longer exits non-zero itself.
+        if: always()
+        run: |
+          rc="${{ steps.tests.outputs.rc }}"
+          exit "${rc:-0}"
+
+  publish-badge:
+    needs: test
+    # always() so this still runs when the 3.12 leg's tests failed (the red
+    # badge case) -- by default a failed `needs` job would skip this one.
+    if: always() && github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Download badge artifact
+        id: download
+        # Tolerate a missing artifact: if the 3.12 leg failed before it could
+        # even generate the badge (e.g. a lint failure), there is nothing to
+        # publish and that's fine -- just skip the publish step below rather
+        # than fail this job.
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: test-badge
+          path: badges
+
       - name: Publish badge
-        if: matrix.python-version == '3.12' && github.ref == 'refs/heads/master'
-        uses: peaceiris/actions-gh-pages@v4
+        if: steps.download.outcome == 'success'
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./badges
@@ -85,20 +163,182 @@ jobs:
     # (theme persistence, mobile nav, search, contrast). Separate job so a
     # browser download never slows the main matrix.
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install -e ".[dev,browser]"
+        run: |
+          pip install -r requirements-lock.txt
+          pip install -e . --no-deps
+          # browser extra isn't part of the dev-extra lock (kept separate so
+          # the Chromium download doesn't weigh down every other leg);
+          # pinned to the same floor pyproject.toml declares.
+          pip install "pytest-playwright>=0.4.0" "playwright>=1.40.0"
 
       - name: Install Chromium
         run: playwright install --with-deps chromium
 
       - name: Run browser tests
         run: pytest -m browser -q
+
+  test-windows:
+    # New leg (not a required status check -- "test (3.11)" etc. are), so a
+    # Windows-only regression is visible on PRs without blocking merges on a
+    # brand-new job while it settles.
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-lock.txt
+          pip install -e . --no-deps
+
+      - name: Run tests
+        run: pytest -q --tb=short
+
+  test-macos:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-lock.txt
+          pip install -e . --no-deps
+
+      - name: Run tests
+        run: pytest -q --tb=short
+
+  build-dist:
+    # Builds sdist, then builds the wheel FROM that sdist (not from the live
+    # checkout) -- a stronger check that MANIFEST.in/package-data actually
+    # ship everything `import sts2.app` and the StaticFiles mount need, since
+    # a working-tree build can accidentally pick up files the sdist omits.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+
+      - name: Install build backend
+        run: pip install "build==1.5.0"
+
+      - name: Build sdist, then the wheel from that sdist
+        run: |
+          python -m build --sdist --outdir dist
+          mkdir -p /tmp/sdist-extract
+          tar -xzf dist/*.tar.gz -C /tmp/sdist-extract --strip-components=1
+          python -m build --wheel --outdir dist /tmp/sdist-extract
+
+      - name: Install the wheel into a fresh venv outside the checkout
+        run: |
+          python -m venv /tmp/wheel-venv
+          /tmp/wheel-venv/bin/pip install dist/*.whl
+
+      - name: Import smoke test from a neutral cwd
+        run: |
+          mkdir -p /tmp/neutral-cwd /tmp/sts2-state /tmp/sts2-saves
+          cd /tmp/neutral-cwd
+          STS2_STATE_DIR=/tmp/sts2-state STS2_SAVE_DIR=/tmp/sts2-saves \
+            /tmp/wheel-venv/bin/python -c "import sts2.app"
+
+      - name: Assert packaged resource directories exist
+        run: |
+          site=$(/tmp/wheel-venv/bin/python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")
+          for d in data templates static locales; do
+            if [ ! -d "$site/sts2/$d" ]; then
+              echo "::error::missing sts2/$d in the installed wheel ($site)"
+              exit 1
+            fi
+          done
+          echo "confirmed: sts2/{data,templates,static,locales} present in $site/sts2"
+
+  docker-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Build image
+        run: docker build . -t spirescope-ci
+
+      - name: Run container
+        run: |
+          docker run --rm -d --name spirescope-ci \
+            -e STS2_ALLOW_UNAUTHENTICATED=1 \
+            -p 8000:8000 \
+            spirescope-ci
+
+      - name: Wait for /health
+        run: |
+          ok=0
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8000/health > /dev/null; then
+              ok=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error::container never became healthy"
+            docker logs spirescope-ci
+            exit 1
+          fi
+          echo "container healthy"
+
+      - name: Stop container
+        if: always()
+        run: docker rm -f spirescope-ci || true
+
+  pip-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+
+      - name: Install pip-audit
+        run: pip install "pip-audit==2.10.1"
+
+      - name: Audit locked dependencies
+        run: pip-audit -r requirements-lock.txt

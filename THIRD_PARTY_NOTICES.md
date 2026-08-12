@@ -17,6 +17,7 @@ environment that produces the released binaries.
 | annotated-types | MIT | https://github.com/annotated-types/annotated-types |
 | anyio | MIT | https://github.com/agronholm/anyio |
 | click | BSD-3-Clause | https://github.com/pallets/click |
+| colorama | BSD-3-Clause | https://github.com/tartley/colorama |
 | FastAPI | MIT | https://github.com/fastapi/fastapi |
 | h11 | MIT | https://github.com/python-hyper/h11 |
 | httptools | MIT | https://github.com/MagicStack/httptools |
