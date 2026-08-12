@@ -11,6 +11,15 @@ from pathlib import Path
 # would silently bypass the rate-limiter and break those tests.
 os.environ["STS2_HOST"] = "0.0.0.0"
 
+# A non-loopback bind engages the network auth gate, so give the suite a
+# token; the shared client below presents it on every request. Auth-specific
+# tests build their own clients without the default header.
+os.environ["STS2_AUTH_TOKEN"] = "test-auth-token"
+
+# Admin endpoints are disabled when no token is configured (nothing is
+# auto-generated any more); the admin-route tests need them enabled.
+os.environ["SPIRESCOPE_ADMIN_TOKEN"] = "test-admin-token"
+
 # Pin the suite to English: KnowledgeBase now applies the persisted UI
 # language's content overlay, so without this a developer who picked German
 # in Settings would fail every English-name assertion locally.
@@ -58,5 +67,6 @@ def _clear_rate_limits():
 async def client():
     """Module-scoped async HTTP client — opened once, reused across all tests."""
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as c:
+    async with AsyncClient(transport=transport, base_url="http://test",
+                           headers={"X-Auth-Token": os.environ["STS2_AUTH_TOKEN"]}) as c:
         yield c

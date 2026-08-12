@@ -667,15 +667,16 @@ class TestCSP:
 # ---------------------------------------------------------------------------
 
 class TestRateLimiter:
-    async def test_sse_exempt_from_rate_limit(self):
-        """SSE endpoint path is exempt from rate limiter middleware."""
-        # Verify exemption logic directly — don't hit the streaming endpoint
-        # which blocks for the full SSE duration.
+    async def test_sse_handshake_counts_against_rate_limit(self):
+        """The stream endpoint used to be exempt, which let a single client
+        open handshakes without limit; the exemption is gone on purpose.
+        (Behavioral coverage lives in test_app's SSE rate-limit test — this
+        guards against the exemption quietly coming back.)"""
         import inspect
 
         from sts2.app import rate_limit
         source = inspect.getsource(rate_limit)
-        assert "/api/live/stream" in source
+        assert '"/api/live/stream"' not in source
 
     async def test_options_exempt_from_rate_limit(self, client):
         _rate_limit_store.clear()
@@ -1433,9 +1434,12 @@ class TestAuditRegressions:
                "card_pick_rates": {}, "relic_win_rates": {}, "ascension_stats": {}}
         path = tmp_path / "aggregate.json"
         path.write_text(json.dumps(agg), encoding="utf-8")
+        import os
+
         from sts2.app import app
         with patch("sts2.aggregate._aggregate_storage_path", return_value=path):
-            resp = TestClient(app).get("/community")
+            resp = TestClient(app).get(
+                "/community", headers={"X-Auth-Token": os.environ["STS2_AUTH_TOKEN"]})
         assert resp.status_code == 200
         # Ranked by rate, and the zero-total rows must not divide by zero.
         assert resp.text.index("Defend") < resp.text.index("Strike")
@@ -1572,9 +1576,11 @@ class TestSecondPassRegressions:
                          gold=137, act=2, floor=23, run_time=1830,
                          deck=["CARD.STRIKE"] * 10, relics=["RELIC.VAJRA"],
                          potions=["POTION.FIRE_POTION"])
+        import os
         with patch("sts2.routes._get_live_run", new=AsyncMock(return_value=run)):
             from sts2.app import app
-            html = TestClient(app).get("/overlay").text
+            html = TestClient(app).get(
+                "/overlay", headers={"X-Auth-Token": os.environ["STS2_AUTH_TOKEN"]}).text
 
         for cls in ("live-hp", "live-gold", "live-cards", "live-relics",
                     "live-potions", "live-floor", "live-act", "hp-fill"):

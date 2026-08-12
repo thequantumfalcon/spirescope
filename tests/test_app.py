@@ -1,5 +1,6 @@
 """Tests for the FastAPI routes."""
 
+import os
 import sys
 
 from sts2.app import _ADMIN_TOKEN, _rate_limit_store, generate_csrf_token
@@ -2833,3 +2834,152 @@ async def test_dashboard_renders_playtime_in_hours(client):
         html = (await client.get("/")).text
     assert "53h 40m" in html
     assert not re.search(r">\s*3220m\s*<", html)
+
+
+# ---------------------------------------------------------------------------
+# Network auth boundary (STS2_AUTH_TOKEN gate on non-loopback binds)
+# ---------------------------------------------------------------------------
+
+class TestNetworkAuthBoundary:
+    """The suite binds 0.0.0.0 (conftest), so the auth gate is live here.
+
+    The shared `client` fixture carries X-Auth-Token by default; these tests
+    build bare clients to exercise the gate itself. Before this gate existed,
+    a network bind served every page, export, and CSRF-gated mutation to any
+    client that could reach the port — CSRF proves browser intent, not
+    identity, and every rendered page handed its requester a valid token.
+    """
+
+    @staticmethod
+    def _bare_client():
+        from httpx import ASGITransport, AsyncClient
+
+        from sts2.app import app as _app
+        return AsyncClient(transport=ASGITransport(app=_app), base_url="http://test")
+
+    async def test_rejects_request_without_credentials(self):
+        async with self._bare_client() as c:
+            resp = await c.get("/")
+        assert resp.status_code == 401
+        assert "Authentication required" in resp.text
+
+    async def test_header_token_is_accepted(self):
+        async with self._bare_client() as c:
+            resp = await c.get("/", headers={"X-Auth-Token": os.environ["STS2_AUTH_TOKEN"]})
+        assert resp.status_code == 200
+
+    async def test_admin_token_is_accepted_as_network_credential(self):
+        from sts2.app import _ADMIN_TOKEN
+        async with self._bare_client() as c:
+            resp = await c.get("/", headers={"X-Admin-Token": _ADMIN_TOKEN})
+        assert resp.status_code == 200
+
+    async def test_query_token_signs_in_and_sets_cookie(self):
+        token = os.environ["STS2_AUTH_TOKEN"]
+        async with self._bare_client() as c:
+            resp = await c.get(f"/cards?character=Ironclad&token={token}")
+            assert resp.status_code == 303
+            # The token must not survive into the redirect target.
+            assert "token=" not in resp.headers["location"]
+            assert "character=Ironclad" in resp.headers["location"]
+            assert "spirescope_auth" in resp.cookies
+            # The cookie alone now authenticates (client keeps the cookie jar).
+            follow = await c.get(resp.headers["location"])
+            assert follow.status_code == 200
+
+    async def test_wrong_query_token_is_rejected(self):
+        async with self._bare_client() as c:
+            resp = await c.get("/?token=wrong")
+        assert resp.status_code == 401
+
+    async def test_forged_cookie_is_rejected(self):
+        async with self._bare_client() as c:
+            c.cookies.set("spirescope_auth", "deadbeef.0000")
+            resp = await c.get("/")
+        assert resp.status_code == 401
+
+    async def test_health_is_exempt_for_container_healthchecks(self):
+        async with self._bare_client() as c:
+            resp = await c.get("/health")
+        assert resp.status_code == 200
+
+    async def test_locked_down_when_no_token_configured(self):
+        """Non-loopback bind with no token = closed by default, even for
+        clients presenting the (now-unconfigured) old credentials."""
+        from unittest.mock import patch
+        env = {k: v for k, v in os.environ.items()
+               if k not in ("STS2_AUTH_TOKEN", "STS2_ALLOW_UNAUTHENTICATED")}
+        with patch.dict(os.environ, env, clear=True):
+            async with self._bare_client() as c:
+                resp = await c.get("/", headers={"X-Auth-Token": "test-auth-token"})
+        assert resp.status_code == 403
+        assert "STS2_AUTH_TOKEN" in resp.text
+
+    async def test_explicit_unauthenticated_opt_out(self):
+        from unittest.mock import patch
+        env = dict(os.environ, STS2_ALLOW_UNAUTHENTICATED="1")
+        del env["STS2_AUTH_TOKEN"]
+        with patch.dict(os.environ, env, clear=True):
+            async with self._bare_client() as c:
+                resp = await c.get("/")
+        assert resp.status_code == 200
+
+    async def test_loopback_bind_needs_no_credentials(self):
+        from unittest.mock import patch
+        with patch.dict(os.environ, {"STS2_HOST": "127.0.0.1"}):
+            async with self._bare_client() as c:
+                resp = await c.get("/")
+        assert resp.status_code == 200
+
+    async def test_auth_ticket_round_trip_and_domain_separation(self):
+        from sts2.app import (_issue_auth_ticket, _validate_auth_ticket,
+                              generate_csrf_token, validate_csrf_token)
+        ticket = _issue_auth_ticket()
+        assert _validate_auth_ticket(ticket) is True
+        assert _validate_auth_ticket("") is False
+        assert _validate_auth_ticket("nodot") is False
+        # A CSRF token must never authenticate, nor the ticket pass as CSRF.
+        assert _validate_auth_ticket(generate_csrf_token()) is False
+        assert validate_csrf_token(ticket) is False
+
+
+async def test_admin_endpoints_disabled_when_token_unset(client, monkeypatch):
+    """Empty configured token = admin off; nothing may match it."""
+    import sts2.app as app_module
+    monkeypatch.setattr(app_module, "_ADMIN_TOKEN", "")
+    resp = await client.post("/api/reload", headers={"X-Admin-Token": ""})
+    assert resp.status_code == 403
+    resp = await client.post("/api/reload")
+    assert resp.status_code == 403
+
+
+async def test_rate_limit_reset_header_is_epoch_seconds(client):
+    """X-RateLimit-Reset used to leak process-monotonic time, which is
+    meaningless to a client; it must be a plausible unix timestamp."""
+    import time as _time
+
+    _rate_limit_store.clear()
+    resp = await client.get("/health")
+    reset = int(resp.headers["X-RateLimit-Reset"])
+    now = _time.time()
+    assert now - 5 <= reset <= now + 70
+
+
+async def test_sse_handshake_is_rate_limited():
+    """The stream endpoint is no longer exempt: one client cannot open
+    handshakes without limit."""
+    import collections
+    import time as _time
+
+    from httpx import ASGITransport, AsyncClient
+
+    from sts2.app import app as _app
+
+    _rate_limit_store.clear()
+    _rate_limit_store["127.0.0.1"] = collections.deque([_time.monotonic()] * 65)
+    transport = ASGITransport(app=_app)
+    async with AsyncClient(transport=transport, base_url="http://test",
+                           headers={"X-Auth-Token": os.environ["STS2_AUTH_TOKEN"]}) as c:
+        resp = await c.get("/api/live/stream")
+    assert resp.status_code == 429
+    _rate_limit_store.clear()

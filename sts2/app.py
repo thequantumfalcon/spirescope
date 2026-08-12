@@ -15,7 +15,7 @@ import time
 from fastapi import FastAPI, Request
 from fastapi.exceptions import StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -180,9 +180,48 @@ def validate_csrf_token(token: str) -> bool:
     expected = hmac.new(_CSRF_SECRET, msg, hashlib.sha256).hexdigest()
     return tokens_equal(sig, expected)
 
-_ADMIN_TOKEN = os.environ.get("SPIRESCOPE_ADMIN_TOKEN", secrets.token_hex(32))
-if not os.environ.get("SPIRESCOPE_ADMIN_TOKEN"):
-    log.info("ADMIN TOKEN (auto-generated, one-time): %s — set SPIRESCOPE_ADMIN_TOKEN env to override", _ADMIN_TOKEN)
+# Admin endpoints stay disabled until a token is configured. The previous
+# auto-generated token was logged at startup, which put a live credential into
+# console and container logs; an unset token now just disables the endpoints.
+_ADMIN_TOKEN = os.environ.get("SPIRESCOPE_ADMIN_TOKEN", "")
+if not _ADMIN_TOKEN:
+    log.info("Admin endpoints disabled: set SPIRESCOPE_ADMIN_TOKEN to enable "
+             "/api/reload and remote shutdown.")
+
+# ---------------------------------------------------------------------------
+# Network authentication (non-loopback binds only)
+# ---------------------------------------------------------------------------
+
+_AUTH_COOKIE = "spirescope_auth"
+_AUTH_TICKET_MAX_AGE = 7 * 24 * 3600  # one browser sign-in per week
+
+
+def _issue_auth_ticket() -> str:
+    """Signed session ticket set as a cookie after a token sign-in.
+
+    Same HMAC scheme as CSRF but domain-separated with an "auth" prefix, so
+    neither artifact can ever be replayed as the other. Signed with the
+    per-process secret: a restart signs everyone out, which is the right
+    default for a token that gates private data.
+    """
+    ts = max(0, int(time.time()))
+    msg = b"auth" + struct.pack(">Q", ts)
+    sig = hmac.new(_CSRF_SECRET, msg, hashlib.sha256).hexdigest()
+    return f"{ts:x}.{sig}"
+
+
+def _validate_auth_ticket(ticket: str) -> bool:
+    try:
+        ts_hex, sig = ticket.split(".", 1)
+        ts = int(ts_hex, 16)
+    except (ValueError, AttributeError):
+        return False
+    now = time.time()
+    if ts > now + 60 or now - ts > _AUTH_TICKET_MAX_AGE:
+        return False
+    msg = b"auth" + struct.pack(">Q", ts)
+    expected = hmac.new(_CSRF_SECRET, msg, hashlib.sha256).hexdigest()
+    return tokens_equal(sig, expected)
 
 # ---------------------------------------------------------------------------
 # Caches
@@ -279,14 +318,65 @@ def _is_loopback_bind() -> bool:
 
 
 @app.middleware("http")
+async def require_network_auth(request: Request, call_next):
+    """Identity gate for non-loopback binds (runs after rate limiting).
+
+    Loopback binds stay zero-config. On a network bind every request must
+    present STS2_AUTH_TOKEN: the X-Auth-Token header for API clients, ?token=
+    once for a browser, then a signed cookie. CSRF stays on as the
+    browser-intent defense — it proves a POST came from this app's own page,
+    which matters exactly because the auth cookie is an ambient credential.
+    CSRF alone was never authentication: any client that could GET a page got
+    a valid token with it.
+    """
+    if _is_loopback_bind():
+        return await call_next(request)
+    # Liveness stays open (Docker healthchecks run in-container against the
+    # non-loopback bind); it serves no user data. Preflight carries no auth.
+    if request.method == "OPTIONS" or request.url.path == "/health":
+        return await call_next(request)
+    auth_token = os.environ.get("STS2_AUTH_TOKEN", "")
+    if not auth_token:
+        # __main__ refuses to serve this configuration; direct ASGI embeddings
+        # get a closed-by-default boundary rather than an open one.
+        if os.environ.get("STS2_ALLOW_UNAUTHENTICATED") == "1":
+            return await call_next(request)
+        return PlainTextResponse(
+            "Network binding requires authentication: set STS2_AUTH_TOKEN "
+            "(or STS2_ALLOW_UNAUTHENTICATED=1 behind a trusted reverse proxy).",
+            status_code=403)
+    if tokens_equal(request.headers.get("x-auth-token", ""), auth_token):
+        return await call_next(request)
+    # The admin token is a strictly stronger credential; a client holding it
+    # does not also need the user token.
+    if _ADMIN_TOKEN and tokens_equal(request.headers.get("x-admin-token", ""), _ADMIN_TOKEN):
+        return await call_next(request)
+    if _validate_auth_ticket(request.cookies.get(_AUTH_COOKIE, "")):
+        return await call_next(request)
+    if tokens_equal(request.query_params.get("token", ""), auth_token):
+        # Sign in: drop the token from the URL so it doesn't linger in the
+        # address bar or history, and hand the browser a session cookie.
+        url = request.url.remove_query_params("token")
+        resp = RedirectResponse(str(url), status_code=303)
+        resp.set_cookie(_AUTH_COOKIE, _issue_auth_ticket(),
+                        max_age=_AUTH_TICKET_MAX_AGE, httponly=True, samesite="lax")
+        return resp
+    return PlainTextResponse(
+        "Authentication required: open ?token=<STS2_AUTH_TOKEN> once in a "
+        "browser, or send the X-Auth-Token header.", status_code=401)
+
+
+@app.middleware("http")
 async def rate_limit(request: Request, call_next):
     # Loopback bind = single-user dashboard. Rate-limiting is dead weight there
     # and the unbounded-keys dict is a memory liability if anyone ever spoofs
     # source IPs. Only enforce when bound to a real network interface.
     if _is_loopback_bind():
         return await call_next(request)
-    # Exempt static files, SSE stream, and CORS preflight
-    if request.url.path.startswith("/static/") or request.url.path == "/api/live/stream":
+    # Exempt static files and CORS preflight. The SSE stream is deliberately
+    # NOT exempt: each handshake counts against the window, so one client
+    # cannot open connections without limit.
+    if request.url.path.startswith("/static/"):
         return await call_next(request)
     if request.method == "OPTIONS":
         return await call_next(request)
@@ -317,7 +407,13 @@ async def rate_limit(request: Request, call_next):
         timestamps.popleft()
 
     remaining = max(0, _RATE_LIMIT_MAX - len(timestamps))
-    reset_at = int(timestamps[0] + _RATE_LIMIT_WINDOW) if timestamps else int(now + _RATE_LIMIT_WINDOW)
+    # The deque holds monotonic stamps (immune to clock changes); the header
+    # translates to epoch seconds because process-monotonic values mean
+    # nothing to a client.
+    if timestamps:
+        reset_at = int(time.time() + max(0.0, timestamps[0] + _RATE_LIMIT_WINDOW - now))
+    else:
+        reset_at = int(time.time() + _RATE_LIMIT_WINDOW)
 
     if len(timestamps) >= _RATE_LIMIT_MAX:
         resp = PlainTextResponse("Rate limit exceeded. Try again later.", status_code=429)

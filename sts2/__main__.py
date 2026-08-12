@@ -242,8 +242,18 @@ def main():
             print("  Keep this window open while you use Spirescope; closing it stops the app.",
                   flush=True)
         if HOST not in ("127.0.0.1", "localhost", "::1"):
-            print("  WARNING: Spirescope is designed for single-user local use.")
-            print("  Binding to a public address exposes it without authentication.\n")
+            if os.environ.get("STS2_AUTH_TOKEN"):
+                print("  Network bind: every request must present STS2_AUTH_TOKEN.")
+                print(f"  Open {url}/?token=<your token> once per browser to sign in.")
+                print("  Use TLS or a reverse proxy for anything beyond a trusted LAN.\n")
+            elif os.environ.get("STS2_ALLOW_UNAUTHENTICATED") == "1":
+                print("  WARNING: STS2_ALLOW_UNAUTHENTICATED=1 — every client that can")
+                print("  reach this port can read your runs and change settings.\n")
+            else:
+                print("  ERROR: refusing to bind to a non-loopback address without")
+                print("  authentication. Set STS2_AUTH_TOKEN to any long random string,")
+                print("  or STS2_ALLOW_UNAUTHENTICATED=1 behind a trusted reverse proxy.")
+                sys.exit(1)
         else:
             print()
         from sts2.app import app
