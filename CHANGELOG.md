@@ -4,6 +4,27 @@
 
 ### Security
 
+- **A network bind answered to any Host header.** With no host allowlist, a
+  page that repoints its own hostname at 127.0.0.1 becomes same-origin with a
+  loopback install and can read run history and drive CSRF-gated actions —
+  CSRF tokens here are stateless HMACs handed out with every page, with no
+  origin binding. Requests whose Host is not one this deployment answers to
+  are now refused, with the allowlist read per request and defaulting by bind.
+- **The loopback decision trusted an environment variable alone.** An ASGI
+  embedding bound to every interface while `STS2_HOST` kept its default
+  served everything unauthenticated. The gate now also considers the
+  interface a request actually arrived on.
+- **The sign-in cookie is marked Secure** whenever the exchange is encrypted,
+  directly or behind a proxy that terminated TLS.
+- **A data bundle only had to parse to be installed.** A file of 400 bare
+  strings passed as "cards". Entries must now carry their family's
+  identifying field, and the whole dataset must survive a real KnowledgeBase
+  build in an isolated subprocess before it can replace live data.
+- **Run integrity verified the parsed model, not the file.** Unknown fields
+  were dropped during validation, so anything added to an exported run
+  vanished and the original digest still matched — a modified file reported
+  as verified. The digest is now recomputed from the file's own run mapping.
+
 - **Network binds now require authentication.** Binding to anything but
   loopback (including the documented Docker setup) used to serve your entire
   run history, live state, exports, and every settings/import action to any
@@ -31,6 +52,34 @@
 
 ### Fixed
 
+- **The browser test suite failed every test, and nothing caught it.**
+  `pytest` deselects those tests by default, so a green run never touched
+  them while the required `browser` check would have failed on merge. The
+  fixture serves on loopback but the auth middleware read the suite-wide
+  `STS2_HOST=0.0.0.0`, so `/health` answered (letting the fixture start)
+  while every page navigation was refused. A guard in the default suite now
+  asserts that alignment.
+- **Crash recovery ran after the data it repairs was already needed.** A
+  process killed mid-swap left no live dataset; recovery only ran later, so
+  the app started against the wreckage, and a frozen build could reseed from
+  the older bundled copy first and abandon the newer backup. Recovery now
+  runs before seeding, migration, and knowledge-base construction.
+- **Combat telemetry recorded the same token for every play.** The log
+  pattern captured a bare word, so `CARD.BASH` became `CARD`; it also
+  discarded the player number, so in co-op a partner's plays were attributed
+  to whoever was being watched.
+- **A prophecy grade was computed from runs that came after it**, so a
+  historical prediction drifted as new runs accumulated.
+- **Release workflows raced.** Both platforms fired on the same tag and both
+  published to the same release; one could publish while the other was still
+  building. They are now one workflow with a single publisher, and tagged
+  builds run the same gates that protect master rather than plain `pytest`.
+- **Binary releases shipped license names and URLs, not license texts**,
+  after deliberately stripping the dependencies' own copies. The verbatim
+  texts are now collected before stripping and ship as `LICENSES.txt`.
+- **Local builds and Docker images could carry files that are deliberately
+  unpublished.** The image build now excludes them and the local build script
+  refuses to run against a tree containing them.
 - **Ghost Run Comparison is actually visible now.** The splits were computed
   on every live view and then discarded — nothing rendered them — and the
   comparison was always anchored to ascension 0 because the live run never
