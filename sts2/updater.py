@@ -110,6 +110,12 @@ _MAX_EXPANDED_BYTES = 200 * 1024 * 1024     # 200 MB total
 
 _REQUIRED_DATA_FILES = ("cards.json", "relics.json", "potions.json",
                          "enemies.json", "events.json", "patches.json")
+# The field that identifies a record in each family. Entity files key on
+# "id"; the patch manifest keys on "patch".
+_IDENTIFYING_FIELD = {
+    "cards.json": "id", "relics.json": "id", "potions.json": "id",
+    "enemies.json": "id", "events.json": "id", "patches.json": "patch",
+}
 _MIN_CARDS = 400
 
 # Long enough that a slow install never trips it, short enough that a lock
@@ -296,10 +302,14 @@ def _extract_capped(bundle: Path, extract_dir: Path) -> None:
 
 
 def _validate_dataset(root: Path) -> None:
-    """Raise _RejectBundle unless every required data file is present, parses
-    as JSON, and cards.json looks like a real dataset rather than a partial
-    one. Runs on the extracted bundle, before anything is staged for the
-    live swap.
+    """Raise _RejectBundle unless the bundle is a dataset this app can load.
+
+    Parsing as JSON is not enough: a file of 400 bare strings satisfied
+    "cards.json is a list of at least 400 entries" while being nothing the
+    app can render. Every required file must therefore be a list of objects
+    whose entries carry the identifying fields the models require, and the
+    whole directory must survive an actual KnowledgeBase construction before
+    it is allowed anywhere near the live data directory.
     """
     if not (root / "last_updated.txt").exists():
         raise _RejectBundle("Bundle missing last_updated.txt — rejected.")
@@ -311,8 +321,63 @@ def _validate_dataset(root: Path) -> None:
             data = json.loads(path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError) as exc:
             raise _RejectBundle(f"Bundle {name} failed to parse — rejected.") from exc
-        if name == "cards.json" and (not isinstance(data, list) or len(data) < _MIN_CARDS):
+        if not isinstance(data, list):
+            raise _RejectBundle(f"Bundle {name} is not a list — rejected.")
+        # Entries must be objects carrying their family's identifying field;
+        # anything else is not the shape consumers assume. patches.json keys
+        # on "patch" rather than "id", so the field is per-family.
+        key = _IDENTIFYING_FIELD[name]
+        for entry in data:
+            if not isinstance(entry, dict) or not entry.get(key):
+                raise _RejectBundle(
+                    f"Bundle {name} has entries without a '{key}' field "
+                    f"— rejected.")
+        if name == "cards.json" and len(data) < _MIN_CARDS:
             raise _RejectBundle("Bundle cards.json has too few entries — rejected.")
+    _validate_loadable(root)
+
+
+def _validate_loadable(root: Path) -> None:
+    """Build a KnowledgeBase against the candidate directory in a subprocess.
+
+    The final proof that a bundle is usable is that the app can actually load
+    it. Done in a subprocess because DATA_DIR binds at import time, so the
+    running process cannot be repointed, and because a hostile or corrupt
+    dataset must not be able to damage live state to prove itself.
+    """
+    import subprocess
+    import sys
+
+    probe = (
+        "import os, sys\n"
+        "from sts2.knowledge import KnowledgeBase\n"
+        "kb = KnowledgeBase()\n"
+        "if len(kb.cards) < %d:\n"
+        "    sys.exit('too few cards loaded')\n"
+        "if not kb.relics or not kb.enemies:\n"
+        "    sys.exit('required families did not load')\n"
+    ) % _MIN_CARDS
+    env = dict(os.environ, STS2_DATA_DIR=str(root))
+    # Isolate the probe completely. Beyond not touching real user state, the
+    # save directory MUST be redirected: KnowledgeBase back-fills entities
+    # discovered from save files, so a probe pointed at the player's real
+    # saves reports families as present that the bundle does not actually
+    # contain — an empty-relics bundle passed until this was redirected.
+    probe_dir = root / "_probe"
+    env["STS2_STATE_DIR"] = str(probe_dir / "state")
+    env["STS2_MODS_DIR"] = str(probe_dir / "mods")
+    env["STS2_SAVE_DIR"] = str(probe_dir / "saves")
+    env["STS2_LOG_FILE"] = str(probe_dir / "none.log")
+    env["STS2_LANG"] = "en"
+    try:
+        result = subprocess.run([sys.executable, "-c", probe], env=env,
+                                capture_output=True, text=True, timeout=120)
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise _RejectBundle("Bundle could not be verified — rejected.") from exc
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout or "").strip().splitlines()
+        reason = detail[-1][:200] if detail else "unknown error"
+        raise _RejectBundle(f"Bundle does not load: {reason} — rejected.")
 
 
 def check_for_data_update() -> dict | None:

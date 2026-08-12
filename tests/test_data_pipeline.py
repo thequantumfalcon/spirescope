@@ -372,11 +372,20 @@ def _make_bundle(tmp_path: Path, cards) -> tuple[Path, str]:
     src = tmp_path / "bundle-src" / "data"
     src.mkdir(parents=True)
     (src / "cards.json").write_text(json.dumps(cards))
-    # The install gate validates the complete dataset (every required file
-    # must parse) before promoting, so the fixture must ship them all.
-    for name in ("relics.json", "potions.json", "enemies.json",
-                 "events.json", "patches.json"):
-        (src / name).write_text("[]")
+    # The install gate validates the complete dataset before promoting: every
+    # required file must parse, hold identified records, and the whole
+    # directory must load as a KnowledgeBase. Empty families fail that on
+    # purpose, so ship one real record each.
+    (src / "relics.json").write_text(
+        json.dumps([{"id": "RELIC.BURNING_BLOOD", "name": "Burning Blood"}]))
+    (src / "potions.json").write_text(
+        json.dumps([{"id": "POTION.FIRE", "name": "Fire Potion"}]))
+    (src / "enemies.json").write_text(
+        json.dumps([{"id": "ENCOUNTER.JAW_WORM", "name": "Jaw Worm"}]))
+    (src / "events.json").write_text(
+        json.dumps([{"id": "EVENT.NEOW", "name": "Neow"}]))
+    (src / "patches.json").write_text(
+        json.dumps([{"patch": "v0.110.0", "date": "2026-07-31"}]))
     (src / "last_updated.txt").write_text("2026-07-22T20:00:00+00:00")
     bundle = tmp_path / "data.tar.gz"
     with tarfile.open(bundle, "w:gz") as tf:

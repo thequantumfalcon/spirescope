@@ -9,6 +9,8 @@ import time
 import urllib.error
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 import sts2.updater as updater
 from sts2.updater import _parse_version, check_for_update, get_update_info, update_checks_enabled
 
@@ -182,14 +184,20 @@ def _cards(n):
 
 
 def _full_bundle_files(cards=None, **overrides):
-    """A complete, valid bundle payload: every file _validate_dataset requires."""
+    """A complete, valid bundle payload: every file _validate_dataset requires.
+
+    Families carry at least one real record. Empty lists used to be enough,
+    but a dataset with no relics and no enemies is not one the app can run
+    on, so validation now builds a KnowledgeBase against the bundle and
+    rejects it — which is the point of the gate.
+    """
     files = {
         "cards.json": cards if cards is not None else _cards(400),
-        "relics.json": [],
-        "potions.json": [],
-        "enemies.json": [],
-        "events.json": [],
-        "patches.json": [],
+        "relics.json": [{"id": "RELIC.BURNING_BLOOD", "name": "Burning Blood"}],
+        "potions.json": [{"id": "POTION.FIRE", "name": "Fire Potion"}],
+        "enemies.json": [{"id": "ENCOUNTER.JAW_WORM", "name": "Jaw Worm"}],
+        "events.json": [{"id": "EVENT.NEOW", "name": "Neow"}],
+        "patches.json": [{"patch": "v0.110.0", "date": "2026-07-31"}],
         "last_updated.txt": "2026-07-22T20:00:00+00:00",
     }
     files.update(overrides)
@@ -574,3 +582,59 @@ class TestCheckForDataUpdateOnDemand:
         monkeypatch.setattr(updater.threading, "Thread", _boom)
 
         assert updater.check_for_data_update() is None
+
+
+class TestDatasetShapeGate:
+    """Parsing as JSON was never proof a bundle is usable.
+
+    The gate previously accepted any cards.json that was a list of 400+
+    entries, so a file of 400 bare strings passed while being nothing the
+    app could render.
+    """
+
+    def test_bare_string_entries_rejected(self, tmp_path):
+        root = tmp_path / "data"
+        root.mkdir()
+        for name, content in _full_bundle_files(cards=["x"] * 400).items():
+            if name.endswith(".txt"):
+                (root / name).write_text(content)
+            else:
+                (root / name).write_text(json.dumps(content))
+        with pytest.raises(updater._RejectBundle, match="without a 'id' field"):
+            updater._validate_dataset(root)
+
+    def test_patch_manifest_keyed_on_patch_not_id(self, tmp_path):
+        """patches.json identifies records by 'patch'; requiring 'id' there
+        would reject the real shipped dataset."""
+        root = tmp_path / "data"
+        root.mkdir()
+        for name, content in _full_bundle_files().items():
+            if name.endswith(".txt"):
+                (root / name).write_text(content)
+            else:
+                (root / name).write_text(json.dumps(content))
+        updater._validate_dataset(root)  # must not raise
+
+    def test_unloadable_bundle_rejected(self, tmp_path):
+        """Well-shaped records but no relics or enemies: the app cannot run
+        on it, so the load probe must catch what the shape checks cannot."""
+        root = tmp_path / "data"
+        root.mkdir()
+        files = _full_bundle_files(**{"relics.json": [], "enemies.json": []})
+        for name, content in files.items():
+            if name.endswith(".txt"):
+                (root / name).write_text(content)
+            else:
+                (root / name).write_text(json.dumps(content))
+        with pytest.raises(updater._RejectBundle, match="does not load"):
+            updater._validate_dataset(root)
+
+    def test_load_probe_does_not_read_real_save_files(self):
+        """The probe must redirect the save dir: KnowledgeBase back-fills
+        entities discovered from saves, so a probe pointed at the player's
+        real saves reports families the bundle does not contain (an
+        empty-relics bundle passed until this was isolated)."""
+        import inspect
+        source = inspect.getsource(updater._validate_loadable)
+        for var in ("STS2_SAVE_DIR", "STS2_STATE_DIR", "STS2_MODS_DIR"):
+            assert var in source, f"load probe does not isolate {var}"
