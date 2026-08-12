@@ -1,5 +1,38 @@
 name: Release
 
+# CA-H7: this used to be two workflow files (release.yml + release-macos.yml)
+# that both triggered on the same v* tag and both independently called
+# softprops/action-gh-release against the same GitHub release, with no
+# ordering between them. Whichever finished first created and published the
+# release; the second then tried to attach more assets to an
+# already-published release, which works today but would fail outright if
+# immutable releases were ever turned on (assets cannot be added after an
+# immutable release is published) -- and even without that, the two jobs
+# racing meant a release could go out with only one platform's assets while
+# the other job was still mid-build.
+#
+# Consolidated into one workflow, one trigger, one publisher:
+#   gate            -> the full CI gate set (ruff, mypy, pytest, browser,
+#                       wheel install), via reusable-workflow-call into
+#                       ci.yml. Nothing here re-implements those checks.
+#   build-windows,
+#   build-macos     -> build + package only. Produce artifacts via
+#                       actions/upload-artifact; never touch the release.
+#   publish         -> the ONLY job with contents:write and the ONLY caller
+#                       of action-gh-release. needs both builds, downloads
+#                       whatever artifacts exist, creates the release once.
+#
+# Deliberate tradeoff: `publish` requires build-windows to have succeeded,
+# but not build-macos. A macOS-only failure (a flaky runner, an Xcode/
+# Gatekeeper quirk, anything not related to the actual code) would otherwise
+# block shipping the Windows build too -- most users are on Windows, and
+# there is no reason a macOS CI hiccup should hold their release hostage.
+# `publish` uses `if: always()` plus an explicit result check to still run
+# when build-macos failed, and posts a visible `::warning::` (not a silent
+# drop) plus a note in the release body when that happens. The race and the
+# immutable-release risk are fixed either way, because there is exactly one
+# job, gated on both builds finishing, that ever calls action-gh-release.
+
 on:
   push:
     tags: ["v*"]
@@ -8,11 +41,21 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  gate:
+    # CA-H8: same job set that protects master/main, run again against this
+    # exact tagged commit. A tag pushed from a branch that never went through
+    # a protected PR (or a commit amended after merge) would otherwise
+    # publish unverified.
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  build-windows:
+    needs: gate
     runs-on: windows-latest
     timeout-minutes: 45
     permissions:
-      contents: write
+      contents: read
       id-token: write
       attestations: write
 
@@ -30,9 +73,6 @@ jobs:
         run: |
           pip install -r requirements-lock.txt
           pip install -e . --no-deps
-
-      - name: Run tests
-        run: pytest -q --tb=short
 
       - name: Verify the tag matches the version in the tree
         # Four releases (v2.9.4-v2.9.7) shipped binaries whose reported version
@@ -53,6 +93,18 @@ jobs:
 
       - name: Build executable
         run: python -m PyInstaller spirescope.spec --clean --noconfirm
+
+      - name: Collect third-party license texts
+        # CA-H9: dist-info is the only place the dependencies' own LICENSE
+        # files live once installed, and "Strip dist-info metadata" below
+        # deletes it. Harvest verbatim license text out of THIS venv's
+        # dist-info (same runtime closure THIRD_PARTY_NOTICES.md documents)
+        # before that happens. THIRD_PARTY_NOTICES.md lists names/SPDX
+        # identifiers/URLs but does not reproduce license text, which
+        # BSD-3-Clause and similar licenses require to travel with a binary
+        # redistribution. Fails the job if any bundled runtime dependency
+        # yields no license text.
+        run: python scripts/collect_licenses.py --output dist/Spirescope/LICENSES.txt --verbose
 
       - name: Strip dist-info metadata
         run: |
@@ -85,28 +137,33 @@ jobs:
         shell: pwsh
 
       - name: Stage distribution files
-        # Runs AFTER the smoke test on purpose. Two things this fixes, both
-        # verified missing from the published v3.0.3 and v3.0.4 zips:
+        # Runs AFTER the smoke test on purpose. Three things this fixes, all
+        # verified missing from published zips at one point or another:
         #
         # 1. The smoke test runs the app from dist/Spirescope, and a frozen
-        #    build seeds its data dir next to the executable — so a data/
+        #    build seeds its data dir next to the executable -- so a data/
         #    directory of runtime state was being swept into the release. A
         #    fresh install re-seeds it from the bundled copy on first run, so
         #    removing it here is safe and keeps runtime state out of the zip.
         # 2. "Strip dist-info" above also deletes the bundled packages' LICENSE
-        #    files, and BSD-3-Clause and Apache-2.0 both require the notice to
-        #    accompany a binary redistribution. build_exe.py does this already, but
-        #    this workflow calls PyInstaller directly and never runs build_exe.py.
+        #    files; THIRD_PARTY_NOTICES.md documents names/licenses/URLs but
+        #    doesn't reproduce license text. "Collect third-party license
+        #    texts" above wrote LICENSES.txt from that same dist-info before
+        #    it was stripped -- ship it alongside the other notices.
+        # 3. LICENSES.txt itself must actually exist and be non-empty, or a
+        #    silent failure in the collection step would ship an
+        #    undocumented binary anyway.
         run: |
           if (Test-Path dist/Spirescope/data) { Remove-Item -Recurse -Force dist/Spirescope/data }
           Copy-Item LICENSE dist/Spirescope/LICENSE.txt
           Copy-Item THIRD_PARTY_NOTICES.md dist/Spirescope/THIRD_PARTY_NOTICES.md
           Copy-Item README_DIST.txt dist/Spirescope/README.txt
-          foreach ($f in @("LICENSE.txt","THIRD_PARTY_NOTICES.md","README.txt")) {
+          foreach ($f in @("LICENSE.txt","THIRD_PARTY_NOTICES.md","README.txt","LICENSES.txt")) {
             if (-not (Test-Path "dist/Spirescope/$f")) { throw "$f missing from the distribution" }
           }
+          if ((Get-Item dist/Spirescope/LICENSES.txt).Length -eq 0) { throw "LICENSES.txt is empty" }
           if (Test-Path dist/Spirescope/data) { throw "runtime data/ still present in the distribution" }
-          Write-Host "staged: LICENSE.txt, THIRD_PARTY_NOTICES.md, README.txt; runtime data/ removed"
+          Write-Host "staged: LICENSE.txt, THIRD_PARTY_NOTICES.md, LICENSES.txt, README.txt; runtime data/ removed"
         shell: pwsh
 
       - name: Create zip archives
@@ -134,8 +191,9 @@ jobs:
           path: dist/Spirescope
           format: spdx-json
           output-file: dist/Spirescope-${{ github.ref_name }}-windows.spdx.json
-          # Attached explicitly via the release `files:` list below, once the
-          # release actually exists -- this step runs before it's created.
+          # Attached explicitly via the publisher job's release `files:`
+          # list, once the release actually exists -- this job never
+          # creates or touches the release itself.
           upload-release-assets: false
 
       - name: Attest build provenance
@@ -144,6 +202,222 @@ jobs:
           subject-path: |
             dist/Spirescope-${{ github.ref_name }}-windows.zip
             dist/Spirescope-windows.zip
+
+      - name: Upload Windows release assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows-release-assets
+          path: |
+            dist/Spirescope-${{ github.ref_name }}-windows.zip
+            dist/Spirescope-${{ github.ref_name }}-windows.zip.sha256
+            dist/Spirescope-windows.zip
+            dist/Spirescope-windows.zip.sha256
+            dist/Spirescope-${{ github.ref_name }}-windows.spdx.json
+          retention-days: 1
+          if-no-files-found: error
+
+  build-macos:
+    needs: gate
+    runs-on: macos-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-lock.txt
+          pip install -e . --no-deps
+
+      - name: Verify the tag matches the version in the tree
+        # Four releases (v2.9.4-v2.9.7) shipped binaries whose reported version
+        # did not match their tag. Fail before building rather than publish a
+        # mislabelled artifact.
+        run: |
+          import os, re, sys
+          tag = os.environ["TAG"].lstrip("v")
+          src = open("sts2/config.py", encoding="utf-8").read()
+          version = re.search(r'^VERSION\s*=\s*"([^"]+)"', src, re.M).group(1)
+          if tag != version:
+              print(f"::error::tag {os.environ['TAG']} does not match VERSION {version} in sts2/config.py")
+              sys.exit(1)
+          print(f"tag and VERSION agree: {version}")
+        shell: python
+        env:
+          TAG: ${{ github.ref_name }}
+
+      - name: Build macOS app
+        run: python -m PyInstaller spirescope.spec --clean --noconfirm
+
+      - name: Collect third-party license texts
+        # CA-H9: same reasoning as the Windows job -- harvest verbatim
+        # license text out of this venv's dist-info before "Strip dist-info
+        # metadata" below deletes it.
+        run: python scripts/collect_licenses.py --output dist/Spirescope/LICENSES.txt --verbose
+
+      - name: Strip dist-info metadata
+        run: find dist/Spirescope -name "*.dist-info" -type d -exec rm -rf {} +
+
+      - name: Smoke-test the built app
+        # Rule: validate the artifact users receive, not just the source tree.
+        # Packaging silently drops files the dev env has (issue #5: locales
+        # were missing, so every nav item rendered as "nav.cards").
+        run: |
+          cd dist/Spirescope
+          STS2_PORT=8899 SPIRESCOPE_CHECK_UPDATES=0 ./Spirescope serve --no-browser &
+          for i in $(seq 1 30); do
+            sleep 2
+            curl -sf -o /dev/null http://127.0.0.1:8899/ && break
+          done
+          html=$(curl -sf http://127.0.0.1:8899/)
+          # i18n-exclusive assertion: this placeholder only exists when a
+          # locale file resolved. Plain words like "Cards" also appear in
+          # hardcoded page content, so they pass even on a broken build.
+          echo "$html" | grep -q 'placeholder="Search cards' || { echo "::error::i18n strings did not resolve in the packaged build"; exit 1; }
+          if echo "$html" | grep -qE '>(nav|common|settings)\.[a-z_]+<'; then
+            echo "::error::raw i18n keys rendered in the packaged build"
+            exit 1
+          fi
+          curl -sf -o /dev/null http://127.0.0.1:8899/cards
+          curl -sf -o /dev/null http://127.0.0.1:8899/settings
+          echo "smoke test passed: real strings rendered, key pages 200"
+          pkill -f "Spirescope serve" || true
+
+      - name: Stage distribution files
+        # Runs AFTER the smoke test on purpose. Three things this fixes, all
+        # verified missing from published zips at one point or another:
+        #
+        # 1. The smoke test runs the app from dist/Spirescope, and a frozen
+        #    build seeds its data dir next to the executable -- so a data/
+        #    directory of runtime state was being swept into the release. A
+        #    fresh install re-seeds it from the bundled copy on first run, so
+        #    removing it here is safe and keeps runtime state out of the zip.
+        # 2. "Strip dist-info" above also deletes the bundled packages' LICENSE
+        #    files; THIRD_PARTY_NOTICES.md documents names/licenses/URLs but
+        #    doesn't reproduce license text. "Collect third-party license
+        #    texts" above wrote LICENSES.txt from that same dist-info before
+        #    it was stripped -- ship it alongside the other notices.
+        # 3. LICENSES.txt itself must actually exist and be non-empty, or a
+        #    silent failure in the collection step would ship an
+        #    undocumented binary anyway.
+        run: |
+          rm -rf dist/Spirescope/data
+          cp LICENSE dist/Spirescope/LICENSE.txt
+          cp THIRD_PARTY_NOTICES.md dist/Spirescope/THIRD_PARTY_NOTICES.md
+          cp README_DIST.txt dist/Spirescope/README.txt
+          for f in LICENSE.txt THIRD_PARTY_NOTICES.md README.txt LICENSES.txt; do
+            test -f "dist/Spirescope/$f" || { echo "::error::$f missing from the distribution"; exit 1; }
+          done
+          test -s dist/Spirescope/LICENSES.txt || { echo "::error::LICENSES.txt is empty"; exit 1; }
+          if [ -d dist/Spirescope/data ]; then
+            echo "::error::runtime data/ still present in the distribution"
+            exit 1
+          fi
+          echo "staged: LICENSE.txt, THIRD_PARTY_NOTICES.md, LICENSES.txt, README.txt; runtime data/ removed"
+
+      - name: Create zip archive
+        run: |
+          cd dist
+          zip -r Spirescope-${{ github.ref_name }}-macos.zip Spirescope/
+          cp Spirescope-${{ github.ref_name }}-macos.zip Spirescope-macos.zip
+          for z in Spirescope-${{ github.ref_name }}-macos.zip Spirescope-macos.zip; do
+            shasum -a 256 "$z" > "$z.sha256"
+          done
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0.24.0
+        with:
+          path: dist/Spirescope
+          format: spdx-json
+          output-file: dist/Spirescope-${{ github.ref_name }}-macos.spdx.json
+          # Attached explicitly via the publisher job's release `files:`
+          # list, once the release actually exists -- this job never
+          # creates or touches the release itself.
+          upload-release-assets: false
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            dist/Spirescope-${{ github.ref_name }}-macos.zip
+            dist/Spirescope-macos.zip
+
+      - name: Upload macOS release assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: macos-release-assets
+          path: |
+            dist/Spirescope-${{ github.ref_name }}-macos.zip
+            dist/Spirescope-${{ github.ref_name }}-macos.zip.sha256
+            dist/Spirescope-macos.zip
+            dist/Spirescope-macos.zip.sha256
+            dist/Spirescope-${{ github.ref_name }}-macos.spdx.json
+          retention-days: 1
+          if-no-files-found: error
+
+  publish:
+    # The only job that touches the release. needs both builds so it can
+    # download and assemble both platforms' assets in one place -- but see
+    # the `if:` below and the top-of-file comment for why build-macos is not
+    # a hard requirement the way gate and build-windows are.
+    needs: [gate, build-windows, build-macos]
+    if: always() && needs.gate.result == 'success' && needs.build-windows.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      # No dependency installation in this job at all: it only reads
+      # CHANGELOG.md (stdlib re/os) and downloads/uploads artifacts. This is
+      # the job holding contents:write, so it must never resolve or execute
+      # third-party package code before it creates the release.
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+
+      - name: Download Windows release assets
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: windows-release-assets
+          path: release-assets
+
+      - name: Download macOS release assets
+        # Tolerated: build-macos may have failed to produce this artifact at
+        # all (see the job's `if:` above). A missing download here must not
+        # fail this job -- it's how a Windows-only release stays possible.
+        id: download_macos
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: macos-release-assets
+          path: release-assets
+
+      - name: Check whether macOS assets are present
+        id: mac_check
+        run: |
+          if ls release-assets/*macos* >/dev/null 2>&1; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::macOS build did not produce assets for this release (build-macos result: ${{ needs.build-macos.result }}). Publishing the Windows build only -- this is not silent: see this warning and the note added to the release body."
+          fi
 
       - name: Extract release notes from CHANGELOG
         id: changelog
@@ -179,13 +453,21 @@ jobs:
           TAG: ${{ github.ref_name }}
         shell: bash
 
+      - name: Note missing macOS build in the release body
+        if: steps.mac_check.outputs.present != 'true'
+        run: |
+          {
+            echo ""
+            echo ""
+            echo "---"
+            echo ""
+            echo "**Note:** the macOS build did not complete for this release, so no macOS download is attached. Only the Windows build is available above; check the workflow run logs for the macOS failure."
+          } >> RELEASE_NOTES.md
+        shell: bash
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3
         with:
-          files: |
-            dist/Spirescope-${{ github.ref_name }}-windows.zip
-            dist/Spirescope-${{ github.ref_name }}-windows.zip.sha256
-            dist/Spirescope-windows.zip
-            dist/Spirescope-windows.zip.sha256
-            dist/Spirescope-${{ github.ref_name }}-windows.spdx.json
+          files: release-assets/*
+          fail_on_unmatched_files: false
           body_path: RELEASE_NOTES.md

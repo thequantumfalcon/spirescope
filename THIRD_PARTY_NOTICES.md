@@ -1,8 +1,14 @@
 # Third-Party Notices
 
-SpireScope incorporates work from the following third parties. The full
-license text for each is available at the URLs cited or in the upstream
-package metadata.
+SpireScope incorporates work from the following third parties. This file
+identifies each dependency's name, license, and project URL; it does not
+reproduce license text itself. The **complete, verbatim license text for
+every bundled runtime dependency ships alongside this file as
+`LICENSES.txt`** in the distribution folder (generated at build time by
+`scripts/collect_licenses.py` from each package's installed metadata, before
+that metadata is stripped from the packaged build). This is a
+compliance-risk reduction, not a legal opinion -- if you need a legal
+determination about license compliance, consult counsel.
 
 ## Runtime Python dependencies
 

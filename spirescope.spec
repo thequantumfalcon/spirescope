@@ -108,6 +108,17 @@ a = Analysis(
         'tkinter', 'unittest', 'doctest', 'xmlrpc', 'ftplib',
         'sphinx', 'babel', 'docutils', 'lxml', 'cryptography', 'zmq',
         'myst_parser', 'rich', 'Cython', 'psutil', 'dateutil',
+        # CA-M16: the pyinstaller-hooks-contrib hook for pydantic does an
+        # unconditional collect_submodules('pydantic'), which sweeps in the
+        # optional pydantic.mypy plugin module. That module's real `import
+        # mypy...` statements then pull the whole mypy package (and its own
+        # runtime deps) into the frozen build, even though the app never
+        # imports it. Verified via a real PyInstaller build (Analysis +
+        # COLLECT): mypy (72 mypyc-compiled .pyd files), mypy_extensions
+        # (pure-Python, zipped into PYZ), librt and ast_serialize (mypy's
+        # own runtime helper deps) all showed up under dist/Spirescope --
+        # 74 files, ~3.2 MB total, none of it reachable from the app itself.
+        'mypy', 'mypy_extensions', 'librt', 'ast_serialize',
     ],
     noarchive=False,
 )

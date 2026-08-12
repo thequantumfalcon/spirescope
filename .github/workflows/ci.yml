@@ -5,6 +5,13 @@ on:
     branches: [master, main]
   pull_request:
     branches: [master, main]
+  # CA-H8: release.yml/release-macos.yml used to run only a plain `pytest`
+  # before publishing a tagged release, skipping ruff, mypy, the browser
+  # suite, the wheel install check, docker-smoke and pip-audit entirely --
+  # none of those run on a tag push. Reusable-workflow-call lets the release
+  # workflow depend on this exact job set (see the `gate` job there) instead
+  # of re-implementing a second, drifting copy of it.
+  workflow_call:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}

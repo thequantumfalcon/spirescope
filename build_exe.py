@@ -103,6 +103,18 @@ def main():
         print("Build failed.")
         sys.exit(1)
 
+    # Harvest the bundled packages' own licence texts BEFORE the dist-info
+    # directories that hold them are stripped below.
+    licenses_out = DIST / "LICENSES.txt"
+    collector = subprocess.run(
+        [str(venv_python), str(ROOT / "scripts" / "collect_licenses.py"),
+         "--output", str(licenses_out)],
+        cwd=str(ROOT),
+    )
+    if collector.returncode != 0:
+        print("Build failed: could not collect third-party licence texts.")
+        sys.exit(1)
+
     # Strip dist-info metadata to avoid false positives from package scanners
     # (for example, bundled metadata being misread as typosquatting)
     for dist_info in DIST.rglob("*.dist-info"):
@@ -116,8 +128,10 @@ def main():
         shutil.copy2(readme_src, DIST / "README.txt")
 
     # Stripping dist-info above also removes the bundled packages' LICENSE
-    # files, but BSD-3-Clause and Apache-2.0 both require the notice to travel
-    # with a binary redistribution. Ship the notices as plain files instead.
+    # files, but BSD-3-Clause and Apache-2.0 both require the notice, the
+    # conditions and the disclaimer to travel with a binary redistribution —
+    # a name and a URL is not a reproduction of them. Collect the verbatim
+    # texts the same way the release workflows do.
     for name, dest in (("LICENSE", "LICENSE.txt"),
                        ("THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.md")):
         src = ROOT / name
