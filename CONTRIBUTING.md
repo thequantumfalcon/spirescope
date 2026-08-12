@@ -45,7 +45,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates
   static/            # CSS, fonts, images, JS
-tests/               # 780 tests (pytest + pytest-asyncio)
+tests/               # 948 tests (pytest + pytest-asyncio)
                      # + 15 Playwright browser tests: pip install -e ".[browser]"
                      #   && playwright install chromium && pytest -m browser
 ```

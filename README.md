@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
   <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/thequantumfalcon/spirescope/badges/tests.json" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-79%25-yellowgreen" alt="Coverage: 79%">
+  <img src="https://img.shields.io/badge/coverage-80%25-yellowgreen" alt="Coverage: 80%">
 </p>
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
@@ -390,7 +390,8 @@ sts2/
   models.py          # Pydantic models for all game entities
   saves.py           # Save file parser (progress + run history + co-op)
   sync.py            # Aggregate sync client (upload/download)
-  updater.py         # Auto-update checker
+  persist.py         # Atomic writes for the small state files
+  updater.py         # Auto-update checker + data-bundle installer
   watcher.py         # File watcher with debounce + polling fallback
   graveyard.py, prophecy.py, hypothesis.py, rivalry.py, cascade.py,
   ghost.py, drift.py, spectral.py, integrity.py,
@@ -398,7 +399,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (32 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 786 tests (pytest + pytest-asyncio)
+tests/               # 948 tests (pytest + pytest-asyncio), +15 Playwright browser tests
 ```
 
 ## Requirements

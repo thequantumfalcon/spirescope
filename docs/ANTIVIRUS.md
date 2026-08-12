@@ -103,7 +103,7 @@ address macOS Gatekeeper, which needs Apple notarization separately.
 
 ## How to satisfy yourself it's safe
 
-- **Read the source** — it's all here, ~700 automated tests included.
+- **Read the source** — it's all here, over 900 automated tests included.
 - **Check what it does on the network:** the packaged build makes no
   outbound calls unless you opt in with `SPIRESCOPE_CHECK_UPDATES=1`.
   (Source installs check GitHub for app and data updates at startup;
