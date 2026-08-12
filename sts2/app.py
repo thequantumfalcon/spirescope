@@ -4,6 +4,7 @@ import collections
 import contextlib
 import hashlib
 import hmac
+import ipaddress
 import logging
 import os
 import re
@@ -362,9 +363,58 @@ app.add_middleware(CORSMiddleware, allow_origins=_cors_origins,
 # ---------------------------------------------------------------------------
 
 
-def _is_loopback_bind() -> bool:
-    """Runtime-checked so tests can monkeypatch STS2_HOST without re-importing app."""
-    return os.environ.get("STS2_HOST", "127.0.0.1") in ("127.0.0.1", "localhost", "::1")
+_LOOPBACK_NAMES = ("127.0.0.1", "localhost", "::1")
+
+
+def _is_loopback_bind(request: Request | None = None) -> bool:
+    """Whether this request arrived on a loopback-only deployment.
+
+    Runtime-checked so tests can monkeypatch STS2_HOST without re-importing
+    app. The environment variable alone is not trusted: an ASGI embedding
+    (uvicorn sts2.app:app --host 0.0.0.0, a gunicorn unit, a parent app that
+    mounts this one) can bind every interface while STS2_HOST still reads as
+    its 127.0.0.1 default, and skipping authentication on that basis is a
+    fail-open default. The ASGI scope's "server" entry is the local address
+    the connection actually landed on, so a request that arrived on a
+    non-loopback interface is treated as networked no matter what the
+    environment claims.
+    """
+    if os.environ.get("STS2_HOST", "127.0.0.1") not in _LOOPBACK_NAMES:
+        return False
+    if request is not None:
+        server = request.scope.get("server")
+        # Only escalate on evidence: a scope host that parses as a real
+        # non-loopback IP address. Test transports and some servers put a
+        # hostname here instead of the socket address, and a hostname is not
+        # proof of anything — treating it as such would refuse legitimate
+        # loopback traffic.
+        if server and server[0]:
+            try:
+                if not ipaddress.ip_address(server[0]).is_loopback:
+                    return False
+            except ValueError:
+                pass
+    return True
+
+
+def _allowed_hosts() -> list[str]:
+    """Host header values this deployment answers to.
+
+    Without this the app answers to any Host, which is what lets a page that
+    has repointed its own hostname at 127.0.0.1 talk to a loopback install as
+    same-origin — reading run history and driving CSRF-gated actions, since a
+    CSRF token comes free with any rendered page. Loopback deployments know
+    exactly which names address them; a network bind is reached by LAN IP or
+    hostname, so operators enumerate those in STS2_ALLOWED_HOSTS.
+    """
+    configured = [h.strip() for h in
+                  os.environ.get("STS2_ALLOWED_HOSTS", "").split(",") if h.strip()]
+    if configured:
+        return configured
+    if os.environ.get("STS2_HOST", "127.0.0.1") in _LOOPBACK_NAMES:
+        # testserver is what Starlette's own test client sends.
+        return ["127.0.0.1", "localhost", "[::1]", "testserver"]
+    return ["*"]
 
 
 @app.middleware("http")
@@ -379,7 +429,7 @@ async def require_network_auth(request: Request, call_next):
     CSRF alone was never authentication: any client that could GET a page got
     a valid token with it.
     """
-    if _is_loopback_bind():
+    if _is_loopback_bind(request):
         return await call_next(request)
     # Liveness and readiness stay open (Docker healthchecks run in-container
     # against the non-loopback bind); neither serves user data. Preflight
@@ -409,8 +459,19 @@ async def require_network_auth(request: Request, call_next):
         # address bar or history, and hand the browser a session cookie.
         url = request.url.remove_query_params("token")
         resp = RedirectResponse(str(url), status_code=303)
+        # Mark the cookie Secure whenever the exchange is already encrypted,
+        # directly or through a terminating proxy. Doing it unconditionally
+        # would break the documented plain-HTTP LAN setup outright — the
+        # browser would refuse to store the cookie and sign-in would loop —
+        # so the flag follows the actual transport instead. Plain HTTP over a
+        # network still exposes this credential in transit, which is why the
+        # docs point at TLS or a reverse proxy for anything beyond a trusted
+        # LAN.
+        forwarded_proto = request.headers.get("x-forwarded-proto", "").split(",")[0].strip()
+        secure = request.url.scheme == "https" or forwarded_proto == "https"
         resp.set_cookie(_AUTH_COOKIE, _issue_auth_ticket(),
-                        max_age=_AUTH_TICKET_MAX_AGE, httponly=True, samesite="lax")
+                        max_age=_AUTH_TICKET_MAX_AGE, httponly=True,
+                        samesite="lax", secure=secure)
         return resp
     return PlainTextResponse(
         "Authentication required: open ?token=<STS2_AUTH_TOKEN> once in a "
@@ -591,6 +652,27 @@ class BodySizeLimitMiddleware:
 
 # Added last = outermost: the cheapest rejection runs before any other work.
 app.add_middleware(BodySizeLimitMiddleware)
+
+@app.middleware("http")
+async def check_host(request: Request, call_next):
+    """Refuse a Host header this deployment does not answer to.
+
+    Written here rather than using TrustedHostMiddleware so the allowlist is
+    read per request: bound at construction it would freeze whatever the
+    environment happened to say at import time, which is both untestable and
+    wrong for anything that reconfigures after startup.
+    """
+    allowed = _allowed_hosts()
+    if "*" not in allowed:
+        host = (request.headers.get("host", "") or "").split(":")[0]
+        # Strip brackets so a literal IPv6 host matches its allowlist entry.
+        if host.startswith("[") and host.endswith("]"):
+            host = host[1:-1]
+        normalized = [h[1:-1] if h.startswith("[") and h.endswith("]") else h
+                      for h in allowed]
+        if host not in normalized:
+            return PlainTextResponse("Invalid host header.", status_code=400)
+    return await call_next(request)
 
 
 # ---------------------------------------------------------------------------

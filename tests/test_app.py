@@ -2926,9 +2926,17 @@ class TestNetworkAuthBoundary:
         assert resp.status_code == 200
 
     async def test_loopback_bind_needs_no_credentials(self):
+        """Addressed as a real loopback client would: the host allowlist that
+        guards against a rebound hostname also refuses the synthetic
+        'http://test' base URL the other tests here use."""
         from unittest.mock import patch
+
+        from httpx import ASGITransport, AsyncClient
+
+        from sts2.app import app as _app
         with patch.dict(os.environ, {"STS2_HOST": "127.0.0.1"}):
-            async with self._bare_client() as c:
+            async with AsyncClient(transport=ASGITransport(app=_app),
+                                   base_url="http://127.0.0.1:8000") as c:
                 resp = await c.get("/")
         assert resp.status_code == 200
 
@@ -2988,3 +2996,78 @@ async def test_sse_handshake_is_rate_limited():
         resp = await c.get("/api/live/stream")
     assert resp.status_code == 429
     _rate_limit_store.clear()
+
+
+class TestHostAndBindBoundary:
+    """Two fail-open holes in the loopback trust decision.
+
+    The gate consulted only STS2_HOST, so (a) any Host header was answered —
+    a page that repoints its own hostname at 127.0.0.1 becomes same-origin
+    with a loopback install and inherits a CSRF token from any page it
+    reads — and (b) an ASGI embedding bound to every interface while
+    STS2_HOST kept its 127.0.0.1 default served everything unauthenticated.
+    """
+
+    @staticmethod
+    def _bare_client():
+        from httpx import ASGITransport, AsyncClient
+
+        from sts2.app import app as _app
+        return AsyncClient(transport=ASGITransport(app=_app),
+                           base_url="http://127.0.0.1:8000")
+
+    async def test_unexpected_host_is_refused_on_loopback(self, monkeypatch):
+        monkeypatch.setenv("STS2_HOST", "127.0.0.1")
+        monkeypatch.delenv("STS2_ALLOWED_HOSTS", raising=False)
+        async with self._bare_client() as c:
+            resp = await c.get("/", headers={"Host": "evil.example.com"})
+        assert resp.status_code == 400
+
+    async def test_expected_hosts_still_served(self, monkeypatch):
+        monkeypatch.setenv("STS2_HOST", "127.0.0.1")
+        async with self._bare_client() as c:
+            for host in ("127.0.0.1:8000", "localhost:8000"):
+                resp = await c.get("/", headers={"Host": host})
+                assert resp.status_code == 200, host
+
+    def test_allowlist_defaults_by_bind(self, monkeypatch):
+        from sts2.app import _allowed_hosts
+
+        monkeypatch.delenv("STS2_ALLOWED_HOSTS", raising=False)
+        monkeypatch.setenv("STS2_HOST", "127.0.0.1")
+        assert "127.0.0.1" in _allowed_hosts()
+        assert "*" not in _allowed_hosts()
+        # A network bind is reached by LAN IP or hostname, so the operator
+        # enumerates them; without that we must not silently refuse traffic.
+        monkeypatch.setenv("STS2_HOST", "0.0.0.0")
+        assert _allowed_hosts() == ["*"]
+        monkeypatch.setenv("STS2_ALLOWED_HOSTS", "spire.lan, 10.0.0.5")
+        assert _allowed_hosts() == ["spire.lan", "10.0.0.5"]
+
+    def test_request_arriving_on_a_network_interface_is_not_loopback(self, monkeypatch):
+        """The environment default must not override the socket reality."""
+        from starlette.requests import Request
+
+        from sts2.app import _is_loopback_bind
+
+        monkeypatch.delenv("STS2_HOST", raising=False)
+        lan = Request({"type": "http", "server": ("192.168.1.100", 8000),
+                       "headers": []})
+        loop = Request({"type": "http", "server": ("127.0.0.1", 8000),
+                        "headers": []})
+        assert _is_loopback_bind(lan) is False
+        assert _is_loopback_bind(loop) is True
+        assert _is_loopback_bind() is True
+
+    async def test_signin_cookie_is_secure_over_tls(self, monkeypatch):
+        """Marked Secure when the exchange is encrypted — including behind a
+        proxy that terminated TLS — but not on plain HTTP, where the browser
+        would refuse to store it and sign-in would loop."""
+        monkeypatch.setenv("STS2_HOST", "0.0.0.0")
+        monkeypatch.setenv("STS2_AUTH_TOKEN", "test-auth-token")
+        async with self._bare_client() as c:
+            behind_proxy = await c.get("/?token=test-auth-token",
+                                       headers={"X-Forwarded-Proto": "https"})
+            plain = await c.get("/?token=test-auth-token")
+        assert "secure" in behind_proxy.headers["set-cookie"].lower()
+        assert "secure" not in plain.headers["set-cookie"].lower()
