@@ -261,9 +261,11 @@ pip install -e .
 spirescope
 ```
 
-Save path (Proton): `~/.local/share/Steam/steamapps/compatdata/2868840/pfx/drive_c/users/steamuser/AppData/Local/SlayTheSpire2/`
+Saves live under (Proton): `~/.local/share/Steam/steamapps/compatdata/2868840/pfx/drive_c/users/steamuser/AppData/Local/SlayTheSpire2/`
 
-Set `STS2_SAVE_DIR` to this path if auto-detection doesn't find your saves.
+If auto-detection doesn't find them, set `STS2_SAVE_DIR` to the profile's
+saves directory itself — `steam/<steam-id>/profile1/saves/` under that path —
+not the tree root; the variable is used verbatim as the saves directory.
 
 ## CLI Commands
 

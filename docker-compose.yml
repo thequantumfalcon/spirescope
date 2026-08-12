@@ -24,7 +24,10 @@ services:
       STS2_AUTH_TOKEN: ${STS2_AUTH_TOKEN:?Set STS2_AUTH_TOKEN to a long random string}
       # Uncomment this together with one of the save-dir bind mounts below to
       # let SpireScope read your real Slay the Spire 2 saves. The value must
-      # match the mount's container-side target path.
+      # match the mount's container-side target path, and the mounted host
+      # directory must be the profile's saves/ directory itself (the leaf that
+      # holds progress.save and history/), NOT the SlayTheSpire2 tree root —
+      # STS2_SAVE_DIR is used verbatim as the saves directory.
       # STS2_SAVE_DIR: /saves
     volumes:
       # Named volume for user state (UI language, hypotheses, community
@@ -39,14 +42,17 @@ services:
       # app knows to look at /saves instead of auto-detecting a host path
       # that doesn't exist inside the container.
       #
+      # Replace <steam-id> with the numeric folder under steam/ (there is
+      # usually exactly one). Mount the profile's saves/ directory itself.
+      #
       # Windows (path as seen from Docker Desktop, not a WSL path):
-      # - "C:/Users/<you>/AppData/Roaming/SlayTheSpire2:/saves:ro"
+      # - "C:/Users/<you>/AppData/Roaming/SlayTheSpire2/steam/<steam-id>/profile1/saves:/saves:ro"
       #
       # macOS:
-      # - "/Users/<you>/Library/Application Support/SlayTheSpire2:/saves:ro"
+      # - "/Users/<you>/Library/Application Support/SlayTheSpire2/steam/<steam-id>/profile1/saves:/saves:ro"
       #
       # Linux (native install; swap in $XDG_DATA_HOME if you set one):
-      # - "${HOME}/.local/share/SlayTheSpire2:/saves:ro"
+      # - "${HOME}/.local/share/SlayTheSpire2/steam/<steam-id>/profile1/saves:/saves:ro"
 
 volumes:
   # Backing store for the state bind mount above — created automatically on
