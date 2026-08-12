@@ -2932,8 +2932,12 @@ class TestNetworkAuthBoundary:
         assert resp.status_code == 200
 
     async def test_auth_ticket_round_trip_and_domain_separation(self):
-        from sts2.app import (_issue_auth_ticket, _validate_auth_ticket,
-                              generate_csrf_token, validate_csrf_token)
+        from sts2.app import (
+            _issue_auth_ticket,
+            _validate_auth_ticket,
+            generate_csrf_token,
+            validate_csrf_token,
+        )
         ticket = _issue_auth_ticket()
         assert _validate_auth_ticket(ticket) is True
         assert _validate_auth_ticket("") is False
