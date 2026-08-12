@@ -943,13 +943,18 @@ async def import_run(request: Request, file: UploadFile = File(...),
                 "error_code": 400,
                 "error_message": "Unsupported format version. Expected format_version: 1.",
             }, status_code=400)
-        if "run" not in data:
+        if not isinstance(data.get("run"), dict):
+            # Key-presence alone was not enough: a "run" holding a list, null,
+            # a string or a number reached RunHistory(**...) and raised
+            # TypeError, which this handler does not catch — an uncaught 500
+            # on a malformed upload.
             return a.templates.TemplateResponse(request, "error.html", {
                 "error_code": 400,
-                "error_message": "Invalid file: missing 'run' key.",
+                "error_message": "Invalid file: 'run' must be an object.",
             }, status_code=400)
         run = RunHistory(**data["run"])
-    except (json.JSONDecodeError, ValidationError, KeyError, RecursionError):
+    except (json.JSONDecodeError, ValidationError, KeyError, TypeError,
+            RecursionError):
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400,
             "error_message": "Invalid run file format.",
@@ -971,17 +976,29 @@ async def import_run(request: Request, file: UploadFile = File(...),
                 "error_code": 400,
                 "error_message": "Run file has unreasonable per-floor list sizes.",
             }, status_code=400)
-    # Check the file against the digest it was exported with. verify_run is
-    # the integrity feature's read side; without this call the export-side
-    # digest proved nothing.
-    from sts2.integrity import DIGEST_VERSION, compute_run_digest, verify_run
+    # Check the FILE against the digest it was exported with — the raw run
+    # mapping, not the parsed model. Verifying the model verified only what
+    # the model kept: anything added to an exported run was dropped during
+    # validation and the original digest still matched, so a modified file
+    # reported as verified.
+    from sts2.integrity import DIGEST_VERSION, compute_run_digest, verify_payload
     expected_digest = data.get("integrity_digest", "")
     if expected_digest and data.get("digest_version") == DIGEST_VERSION:
-        integrity_check = "verified" if verify_run(run, expected_digest) else "mismatch"
+        integrity_check = ("verified" if verify_payload(data["run"], expected_digest)
+                           else "mismatch")
     else:
         # No digest, or one from a different canonicalization version — an old
         # export is not evidence of tampering, just unverifiable.
         integrity_check = "absent"
+    try:
+        recomputed_digest = compute_run_digest(run)
+    except ValueError:
+        # Text that cannot be encoded (an unpaired surrogate) is malformed
+        # input, not a server fault.
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 400,
+            "error_message": "Run file contains malformed text.",
+        }, status_code=400)
     # Rivalry Seeds: keep the parsed run in the session-scoped imported store
     # so it can be picked from the Runs page for comparison against a local
     # run. This route itself still only ever renders it transiently.
@@ -989,7 +1006,7 @@ async def import_run(request: Request, file: UploadFile = File(...),
     run_analysis = analyze_run(run, kb=a.kb)
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "run_analysis": run_analysis, "kb": a.kb, "imported": True,
-        "integrity_hash": compute_run_digest(run),
+        "integrity_hash": recomputed_digest,
         "integrity_check": integrity_check,
     })
 

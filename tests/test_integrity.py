@@ -10,6 +10,8 @@ ever actually verified.
 import json
 from unittest.mock import AsyncMock, patch
 
+import pytest
+
 from sts2.integrity import DIGEST_VERSION, compute_run_digest, verify_run
 from sts2.models import RunFloor, RunHistory
 
@@ -110,3 +112,64 @@ class TestImportVerifiesDigest:
             "format_version": 1, "run": _base_run().model_dump()})
         assert resp.status_code == 200
         assert "no checksum" in resp.text
+
+
+class TestFileLevelVerification:
+    """Verifying the parsed model verified only what the model kept.
+
+    RunHistory does not forbid unknown fields, so anything added to an
+    exported run was dropped during validation and the ORIGINAL digest still
+    matched — a modified file reported as verified.
+    """
+
+    @staticmethod
+    async def _import(client, payload: dict):
+        from sts2.app import generate_csrf_token
+        return await client.post(
+            "/runs/import",
+            files={"file": ("run.json", json.dumps(payload).encode(),
+                            "application/json")},
+            data={"csrf_token": generate_csrf_token()})
+
+    async def test_added_field_is_detected(self, client):
+        from sts2.integrity import compute_payload_digest
+        run = _base_run()
+        payload = run.model_dump()
+        digest = compute_payload_digest(payload)
+        tampered = dict(payload, injected_note="added after export")
+        resp = await self._import(client, {
+            "format_version": 1, "digest_version": DIGEST_VERSION,
+            "integrity_digest": digest, "run": tampered})
+        assert resp.status_code == 200
+        assert "does not match the checksum" in resp.text
+
+    async def test_untampered_export_still_verifies(self, client):
+        from sts2.integrity import compute_payload_digest
+        payload = _base_run().model_dump()
+        resp = await self._import(client, {
+            "format_version": 1, "digest_version": DIGEST_VERSION,
+            "integrity_digest": compute_payload_digest(payload),
+            "run": payload})
+        assert "matches the checksum" in resp.text
+
+    async def test_export_digest_matches_file_level_digest(self, client):
+        """The digest an export embeds must be the one an import recomputes
+        from the file, or every round trip would report a mismatch."""
+        from unittest.mock import AsyncMock, patch
+
+        from sts2.integrity import compute_payload_digest
+        run = _base_run()
+        with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=run)):
+            resp = await client.get("/runs/run-1/export")
+        payload = json.loads(resp.text)
+        assert payload["integrity_digest"] == compute_payload_digest(payload["run"])
+
+    async def test_non_object_run_is_rejected_not_a_server_error(self, client):
+        for bad in ([], None, "x", 5):
+            resp = await self._import(client, {"format_version": 1, "run": bad})
+            assert resp.status_code == 400, f"run={bad!r} gave {resp.status_code}"
+
+    def test_unencodable_text_raises_value_error_not_unicode_error(self):
+        from sts2.integrity import compute_payload_digest
+        with pytest.raises(ValueError):
+            compute_payload_digest({"id": "r", "seed": "\ud800"})
