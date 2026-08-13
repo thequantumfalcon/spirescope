@@ -129,39 +129,6 @@ jobs:
           rc="${{ steps.tests.outputs.rc }}"
           exit "${rc:-0}"
 
-  publish-badge:
-    needs: test
-    # always() so this still runs when the 3.12 leg's tests failed (the red
-    # badge case) -- by default a failed `needs` job would skip this one.
-    if: always() && github.ref == 'refs/heads/master' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    steps:
-      - name: Download badge artifact
-        id: download
-        # Tolerate a missing artifact: if the 3.12 leg failed before it could
-        # even generate the badge (e.g. a lint failure), there is nothing to
-        # publish and that's fine -- just skip the publish step below rather
-        # than fail this job.
-        continue-on-error: true
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: test-badge
-          path: badges
-
-      - name: Publish badge
-        if: steps.download.outcome == 'success'
-        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./badges
-          publish_branch: badges
-          destination_dir: .
-          keep_files: true
-          commit_message: "Update test badge"
-
   browser:
     # Playwright suite: the only tests that exercise the actual JS/CSS
     # (theme persistence, mobile nav, search, contrast). Separate job so a

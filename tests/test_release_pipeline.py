@@ -479,3 +479,42 @@ class TestDryRunPathExists:
                     assert step.get("if") == "github.event_name == 'push'", (
                         f"{job}'s version gate would fail a tagless dry run")
         assert checked == 2, "expected a version gate in each build job"
+
+
+class TestCallableWorkflowStaysWithinCallerPermissions:
+    """A reusable workflow cannot request more permission than its caller.
+
+    ci.yml is called by the release pipeline's gate job, which grants
+    contents: read. A write-scoped job inside ci.yml therefore made the whole
+    release workflow fail to compile — startup_failure, before a single job
+    ran, which is how the first real dry run failed. Badge publishing moved
+    to its own workflow_run-triggered workflow so the gate stays purely
+    verification.
+    """
+
+    def test_ci_requests_no_write_permission_anywhere(self):
+        ci = _load_workflow(CI_YML)
+        offenders = []
+        for job_id, cfg in _jobs(ci).items():
+            perms = cfg.get("permissions") or {}
+            if isinstance(perms, dict):
+                offenders += [f"{job_id}:{k}" for k, v in perms.items()
+                              if v == "write"]
+            elif perms == "write-all":
+                offenders.append(f"{job_id}:write-all")
+        assert not offenders, (
+            "ci.yml is called as a reusable workflow with contents: read; "
+            f"these jobs would make it fail to compile: {offenders}")
+
+    def test_gate_grants_no_more_than_read(self):
+        release = _load_workflow(RELEASE_YML)
+        gate = _jobs(release)["gate"]
+        assert gate["permissions"] == {"contents": "read"}
+
+    def test_badge_publishing_still_exists_outside_the_gate(self):
+        badge = _load_workflow(WORKFLOWS_DIR / "badge.yml")
+        triggers = badge.get(True) or badge.get("on")
+        assert "workflow_run" in triggers, (
+            "the badge must react to CI finishing, not run inside it")
+        [job] = _jobs(badge).values()
+        assert job["permissions"]["contents"] == "write"
