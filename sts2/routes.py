@@ -310,9 +310,14 @@ async def ready():
         probe = state_path(".readiness")
         probe.write_text("ok", encoding="utf-8")
         probe.unlink()
-    except OSError as exc:
+    except OSError:
+        # The exception text carries the full filesystem path, and /ready is
+        # deliberately exempt from authentication so container healthchecks
+        # can reach it — so the detail goes to the log, not the response.
+        logging.getLogger(__name__).warning(
+            "Readiness probe: state directory is not writable", exc_info=True)
         return JSONResponse(
-            {"status": "not_ready", "reason": f"state directory not writable: {exc}",
+            {"status": "not_ready", "reason": "state directory is not writable",
              "families": families}, status_code=503)
     return {"status": "ready", "cards": families["cards"],
             "families": families, "version": VERSION}
@@ -2001,10 +2006,15 @@ async def api_import_stats(request: Request, file: UploadFile = File(...),
     existing = load_aggregate()
     try:
         merged = merge_aggregate(existing, imported)
-    except ValueError as exc:
+    except ValueError:
         # Includes Infinity/NaN counters: json.loads accepts them, the
-        # sanitiser rejects them, and this used to surface as a 500.
-        return _api_error(f"Invalid aggregate file: {exc}", 400)
+        # sanitiser rejects them, and this used to surface as a 500. The
+        # exception text is logged rather than returned — it can carry
+        # fragments of the submitted file back to whoever sent it.
+        logging.getLogger(__name__).info(
+            "Rejected an aggregate import", exc_info=True)
+        return _api_error("Invalid aggregate file: counters must be finite "
+                          "numbers.", 400)
     if not save_aggregate(merged):
         return _api_error(
             "Import processed but could not be persisted (too large or "

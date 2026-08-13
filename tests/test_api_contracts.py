@@ -173,3 +173,39 @@ class TestErrorEnvelopeIsUniform:
         resp = await client.get("/no-such-page")
         assert resp.status_code == 404
         assert resp.headers["content-type"].startswith("text/html")
+
+
+class TestErrorsDoNotLeakInternals:
+    """Exception text carries filesystem paths and fragments of submitted
+    input. /ready is deliberately unauthenticated so container healthchecks
+    can reach it, which makes it exactly the wrong place to echo an OSError.
+    """
+
+    async def test_readiness_failure_hides_the_path(self, client, monkeypatch):
+        import sts2.routes as routes
+
+        def unwritable(name):
+            raise OSError(2, "No such file or directory",
+                          r"Z:\secret\path\SpireScope\.readiness")
+
+        monkeypatch.setattr("sts2.config.state_path", unwritable)
+        resp = await client.get("/ready")
+        assert resp.status_code == 503
+        body = resp.text
+        assert "secret" not in body and "Z:" not in body, body
+        assert "not writable" in resp.json()["reason"]
+        assert routes  # imported for patch-target clarity
+
+    async def test_aggregate_import_error_is_generic(self, client):
+        from sts2.app import generate_csrf_token
+        # Infinity reaches the sanitiser's ValueError path.
+        body = b'{"run_count": Infinity}'
+        resp = await client.post(
+            "/api/import/stats",
+            files={"file": ("stats.json", body, "application/json")},
+            data={"csrf_token": generate_csrf_token()})
+        assert resp.status_code == 400
+        message = resp.json()["error"]
+        # The message must describe the rule, not echo the exception.
+        assert "finite" in message
+        assert "run_count must be" not in message
