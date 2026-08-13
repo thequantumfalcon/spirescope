@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
   <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/thequantumfalcon/spirescope/badges/tests.json" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-83%25-yellowgreen" alt="Coverage: 83%">
+  <img src="https://img.shields.io/badge/coverage-74%25-yellowgreen" alt="Coverage: 74%">
 </p>
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
