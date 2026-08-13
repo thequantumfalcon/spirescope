@@ -52,6 +52,18 @@
 
 ### Fixed
 
+- **Reported coverage was measured on a machine with the game installed.**
+  `sts2/localize.py` reads the game's own data files: it covers 87% where
+  the game exists and 12% where it does not, and it is 723 statements, so
+  the total moves about ten points. The reproducible figure — what CI and a
+  contributor see — is 74%, not the ~84% previously quoted. The CI gate is
+  calibrated against CI, and the badge states the CI number.
+- **Badge publishing moved out of the CI workflow.** CI is now called as a
+  reusable workflow by the release pipeline, and a called workflow cannot
+  request more permission than its caller grants — the write-scoped badge
+  job made the entire release workflow fail to compile. It now reacts to CI
+  completing instead, which also means the badge token is never held during
+  a pull request.
 - **The browser test suite failed every test, and nothing caught it.**
   `pytest` deselects those tests by default, so a green run never touched
   them while the required `browser` check would have failed on merge. The
