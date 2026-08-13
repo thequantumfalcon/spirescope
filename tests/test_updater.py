@@ -677,3 +677,38 @@ def test_recovery_runs_before_the_knowledge_base_loads(tmp_path):
     assert live.exists(), "live data directory was not restored"
     loaded = int(result.stdout.split("CARDS")[1].split()[0])
     assert loaded > 400, f"knowledge base loaded {loaded} cards after recovery"
+
+
+class TestOriginCheckResistsLookalikes:
+    """The origin check is a prefix match on scheme + host + '/', not a
+    substring search. CodeQL flags the substring shape wherever it sees it,
+    so this pins the distinction: every host below embeds 'github.com' and
+    every one must still be refused.
+    """
+
+    LOOKALIKES = [
+        "https://github.com.evil.example/data.tar.gz",   # suffix-extended host
+        "https://evil.example/github.com/data.tar.gz",   # host in the path
+        "https://evil.example/?u=https://github.com/",   # host in the query
+        "https://notgithub.com/data.tar.gz",             # prefix-extended host
+        "http://github.com/data.tar.gz",                 # right host, no TLS
+        "https://github.com@evil.example/data.tar.gz",   # host as userinfo
+        "https://github.como/data.tar.gz",               # TLD extended
+    ]
+
+    @pytest.mark.parametrize("url", LOOKALIKES)
+    def test_lookalike_origins_are_refused(self, url, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+
+        def _boom(req, timeout):
+            raise AssertionError("must not reach the network before the origin check")
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _boom)
+        _set_pending_update(tarball=url)
+
+        ok, _ = updater.install_data_update()
+
+        assert not ok, f"origin check accepted {url}"
+        updater._data_update = None
