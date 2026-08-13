@@ -24,6 +24,13 @@
   were dropped during validation, so anything added to an exported run
   vanished and the original digest still matched — a modified file reported
   as verified. The digest is now recomputed from the file's own run mapping.
+- **Two error responses echoed internal detail.** The readiness probe
+  returned the `OSError` text when the state directory was unwritable, which
+  carries the full filesystem path — and `/ready` is deliberately exempt from
+  authentication so container healthchecks can reach it. The aggregate import
+  returned the sanitiser's exception verbatim, which can quote fragments of
+  the uploaded file back to whoever sent it. Both now log the detail and
+  return a description of what was wrong.
 
 - **Network binds now require authentication.** Binding to anything but
   loopback (including the documented Docker setup) used to serve your entire
