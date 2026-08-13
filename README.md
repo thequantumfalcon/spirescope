@@ -300,6 +300,7 @@ spirescope --version    # Show version
 | `STS2_PORT` | Server port | `8000` |
 | `STS2_AUTH_TOKEN` | Required credential for every request on a non-loopback bind (header `X-Auth-Token`, or `?token=` once per browser) | None — non-loopback serve refuses to start without it |
 | `STS2_ALLOW_UNAUTHENTICATED` | `1` explicitly serves a non-loopback bind with no credential — trusted reverse proxy/network only | Off |
+| `STS2_ALLOWED_HOSTS` | Comma-separated `Host` header values this server answers to. Requests carrying any other host are refused, which is what stops a page that has repointed its own hostname at your machine from talking to a loopback install | Loopback names on a loopback bind; unrestricted on a network bind, where only you know the address it is reached by |
 | `STS2_LOG_FILE` | Path to the game's `godot.log` for live tracking | Auto-detected |
 | `STS2_COMMUNITY_SOURCES` | Community sources: `all`, `steam` | `all` |
 | `STS2_SYNC_URL` | Sync service URL (opt-in) | Disabled |

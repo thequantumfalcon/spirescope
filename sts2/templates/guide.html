@@ -241,6 +241,8 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
     <tr><td><code>STS2_GAME_DIR</code></td><td>Path to STS2 game install</td><td>Auto-detected</td></tr>
     <tr><td><code>STS2_MODS_DIR</code></td><td>Path to mod JSON files</td><td><code>mods/</code> under the state directory; beside the executable in packaged builds</td></tr>
     <tr><td><code>STS2_HOST</code></td><td>Server bind address</td><td><code>127.0.0.1</code></td></tr>
+    <tr><td><code>STS2_AUTH_TOKEN</code></td><td>Required on any non-loopback bind: every request must present it</td><td>Unset &mdash; a network bind refuses to start without it</td></tr>
+    <tr><td><code>STS2_ALLOWED_HOSTS</code></td><td>Comma-separated <code>Host</code> values this server answers to</td><td>Loopback names on a loopback bind</td></tr>
     <tr><td><code>STS2_PORT</code></td><td>Server port</td><td><code>8000</code></td></tr>
     <tr><td><code>SPIRESCOPE_ADMIN_TOKEN</code></td><td>Token for <code>/api/reload</code></td><td>Unset — endpoint disabled</td></tr>
   </table>

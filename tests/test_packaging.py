@@ -443,3 +443,37 @@ def test_dockerignore_covers_the_private_set():
     for name in ("sts2/risk.py", "sts2/diagnosis.py",
                  "sts2/data/.fetcher_keys.json", "sts2/locales/content/"):
         assert name in ignored, f".dockerignore does not exclude {name}"
+
+
+def test_every_configuration_variable_is_documented():
+    """Configuration the code reads but the README never mentions is
+    configuration nobody can find.
+
+    Caught in review: STS2_ALLOWED_HOSTS was added to harden the request
+    boundary and shipped undocumented, so the only way to discover it was
+    to read the source.
+
+    Limitation worth knowing: this sees direct reads only. A name passed
+    through a helper (SPIRESCOPE_OPEN_BROWSER goes through _env_flag) is
+    invisible here, so a clean run is evidence, not proof.
+    """
+    import re as _re
+
+    # Only actual environment reads. Matching bare STS2_* identifiers would
+    # also catch module constants such as the STS2_INDICATORS regex, which
+    # is not configuration at all.
+    reads = _re.compile(
+        r"""os\.(?:environ\.get|getenv)\(\s*["']((?:STS2|SPIRESCOPE)_[A-Z_]+)["']"""
+        r"""|os\.environ\[\s*["']((?:STS2|SPIRESCOPE)_[A-Z_]+)["']\s*\]""")
+    used = set()
+    for path in sorted(PKG.rglob("*.py")):
+        for first, second in reads.findall(path.read_text(encoding="utf-8")):
+            used.add(first or second)
+    assert used, "no environment reads found — this guard has stopped working"
+    documented = set(_re.findall(
+        r"\b(?:STS2|SPIRESCOPE)_[A-Z_]+\b",
+        (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")))
+    missing = sorted(used - documented)
+    assert not missing, (
+        "environment variables read by the code but absent from README's "
+        f"configuration section: {missing}")
