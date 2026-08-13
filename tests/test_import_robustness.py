@@ -330,3 +330,23 @@ class TestPersistHelper:
         # interleaved between two writers' content.
         data = json.loads(path.read_text(encoding="utf-8"))
         assert "writer" in data and "pad" in data
+
+
+class TestLocalePathTraversal:
+    """Locale codes build a filesystem path, so the guard belongs at the
+    point of use — not only in whichever callers remember to check."""
+
+    def test_traversal_codes_fall_back_to_english(self):
+        from sts2.i18n import _load_locale
+        english = _load_locale("en")
+        for hostile in ("../../../etc/passwd", "de/../../secrets",
+                        r"..\..\windows\win.ini", "content/de", ""):
+            assert _load_locale(hostile) == english, hostile
+
+    def test_valid_codes_still_load(self):
+        from sts2.i18n import _load_locale
+        assert _load_locale("de").get("nav"), "a real locale stopped loading"
+
+    def test_translator_tolerates_a_hostile_code(self):
+        from sts2.i18n import get_translator
+        assert get_translator("../../../etc/passwd")("nav.cards") == "Cards"

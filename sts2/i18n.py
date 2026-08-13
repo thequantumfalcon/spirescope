@@ -37,7 +37,16 @@ def is_valid_code(code: str) -> bool:
 
 
 def _load_locale(code: str) -> dict:
-    """Load a locale file, falling back to English."""
+    """Load a locale file, falling back to English.
+
+    The code is validated here rather than trusted from the caller. Every
+    current caller does check first, but this builds a filesystem path out
+    of the value, and a guard that lives only in callers is one new call
+    site away from being absent — 'de/../../../etc/passwd' would otherwise
+    resolve straight out of the locales directory.
+    """
+    if not is_valid_code(code):
+        code = "en"
     if code in _cache:
         return _cache[code]
     path = _LOCALES_DIR / f"{code}.json"

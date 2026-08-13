@@ -181,6 +181,11 @@
   /* ── Card info popover ── */
   var synergyCache = {};
 
+  // Escapes &, < and > — NOT quotes. Safe for text between tags, which is
+  // the only place it is used. Never put its output inside an attribute:
+  // an unescaped quote would close the attribute and escape the context.
+  // Attribute values here are either allowlisted (the tag-* classes) or
+  // percent-encoded (the card href).
   function escapeHtml(str) {
     var div = document.createElement('div');
     div.textContent = str;
