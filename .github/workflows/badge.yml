@@ -29,6 +29,13 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: write
+      # The artifact belongs to the triggering CI run, and a cross-run download
+      # needs this scope. A job-level permissions block replaces the
+      # workflow-level one rather than merging with it, so without naming
+      # `actions` here it would be `none`, the download would 403, and
+      # `continue-on-error` below would turn that into a silently skipped
+      # publish -- a badge that never updates and never complains.
+      actions: read
 
     steps:
       - name: Download badge artifact

@@ -49,7 +49,9 @@ browser = [
 ]
 
 [build-system]
-requires = ["setuptools>=68.0"]
+# 77 is the floor, not 68: `license = "MIT"` above is the PEP 639 SPDX string
+# form, which older setuptools rejects as an invalid [project] license.
+requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]

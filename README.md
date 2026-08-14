@@ -29,7 +29,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Current With Every Patch (v3.0)
 
-- **Self-updating game data** — a multi-source pipeline (slaythespire2.gg primary, slaythespire.wiki.gg secondary, save-file discovery third) keeps cards, relics, and potions current; on startup the app offers new data bundles for one-click, checksum-verified install — no app update needed.
+- **Self-updating game data** — a multi-source pipeline (slaythespire2.gg primary, slaythespire.wiki.gg secondary, save-file discovery third) keeps cards, relics, and potions current; a source run offers new data bundles on startup for one-click, checksum-verified install — no app update needed. Packaged builds keep that check off unless you set `SPIRESCOPE_CHECK_UPDATES=1`, so a downloaded copy makes no unsolicited network call; `python -m sts2 update` refreshes on demand either way.
 - **Patch-era analytics** — every run resolves to a named patch era. Default views scope to the current patch with an all-time toggle; reworked cards and relics carry "Changed in ..." markers with before/after win-rate and pick-rate comparisons (sample-size guarded).
 - **Enchantment display** — enchanted cards show their enchantment in the live tracker and run history.
 - **Main vs beta awareness** — runs badge their game branch; beta-only content is chipped; filter analytics by branch.
@@ -134,6 +134,7 @@ If you're cautious about unsigned Windows apps, that's fair — and running from
 macOS / Linux:
 
 ```bash
+git clone https://github.com/thequantumfalcon/Spirescope.git && cd Spirescope
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e .
 spirescope
@@ -142,6 +143,8 @@ spirescope
 Windows (PowerShell or cmd):
 
 ```powershell
+git clone https://github.com/thequantumfalcon/Spirescope.git
+cd Spirescope
 python -m venv .venv
 .venv\Scripts\activate
 pip install -e .
@@ -171,7 +174,9 @@ Local builds also write `dist/SHA256SUMS.txt` for checksum verification.
 ### Docker
 
 ```bash
-STS2_AUTH_TOKEN=$(openssl rand -hex 24) docker compose up --build
+export STS2_AUTH_TOKEN=$(openssl rand -hex 24)
+echo "Your token: $STS2_AUTH_TOKEN"
+docker compose up --build
 ```
 
 The bundled compose file publishes on `127.0.0.1` only, keeps state in a
@@ -346,7 +351,7 @@ SpireScope auto-detects both vanilla and modded paths; history merges across the
 ## Security
 
 - Non-loopback binds require authentication: every request must present `STS2_AUTH_TOKEN` (loopback stays zero-config; `serve` refuses a network bind with no token unless `STS2_ALLOW_UNAUTHENTICATED=1` is set explicitly)
-- CSRF protection on every state-changing POST, including `/shutdown` (loopback alone is not treated as proof of intent)
+- CSRF protection on every state-changing POST a browser can reach through a form, including `/shutdown` (loopback alone is not treated as proof of intent); the two admin-only JSON endpoints instead require an `X-Admin-Token` header, which a cross-origin page cannot set
 - Content-Security-Policy, X-Frame-Options, Referrer-Policy, X-Content-Type-Options
 - Per-IP rate limiting (60 req/min) when bound to a non-loopback address via `STS2_HOST`; skipped on loopback, where the server is single-user
 - Admin-token-gated reload endpoint (constant-time comparison); admin endpoints stay disabled until a token is configured

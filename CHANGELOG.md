@@ -162,6 +162,19 @@
   WCAG AA contrast.
 - **The Stop button reports failures.** It said "SpireScope stopped" even
   when the server refused the request.
+- **The default loopback Host allowlist no longer answers to `testserver`.**
+  That name is what Starlette's test client sends; it was never a loopback
+  name, and shipping it left the rebinding defence answering to a hostname
+  no real deployment uses.
+- **Documentation corrections.** The Docker quick-start generated an auth
+  token in a subshell and never showed it, so the documented one-liner
+  produced a dashboard you could not open. "From Source" began at `venv`
+  with no `git clone`, so it failed verbatim on a clean machine. The
+  self-updating-data bullet advertised startup bundle offers without saying
+  packaged builds keep that check off by default — which is exactly what
+  Quick Start tells you to download. The CSRF claim said "every
+  state-changing POST"; the two admin JSON endpoints are gated by an
+  `X-Admin-Token` header instead, which a cross-origin page cannot set.
 
 ### Internal
 
@@ -178,6 +191,22 @@
 - The build script is `build_exe.py` (a root `build.py` shadowed PyPA's
   `python -m build`), and the version is single-sourced from
   `sts2/config.py`.
+- **The test badge could never have published.** Its job declares
+  `contents: write`, and a job-level permissions block replaces the
+  workflow-level one rather than merging with it, so `actions` was `none` —
+  but the badge artifact belongs to the triggering CI run, and that
+  cross-run download needs `actions: read`. It would have 403'd, and
+  `continue-on-error` would have turned that into a skipped publish: a badge
+  that silently never updates. Only reachable on `master`, which is why a
+  green branch never showed it.
+- The release workflow's `dry_run` input is gone. Publishing gates on
+  `github.event_name == 'push'`, so every `workflow_dispatch` was already a
+  dry run and the toggle could only mislead. The comment claiming a missing
+  macOS artifact is tolerated went too — that step has no
+  `continue-on-error`, and the next one refuses to publish a release missing
+  either platform's assets.
+- The build requires `setuptools>=77`, not `>=68`: the `license = "MIT"`
+  metadata is the PEP 639 SPDX string form, which older setuptools rejects.
 
 ## v3.0.5
 

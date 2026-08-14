@@ -430,8 +430,7 @@ def _allowed_hosts() -> list[str]:
     if configured:
         return configured
     if os.environ.get("STS2_HOST", "127.0.0.1") in _LOOPBACK_NAMES:
-        # testserver is what Starlette's own test client sends.
-        return ["127.0.0.1", "localhost", "[::1]", "testserver"]
+        return ["127.0.0.1", "localhost", "[::1]"]
     return ["*"]
 
 
