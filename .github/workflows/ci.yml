@@ -85,9 +85,14 @@ jobs:
           passed=$(echo "$output" | grep -oP '\d+(?= passed)' | tail -1)
           failed=$(echo "$output" | grep -oP '\d+(?= failed)' | tail -1)
           errors=$(echo "$output" | grep -oP '\d+(?= error)' | tail -1)
+          # Coverage percentage off pytest-cov's TOTAL row. Empty on the legs
+          # that run plain pytest, which is why the badge step below skips
+          # writing coverage.json rather than publishing a blank number.
+          coverage=$(echo "$output" | grep -E '^TOTAL' | grep -oE '[0-9]+%' | tail -1 | tr -d '%')
           echo "passed=${passed:-0}" >> "$GITHUB_OUTPUT"
           echo "failed=${failed:-0}" >> "$GITHUB_OUTPUT"
           echo "errors=${errors:-0}" >> "$GITHUB_OUTPUT"
+          echo "coverage=${coverage}" >> "$GITHUB_OUTPUT"
           echo "rc=$rc" >> "$GITHUB_OUTPUT"
           # Deliberately not `exit $rc` here. Badge generation below must run
           # even when tests fail -- that's the only way the red badge is ever
@@ -113,6 +118,23 @@ jobs:
           mkdir -p badges
           echo "{\"schemaVersion\":1,\"label\":\"tests\",\"message\":\"${message}\",\"color\":\"${color}\"}" > badges/tests.json
 
+          # Coverage badge, published the same way rather than hand-typed into
+          # the README. A hardcoded number only moves when someone remembers to
+          # move it, and this one had already drifted away from what CI
+          # measured. Written only when a figure was actually parsed, so a
+          # missing TOTAL row leaves the previous badge standing instead of
+          # publishing "%" or a zero.
+          coverage=${{ steps.tests.outputs.coverage }}
+          if [ -n "$coverage" ]; then
+            if [ "$coverage" -ge 90 ]; then cov_color="brightgreen"
+            elif [ "$coverage" -ge 80 ]; then cov_color="green"
+            elif [ "$coverage" -ge 70 ]; then cov_color="yellowgreen"
+            elif [ "$coverage" -ge 60 ]; then cov_color="yellow"
+            else cov_color="orange"
+            fi
+            echo "{\"schemaVersion\":1,\"label\":\"coverage\",\"message\":\"${coverage}%\",\"color\":\"${cov_color}\"}" > badges/coverage.json
+          fi
+
       - name: Upload badge artifact
         # Handoff to the publish-badge job below, which is the only job in
         # this workflow that holds contents: write, and only runs on master
@@ -121,7 +143,10 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: test-badge
-          path: badges/tests.json
+          # The whole directory: this now carries the coverage badge as well
+          # as the test badge. The artifact name is unchanged because badge.yml
+          # downloads it by name.
+          path: badges/
           retention-days: 1
 
       - name: Fail job on test result
