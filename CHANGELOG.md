@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Fixed
+
+- **The security list claimed log-injection prevention that does not exist.**
+  There is no control-character sanitisation on log writes, and no logging
+  filter or formatter is configured anywhere in the package, so nothing
+  implemented the control the bullet described. Removed rather than reworded:
+  the honest options were to implement it or to stop claiming it, and
+  implementing a logging filter is a feature, not a documentation fix.
+
 ### Internal
 
 - **The sdist manifest names data files instead of globbing them.**

@@ -357,7 +357,6 @@ SpireScope auto-detects both vanilla and modded paths; history merges across the
 - Admin-token-gated reload endpoint (constant-time comparison); admin endpoints stay disabled until a token is configured
 - SSE connection caps (10 total, 3 per client) with 5-minute idle timeout
 - Jinja2 auto-escaping on all user-reflected input
-- Log injection prevention (control character sanitization)
 - Request body size limit enforced before parsing (2 MB), with tighter per-route caps on run and stats imports
 - Input validation on all query parameters
 - Anti-manipulation caps and counter invariants on aggregate stats merging
