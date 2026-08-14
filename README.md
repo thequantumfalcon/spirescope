@@ -6,12 +6,12 @@
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
   <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/thequantumfalcon/spirescope/badges/tests.json" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-79%25-yellowgreen" alt="Coverage: 79%">
+  <img src="https://img.shields.io/badge/coverage-74%25-yellowgreen" alt="Coverage: 74%">
 </p>
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
 
-**Game data:** current through STS2 **v0.109.1** (refreshed 2026-07-22). Refresh anytime with `python -m sts2 update`.
+**Game data:** current through STS2 **v0.110.0** (refreshed 2026-08-08). Refresh anytime with `python -m sts2 update`.
 
 <p align="center">
   <img src="docs/screenshot-dashboard.png" alt="SpireScope Dashboard — your runs, your stats, your data" width="80%">
@@ -29,13 +29,13 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ### Current With Every Patch (v3.0)
 
-- **Self-updating game data** — a multi-source pipeline (slaythespire2.gg primary, slaythespire.wiki.gg secondary, save-file discovery third) keeps cards, relics, and potions current; on startup the app offers new data bundles for one-click, checksum-verified install — no app update needed.
+- **Self-updating game data** — a multi-source pipeline (slaythespire2.gg primary, slaythespire.wiki.gg secondary, save-file discovery third) keeps cards, relics, and potions current; a source run offers new data bundles on startup for one-click, checksum-verified install — no app update needed. Packaged builds keep that check off unless you set `SPIRESCOPE_CHECK_UPDATES=1`, so a downloaded copy makes no unsolicited network call; `python -m sts2 update` refreshes on demand either way.
 - **Patch-era analytics** — every run resolves to a named patch era. Default views scope to the current patch with an all-time toggle; reworked cards and relics carry "Changed in ..." markers with before/after win-rate and pick-rate comparisons (sample-size guarded).
 - **Enchantment display** — enchanted cards show their enchantment in the live tracker and run history.
 - **Main vs beta awareness** — runs badge their game branch; beta-only content is chipped; filter analytics by branch.
 - **Merged save history** — vanilla and modded save trees merge into one deduplicated history (the game copies saves between them since v0.108.0); runs carry a vanilla/modded origin filter.
 - **Badges** — earned badges with bronze/silver/gold tiers on the Records page.
-- **Languages** — switch under Settings. The interface ships in fourteen languages; card, relic and enemy text can be translated too with one command. See [Languages](#languages).
+- **Languages** — switch under Settings. Navigation and settings are translated into fifteen languages (most page bodies are still English); card, relic and enemy text can be translated too with one command. See [Languages](#languages).
 
 ### Browse & Research
 
@@ -84,12 +84,11 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Anti-Pattern Detection** — Named recurring mistakes: "The Hoarder" (unused potions), "The Greedy Builder" (oversized decks), "The Coward" (skipping elites).
 - **Deck Health Score** — Synergy graph analysis scoring deck coherence from 0-100. Identifies orphan cards with zero synergy connections.
 - **Archetype Drift** — Alerts when your card picks drift away from your deck's archetype mid-run.
-- **Cascade Map** — Click any card in a completed run to see its downstream impact: how damage, fight length, and HP changed after picking it.
-- **Prophecy Engine** — Pre-run predictions based on your history: win probability, danger zone floors, and strategic recommendations.
-- **Autopsy Report** — When you die, 5 diagnostic agents analyze what went wrong AND what went right. Causal chain narrative + exculpatory findings.
-- **Hypothesis Lab** — Register strategic beliefs (*"Skipping elites helps"*) and test them with Bayesian statistics across your runs.
-- **Rivalry Seeds** — Export your run, share the seed with a friend, import their run, and see a floor-by-floor decision diff.
-- **Run Integrity** — SHA-256 Merkle chain over a run's floors, shown on the run detail page, so an exported run can be checked against the hash it was published with.
+- **Cascade Map** — Open a completed run to see, for each card you picked, how damage taken, fight length, and HP changed afterwards. Observational before/after comparison — later floors are harder, so it shows what happened after a pick, not what the pick caused.
+- **Prophecy Engine** — Pre-run predictions based on your history: win probability, danger zone floors, and strategic recommendations. Shown on the home page and graded against the outcome on the run detail page.
+- **Hypothesis Lab** — Register strategic beliefs (*"Skipping elites helps"*) and test them with a Beta-Binomial model across your runs: posterior win rates per arm and the probability your history leans that way. An association in your own runs, not a controlled result.
+- **Rivalry Seeds** — Export your run, share the seed with a friend, import their run, and compare decisions against your own attempt on that seed.
+- **Run Integrity** — SHA-256 checksum over a run's complete record, shown on the run detail page and embedded in every export; imports are re-checked against it. Tamper evidence, not proof of authorship.
 
 ### Customize & Extend
 
@@ -132,8 +131,22 @@ If you're cautious about unsigned Windows apps, that's fair — and running from
 
 ### From Source
 
+macOS / Linux:
+
 ```bash
-python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+git clone https://github.com/thequantumfalcon/Spirescope.git && cd Spirescope
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e .
+spirescope
+```
+
+Windows (PowerShell or cmd):
+
+```powershell
+git clone https://github.com/thequantumfalcon/Spirescope.git
+cd Spirescope
+python -m venv .venv
+.venv\Scripts\activate
 pip install -e .
 spirescope
 ```
@@ -152,7 +165,7 @@ Opens your browser at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 ```bash
 pip install -e ".[dev]"
-python build.py
+python build_exe.py
 ```
 
 Output: `dist/Spirescope/Spirescope.exe` — zip the entire `dist/Spirescope/` folder and share it.
@@ -161,18 +174,39 @@ Local builds also write `dist/SHA256SUMS.txt` for checksum verification.
 ### Docker
 
 ```bash
-docker build -t spirescope .
-docker run -p 8000:8000 spirescope
+export STS2_AUTH_TOKEN=$(openssl rand -hex 24)
+echo "Your token: $STS2_AUTH_TOKEN"
+docker compose up --build
 ```
+
+The bundled compose file publishes on `127.0.0.1` only, keeps state in a
+named volume, and requires `STS2_AUTH_TOKEN` — inside a container the app
+binds a non-loopback interface, and network binds always require the token
+(open `http://127.0.0.1:8000/?token=<your token>` once per browser). With
+plain `docker run`:
+
+```bash
+docker build -t spirescope .
+docker run -p 127.0.0.1:8000:8000 -e STS2_AUTH_TOKEN=<long random string> spirescope
+```
+
+Never publish the port as a bare `-p 8000:8000` on a machine others can
+reach: Docker binds that on every interface, and the dashboard serves your
+complete run history to anyone holding the token — or, with
+`STS2_ALLOW_UNAUTHENTICATED=1`, to anyone at all. Use TLS or a reverse
+proxy for anything beyond a trusted LAN. To see your runs in the container,
+mount your save directory read-only (see the commented examples in
+`docker-compose.yml`).
 
 ## Languages
 
-Pick a language under **Settings**. That translates the interface — navigation,
-buttons, labels. It ships in fourteen: English, Traditional Chinese, German,
-Spanish, Latin American Spanish, French, Italian, Japanese, Korean, Polish,
-Brazilian Portuguese, Russian, Thai and Turkish. English and Traditional
-Chinese are reviewed; the other twelve are drafts, and corrections from native
-speakers are welcome.
+Pick a language under **Settings**. That translates the shared chrome —
+navigation, buttons and the settings page. Most page bodies are still English;
+contributions there are welcome. It ships in fifteen: English, Simplified Chinese,
+Traditional Chinese, German, Spanish, Latin American Spanish, French,
+Italian, Japanese, Korean, Polish, Brazilian Portuguese, Russian, Thai and
+Turkish. English and Traditional Chinese are reviewed; the others are
+drafts, and corrections from native speakers are welcome.
 
 Card, relic, potion, enemy and event text is separate, because that text
 belongs to the game. To see it in your language, run this once:
@@ -207,7 +241,7 @@ The card browser, relic browser, enemy guides, event guides, deck analyzer, and 
 
 ## Using with Mods
 
-SpireScope automatically checks both vanilla and modded save paths and uses whichever contains more recent runs. If you use multiple mods, install UnifiedSavePath to merge both paths into one location.
+SpireScope watches both vanilla and modded save trees: run history is merged and deduplicated across them, and live tracking follows whichever tree is freshest. If you use multiple mods, install UnifiedSavePath to merge both paths into one location.
 
 - Vanilla: `%APPDATA%\SlayTheSpire2\steam\<id>\profile1\saves\`
 - Modded: `%APPDATA%\SlayTheSpire2\steam\<id>\modded\profile1\saves\`
@@ -223,16 +257,21 @@ Both update in real time via SSE — no page reloads, no stream interruption. Us
 
 ## Steam Deck
 
-SpireScope runs on Steam Deck via the Linux source install. From Desktop Mode:
+SpireScope runs on Steam Deck via the Linux source install. From Desktop
+Mode (the venv matters — SteamOS refuses system-wide `pip install` per
+PEP 668):
 
 ```bash
+python3 -m venv ~/.spirescope-venv && source ~/.spirescope-venv/bin/activate
 pip install -e .
 spirescope
 ```
 
-Save path (Proton): `~/.local/share/Steam/steamapps/compatdata/2868840/pfx/drive_c/users/steamuser/AppData/Local/SlayTheSpire2/`
+Saves live under (Proton): `~/.local/share/Steam/steamapps/compatdata/2868840/pfx/drive_c/users/steamuser/AppData/Local/SlayTheSpire2/`
 
-Set `STS2_SAVE_DIR` to this path if auto-detection doesn't find your saves.
+If auto-detection doesn't find them, set `STS2_SAVE_DIR` to the profile's
+saves directory itself — `steam/<steam-id>/profile1/saves/` under that path —
+not the tree root; the variable is used verbatim as the saves directory.
 
 ## CLI Commands
 
@@ -261,16 +300,20 @@ spirescope --version    # Show version
 | -------- | ----------- | ------- |
 | `STS2_SAVE_DIR` | Path to your STS2 save directory | Auto-detected |
 | `STS2_GAME_DIR` | Path to STS2 game install | Auto-detected |
-| `STS2_MODS_DIR` | Path to mods directory (JSON files) | `sts2/data/mods/` |
+| `STS2_MODS_DIR` | Path to mods directory (JSON files) | `mods/` under `STS2_STATE_DIR`; beside the executable in packaged builds |
 | `STS2_HOST` | Server bind address | `127.0.0.1` |
 | `STS2_PORT` | Server port | `8000` |
+| `STS2_AUTH_TOKEN` | Required credential for every request on a non-loopback bind (header `X-Auth-Token`, or `?token=` once per browser) | None — non-loopback serve refuses to start without it |
+| `STS2_ALLOW_UNAUTHENTICATED` | `1` explicitly serves a non-loopback bind with no credential — trusted reverse proxy/network only | Off |
+| `STS2_ALLOWED_HOSTS` | Comma-separated `Host` header values this server answers to. Requests carrying any other host are refused, which is what stops a page that has repointed its own hostname at your machine from talking to a loopback install | Loopback names on a loopback bind; unrestricted on a network bind, where only you know the address it is reached by |
+| `STS2_LOG_FILE` | Path to the game's `godot.log` for live tracking | Auto-detected |
 | `STS2_COMMUNITY_SOURCES` | Community sources: `all`, `steam` | `all` |
 | `STS2_SYNC_URL` | Sync service URL (opt-in) | Disabled |
 | `STS2_SYNC_KEY` | API key for sync service | None |
 | `SPIRESCOPE_API_KEY` | Optional API key for rate limit bypass | None |
-| `SPIRESCOPE_ADMIN_TOKEN` | Token for `/api/reload` and `/api/reset/stats` | Auto-generated |
+| `SPIRESCOPE_ADMIN_TOKEN` | Token for `/api/reload` and `/api/reset/stats` | Unset — admin endpoints disabled |
 | `SPIRESCOPE_OPEN_BROWSER` | `1`/`0` override for browser auto-open on `serve` | Enabled |
-| `SPIRESCOPE_CHECK_UPDATES` | `1`/`0` override for automatic GitHub update checks | Source: enabled, frozen build: disabled |
+| `SPIRESCOPE_CHECK_UPDATES` | `1`/`0` override for automatic GitHub update checks, both directions: `1` enables them for packaged builds, `0` disables them for source installs | Source: enabled, packaged build: disabled |
 | `STS2_CORS_ORIGINS` | Comma-separated CORS allowed origins | Localhost only |
 | `STS2_LANG` | Interface language code, e.g. `de` (see [Languages](#languages)) | Settings choice, else `en` |
 | `STS2_STATE_DIR` | Your settings, stats and saved hypotheses | `%APPDATA%\SpireScope`, `~/Library/Application Support/SpireScope`, or `$XDG_DATA_HOME/SpireScope` |
@@ -283,7 +326,7 @@ spirescope --version    # Show version
 - **macOS**: `~/Library/Application Support/SlayTheSpire2/steam/<steam_id>/profile1/saves/`
 - **Linux**: `~/.local/share/SlayTheSpire2/steam/<steam_id>/profile1/saves/`
 
-SpireScope auto-detects both vanilla and modded paths and uses whichever has more recent data.
+SpireScope auto-detects both vanilla and modded paths; history merges across them and live tracking follows the freshest.
 
 ## API Endpoints
 
@@ -307,16 +350,17 @@ SpireScope auto-detects both vanilla and modded paths and uses whichever has mor
 
 ## Security
 
-- CSRF protection on every state-changing POST, including `/shutdown` (loopback alone is not treated as proof of intent)
+- Non-loopback binds require authentication: every request must present `STS2_AUTH_TOKEN` (loopback stays zero-config; `serve` refuses a network bind with no token unless `STS2_ALLOW_UNAUTHENTICATED=1` is set explicitly)
+- CSRF protection on every state-changing POST a browser can reach through a form, including `/shutdown` (loopback alone is not treated as proof of intent); the two admin-only JSON endpoints instead require an `X-Admin-Token` header, which a cross-origin page cannot set
 - Content-Security-Policy, X-Frame-Options, Referrer-Policy, X-Content-Type-Options
 - Per-IP rate limiting (60 req/min) when bound to a non-loopback address via `STS2_HOST`; skipped on loopback, where the server is single-user
-- Admin-token-gated reload endpoint (constant-time comparison)
-- SSE connection cap (10 concurrent) with 5-minute idle timeout
+- Admin-token-gated reload endpoint (constant-time comparison); admin endpoints stay disabled until a token is configured
+- SSE connection caps (10 total, 3 per client) with 5-minute idle timeout
 - Jinja2 auto-escaping on all user-reflected input
 - Log injection prevention (control character sanitization)
-- Request body size limits on deck analysis and stats import
+- Request body size limit enforced before parsing (2 MB), with tighter per-route caps on run and stats imports
 - Input validation on all query parameters
-- Anti-manipulation caps on aggregate stats merging
+- Anti-manipulation caps and counter invariants on aggregate stats merging
 
 ## Code signing
 
@@ -326,8 +370,9 @@ packaging format rather than the contents. See
 [docs/ANTIVIRUS.md](docs/ANTIVIRUS.md) to verify a download yourself or run
 from source instead.
 
-Every release publishes a `SHA256SUMS.txt` alongside the binaries, so a
-download can be checked against the checksum the build produced.
+Every release publishes a `.sha256` checksum file alongside each archive, so
+a download can be checked against the checksum the build produced. (Local
+builds via `build_exe.py` additionally write a combined `dist/SHA256SUMS.txt`.)
 
 ## Project Structure
 
@@ -354,15 +399,16 @@ sts2/
   models.py          # Pydantic models for all game entities
   saves.py           # Save file parser (progress + run history + co-op)
   sync.py            # Aggregate sync client (upload/download)
-  updater.py         # Auto-update checker
+  persist.py         # Atomic writes for the small state files
+  updater.py         # Auto-update checker + data-bundle installer
   watcher.py         # File watcher with debounce + polling fallback
   graveyard.py, prophecy.py, hypothesis.py, rivalry.py, cascade.py,
-  ghost.py, drift.py, spectral.py, integrity.py, diagnosis.py,
-  behavior.py, risk.py    # The advanced analytics modules
+  ghost.py, drift.py, spectral.py, integrity.py,
+  behavior.py           # The advanced analytics modules
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates (32 templates)
   static/            # CSS, fonts (Cinzel), images, JS
-tests/               # 786 tests (pytest + pytest-asyncio)
+tests/               # pytest + pytest-asyncio, plus 15 Playwright browser tests
 ```
 
 ## Requirements

@@ -437,3 +437,24 @@ def test_merge_post_type_counts():
     merged = merge_results([r])
     assert merged["tier_post_count"] == 1
     assert merged["strategy_post_count"] == 2
+
+
+class TestSteamResponseCap:
+    def test_oversized_response_is_rejected(self, monkeypatch):
+        """An unbounded body must not be read into memory; only the capped
+        prefix is read and the fetch fails with the module's error type."""
+        import contextlib
+        import io
+        import urllib.error
+
+        import pytest
+
+        import sts2.community.steam as steam
+
+        @contextlib.contextmanager
+        def fake_urlopen(req, timeout):
+            yield io.BytesIO(b"x" * (steam._MAX_RESPONSE_SIZE + 10))
+
+        monkeypatch.setattr(steam.urllib.request, "urlopen", fake_urlopen)
+        with pytest.raises(urllib.error.URLError, match="too large"):
+            steam._fetch_url("https://steamcommunity.com/x", retries=0)

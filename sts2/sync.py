@@ -43,7 +43,7 @@ def _validate_url(url: str) -> str:
     if not hostname:
         raise ValueError("Sync URL has no hostname")
 
-    def _disallowed_reason(addr: ipaddress._BaseAddress) -> str | None:
+    def _disallowed_reason(addr: ipaddress.IPv4Address | ipaddress.IPv6Address) -> str | None:
         # Block private, loopback, reserved, multicast, link-local (cloud-
         # metadata 169.254.169.254 is link-local — must be explicit).
         if addr.is_loopback:
@@ -140,7 +140,12 @@ def upload_stats(data: dict) -> dict:
     if not SYNC_URL:
         raise SyncError("Sync not configured. Set STS2_SYNC_URL environment variable.")
 
-    _validate_url(SYNC_URL)
+    # A malformed STS2_SYNC_URL is a configuration error, not a crash: the
+    # CLI catches SyncError only, so a bare ValueError was a raw traceback.
+    try:
+        _validate_url(SYNC_URL)
+    except ValueError as e:
+        raise SyncError(f"Invalid sync URL: {e}") from e
     url = SYNC_URL.rstrip("/") + "/api/v1/aggregate"
     payload = json.dumps(data).encode("utf-8")
     if len(payload) > _MAX_SIZE:
@@ -163,7 +168,10 @@ def download_stats() -> dict:
     if not SYNC_URL:
         raise SyncError("Sync not configured. Set STS2_SYNC_URL environment variable.")
 
-    _validate_url(SYNC_URL)
+    try:
+        _validate_url(SYNC_URL)
+    except ValueError as e:
+        raise SyncError(f"Invalid sync URL: {e}") from e
     url = SYNC_URL.rstrip("/") + "/api/v1/aggregate"
     req = urllib.request.Request(url, headers=_headers(), method="GET")
     try:

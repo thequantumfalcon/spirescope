@@ -144,7 +144,9 @@ def main():
         runs = get_run_history()
         print(f"Found {len(runs)} runs, computing stats...")
         stats = compute_aggregate_stats(runs)
-        save_aggregate(stats)
+        if not save_aggregate(stats):
+            print("Could not write the aggregate stats file (too large or unwritable).")
+            sys.exit(1)
         print(f"Exported aggregate stats from {stats.get('run_count', 0)} runs.")
         return
 
@@ -212,7 +214,10 @@ def main():
             print(f"Downloaded stats from {remote.get('run_count', 0)} runs.")
             existing = load_aggregate()
             merged = merge_aggregate(existing, remote)
-            save_aggregate(merged)
+            if not save_aggregate(merged):
+                print("Merged, but the result could not be persisted "
+                      "(too large or unwritable).")
+                sys.exit(1)
             print(f"Merged. Local aggregate now has {merged.get('run_count', 0)} runs.")
         except SyncError as e:
             print(f"Sync failed: {e}")
@@ -242,8 +247,18 @@ def main():
             print("  Keep this window open while you use Spirescope; closing it stops the app.",
                   flush=True)
         if HOST not in ("127.0.0.1", "localhost", "::1"):
-            print("  WARNING: Spirescope is designed for single-user local use.")
-            print("  Binding to a public address exposes it without authentication.\n")
+            if os.environ.get("STS2_AUTH_TOKEN"):
+                print("  Network bind: every request must present STS2_AUTH_TOKEN.")
+                print(f"  Open {url}/?token=<your token> once per browser to sign in.")
+                print("  Use TLS or a reverse proxy for anything beyond a trusted LAN.\n")
+            elif os.environ.get("STS2_ALLOW_UNAUTHENTICATED") == "1":
+                print("  WARNING: STS2_ALLOW_UNAUTHENTICATED=1 — every client that can")
+                print("  reach this port can read your runs and change settings.\n")
+            else:
+                print("  ERROR: refusing to bind to a non-loopback address without")
+                print("  authentication. Set STS2_AUTH_TOKEN to any long random string,")
+                print("  or STS2_ALLOW_UNAUTHENTICATED=1 behind a trusted reverse proxy.")
+                sys.exit(1)
         else:
             print()
         from sts2.app import app

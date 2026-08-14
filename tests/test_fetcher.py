@@ -1,6 +1,8 @@
 """Tests for the fetcher module."""
 import json
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from sts2.fetcher import (
     _clean_description,
@@ -9,6 +11,7 @@ from sts2.fetcher import (
     _existing_count,
     _extract_json_objects,
     _extract_keywords,
+    _fetch_page,
     _load_existing_name_index,
     _log_field_drift,
     _merge_with_existing,
@@ -474,3 +477,19 @@ class TestRunFetcher:
             result = _fetch_with_retry("/cards", retries=1)
         assert result == "<html>success</html>"
         assert mock_page.call_count == 2
+
+
+class TestFetchPage:
+    def test_oversized_response_is_rejected(self):
+        """A response over the cap must not be read into memory unbounded."""
+        import urllib.error
+
+        mock_resp = MagicMock()
+        mock_resp.read.return_value = b"x" * 11
+        mock_resp.__enter__ = lambda s: s
+        mock_resp.__exit__ = MagicMock(return_value=False)
+
+        with patch("sts2.fetcher._MAX_RESPONSE_SIZE", 10), \
+             patch("sts2.fetcher.urllib.request.urlopen", return_value=mock_resp):
+            with pytest.raises(urllib.error.URLError, match="too large"):
+                _fetch_page("/cards")

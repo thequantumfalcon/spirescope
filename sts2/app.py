@@ -4,6 +4,7 @@ import collections
 import contextlib
 import hashlib
 import hmac
+import ipaddress
 import logging
 import os
 import re
@@ -13,15 +14,16 @@ import sys
 import time
 
 from fastapi import FastAPI, Request
-from fastapi.exceptions import StarletteHTTPException
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError, StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from sts2.analytics import compute_analytics
 from sts2.config import (
-    SAVE_DIR,
+    SAVE_DIRS,
     STATIC_DIR,
     TEMPLATES_DIR,
     VERSION,
@@ -38,23 +40,23 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 _css_path = STATIC_DIR / "style.css"
-_CSS_HASH = hashlib.md5(_css_path.read_bytes()).hexdigest()[:8] if _css_path.exists() else "0"
+_CSS_HASH = hashlib.md5(_css_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _css_path.exists() else "0"
 _theme_init_path = STATIC_DIR / "theme-init.js"
-_THEME_INIT_HASH = hashlib.md5(_theme_init_path.read_bytes()).hexdigest()[:8] if _theme_init_path.exists() else "0"
+_THEME_INIT_HASH = hashlib.md5(_theme_init_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _theme_init_path.exists() else "0"
 _logo_path = STATIC_DIR / "logo.jpg"
-_LOGO_HASH = hashlib.md5(_logo_path.read_bytes()).hexdigest()[:8] if _logo_path.exists() else "0"
+_LOGO_HASH = hashlib.md5(_logo_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _logo_path.exists() else "0"
 _hero_bg_path = STATIC_DIR / "hero-bg.jpg"
-_HERO_BG_HASH = hashlib.md5(_hero_bg_path.read_bytes()).hexdigest()[:8] if _hero_bg_path.exists() else "0"
+_HERO_BG_HASH = hashlib.md5(_hero_bg_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _hero_bg_path.exists() else "0"
 _deck_js_path = STATIC_DIR / "deck.js"
-_DECK_JS_HASH = hashlib.md5(_deck_js_path.read_bytes()).hexdigest()[:8] if _deck_js_path.exists() else "0"
+_DECK_JS_HASH = hashlib.md5(_deck_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _deck_js_path.exists() else "0"
 _collections_js_path = STATIC_DIR / "collections.js"
-_COLLECTIONS_JS_HASH = hashlib.md5(_collections_js_path.read_bytes()).hexdigest()[:8] if _collections_js_path.exists() else "0"
+_COLLECTIONS_JS_HASH = hashlib.md5(_collections_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _collections_js_path.exists() else "0"
 _shortcuts_js_path = STATIC_DIR / "shortcuts.js"
-_SHORTCUTS_JS_HASH = hashlib.md5(_shortcuts_js_path.read_bytes()).hexdigest()[:8] if _shortcuts_js_path.exists() else "0"
+_SHORTCUTS_JS_HASH = hashlib.md5(_shortcuts_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _shortcuts_js_path.exists() else "0"
 _compare_js_path = STATIC_DIR / "compare.js"
-_COMPARE_JS_HASH = hashlib.md5(_compare_js_path.read_bytes()).hexdigest()[:8] if _compare_js_path.exists() else "0"
+_COMPARE_JS_HASH = hashlib.md5(_compare_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _compare_js_path.exists() else "0"
 _live_js_path = STATIC_DIR / "live.js"
-_LIVE_JS_HASH = hashlib.md5(_live_js_path.read_bytes()).hexdigest()[:8] if _live_js_path.exists() else "0"
+_LIVE_JS_HASH = hashlib.md5(_live_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _live_js_path.exists() else "0"
 
 
 @contextlib.asynccontextmanager
@@ -63,8 +65,23 @@ async def _lifespan(application):
     check_for_update(templates.env.globals.get("version", "0.0.0"))
     check_for_data_update()
     await _prewarm_caches()
-    _watcher_task = asyncio.create_task(_watch_saves())  # noqa: F841
-    yield
+    watcher_task = asyncio.create_task(_watch_saves())
+    try:
+        yield
+    finally:
+        # Nothing used to run after yield: the watcher task was never
+        # cancelled and the watchdog observer threads were never stopped or
+        # joined, so shutdown relied on daemon threads dying with the process.
+        watcher_task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await watcher_task
+        for observer in _observers:
+            with contextlib.suppress(Exception):
+                observer.stop()
+        for observer in _observers:
+            with contextlib.suppress(Exception):
+                await asyncio.to_thread(observer.join, 2.0)
+        _observers.clear()
 
 
 app = FastAPI(title="Spirescope", lifespan=_lifespan)
@@ -89,6 +106,9 @@ from sts2 import patches as _patches  # noqa: E402
 from sts2.i18n import get_language, get_translator  # noqa: E402
 
 templates.env.globals["t"] = get_translator(get_language())
+# Callable, not a snapshot: <html lang> must follow a language change without
+# a process restart, and hardcoding lang="en" misdeclared every translated page.
+templates.env.globals["ui_lang"] = get_language
 templates.env.globals["changed_in"] = _patches.changed_in
 
 
@@ -119,6 +139,23 @@ templates.env.globals["collections_js_hash"] = _COLLECTIONS_JS_HASH
 templates.env.globals["shortcuts_js_hash"] = _SHORTCUTS_JS_HASH
 templates.env.globals["compare_js_hash"] = _COMPARE_JS_HASH
 templates.env.globals["live_js_hash"] = _LIVE_JS_HASH
+
+# Repair a half-finished data swap FIRST. A process killed between the
+# live->backup and staging->live renames leaves no live dataset, and every
+# step below this line reads that directory: seeding would refill it from
+# the older bundled copy (making recovery think the live dir is fine and
+# abandon the newer backup), and KnowledgeBase would load whatever remained.
+# Recovery ran only on the later update-check path before this, which is
+# after the damage was already baked in.
+try:
+    from sts2.updater import recover_data_dir
+
+    if recover_data_dir():
+        log.warning("Restored the game data directory from its backup after "
+                    "an interrupted update")
+except Exception:
+    # Never let repair prevent startup; the app degrades on missing data.
+    log.debug("Data directory recovery check failed", exc_info=True)
 
 # Frozen builds: seed the writable data dir from bundled data before loading
 ensure_data_dir()
@@ -180,9 +217,48 @@ def validate_csrf_token(token: str) -> bool:
     expected = hmac.new(_CSRF_SECRET, msg, hashlib.sha256).hexdigest()
     return tokens_equal(sig, expected)
 
-_ADMIN_TOKEN = os.environ.get("SPIRESCOPE_ADMIN_TOKEN", secrets.token_hex(32))
-if not os.environ.get("SPIRESCOPE_ADMIN_TOKEN"):
-    log.info("ADMIN TOKEN (auto-generated, one-time): %s — set SPIRESCOPE_ADMIN_TOKEN env to override", _ADMIN_TOKEN)
+# Admin endpoints stay disabled until a token is configured. The previous
+# auto-generated token was logged at startup, which put a live credential into
+# console and container logs; an unset token now just disables the endpoints.
+_ADMIN_TOKEN = os.environ.get("SPIRESCOPE_ADMIN_TOKEN", "")
+if not _ADMIN_TOKEN:
+    log.info("Admin endpoints disabled: set SPIRESCOPE_ADMIN_TOKEN to enable "
+             "/api/reload and remote shutdown.")
+
+# ---------------------------------------------------------------------------
+# Network authentication (non-loopback binds only)
+# ---------------------------------------------------------------------------
+
+_AUTH_COOKIE = "spirescope_auth"
+_AUTH_TICKET_MAX_AGE = 7 * 24 * 3600  # one browser sign-in per week
+
+
+def _issue_auth_ticket() -> str:
+    """Signed session ticket set as a cookie after a token sign-in.
+
+    Same HMAC scheme as CSRF but domain-separated with an "auth" prefix, so
+    neither artifact can ever be replayed as the other. Signed with the
+    per-process secret: a restart signs everyone out, which is the right
+    default for a token that gates private data.
+    """
+    ts = max(0, int(time.time()))
+    msg = b"auth" + struct.pack(">Q", ts)
+    sig = hmac.new(_CSRF_SECRET, msg, hashlib.sha256).hexdigest()
+    return f"{ts:x}.{sig}"
+
+
+def _validate_auth_ticket(ticket: str) -> bool:
+    try:
+        ts_hex, sig = ticket.split(".", 1)
+        ts = int(ts_hex, 16)
+    except (ValueError, AttributeError):
+        return False
+    now = time.time()
+    if ts > now + 60 or now - ts > _AUTH_TICKET_MAX_AGE:
+        return False
+    msg = b"auth" + struct.pack(">Q", ts)
+    expected = hmac.new(_CSRF_SECRET, msg, hashlib.sha256).hexdigest()
+    return tokens_equal(sig, expected)
 
 # ---------------------------------------------------------------------------
 # Caches
@@ -207,25 +283,48 @@ _analytics_cache: dict = {}        # {None: {...}, 5: {...}, ...}
 _analytics_cache_time: dict = {}   # {None: float, 5: float, ...}
 _ANALYTICS_CACHE_TTL = 60.0
 
+# Single-flight locks: concurrent cold requests used to each run the same
+# computation. The generation counter closes the other race — a computation
+# that started before _refresh_data cleared the caches must not finish after
+# it and re-install pre-refresh data.
+_progress_lock = asyncio.Lock()
+_runs_lock = asyncio.Lock()
+_analytics_lock = asyncio.Lock()
+_data_generation = 0
+
 
 async def _get_progress():
     global _progress_cache, _progress_cache_time
     now = time.monotonic()
     # Use cache_time==0 (never populated) rather than cache is None — get_progress
     # returns None for "no save file" which is a valid cached value.
-    if _progress_cache_time == 0 or (now - _progress_cache_time) > _PROGRESS_CACHE_TTL:
-        _progress_cache = await asyncio.to_thread(get_progress)
-        _progress_cache_time = now
+    if _progress_cache_time != 0 and (now - _progress_cache_time) <= _PROGRESS_CACHE_TTL:
+        return _progress_cache
+    async with _progress_lock:
+        now = time.monotonic()
+        if _progress_cache_time == 0 or (now - _progress_cache_time) > _PROGRESS_CACHE_TTL:
+            generation = _data_generation
+            fresh = await asyncio.to_thread(get_progress)
+            if generation == _data_generation:
+                _progress_cache = fresh
+                _progress_cache_time = time.monotonic()
     return _progress_cache
 
 
 async def _get_runs():
     global _run_cache, _run_cache_by_id, _run_cache_time
     now = time.monotonic()
-    if _run_cache_time == 0 or (now - _run_cache_time) > _RUN_CACHE_TTL:
-        _run_cache = await asyncio.to_thread(get_run_history)
-        _run_cache_by_id = {r.id: r for r in _run_cache}
-        _run_cache_time = now
+    if _run_cache_time != 0 and (now - _run_cache_time) <= _RUN_CACHE_TTL:
+        return _run_cache
+    async with _runs_lock:
+        now = time.monotonic()
+        if _run_cache_time == 0 or (now - _run_cache_time) > _RUN_CACHE_TTL:
+            generation = _data_generation
+            fresh = await asyncio.to_thread(get_run_history)
+            if generation == _data_generation:
+                _run_cache = fresh
+                _run_cache_by_id = {r.id: r for r in fresh}
+                _run_cache_time = time.monotonic()
     return _run_cache
 
 
@@ -238,15 +337,24 @@ async def _get_analytics(ascension=None):
     global _analytics_cache, _analytics_cache_time
     now = time.monotonic()
     cache_time = _analytics_cache_time.get(ascension, 0)
-    if cache_time == 0 or (now - cache_time) > _ANALYTICS_CACHE_TTL:
+    if cache_time != 0 and (now - cache_time) <= _ANALYTICS_CACHE_TTL:
+        return _analytics_cache[ascension]
+    async with _analytics_lock:
+        cache_time = _analytics_cache_time.get(ascension, 0)
+        now = time.monotonic()
+        if cache_time != 0 and (now - cache_time) <= _ANALYTICS_CACHE_TTL:
+            return _analytics_cache[ascension]
+        generation = _data_generation
         runs = await _get_runs()
         if ascension is not None:
             runs = [r for r in runs if r.ascension == ascension]
         progress = await _get_progress()
         card_stats = progress.card_stats if progress else {}
-        _analytics_cache[ascension] = await asyncio.to_thread(compute_analytics, runs, card_stats, kb)
-        _analytics_cache_time[ascension] = now
-    return _analytics_cache[ascension]
+        result = await asyncio.to_thread(compute_analytics, runs, card_stats, kb)
+        if generation == _data_generation:
+            _analytics_cache[ascension] = result
+            _analytics_cache_time[ascension] = time.monotonic()
+        return result
 
 
 # ---------------------------------------------------------------------------
@@ -273,9 +381,118 @@ app.add_middleware(CORSMiddleware, allow_origins=_cors_origins,
 # ---------------------------------------------------------------------------
 
 
-def _is_loopback_bind() -> bool:
-    """Runtime-checked so tests can monkeypatch STS2_HOST without re-importing app."""
-    return os.environ.get("STS2_HOST", "127.0.0.1") in ("127.0.0.1", "localhost", "::1")
+_LOOPBACK_NAMES = ("127.0.0.1", "localhost", "::1")
+
+
+def _is_loopback_bind(request: Request | None = None) -> bool:
+    """Whether this request arrived on a loopback-only deployment.
+
+    Runtime-checked so tests can monkeypatch STS2_HOST without re-importing
+    app. The environment variable alone is not trusted: an ASGI embedding
+    (uvicorn sts2.app:app --host 0.0.0.0, a gunicorn unit, a parent app that
+    mounts this one) can bind every interface while STS2_HOST still reads as
+    its 127.0.0.1 default, and skipping authentication on that basis is a
+    fail-open default. The ASGI scope's "server" entry is the local address
+    the connection actually landed on, so a request that arrived on a
+    non-loopback interface is treated as networked no matter what the
+    environment claims.
+    """
+    if os.environ.get("STS2_HOST", "127.0.0.1") not in _LOOPBACK_NAMES:
+        return False
+    if request is not None:
+        server = request.scope.get("server")
+        # Only escalate on evidence: a scope host that parses as a real
+        # non-loopback IP address. Test transports and some servers put a
+        # hostname here instead of the socket address, and a hostname is not
+        # proof of anything — treating it as such would refuse legitimate
+        # loopback traffic.
+        if server and server[0]:
+            try:
+                if not ipaddress.ip_address(server[0]).is_loopback:
+                    return False
+            except ValueError:
+                pass
+    return True
+
+
+def _allowed_hosts() -> list[str]:
+    """Host header values this deployment answers to.
+
+    Without this the app answers to any Host, which is what lets a page that
+    has repointed its own hostname at 127.0.0.1 talk to a loopback install as
+    same-origin — reading run history and driving CSRF-gated actions, since a
+    CSRF token comes free with any rendered page. Loopback deployments know
+    exactly which names address them; a network bind is reached by LAN IP or
+    hostname, so operators enumerate those in STS2_ALLOWED_HOSTS.
+    """
+    configured = [h.strip() for h in
+                  os.environ.get("STS2_ALLOWED_HOSTS", "").split(",") if h.strip()]
+    if configured:
+        return configured
+    if os.environ.get("STS2_HOST", "127.0.0.1") in _LOOPBACK_NAMES:
+        return ["127.0.0.1", "localhost", "[::1]"]
+    return ["*"]
+
+
+@app.middleware("http")
+async def require_network_auth(request: Request, call_next):
+    """Identity gate for non-loopback binds (runs after rate limiting).
+
+    Loopback binds stay zero-config. On a network bind every request must
+    present STS2_AUTH_TOKEN: the X-Auth-Token header for API clients, ?token=
+    once for a browser, then a signed cookie. CSRF stays on as the
+    browser-intent defense — it proves a POST came from this app's own page,
+    which matters exactly because the auth cookie is an ambient credential.
+    CSRF alone was never authentication: any client that could GET a page got
+    a valid token with it.
+    """
+    if _is_loopback_bind(request):
+        return await call_next(request)
+    # Liveness and readiness stay open (Docker healthchecks run in-container
+    # against the non-loopback bind); neither serves user data. Preflight
+    # carries no auth.
+    if request.method == "OPTIONS" or request.url.path in ("/health", "/ready"):
+        return await call_next(request)
+    auth_token = os.environ.get("STS2_AUTH_TOKEN", "")
+    if not auth_token:
+        # __main__ refuses to serve this configuration; direct ASGI embeddings
+        # get a closed-by-default boundary rather than an open one.
+        if os.environ.get("STS2_ALLOW_UNAUTHENTICATED") == "1":
+            return await call_next(request)
+        return PlainTextResponse(
+            "Network binding requires authentication: set STS2_AUTH_TOKEN "
+            "(or STS2_ALLOW_UNAUTHENTICATED=1 behind a trusted reverse proxy).",
+            status_code=403)
+    if tokens_equal(request.headers.get("x-auth-token", ""), auth_token):
+        return await call_next(request)
+    # The admin token is a strictly stronger credential; a client holding it
+    # does not also need the user token.
+    if _ADMIN_TOKEN and tokens_equal(request.headers.get("x-admin-token", ""), _ADMIN_TOKEN):
+        return await call_next(request)
+    if _validate_auth_ticket(request.cookies.get(_AUTH_COOKIE, "")):
+        return await call_next(request)
+    if tokens_equal(request.query_params.get("token", ""), auth_token):
+        # Sign in: drop the token from the URL so it doesn't linger in the
+        # address bar or history, and hand the browser a session cookie.
+        url = request.url.remove_query_params("token")
+        resp = RedirectResponse(str(url), status_code=303)
+        # Mark the cookie Secure whenever the exchange is already encrypted,
+        # directly or through a terminating proxy. Doing it unconditionally
+        # would break the documented plain-HTTP LAN setup outright — the
+        # browser would refuse to store the cookie and sign-in would loop —
+        # so the flag follows the actual transport instead. Plain HTTP over a
+        # network still exposes this credential in transit, which is why the
+        # docs point at TLS or a reverse proxy for anything beyond a trusted
+        # LAN.
+        forwarded_proto = request.headers.get("x-forwarded-proto", "").split(",")[0].strip()
+        secure = request.url.scheme == "https" or forwarded_proto == "https"
+        resp.set_cookie(_AUTH_COOKIE, _issue_auth_ticket(),
+                        max_age=_AUTH_TICKET_MAX_AGE, httponly=True,
+                        samesite="lax", secure=secure)
+        return resp
+    return PlainTextResponse(
+        "Authentication required: open ?token=<STS2_AUTH_TOKEN> once in a "
+        "browser, or send the X-Auth-Token header.", status_code=401)
 
 
 @app.middleware("http")
@@ -285,8 +502,10 @@ async def rate_limit(request: Request, call_next):
     # source IPs. Only enforce when bound to a real network interface.
     if _is_loopback_bind():
         return await call_next(request)
-    # Exempt static files, SSE stream, and CORS preflight
-    if request.url.path.startswith("/static/") or request.url.path == "/api/live/stream":
+    # Exempt static files and CORS preflight. The SSE stream is deliberately
+    # NOT exempt: each handshake counts against the window, so one client
+    # cannot open connections without limit.
+    if request.url.path.startswith("/static/"):
         return await call_next(request)
     if request.method == "OPTIONS":
         return await call_next(request)
@@ -317,7 +536,13 @@ async def rate_limit(request: Request, call_next):
         timestamps.popleft()
 
     remaining = max(0, _RATE_LIMIT_MAX - len(timestamps))
-    reset_at = int(timestamps[0] + _RATE_LIMIT_WINDOW) if timestamps else int(now + _RATE_LIMIT_WINDOW)
+    # The deque holds monotonic stamps (immune to clock changes); the header
+    # translates to epoch seconds because process-monotonic values mean
+    # nothing to a client.
+    if timestamps:
+        reset_at = int(time.time() + max(0.0, timestamps[0] + _RATE_LIMIT_WINDOW - now))
+    else:
+        reset_at = int(time.time() + _RATE_LIMIT_WINDOW)
 
     if len(timestamps) >= _RATE_LIMIT_MAX:
         resp = PlainTextResponse("Rate limit exceeded. Try again later.", status_code=429)
@@ -366,10 +591,123 @@ async def security_headers(request: Request, call_next):
 
 
 # ---------------------------------------------------------------------------
+# Request body size limit
+# ---------------------------------------------------------------------------
+
+# Largest legitimate upload is the 1 MB run import (as multipart, with
+# encoding overhead). Everything else is small forms.
+_MAX_REQUEST_BODY_BYTES = 2 * 1024 * 1024
+
+
+class _BodyTooLarge(StarletteHTTPException):
+    """413 as an HTTPException subclass: FastAPI wraps generic exceptions
+    raised during form parsing into a 400 ("error parsing the body") but
+    re-raises HTTPException as-is, so this reaches the 413 handler intact."""
+
+    def __init__(self):
+        super().__init__(status_code=413, detail="Request body too large.")
+
+
+class BodySizeLimitMiddleware:
+    """Reject oversized request bodies before any route code parses them.
+
+    The per-route caps (1 MB run import, 500 KB stats import) are checked
+    only after Starlette has parsed — and potentially spooled to temp disk —
+    the complete multipart body, so a huge upload did all its damage before
+    the check ran. Pure ASGI (not BaseHTTPMiddleware) so a declared
+    Content-Length is rejected before a single body byte is read, and
+    chunked bodies are counted as they stream.
+    """
+
+    def __init__(self, app, max_bytes: int = _MAX_REQUEST_BODY_BYTES):
+        self.app = app
+        self.max_bytes = max_bytes
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        for name, value in scope.get("headers") or ():
+            if name == b"content-length":
+                try:
+                    declared = int(value)
+                except ValueError:
+                    declared = self.max_bytes + 1
+                if declared > self.max_bytes:
+                    return await self._reject(send)
+        received = 0
+        response_started = False
+
+        async def counting_receive():
+            nonlocal received
+            message = await receive()
+            if message["type"] == "http.request":
+                received += len(message.get("body", b""))
+                if received > self.max_bytes:
+                    raise _BodyTooLarge()
+            return message
+
+        async def tracking_send(message):
+            nonlocal response_started
+            if message["type"] == "http.response.start":
+                response_started = True
+            await send(message)
+
+        try:
+            await self.app(scope, counting_receive, tracking_send)
+        except _BodyTooLarge:
+            if response_started:
+                raise
+            await self._reject(send)
+
+    @staticmethod
+    async def _reject(send):
+        await send({"type": "http.response.start", "status": 413,
+                    "headers": [(b"content-type", b"text/plain; charset=utf-8")]})
+        await send({"type": "http.response.body",
+                    "body": b"Request body too large."})
+
+
+# Added last = outermost: the cheapest rejection runs before any other work.
+app.add_middleware(BodySizeLimitMiddleware)
+
+@app.middleware("http")
+async def check_host(request: Request, call_next):
+    """Refuse a Host header this deployment does not answer to.
+
+    Written here rather than using TrustedHostMiddleware so the allowlist is
+    read per request: bound at construction it would freeze whatever the
+    environment happened to say at import time, which is both untestable and
+    wrong for anything that reconfigures after startup.
+    """
+    allowed = _allowed_hosts()
+    if "*" not in allowed:
+        host = (request.headers.get("host", "") or "").split(":")[0]
+        # Strip brackets so a literal IPv6 host matches its allowlist entry.
+        if host.startswith("[") and host.endswith("]"):
+            host = host[1:-1]
+        normalized = [h[1:-1] if h.startswith("[") and h.endswith("]") else h
+                      for h in allowed]
+        if host not in normalized:
+            return PlainTextResponse("Invalid host header.", status_code=400)
+    return await call_next(request)
+
+
+# ---------------------------------------------------------------------------
 # Exception handlers
 # ---------------------------------------------------------------------------
 
 _LOG_SANITIZE_RE = re.compile(r"[\x00-\x1f\x7f]")
+
+
+def _wants_json(request: Request) -> bool:
+    """API paths get JSON errors; pages get the HTML error template.
+
+    Hand-written /api handlers returned a JSON envelope, but anything raised
+    past them — request validation, an unknown /api path, an unhandled
+    exception — fell through to the HTML page, so a JSON client parsing an
+    error got a document instead.
+    """
+    return request.url.path.startswith("/api/")
 
 
 @app.exception_handler(StarletteHTTPException)
@@ -383,16 +721,37 @@ async def http_error_handler(request: Request, exc: StarletteHTTPException):
         422: "Invalid request parameters.",
         429: "Too many requests.",
     }
+    message = exc.detail if isinstance(getattr(exc, "detail", None), str) else None
+    message = message or messages.get(exc.status_code, "Something went wrong.")
+    if _wants_json(request):
+        return JSONResponse({"error": message, "status": exc.status_code},
+                            status_code=exc.status_code)
     return templates.TemplateResponse(request, "error.html", {
         "error_code": exc.status_code,
         "error_message": messages.get(exc.status_code, "Something went wrong."),
     }, status_code=exc.status_code)
 
 
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(request: Request, exc: RequestValidationError):
+    """FastAPI's own 422 shape ({"detail": [...]}) is not this app's error
+    envelope; API clients should see one shape from every failure."""
+    if _wants_json(request):
+        return JSONResponse({"error": "Invalid request parameters.", "status": 422,
+                             "detail": jsonable_encoder(exc.errors())},
+                            status_code=422)
+    return templates.TemplateResponse(request, "error.html", {
+        "error_code": 422, "error_message": "Invalid request parameters.",
+    }, status_code=422)
+
+
 @app.exception_handler(Exception)
 async def global_error_handler(request: Request, exc: Exception):
     safe_path = _LOG_SANITIZE_RE.sub("", str(request.url.path))[:200]
     log.exception("Unhandled error on %s", safe_path)
+    if _wants_json(request):
+        return JSONResponse({"error": "Something went wrong. Please try again.",
+                             "status": 500}, status_code=500)
     return templates.TemplateResponse(request, "error.html", {
         "error_code": 500,
         "error_message": "Something went wrong. Please try again.",
@@ -425,7 +784,10 @@ async def _refresh_data():
     """Reload KnowledgeBase, progress, and run caches from disk."""
     global kb, _progress_cache, _progress_cache_time
     global _run_cache, _run_cache_by_id, _run_cache_time
-    global _analytics_cache, _analytics_cache_time
+    global _analytics_cache, _analytics_cache_time, _data_generation
+    # Invalidate every computation currently in flight: whatever it read, it
+    # read before this refresh, and must not be cached after it.
+    _data_generation += 1
     log.info("Save files changed, refreshing data")
     _analytics_cache = {}
     _analytics_cache_time = {}
@@ -445,36 +807,52 @@ async def _refresh_data():
 
 
 def _check_mtime() -> float:
-    """Return the latest modification time across save files."""
+    """Latest modification time across save files in EVERY detected tree.
+
+    History merges the vanilla and modded trees, but change detection used
+    to watch only the tree that was freshest at startup — switching between
+    vanilla and modded play mid-session left the dashboard blind to the
+    active one.
+    """
     mtime = 0.0
-    progress_path = SAVE_DIR / "progress.save"
-    if progress_path.exists():
-        mtime = max(mtime, progress_path.stat().st_mtime)
-    history_dir = SAVE_DIR / "history"
-    if history_dir.exists():
-        mtime = max(mtime, history_dir.stat().st_mtime)
-        for run_file in history_dir.glob("*.run"):
-            try:
-                mtime = max(mtime, run_file.stat().st_mtime)
-            except OSError:
-                pass
+    for save_dir in SAVE_DIRS:
+        progress_path = save_dir / "progress.save"
+        if progress_path.exists():
+            mtime = max(mtime, progress_path.stat().st_mtime)
+        history_dir = save_dir / "history"
+        if history_dir.exists():
+            mtime = max(mtime, history_dir.stat().st_mtime)
+            for run_file in history_dir.glob("*.run"):
+                try:
+                    mtime = max(mtime, run_file.stat().st_mtime)
+                except OSError:
+                    pass
     return mtime
+
+
+# Observer handles kept for lifespan shutdown (stop + join).
+_observers: list = []
 
 
 async def _watch_saves():
     global _save_watcher_last_mtime
 
-    # Try watchdog for instant file-change detection
+    # Try watchdog for instant file-change detection — one observer per
+    # detected save tree, so vanilla and modded play both trigger refreshes.
     from sts2.watcher import start_observer
     loop = asyncio.get_running_loop()
-    observer = start_observer(SAVE_DIR, loop, _save_changed_event) if SAVE_DIR.exists() else None
-    use_polling = observer is None
+    for save_dir in SAVE_DIRS:
+        if save_dir.exists():
+            observer = start_observer(save_dir, loop, _save_changed_event)
+            if observer:
+                _observers.append(observer)
+    use_polling = not _observers
 
     while True:
         try:
             if use_polling:
                 await asyncio.sleep(10)
-                if not SAVE_DIR.exists():
+                if not any(d.exists() for d in SAVE_DIRS):
                     continue
                 mtime = _check_mtime()
                 changed = mtime > _save_watcher_last_mtime and _save_watcher_last_mtime > 0
@@ -503,7 +881,7 @@ async def _watch_saves():
 # Game log tailer — builds live run state from godot.log
 # ---------------------------------------------------------------------------
 
-_log_tailer = None  # type: ignore[assignment]
+_log_tailer = None
 _log_run_state: dict | None = None
 _log_poll_lock: asyncio.Lock | None = None
 

@@ -105,13 +105,14 @@ def test_translator_never_returns_raw_key_for_shipped_keys(key):
     assert get_translator("en")(key) != key
 
 
-def test_version_is_consistent_across_release_artifacts():
-    """pyproject, the app, and the PyInstaller spec must agree.
+def test_version_is_single_sourced():
+    """sts2/config.py owns the version; pyproject and the spec derive it.
 
     The spec used to restate the version as a literal and drifted six releases
     behind (2.9.7 while the app shipped 3.0.2), stamping the stale number into
-    the Windows executable's file metadata. It now derives the value, and this
-    guards the other two.
+    the Windows executable's file metadata. pyproject then carried its own
+    literal copy, which is the same drift waiting to happen — it now declares
+    the version dynamic and reads the config attribute.
     """
     import re
 
@@ -119,17 +120,81 @@ def test_version_is_consistent_across_release_artifacts():
     config = (PKG / "config.py").read_text(encoding="utf-8")
     spec = SPEC.read_text(encoding="utf-8")
 
-    pyproject_version = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.M)
     config_version = re.search(r'^VERSION\s*=\s*"([^"]+)"', config, re.M)
-    assert pyproject_version and config_version
-    assert pyproject_version.group(1) == config_version.group(1), (
-        f"pyproject {pyproject_version.group(1)} != config {config_version.group(1)}")
+    assert config_version, "sts2/config.py no longer defines VERSION"
 
-    # The spec must not reintroduce a hardcoded literal.
+    assert 'dynamic = ["version"]' in pyproject, (
+        "pyproject.toml no longer declares the version dynamic")
+    assert 'attr = "sts2.config.VERSION"' in pyproject, (
+        "pyproject.toml no longer derives the version from sts2.config")
+    literal = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.M)
+    assert literal is None, (
+        f"pyproject.toml restates version={literal.group(1)!r}; config.py owns it")
+
+    # The spec must not reintroduce a hardcoded literal either.
     hardcoded = re.search(r'^VERSION\s*=\s*"([^"]+)"', spec, re.M)
     assert hardcoded is None, (
         f"spirescope.spec hardcodes VERSION={hardcoded.group(1)!r}; derive it instead")
     assert "config.py" in spec, "spec no longer reads the version from config.py"
+
+
+def test_wheel_package_data_covers_every_resource_dir():
+    """Any non-code directory under sts2/ must be declared as package data.
+
+    Same bug class as issue #5 but through the other packaging channel: the
+    PyInstaller spec bundled every resource dir while wheels shipped none of
+    them, so `pip install spirescope` from a wheel produced a package whose
+    import failed on the missing static directory.
+    """
+    pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    section = re.search(
+        r"\[tool\.setuptools\.package-data\](.*?)(?=\n\[|\Z)", pyproject, re.S)
+    assert section, "pyproject.toml has no [tool.setuptools.package-data]"
+    missing = [
+        name for name in _resource_dirs()
+        if f'"{name}/' not in section.group(1)
+    ]
+    assert not missing, (
+        f"sts2/{{{','.join(missing)}}} exist but have no package-data pattern — "
+        f"wheels would ship without them")
+
+
+def test_wheel_never_bundles_user_content_overlays():
+    """locales/content is the user's own game text; wheels must not sweep it in.
+
+    The package-data pattern must stay file-scoped (locales/*.json) and the
+    exclude list must keep the content directory out, mirroring what
+    spirescope.spec does for frozen builds.
+    """
+    pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert '"locales/*.json"' in pyproject, (
+        "locales package-data no longer lists UI files individually")
+    assert '"locales/content/*"' in pyproject, (
+        "locales/content is no longer excluded from package data")
+
+
+def test_sdist_manifest_covers_every_resource_dir():
+    """MANIFEST.in must keep sdists complete and prune the content overlays."""
+    manifest = (PROJECT_ROOT / "MANIFEST.in").read_text(encoding="utf-8")
+    missing = [
+        name for name in _resource_dirs()
+        if f"sts2/{name}" not in manifest
+    ]
+    assert not missing, f"MANIFEST.in misses sts2/{{{','.join(missing)}}}"
+    assert "prune sts2/locales/content" in manifest
+
+
+def test_no_module_shadows_the_pypa_build_package():
+    """`python -m build` from the project root must reach PyPA's builder.
+
+    A root-level build.py used to shadow it: with the project root as cwd,
+    `python -m build` executed the PyInstaller script instead of building a
+    wheel. The executable-build script is build_exe.py precisely so the name
+    `build` stays free.
+    """
+    assert not (PROJECT_ROOT / "build.py").exists(), (
+        "build.py shadows PyPA's `python -m build`; keep it named build_exe.py")
+    assert (PROJECT_ROOT / "build_exe.py").exists()
 
 
 class TestStateDirSplit:
@@ -337,3 +402,78 @@ def test_cli_names_the_running_executable(monkeypatch, exe_name):
 
     monkeypatch.delattr(_sys, "frozen", raising=False)
     assert entry._program_name() == "spirescope"
+
+
+def test_browser_fixture_aligns_host_with_its_loopback_bind():
+    """The browser suite must not be locked out by the auth middleware.
+
+    conftest sets STS2_HOST=0.0.0.0 so the rate-limiter engages, but the
+    request-auth middleware reads that same variable at request time. The
+    browser fixture serves on real loopback, so it must align the variable
+    with its socket or every navigation gets 401 while /health (exempt) still
+    answers — the fixture starts and all 15 tests fail on their first
+    assertion. That failure mode is invisible to `pytest -q`, which
+    deselects browser tests, so it is guarded here instead.
+    """
+    text = (PROJECT_ROOT / "tests" / "test_browser.py").read_text(encoding="utf-8")
+    assert 'os.environ["STS2_HOST"] = "127.0.0.1"' in text, (
+        "browser fixture no longer pins STS2_HOST to loopback; every page "
+        "request will be refused by the auth middleware")
+    assert "old_host" in text, "browser fixture does not restore STS2_HOST"
+
+
+def test_local_build_refuses_a_tree_holding_unshippable_files():
+    """A build runs against the working tree, so private modules sitting in
+    it get swept into the artifact — PyInstaller bundles the package as it
+    finds it, and setuptools can exclude package data but not discovered
+    Python modules. The local build script must stop rather than produce a
+    distributable containing them.
+    """
+    text = (PROJECT_ROOT / "build_exe.py").read_text(encoding="utf-8")
+    assert "_refuse_dirty_tree" in text
+    for name in ("sts2/risk.py", "sts2/diagnosis.py",
+                 "sts2/data/.fetcher_keys.json"):
+        assert name in text, f"build guard does not cover {name}"
+
+
+def test_dockerignore_covers_the_private_set():
+    """The Dockerfile copies sts2/ wholesale, so anything not excluded here
+    lands in a locally built image and stays importable."""
+    ignored = (PROJECT_ROOT / ".dockerignore").read_text(encoding="utf-8")
+    for name in ("sts2/risk.py", "sts2/diagnosis.py",
+                 "sts2/data/.fetcher_keys.json", "sts2/locales/content/"):
+        assert name in ignored, f".dockerignore does not exclude {name}"
+
+
+def test_every_configuration_variable_is_documented():
+    """Configuration the code reads but the README never mentions is
+    configuration nobody can find.
+
+    Caught in review: STS2_ALLOWED_HOSTS was added to harden the request
+    boundary and shipped undocumented, so the only way to discover it was
+    to read the source.
+
+    Limitation worth knowing: this sees direct reads only. A name passed
+    through a helper (SPIRESCOPE_OPEN_BROWSER goes through _env_flag) is
+    invisible here, so a clean run is evidence, not proof.
+    """
+    import re as _re
+
+    # Only actual environment reads. Matching bare STS2_* identifiers would
+    # also catch module constants such as the STS2_INDICATORS regex, which
+    # is not configuration at all.
+    reads = _re.compile(
+        r"""os\.(?:environ\.get|getenv)\(\s*["']((?:STS2|SPIRESCOPE)_[A-Z_]+)["']"""
+        r"""|os\.environ\[\s*["']((?:STS2|SPIRESCOPE)_[A-Z_]+)["']\s*\]""")
+    used = set()
+    for path in sorted(PKG.rglob("*.py")):
+        for first, second in reads.findall(path.read_text(encoding="utf-8")):
+            used.add(first or second)
+    assert used, "no environment reads found — this guard has stopped working"
+    documented = set(_re.findall(
+        r"\b(?:STS2|SPIRESCOPE)_[A-Z_]+\b",
+        (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")))
+    missing = sorted(used - documented)
+    assert not missing, (
+        "environment variables read by the code but absent from README's "
+        f"configuration section: {missing}")

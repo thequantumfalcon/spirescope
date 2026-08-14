@@ -1,5 +1,6 @@
 """Analytics engine: compute aggregate stats from run history."""
 from collections import Counter, defaultdict
+from typing import Any
 
 from sts2.models import PlayerProgress, RunHistory
 
@@ -45,7 +46,7 @@ def _pearson_r(xs: list[float], ys: list[float]) -> float:
     return round(num / den, 3) if den else 0.0
 
 
-def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) -> dict:
+def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb=None) -> dict:
     """Compute aggregate analytics from all completed runs.
 
     Returns a dict with:
@@ -84,15 +85,15 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
     }
 
     # --- Card Win Rates ---
-    card_wins = Counter()
-    card_total = Counter()
+    card_wins: Counter[str] = Counter()
+    card_total: Counter[str] = Counter()
     for run in runs:
         for card_id in set(run.deck):  # unique cards per run
             card_total[card_id] += 1
             if run.win:
                 card_wins[card_id] += 1
 
-    card_rankings = []
+    card_rankings: list[dict[str, Any]] = []
     for card_id, appearances in card_total.most_common():
         if appearances < 2:
             continue
@@ -106,8 +107,8 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
     card_rankings.sort(key=lambda x: (-x["win_rate"], -x["appearances"]))
 
     # --- Relic Win Rates (global + per-character in single pass) ---
-    relic_wins = Counter()
-    relic_total = Counter()
+    relic_wins: Counter[str] = Counter()
+    relic_total: Counter[str] = Counter()
     relic_by_char: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(lambda: [0, 0]))
     for run in runs:
         for relic_id in set(run.relics):
@@ -117,7 +118,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
                 relic_wins[relic_id] += 1
                 relic_by_char[run.character][relic_id][1] += 1
 
-    relic_rankings = []
+    relic_rankings: list[dict[str, Any]] = []
     for relic_id, appearances in relic_total.most_common():
         if appearances < 2:
             continue
@@ -132,7 +133,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
 
     relic_rankings_by_character: dict[str, list[dict]] = {}
     for char, relics in sorted(relic_by_char.items()):
-        char_list = []
+        char_list: list[dict[str, Any]] = []
         for relic_id, (r_total, r_wins) in relics.items():
             if r_total < 2:
                 continue
@@ -166,8 +167,8 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
         }
 
     # --- Card Pick Rates (from floor card_picked / cards_offered) ---
-    card_offered = Counter()
-    card_picked = Counter()
+    card_offered: Counter[str] = Counter()
+    card_picked: Counter[str] = Counter()
     for run in runs:
         for floor in run.floors:
             if floor.cards_offered:
@@ -177,7 +178,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
                 if floor.card_picked:
                     card_picked[floor.card_picked] += 1
 
-    card_pick_rates = []
+    card_pick_rates: list[dict[str, Any]] = []
     for card_id, offered in card_offered.most_common():
         if offered < 2:
             continue
@@ -207,7 +208,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
         }
 
     # --- Floor Survival Distribution ---
-    floor_counts = Counter()
+    floor_counts: Counter[int] = Counter()
     for run in runs:
         bucket = (len(run.floors) // 5) * 5  # group by 5s
         floor_counts[bucket] += 1
@@ -216,7 +217,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
 
     # --- Deadliest Encounters ---
     encounter_damage = defaultdict(list)
-    encounter_deaths = Counter()
+    encounter_deaths: Counter[str] = Counter()
     for run in runs:
         for floor in run.floors:
             if floor.encounter and _is_combat(floor):
@@ -224,7 +225,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
         if run.killed_by:
             encounter_deaths[run.killed_by] += 1
 
-    deadly_encounters = []
+    deadly_encounters: list[dict[str, Any]] = []
     for enc_id, dmg_list in encounter_damage.items():
         if len(dmg_list) < 2:
             continue
@@ -256,7 +257,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
     }
 
     # --- Card Synergy Network (co-occurrence in winning decks) ---
-    card_cooccurrence = Counter()
+    card_cooccurrence: Counter[tuple[str, str]] = Counter()
     for run in wins:
         unique_cards = sorted(set(run.deck))
         for i, c1 in enumerate(unique_cards):
@@ -288,7 +289,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
             })
 
     # --- Relic Co-occurrence (synergy matrix) ---
-    relic_cooccurrence = Counter()
+    relic_cooccurrence: Counter[tuple[str, str]] = Counter()
     for run in wins:
         unique_relics = sorted(set(run.relics))
         for i, r1 in enumerate(unique_relics):
@@ -302,10 +303,10 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
         relic_synergy_edges.append({"source": r1, "target": r2, "weight": count})
 
     # --- Potion Usage Stats ---
-    potion_used_count = Counter()
-    potion_gained_count = Counter()
-    potion_used_in_wins = Counter()
-    potion_used_in_runs = Counter()  # run-level (used at least once)
+    potion_used_count: Counter[str] = Counter()
+    potion_gained_count: Counter[str] = Counter()
+    potion_used_in_wins: Counter[str] = Counter()
+    potion_used_in_runs: Counter[str] = Counter()  # run-level (used at least once)
     for run in runs:
         potions_this_run: set[str] = set()
         for floor in run.floors:
@@ -382,7 +383,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
     card_quality.sort(key=lambda x: (-x["win_rate"], -x["pick_rate"]))
 
     # --- Damage Percentiles (enrich deadly encounters) ---
-    damage_percentiles = []
+    damage_percentiles: list[dict[str, Any]] = []
     for enc_id, dmg_list in encounter_damage.items():
         if len(dmg_list) < 3:
             continue
@@ -453,13 +454,13 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
 
     per_act = {}
     for act_num in (1, 2, 3):
-        s = act_stats[act_num]
+        act_data = act_stats[act_num]
         per_act[act_num] = {
-            "avg_damage": round(sum(s["damage"]) / len(s["damage"]), 1) if s["damage"] else 0,
-            "cards_added": len(s["cards_added"]),
-            "avg_cards_per_run": round(len(s["cards_added"]) / total, 1) if total else 0,
+            "avg_damage": round(sum(act_data["damage"]) / len(act_data["damage"]), 1) if act_data["damage"] else 0,
+            "cards_added": len(act_data["cards_added"]),
+            "avg_cards_per_run": round(len(act_data["cards_added"]) / total, 1) if total else 0,
             "death_count": act_deaths.get(act_num, 0),
-            "avg_gold": round(sum(s["gold"]) / len(s["gold"]), 0) if s["gold"] else 0,
+            "avg_gold": round(sum(act_data["gold"]) / len(act_data["gold"]), 0) if act_data["gold"] else 0,
         }
 
     # --- Archetype Stats ---
@@ -618,7 +619,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict = None, kb=None) 
                         else:
                             target_skip[offered_id] += 1
 
-    card_regret = {"most_skipped_in_wins": [], "most_picked_in_losses": [], "high_regret": []}
+    card_regret: dict[str, list[dict[str, Any]]] = {"most_skipped_in_wins": [], "most_picked_in_losses": [], "high_regret": []}
     # Cards you skip in wins (maybe you should pick them?)
     for card_id, skip_count in win_skips.most_common(10):
         total_offered_wins = win_picks.get(card_id, 0) + skip_count
@@ -754,7 +755,7 @@ def analyze_run(run: RunHistory, kb=None) -> dict:
                         "text": f"{skl_pct}% Skills ({skl}/{n}) — below average defense."})
 
                 # Defensive gap
-                kw_set = set()
+                kw_set: set[str] = set()
                 for c in typed:
                     kw_set.update(getattr(c, "keywords", []))
                 has_block = any(k in kw_set for k in ("Block", "Dexterity", "Frost"))
@@ -792,7 +793,7 @@ def analyze_run_patterns(runs: list[RunHistory], kb=None) -> list[dict]:
         for run in recent:
             typed = [kb.get_card_by_id(c) for c in run.deck]
             typed = [c for c in typed if c]
-            kw_set = set()
+            kw_set: set[str] = set()
             for c in typed:
                 kw_set.update(getattr(c, "keywords", []))
             if not any(k in kw_set for k in ("Block", "Dexterity", "Frost")):
@@ -849,14 +850,14 @@ def compute_records(runs: list[RunHistory], progress: PlayerProgress | None = No
         smallest_deck = {"size": len(small.deck), "character": small.character, "run_id": small.id}
 
     # Most gold on a single floor
-    most_gold = None
+    most_gold: dict[str, Any] | None = None
     for run in runs:
         for floor in run.floors:
             if floor.gold > 0 and (most_gold is None or floor.gold > most_gold["gold"]):
                 most_gold = {"gold": floor.gold, "run_id": run.id, "floor": floor.floor}
 
     # Most damage taken on a single floor
-    most_damage_floor = None
+    most_damage_floor: dict[str, Any] | None = None
     for run in runs:
         for floor in run.floors:
             if most_damage_floor is None or floor.damage_taken > most_damage_floor["damage"]:
@@ -886,13 +887,13 @@ def compute_records(runs: list[RunHistory], progress: PlayerProgress | None = No
     per_character = {}
     for char, char_run_list in sorted(char_runs.items()):
         char_wins = [r for r in char_run_list if r.win]
-        best_asc = max((r.ascension for r in char_wins), default=0)
-        fastest = min((r.run_time for r in char_wins), default=0)
+        char_best_asc = max((r.ascension for r in char_wins), default=0)
+        char_fastest = min((r.run_time for r in char_wins), default=0)
         per_character[char] = {
             "wins": len(char_wins),
             "losses": len(char_run_list) - len(char_wins),
-            "best_ascension": best_asc,
-            "fastest": fastest,
+            "best_ascension": char_best_asc,
+            "fastest": char_fastest,
         }
 
     return {
@@ -989,7 +990,8 @@ def compute_era_split(runs: list, entity_id: str, patch_name: str) -> dict | Non
     pivot = era_index(patch_name)
     if pivot < 0:
         return None
-    before_runs, after_runs = [], []
+    before_runs: list[Any] = []
+    after_runs: list[Any] = []
     for r in runs:
         idx = era_index(era_of(r.build_id))
         if idx < 0:
@@ -1016,7 +1018,7 @@ def compute_era_split(runs: list, entity_id: str, patch_name: str) -> dict | Non
             "pick_rate": round(picked / offered * 100, 1) if offered else None,
         }
 
-    result = {"patch": patch_name,
+    result: dict[str, Any] = {"patch": patch_name,
               "before": _side(before_runs), "after": _side(after_runs)}
     if result["before"]["n"] == 0 and result["after"]["n"] == 0:
         return None

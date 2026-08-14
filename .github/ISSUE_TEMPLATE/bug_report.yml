@@ -3,15 +3,35 @@ description: Something isn't working as expected
 labels: [bug]
 body:
   - type: input
-    label: SpireScope version
-    placeholder: 'e.g. v2.6.0'
+    id: version
+    attributes:
+      label: SpireScope version
+      placeholder: 'e.g. v3.1.0'
+    validations:
+      required: true
   - type: dropdown
-    label: OS
-    options: [Windows, macOS, Linux, Steam Deck]
+    id: os
+    attributes:
+      label: OS
+      options: [Windows, macOS, Linux, Steam Deck]
+    validations:
+      required: true
   - type: input
-    label: Python version
-    placeholder: 'e.g. 3.11.4 (skip if using .exe)'
+    id: python-version
+    attributes:
+      label: Python version
+      placeholder: 'e.g. 3.11.4 (skip if using .exe)'
+    validations:
+      required: false
   - type: textarea
-    label: What happened?
+    id: what-happened
+    attributes:
+      label: What happened?
+    validations:
+      required: true
   - type: textarea
-    label: Steps to reproduce
+    id: repro-steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true

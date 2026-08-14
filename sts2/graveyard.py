@@ -1,5 +1,6 @@
 """The Graveyard — procedural epitaphs for dead runs."""
 import hashlib
+from typing import Any
 
 from sts2.models import RunHistory
 
@@ -18,13 +19,13 @@ def generate_epitaph(run: RunHistory, kb=None) -> str:
     if not templates:
         return _fallback_epitaph(run)
 
-    seed = int(hashlib.md5(run.id.encode()).hexdigest()[:8], 16)
+    seed = int(hashlib.md5(run.id.encode(), usedforsecurity=False).hexdigest()[:8], 16)
     return templates[seed % len(templates)]
 
 
 def _collect_facts(run: RunHistory, kb) -> dict:
     """Extract notable facts from a run for epitaph generation."""
-    facts = {}
+    facts: dict[str, Any] = {}
     last_floor = run.floors[-1].floor if run.floors else 0
 
     # Potion hoarding
@@ -171,5 +172,5 @@ def _fallback_epitaph(run: RunHistory) -> str:
         f"{char}, floor {floor}. Gone but not forgotten.",
         f"Floor {floor}. The climb continues. Not for this one.",
     ]
-    seed = int(hashlib.md5(run.id.encode()).hexdigest()[:8], 16)
+    seed = int(hashlib.md5(run.id.encode(), usedforsecurity=False).hexdigest()[:8], 16)
     return fallbacks[seed % len(fallbacks)]

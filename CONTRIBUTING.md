@@ -45,7 +45,7 @@ sts2/
   data/              # JSON game data + mods
   templates/         # Jinja2 HTML templates
   static/            # CSS, fonts, images, JS
-tests/               # 780 tests (pytest + pytest-asyncio)
+tests/               # pytest + pytest-asyncio (browser tests deselected by default)
                      # + 15 Playwright browser tests: pip install -e ".[browser]"
                      #   && playwright install chromium && pytest -m browser
 ```
@@ -70,7 +70,7 @@ tests/               # 780 tests (pytest + pytest-asyncio)
 
 - Keep changes focused — one feature or fix per PR
 - Add tests for new routes or logic
-- Don't commit game data changes (sts2/data/*.json) unless adding new fields
+- Don't include game data changes (sts2/data/*.json) in feature PRs unless the change adds new fields. Data refreshes are committed and released separately by the maintainer through the data-release pipeline — see docs/DATA_MAINTENANCE.md
 - Run `ruff check sts2/ tests/` to lint before submitting
 - All tests must pass before merge
 

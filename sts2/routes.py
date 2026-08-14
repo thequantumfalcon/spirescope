@@ -8,15 +8,15 @@ import math
 import re
 import time
 from datetime import date, datetime, timedelta, timezone
-from xml.sax.saxutils import escape as xml_escape
+from xml.sax.saxutils import escape as xml_escape  # nosec B406 — escaping output, never parsing XML
 
 from fastapi import APIRouter, File, Form, Path, Query, Request, UploadFile
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from pydantic import ValidationError
 from starlette.responses import StreamingResponse
 
-from sts2.config import CHARACTERS
-from sts2.models import CurrentRun
+from sts2.config import CHARACTERS, VERSION
+from sts2.models import CurrentRun, RunHistory
 from sts2.saves import get_current_run
 
 router = APIRouter()
@@ -79,13 +79,45 @@ def _filter_runs(runs: list, *, version: str | None = None,
     return runs
 
 
+_LIVE_MEMO_TTL = 2.5  # seconds; just under the SSE poll cadence
+_live_memo: dict = {}
+_live_memo_locks: dict = {}
+
+
 async def _get_live_run(player: int | None = None) -> CurrentRun:
+    """Memoized live-run state: N concurrent SSE connections share one log
+    poll and save read per window instead of each running its own 3-second
+    poll loop against the disk.
+
+    Single-flight per player: without the lock, every connection that found
+    the entry cold started its own computation, which is exactly the
+    duplicated disk work the memo exists to prevent — the cache only helped
+    callers that arrived after one of them finished.
+    """
+    now = time.monotonic()
+    hit = _live_memo.get(player)
+    if hit and now - hit[0] < _LIVE_MEMO_TTL:
+        return hit[1]
+    lock = _live_memo_locks.get(player)
+    if lock is None:
+        lock = _live_memo_locks.setdefault(player, asyncio.Lock())
+    async with lock:
+        # Another caller may have filled it while we waited.
+        hit = _live_memo.get(player)
+        if hit and time.monotonic() - hit[0] < _LIVE_MEMO_TTL:
+            return hit[1]
+        run = await _compute_live_run(player)
+        _live_memo[player] = (time.monotonic(), run)
+        return run
+
+
+async def _compute_live_run(player: int | None = None) -> CurrentRun:
     """Get the best available live run data, merging save + log sources.
 
     Save is authoritative for everything it records: HP, gold, deck (with
     upgrades and enchantments), relics, potions, floors, run_time, events_seen.
-    Log contributes only act progression and encounters won — the fields it can
-    reconstruct completely. It is a supplement, never an override.
+    Log contributes only act progression, encounters won, and the combat
+    telemetry only it can see — supplements, never overrides.
     """
     a = _app()
     await a._poll_game_log_once()
@@ -102,21 +134,118 @@ async def _get_live_run(player: int | None = None) -> CurrentRun:
         # accumulator with no spend events; its floor is act-relative where the
         # save's is cumulative. The save is rewritten continuously during play
         # (~100 writes per session), so it is fresh as well as complete.
+        assert _log_run_state is not None  # implied by log_active above
         log = _log_run_state
         merged = run.model_dump()
         if log.get("act", 1) > merged.get("act", 1):
             merged["act"] = log["act"]
         if log.get("encounters_won"):
             merged["encounters_won"] = log["encounters_won"]
+        # Combat telemetry exists only in the log, and in co-op the log
+        # interleaves both players — select the seat this view is watching
+        # rather than reporting one merged total as if it were theirs.
+        seat = merged.get("player_index", 0) or 0
+        by_player = log.get("cards_played_by_player") or {}
+        turns_by_player = log.get("extra_turns_by_player") or {}
+        merged["cards_played"] = by_player.get(seat, log.get("cards_played", []))
+        merged["extra_turns"] = turns_by_player.get(seat, log.get("extra_turns", 0))
+        merged["elites_defeated"] = log.get("elites_defeated", 0)
         return CurrentRun(**merged)
 
     if run.active:
         return run  # Save file only
 
     if log_active:
+        assert _log_run_state is not None  # implied by log_active above
         return CurrentRun(**_log_run_state)  # Log parser only
 
     return run  # No active run from either source
+
+
+def _hp_danger(run) -> tuple[str | None, int]:
+    """HP-threshold danger fallback: (level or None, HP % remaining).
+
+    One definition on purpose: /live used <20%/<40% while /overlay used
+    <=25%/<=50%, and /overlay's primary path displayed a risk percentage in
+    a template slot labelled "% HP". danger_pct is always HP remaining.
+    """
+    if not run.max_hp:
+        return None, 0
+    hp_pct = int(run.current_hp / run.max_hp * 100)
+    if hp_pct <= 25:
+        return "critical", hp_pct
+    if hp_pct <= 50:
+        return "warning", hp_pct
+    return None, hp_pct
+
+
+def _danger_assessment(run, kb) -> tuple[str | None, int]:
+    """Danger level + HP %, shared by /live, /overlay and the SSE payload.
+
+    Uses the compound-risk scorer when the private module is installed
+    (caution suppressed — banner-worthy levels only), HP thresholds
+    otherwise.
+    """
+    fallback_level, hp_pct = _hp_danger(run)
+    try:
+        from sts2.risk import compute_death_risk
+    except ImportError:
+        return fallback_level, hp_pct
+    try:
+        risk = compute_death_risk(run, kb)
+    except Exception:
+        logging.getLogger(__name__).debug("Risk scoring failed", exc_info=True)
+        return fallback_level, hp_pct
+    level = risk.get("level")
+    return (level if level in ("warning", "danger", "critical") else None), hp_pct
+
+
+def _counter_card_hints(run, kb) -> tuple[list, str]:
+    """Counter-card picks for the most recent known encounter."""
+    deck_set = set(run.deck)
+    for floor in reversed(run.floors or []):
+        enemy = kb.get_enemy_by_id(floor.encounter) if floor.encounter else None
+        if enemy:
+            raw = kb.get_counter_cards(enemy, limit=8)
+            filtered = [c for c in raw
+                        if c.character in (run.character, "Colorless")
+                        and c.id not in deck_set]
+            return filtered[:4], enemy.name
+    return [], ""
+
+
+def _synergy_pick_hints(run, kb) -> list[dict]:
+    """Synergy suggestions for the most recent card pick."""
+    deck_set = set(run.deck)
+    for floor in reversed(run.floors or []):
+        if floor.card_picked:
+            synergy_list = kb.find_synergies(floor.card_picked)
+            picked_card = kb.get_card_by_id(floor.card_picked)
+            picked_name = picked_card.name if picked_card else floor.card_picked
+            return [{"card_name": s.name, "picked_name": picked_name}
+                    for s in synergy_list if s.id not in deck_set][:4]
+    return []
+
+
+def _build_live_payload(run, all_runs) -> dict:
+    """SSE payload: run state plus the danger and ghost data the page shows,
+    so an HP change within a floor updates the banner and splits without a
+    reload. Enrichment is computed only when the run state changed."""
+    a = _app()
+    data = run.model_dump()
+    if run.active:
+        level, hp_pct = _danger_assessment(run, a.kb)
+        data["danger"] = {"level": level, "hp_pct": hp_pct}
+        try:
+            from sts2.ghost import compute_splits, find_ghost_run, ghost_summary
+            ghost = find_ghost_run(run.character, run.ascension, all_runs)
+            if ghost:
+                splits = compute_splits(run, ghost)
+                data["ghost"] = {"info": ghost_summary(splits),
+                                 "splits": splits[-5:]}
+        except Exception:
+            logging.getLogger(__name__).debug("Ghost payload failed", exc_info=True)
+    return data
 
 
 def _app():
@@ -150,6 +279,48 @@ def _is_loopback_client(request: Request) -> bool:
 async def health():
     a = _app()
     return {"status": "ok", "cards": len(a.kb.cards)}
+
+
+@router.get("/ready")
+async def ready():
+    """Readiness probe, distinct from /health.
+
+    /health is pure liveness (process is up, always 200); it never blocks a
+    Docker HEALTHCHECK on data being loaded. /ready reports whether the app
+    can actually serve — 200 once it can, 503 while it cannot, so an
+    orchestrator can tell "process running" apart from "actually usable".
+
+    Checking cards alone was too shallow: a dataset with cards but no relics
+    or enemies, or an unwritable state directory, passed while most of the
+    app was broken.
+    """
+    a = _app()
+    families = {"cards": len(a.kb.cards), "relics": len(a.kb.relics),
+                "enemies": len(a.kb.enemies), "potions": len(a.kb.potions),
+                "events": len(a.kb.events)}
+    missing = [name for name, count in families.items() if count == 0]
+    if missing:
+        return JSONResponse(
+            {"status": "not_ready", "reason": f"no data loaded for: {', '.join(missing)}",
+             "families": families}, status_code=503)
+    # User state must be writable, or settings, hypotheses and imported stats
+    # all fail at the moment the user tries to use them.
+    try:
+        from sts2.config import state_path
+        probe = state_path(".readiness")
+        probe.write_text("ok", encoding="utf-8")
+        probe.unlink()
+    except OSError:
+        # The exception text carries the full filesystem path, and /ready is
+        # deliberately exempt from authentication so container healthchecks
+        # can reach it — so the detail goes to the log, not the response.
+        logging.getLogger(__name__).warning(
+            "Readiness probe: state directory is not writable", exc_info=True)
+        return JSONResponse(
+            {"status": "not_ready", "reason": "state directory is not writable",
+             "families": families}, status_code=503)
+    return {"status": "ready", "cards": families["cards"],
+            "families": families, "version": VERSION}
 
 
 @router.get("/robots.txt", response_class=PlainTextResponse)
@@ -224,6 +395,26 @@ async def index(request: Request):
             data_age_days = (datetime.now(timezone.utc) - parsed).days
         except (ValueError, TypeError):
             pass
+
+    # Home-page prophecy: a compact preview, for the character of the most
+    # recent run (runs is newest-first), of what a full visit to /prophecy
+    # would show. Tilt: same session-momentum signal /analytics surfaces,
+    # shown here too since the home page is where a player lands first.
+    home_prophecy = None
+    tilt = None
+    if runs:
+        try:
+            from sts2.prophecy import generate_prophecy
+            latest_run = runs[0]
+            home_prophecy = generate_prophecy(latest_run.character, latest_run.ascension, runs)
+        except Exception:
+            logging.getLogger(__name__).debug("Home prophecy failed", exc_info=True)
+        try:
+            from sts2.behavior import detect_tilt
+            tilt = detect_tilt(runs)
+        except Exception:
+            logging.getLogger(__name__).debug("Home tilt detection failed", exc_info=True)
+
     return a.templates.TemplateResponse(request, "index.html", {
         "characters": CHARACTERS, "progress": progress, "recent_runs": runs[:5],
         "current_streak": current_streak, "streak_character": streak_character,
@@ -236,6 +427,7 @@ async def index(request: Request):
         "data_update_info": get_data_update_info(),
         "data_updated_msg": request.query_params.get("data_updated", ""),
         "csrf_token": a.generate_csrf_token(),
+        "home_prophecy": home_prophecy, "tilt": tilt,
     })
 
 
@@ -459,13 +651,90 @@ async def strategy(request: Request, character: str = Path(max_length=50)):
     })
 
 
+# ---------------------------------------------------------------------------
+# Imported-run store — Rivalry Seeds
+#
+# A friend's exported run has nowhere else to live: the import route used to
+# render it once and discard it, so it could never be selected for /runs/compare
+# (which only ever resolved ids against local save history). This is a bounded,
+# in-memory holding pen so an imported run can be picked for comparison from
+# the Runs page. Lost on process restart by design — that is the advertised
+# contract, not a substitute for saving the file.
+#
+# Scope, stated plainly: this is process-wide, not per browser session. Every
+# client of one server shares it. That is acceptable only because Spirescope
+# is a single-user local dashboard — on a loopback bind the one user IS the
+# process, and on a network bind every client has already presented the same
+# STS2_AUTH_TOKEN, so there is no privilege boundary between them to cross.
+# Ids are namespaced and length-capped so an imported run can neither collide
+# with nor shadow a local run id.
+# ---------------------------------------------------------------------------
+
+_imported_runs: dict[str, tuple[float, RunHistory]] = {}
+_IMPORTED_MAX = 20
+_IMPORTED_TTL = 4 * 60 * 60  # 4 hours, in seconds
+# The compare route caps each id query parameter at 200 characters; keep the
+# stored id inside that with room for the "imported-" prefix.
+_IMPORTED_ID_MAX_LEN = 180
+
+
+def _evict_imported_runs(now: float | None = None) -> None:
+    """Drop imported-store entries older than the TTL."""
+    now = time.monotonic() if now is None else now
+    expired = [k for k, (ts, _run) in _imported_runs.items() if now - ts > _IMPORTED_TTL]
+    for k in expired:
+        del _imported_runs[k]
+
+
+def _store_imported_run(run: RunHistory) -> str:
+    """Stash an imported run under a namespaced id (so it can't collide with
+    a locally-saved run's id), then evict expired entries and, if still over
+    the cap, the oldest entry by import time. Re-importing the same run's id
+    lands on the same namespaced id and overwrites the existing entry, which
+    refreshes its TTL clock.
+    """
+    now = time.monotonic()
+    _evict_imported_runs(now)
+    safe_id = re.sub(r'[^\w\-.]', '_', run.id)
+    # Cap the id so it always fits the compare route's own length limit;
+    # a longer one could be listed on the Runs page but never selected,
+    # because the query parameter would be rejected before lookup.
+    safe_id = safe_id[:_IMPORTED_ID_MAX_LEN]
+    imported_id = f"imported-{safe_id}"
+    _imported_runs[imported_id] = (now, run)
+    while len(_imported_runs) > _IMPORTED_MAX:
+        oldest_id = min(_imported_runs, key=lambda k: _imported_runs[k][0])
+        del _imported_runs[oldest_id]
+    return imported_id
+
+
+def _get_imported_run(run_id: str):
+    """Look up a namespaced id in the imported-run store, respecting TTL.
+    Returns the stored RunHistory, or None if absent/expired."""
+    _evict_imported_runs()
+    entry = _imported_runs.get(run_id)
+    return entry[1] if entry else None
+
+
+async def _resolve_run(run_id: str):
+    """Resolve a run id against the session-scoped imported store first
+    (respecting TTL), then fall back to local run history. Compare is the
+    only reachable place an imported run can be selected against anything,
+    so this is what lets /runs/compare accept an imported id on either side.
+    """
+    run = _get_imported_run(run_id)
+    if run is not None:
+        return run
+    return await _app()._get_run_by_id(run_id)
+
+
 @router.get("/runs", response_class=HTMLResponse)
 async def runs(request: Request, character: str = Query(None, max_length=50),
                result: str = Query(None, max_length=10),
                ascension: int = Query(None, ge=0, le=20),
                version: str = Query(None, max_length=100),
                date_from: str = Query(None, alias="from", max_length=10),
-               date_to: str = Query(None, alias="to", max_length=10),
+               date_to: str | None = Query(None, alias="to", max_length=10),
                preset: str = Query(None, max_length=10),
                origin: str = Query(None, max_length=10),
                scope: str = Query("current", max_length=10),
@@ -510,6 +779,10 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
     available_origins = sorted({r.origin for r in run_list})
     available_branches = sorted({b for b in (branch_of(r.build_id) for r in run_list) if b})
     selected_preset = preset if preset in ("7d", "30d", "90d", "all") else ""
+    # Imported-this-session runs (Rivalry Seeds): newest import first.
+    _evict_imported_runs()
+    imported_runs_sorted = sorted(_imported_runs.items(), key=lambda kv: kv[1][0], reverse=True)
+    imported_runs = [(iid, run) for iid, (_ts, run) in imported_runs_sorted]
     return a.templates.TemplateResponse(request, "runs.html", {
         "runs": filtered, "kb": a.kb, "characters": CHARACTERS,
         "selected_character": character, "selected_result": result,
@@ -522,6 +795,7 @@ async def runs(request: Request, character: str = Query(None, max_length=50),
         "selected_preset": selected_preset,
         "selected_scope": scope, "scope_expanded": scope_expanded,
         "branch_of": branch_of,
+        "imported_runs": imported_runs,
     })
 
 
@@ -537,13 +811,15 @@ async def compare_runs(request: Request,
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400, "error_message": "Select two runs to compare.",
         }, status_code=400)
-    run_a = await a._get_run_by_id(a_id)
-    run_b = await a._get_run_by_id(b_id)
+    run_a = await _resolve_run(a_id)
+    run_b = await _resolve_run(b_id)
     if not run_a or not run_b:
         missing = a_id if not run_a else b_id
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Run '{missing[:100]}' not found.",
         }, status_code=404)
+    a_imported = _get_imported_run(a_id) is not None
+    b_imported = _get_imported_run(b_id) is not None
     deck_a, deck_b = Counter(run_a.deck), Counter(run_b.deck)
     all_cards = sorted(set(deck_a) | set(deck_b))
     deck_diff = [{"id": c, "name": a.kb.id_to_name(c),
@@ -575,6 +851,7 @@ async def compare_runs(request: Request,
         "deck_diff": deck_diff, "relic_diff": relic_diff,
         "stats_a": run_stats(run_a), "stats_b": run_stats(run_b),
         "rivalry_diff": rivalry_diff,
+        "a_imported": a_imported, "b_imported": b_imported,
     })
 
 
@@ -596,16 +873,20 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
             all_runs = await a._get_runs()
             autopsy = diagnose_run(run, a.kb, all_runs)
         except ImportError:
+            # Expected in the public build: the module is not shipped.
             pass
         except Exception:
-            pass
-    # Tamper-evidence: SHA-256 Merkle chain over every floor decision.
-    # Same chain = same run, byte-for-byte. Shared hash lets two players
-    # confirm they're talking about the identical run.
-    from sts2.integrity import compute_merkle_root
-    integrity_hash = compute_merkle_root(run)
-    # Cascade map: per-pick downstream impact (Δ damage, Δ turns vs pre-pick).
-    # Helps identify which pick changed the run's trajectory.
+            # A real failure must leave a trace. Swallowing it silently made
+            # a regression indistinguishable from the feature being absent.
+            logging.getLogger(__name__).warning(
+                "Autopsy generation failed for run %s", run.id, exc_info=True)
+    # Tamper-evidence: SHA-256 over the run's complete canonical record.
+    # Same digest = identical record; it is a checksum, not a signature.
+    from sts2.integrity import compute_run_digest
+    integrity_hash = compute_run_digest(run)
+    # Cascade map: observational before/after comparison per pick (Δ damage,
+    # Δ turns, Δ HP vs the combats before the pick). Not causal — later
+    # floors are harder regardless of what you pick — see cascade.py.
     from sts2.cascade import trace_all_picks
     try:
         cascade = trace_all_picks(run, a.kb)
@@ -620,6 +901,24 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
     except Exception:
         drift_trajectory = []
         drift_alert = None
+    # Prophecy grade: the prophecy this run would have received BEFORE it was
+    # played, graded against what actually happened. Only runs that finished
+    # earlier may inform it — excluding just this run left every later run in
+    # the comparison set, so a historical "prediction" silently changed as new
+    # runs accumulated and was never the prediction anyone could have made.
+    # None when there is not enough prior history to have made a prophecy.
+    from sts2.prophecy import generate_prophecy, grade_prophecy
+    prophecy_grade = None
+    try:
+        history = await a._get_runs()
+        prior_runs = [r for r in history
+                      if r.id != run.id and r.timestamp and run.timestamp
+                      and r.timestamp < run.timestamp]
+        if prior_runs:
+            run_prophecy = generate_prophecy(run.character, run.ascension, prior_runs)
+            prophecy_grade = grade_prophecy(run_prophecy, run)
+    except Exception:
+        logging.getLogger(__name__).debug("Prophecy grading failed", exc_info=True)
     from sts2.patches import branch_of
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "kb": a.kb, "run_analysis": run_analysis,
@@ -628,6 +927,7 @@ async def run_detail(request: Request, run_id: str = Path(max_length=200)):
         "cascade": cascade,
         "drift_trajectory": drift_trajectory,
         "drift_alert": drift_alert,
+        "prophecy_grade": prophecy_grade,
         "run_branch": branch_of(run.build_id),
     })
 
@@ -639,7 +939,13 @@ async def export_run(run_id: str = Path(max_length=200)):
     if not run:
         return PlainTextResponse("Run not found.", status_code=404)
     from sts2.config import VERSION
+    from sts2.integrity import DIGEST_VERSION, compute_run_digest
+    # The digest travels with the export so an import can be checked against
+    # the record it was exported with (added keys keep format_version 1 —
+    # older importers ignore them).
     export_data = json.dumps({"spirescope_version": VERSION, "format_version": 1,
+                              "digest_version": DIGEST_VERSION,
+                              "integrity_digest": compute_run_digest(run),
                               "run": run.model_dump()}, indent=2)
     safe_id = re.sub(r'[^\w\-.]', '_', run.id)
     return PlainTextResponse(
@@ -688,18 +994,29 @@ async def import_run(request: Request, file: UploadFile = File(...),
         }, status_code=413)
     try:
         data = json.loads(contents)
+        # A top-level array is valid JSON; .get() on it was an unhandled 500.
+        if not isinstance(data, dict):
+            return a.templates.TemplateResponse(request, "error.html", {
+                "error_code": 400,
+                "error_message": "Invalid file: expected a JSON object.",
+            }, status_code=400)
         if data.get("format_version") != 1:
             return a.templates.TemplateResponse(request, "error.html", {
                 "error_code": 400,
                 "error_message": "Unsupported format version. Expected format_version: 1.",
             }, status_code=400)
-        if "run" not in data:
+        if not isinstance(data.get("run"), dict):
+            # Key-presence alone was not enough: a "run" holding a list, null,
+            # a string or a number reached RunHistory(**...) and raised
+            # TypeError, which this handler does not catch — an uncaught 500
+            # on a malformed upload.
             return a.templates.TemplateResponse(request, "error.html", {
                 "error_code": 400,
-                "error_message": "Invalid file: missing 'run' key.",
+                "error_message": "Invalid file: 'run' must be an object.",
             }, status_code=400)
         run = RunHistory(**data["run"])
-    except (json.JSONDecodeError, ValidationError, KeyError, RecursionError):
+    except (json.JSONDecodeError, ValidationError, KeyError, TypeError,
+            RecursionError):
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400,
             "error_message": "Invalid run file format.",
@@ -721,9 +1038,38 @@ async def import_run(request: Request, file: UploadFile = File(...),
                 "error_code": 400,
                 "error_message": "Run file has unreasonable per-floor list sizes.",
             }, status_code=400)
+    # Check the FILE against the digest it was exported with — the raw run
+    # mapping, not the parsed model. Verifying the model verified only what
+    # the model kept: anything added to an exported run was dropped during
+    # validation and the original digest still matched, so a modified file
+    # reported as verified.
+    from sts2.integrity import DIGEST_VERSION, compute_run_digest, verify_payload
+    expected_digest = data.get("integrity_digest", "")
+    if expected_digest and data.get("digest_version") == DIGEST_VERSION:
+        integrity_check = ("verified" if verify_payload(data["run"], expected_digest)
+                           else "mismatch")
+    else:
+        # No digest, or one from a different canonicalization version — an old
+        # export is not evidence of tampering, just unverifiable.
+        integrity_check = "absent"
+    try:
+        recomputed_digest = compute_run_digest(run)
+    except ValueError:
+        # Text that cannot be encoded (an unpaired surrogate) is malformed
+        # input, not a server fault.
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 400,
+            "error_message": "Run file contains malformed text.",
+        }, status_code=400)
+    # Rivalry Seeds: keep the parsed run in the session-scoped imported store
+    # so it can be picked from the Runs page for comparison against a local
+    # run. This route itself still only ever renders it transiently.
+    _store_imported_run(run)
     run_analysis = analyze_run(run, kb=a.kb)
     return a.templates.TemplateResponse(request, "run_detail.html", {
         "run": run, "run_analysis": run_analysis, "kb": a.kb, "imported": True,
+        "integrity_hash": recomputed_digest,
+        "integrity_check": integrity_check,
     })
 
 
@@ -732,7 +1078,7 @@ async def analytics(request: Request,
                     ascension: int = Query(None, ge=0, le=20),
                     version: str = Query(None, max_length=100),
                     date_from: str = Query(None, alias="from", max_length=10),
-                    date_to: str = Query(None, alias="to", max_length=10),
+                    date_to: str | None = Query(None, alias="to", max_length=10),
                     preset: str = Query(None, max_length=10),
                     origin: str = Query(None, max_length=10),
                     scope: str = Query("current", max_length=10),
@@ -823,26 +1169,19 @@ async def records(request: Request):
 
 @router.get("/hypothesis", response_class=HTMLResponse)
 async def hypothesis_list(request: Request):
-    """List + manage Bayesian-style hypotheses tested against run history."""
-    from sts2.hypothesis import load_hypotheses, save_hypotheses, update_hypothesis
+    """List + manage hypotheses tested against run history.
+
+    Strictly read-only: evaluation is a pure computation over a snapshot of
+    run history, run off the event loop, and nothing is written. The old
+    version reset and rewrote the hypotheses file once per run x hypothesis
+    on every GET — thousands of synchronous event-loop-blocking writes.
+    """
+    from sts2.hypothesis import evaluate_hypotheses, load_hypotheses
     a = _app()
     runs = await a._get_runs()
     hyps = load_hypotheses()
-    # Re-evaluate all hypotheses fresh against current run history so the page
-    # is idempotent and never double-counts.
-    for h in hyps.values():
-        h["runs_tested"] = 0
-        h["runs_matching"] = 0
-        h["runs_not_matching"] = 0
-        h["wins_matching"] = 0
-        h["wins_not_matching"] = 0
-        h["verdict"] = "insufficient_data"
-        h.pop("effect_size", None)
-    save_hypotheses(hyps)
-    for run in runs:
-        for hyp_id in list(hyps):
-            update_hypothesis(hyp_id, run)
-    hyps = load_hypotheses()
+    if hyps:
+        hyps = await asyncio.to_thread(evaluate_hypotheses, hyps, list(runs))
     return a.templates.TemplateResponse(request, "hypothesis.html", {
         "hypotheses": hyps,
         "csrf_token": a.generate_csrf_token(),
@@ -867,7 +1206,9 @@ async def hypothesis_create(request: Request,
         return PlainTextResponse("Invalid form submission.", status_code=403)
     if not text or condition_type not in ("elite_skip", "deck_size", "card_pick", "character"):
         return PlainTextResponse("Invalid hypothesis.", status_code=400)
-    hyp_id = hashlib.sha1(f"{text}{_t.time()}".encode()).hexdigest()[:12]
+    # Opaque id generation, not a security hash.
+    hyp_id = hashlib.sha1(f"{text}{_t.time()}".encode(),
+                          usedforsecurity=False).hexdigest()[:12]
     params: dict = {}
     if condition_type == "deck_size":
         try:
@@ -932,8 +1273,13 @@ async def graveyard(request: Request):
     try:
         from sts2.graveyard import generate_epitaph
         runs = await a._get_runs()
-        deaths = [r for r in runs if not r.win][-50:]
-        graves = [{"run": r, "epitaph": generate_epitaph(r, a.kb)} for r in reversed(deaths)]
+        # _get_runs() is newest-first (saves.py sorts run files by filename
+        # descending), so the newest 50 losses are the first 50, not the
+        # last 50 — [-50:] silently selected the 50 OLDEST losses once a
+        # player passed 50 total deaths, and new deaths never appeared.
+        # This slice is already newest-first, matching the display order.
+        deaths = [r for r in runs if not r.win][:50]
+        graves = [{"run": r, "epitaph": generate_epitaph(r, a.kb)} for r in deaths]
     except ImportError:
         graves = []
     return a.templates.TemplateResponse(request, "graveyard.html", {"graves": graves})
@@ -1083,7 +1429,7 @@ async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
     pick_suggestions = []
     danger_level = None
     danger_pct = 0
-    counter_cards = []
+    counter_cards: list = []
     last_enemy_name = ""
     synergy_hints = []
 
@@ -1140,58 +1486,18 @@ async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
         except Exception:
             _log.debug("Coaching: analytics suggestions failed", exc_info=True)
 
-        # Compound risk scoring
-        try:
-            from sts2.risk import compute_death_risk
-            risk = compute_death_risk(run, a.kb)
-            # Only show danger banner for danger/critical, not caution
-            if risk["level"] in ("danger", "critical"):
-                danger_level = risk["level"]
-                danger_pct = int(run.current_hp / run.max_hp * 100) if run.max_hp else 0
-        except ImportError:
-            # Fallback: simple HP percentage
-            try:
-                if run.max_hp > 0:
-                    hp_pct = run.current_hp / run.max_hp
-                    danger_pct = int(hp_pct * 100)
-                    if hp_pct < 0.2:
-                        danger_level = "critical"
-                    elif hp_pct < 0.4:
-                        danger_level = "warning"
-            except Exception:
-                pass
-        except Exception:
-            _log.debug("Coaching: risk scoring failed", exc_info=True)
+        # Danger assessment (shared definition with /overlay and SSE)
+        danger_level, danger_pct = _danger_assessment(run, a.kb)
 
         # Counter-card suggestions (based on last combat encounter)
         try:
-            if run.floors:
-                deck_set = set(run.deck)
-                for floor in reversed(run.floors):
-                    enemy = a.kb.get_enemy_by_id(floor.encounter) if floor.encounter else None
-                    if enemy:
-                        raw_counters = a.kb.get_counter_cards(enemy, limit=8)
-                        filtered = [c for c in raw_counters
-                                    if c.character in (run.character, "Colorless")
-                                    and c.id not in deck_set]
-                        counter_cards = filtered[:4]
-                        last_enemy_name = enemy.name
-                        break
+            counter_cards, last_enemy_name = _counter_card_hints(run, a.kb)
         except Exception:
             _log.debug("Coaching: counter-cards failed", exc_info=True)
 
         # Synergy hints (based on last card picked)
         try:
-            if run.floors:
-                deck_set = set(run.deck)
-                for floor in reversed(run.floors):
-                    if floor.card_picked:
-                        synergy_list = a.kb.find_synergies(floor.card_picked)
-                        picked_card = a.kb.get_card_by_id(floor.card_picked)
-                        picked_name = picked_card.name if picked_card else floor.card_picked
-                        synergy_hints = [{"card_name": s.name, "picked_name": picked_name}
-                                         for s in synergy_list if s.id not in deck_set][:4]
-                        break
+            synergy_hints = _synergy_pick_hints(run, a.kb)
         except Exception:
             _log.debug("Coaching: synergy hints failed", exc_info=True)
 
@@ -1253,21 +1559,21 @@ async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
         except Exception:
             _log.debug("Coaching: boss prep failed", exc_info=True)
 
-    # Ghost run comparison
+    # Ghost run comparison. The window is centered on the live run's real
+    # ascension (the field used to be missing, so this always compared
+    # against ascension-0 ghosts), and failures are logged, not hidden.
     ghost_splits = []
     ghost_info = None
     if run.active:
         try:
             from sts2.ghost import compute_splits, find_ghost_run, ghost_summary
             all_runs = await a._get_runs()
-            ghost = find_ghost_run(run.character, getattr(run, "ascension", 0), all_runs)
+            ghost = find_ghost_run(run.character, run.ascension, all_runs)
             if ghost:
                 ghost_splits = compute_splits(run, ghost)
                 ghost_info = ghost_summary(ghost_splits)
-        except ImportError:
-            pass
         except Exception:
-            pass
+            _log.debug("Ghost comparison failed", exc_info=True)
 
     return a.templates.TemplateResponse(request, "live.html", {
         "run": run, "analysis": analysis, "kb": a.kb,
@@ -1289,24 +1595,24 @@ async def overlay(request: Request, player: int = Query(None, ge=0, le=3)):
     run = await _get_live_run(player)
     danger_level = None
     danger_pct = 0
-    counter_cards = []
+    counter_cards: list = []
     synergy_hints = []
     top_cards = []
     if run.active:
+        # Shared definition with /live and SSE. The old primary path put a
+        # risk percentage into the "% HP" template slot, so the same number
+        # meant risk with the private module installed and HP without it.
+        danger_level, danger_pct = _danger_assessment(run, a.kb)
+        # Counter cards and synergy hints were initialized empty and never
+        # computed here — the overlay sections could not ever render.
         try:
-            from sts2.risk import compute_death_risk
-            risk = compute_death_risk(run, a.kb)
-            danger_level = risk["level"] if risk["level"] != "safe" else None
-            danger_pct = int(100 - risk["win_probability"])
-        except ImportError:
-            if run.max_hp and run.current_hp:
-                danger_pct = int(run.current_hp / run.max_hp * 100)
-                if danger_pct <= 25:
-                    danger_level = "critical"
-                elif danger_pct <= 50:
-                    danger_level = "warning"
+            counter_cards, _ = _counter_card_hints(run, a.kb)
         except Exception:
-            pass
+            logging.getLogger(__name__).debug("Overlay counter-cards failed", exc_info=True)
+        try:
+            synergy_hints = _synergy_pick_hints(run, a.kb)
+        except Exception:
+            logging.getLogger(__name__).debug("Overlay synergy hints failed", exc_info=True)
         # Top cards by play count
         from collections import Counter as _Counter
         card_counts = _Counter(run.deck)
@@ -1370,6 +1676,8 @@ async def analyze_deck(request: Request):
     analysis = a.kb.analyze_deck(card_ids)
     selected_counts: dict[str, int] = {}
     for cid in card_ids:
+        if not isinstance(cid, str):
+            continue
         selected_counts[cid] = selected_counts.get(cid, 0) + 1
     # Deck health via spectral graph analysis: builds keyword-synergy graph,
     # computes algebraic connectivity + orphan list. Score 0-100, higher = more
@@ -1391,11 +1699,32 @@ async def analyze_deck(request: Request):
 # JSON API
 # ---------------------------------------------------------------------------
 
+def _api_error(message: str, status_code: int, **extra) -> JSONResponse:
+    """Standardized JSON error envelope for /api/* handlers.
+
+    The app-wide StarletteHTTPException handler in app.py renders error.html
+    for every path, including /api/*, so API handlers must never raise
+    HTTPException or return a bare PlainTextResponse for an error — they
+    return this instead. Shape: {"error": <message>, "status": <code>},
+    plus any extra fields a specific endpoint wants to keep (e.g. card_id).
+    """
+    payload = {"error": message, "status": status_code}
+    payload.update(extra)
+    return JSONResponse(payload, status_code=status_code)
+
+
 @router.get("/api/analytics")
 async def api_analytics(version: str = Query(None, max_length=100),
                         date_from: str = Query(None, alias="from", max_length=10),
                         date_to: str = Query(None, alias="to", max_length=10),
                         ascension: int = Query(None, ge=0, le=20)):
+    """Computed analytics over run history.
+
+    Public contract: a top-level dict whose keys (overview, card_rankings,
+    relic_synergy_edges, encounter_danger, potion_stats, ...) are produced by
+    sts2.analytics.compute_analytics — see that module for the authoritative
+    key list. schema_version bumps only on a breaking change to this shape.
+    """
     a = _app()
     if version or date_from or date_to:
         from sts2.analytics import compute_analytics
@@ -1406,53 +1735,65 @@ async def api_analytics(version: str = Query(None, max_length=100),
             filtered = [r for r in filtered if r.ascension == ascension]
         progress = await a._get_progress()
         card_stats = progress.card_stats if progress else {}
-        return await asyncio.to_thread(compute_analytics, filtered, card_stats, a.kb)
-    return await a._get_analytics(ascension=ascension)
+        stats = await asyncio.to_thread(compute_analytics, filtered, card_stats, a.kb)
+    else:
+        stats = await a._get_analytics(ascension=ascension)
+    return {**stats, "schema_version": 1}
 
 
-@router.get("/api/live")
+@router.get("/api/live", response_model=CurrentRun)
 async def api_live_run(player: int = Query(None, ge=0, le=3)):
     run = await _get_live_run(player)
     return run.model_dump()
 
 
-# SSE connection tracking — atomic counter (safe in single-threaded asyncio)
+# SSE connection tracking — atomic counters (safe in single-threaded asyncio).
+# Global cap plus a per-client cap so one client cannot hold every slot.
 _SSE_MAX_CONNECTIONS = 10
+_SSE_MAX_PER_CLIENT = 3
 _SSE_IDLE_TIMEOUT = 300.0
 _sse_active = 0
+_sse_by_client: dict[str, int] = {}
 
 
 @router.get("/api/live/stream")
-async def live_stream(player: int = Query(None, ge=0, le=3)):
+async def live_stream(request: Request, player: int = Query(None, ge=0, le=3)):
     global _sse_active
+    client_ip = request.client.host if request.client else "unknown"
     # Atomic check-and-reserve. Increment is done INSIDE the generator's try
     # block (paired with the finally decrement) so a pre-stream client
     # disconnect can't leak a slot. The pre-check here only refuses obvious
     # overflows — the generator will re-check on first yield.
-    if _sse_active >= _SSE_MAX_CONNECTIONS:
-        return PlainTextResponse("Too many live connections. Close another tab.",
-                                 status_code=429)
+    if (_sse_active >= _SSE_MAX_CONNECTIONS
+            or _sse_by_client.get(client_ip, 0) >= _SSE_MAX_PER_CLIENT):
+        return _api_error("Too many live connections. Close another tab.", 429)
 
     async def event_generator():
         global _sse_active
-        # Re-check cap and reserve atomically when the body actually starts;
+        # Re-check caps and reserve atomically when the body actually starts;
         # this pairs with the `finally` decrement so disconnect cannot leak.
-        if _sse_active >= _SSE_MAX_CONNECTIONS:
+        if (_sse_active >= _SSE_MAX_CONNECTIONS
+                or _sse_by_client.get(client_ip, 0) >= _SSE_MAX_PER_CLIENT):
             yield "event: error\ndata: {\"reason\":\"too_many\"}\n\n"
             return
         _sse_active += 1
+        _sse_by_client[client_ip] = _sse_by_client.get(client_ip, 0) + 1
         try:
             last_hash = ""
             idle_since = time.monotonic()
             while True:
                 run = await _get_live_run(player)
-                data = run.model_dump()
-                data_json = json.dumps(data, sort_keys=True)
-                current_hash = hashlib.sha1(data_json.encode(), usedforsecurity=False).hexdigest()
+                # Hash the raw run state; danger/ghost are derived from it,
+                # so enrichment is only computed when something changed.
+                state_json = json.dumps(run.model_dump(), sort_keys=True)
+                current_hash = hashlib.sha1(state_json.encode(), usedforsecurity=False).hexdigest()
                 if current_hash != last_hash:
                     last_hash = current_hash
                     idle_since = time.monotonic()
-                    yield f"data: {data_json}\n\n"
+                    a = _app()
+                    all_runs = await a._get_runs()
+                    payload = _build_live_payload(run, all_runs)
+                    yield f"data: {json.dumps(payload, sort_keys=True)}\n\n"
                 elif time.monotonic() - idle_since > _SSE_IDLE_TIMEOUT:
                     yield "event: timeout\ndata: {}\n\n"
                     return
@@ -1464,6 +1805,11 @@ async def live_stream(player: int = Query(None, ge=0, le=3)):
                     pass
         finally:
             _sse_active -= 1
+            remaining = _sse_by_client.get(client_ip, 1) - 1
+            if remaining <= 0:
+                _sse_by_client.pop(client_ip, None)
+            else:
+                _sse_by_client[client_ip] = remaining
 
     return StreamingResponse(event_generator(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache",
@@ -1475,14 +1821,18 @@ async def reload_data(request: Request):
     a = _app()
     token = request.headers.get("X-Admin-Token", "")
     if not a.tokens_equal(token, a._ADMIN_TOKEN):
-        return PlainTextResponse("Unauthorized.", status_code=403)
+        return _api_error("Unauthorized.", 403)
     from sts2.knowledge import KnowledgeBase
     from sts2.patches import invalidate_cache
     invalidate_cache()
     new_kb = await asyncio.to_thread(KnowledgeBase)
     a.kb = new_kb
     # Analytics bakes entity names into its cached payload, so a reload that
-    # leaves it in place serves the old names for the rest of the TTL
+    # leaves it in place serves the old names for the rest of the TTL.
+    # Bumping the generation matters as much as clearing: a computation that
+    # started before this reload would otherwise finish afterwards and write
+    # its pre-reload result straight back into the cache we just emptied.
+    a._data_generation += 1
     a._analytics_cache.clear()
     a._analytics_cache_time.clear()
     return {"status": "ok", "cards": len(a.kb.cards), "relics": len(a.kb.relics),
@@ -1517,10 +1867,7 @@ async def api_card(card_id: str = Path(max_length=200)):
     a = _app()
     card = a.kb.get_card_by_id(card_id)
     if not card:
-        # Match the JSON shape used by the success path so API clients
-        # can parse both responses uniformly.
-        from fastapi.responses import JSONResponse
-        return JSONResponse({"error": "Card not found.", "card_id": card_id}, status_code=404)
+        return _api_error("Card not found.", 404, card_id=card_id)
     progress = await a._get_progress()
     card_stats = progress.card_stats.get(card_id, {}) if progress else {}
     synergies = a.kb.find_synergies(card_id)
@@ -1544,6 +1891,13 @@ async def api_runs(character: str = Query(None, max_length=50), result: str = Qu
                    date_from: str = Query(None, alias="from", max_length=10),
                    date_to: str = Query(None, alias="to", max_length=10),
                    limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)):
+    """Paginated run history.
+
+    Public contract, top-level keys: schema_version (int), total (matching
+    runs before pagination), offset, limit, and runs — a page of full
+    RunHistory records (sts2.models.RunHistory.model_dump()), not a reduced
+    summary. schema_version bumps only on a breaking change to this shape.
+    """
     a = _app()
     run_list = await a._get_runs()
     filtered = _filter_runs(run_list, version=version,
@@ -1556,7 +1910,7 @@ async def api_runs(character: str = Query(None, max_length=50), result: str = Qu
         filtered = [r for r in filtered if not r.win]
     total = len(filtered)
     page = filtered[offset:offset + limit]
-    return {"total": total, "offset": offset, "limit": limit,
+    return {"schema_version": 1, "total": total, "offset": offset, "limit": limit,
             "runs": [r.model_dump() for r in page]}
 
 
@@ -1608,11 +1962,18 @@ async def api_search(q: str = Query("", max_length=200)):
 
 @router.get("/api/export/stats")
 async def api_export_stats():
+    """Aggregate community-style stats computed from local run history.
+
+    Public contract: a top-level dict whose keys (run_count, character_stats,
+    card_win_rates, ...) are produced by sts2.aggregate.compute_aggregate_stats
+    — see that module for the authoritative key list. schema_version bumps
+    only on a breaking change to this shape.
+    """
     from sts2.aggregate import compute_aggregate_stats
     a = _app()
     runs = await a._get_runs()
     stats = compute_aggregate_stats(runs)
-    return stats
+    return {**stats, "schema_version": 1}
 
 
 @router.post("/api/reset/stats")
@@ -1620,7 +1981,7 @@ async def api_reset_stats(request: Request):
     a = _app()
     token = request.headers.get("X-Admin-Token", "")
     if not a.tokens_equal(token, a._ADMIN_TOKEN):
-        return PlainTextResponse("Unauthorized.", status_code=403)
+        return _api_error("Unauthorized.", 403)
     from sts2.aggregate import reset_aggregate
     deleted = reset_aggregate()
     return {"status": "ok", "deleted": deleted}
@@ -1632,19 +1993,32 @@ async def api_import_stats(request: Request, file: UploadFile = File(...),
     from sts2.aggregate import load_aggregate, merge_aggregate, save_aggregate
     a = _app()
     if not a.validate_csrf_token(csrf_token):
-        return PlainTextResponse("Invalid CSRF token.", status_code=403)
+        return _api_error("Invalid CSRF token.", 403)
     contents = await file.read(512_001)
     if len(contents) > 512_000:
-        return PlainTextResponse("File too large (max 500 KB).", status_code=413)
+        return _api_error("File too large (max 500 KB).", 413)
     try:
         imported = json.loads(contents)
         if not isinstance(imported, dict) or "run_count" not in imported:
-            return PlainTextResponse("Invalid aggregate file.", status_code=400)
+            return _api_error("Invalid aggregate file.", 400)
     except (json.JSONDecodeError, RecursionError):
-        return PlainTextResponse("Invalid JSON.", status_code=400)
+        return _api_error("Invalid JSON.", 400)
     existing = load_aggregate()
-    merged = merge_aggregate(existing, imported)
-    save_aggregate(merged)
+    try:
+        merged = merge_aggregate(existing, imported)
+    except ValueError:
+        # Includes Infinity/NaN counters: json.loads accepts them, the
+        # sanitiser rejects them, and this used to surface as a 500. The
+        # exception text is logged rather than returned — it can carry
+        # fragments of the submitted file back to whoever sent it.
+        logging.getLogger(__name__).info(
+            "Rejected an aggregate import", exc_info=True)
+        return _api_error("Invalid aggregate file: counters must be finite "
+                          "numbers.", 400)
+    if not save_aggregate(merged):
+        return _api_error(
+            "Import processed but could not be persisted (too large or "
+            "storage unwritable).", 500)
     return {"status": "ok", "run_count": merged.get("run_count", 0)}
 
 
@@ -1754,7 +2128,10 @@ async def settings_language(request: Request,
             logging.getLogger(__name__).exception(
                 "Could not rebuild the knowledge base for language %s", code)
         else:
-            # Analytics bakes entity names into its cached payload
+            # Analytics bakes entity names into its cached payload. Bump the
+            # generation too, or an in-flight computation started under the
+            # previous language repopulates the cache we just cleared.
+            a._data_generation += 1
             a._analytics_cache.clear()
             a._analytics_cache_time.clear()
     return RedirectResponse("/settings?saved=1", status_code=303)

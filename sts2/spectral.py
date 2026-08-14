@@ -42,15 +42,27 @@ def deck_spectral_health(card_ids, kb):
             if i != j:
                 diff_matrix[i][j] = -float(adj[i][j])
 
-    # Compute connectivity (second-smallest component)
-    components = _compute_components(diff_matrix)
+    # Compute connectivity (second-smallest component). A fixed rotation
+    # budget doesn't converge as the graph grows — 100 single rotations left
+    # a 30-node graph's connectivity at 0.129 vs a true value of 0.011 — so
+    # scale the budget with matrix size; the early-exit on the off-diagonal
+    # threshold still short-circuits once it actually converges.
+    max_rotations = max(100, n * n * 10)
+    components = _compute_components(diff_matrix, max_iter=max_rotations)
     components.sort()
     connectivity = components[1] if len(components) > 1 else 0
 
     # Orphans: cards with zero connections
     orphans = [cards[i].name for i in range(n) if degree[i] == 0]
 
-    total_edges = sum(sum(row) for row in adj) // 2
+    # Edge count/degree as the UI presents them: a real synergy connection
+    # either exists between two cards or it doesn't. `degree` above (and the
+    # adjacency weights) are the shared-keyword mass used for the
+    # connectivity math, so a pair sharing 3 keywords counted as "3 edges"
+    # and a weak 0.5-weight fallback link showed up as "0.5 edges" — a stat
+    # labelled "Synergy Edges" should be an edge count, not weighted mass.
+    unweighted_degree = [sum(1 for w in row if w > 0) for row in adj]
+    total_edges = sum(unweighted_degree) // 2
 
     # Health score: blend of connectivity metrics
     # 1. Fraction of non-orphan cards (0-50 points)
@@ -62,17 +74,19 @@ def deck_spectral_health(card_ids, kb):
     density = total_edges / max_edges if max_edges else 0
     density_score = int(min(density * 10, 1) * 30)  # Cap at density=0.1
 
-    # 3. Connectivity bonus if graph is connected (0-20 points)
+    # 3. Connectivity bonus if graph is connected (0-20 points, full weight —
+    # this used to be halved here, which capped the score at 90 even for an
+    # ideal, fully-connected deck despite the docs promising a 0-100 range)
     connectivity_score = min(20, int(connectivity * 10)) if connectivity > 0.01 else 0
 
-    health = orphan_score + density_score + connectivity_score // 2
+    health = orphan_score + density_score + connectivity_score
 
     return {
         "health_score": max(0, min(100, health)),
         "connectivity": round(connectivity, 3),
         "orphans": orphans,
         "total_edges": total_edges,
-        "avg_degree": round(sum(degree) / n, 1) if n else 0,
+        "avg_degree": round(sum(unweighted_degree) / n, 1) if n else 0,
     }
 
 

@@ -82,12 +82,8 @@ def assign_build(build_id: str, patch_name: str) -> bool:
         build_ids = entry.setdefault("build_ids", [])
         if build_id not in build_ids:
             build_ids.append(build_id)
-            try:
-                (DATA_DIR / _PATCHES_FILE).write_text(
-                    json.dumps(patches, indent=2) + "\n", encoding="utf-8"
-                )
-            except OSError as exc:
-                log.error("Failed to write %s: %s", _PATCHES_FILE, exc)
+            from sts2.persist import write_json_atomic
+            if not write_json_atomic(DATA_DIR / _PATCHES_FILE, patches):
                 build_ids.remove(build_id)
                 return False
         invalidate_cache()

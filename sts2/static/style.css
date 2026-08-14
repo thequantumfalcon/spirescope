@@ -128,6 +128,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .skip-link { position: absolute; top: -40px; left: 0; background: var(--accent2); color: #fff; padding: 0.5rem 1rem; z-index: 100; border-radius: 0 0 4px 0; }
 .skip-link:focus { top: 0; }
 
+/* Reduced motion (accessibility): collapse every transition/animation the
+   sheet defines (hovers, the live-badge pulse, bar/HP-fill grows, etc.) to
+   near-instant rather than hunting down each declaration individually. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ── Nav ── */
 nav {
   background: var(--nav-bg);
@@ -155,6 +167,8 @@ nav button { background: linear-gradient(135deg, var(--accent2), var(--copper));
 nav button:hover { opacity: 0.85; }
 .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text); font-size: 1.2rem; padding: 0.3rem 0.5rem; border-radius: 6px; cursor: pointer; line-height: 1; transition: border-color 0.15s; margin-left: 0.5rem; }
 .theme-toggle:hover { border-color: var(--gold); }
+.shortcuts-btn { background: none; border: 1px solid var(--border); color: var(--text); font-size: 0.95rem; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; line-height: 1; transition: border-color 0.15s; margin-left: 0.25rem; }
+.shortcuts-btn:hover { border-color: var(--gold); }
 .stop-btn { background: none; border: 1px solid var(--crimson); color: var(--crimson); font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; margin-left: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; transition: background 0.15s, color 0.15s; }
 .stop-btn:hover { background: var(--crimson); color: var(--bg); }
 
@@ -458,7 +472,7 @@ tr:hover { background: rgba(201,165,92,0.03); }
 .deck-card:hover { border-color: var(--gold); }
 /* Quantity stepper */
 .card-qty { display: flex; align-items: center; gap: 0; border-right: 1px solid var(--border); }
-.qty-btn { width: 22px; align-self: stretch; border: none; background: transparent; color: var(--text2); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; font-family: inherit; padding: 0; }
+.qty-btn { width: 22px; min-height: 32px; align-self: stretch; border: none; background: transparent; color: var(--text2); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; font-family: inherit; padding: 0; }
 .qty-btn:hover { background: rgba(201,165,92,0.15); color: var(--gold); }
 .qty-count { min-width: 1.2em; text-align: center; font-size: 0.8rem; color: var(--text2); font-weight: 600; padding: 0 0.1rem; }
 .card-label { padding: 0.25rem 0.4rem; font-size: 0.85rem; }

@@ -1,5 +1,213 @@
 # Changelog
 
+## v3.1.0
+
+### Security
+
+- **A network bind answered to any Host header.** With no host allowlist, a
+  page that repoints its own hostname at 127.0.0.1 becomes same-origin with a
+  loopback install and can read run history and drive CSRF-gated actions —
+  CSRF tokens here are stateless HMACs handed out with every page, with no
+  origin binding. Requests whose Host is not one this deployment answers to
+  are now refused, with the allowlist read per request and defaulting by bind.
+- **The loopback decision trusted an environment variable alone.** An ASGI
+  embedding bound to every interface while `STS2_HOST` kept its default
+  served everything unauthenticated. The gate now also considers the
+  interface a request actually arrived on.
+- **The sign-in cookie is marked Secure** whenever the exchange is encrypted,
+  directly or behind a proxy that terminated TLS.
+- **A data bundle only had to parse to be installed.** A file of 400 bare
+  strings passed as "cards". Entries must now carry their family's
+  identifying field, and the whole dataset must survive a real KnowledgeBase
+  build in an isolated subprocess before it can replace live data.
+- **Run integrity verified the parsed model, not the file.** Unknown fields
+  were dropped during validation, so anything added to an exported run
+  vanished and the original digest still matched — a modified file reported
+  as verified. The digest is now recomputed from the file's own run mapping.
+- **Two error responses echoed internal detail.** The readiness probe
+  returned the `OSError` text when the state directory was unwritable, which
+  carries the full filesystem path — and `/ready` is deliberately exempt from
+  authentication so container healthchecks can reach it. The aggregate import
+  returned the sanitiser's exception verbatim, which can quote fragments of
+  the uploaded file back to whoever sent it. Both now log the detail and
+  return a description of what was wrong.
+
+- **Network binds now require authentication.** Binding to anything but
+  loopback (including the documented Docker setup) used to serve your entire
+  run history, live state, exports, and every settings/import action to any
+  client that could reach the port — CSRF tokens prove a request came from a
+  page, not who sent it, and every page handed one out. `serve` now refuses a
+  non-loopback bind unless `STS2_AUTH_TOKEN` is set, and every request must
+  present it (header, or `?token=` once per browser, then a signed cookie).
+  Loopback use stays zero-config. `STS2_ALLOW_UNAUTHENTICATED=1` is the
+  explicit opt-out for trusted reverse-proxy setups.
+- **Admin endpoints are disabled until a token is configured.** The
+  auto-generated admin token was logged at startup, which put a live
+  credential into console and container logs.
+- **Request bodies are capped before parsing.** Upload size checks used to
+  run only after the whole multipart body was parsed and spooled to disk.
+  A 2 MB request cap now rejects oversized bodies up front, and every
+  local/upstream input is bounded: save files, the game-install `.pck`
+  reader, wiki/Steam fetches, and data-bundle downloads and extraction.
+- **Imported data is validated as data, not just as JSON.** A top-level
+  array in a settings, community, hypotheses, aggregate, or imported-run
+  file used to crash pages (or the whole app at startup); `Infinity`
+  counters crashed the stats import and could persist as nonstandard JSON.
+  Every loader now shape-checks, rejects non-finite numbers, enforces
+  counter invariants (wins ≤ total, picks ≤ offers), and reports — instead
+  of silently skipping — a failed persist.
+
+### Fixed
+
+- **Reported coverage was measured on a machine with the game installed.**
+  `sts2/localize.py` reads the game's own data files: it covers 87% where
+  the game exists and 12% where it does not, and it is 723 statements, so
+  the total moves about ten points. The reproducible figure — what CI and a
+  contributor see — is 74%, not the ~84% previously quoted. The CI gate is
+  calibrated against CI, and the badge states the CI number.
+- **Badge publishing moved out of the CI workflow.** CI is now called as a
+  reusable workflow by the release pipeline, and a called workflow cannot
+  request more permission than its caller grants — the write-scoped badge
+  job made the entire release workflow fail to compile. It now reacts to CI
+  completing instead, which also means the badge token is never held during
+  a pull request.
+- **The browser test suite failed every test, and nothing caught it.**
+  `pytest` deselects those tests by default, so a green run never touched
+  them while the required `browser` check would have failed on merge. The
+  fixture serves on loopback but the auth middleware read the suite-wide
+  `STS2_HOST=0.0.0.0`, so `/health` answered (letting the fixture start)
+  while every page navigation was refused. A guard in the default suite now
+  asserts that alignment.
+- **Crash recovery ran after the data it repairs was already needed.** A
+  process killed mid-swap left no live dataset; recovery only ran later, so
+  the app started against the wreckage, and a frozen build could reseed from
+  the older bundled copy first and abandon the newer backup. Recovery now
+  runs before seeding, migration, and knowledge-base construction.
+- **Combat telemetry recorded the same token for every play.** The log
+  pattern captured a bare word, so `CARD.BASH` became `CARD`; it also
+  discarded the player number, so in co-op a partner's plays were attributed
+  to whoever was being watched.
+- **A prophecy grade was computed from runs that came after it**, so a
+  historical prediction drifted as new runs accumulated.
+- **Release workflows raced.** Both platforms fired on the same tag and both
+  published to the same release; one could publish while the other was still
+  building. They are now one workflow with a single publisher, and tagged
+  builds run the same gates that protect master rather than plain `pytest`.
+- **Binary releases shipped license names and URLs, not license texts**,
+  after deliberately stripping the dependencies' own copies. The verbatim
+  texts are now collected before stripping and ship as `LICENSES.txt`.
+- **Local builds and Docker images could carry files that are deliberately
+  unpublished.** The image build now excludes them and the local build script
+  refuses to run against a tree containing them.
+- **Ghost Run Comparison is actually visible now.** The splits were computed
+  on every live view and then discarded — nothing rendered them — and the
+  comparison was always anchored to ascension 0 because the live run never
+  carried its ascension. The live page now shows the splits and summary,
+  updates them over SSE without a reload, and matches the ghost to your
+  real ascension.
+- **The Graveyard shows your newest deaths.** It selected the oldest 50, so
+  once you had 50 losses no new death ever appeared.
+- **Run Integrity now checks something.** The digest omitted whether you
+  won, what killed you, and the run's length — two runs differing only in
+  those produced the same hash while the page promised byte-for-byte
+  identity. The digest now covers the complete run record, exports embed
+  it, imports verify it, and the page reports verified/mismatch honestly:
+  it is tamper evidence, not proof of authorship.
+- **Rivalry Seeds works end to end.** Imported runs are kept for the
+  session (bounded, 4 hours) and can be selected on the Runs page for
+  comparison against your own attempt — previously an imported run
+  vanished after one view and could not be compared at all.
+- **Hypothesis Lab is Bayesian for real.** The old "posterior" was
+  0.5 + effect/2. Verdicts now come from an exact Beta-Binomial posterior
+  comparison of the two arms' win rates (95% threshold, minimum 3 runs per
+  arm), and the page shows the posterior effect and P(better). A page view
+  also no longer rewrites the hypotheses file thousands of times — reads
+  are pure and write nothing.
+- **Live tracking follows the tree you're playing in.** Change detection
+  and the live run watched only whichever save tree was freshest at
+  startup; switching between vanilla and modded play mid-session left the
+  dashboard blind. Combat telemetry from the game log (cards played, extra
+  turns, elites defeated) also survives into the API now instead of being
+  silently dropped.
+- **The Cascade Map tells the truth.** The acquisition floor no longer
+  counts as "after the pick", tiny windows are skipped instead of compared
+  against zero, repeated picks get their own rows, the promised HP
+  trajectory exists, and the UI says plainly that this is an observational
+  before/after split — later floors are harder regardless of the pick.
+- **Deck health spans its promised 0-100.** The connectivity component was
+  silently halved (ideal decks capped at 90), "Synergy Edges" was a
+  keyword-weighted sum that could display 1.0, and the eigensolver stopped
+  before converging on larger decks.
+- **Prophecy does what the guide says.** The home page shows a prophecy for
+  your latest character plus a tilt warning when one fires, and the run
+  detail page grades the prophecy against the outcome.
+- **The deck-save dialog names your character.** It used to derive the
+  "character" from a card id and offer "Deck name (saving as BASH)".
+- **pip installs work.** Wheels shipped without templates, static assets,
+  data, or locales, so `pip install` produced a package that could not even
+  import. Wheels and sdists now carry every runtime resource, and CI
+  installs the built wheel to prove it.
+- **Data updates can't destroy your dataset.** The updater's swap had a
+  crash window that left no live data and could then delete the only
+  backup; installs are now staged, locked, fsynced, validated as a complete
+  dataset before promotion, and recoverable at startup.
+- **Docker keeps your state.** The compose file publishes on loopback only,
+  keeps settings/stats in a named volume, and documents read-only save
+  mounts; the image healthcheck now reflects readiness (card data loaded),
+  not just liveness.
+- **Accessibility.** The shortcuts overlay is a real dialog (focus trap,
+  Escape, visible "?" trigger), the nav toggle exposes its state, motion
+  respects `prefers-reduced-motion`, the page language follows your
+  language setting, and the project site's download button finally passes
+  WCAG AA contrast.
+- **The Stop button reports failures.** It said "SpireScope stopped" even
+  when the server refused the request.
+- **The default loopback Host allowlist no longer answers to `testserver`.**
+  That name is what Starlette's test client sends; it was never a loopback
+  name, and shipping it left the rebinding defence answering to a hostname
+  no real deployment uses.
+- **Documentation corrections.** The Docker quick-start generated an auth
+  token in a subshell and never showed it, so the documented one-liner
+  produced a dashboard you could not open. "From Source" began at `venv`
+  with no `git clone`, so it failed verbatim on a clean machine. The
+  self-updating-data bullet advertised startup bundle offers without saying
+  packaged builds keep that check off by default — which is exactly what
+  Quick Start tells you to download. The CSRF claim said "every
+  state-changing POST"; the two admin JSON endpoints are gated by an
+  `X-Admin-Token` header instead, which a cross-origin page cannot set.
+
+### Internal
+
+- Dependencies are locked with hashes and CI installs from the lock;
+  workflow actions are pinned to commit SHAs; PR runs hold read-only
+  tokens; releases ship an SBOM and build-provenance attestation.
+- CI adds Windows/macOS test legs, wheel-from-sdist install and Docker
+  smoke jobs, a pip-audit job, a branch-coverage floor, and a test badge
+  that can actually turn red.
+- SSE connections are capped per client, rate-limited at the handshake,
+  and share one poll per window instead of one per connection; caches got
+  single-flight locks and refresh generations; shutdown now stops the file
+  watchers it started.
+- The build script is `build_exe.py` (a root `build.py` shadowed PyPA's
+  `python -m build`), and the version is single-sourced from
+  `sts2/config.py`.
+- **The test badge could never have published.** Its job declares
+  `contents: write`, and a job-level permissions block replaces the
+  workflow-level one rather than merging with it, so `actions` was `none` —
+  but the badge artifact belongs to the triggering CI run, and that
+  cross-run download needs `actions: read`. It would have 403'd, and
+  `continue-on-error` would have turned that into a skipped publish: a badge
+  that silently never updates. Only reachable on `master`, which is why a
+  green branch never showed it.
+- The release workflow's `dry_run` input is gone. Publishing gates on
+  `github.event_name == 'push'`, so every `workflow_dispatch` was already a
+  dry run and the toggle could only mislead. The comment claiming a missing
+  macOS artifact is tolerated went too — that step has no
+  `continue-on-error`, and the next one refuses to publish a release missing
+  either platform's assets.
+- The build requires `setuptools>=77`, not `>=68`: the `license = "MIT"`
+  metadata is the PEP 639 SPDX string form, which older setuptools rejects.
+
 ## v3.0.5
 
 ### Fixed

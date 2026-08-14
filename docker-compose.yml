@@ -1,0 +1,60 @@
+# Local-only Compose file for running SpireScope in a container.
+#
+# Quick start:
+#   1. Set STS2_AUTH_TOKEN to a long random string, e.g. in a `.env` file
+#      next to this one (STS2_AUTH_TOKEN=...). The app is bound to
+#      0.0.0.0 inside the container (see the Dockerfile), and any
+#      non-loopback bind refuses to start without this token set.
+#   2. docker compose up --build
+#   3. Open http://127.0.0.1:8000
+services:
+  spirescope:
+    build: .
+    ports:
+      # Published on the host's loopback interface only: the container
+      # listens on 0.0.0.0:8000 internally, but "127.0.0.1:8000:8000" means
+      # only 127.0.0.1 on the host machine can reach it — not your LAN. Drop
+      # the "127.0.0.1:" prefix (and keep STS2_AUTH_TOKEN set) to expose it
+      # more broadly.
+      - "127.0.0.1:8000:8000"
+    environment:
+      # ${VAR:?message} makes `docker compose up` fail immediately with
+      # `message` when STS2_AUTH_TOKEN is unset, instead of starting a
+      # server that then rejects every request with 401.
+      STS2_AUTH_TOKEN: ${STS2_AUTH_TOKEN:?Set STS2_AUTH_TOKEN to a long random string}
+      # Uncomment this together with one of the save-dir bind mounts below to
+      # let SpireScope read your real Slay the Spire 2 saves. The value must
+      # match the mount's container-side target path, and the mounted host
+      # directory must be the profile's saves/ directory itself (the leaf that
+      # holds progress.save and history/), NOT the SlayTheSpire2 tree root —
+      # STS2_SAVE_DIR is used verbatim as the saves directory.
+      # STS2_SAVE_DIR: /saves
+    volumes:
+      # Named volume for user state (UI language, hypotheses, community
+      # aggregate) — see the Dockerfile's state-dir comment for the path.
+      # Survives `docker compose down`; only `docker compose down -v` (or
+      # `docker volume rm`) removes it.
+      - spirescope-state:/home/appuser/.local/share/SpireScope
+
+      # Read-only bind mount for the host's STS2 save directory. Uncomment
+      # exactly ONE of the following lines for your platform (adjust the
+      # username/path as needed), and uncomment STS2_SAVE_DIR above so the
+      # app knows to look at /saves instead of auto-detecting a host path
+      # that doesn't exist inside the container.
+      #
+      # Replace <steam-id> with the numeric folder under steam/ (there is
+      # usually exactly one). Mount the profile's saves/ directory itself.
+      #
+      # Windows (path as seen from Docker Desktop, not a WSL path):
+      # - "C:/Users/<you>/AppData/Roaming/SlayTheSpire2/steam/<steam-id>/profile1/saves:/saves:ro"
+      #
+      # macOS:
+      # - "/Users/<you>/Library/Application Support/SlayTheSpire2/steam/<steam-id>/profile1/saves:/saves:ro"
+      #
+      # Linux (native install; swap in $XDG_DATA_HOME if you set one):
+      # - "${HOME}/.local/share/SlayTheSpire2/steam/<steam-id>/profile1/saves:/saves:ro"
+
+volumes:
+  # Backing store for the state bind mount above — created automatically on
+  # first `docker compose up`.
+  spirescope-state:

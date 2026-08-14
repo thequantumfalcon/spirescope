@@ -1,18 +1,18 @@
 [project]
 name = "spirescope"
-version = "3.0.5"
+dynamic = ["version"]
 description = "Spirescope — a local web dashboard for Slay the Spire 2. Card/relic/enemy lookup, deck analysis, live run tracking, and strategy guides."
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.11"
 authors = [{name = "The Quantum Falcon", email = "thequantumfalcon@users.noreply.github.com"}]
 keywords = ["slay-the-spire", "slay-the-spire-2", "dashboard", "deck-analysis", "live-tracking", "companion-app"]
 classifiers = [
     "Development Status :: 4 - Beta",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",
     "Topic :: Games/Entertainment",
 ]
@@ -41,6 +41,7 @@ dev = [
     "httpx>=0.24.0",
     "ruff>=0.4.0",
     "pyinstaller>=6.0",
+    "mypy>=1.0",
 ]
 browser = [
     "pytest-playwright>=0.4.0",
@@ -48,11 +49,41 @@ browser = [
 ]
 
 [build-system]
-requires = ["setuptools>=68.0"]
+# 77 is the floor, not 68: `license = "MIT"` above is the PEP 639 SPDX string
+# form, which older setuptools rejects as an invalid [project] license.
+requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["sts2*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "sts2.config.VERSION"}
+
+# Wheels must carry every runtime resource dir, or `import sts2.app` fails on
+# the StaticFiles mount. locales/*.json deliberately excludes locales/content/
+# (user-built game-text overlays — not ours to redistribute), matching
+# spirescope.spec.
+[tool.setuptools.package-data]
+sts2 = [
+    "data/*.json",
+    "data/last_updated.txt",
+    "data/mods/README.md",
+    "templates/*.html",
+    "static/*",
+    "static/fonts/*",
+    "locales/*.json",
+]
+
+# Never ship: local working files that .gitignore keeps out of the repo but
+# that a wheel built from a working tree would otherwise sweep in.
+[tool.setuptools.exclude-package-data]
+sts2 = [
+    "data/pheromones.json",
+    "data/hypotheses.json",
+    "data/.fetcher_keys.json",
+    "locales/content/*",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -70,3 +101,17 @@ extend-exclude = ["dist", "build", ".venv_build"]
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
 ignore = ["E402", "E501"]
+
+# Blocking in CI (see ci.yml): the error backlog is cleared and stays at zero.
+# Config kept minimal for now: no strictness flags beyond defaults.
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+
+# sts2.risk and sts2.diagnosis are private modules deliberately excluded from
+# the public repository (see routes.py's try/except imports of them). On a
+# clean checkout they don't exist, so mypy would otherwise report
+# import-not-found for these two.
+[[tool.mypy.overrides]]
+module = ["sts2.risk", "sts2.diagnosis"]
+ignore_missing_imports = true

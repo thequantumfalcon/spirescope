@@ -372,6 +372,20 @@ def _make_bundle(tmp_path: Path, cards) -> tuple[Path, str]:
     src = tmp_path / "bundle-src" / "data"
     src.mkdir(parents=True)
     (src / "cards.json").write_text(json.dumps(cards))
+    # The install gate validates the complete dataset before promoting: every
+    # required file must parse, hold identified records, and the whole
+    # directory must load as a KnowledgeBase. Empty families fail that on
+    # purpose, so ship one real record each.
+    (src / "relics.json").write_text(
+        json.dumps([{"id": "RELIC.BURNING_BLOOD", "name": "Burning Blood"}]))
+    (src / "potions.json").write_text(
+        json.dumps([{"id": "POTION.FIRE", "name": "Fire Potion"}]))
+    (src / "enemies.json").write_text(
+        json.dumps([{"id": "ENCOUNTER.JAW_WORM", "name": "Jaw Worm"}]))
+    (src / "events.json").write_text(
+        json.dumps([{"id": "EVENT.NEOW", "name": "Neow"}]))
+    (src / "patches.json").write_text(
+        json.dumps([{"patch": "v0.110.0", "date": "2026-07-31"}]))
     (src / "last_updated.txt").write_text("2026-07-22T20:00:00+00:00")
     bundle = tmp_path / "data.tar.gz"
     with tarfile.open(bundle, "w:gz") as tf:
@@ -400,6 +414,9 @@ def test_install_data_update_swaps_atomically(tmp_path, monkeypatch):
 
     monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
     monkeypatch.setattr(updater.urllib.request, "urlopen", fake_urlopen)
+    # The fixture ships one card; the real >=400 floor is exercised by
+    # test_updater's validation-gate tests.
+    monkeypatch.setattr(updater, "_MIN_CARDS", 1)
     updater._data_update = {
         "tag": "data-v2026.07.22", "date": "2026-07-22",
         "tarball": "https://github.com/x/y/data.tar.gz",

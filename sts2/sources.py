@@ -9,10 +9,13 @@ import json
 import logging
 import re
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 
 log = logging.getLogger(__name__)
+
+_MAX_RESPONSE_SIZE = 10_000_000  # 10 MB
 
 _WIKI_API = "https://slaythespire.wiki.gg/api.php"
 _WIKI_CARD_MODULES = [
@@ -198,8 +201,13 @@ class WikiggSource:
                 f"{_WIKI_API}?{params}",
                 headers={"User-Agent": _get_user_agent()},
             )
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
+            # URL is always the hardcoded https wiki API — no file:/custom schemes.
+            with urllib.request.urlopen(req, timeout=30) as resp:  # nosec B310
+                body = resp.read(_MAX_RESPONSE_SIZE + 1)
+                if len(body) > _MAX_RESPONSE_SIZE:
+                    raise urllib.error.URLError(
+                        f"Response too large (> {_MAX_RESPONSE_SIZE} bytes)")
+                data = json.loads(body.decode("utf-8"))
             for page in data.get("query", {}).get("pages", []):
                 revs = page.get("revisions", [])
                 if revs:

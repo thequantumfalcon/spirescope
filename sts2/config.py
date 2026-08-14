@@ -3,10 +3,10 @@ import os
 import sys
 from pathlib import Path
 
-# Single source of truth for the version fallback (used when importlib.metadata
-# can't find the package, e.g. in PyInstaller bundles). Keep in sync with
-# pyproject.toml [project] version.
-VERSION = "3.0.5"
+# Single source of truth for the version. pyproject.toml declares the version
+# dynamic and reads it straight off this attribute, so there is no second copy
+# to keep in sync -- editing this line is the whole of a version bump.
+VERSION = "3.1.0"
 
 # Project paths
 PROJECT_ROOT = Path(__file__).parent

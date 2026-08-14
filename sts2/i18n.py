@@ -18,6 +18,7 @@ import logging
 import os
 import re
 from pathlib import Path
+from typing import Any
 
 _CODE_RE = re.compile(r"[a-z]{2,8}")
 
@@ -36,7 +37,16 @@ def is_valid_code(code: str) -> bool:
 
 
 def _load_locale(code: str) -> dict:
-    """Load a locale file, falling back to English."""
+    """Load a locale file, falling back to English.
+
+    The code is validated here rather than trusted from the caller. Every
+    current caller does check first, but this builds a filesystem path out
+    of the value, and a guard that lives only in callers is one new call
+    site away from being absent — 'de/../../../etc/passwd' would otherwise
+    resolve straight out of the locales directory.
+    """
+    if not is_valid_code(code):
+        code = "en"
     if code in _cache:
         return _cache[code]
     path = _LOCALES_DIR / f"{code}.json"
@@ -65,7 +75,7 @@ def get_translator(code: str = ""):
         """Look up a dotted key like 'nav.cards'. Falls back to English, then the key itself."""
         parts = key.split(".")
         # Try requested locale
-        node = locale
+        node: Any = locale
         for p in parts:
             if isinstance(node, dict) and p in node:
                 node = node[p]
@@ -129,9 +139,19 @@ def get_language() -> str:
     if env:
         return env
     try:
-        return json.loads(_settings_path().read_text(encoding="utf-8")).get("language", "en")
+        settings = json.loads(_settings_path().read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return "en"
+    # A settings.json holding valid-but-wrong JSON (e.g. []) used to raise
+    # here — during application import, taking the whole app down with it.
+    if not isinstance(settings, dict):
+        return "en"
+    lang = settings.get("language", "en")
+    # A truthy non-string value (e.g. ["de"], 5) used to be returned as-is
+    # and flow unvalidated into locale loading — an unhashable value like a
+    # list then raised in _load_locale's cache lookup, taking application
+    # import down with it.
+    return lang if isinstance(lang, str) and is_valid_code(lang) else "en"
 
 
 def set_language(code: str) -> bool:
@@ -143,17 +163,16 @@ def set_language(code: str) -> bool:
         settings = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         settings = {}
+    if not isinstance(settings, dict):
+        # Same valid-but-wrong-JSON hole as get_language: settings[] made this
+        # a TypeError 500. The file is corrupt state, not user prose — replace.
+        settings = {}
     settings["language"] = code
-    try:
-        path.write_text(json.dumps(settings, indent=2) + "\n", encoding="utf-8")
-    except OSError:
-        # Callers turn False into "Unknown language.", which is the wrong story
-        # when the locale was fine and the data dir was simply unwritable —
-        # exactly the Docker case, where this failed silently for every user.
-        logging.getLogger(__name__).warning(
-            "Could not persist language choice to %s", path, exc_info=True)
-        return False
-    return True
+    from sts2.persist import write_json_atomic
+    # Callers turn False into "Unknown language.", which is the wrong story
+    # when the locale was fine and the state dir was simply unwritable —
+    # exactly the Docker case, where this failed silently for every user.
+    return write_json_atomic(path, settings)
 
 
 def available_languages() -> list[dict]:

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ ui_lang() }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,8 +24,8 @@
       <img src="/static/logo.jpg?v={{ logo_hash }}" alt="SpireScope" width="32" height="32" class="logo-img">
       SpireScope
     </a>
-    <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
-    <div class="nav-links">
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">&#9776;</button>
+    <div class="nav-links" id="nav-links">
       <a href="/live" class="live-link" {% if p == '/live' %}aria-current="page"{% endif %}>{{ t("nav.live_run") }}</a>
       <a href="/cards" {% if p.startswith('/cards') %}aria-current="page"{% endif %}>{{ t("nav.cards") }}</a>
       <a href="/relics" {% if p.startswith('/relics') %}aria-current="page"{% endif %}>{{ t("nav.relics") }}</a>
@@ -44,12 +44,13 @@
       <a href="/community" {% if p == '/community' %}aria-current="page"{% endif %}>{{ t("nav.community") }}</a>
       <a href="/guide" {% if p == '/guide' %}aria-current="page"{% endif %}>{{ t("nav.guide") }}</a>
       <form class="search-form" action="/search" method="get">
-        <input type="search" name="q" placeholder="{{ t('nav.search_placeholder') }}" value="{{ query|default('') }}" maxlength="200">
+        <input type="search" name="q" placeholder="{{ t('nav.search_placeholder') }}" aria-label="{{ t('nav.search_placeholder') }}" value="{{ query|default('') }}" maxlength="200">
         <button type="submit">{{ t("nav.search") }}</button>
       </form>
     </div>
     <button class="stop-btn" aria-label="Stop SpireScope">Stop</button>
     <button class="theme-toggle" aria-label="Switch to light mode">&#9790;</button>
+    <button class="shortcuts-btn" aria-label="Keyboard shortcuts" aria-haspopup="dialog" aria-controls="shortcut-overlay">?</button>
   </nav>
   <main id="main" class="container" data-page="{% block page_id %}home{% endblock %}">
     {% block content %}{% endblock %}
@@ -59,9 +60,9 @@
     <a href="https://github.com/thequantumfalcon/spirescope">GitHub</a> &middot;
     <a href="/settings">{{ t("settings.title") }}</a>
   </footer>
-  <div id="shortcut-overlay" class="shortcut-overlay" hidden>
-    <div class="shortcut-overlay-content">
-      <h3>Keyboard Shortcuts</h3>
+  <div id="shortcut-overlay" class="shortcut-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="shortcut-overlay-title">
+    <div class="shortcut-overlay-content" tabindex="-1">
+      <h3 id="shortcut-overlay-title">Keyboard Shortcuts</h3>
       <table class="shortcut-table">
         <tr><td><kbd>/</kbd></td><td>Search</td></tr>
         <tr><td><kbd>h</kbd></td><td>Home</td></tr>

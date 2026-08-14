@@ -103,11 +103,12 @@ address macOS Gatekeeper, which needs Apple notarization separately.
 
 ## How to satisfy yourself it's safe
 
-- **Read the source** — it's all here, ~700 automated tests included.
-- **Check what it does on the network:** nothing, unless you ask it to.
-  The server binds to `127.0.0.1` only. The sole outbound calls are the
-  optional update check and the game-data refresh, both disableable with
-  `SPIRESCOPE_CHECK_UPDATES=0`.
+- **Read the source** — it's all here, with an automated test suite (including browser tests) that runs on every change.
+- **Check what it does on the network:** the packaged build makes no
+  outbound calls unless you opt in with `SPIRESCOPE_CHECK_UPDATES=1`.
+  (Source installs check GitHub for app and data updates at startup;
+  `SPIRESCOPE_CHECK_UPDATES=0` turns that off.) The server binds to
+  `127.0.0.1` only.
 - **Check what it touches on disk:** it reads your STS2 save files and
   never writes to them.
 - **Scan it yourself** — upload the zip to [VirusTotal](https://www.virustotal.com/).
@@ -130,8 +131,9 @@ URL. Other vendors have equivalent forms.
 
 ## Maintainer notes
 
-- Builds are produced only by GitHub Actions from tagged commits in this
-  repository — there is no local build step and no other upload path.
+- Published builds are produced only by GitHub Actions from tagged commits
+  in this repository; there is no other upload path. (`build_exe.py` exists
+  for local development builds, which are never published.)
 - GitHub Releases is the only official download source.
 - Signing options under consideration: Azure Trusted Signing (about
   $10/month, works from GitHub Actions, requires identity verification) or

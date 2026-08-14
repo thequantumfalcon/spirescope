@@ -57,7 +57,7 @@ def _enabled_sources() -> list[str]:
     return [s for s in sources if s in _KNOWN_SOURCES]
 
 
-def scrape_community_data(existing_names: set[str] = None) -> dict:
+def scrape_community_data(existing_names: set[str] | None = None) -> dict:
     """Scrape all enabled sources for STS2 community data.
 
     Returns dict with: card_tiers, community_tips, meta_posts, sources, etc.
@@ -146,7 +146,7 @@ def _load_cached_community_data() -> dict | None:
     return None
 
 
-def run_community_scraper():
+def run_community_scraper() -> None:
     """Main entry point: scrape, save, and apply community data."""
     # Build name set from existing data
     existing_names: set[str] = set()

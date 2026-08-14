@@ -11,10 +11,24 @@ from pathlib import Path
 # would silently bypass the rate-limiter and break those tests.
 os.environ["STS2_HOST"] = "0.0.0.0"
 
+# A non-loopback bind engages the network auth gate, so give the suite a
+# token; the shared client below presents it on every request. Auth-specific
+# tests build their own clients without the default header.
+os.environ["STS2_AUTH_TOKEN"] = "test-auth-token"
+
+# Admin endpoints are disabled when no token is configured (nothing is
+# auto-generated any more); the admin-route tests need them enabled.
+os.environ["SPIRESCOPE_ADMIN_TOKEN"] = "test-admin-token"
+
 # Pin the suite to English: KnowledgeBase now applies the persisted UI
 # language's content overlay, so without this a developer who picked German
 # in Settings would fail every English-name assertion locally.
 os.environ["STS2_LANG"] = "en"
+
+# Keep the suite hermetic: without this the log tailer resolves godot.log
+# under the real APPDATA and live-run tests read whatever game session this
+# machine last played.
+os.environ["STS2_LOG_FILE"] = str(Path(__file__).parent / "_no_such_godot.log")
 
 import pytest
 import pytest_asyncio
@@ -50,13 +64,17 @@ def pytest_configure(config):
 
 @pytest.fixture(autouse=True)
 def _clear_rate_limits():
-    """Clear rate limit store before every test to prevent cross-test 429s."""
+    """Clear rate limit store and the live-run memo before every test —
+    cross-test 429s and a 2.5s-stale CurrentRun both make tests flaky."""
     _rate_limit_store.clear()
+    from sts2.routes import _live_memo
+    _live_memo.clear()
 
 
 @pytest_asyncio.fixture(scope="module")
 async def client():
     """Module-scoped async HTTP client — opened once, reused across all tests."""
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as c:
+    async with AsyncClient(transport=transport, base_url="http://test",
+                           headers={"X-Auth-Token": os.environ["STS2_AUTH_TOKEN"]}) as c:
         yield c

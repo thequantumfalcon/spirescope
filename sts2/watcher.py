@@ -20,7 +20,7 @@ try:
     _HAS_WATCHDOG = True
 except ImportError:
     _HAS_WATCHDOG = False
-    Observer = None  # type: ignore[assignment,misc]
+    Observer = None  # type: ignore[assignment]
     FileSystemEventHandler = object  # type: ignore[assignment,misc]
 
 
@@ -47,7 +47,7 @@ class SaveFileHandler(FileSystemEventHandler):
         """Only react to save-relevant files."""
         return path.endswith((".save", ".run"))
 
-    def on_modified(self, event):  # type: ignore[override]
+    def on_modified(self, event):
         if event.is_directory or not self._should_handle(event.src_path):
             return
         now = time.monotonic()
@@ -57,14 +57,14 @@ class SaveFileHandler(FileSystemEventHandler):
             self._last_trigger = now
         self._loop.call_soon_threadsafe(self._event.set)
 
-    on_created = on_modified  # type: ignore[assignment]
+    on_created = on_modified
 
 
 def start_observer(
     save_dir: Path,
     loop: asyncio.AbstractEventLoop,
     event: asyncio.Event,
-) -> Observer | None:
+) -> Observer | None:  # type: ignore[valid-type]
     """Start watchdog Observer. Returns None if watchdog unavailable or fails."""
     if not _HAS_WATCHDOG:
         log.info("watchdog not installed, using polling fallback")

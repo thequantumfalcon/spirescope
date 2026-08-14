@@ -1,8 +1,25 @@
-"""Hypothesis Lab — formally test strategic beliefs with Bayesian statistics."""
+"""Hypothesis Lab — test strategic beliefs with a Beta-Binomial model.
+
+Each hypothesis splits run history into a matching arm and a non-matching
+arm and compares win rates. Both arms get a uniform Beta(1,1) prior; the
+posterior probability that the matching arm's true win rate is higher is
+computed exactly (no sampling) and drives the verdict. The previous scoring
+subtracted two raw win rates and called 0.5 + effect/2 a "posterior" — no
+prior, no likelihood, no uncertainty.
+"""
 import json
+import logging
+import math
 import time
 
 from sts2.config import state_path
+
+log = logging.getLogger(__name__)
+
+# A verdict requires at least this many runs in EACH arm, and 95% posterior
+# probability in one direction.
+_MIN_RUNS_PER_ARM = 3
+_DECISION_THRESHOLD = 0.95
 
 
 def _hypotheses_file():
@@ -19,17 +36,30 @@ def load_hypotheses():
     path = _hypotheses_file()
     if path.exists():
         try:
-            return json.loads(path.read_text(encoding="utf-8"))
+            data = json.loads(path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
-            pass
+            return {}
+        # Anything but an object is corrupt state; every caller iterates
+        # .items() and would 500 on a top-level array.
+        if isinstance(data, dict):
+            # A dict whose entries aren't themselves dicts is also corrupt
+            # state — every downstream field access (hyp["condition_type"],
+            # hyp["runs_matching"] = ...) assumes each entry is an object,
+            # and would crash evaluation. Drop the bad entries and degrade.
+            clean = {}
+            for hyp_id, hyp in data.items():
+                if isinstance(hyp, dict):
+                    clean[hyp_id] = hyp
+                else:
+                    log.warning("Dropping non-dict hypothesis entry %r in %s",
+                                hyp_id, path)
+            return clean
     return {}
 
 
-def save_hypotheses(hypotheses):
-    try:
-        _hypotheses_file().write_text(json.dumps(hypotheses, indent=2), encoding="utf-8")
-    except OSError:
-        pass
+def save_hypotheses(hypotheses) -> bool:
+    from sts2.persist import write_json_atomic
+    return write_json_atomic(_hypotheses_file(), hypotheses)
 
 
 def register_hypothesis(hyp_id, text, condition_type, params):
@@ -43,7 +73,6 @@ def register_hypothesis(hyp_id, text, condition_type, params):
         "text": text,
         "condition_type": condition_type,
         "params": params,
-        "prior": 0.5,
         "runs_tested": 0,
         "runs_matching": 0,
         "wins_matching": 0,
@@ -56,44 +85,86 @@ def register_hypothesis(hyp_id, text, condition_type, params):
     return hypotheses[hyp_id]
 
 
-def update_hypothesis(hyp_id, run):
-    """Update a hypothesis with data from a new run. Bayesian posterior update."""
-    hypotheses = load_hypotheses()
-    if hyp_id not in hypotheses:
-        return None
+def evaluate_hypotheses(hypotheses: dict, runs) -> dict:
+    """Re-evaluate every hypothesis against a snapshot of run history.
 
-    hyp = hypotheses[hyp_id]
-    matches = _check_condition(hyp, run)
-
-    if matches:
-        hyp["runs_matching"] += 1
-        if run.win:
-            hyp["wins_matching"] += 1
-    else:
-        hyp["runs_not_matching"] += 1
-        if run.win:
-            hyp["wins_not_matching"] += 1
-
-    hyp["runs_tested"] += 1
-
-    # Compute posterior
-    if hyp["runs_matching"] >= 3 and hyp["runs_not_matching"] >= 3:
-        wr_match = hyp["wins_matching"] / hyp["runs_matching"]
-        wr_no_match = hyp["wins_not_matching"] / hyp["runs_not_matching"]
-        effect = wr_match - wr_no_match
-
-        if hyp["runs_tested"] >= 10:
-            if effect > 0.1:
-                hyp["verdict"] = "confirmed"
-            elif effect < -0.1:
-                hyp["verdict"] = "refuted"
+    Pure computation on the passed dict — no file I/O. The previous design
+    reloaded and rewrote the whole hypotheses file once per run x hypothesis
+    (roughly 10,001 synchronous writes for one page view at 1,000 runs and
+    10 hypotheses), blocked the event loop doing it, and silently corrupted
+    counters whenever a mid-loop write failed.
+    """
+    for hyp in hypotheses.values():
+        hyp["runs_tested"] = 0
+        hyp["runs_matching"] = 0
+        hyp["runs_not_matching"] = 0
+        hyp["wins_matching"] = 0
+        hyp["wins_not_matching"] = 0
+        hyp["verdict"] = "insufficient_data"
+        for stale in ("effect_size", "prob_effect", "posterior_match",
+                      "posterior_not_matching", "prior"):
+            hyp.pop(stale, None)
+    for run in runs:
+        for hyp in hypotheses.values():
+            if _check_condition(hyp, run):
+                hyp["runs_matching"] += 1
+                if run.win:
+                    hyp["wins_matching"] += 1
             else:
-                hyp["verdict"] = "inconclusive"
-        hyp["effect_size"] = round(effect, 3)
-        hyp["prior"] = round(0.5 + effect / 2, 3)  # Simple posterior
+                hyp["runs_not_matching"] += 1
+                if run.win:
+                    hyp["wins_not_matching"] += 1
+            hyp["runs_tested"] += 1
+    for hyp in hypotheses.values():
+        _finalise_verdict(hyp)
+    return hypotheses
 
-    save_hypotheses(hypotheses)
-    return hyp
+
+def _prob_first_beats_second(a1: int, b1: int, a2: int, b2: int) -> float:
+    """Exact P(p1 > p2) for p1 ~ Beta(a1,b1), p2 ~ Beta(a2,b2), integer a1.
+
+    Closed form: sum over i in [0, a1) of
+        B(a2+i, b1+b2) / ((b1+i) * B(1+i, b1) * B(a2, b2))
+    evaluated in log space to stay finite for large counts. Validated in
+    tests against an analytically known case (Beta(2,1) vs Beta(1,2) = 5/6).
+    """
+    def lbeta(x: float, y: float) -> float:
+        return math.lgamma(x) + math.lgamma(y) - math.lgamma(x + y)
+
+    total = 0.0
+    for i in range(int(a1)):
+        total += math.exp(lbeta(a2 + i, b1 + b2) - math.log(b1 + i)
+                          - lbeta(1 + i, b1) - lbeta(a2, b2))
+    return min(1.0, max(0.0, total))
+
+
+def _finalise_verdict(hyp: dict) -> None:
+    """Beta-Binomial posterior comparison of the two arms' win rates."""
+    n_match, w_match = hyp["runs_matching"], hyp["wins_matching"]
+    n_other, w_other = hyp["runs_not_matching"], hyp["wins_not_matching"]
+    if n_match < _MIN_RUNS_PER_ARM or n_other < _MIN_RUNS_PER_ARM:
+        return
+    a1, b1 = 1 + w_match, 1 + n_match - w_match
+    a2, b2 = 1 + w_other, 1 + n_other - w_other
+    posterior_match = a1 / (a1 + b1)
+    posterior_other = a2 / (a2 + b2)
+    prob = _prob_first_beats_second(a1, b1, a2, b2)
+    hyp["posterior_match"] = round(posterior_match, 3)
+    hyp["posterior_not_matching"] = round(posterior_other, 3)
+    hyp["effect_size"] = round(posterior_match - posterior_other, 3)
+    hyp["prob_effect"] = round(prob, 3)
+    # "supported"/"contradicted", not "confirmed"/"refuted": this compares
+    # two arms of your own history with nothing held constant — character,
+    # ascension, patch, improving skill over time, and choices that travel
+    # together all sit inside the comparison, and every page view is another
+    # look at the same accumulating data. The arithmetic is sound; the claim
+    # it licenses is association, not proof.
+    if prob >= _DECISION_THRESHOLD:
+        hyp["verdict"] = "supported"
+    elif prob <= 1 - _DECISION_THRESHOLD:
+        hyp["verdict"] = "contradicted"
+    else:
+        hyp["verdict"] = "inconclusive"
 
 
 def _check_condition(hyp, run):

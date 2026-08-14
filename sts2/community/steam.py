@@ -25,15 +25,21 @@ _REVIEWS_URL = (
 )
 _GUIDES_URL = f"https://steamcommunity.com/app/{_APP_ID}/guides/"
 _DISCUSSIONS_URL = f"https://steamcommunity.com/app/{_APP_ID}/discussions/"
+_MAX_RESPONSE_SIZE = 10_000_000  # 10 MB
 
 
-def _fetch_url(url: str, retries: int = 1) -> str | None:
+def _fetch_url(url: str, retries: int = 1) -> str | None:  # type: ignore[return]
     """Fetch URL content as string with retry."""
     for attempt in range(retries + 1):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                return resp.read().decode("utf-8", errors="replace")
+            # URLs come from the hardcoded https steamcommunity constants.
+            with urllib.request.urlopen(req, timeout=30) as resp:  # nosec B310
+                body = resp.read(_MAX_RESPONSE_SIZE + 1)
+                if len(body) > _MAX_RESPONSE_SIZE:
+                    raise urllib.error.URLError(
+                        f"Response too large (> {_MAX_RESPONSE_SIZE} bytes)")
+                return body.decode("utf-8", errors="replace")
         except (urllib.error.URLError, OSError) as e:
             if attempt < retries:
                 log.warning("Steam fetch failed (attempt %d/%d): %s", attempt + 1, retries + 1, e)
@@ -44,7 +50,7 @@ def _fetch_url(url: str, retries: int = 1) -> str | None:
 
 def _fetch_json(url: str) -> dict:
     """Fetch and parse JSON from URL."""
-    return json.loads(_fetch_url(url))
+    return json.loads(_fetch_url(url))  # type: ignore[arg-type]
 
 
 # ── Steam Reviews (JSON API) ────────────────────────────────────────────
@@ -98,7 +104,7 @@ def _scrape_reviews(existing_names: set[str], result: SourceResult) -> None:
 class _GuideListParser(HTMLParser):
     """Parse Steam guide listing page for guide titles and URLs."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.guides: list[dict] = []
         self._in_title = False
@@ -128,7 +134,7 @@ class _GuideListParser(HTMLParser):
 class _GuideDetailParser(HTMLParser):
     """Parse a Steam guide detail page for body text."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.text_parts: list[str] = []
         self._in_description = False
@@ -208,7 +214,7 @@ def _scrape_guides(existing_names: set[str], result: SourceResult) -> None:
 
         detail_parser = _GuideDetailParser()
         try:
-            detail_parser.feed(detail_html)
+            detail_parser.feed(detail_html)  # type: ignore[arg-type]
         except Exception:
             continue
 
@@ -248,7 +254,7 @@ def _scrape_guides(existing_names: set[str], result: SourceResult) -> None:
 class _DiscussionListParser(HTMLParser):
     """Parse Steam discussion listing for topic titles and reply counts."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.topics: list[dict] = []
         self._in_title = False
@@ -286,7 +292,7 @@ def _scrape_discussions(existing_names: set[str], result: SourceResult) -> None:
 
     parser = _DiscussionListParser()
     try:
-        parser.feed(html)
+        parser.feed(html)  # type: ignore[arg-type]
     except Exception as e:
         result.errors.append(f"Steam discussions parse: {e}")
         print("    Discussions: parse error, skipping")

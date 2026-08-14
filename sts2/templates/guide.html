@@ -56,16 +56,16 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <h2 id="updating-data">Updating Data</h2>
 <div class="card mb-md">
-  <p>SpireScope ships with baked-in game data. To fetch the latest cards, relics, and potions from the wiki:</p>
+  <p>SpireScope ships with baked-in game data. To fetch the latest cards, relics, and potions from its data sources (slaythespire2.gg primary, the community wiki secondary):</p>
   <pre><code>{{ cli }} update</code></pre>
   <p class="mt-sm">If you don't have internet access or just want to discover new entities from your save files:</p>
   <pre><code>{{ cli }} update --save-only</code></pre>
-  <p class="text-sm text-muted mt-sm">You can also hot-reload data without restarting by calling <code>POST /api/reload</code> with header <code>X-Admin-Token: YOUR_TOKEN</code>. Set <code>SPIRESCOPE_ADMIN_TOKEN</code> env var or enable debug logging to see the auto-generated token.</p>
+  <p class="text-sm text-muted mt-sm">You can also hot-reload data without restarting by calling <code>POST /api/reload</code> with header <code>X-Admin-Token: YOUR_TOKEN</code>. Set the <code>SPIRESCOPE_ADMIN_TOKEN</code> env var first — the endpoint stays disabled until a token is configured.</p>
 </div>
 
 <h2 id="languages">Languages</h2>
 <div class="card mb-md">
-  <p>Pick a language under <a href="/settings">Settings</a>. That translates the interface &mdash; navigation, buttons, and labels &mdash; and ships in fourteen languages. English and Traditional Chinese are reviewed; the rest are drafts, and corrections are welcome.</p>
+  <p>Pick a language under <a href="/settings">Settings</a>. That translates the shared chrome &mdash; navigation, buttons and the settings page &mdash; and ships in fifteen languages. Most page bodies are still English. English and Traditional Chinese are reviewed; the rest are drafts, and corrections are welcome.</p>
   <p class="mt-sm">Card, relic, potion, enemy, and event text is separate, because that text belongs to the game. To see it in your language, run this once:</p>
   <pre><code>{{ cli }} localize</code></pre>
   <p class="text-sm text-muted mt-sm">It reads the language files from the copy of Slay the Spire 2 already installed on this machine &mdash; nothing is downloaded, and the game folder is only read from. Restart Spirescope afterwards and card text follows your language setting, with search matching the translated names. Use <code>{{ cli }} localize --list</code> to see what your install offers, or <code>{{ cli }} localize --lang de,ja</code> for just a few. Anything the game does not translate stays in English.</p>
@@ -134,8 +134,8 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 <h2 id="mods">Mod Support</h2>
 <div class="card mb-md">
   <p>SpireScope can load custom mod data (cards, relics, enemies) from JSON files. Place <code>.json</code> files in the mods directory:</p>
-  <pre><code># Exe distribution: mods/ folder next to spirescope.exe
-# Development: sts2/data/mods/</code></pre>
+  <pre><code># Packaged build: mods/ folder next to the executable
+# Source install: mods/ under the state directory (see STS2_STATE_DIR)</code></pre>
   <p class="mt-sm">You can also set <code>STS2_MODS_DIR</code> to a custom path. Each JSON file should follow this format:</p>
   <pre><code>{
   "mod_name": "My Mod",
@@ -167,7 +167,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <div class="card mb-md">
   <h3>Ghost Run Comparison</h3>
-  <p>During a live run, SpireScope finds your best comparable historical run and shows floor-by-floor deltas. Green arrows mean you're ahead of your personal best. Red arrows mean you're behind. Works automatically — just open the live tracker.</p>
+  <p>During a live run, SpireScope finds your best comparable historical run (same character, ascension-matched when possible) and shows floor-by-floor HP and gold deltas. Green splits mean you're ahead of your personal best; red means behind. Works automatically — just open the live tracker.</p>
 </div>
 
 <div class="card mb-md">
@@ -193,13 +193,8 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 </div>
 
 <div class="card mb-md">
-  <h3>Autopsy Report</h3>
-  <p>When a run ends in death, open the run detail page to see the Autopsy Report. Five diagnostic agents analyze your run from different angles — deck coherence, combat tempo, economy, adaptation, and (uniquely) what went <em>right</em>. The causal chain traces the sequence of decisions that led to death.</p>
-</div>
-
-<div class="card mb-md">
   <h3>Cascade Map</h3>
-  <p>On any completed run's detail page, click a card to see its downstream impact. SpireScope compares your performance before and after picking that card — damage taken, fight length, floors survived. One card, its entire ripple through your run.</p>
+  <p>Every completed run's detail page includes a table showing, for each card you picked, how your combats changed afterwards — damage taken, fight length, and HP. It's an observational before/after comparison: later floors are harder, so it shows what happened after a pick, not what the pick caused.</p>
 </div>
 
 <div class="card mb-md">
@@ -209,17 +204,17 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <div class="card mb-md">
   <h3>Hypothesis Lab</h3>
-  <p>Test your strategic beliefs with data. Register a hypothesis like "skipping elites helps" and SpireScope tracks qualifying runs, updates Bayesian probabilities, and delivers a verdict: confirmed, refuted, or inconclusive.</p>
+  <p>Test your strategic beliefs with data. Register a hypothesis like "skipping elites helps" and SpireScope splits your runs into a matching and a non-matching arm, compares their win rates with a Beta-Binomial model, and reports whether your history supports it, contradicts it, or is inconclusive. It measures an association in your own runs — character, ascension, patch and your own improvement all sit inside the comparison — so treat it as a lean, not a proof.</p>
 </div>
 
 <div class="card mb-md">
   <h3>Rivalry Seeds</h3>
-  <p>Export a run as JSON from the run detail page. Share the seed with a friend. They play the same seed and export their run. Import both on the rivalry page to see a floor-by-floor decision diff — where you picked differently and who survived longer.</p>
+  <p>Export a run as JSON from the run detail page and share it. When a friend sends you theirs, import it on the Runs page — imported runs stay available for comparison during your session — then compare it against your own attempt on that seed for a floor-by-floor decision diff: where you picked differently and who survived longer.</p>
 </div>
 
 <div class="card mb-md">
   <h3>Run Integrity</h3>
-  <p>Every run gets a SHA-256 hash chain (Merkle root) that proves the run data is unmodified. Shown on the run detail page. Share your hash to verify achievements without trusting a central server.</p>
+  <p>Every run gets a SHA-256 checksum over its complete record, shown on the run detail page. Import a friend's exported run and Spirescope re-checks it against the checksum in the file, so you can tell whether it was edited after export. It's tamper evidence, not proof of authorship — anyone can recompute the checksum for a run they changed — so it doesn't verify achievements on its own.</p>
 </div>
 
 <h2 id="shortcuts">Keyboard Shortcuts</h2>
@@ -244,10 +239,12 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
     <tr><th>Variable</th><th>Description</th><th>Default</th></tr>
     <tr><td><code>STS2_SAVE_DIR</code></td><td>Path to your STS2 save directory</td><td>Auto-detected</td></tr>
     <tr><td><code>STS2_GAME_DIR</code></td><td>Path to STS2 game install</td><td>Auto-detected</td></tr>
-    <tr><td><code>STS2_MODS_DIR</code></td><td>Path to mod JSON files</td><td><code>sts2/data/mods/</code></td></tr>
+    <tr><td><code>STS2_MODS_DIR</code></td><td>Path to mod JSON files</td><td><code>mods/</code> under the state directory; beside the executable in packaged builds</td></tr>
     <tr><td><code>STS2_HOST</code></td><td>Server bind address</td><td><code>127.0.0.1</code></td></tr>
+    <tr><td><code>STS2_AUTH_TOKEN</code></td><td>Required on any non-loopback bind: every request must present it</td><td>Unset &mdash; a network bind refuses to start without it</td></tr>
+    <tr><td><code>STS2_ALLOWED_HOSTS</code></td><td>Comma-separated <code>Host</code> values this server answers to</td><td>Loopback names on a loopback bind</td></tr>
     <tr><td><code>STS2_PORT</code></td><td>Server port</td><td><code>8000</code></td></tr>
-    <tr><td><code>SPIRESCOPE_ADMIN_TOKEN</code></td><td>Token for <code>/api/reload</code></td><td>Auto-generated</td></tr>
+    <tr><td><code>SPIRESCOPE_ADMIN_TOKEN</code></td><td>Token for <code>/api/reload</code></td><td>Unset — endpoint disabled</td></tr>
   </table>
 </div>
 

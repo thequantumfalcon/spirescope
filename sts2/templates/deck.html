@@ -77,7 +77,7 @@
               {% for card in type_groups[type_name] %}
               {% set qty = selected_counts.get(card.id, 0) if selected_counts else 0 %}
               <div class="deck-card deck-card--{{ card.type|lower }}{% if qty > 0 %} deck-card--selected{% endif %}"
-                   data-card-type="{{ card.type }}" data-card-name="{{ card.name|lower }}" data-card-id="{{ card.id }}">
+                   data-card-type="{{ card.type }}" data-card-name="{{ card.name|lower }}" data-card-id="{{ card.id }}" data-character="{{ card.character }}">
                 <div class="card-qty">
                   <button type="button" class="qty-btn qty-minus" aria-label="Remove one {{ card.name }}">−</button>
                   <span class="qty-count">{{ qty }}</span>
@@ -107,7 +107,7 @@
           {% for card in char_cards %}
           {% set qty = selected_counts.get(card.id, 0) if selected_counts else 0 %}
           <div class="deck-card deck-card--unknown{% if qty > 0 %} deck-card--selected{% endif %}"
-               data-card-type="{{ card.type }}" data-card-name="{{ card.name|lower }}" data-card-id="{{ card.id }}">
+               data-card-type="{{ card.type }}" data-card-name="{{ card.name|lower }}" data-card-id="{{ card.id }}" data-character="{{ card.character }}">
             <div class="card-qty">
               <button type="button" class="qty-btn qty-minus" aria-label="Remove one {{ card.name }}">−</button>
               <span class="qty-count">{{ qty }}</span>

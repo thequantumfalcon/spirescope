@@ -667,15 +667,16 @@ class TestCSP:
 # ---------------------------------------------------------------------------
 
 class TestRateLimiter:
-    async def test_sse_exempt_from_rate_limit(self):
-        """SSE endpoint path is exempt from rate limiter middleware."""
-        # Verify exemption logic directly — don't hit the streaming endpoint
-        # which blocks for the full SSE duration.
+    async def test_sse_handshake_counts_against_rate_limit(self):
+        """The stream endpoint used to be exempt, which let a single client
+        open handshakes without limit; the exemption is gone on purpose.
+        (Behavioral coverage lives in test_app's SSE rate-limit test — this
+        guards against the exemption quietly coming back.)"""
         import inspect
 
         from sts2.app import rate_limit
         source = inspect.getsource(rate_limit)
-        assert "/api/live/stream" in source
+        assert '"/api/live/stream"' not in source
 
     async def test_options_exempt_from_rate_limit(self, client):
         _rate_limit_store.clear()
@@ -882,10 +883,13 @@ class TestSSEIntegration:
     async def test_sse_delivers_event_data(self):
         """SSE generator should yield valid JSON data events."""
         import asyncio
+        from types import SimpleNamespace
 
         from sts2.routes import live_stream
-        # Call the route handler directly to get the StreamingResponse
-        resp = await live_stream(player=0)
+        # Call the route handler directly to get the StreamingResponse.
+        # The handler now takes the request to enforce the per-client cap.
+        request = SimpleNamespace(client=SimpleNamespace(host="127.0.0.1"))
+        resp = await live_stream(request, player=0)
         assert resp.media_type == "text/event-stream"
         # Consume just the first event from the async generator
         body_gen = resp.body_iterator
@@ -1433,9 +1437,12 @@ class TestAuditRegressions:
                "card_pick_rates": {}, "relic_win_rates": {}, "ascension_stats": {}}
         path = tmp_path / "aggregate.json"
         path.write_text(json.dumps(agg), encoding="utf-8")
+        import os
+
         from sts2.app import app
         with patch("sts2.aggregate._aggregate_storage_path", return_value=path):
-            resp = TestClient(app).get("/community")
+            resp = TestClient(app).get(
+                "/community", headers={"X-Auth-Token": os.environ["STS2_AUTH_TOKEN"]})
         assert resp.status_code == 200
         # Ranked by rate, and the zero-total rows must not divide by zero.
         assert resp.text.index("Defend") < resp.text.index("Strike")
@@ -1572,9 +1579,11 @@ class TestSecondPassRegressions:
                          gold=137, act=2, floor=23, run_time=1830,
                          deck=["CARD.STRIKE"] * 10, relics=["RELIC.VAJRA"],
                          potions=["POTION.FIRE_POTION"])
+        import os
         with patch("sts2.routes._get_live_run", new=AsyncMock(return_value=run)):
             from sts2.app import app
-            html = TestClient(app).get("/overlay").text
+            html = TestClient(app).get(
+                "/overlay", headers={"X-Auth-Token": os.environ["STS2_AUTH_TOKEN"]}).text
 
         for cls in ("live-hp", "live-gold", "live-cards", "live-relics",
                     "live-potions", "live-floor", "live-act", "hp-fill"):
@@ -1722,16 +1731,28 @@ class TestAdvancedAnalyticsValues:
         assert splits[0]["ahead"] is False
 
     def test_cascade_contrasts_before_and_after_a_pick(self):
+        """Two combats on each side of the pick; the acquisition floor is
+        excluded from 'after', and a pick with no pre-pick combats is
+        skipped instead of compared against a fabricated zero baseline."""
         from sts2.app import kb as _kb
         from sts2.cascade import trace_card_impact
 
-        run = self._run("c", False, 4, [self._floor(1, dmg=20, pick="CARD.BASH"),
-                                        self._floor(2, dmg=5), self._floor(3, dmg=5)])
+        run = self._run("c", False, 4, [
+            self._floor(1, dmg=20), self._floor(2, dmg=20),
+            self._floor(3, dmg=99, pick="CARD.BASH"),
+            self._floor(4, dmg=5), self._floor(5, dmg=5)])
         impact = trace_card_impact(run, "CARD.BASH", _kb)
         assert impact["card_id"] == "CARD.BASH"
-        assert impact["picked_floor"] == 1
-        assert impact["floors_survived_after"] == 3
-        assert impact["post_avg_damage"] == 10.0
+        assert impact["picked_floor"] == 3
+        assert impact["pre_avg_damage"] == 20.0
+        assert impact["post_avg_damage"] == 5.0  # floor 3's 99 dmg excluded
+        assert impact["damage_delta"] == -15.0
+        assert "hp_delta" in impact
+
+        early = self._run("c2", False, 4, [
+            self._floor(1, dmg=20, pick="CARD.BASH"),
+            self._floor(2, dmg=5), self._floor(3, dmg=5)])
+        assert "error" in trace_card_impact(early, "CARD.BASH", _kb)
 
     def test_drift_trajectory_tracks_every_floor_and_its_pick(self):
         from sts2.app import kb as _kb

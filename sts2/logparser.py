@@ -26,6 +26,22 @@ elif sys.platform == "linux":
 
 LOG_FILE = _LOG_DIR / "godot.log"
 
+# How much of an existing log to parse at startup, and how much backlog a
+# single poll will read. godot.log grows for as long as the game runs;
+# reading it whole pinned startup and memory to the log's size.
+_INIT_TAIL_BYTES = 5 * 1024 * 1024
+_MAX_POLL_BYTES = 10 * 1024 * 1024
+
+
+def _resolve_log_path() -> Path:
+    """STS2_LOG_FILE overrides detection (tests, sandboxes, custom installs).
+
+    Resolved per call: the fixed import-time path meant a redirected
+    deployment silently tailed the host user's real log.
+    """
+    env = os.environ.get("STS2_LOG_FILE")
+    return Path(env) if env else LOG_FILE
+
 # Regex patterns for extracting game events
 _RE_OBTAINED_CARD = re.compile(r"\[INFO\] Obtained (CARD\.\w+) from card reward")
 _RE_OBTAINED_POTION = re.compile(r"\[INFO\] Obtained (POTION\.\w+) from potion reward")
@@ -54,8 +70,12 @@ _RE_NEOW_EVENT = re.compile(r"\[VERYDEBUG\] \[EventSynchronizer\] Event EVENT\.N
 # Combat telemetry — surfaces signal the godot.log emits but the parser
 # previously ignored. Enables turn-by-turn analytics without requiring the
 # STS2MCP mod.
-_RE_PLAYING_CARD = re.compile(r"\[INFO\] Player \d+ playing card (\w+)")
-_RE_EXTRA_TURN = re.compile(r"\[INFO\] Player \d+ \([A-Z]+\) is taking an extra turn")
+# Card ids are dotted (CARD.BASH), so a bare \w+ captured only "CARD" —
+# every play recorded the same meaningless token. The player number is
+# captured too: in co-op the log interleaves both players, and attributing
+# a teammate's plays to whoever the page is watching is simply wrong.
+_RE_PLAYING_CARD = re.compile(r"\[INFO\] Player (\d+) playing card ([\w.]+)")
+_RE_EXTRA_TURN = re.compile(r"\[INFO\] Player (\d+) \([A-Z]+\) is taking an extra turn")
 _RE_ELITES_DEFEATED = re.compile(r"\[INFO\] Elites Defeated: (\d+)/\d+")
 
 # Character ID mapping
@@ -71,10 +91,10 @@ _CHAR_MAP = {
 class LogRunState:
     """Mutable state built from log parsing."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         self.active = False
         self.character = ""
         self.deck: list[str] = []
@@ -88,21 +108,29 @@ class LogRunState:
         self.events_seen: list[str] = []
         self.total_players = 1
         self.run_started = False
-        # Combat telemetry captured from godot.log. cards_played is bounded
-        # to prevent unbounded memory growth on long runs (O(n) copy per SSE poll).
-        self.cards_played: list[str] = []
+        # Combat telemetry captured from godot.log, kept per player because
+        # a co-op log interleaves both. Each list is bounded to prevent
+        # unbounded memory growth on long runs (O(n) copy per SSE poll).
+        self.cards_played_by_player: dict[int, list[str]] = {}
         self._cards_played_cap = 500
-        self.extra_turns = 0
+        self.extra_turns_by_player: dict[int, int] = {}
+        # Run-wide, not per player: the game emits a cumulative count.
         self.elites_defeated = 0
 
-    def to_dict(self) -> dict:
+    def to_dict(self, player_index: int = 0) -> dict:
         """Convert to dict compatible with CurrentRun.model_dump().
 
-        Combat telemetry fields (cards_played, extra_turns, elites_defeated)
-        are extra signal the log carries that CurrentRun's Pydantic model
-        doesn't currently declare — they're returned for SSE consumers that
-        opt in via dict access. Adding them to CurrentRun would force model
-        bumps on every save-file-only path that doesn't have these signals.
+        Combat telemetry (cards_played, extra_turns, elites_defeated) is
+        declared on CurrentRun with defaults, so log-sourced state carries it
+        through to API/SSE payloads while save-file-only paths just leave
+        the defaults. Before the fields were declared, pydantic silently
+        dropped them here and no consumer ever saw them.
+
+        Telemetry is reported for `player_index`, and the full per-player
+        breakdown rides along under keys CurrentRun does not declare so
+        callers that know which seat they are watching can select. Reporting
+        one merged total attributed a co-op partner's plays to whoever the
+        page happened to be showing.
         """
         return {
             "active": self.active,
@@ -122,9 +150,12 @@ class LogRunState:
             "floors": [],
             "player_index": 0,
             "total_players": self.total_players,
-            "cards_played": list(self.cards_played),
-            "extra_turns": self.extra_turns,
+            "cards_played": list(self.cards_played_by_player.get(player_index, [])),
+            "extra_turns": self.extra_turns_by_player.get(player_index, 0),
             "elites_defeated": self.elites_defeated,
+            "cards_played_by_player": {p: list(v) for p, v
+                                       in self.cards_played_by_player.items()},
+            "extra_turns_by_player": dict(self.extra_turns_by_player),
         }
 
 
@@ -132,20 +163,29 @@ class LogTailer:
     """Tails the STS2 godot.log and maintains live run state."""
 
     def __init__(self, log_path: Path | None = None):
-        self.path = log_path or LOG_FILE
+        self.path = log_path or _resolve_log_path()
         self.state = LogRunState()
         self._offset = 0
         self._last_size = 0
         self._initialized = False
 
     def _parse_initial(self):
-        """Parse the entire log file to build initial state."""
+        """Parse the tail of the log file to build initial state.
+
+        Only the last _INIT_TAIL_BYTES are read: the current run's events are
+        by definition at the end, and an unbounded read pinned startup time
+        and memory to however large the log had grown.
+        """
         if not self.path.exists():
             return
         try:
+            size = self.path.stat().st_size
             with open(self.path, "r", encoding="utf-8", errors="replace") as f:
+                if size > _INIT_TAIL_BYTES:
+                    f.seek(size - _INIT_TAIL_BYTES)
+                    f.readline()  # skip the partial line the seek landed in
                 lines = f.readlines()
-            self._offset = self.path.stat().st_size
+            self._offset = size
             self._last_size = self._offset
 
             # Find the LAST run start (work backwards to find it)
@@ -213,6 +253,15 @@ class LogTailer:
 
         if current_size < self._last_size:
             # Log was rotated/truncated — re-parse from scratch
+            self._initialized = False
+            self._offset = 0
+            self._last_size = 0
+            return self.poll()
+
+        if current_size - self._offset > _MAX_POLL_BYTES:
+            # Pathological backlog (poller stalled for hours, or something
+            # else is writing the file). Treat like a rotation and re-anchor
+            # on the tail instead of reading it all into memory.
             self._initialized = False
             self._offset = 0
             self._last_size = 0
@@ -368,15 +417,20 @@ class LogTailer:
         # Card played in combat
         m = _RE_PLAYING_CARD.search(line)
         if m:
-            self.state.cards_played.append(m.group(1))
-            # Cap the list to prevent unbounded growth on long runs.
-            if len(self.state.cards_played) > self.state._cards_played_cap:
-                self.state.cards_played = self.state.cards_played[-self.state._cards_played_cap:]
+            player = int(m.group(1))
+            played = self.state.cards_played_by_player.setdefault(player, [])
+            played.append(m.group(2))
+            # Cap each list to prevent unbounded growth on long runs.
+            if len(played) > self.state._cards_played_cap:
+                del played[:-self.state._cards_played_cap]
             return True
 
         # Extra turn triggered (Regent / Heel / etc.)
-        if _RE_EXTRA_TURN.search(line):
-            self.state.extra_turns += 1
+        m = _RE_EXTRA_TURN.search(line)
+        if m:
+            player = int(m.group(1))
+            self.state.extra_turns_by_player[player] = (
+                self.state.extra_turns_by_player.get(player, 0) + 1)
             return True
 
         # Elites defeated counter — game emits cumulative count

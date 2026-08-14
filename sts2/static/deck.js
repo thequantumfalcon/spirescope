@@ -2,6 +2,7 @@
   var KEY = 'spirescope_decks';
   var MAX_QTY = 5;
   var cardQtys = {};
+  var cardCharacter = {};
 
   // Initialize qty map from DOM (picks up server-rendered quantities)
   document.querySelectorAll('.deck-card[data-card-id]').forEach(function(el) {
@@ -9,6 +10,7 @@
     if (!id) return;
     var qtyEl = el.querySelector('.qty-count');
     cardQtys[id] = qtyEl ? parseInt(qtyEl.textContent, 10) || 0 : 0;
+    cardCharacter[id] = el.getAttribute('data-character') || '';
   });
 
   function getDecks() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) { return {}; } }
@@ -73,20 +75,22 @@
   }
 
   function detectCharacter(selected) {
-    var chars = {};
+    // Card ids (e.g. "CARD.BASH") don't encode the character — splitting the
+    // id and taking the second token produced the card's own name, not a
+    // character, so the save dialog read "saving as BASH". Read the real
+    // character off each card element's data-character attribute instead.
     var ids = (typeof selected === 'object' && !Array.isArray(selected)) ? selected : {};
+    var chars = {};
     for (var id in ids) {
-      var parts = id.split('.');
-      if (parts.length >= 2 && parts[0] === 'CARD') {
-        var c = parts[1];
-        if (c !== 'COLORLESS' && c !== 'STATUS' && c !== 'CURSE') {
-          chars[c] = (chars[c] || 0) + ids[id];
-        }
+      var c = cardCharacter[id];
+      if (c && c !== 'Colorless' && c !== 'Status' && c !== 'Curse') {
+        chars[c] = true;
       }
     }
-    var best = ''; var max = 0;
-    for (var k in chars) { if (chars[k] > max) { max = chars[k]; best = k; } }
-    return best || 'Unknown';
+    var distinct = Object.keys(chars);
+    if (distinct.length === 1) return distinct[0];
+    if (distinct.length > 1) return 'Mixed';
+    return 'Unknown';
   }
 
   function deckCardCount(selected) {
@@ -177,6 +181,11 @@
   /* ── Card info popover ── */
   var synergyCache = {};
 
+  // Escapes &, < and > — NOT quotes. Safe for text between tags, which is
+  // the only place it is used. Never put its output inside an attribute:
+  // an unescaped quote would close the attribute and escape the context.
+  // Attribute values here are either allowlisted (the tag-* classes) or
+  // percent-encoded (the card href).
   function escapeHtml(str) {
     var div = document.createElement('div');
     div.textContent = str;

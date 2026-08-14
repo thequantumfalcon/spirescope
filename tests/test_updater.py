@@ -1,7 +1,16 @@
 """Tests for the updater module."""
+import contextlib
+import hashlib
+import io
 import json
+import os
+import shutil
+import tarfile
+import time
 import urllib.error
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 import sts2.updater as updater
 from sts2.updater import _parse_version, check_for_update, get_update_info, update_checks_enabled
@@ -149,3 +158,557 @@ class TestUpdateChecksEnabled:
         with patch.object(updater.sys, "frozen", True, create=True), \
              patch.dict("os.environ", {"SPIRESCOPE_CHECK_UPDATES": "1"}, clear=False):
             assert update_checks_enabled() is True
+
+    def test_env_override_disables_checks_for_source_build(self):
+        """SPIRESCOPE_CHECK_UPDATES=0 must force checks off even for a source
+        build, symmetric with =1 forcing them on for a frozen one."""
+        with patch.object(updater.sys, "frozen", False, create=True), \
+             patch.dict("os.environ", {"SPIRESCOPE_CHECK_UPDATES": "0"}, clear=False):
+            assert update_checks_enabled() is False
+
+
+# ---------------------------------------------------------------------------
+# Data-bundle updater: crash-safety, locking, download/extraction caps,
+# full-dataset validation, and the on-demand check contract.
+# ---------------------------------------------------------------------------
+
+def _card(name, **kw):
+    d = {"id": f"CARD.{name.upper()}", "name": name, "character": "Ironclad",
+         "cost": "1", "type": "Attack", "rarity": "Common",
+         "description": f"{name} desc", "description_upgraded": "", "keywords": []}
+    d.update(kw)
+    return d
+
+
+def _cards(n):
+    return [_card(f"Card{i}") for i in range(n)]
+
+
+def _full_bundle_files(cards=None, **overrides):
+    """A complete, valid bundle payload: every file _validate_dataset requires.
+
+    Families carry at least one real record. Empty lists used to be enough,
+    but a dataset with no relics and no enemies is not one the app can run
+    on, so validation now builds a KnowledgeBase against the bundle and
+    rejects it — which is the point of the gate.
+    """
+    files = {
+        "cards.json": cards if cards is not None else _cards(400),
+        "relics.json": [{"id": "RELIC.BURNING_BLOOD", "name": "Burning Blood"}],
+        "potions.json": [{"id": "POTION.FIRE", "name": "Fire Potion"}],
+        "enemies.json": [{"id": "ENCOUNTER.JAW_WORM", "name": "Jaw Worm"}],
+        "events.json": [{"id": "EVENT.NEOW", "name": "Neow"}],
+        "patches.json": [{"patch": "v0.110.0", "date": "2026-07-31"}],
+        "last_updated.txt": "2026-07-22T20:00:00+00:00",
+    }
+    files.update(overrides)
+    return files
+
+
+def _make_bundle(tmp_path, files: dict):
+    """Build data.tar.gz under tmp_path containing data/<name> for each entry."""
+    src = tmp_path / "bundle-src" / "data"
+    src.mkdir(parents=True)
+    for name, content in files.items():
+        if name.endswith(".txt"):
+            (src / name).write_text(content)
+        else:
+            (src / name).write_text(json.dumps(content))
+    bundle = tmp_path / "data.tar.gz"
+    with tarfile.open(bundle, "w:gz") as tf:
+        tf.add(src, arcname="data")
+    return bundle
+
+
+@contextlib.contextmanager
+def _wrap_bytes(data: bytes):
+    yield io.BytesIO(data)
+
+
+def _fake_urlopen(bundle, digest: str):
+    def _do(req, timeout):
+        if req.full_url.endswith(".tar.gz"):
+            return _wrap_bytes(bundle.read_bytes())
+        return _wrap_bytes(f"{digest}  data.tar.gz".encode())
+    return _do
+
+
+def _set_pending_update(tag="data-v2026.07.22", tarball="https://github.com/x/y/data.tar.gz",
+                         sha256="https://github.com/x/y/data.sha256"):
+    updater._data_update = {"tag": tag, "date": "2026-07-22", "tarball": tarball, "sha256": sha256}
+
+
+class TestRecoverDataDir:
+    def test_restores_from_backup_when_live_missing(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        backup_dir = tmp_path / "data.backup"
+        backup_dir.mkdir()
+        (backup_dir / "cards.json").write_text(json.dumps(_cards(2)))
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+
+        recovered = updater.recover_data_dir()
+
+        assert recovered is True
+        assert data_dir.exists()
+        assert not backup_dir.exists()
+        assert json.loads((data_dir / "cards.json").read_text())[0]["name"] == "Card0"
+
+    def test_restores_from_backup_when_live_incomplete(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()  # a crash left the live dir present but without cards.json
+        backup_dir = tmp_path / "data.backup"
+        backup_dir.mkdir()
+        (backup_dir / "cards.json").write_text(json.dumps(_cards(2)))
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+
+        recovered = updater.recover_data_dir()
+
+        assert recovered is True
+        assert json.loads((data_dir / "cards.json").read_text())[0]["name"] == "Card0"
+
+    def test_noop_when_live_already_valid(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+
+        assert updater.recover_data_dir() is False
+        assert json.loads((data_dir / "cards.json").read_text())[0]["name"] == "Card0"
+
+    def test_noop_when_neither_live_nor_backup_usable(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"  # never created — nothing to recover from
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+
+        assert updater.recover_data_dir() is False
+        assert not data_dir.exists()
+
+
+class TestLock:
+    def test_second_attempt_fails_cleanly_while_lock_held(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+        _set_pending_update()
+
+        lock_path = updater._lock_path(data_dir)
+        held_fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        try:
+            def _boom(req, timeout):
+                raise AssertionError("must not touch the network while the lock is held")
+            monkeypatch.setattr(updater.urllib.request, "urlopen", _boom)
+
+            ok, msg = updater.install_data_update()
+
+            assert not ok
+            assert "already in progress" in msg.lower()
+            assert json.loads((data_dir / "cards.json").read_text())[0]["name"] == "Card0"
+        finally:
+            os.close(held_fd)
+            lock_path.unlink(missing_ok=True)
+            updater._data_update = None
+
+    def test_stale_lock_is_taken_over(self, tmp_path):
+        lock_path = tmp_path / "data.update.lock"
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        os.close(fd)
+        stale_time = time.time() - updater._LOCK_STALE_SECONDS - 60
+        os.utime(lock_path, (stale_time, stale_time))
+
+        acquired = updater._acquire_lock(lock_path)
+
+        assert acquired is not None
+        os.close(acquired)
+        lock_path.unlink(missing_ok=True)
+
+    def test_fresh_lock_is_not_taken_over(self, tmp_path):
+        lock_path = tmp_path / "data.update.lock"
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        os.close(fd)
+
+        assert updater._acquire_lock(lock_path) is None
+        lock_path.unlink()
+
+
+class TestDownloadCap:
+    def test_bundle_over_cap_rejected(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        bundle = _make_bundle(tmp_path, _full_bundle_files())
+        digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+        monkeypatch.setattr(updater, "_MAX_BUNDLE_BYTES", 10)
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _fake_urlopen(bundle, digest))
+        _set_pending_update()
+
+        ok, msg = updater.install_data_update()
+
+        assert not ok
+        assert "cap" in msg.lower()
+        assert json.loads((data_dir / "cards.json").read_text())[0]["name"] == "Card0"
+        updater._data_update = None
+
+    def test_checksum_file_over_cap_rejected(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        bundle = _make_bundle(tmp_path, _full_bundle_files())
+        digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+        monkeypatch.setattr(updater, "_MAX_CHECKSUM_BYTES", 4)
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _fake_urlopen(bundle, digest))
+        _set_pending_update()
+
+        ok, msg = updater.install_data_update()
+
+        assert not ok
+        assert "cap" in msg.lower()
+        updater._data_update = None
+
+
+class TestChecksumUrlOrigin:
+    def test_non_github_checksum_url_rejected(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+
+        def _boom(req, timeout):
+            raise AssertionError("must not reach the network before the origin check")
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _boom)
+        _set_pending_update(sha256="https://evil.example.com/data.sha256")
+
+        ok, msg = updater.install_data_update()
+
+        assert not ok
+        assert "github.com" in msg.lower()
+        updater._data_update = None
+
+    def test_non_github_tarball_url_rejected(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+
+        def _boom(req, timeout):
+            raise AssertionError("must not reach the network before the origin check")
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _boom)
+        _set_pending_update(tarball="https://evil.example.com/data.tar.gz")
+
+        ok, msg = updater.install_data_update()
+
+        assert not ok
+        assert "github.com" in msg.lower()
+        updater._data_update = None
+
+
+class TestExtractionCaps:
+    def test_too_many_members_rejected(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        bundle = _make_bundle(tmp_path, _full_bundle_files())
+        digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+        monkeypatch.setattr(updater, "_MAX_MEMBERS", 1)
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _fake_urlopen(bundle, digest))
+        _set_pending_update()
+
+        ok, msg = updater.install_data_update()
+
+        assert not ok
+        assert "entries" in msg.lower()
+        updater._data_update = None
+
+    def test_oversized_member_rejected(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        bundle = _make_bundle(tmp_path, _full_bundle_files())
+        digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+        monkeypatch.setattr(updater, "_MAX_MEMBER_BYTES", 1)
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _fake_urlopen(bundle, digest))
+        _set_pending_update()
+
+        ok, msg = updater.install_data_update()
+
+        assert not ok
+        assert "too large" in msg.lower()
+        updater._data_update = None
+
+    def test_expanded_size_cap_rejected(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        bundle = _make_bundle(tmp_path, _full_bundle_files())
+        digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+        monkeypatch.setattr(updater, "_MAX_EXPANDED_BYTES", 1)
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _fake_urlopen(bundle, digest))
+        _set_pending_update()
+
+        ok, msg = updater.install_data_update()
+
+        assert not ok
+        assert "expands" in msg.lower()
+        updater._data_update = None
+
+
+class TestFullValidationGate:
+    def test_missing_required_file_rejected(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        files = _full_bundle_files()
+        del files["relics.json"]
+        bundle = _make_bundle(tmp_path, files)
+        digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _fake_urlopen(bundle, digest))
+        _set_pending_update()
+
+        ok, msg = updater.install_data_update()
+
+        assert not ok
+        assert "relics.json" in msg
+        updater._data_update = None
+
+    def test_too_few_cards_rejected(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        bundle = _make_bundle(tmp_path, _full_bundle_files(cards=_cards(5)))
+        digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _fake_urlopen(bundle, digest))
+        _set_pending_update()
+
+        ok, msg = updater.install_data_update()
+
+        assert not ok
+        assert "cards.json" in msg.lower()
+        updater._data_update = None
+
+    def test_complete_bundle_installs_and_keeps_one_backup(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        bundle = _make_bundle(tmp_path, _full_bundle_files())
+        digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _fake_urlopen(bundle, digest))
+        _set_pending_update()
+
+        ok, msg = updater.install_data_update()
+
+        assert ok, msg
+        installed = json.loads((data_dir / "cards.json").read_text())
+        assert len(installed) == 400
+        assert updater.get_data_update_info() is None
+        # The pre-install dataset is kept as a recovery backup, not discarded.
+        backup = updater._backup_dir(data_dir)
+        assert backup.exists()
+        assert json.loads((backup / "cards.json").read_text())[0]["name"] == "Card0"
+
+
+class TestCheckForDataUpdateOnDemand:
+    def test_returns_the_finding(self, tmp_path, monkeypatch):
+        (tmp_path / "last_updated.txt").write_text("2026-07-01T00:00:00+00:00")
+        monkeypatch.setattr("sts2.config.DATA_DIR", tmp_path)
+        monkeypatch.setattr(updater, "update_checks_enabled", lambda: True)
+        monkeypatch.setattr(updater, "recover_data_dir", lambda: False)
+        release = {"tag_name": "data-v2026.07.22", "assets": [
+            {"name": "spirescope-data.tar.gz", "browser_download_url": "https://github.com/x/y/a.tar.gz"},
+            {"name": "spirescope-data.sha256", "browser_download_url": "https://github.com/x/y/a.sha256"},
+        ]}
+
+        class FakeResp:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+            def read(self):
+                return json.dumps([release]).encode()
+
+        class T:
+            def __init__(self, target, daemon):
+                self.target = target
+
+            def start(self):
+                self.target()
+
+        monkeypatch.setattr(updater.threading, "Thread", T)
+        monkeypatch.setattr(updater.urllib.request, "urlopen", lambda req, timeout: FakeResp())
+        updater._data_update = None
+
+        result = updater.check_for_data_update()
+
+        assert result is not None and result["tag"] == "data-v2026.07.22"
+        assert updater.get_data_update_info() == result
+        updater._data_update = None
+
+    def test_idempotent_while_a_check_is_in_flight(self, monkeypatch):
+        monkeypatch.setattr(updater, "update_checks_enabled", lambda: True)
+        monkeypatch.setattr(updater, "recover_data_dir", lambda: False)
+        monkeypatch.setattr(updater, "_data_checking", True)
+        monkeypatch.setattr(updater, "_data_update", {"tag": "data-v2026.07.22"})
+
+        def _boom(*a, **kw):
+            raise AssertionError("must not start a second check while one is in flight")
+        monkeypatch.setattr(updater.threading, "Thread", _boom)
+
+        result = updater.check_for_data_update()
+
+        assert result == {"tag": "data-v2026.07.22"}
+
+    def test_disabled_returns_current_finding_without_checking(self, monkeypatch):
+        monkeypatch.setattr(updater, "update_checks_enabled", lambda: False)
+        monkeypatch.setattr(updater, "recover_data_dir", lambda: False)
+        monkeypatch.setattr(updater, "_data_update", None)
+
+        def _boom(*a, **kw):
+            raise AssertionError("must not check the network when checks are disabled")
+        monkeypatch.setattr(updater.threading, "Thread", _boom)
+
+        assert updater.check_for_data_update() is None
+
+
+class TestDatasetShapeGate:
+    """Parsing as JSON was never proof a bundle is usable.
+
+    The gate previously accepted any cards.json that was a list of 400+
+    entries, so a file of 400 bare strings passed while being nothing the
+    app could render.
+    """
+
+    def test_bare_string_entries_rejected(self, tmp_path):
+        root = tmp_path / "data"
+        root.mkdir()
+        for name, content in _full_bundle_files(cards=["x"] * 400).items():
+            if name.endswith(".txt"):
+                (root / name).write_text(content)
+            else:
+                (root / name).write_text(json.dumps(content))
+        with pytest.raises(updater._RejectBundle, match="without a 'id' field"):
+            updater._validate_dataset(root)
+
+    def test_patch_manifest_keyed_on_patch_not_id(self, tmp_path):
+        """patches.json identifies records by 'patch'; requiring 'id' there
+        would reject the real shipped dataset."""
+        root = tmp_path / "data"
+        root.mkdir()
+        for name, content in _full_bundle_files().items():
+            if name.endswith(".txt"):
+                (root / name).write_text(content)
+            else:
+                (root / name).write_text(json.dumps(content))
+        updater._validate_dataset(root)  # must not raise
+
+    def test_unloadable_bundle_rejected(self, tmp_path):
+        """Well-shaped records but no relics or enemies: the app cannot run
+        on it, so the load probe must catch what the shape checks cannot."""
+        root = tmp_path / "data"
+        root.mkdir()
+        files = _full_bundle_files(**{"relics.json": [], "enemies.json": []})
+        for name, content in files.items():
+            if name.endswith(".txt"):
+                (root / name).write_text(content)
+            else:
+                (root / name).write_text(json.dumps(content))
+        with pytest.raises(updater._RejectBundle, match="does not load"):
+            updater._validate_dataset(root)
+
+    def test_load_probe_does_not_read_real_save_files(self):
+        """The probe must redirect the save dir: KnowledgeBase back-fills
+        entities discovered from saves, so a probe pointed at the player's
+        real saves reports families the bundle does not contain (an
+        empty-relics bundle passed until this was isolated)."""
+        import inspect
+        source = inspect.getsource(updater._validate_loadable)
+        for var in ("STS2_SAVE_DIR", "STS2_STATE_DIR", "STS2_MODS_DIR"):
+            assert var in source, f"load probe does not isolate {var}"
+
+
+def test_recovery_runs_before_the_knowledge_base_loads(tmp_path):
+    """A crash between the two renames leaves no live data directory.
+
+    Recovery used to run only on the later update-check path, by which point
+    app import had already seeded and loaded from whatever was there — for a
+    frozen build the seed could even refill the live directory from the older
+    bundled copy, making recovery believe it was fine and abandon the newer
+    backup. It must therefore run before seeding, migration, and
+    KnowledgeBase construction. Checked in a subprocess because the ordering
+    under test is import-time.
+    """
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    repo = Path(__file__).resolve().parent.parent
+    live = tmp_path / "data"
+    backup = tmp_path / "data.backup"
+    shutil.copytree(repo / "sts2" / "data", backup)
+    assert not live.exists(), "the crash state is: live gone, backup intact"
+
+    env = dict(os.environ,
+               STS2_DATA_DIR=str(live), STS2_STATE_DIR=str(tmp_path / "state"),
+               STS2_SAVE_DIR=str(tmp_path / "saves"),
+               STS2_MODS_DIR=str(tmp_path / "mods"),
+               STS2_LOG_FILE=str(tmp_path / "none.log"),
+               STS2_LANG="en", SPIRESCOPE_CHECK_UPDATES="0")
+    result = subprocess.run(
+        [sys.executable, "-c",
+         "import sts2.app as a; print('CARDS', len(a.kb.cards))"],
+        env=env, cwd=str(repo), capture_output=True, text=True, timeout=300)
+
+    assert result.returncode == 0, result.stderr[-500:]
+    assert live.exists(), "live data directory was not restored"
+    loaded = int(result.stdout.split("CARDS")[1].split()[0])
+    assert loaded > 400, f"knowledge base loaded {loaded} cards after recovery"
+
+
+class TestOriginCheckResistsLookalikes:
+    """The origin check is a prefix match on scheme + host + '/', not a
+    substring search. CodeQL flags the substring shape wherever it sees it,
+    so this pins the distinction: every host below embeds 'github.com' and
+    every one must still be refused.
+    """
+
+    LOOKALIKES = [
+        "https://github.com.evil.example/data.tar.gz",   # suffix-extended host
+        "https://evil.example/github.com/data.tar.gz",   # host in the path
+        "https://evil.example/?u=https://github.com/",   # host in the query
+        "https://notgithub.com/data.tar.gz",             # prefix-extended host
+        "http://github.com/data.tar.gz",                 # right host, no TLS
+        "https://github.com@evil.example/data.tar.gz",   # host as userinfo
+        "https://github.como/data.tar.gz",               # TLD extended
+    ]
+
+    @pytest.mark.parametrize("url", LOOKALIKES)
+    def test_lookalike_origins_are_refused(self, url, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+
+        def _boom(req, timeout):
+            raise AssertionError("must not reach the network before the origin check")
+        monkeypatch.setattr(updater.urllib.request, "urlopen", _boom)
+        _set_pending_update(tarball=url)
+
+        ok, _ = updater.install_data_update()
+
+        assert not ok, f"origin check accepted {url}"
+        updater._data_update = None

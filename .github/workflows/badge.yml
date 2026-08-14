@@ -1,0 +1,65 @@
+name: Test Badge
+
+# Publishing the badge needs `contents: write`, and ci.yml is called as a
+# reusable workflow by the release pipeline. A called workflow cannot request
+# more permission than its caller grants, so a write-scoped job inside ci.yml
+# made the entire release workflow fail to compile (startup_failure, before
+# any job ran). Publishing a badge is not verification, so it lives here and
+# reacts to CI finishing instead.
+#
+# workflow_run also means this never holds a write token during a pull
+# request: it only fires after a CI run completes on the default branch.
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    # Deliberately not gated on the CI run having succeeded: a failing run is
+    # exactly when the badge has to turn red. The badge is generated even on
+    # failure (see ci.yml), and a missing artifact is tolerated below.
+    if: github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      # The artifact belongs to the triggering CI run, and a cross-run download
+      # needs this scope. A job-level permissions block replaces the
+      # workflow-level one rather than merging with it, so without naming
+      # `actions` here it would be `none`, the download would 403, and
+      # `continue-on-error` below would turn that into a silently skipped
+      # publish -- a badge that never updates and never complains.
+      actions: read
+
+    steps:
+      - name: Download badge artifact
+        id: download
+        # Tolerate a missing artifact: if the 3.12 leg failed before it could
+        # generate the badge at all, there is nothing to publish and that is
+        # fine -- skip the publish step rather than fail.
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: test-badge
+          path: badges
+          # The artifact belongs to the CI run that triggered this one, not
+          # to this run, so it has to be fetched explicitly.
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish badge
+        if: steps.download.outcome == 'success'
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./badges
+          publish_branch: badges
+          destination_dir: .
+          keep_files: true
+          commit_message: "Update test badge"

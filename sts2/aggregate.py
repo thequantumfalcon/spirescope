@@ -2,9 +2,11 @@
 import copy
 import json
 import logging
+import math
 from pathlib import Path
 
 from sts2.models import RunHistory
+from sts2.persist import write_text_atomic
 
 log = logging.getLogger(__name__)
 
@@ -88,7 +90,7 @@ def _scale_subcounts(d: dict, scale: float) -> dict:
         if not isinstance(vals, dict):
             out[key] = vals
             continue
-        scaled = {}
+        scaled: dict = {}
         any_nonzero = False
         for subkey, subval in vals.items():
             # Exclude bools — they're technically int but should not aggregate.
@@ -125,8 +127,11 @@ def _sanitise_import(imported: dict) -> dict:
     """
     clean: dict = {"run_count": 0}
     count = imported.get("run_count", 0)
-    if isinstance(count, bool) or not isinstance(count, (int, float)):
-        raise ValueError("run_count must be a number")
+    # json.loads accepts Infinity/NaN; int(inf) raised an uncaught
+    # OverflowError here, turning a hand-crafted import into a 500.
+    if (isinstance(count, bool) or not isinstance(count, (int, float))
+            or not math.isfinite(count)):
+        raise ValueError("run_count must be a finite number")
     clean["run_count"] = max(0, int(count))
 
     for field in _COUNTER_FIELDS:
@@ -139,10 +144,24 @@ def _sanitise_import(imported: dict) -> dict:
                 continue
             numeric = {k: v for k, v in values.items()
                        if isinstance(k, str) and not isinstance(v, bool)
-                       and isinstance(v, (int, float)) and v >= 0}
+                       and isinstance(v, (int, float)) and math.isfinite(v)
+                       and v >= 0}
             if numeric:
                 kept[key] = numeric
         clean[field] = kept
+
+    # Counters must satisfy their own definitions — more wins than attempts
+    # or more picks than offers is manipulated or corrupt data. Clamp rather
+    # than drop: the entry still carries real information up to its bound.
+    _INVARIANTS = {"card_win_rates": ("wins", "total"),
+                   "relic_win_rates": ("wins", "total"),
+                   "character_stats": ("wins", "total"),
+                   "ascension_stats": ("wins", "total"),
+                   "card_pick_rates": ("picked", "offered")}
+    for field, (part, whole) in _INVARIANTS.items():
+        for values in clean.get(field, {}).values():
+            if part in values and whole in values and values[part] > values[whole]:
+                values[part] = values[whole]
     return clean
 
 
@@ -157,7 +176,7 @@ def merge_aggregate(existing: dict, imported: dict) -> dict:
         imported_count = imported.get("run_count", 0)
         if imported_count > _MIN_IMPORT_CAP and imported_count > 0:
             scale = _MIN_IMPORT_CAP / imported_count
-            scaled = {"run_count": _MIN_IMPORT_CAP}
+            scaled: dict = {"run_count": _MIN_IMPORT_CAP}
             for field in ("card_pick_rates", "card_win_rates", "relic_win_rates",
                           "character_stats", "ascension_stats"):
                 scaled[field] = _scale_subcounts(imported.get(field, {}), scale)
@@ -204,14 +223,17 @@ def merge_aggregate(existing: dict, imported: dict) -> dict:
 
 
 def load_aggregate() -> dict:
-    """Load aggregate from disk, return empty dict if missing."""
+    """Load aggregate from disk, return empty dict if missing or malformed."""
     path = _aggregate_storage_path()
     if not path.exists():
         return {}
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return {}
+    # Valid JSON is not necessarily an aggregate: a top-level array here made
+    # every downstream .get() a 500 until the file was hand-deleted.
+    return data if isinstance(data, dict) else {}
 
 
 def reset_aggregate() -> bool:
@@ -223,14 +245,17 @@ def reset_aggregate() -> bool:
     return False
 
 
-def save_aggregate(data: dict) -> None:
-    """Atomic write aggregate to disk."""
+def save_aggregate(data: dict) -> bool:
+    """Atomic write aggregate to disk. Returns False when nothing was
+    persisted (too large, non-finite numbers, or unwritable) so callers can
+    say so instead of reporting success for a write that never happened."""
     path = _aggregate_storage_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    content = json.dumps(data, indent=2)
+    try:
+        content = json.dumps(data, indent=2, allow_nan=False)
+    except ValueError:
+        log.error("Refusing to persist non-finite numbers to %s", path)
+        return False
     if len(content) > 5_000_000:
         log.warning("Aggregate file too large (%d bytes), skipping write", len(content))
-        return
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(content, encoding="utf-8")
-    tmp.replace(path)
+        return False
+    return write_text_atomic(path, content)
