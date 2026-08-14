@@ -6,6 +6,7 @@ rendered raw translation keys ("nav.cards") in the navigation. Source runs
 were fine, which is exactly why source-only testing missed it.
 """
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -477,3 +478,84 @@ def test_every_configuration_variable_is_documented():
     assert not missing, (
         "environment variables read by the code but absent from README's "
         f"configuration section: {missing}")
+
+
+class TestSdistDataAllowlist:
+    """MANIFEST.in names data files one by one; nothing may fall off the list.
+
+    The include used to be the wildcard `sts2/data/*.json`, which also swept
+    up user state a legacy install had left in the data dir (see
+    migrate_state_from_data_dir in app.py), so it had to be undone by exclude
+    lines -- and those warned on every single build whenever the state file
+    happened not to exist.
+
+    Naming the files individually removes both the sweep and the warnings, but
+    trades a fail-open mode for a fail-closed one: a new data file nobody adds
+    to the list would simply not ship, and an sdist install would break at
+    runtime with nothing failing at build time. These two tests are that
+    missing signal.
+    """
+
+    def _manifest_data_includes(self) -> set[str]:
+        text = (PROJECT_ROOT / "MANIFEST.in").read_text(encoding="utf-8")
+        return {
+            line.split(None, 1)[1].strip()
+            for line in text.splitlines()
+            if line.startswith("include ") and len(line.split(None, 1)) == 2
+        }
+
+    def test_every_tracked_data_file_is_named(self):
+        """A tracked data file absent from MANIFEST.in would not reach an sdist."""
+        result = subprocess.run(
+            ["git", "ls-files", "sts2/data/*.json"],
+            cwd=PROJECT_ROOT, capture_output=True, text=True,
+        )
+        if result.returncode != 0:
+            pytest.skip("git unavailable; cannot determine tracked files")
+        tracked = {line.strip() for line in result.stdout.splitlines() if line.strip()}
+        assert tracked, "git reported no tracked data files -- guard has broken"
+        missing = sorted(tracked - self._manifest_data_includes())
+        assert not missing, (
+            "these data files are tracked but not named in MANIFEST.in, so an "
+            f"sdist would install without them: {missing}")
+
+    def test_no_named_data_file_is_absent(self):
+        """An include naming a file that isn't there warns on every build.
+
+        This is the regression that motivated the allowlist in the first
+        place, in its mirror form: keep the manifest and the tree agreeing.
+        """
+        absent = sorted(
+            inc for inc in self._manifest_data_includes()
+            if inc.startswith("sts2/data/") and not (PROJECT_ROOT / inc).exists())
+        assert not absent, (
+            "MANIFEST.in names these files but they do not exist, which makes "
+            f"setuptools warn on every build: {absent}")
+
+    # User state and fetcher credentials. These used to be kept out by exclude
+    # lines; the allowlist cannot reach them, so the exclusion is enforced here
+    # instead -- an exclude for an unreachable file only produces build noise.
+    NEVER_SHIP = ("pheromones.json", "hypotheses.json", ".fetcher_keys.json")
+
+    def test_no_state_or_credential_file_is_named(self):
+        leaked = sorted(
+            inc for inc in self._manifest_data_includes()
+            if Path(inc).name in self.NEVER_SHIP)
+        assert not leaked, (
+            "MANIFEST.in names files that hold user state or fetcher "
+            f"credentials; an sdist must never carry these: {leaked}")
+
+    def test_data_includes_stay_literal(self):
+        """A wildcard is what swept state and credentials in originally.
+
+        `include sts2/data/*.json` matched leading-dot names too, so it pulled
+        in .fetcher_keys.json and any user state left in the directory, and
+        each one then needed an exclude to undo it. Reverting to a glob would
+        silently reinstate that, because the excludes are gone now.
+        """
+        globbed = sorted(
+            inc for inc in self._manifest_data_includes()
+            if inc.startswith("sts2/data/") and ("*" in inc or "?" in inc))
+        assert not globbed, (
+            "MANIFEST.in data includes must name files literally; these "
+            f"wildcards would sweep in state and credentials: {globbed}")

@@ -1,7 +1,22 @@
 # Sdist contents beyond Python sources. Wheels take their data files from
 # [tool.setuptools.package-data] in pyproject.toml; this manifest keeps sdists
 # complete so a wheel rebuilt from the sdist ships the same resources.
-include sts2/data/*.json
+# Named individually rather than sts2/data/*.json: that wildcard swept up any
+# JSON sitting in the data dir, including user state a legacy install left
+# behind (see migrate_state_from_data_dir in app.py), so it had to be undone
+# by exclude lines that warned on every build when the file wasn't there.
+# An allowlist cannot sweep in what it does not name. test_packaging.py
+# asserts this list still covers every tracked data file, so a new one that
+# is not added here fails the suite instead of silently not shipping.
+include sts2/data/badges.json
+include sts2/data/cards.json
+include sts2/data/enemies.json
+include sts2/data/epochs.json
+include sts2/data/events.json
+include sts2/data/patches.json
+include sts2/data/potions.json
+include sts2/data/relics.json
+include sts2/data/strategy.json
 include sts2/data/last_updated.txt
 include sts2/data/mods/README.md
 recursive-include sts2/templates *.html
@@ -11,8 +26,13 @@ include sts2/locales/*.json
 # Never ship: user-built game-text overlays (not ours to redistribute) and
 # local working files that .gitignore keeps out of the repo.
 prune sts2/locales/content
-exclude sts2/data/pheromones.json
-exclude sts2/data/hypotheses.json
-exclude sts2/data/.fetcher_keys.json
+# No exclude for sts2/data/.fetcher_keys.json, user state, or anything else in
+# the data dir: the allowlist above cannot reach them, so an exclude would have
+# nothing to undo and would warn on every build. test_packaging.py enforces
+# what the excludes used to -- that no state or secret file is ever named, and
+# that the include list never reverts to a wildcard that would sweep them in.
+# These two are .py files reached by packages.find, not by an include above,
+# so they still need excluding by name. Both exist locally on a development
+# machine, so neither warns.
 exclude sts2/risk.py
 exclude sts2/diagnosis.py

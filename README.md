@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
   <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/thequantumfalcon/spirescope/badges/tests.json" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-74%25-yellowgreen" alt="Coverage: 74%">
+  <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/thequantumfalcon/spirescope/badges/coverage.json" alt="Coverage">
 </p>
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
@@ -357,7 +357,6 @@ SpireScope auto-detects both vanilla and modded paths; history merges across the
 - Admin-token-gated reload endpoint (constant-time comparison); admin endpoints stay disabled until a token is configured
 - SSE connection caps (10 total, 3 per client) with 5-minute idle timeout
 - Jinja2 auto-escaping on all user-reflected input
-- Log injection prevention (control character sanitization)
 - Request body size limit enforced before parsing (2 MB), with tighter per-route caps on run and stats imports
 - Input validation on all query parameters
 - Anti-manipulation caps and counter invariants on aggregate stats merging
