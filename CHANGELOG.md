@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+### Internal
+
+- **The sdist manifest names data files instead of globbing them.**
+  `include sts2/data/*.json` matched leading-dot names, so it swept in
+  `.fetcher_keys.json` and any user state a legacy install had left in the
+  data directory, and each one then needed an `exclude` to undo it — which
+  warned on every build whenever the file happened to be absent. The include
+  list is now literal, the excludes it required are gone, and the build is
+  warning-free. Four tests hold the line: every tracked data file must be
+  named, no named file may be missing, no state or credential file may be
+  named, and the includes may not revert to a wildcard.
+- Dropped the unused `id: download_macos` from the release workflow; nothing
+  referenced its outcome once the tolerate-a-missing-artifact behaviour it
+  belonged to was removed.
+
 ## v3.1.0
 
 ### Security
