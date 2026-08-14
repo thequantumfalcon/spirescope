@@ -518,3 +518,30 @@ class TestCallableWorkflowStaysWithinCallerPermissions:
             "the badge must react to CI finishing, not run inside it")
         [job] = _jobs(badge).values()
         assert job["permissions"]["contents"] == "write"
+
+    def test_badge_job_can_read_the_triggering_runs_artifact(self):
+        """The badge download is cross-run, so the job token needs
+        `actions: read`.
+
+        A job-level `permissions:` block replaces the workflow-level one
+        rather than merging with it, so every scope left unnamed is `none`.
+        The badge artifact belongs to the CI run that triggered this
+        workflow, and download-artifact cannot fetch another run's artifact
+        without `actions: read`: it 403s, `continue-on-error` swallows the
+        failure, the publish step's `if:` goes false, and the badge silently
+        never updates. badge.yml only triggers on master, so no branch run
+        can ever surface this -- which is exactly why it needs pinning here.
+        """
+        badge = _load_workflow(WORKFLOWS_DIR / "badge.yml")
+        [job] = _jobs(badge).values()
+        cross_run = [s for s in job["steps"]
+                     if "download-artifact" in str(s.get("uses", ""))
+                     and "run-id" in (s.get("with") or {})]
+        assert cross_run, (
+            "expected badge.yml to download the triggering run's artifact "
+            "by run-id; if that changed, revisit whether actions: read is "
+            "still the right scope")
+        assert job["permissions"].get("actions") == "read", (
+            "badge.yml's job fetches an artifact from another run, which "
+            "needs actions: read; without it the scope is none and the "
+            "download 403s into a silently skipped publish")
