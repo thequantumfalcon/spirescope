@@ -70,8 +70,8 @@ jobs:
           if [ "${{ matrix.python-version }}" == "3.12" ]; then
             # Coverage gate, calibrated against THIS environment rather than a
             # laptop -- the first version of it was set from a local run and
-            # failed on its first real execution. This leg measured 88.32% when
-            # the floor was set, so 86 leaves the same ~2 points of headroom the
+            # failed on its first real execution. This leg measured 90.48% when
+            # the floor was set, so 88 leaves the same ~2 points of headroom the
             # previous 72-against-74 gate had.
             #
             # That laptop-vs-CI gap used to be ~7 points, almost all of it
@@ -85,7 +85,7 @@ jobs:
             # checkout entirely.
             #
             # Only one leg carries the gate; the other two stay plain pytest.
-            output=$(pytest -q --tb=short --cov=sts2 --cov-branch --cov-fail-under=86 2>&1)
+            output=$(pytest -q --tb=short --cov=sts2 --cov-branch --cov-fail-under=88 2>&1)
           else
             output=$(pytest -q --tb=short 2>&1)
           fi
