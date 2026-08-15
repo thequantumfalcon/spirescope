@@ -624,6 +624,8 @@ ENG_CARDS = {
     "BASH.description": "Deal {Damage} damage. Apply {Vuln} Vulnerable.",
     "STATIC.title": "Static",
     "STATIC.description": "Exhaust.",                     # no alignment needed
+    "STATICUP.title": "Static Upgraded",
+    "STATICUP.description": "Exhaust.",                   # no alignment, has upgrade
     "NOTRANS.title": "Untranslated",
     "NOTRANS.description": "Deal {Damage} damage.",
     "RESIDUE.title": "Residue",
@@ -648,6 +650,8 @@ DEU_CARDS = {
     "BASH.description": "Verursache {Damage} Schaden. Wende {Vuln} Verwundbar an.",
     "STATIC.title": "Statisch",
     "STATIC.description": "Verbannen.",
+    "STATICUP.title": "Statisch Verbessert",
+    "STATICUP.description": "Verbannen.",
     # NOTRANS deliberately absent: not yet translated
     "RESIDUE.title": "Kaputt {Damage}",                   # unrendered markup in a name
     "RESIDUE.description": "Verursache {Damage} Schaden.",
@@ -668,6 +672,8 @@ APP_CARDS = [
     {"id": "CARD.BASH", "description": "Deal 8 damage. Apply 2 Vulnerable.",
      "description_upgraded": "Deal 10 damage. Apply 3 Vulnerable."},
     {"id": "CARD.STATIC", "description": "Exhaust."},
+    {"id": "CARD.STATICUP", "description": "Exhaust.",
+     "description_upgraded": "Innate. Exhaust."},
     {"id": "CARD.NOTRANS", "description": "Deal 5 damage."},
     {"id": "CARD.RESIDUE", "description": "Deal 5 damage."},
     {"id": "CARD.DRIFTED", "description": "Deals 6 damage to ALL enemies."},
@@ -780,6 +786,22 @@ def test_build_translates_a_template_that_needs_no_alignment(built):
     entry = built[1]["cards"]["CARD.STATIC"]
     assert entry["name"] == "Statisch"
     assert entry["description"] == "Verbannen."
+
+
+def test_build_never_invents_an_upgraded_description(built):
+    """card_detail.html renders an "Upgraded:" block whenever the field is
+    present, so supplying one that English does not have shows translated
+    players a section English readers never see -- restating the base text
+    back at them. CARD.STATIC needs no alignment and ships no upgraded
+    English, which is exactly the shape that used to slip through (6 real
+    cards: Apotheosis, Despair, Lantern Key, Sharp Edge, Wish, Reserves).
+    """
+    _report, overlay = built
+    assert "description_upgraded" not in overlay["cards"]["CARD.STATIC"]
+    # cards that *do* ship upgraded English must still get one, whether or not
+    # their template needs aligning
+    assert "description_upgraded" in overlay["cards"]["CARD.BASH"]
+    assert overlay["cards"]["CARD.STATICUP"]["description_upgraded"] == "Verbannen."
 
 
 def test_build_uses_the_single_number_fallback_when_wording_drifted(built):
