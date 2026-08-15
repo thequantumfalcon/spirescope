@@ -252,8 +252,12 @@ def test_program_name_matches_a_packaged_build():
     """A packaged build has no `spirescope` on PATH, so printing that name
     tells the reader to run something they do not have."""
     from sts2.__main__ import _program_name
+    # Built with os.path.join rather than a literal Windows path: basename()
+    # only splits on the host separator, so a hardcoded backslash path is the
+    # whole string on Linux and macOS.
+    exe = os.path.join("Games", "Spirescope", "Spirescope.exe")
     with patch.object(sys, "frozen", True, create=True), \
-         patch.object(sys, "executable", r"C:\Games\Spirescope\Spirescope.exe"):
+         patch.object(sys, "executable", exe):
         assert _program_name() == "Spirescope.exe"
 
 

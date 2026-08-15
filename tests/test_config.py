@@ -438,6 +438,8 @@ def test_game_dir_scans_every_drive_letter_on_windows(monkeypatch):
     """A Steam library on D: or E: is the common case on Windows, and only
     the win32 leg looks past C:."""
     monkeypatch.setattr(sys, "platform", "win32")
+    # Safe off Windows: _find_game_dir builds this same literal, so the two
+    # Paths compare equal however the host platform parses the separators.
     target = Path(r"E:\SteamLibrary\steamapps\common\Slay the Spire 2")
     monkeypatch.setattr(Path, "exists", lambda self: self == target)
     assert config._find_game_dir() == target
