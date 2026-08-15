@@ -68,15 +68,24 @@ jobs:
         run: |
           set +e
           if [ "${{ matrix.python-version }}" == "3.12" ]; then
-            # Coverage gate. CI measures 74%; a developer machine measures
-            # ~84%, and the difference is not noise: sts2/localize.py is 723
-            # statements that read the installed game's data files, so it
-            # covers 87% where the game exists and 12% here. The threshold is
-            # therefore calibrated against THIS environment, not a laptop --
-            # the first version of this gate was set from a local run and
-            # failed on its first real execution. Only one leg carries it;
-            # the other two stay plain pytest.
-            output=$(pytest -q --tb=short --cov=sts2 --cov-branch --cov-fail-under=72 2>&1)
+            # Coverage gate, calibrated against THIS environment rather than a
+            # laptop -- the first version of it was set from a local run and
+            # failed on its first real execution. This leg measured 90.48% when
+            # the floor was set, so 88 leaves the same ~2 points of headroom the
+            # previous 72-against-74 gate had.
+            #
+            # That laptop-vs-CI gap used to be ~7 points, almost all of it
+            # sts2/localize.py: 723 statements that read the installed game's
+            # data files, so it measured 87% where the game exists and 12%
+            # here. It is now exercised with fixture strings instead (see
+            # tests/test_localize_pipeline.py), so both environments measure
+            # the same code and the two numbers have converged. The only
+            # remaining local-only difference is sts2/risk.py and
+            # sts2/diagnosis.py, which are gitignored and absent from a CI
+            # checkout entirely.
+            #
+            # Only one leg carries the gate; the other two stay plain pytest.
+            output=$(pytest -q --tb=short --cov=sts2 --cov-branch --cov-fail-under=88 2>&1)
           else
             output=$(pytest -q --tb=short 2>&1)
           fi

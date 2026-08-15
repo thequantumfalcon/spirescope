@@ -722,7 +722,7 @@ def _build_all():
     log.debug("TOKEN-NAME CHECK on 20 random cards: "
           f"{len(mismatches)} languages x entities with token names not in English")
     for mm in mismatches:
-        log.debug("   ", mm)
+        log.debug("   %s", mm)
 
     # ---- English alignment pass (once) ----
     # aligned[(section, shipped_id)] = dict(variant -> (values, branches) or None)
@@ -759,15 +759,22 @@ def _build_all():
                 variants["base"] = res
             if section == "cards":
                 up = item.get("description_upgraded", "") or ""
-                if not needs_alignment(tpl):
+                if not up:
+                    # No upgraded English means there is nothing to translate.
+                    # This has to be checked before the no-alignment shortcut
+                    # below: card_detail.html renders an "Upgraded:" block
+                    # whenever the field is present, so filling it in anyway
+                    # showed translated players a section English readers
+                    # never see (6 cards x 13 languages), restating the base
+                    # description back at them.
+                    variants["up"] = None
+                elif not needs_alignment(tpl):
                     variants["up"] = ({}, {}, {})
-                elif up:
+                else:
                     upres = extract_english(tpl, up)
                     if upres is None:
                         upres = fallback_single_number(tpl, up)
                     variants["up"] = upres
-                else:
-                    variants["up"] = None
             aligned[(section, sid)] = variants
             if variants["base"] is not None:
                 stats_align[section][0] += 1

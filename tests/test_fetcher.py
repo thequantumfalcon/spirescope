@@ -493,3 +493,157 @@ class TestFetchPage:
              patch("sts2.fetcher.urllib.request.urlopen", return_value=mock_resp):
             with pytest.raises(urllib.error.URLError, match="too large"):
                 _fetch_page("/cards")
+
+    def test_a_response_under_the_cap_is_decoded(self):
+        mock_resp = MagicMock()
+        mock_resp.read.return_value = "<html>Café</html>".encode("utf-8")
+        mock_resp.__enter__ = lambda s: s
+        mock_resp.__exit__ = MagicMock(return_value=False)
+        with patch("sts2.fetcher.urllib.request.urlopen", return_value=mock_resp):
+            assert _fetch_page("/cards") == "<html>Café</html>"
+
+    def test_the_user_agent_identifies_the_project(self):
+        from sts2.config import VERSION
+        from sts2.fetcher import _get_user_agent
+        agent = _get_user_agent()
+        assert VERSION in agent
+        assert "github.com/thequantumfalcon/spirescope" in agent
+
+
+# ── Extraction fallbacks ─────────────────────────────────────────────────
+#
+# _extract_json_objects tries four strategies in order and only falls through
+# when the previous one found nothing. Strategy 1 was the only one under test,
+# so the wiki could switch to any of the other three shapes and the scrape
+# would silently return zero items -- which the "no X found" guard then reads
+# as "keep the existing data", leaving stale text in place with no error.
+
+CARD_OBJ = {"category": "CARD", "id": "bash-ironclad", "name": "Bash",
+            "cardType": "Attack", "description": "Deal 8 damage."}
+
+
+def _push(payload: str) -> str:
+    """One Next.js RSC streaming chunk as it appears in the page source."""
+    return f'self.__next_f.push([1,"{payload}"])'
+
+
+def _u22(obj: dict) -> str:
+    """Serialise with quotes as \\u0022 escapes, which is how the site's RSC
+    payloads carry them."""
+    return json.dumps(obj).replace('"', '\\u0022')
+
+
+class TestExtractionStrategyFallbacks:
+    def test_strategy_2_reads_an_object_that_contains_a_nested_one(self):
+        """The flat pattern cannot cross a '{', so an object that gained a
+        nested field would vanish entirely."""
+        html = '{"meta":{"a":1},"category":"CARD","id":"nested-1","name":"N"}'
+        assert [o["id"] for o in _extract_json_objects(html, "CARD")] == ["nested-1"]
+
+    def test_strategy_3_walks_the_next_data_script_tag(self):
+        deep = {"props": {"pageProps": {"items": [
+            dict(CARD_OBJ, id="deep-1", meta={"x": {"y": 1}})]}}}
+        html = ('<script id="__NEXT_DATA__" type="application/json">'
+                f'{json.dumps(deep)}</script>')
+        assert [o["id"] for o in _extract_json_objects(html, "CARD")] == ["deep-1"]
+
+    def test_a_malformed_next_data_block_is_ignored_not_fatal(self):
+        html = '<script id="__NEXT_DATA__">{not json at all</script>'
+        assert _extract_json_objects(html, "CARD") == []
+
+    def test_strategy_4_reads_an_rsc_streaming_payload(self):
+        assert [o["id"] for o in
+                _extract_json_objects(_push(_u22(CARD_OBJ)), "CARD")] == [
+            "bash-ironclad"]
+
+    def test_strategy_4_rejoins_an_object_split_across_push_calls(self):
+        """The site splits JSON mid-token across push() calls, so the chunks
+        must be concatenated before decoding -- an escape sequence can straddle
+        a chunk boundary."""
+        payload = _u22(CARD_OBJ)
+        half = len(payload) // 2
+        html = _push(payload[:half]) + _push(payload[half:])
+        assert [o["id"] for o in _extract_json_objects(html, "CARD")] == [
+            "bash-ironclad"]
+
+    def test_strategy_4_finds_objects_whose_own_text_contains_braces(self):
+        """Card text carries {token} markup, which is invisible to the flat
+        pattern -- the bracket-balanced second pass is what catches it."""
+        obj = dict(CARD_OBJ, id="braced", meta={"deep": {"deeper": 1}})
+        assert [o["id"] for o in _extract_json_objects(_push(_u22(obj)), "CARD")] == [
+            "braced"]
+
+    def test_rsc_extraction_on_a_page_with_no_push_calls_is_a_no_op(self):
+        from sts2.fetcher import _extract_from_rsc_payloads
+        results, seen = [], set()
+        _extract_from_rsc_payloads("<html>no payloads here</html>", "CARD",
+                                   results, seen)
+        assert results == []
+
+    def test_every_strategy_failing_returns_empty_and_says_so(self, caplog):
+        assert _extract_json_objects("<html>nothing useful</html>", "CARD") == []
+        assert "All extraction strategies found 0" in caplog.text
+
+    def test_the_same_id_is_never_returned_twice_across_strategies(self):
+        html = _push(_u22(CARD_OBJ)) + _push(_u22(CARD_OBJ))
+        assert len(_extract_json_objects(html, "CARD")) == 1
+
+
+class TestWalkJsonForCategory:
+    def test_finds_a_match_at_any_depth(self):
+        from sts2.fetcher import _walk_json_for_category
+        results, seen = [], set()
+        _walk_json_for_category(
+            {"a": {"b": [{"c": dict(CARD_OBJ, id="found")}]}},
+            "CARD", results, seen)
+        assert [o["id"] for o in results] == ["found"]
+
+    def test_ignores_a_structure_with_no_matching_category(self):
+        from sts2.fetcher import _walk_json_for_category
+        results, seen = [], set()
+        _walk_json_for_category({"a": {"b": 1}}, "RELIC", results, seen)
+        assert results == []
+
+    def test_gives_up_before_recursing_forever(self):
+        """A cyclic or pathologically deep payload must not blow the stack."""
+        from sts2.fetcher import _walk_json_for_category
+        root = cursor = {}
+        for _ in range(30):
+            cursor["next"] = {}
+            cursor = cursor["next"]
+        cursor.update(dict(CARD_OBJ, id="too-deep"))
+        results, seen = [], set()
+        _walk_json_for_category(root, "CARD", results, seen)
+        assert results == []
+
+    def test_an_object_without_an_id_is_skipped(self):
+        from sts2.fetcher import _walk_json_for_category
+        results, seen = [], set()
+        _walk_json_for_category({"category": "CARD", "name": "No Id"},
+                                "CARD", results, seen)
+        assert results == []
+
+
+class TestDecodeUnicodeEscapes:
+    """A previous fix ran the payload through unicode_escape, which round-trips
+    UTF-8 through latin-1 and mangled every real non-ASCII character: three
+    relic descriptions shipped reading 'Cards containing â€œStrike'.
+    The data file was repaired but the function was not, so the next refresh
+    reproduced it exactly.
+    """
+
+    def test_resolves_a_lone_escape(self):
+        from sts2.fetcher import _decode_unicode_escapes
+        assert _decode_unicode_escapes(r"“Strike”") == "“Strike”"
+
+    def test_recombines_a_surrogate_pair_into_one_character(self):
+        from sts2.fetcher import _decode_unicode_escapes
+        assert _decode_unicode_escapes(r"😀") == "\U0001F600"
+
+    def test_leaves_literal_non_ascii_text_untouched(self):
+        from sts2.fetcher import _decode_unicode_escapes
+        assert _decode_unicode_escapes("Café “x”") == "Café “x”"
+
+    def test_mixes_escaped_and_literal_text(self):
+        from sts2.fetcher import _decode_unicode_escapes
+        assert _decode_unicode_escapes(r"Café déjà") == "Café déjà"

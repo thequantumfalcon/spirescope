@@ -19,7 +19,16 @@
 </div>
 
 <div class="detail-desc">{{ card.description }}</div>
-{% if card.description_upgraded %}
+{# Same guard the deck popover already applies (deck.js): an "Upgraded:" block
+   repeating the base description tells the reader nothing. It happens in
+   English wherever the wiki records identical text, and in translations
+   wherever the difference is a keyword prefix (Retain./Innate./Exhaust.) that
+   lives in card metadata rather than in the game's description template, so
+   the localized template cannot express it. Suppressing it here rather than
+   in the overlay is deliberate: an overlay that omits the field falls back to
+   the English string (knowledge.py skips absent values), which would put
+   English upgrade text under a translated description. #}
+{% if card.description_upgraded and card.description_upgraded != card.description %}
 <div class="detail-desc card-win"><strong class="text-green">Upgraded:</strong> {{ card.description_upgraded }}</div>
 {% endif %}
 

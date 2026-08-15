@@ -638,6 +638,39 @@ async def test_card_detail_no_stats_when_empty(client):
         assert "Your Stats" not in resp.text
 
 
+async def test_card_detail_hides_an_upgraded_block_that_repeats_the_base(client):
+    """An "Upgraded:" section identical to the description tells the reader
+    nothing. It happens in English wherever the wiki records the same text for
+    both, and in translations wherever the difference is a keyword prefix
+    (Retain./Innate./Exhaust.) that the game's description template does not
+    carry. deck.js already applied this guard; the detail page did not.
+
+    Suppressing it here rather than in the localize overlay is deliberate:
+    knowledge.py skips absent overlay fields, so an overlay that dropped the
+    field would leave the *English* upgrade text under a translated
+    description.
+    """
+    from unittest.mock import patch
+
+    from sts2.app import kb as _kb
+
+    card = next(c for c in _kb.cards if c.id == "CARD.BASH")
+    same = card.model_copy(update={"description": "Deal 8 damage.",
+                                   "description_upgraded": "Deal 8 damage."})
+    differs = card.model_copy(update={"description": "Deal 8 damage.",
+                                      "description_upgraded": "Deal 10 damage."})
+
+    # the route resolves through the id index, not by scanning kb.cards
+    with patch.object(_kb, "get_card_by_id", return_value=same):
+        body = (await client.get("/cards/CARD.BASH")).text
+    assert "Upgraded:" not in body
+
+    with patch.object(_kb, "get_card_by_id", return_value=differs):
+        body = (await client.get("/cards/CARD.BASH")).text
+    assert "Upgraded:" in body
+    assert "Deal 10 damage." in body
+
+
 async def test_index_shows_character_streaks(client):
     """Index page should show streak/ascension info when available."""
     from unittest.mock import AsyncMock, patch

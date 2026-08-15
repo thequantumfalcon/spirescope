@@ -2,8 +2,11 @@
 import hashlib
 import json
 import tarfile
+import urllib.error
 from pathlib import Path
 from unittest.mock import patch
+
+import pytest
 
 from sts2 import updater
 from sts2.sources import (
@@ -108,6 +111,99 @@ def test_wikigg_relics_convert_icon_runs():
         relics = src.fetch_relics()
     assert relics[0]["description"] == (
         "Gain 1 Energy at the start of each turn. You can no longer obtain potions.")
+
+
+def test_regent_module_is_normalised_to_the_app_spelling():
+    """The wiki names the character "The Regent"; config.py, logparser.py and
+    every template use "Regent". A leak here splits one character into two
+    across the whole app."""
+    lua = '''
+    local d = {
+      ["Royal Decree"] = {
+        Cost = 1, Color = "The Regent", Type = "Skill",
+        Rarity = "Common", Text = "Do a thing."
+      }
+    }
+    '''
+    src = WikiggSource()
+    with patch.object(WikiggSource, "_fetch_modules",
+                      return_value={"Module:Cards/StS2 data/Regent": lua}):
+        cards = src.fetch_cards()
+    assert [c["character"] for c in cards] == ["Regent"]
+
+
+def test_character_falls_back_to_the_module_title():
+    """A module entry with no Color field still belongs to the character whose
+    page it came from."""
+    lua = '["Nameless"] = { Cost = 1, Type = "Skill", Text = "x" }'
+    src = WikiggSource()
+    with patch.object(WikiggSource, "_fetch_modules",
+                      return_value={"Module:Cards/StS2 data/Defect": lua}):
+        cards = src.fetch_cards()
+    assert cards[0]["character"] == "Defect"
+
+
+class TestWikiggFetchModules:
+    """The MediaWiki API call itself: batching, the response cap, and the
+    shape-tolerance that keeps one odd page from aborting a whole scrape.
+    """
+
+    @staticmethod
+    def _response(payload):
+        from unittest.mock import MagicMock
+        resp = MagicMock()
+        resp.read.return_value = json.dumps(payload).encode("utf-8")
+        resp.__enter__ = lambda s: s
+        resp.__exit__ = MagicMock(return_value=False)
+        return resp
+
+    def _page(self, title, content):
+        return {"title": title,
+                "revisions": [{"slots": {"main": {"content": content}}}]}
+
+    def test_titles_are_requested_in_batches_of_three(self):
+        """Six modules in one request would be a single oversized response and
+        a heavier hit on the wiki; the delay between batches is the politeness
+        the scrape depends on."""
+        titles = [f"Module:{i}" for i in range(7)]
+        responses = [
+            self._response({"query": {"pages": [
+                self._page(t, f"content {t}") for t in titles[i:i + 3]]}})
+            for i in range(0, 7, 3)
+        ]
+        with patch("sts2.sources.urllib.request.urlopen", side_effect=responses) \
+                as urlopen, patch("sts2.sources.time.sleep") as sleep:
+            got = WikiggSource()._fetch_modules(titles)
+        assert urlopen.call_count == 3
+        assert sleep.call_count == 2          # between batches, not before the first
+        assert len(got) == 7
+        assert got["Module:0"] == "content Module:0"
+
+    def test_an_oversized_response_is_refused(self):
+        from unittest.mock import MagicMock
+        resp = MagicMock()
+        resp.read.return_value = b"x" * 11
+        resp.__enter__ = lambda s: s
+        resp.__exit__ = MagicMock(return_value=False)
+        with patch("sts2.sources._MAX_RESPONSE_SIZE", 10), \
+             patch("sts2.sources.urllib.request.urlopen", return_value=resp), \
+             pytest.raises(urllib.error.URLError, match="too large"):
+            WikiggSource()._fetch_modules(["Module:X"])
+
+    def test_a_page_with_no_revisions_is_skipped_not_fatal(self):
+        payload = {"query": {"pages": [
+            {"title": "Module:Missing"},
+            self._page("Module:Real", "content"),
+        ]}}
+        with patch("sts2.sources.urllib.request.urlopen",
+                   return_value=self._response(payload)):
+            got = WikiggSource()._fetch_modules(["Module:Missing", "Module:Real"])
+        assert got == {"Module:Real": "content"}
+
+    def test_an_empty_query_result_yields_nothing(self):
+        with patch("sts2.sources.urllib.request.urlopen",
+                   return_value=self._response({})):
+            assert WikiggSource()._fetch_modules(["Module:X"]) == {}
 
 
 def test_icon_runs_cover_the_tokens_the_wiki_actually_emits():

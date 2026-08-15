@@ -11,10 +11,10 @@ def detect_tilt(runs, session_window_hours=4):
     if len(runs) < 3:
         return {"tilting": False, "momentum": 0, "message": ""}
 
-    sessions = _group_sessions(runs, session_window_hours)
-    current = sessions[-1] if sessions else runs[-5:]
-    if not current:
-        return {"tilting": False, "momentum": 0, "message": ""}
+    # runs is non-empty (guarded above) and _group_sessions always returns at
+    # least one non-empty session for non-empty input, so the most recent
+    # session is always present and always has runs in it.
+    current = _group_sessions(runs, session_window_hours)[-1]
 
     avg_floors = _avg_last_floor(current)
     hist_avg = _avg_last_floor(runs)
