@@ -51,10 +51,19 @@ async def test_deck_analysis_survives_a_broken_spectral_analysis(client):
 
 async def test_deck_analysis_caps_the_number_of_cards_accepted(client):
     """An unbounded card list is a cheap way to make the server do a lot of
-    graph work; the handler truncates instead."""
-    resp = await client.post("/deck/analyze",
-                             data=_form(card_ids=["CARD.BASH"] * 3000))
+    graph work; the handler truncates to _MAX_DECK_SIZE instead.
+
+    Deliberately just over the handler's own cap rather than enormous: a
+    submission with thousands of fields is refused by Starlette's form parser
+    (400) before the handler ever sees it, which tests the framework instead
+    of this guard -- and does so only on the Starlette version CI pins.
+    """
+    from sts2.routes import _MAX_DECK_SIZE
+    resp = await client.post(
+        "/deck/analyze",
+        data=_form(card_ids=["CARD.BASH"] * (_MAX_DECK_SIZE + 20)))
     assert resp.status_code == 200
+    assert "Bash" in resp.text
 
 
 # ------------------------------------------------------------ patch admin
@@ -167,11 +176,25 @@ async def test_a_run_page_renders_without_the_private_autopsy_module(
 async def test_a_broken_autopsy_leaves_a_trace_instead_of_failing_silently(
         client, one_lost_run, caplog):
     """Swallowing this made a regression indistinguishable from the feature
-    simply being absent."""
+    simply being absent.
+
+    A stub module is injected rather than patching sts2.diagnosis in place:
+    the real module is gitignored, so on a clean checkout (which is every CI
+    run) there is nothing to patch and the patch target itself fails to
+    resolve. Injecting exercises this branch in both environments.
+    """
     import logging
+    import sys
+    import types
+
     caplog.set_level(logging.WARNING)
-    with patch("sts2.diagnosis.diagnose_run",
-               side_effect=RuntimeError("model exploded"), create=True):
+    stub = types.ModuleType("sts2.diagnosis")
+
+    def _boom(*_a, **_kw):
+        raise RuntimeError("model exploded")
+
+    stub.diagnose_run = _boom
+    with patch.dict(sys.modules, {"sts2.diagnosis": stub}):
         resp = await _run_page(client, one_lost_run)
     assert resp.status_code == 200
     assert "Autopsy generation failed" in caplog.text
