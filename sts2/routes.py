@@ -193,10 +193,21 @@ def _danger_assessment(run, kb) -> tuple[str | None, int]:
         return fallback_level, hp_pct
     try:
         risk = compute_death_risk(run, kb)
+        level = risk.get("level")
     except Exception:
-        logging.getLogger(__name__).debug("Risk scoring failed", exc_info=True)
+        # Reading the result belongs inside the guard, not after it. The call
+        # raising was already handled, but a changed return type — dict to
+        # dataclass, or None — made .get() an uncaught AttributeError, and this
+        # function is what /live, /overlay and the SSE stream share, so all
+        # three fell over at once. risk.py is untracked, so CI never loads it
+        # and no test here can see that drift.
+        #
+        # WARNING rather than DEBUG for the reason the autopsy call below
+        # states: at DEBUG a broken scorer is indistinguishable from the module
+        # being absent, which is the normal state of the public build.
+        logging.getLogger(__name__).warning(
+            "Risk scoring failed, falling back to HP thresholds", exc_info=True)
         return fallback_level, hp_pct
-    level = risk.get("level")
     return (level if level in ("warning", "danger", "critical") else None), hp_pct
 
 
