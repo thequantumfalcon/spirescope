@@ -19,6 +19,23 @@
   HP thresholds. The result is read inside the guard now, and the fallback logs
   at `WARNING`: at `DEBUG` a broken scorer was indistinguishable from the
   module being absent, which is the normal state of the public build.
+- **The overlay invented upgraded descriptions for six cards.** The overlay
+  builder gave every no-alignment card an "up" variant whether or not English
+  had upgraded text to translate, and the card page renders an "Upgraded:"
+  block whenever one is present — so Apotheosis, Despair, Lantern Key, Sharp
+  Edge, Wish and Reserves showed translated players a section English readers
+  never see, restating the base description back at them. Thirteen languages,
+  78 entries. Checking for upgraded English first leaves the 545 legitimate
+  upgraded translations untouched.
+- **The card page repeated the description under an "Upgraded:" heading.**
+  `deck.js` already suppressed its popover when the two strings matched; the
+  card page did not — 98 cards in English, where the wiki records the same text
+  for both, and 120 in German, where the difference is a keyword prefix carried
+  in card metadata rather than in the description template. Fixed in the
+  template rather than the overlay: absent overlay fields are skipped, so
+  dropping the field there would have left the English upgrade string sitting
+  under a translated description on 148 fields — mixed-language output, worse
+  than the duplicate it set out to remove.
 
 ### Internal
 
@@ -71,6 +88,12 @@
   every push and pull request including from forks, and the gate that keeps
   attribution out of the history should not rest on the shape of an event
   payload field.
+- `log.debug` passed an argument to a format string with no placeholder in the
+  localize token-name check, which raises inside logging whenever DEBUG is
+  enabled and the check has anything to report.
+- `detect_tilt`'s empty-session guard was unreachable: the run count is already
+  checked above it, and session grouping always returns at least one non-empty
+  session for non-empty input, so neither the guard nor its fallback could run.
 
 ## v3.1.0
 
