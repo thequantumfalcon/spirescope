@@ -92,9 +92,9 @@
     "name": "Beautiful Bracelet",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, choose 4 cards in your Deck. Enchant them with Swift 2.",
+    "description": "Upon pickup, Enchant 4 random cards in your Deck with Swift 2.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-08-08"
+    "fetched_at": "2026-09-14"
   },
   {
     "id": "RELIC.BELLOWS",
@@ -296,7 +296,9 @@
     "name": "Calling Bell",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, obtain a unique Curse and 3 Relics."
+    "description": "Upon pickup, obtain a unique Curse of the Bell and 3 Relics.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-09-14"
   },
   {
     "id": "RELIC.CANDELABRA",
@@ -476,8 +478,10 @@
     "name": "Distinguished Cape",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, add 2 random Curses and 3 Apparitions to your Deck.",
-    "last_changed": "v0.109.0"
+    "description": "Upon pickup, add 2 random Curses and 3 Apparition to your Deck.",
+    "last_changed": "v0.109.0",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-09-14"
   },
   {
     "id": "RELIC.DIVINE_DESTINY",
@@ -650,7 +654,9 @@
     "name": "Funerary Mask",
     "character": "Necrobinder",
     "rarity": "Uncommon",
-    "description": "At the start of each combat, add 3 Souls into your Draw Pile."
+    "description": "At the start of each combat, add 3 Soul into your Draw Pile.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-09-14"
   },
   {
     "id": "RELIC.FUR_COAT",
@@ -1240,7 +1246,9 @@
     "name": "Ninja Scroll",
     "character": "Silent",
     "rarity": "Shop",
-    "description": "At the start of each combat, add 3 Shivs into your Hand."
+    "description": "At the start of each combat, add 3 Shiv into your Hand.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-09-14"
   },
   {
     "id": "RELIC.NUNCHAKU",
@@ -1639,9 +1647,9 @@
     "name": "Regalite",
     "character": "Regent",
     "rarity": "Uncommon",
-    "description": "The first time you create a card each turn, gain 6 Block.",
+    "description": "The first time you create a card each turn, gain 4 Block.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-08-08"
+    "fetched_at": "2026-09-14"
   },
   {
     "id": "RELIC.REPTILE_TRINKET",
@@ -1776,10 +1784,10 @@
     "name": "Sere Talon",
     "character": "Event",
     "rarity": "Ancient",
-    "description": "Upon pickup, lose 9 Max HP. Add 3 Wishes to your Deck.",
+    "description": "Upon pickup, lose 9 Max HP. Add 3 Wish to your Deck.",
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-08-08"
+    "fetched_at": "2026-09-14"
   },
   {
     "id": "RELIC.SHOVEL",
