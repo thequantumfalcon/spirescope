@@ -1,5 +1,93 @@
 [
   {
+    "patch": "v0.98.1",
+    "date": "2026-03-06",
+    "branch": "main",
+    "build_ids": [
+      "v0.98.1"
+    ],
+    "changed": {
+      "cards": [],
+      "relics": [],
+      "enemies": []
+    }
+  },
+  {
+    "patch": "v0.98.2",
+    "date": "2026-03-07",
+    "branch": "main",
+    "build_ids": [
+      "v0.98.2"
+    ],
+    "changed": {
+      "cards": [],
+      "relics": [],
+      "enemies": []
+    }
+  },
+  {
+    "patch": "v0.98.3",
+    "date": "2026-03-10",
+    "branch": "main",
+    "build_ids": [
+      "v0.98.3"
+    ],
+    "changed": {
+      "cards": [],
+      "relics": [],
+      "enemies": []
+    }
+  },
+  {
+    "patch": "v0.99.1",
+    "date": "2026-03-17",
+    "branch": "main",
+    "build_ids": [
+      "v0.99.1"
+    ],
+    "changed": {
+      "cards": [],
+      "relics": [],
+      "enemies": []
+    }
+  },
+  {
+    "patch": "v0.103.2",
+    "date": "2026-04-17",
+    "branch": "main",
+    "build_ids": [
+      "v0.103.2"
+    ],
+    "changed": {
+      "cards": [
+        "CARD.ACROBATICS",
+        "CARD.ARSENAL",
+        "CARD.BLADE_OF_INK",
+        "CARD.BORROWED_TIME",
+        "CARD.DOMINATE",
+        "CARD.EXPECT_A_FIGHT",
+        "CARD.GRAPPLE",
+        "CARD.HIDDEN_GEM",
+        "CARD.NOT_YET",
+        "CARD.SPITE",
+        "CARD.STOKE"
+      ],
+      "relics": [
+        "RELIC.HEFTY_TABLET",
+        "RELIC.NEOWS_BONES",
+        "RELIC.NEOWS_TALISMAN",
+        "RELIC.PENDULUM",
+        "RELIC.PHIAL_HOLSTER",
+        "RELIC.REGALITE",
+        "RELIC.WINGED_BOOTS"
+      ],
+      "enemies": [
+        "MONSTER.DOORMAKER",
+        "MONSTER.SKULKING_COLONY"
+      ]
+    }
+  },
+  {
     "patch": "v0.107.0",
     "date": "2026-06-04",
     "branch": "beta",
