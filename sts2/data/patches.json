@@ -163,5 +163,49 @@
       ],
       "enemies": []
     }
+  },
+  {
+    "patch": "v0.111.0",
+    "date": "2026-08-14",
+    "branch": "beta",
+    "build_ids": [
+      "v0.111.0"
+    ],
+    "changed": {
+      "cards": [
+        "CARD.ALIGNMENT",
+        "CARD.BLADE_OF_INK",
+        "CARD.BRIGHTEST_FLAME",
+        "CARD.EXPECT_A_FIGHT",
+        "CARD.FORGOTTEN_RITUAL",
+        "CARD.GUIDING_STAR",
+        "CARD.HYPERBEAM",
+        "CARD.MIRAGE",
+        "CARD.NULL",
+        "CARD.RAMPAGE",
+        "CARD.REFINE_BLADE",
+        "CARD.REND",
+        "CARD.SALVO",
+        "CARD.SHROUD",
+        "CARD.SPLASH",
+        "CARD.SPOILS_OF_BATTLE",
+        "CARD.SYNCHRONIZE",
+        "CARD.THUNDER",
+        "CARD.TIMES_UP"
+      ],
+      "relics": [
+        "RELIC.BEAUTIFUL_BRACELET",
+        "RELIC.REGALITE"
+      ],
+      "enemies": [
+        "MONSTER.AXEBOT",
+        "MONSTER.ENTOMANCER",
+        "MONSTER.EXOSKELETON",
+        "MONSTER.GLOBE_HEAD",
+        "MONSTER.LOUSE_PROGENITOR",
+        "MONSTER.MECHA_KNIGHT",
+        "MONSTER.SOUL_FYSH"
+      ]
+    }
   }
 ]
