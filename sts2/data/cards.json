@@ -876,7 +876,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Rare",
+    "rarity": "Uncommon",
     "description": "Deal 12 damage. Retain your Hand this turn.",
     "description_upgraded": "Deal 16 damage. Retain your Hand this turn.",
     "keywords": [
@@ -983,7 +983,7 @@
     "character": "Colorless",
     "cost": "1",
     "type": "Skill",
-    "rarity": "Uncommon",
+    "rarity": "Rare",
     "description": "Choose 1 of 3 random Attacks from another character to add into your Hand. It's free to play this turn.",
     "description_upgraded": "Choose 1 of 3 random Upgraded Attacks from another character to add into your Hand. It's free to play this turn.",
     "keywords": [],

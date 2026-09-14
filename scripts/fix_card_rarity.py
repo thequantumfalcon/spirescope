@@ -180,7 +180,12 @@ _add("Colorless", [
     "Huddle Up", "Impatience", "Intercept", "Jack of All Trades", "Lift",
     "Mind Blast", "Omnislice", "Panache", "Panic Button", "Prep Time",
     "Production", "Prolong", "Prowess", "Purity", "Restlessness",
-    "Seeker Strike", "Shockwave", "Splash", "Stratagem", "Tag Team",
+    # v0.111.0 swapped Salvo and Splash: Splash is Rare, Salvo is Uncommon.
+    # This map runs after every wiki refresh (see __main__._run_rarity_fix), so
+    # while it held the pre-swap pairing it re-inverted both on every scrape --
+    # the scraped value was correct and this overwrote it.
+    "Salvo",
+    "Seeker Strike", "Shockwave", "Stratagem", "Tag Team",
     "The Bomb", "Thinking Ahead", "Thrumming Hatchet", "Ultimate Defend",
     "Ultimate Strike", "Volley",
 ], "Uncommon")
@@ -188,7 +193,7 @@ _add("Colorless", [
     "Alchemize", "Anointed", "Beacon of Hope", "Beat Down", "Bolas",
     "Calamity", "Entropy", "Eternal Armor", "Gold Axe", "Hand of Greed",
     "Hidden Gem", "Jackpot", "Knockdown", "Master of Strategy", "Mayhem",
-    "Mimic", "Nostalgia", "Rally", "Rend", "Rolling Boulder", "Salvo",
+    "Mimic", "Nostalgia", "Rally", "Rend", "Rolling Boulder", "Splash",
     "Scrawl", "Secret Technique", "Secret Weapon", "The Gambit",
 ], "Rare")
 _add("Colorless", [
