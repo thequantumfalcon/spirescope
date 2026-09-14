@@ -32,14 +32,24 @@ jobs:
           persist-credentials: false
 
       - name: Scan commit messages in this push
+        # Passed through env rather than spliced into the script body. A ${{ }}
+        # inside run: is substituted as text before the shell ever sees it, so
+        # the script's safety rests on what the value happens to contain. These
+        # three are GitHub-generated commit SHAs and carry nothing dangerous
+        # today, but this workflow gates every push and PR including from
+        # forks, and an env var is read by the shell as data whatever it holds.
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.event.after }}
         run: |
           set -euo pipefail
           # For PRs, compare against the base. For pushes, check HEAD commits since
           # the previous ref — fall back to scanning the last 50 commits.
-          if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
-            RANGE="${{ github.event.pull_request.base.sha }}..HEAD"
-          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            RANGE="${{ github.event.before }}..${{ github.event.after }}"
+          if [ -n "$PR_BASE_SHA" ]; then
+            RANGE="$PR_BASE_SHA..HEAD"
+          elif [ -n "$PUSH_BEFORE" ] && [ "$PUSH_BEFORE" != "0000000000000000000000000000000000000000" ]; then
+            RANGE="$PUSH_BEFORE..$PUSH_AFTER"
           else
             RANGE="HEAD~50..HEAD"
           fi
