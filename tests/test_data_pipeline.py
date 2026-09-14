@@ -681,3 +681,91 @@ def test_gap_fill_adopts_upgraded_text_even_when_primary_had_a_description(
     both = next(c for c in cards if c["name"] == "Both")
     assert both["description"] == "Deal 6 damage."
     assert both["description_upgraded"] == "Deal 9 damage."
+
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+class TestCardTextOverrides:
+    """scripts/fix_card_text.py pins text the wiki has not caught up on.
+
+    The wiki is the primary source for card text and it lags the game. After
+    the v0.111.0 refresh it still served text for three cards that two patches
+    had changed, and for Expect a Fight it served pre-v0.109.0 text -- so the
+    refresh reintroduced a clause that patch had removed. A scrape returning a
+    plausible string is indistinguishable from a correct one, hence the pin.
+    """
+
+    @staticmethod
+    def _module():
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "fix_card_text", REPO_ROOT / "scripts" / "fix_card_text.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    OVERRIDE = {
+        "id": "CARD.T", "source": "vX", "verbatim": True, "note": "",
+        "expect": {"cost": "2", "description": "old"},
+        "replace": {"cost": "3", "description": "new"},
+    }
+
+    def test_stale_text_is_pinned(self):
+        mod = self._module()
+        cards = [{"id": "CARD.T", "cost": "2", "description": "old"}]
+        applied, caught, drifted = mod.apply_overrides(cards, [self.OVERRIDE])
+        assert applied and not caught and not drifted
+        assert cards[0] == {"id": "CARD.T", "cost": "3", "description": "new"}
+
+    def test_already_correct_is_a_noop(self):
+        mod = self._module()
+        cards = [{"id": "CARD.T", "cost": "3", "description": "new"}]
+        applied, caught, drifted = mod.apply_overrides(cards, [self.OVERRIDE])
+        assert caught and not applied and not drifted
+
+    @pytest.mark.parametrize("card", [
+        {"id": "CARD.T", "cost": "1", "description": "newer still"},   # later patch
+        {"id": "CARD.T", "cost": "2", "description": "newer still"},   # half-updated
+    ])
+    def test_drifted_text_is_refused_not_overwritten(self, card):
+        """The reason this mechanism is safe to leave wired in.
+
+        A later patch will change these cards again. An override that wrote
+        over whatever it found would pin the game to a version two patches old
+        -- the same failure it exists to fix, but disguised as intent.
+        """
+        mod = self._module()
+        before = dict(card)
+        cards = [card]
+        applied, caught, drifted = mod.apply_overrides(cards, [self.OVERRIDE])
+        assert drifted and not applied and not caught
+        assert cards[0] == before, "a drifted card must be left exactly as found"
+
+    def test_missing_card_is_reported_not_crashed(self):
+        mod = self._module()
+        _, _, drifted = mod.apply_overrides([], [self.OVERRIDE])
+        assert drifted and "not present" in drifted[0]
+
+    def test_shipped_overrides_are_well_formed(self):
+        """Every expect key must have a replace counterpart, or the classifier
+        would call a half-applied card 'caught-up' and skip the rest."""
+        mod = self._module()
+        assert mod.OVERRIDES, "override table should not be empty while the wiki lags"
+        for ov in mod.OVERRIDES:
+            assert set(ov["expect"]) <= set(ov["replace"]), ov["id"]
+            assert ov["expect"] != ov["replace"], ov["id"]
+            assert ov["source"] and ov["note"], ov["id"]
+
+    def test_shipped_overrides_match_the_real_data(self):
+        """cards.json must be in the pinned state, not the stale one."""
+        mod = self._module()
+        cards = json.loads((REPO_ROOT / "sts2" / "data" / "cards.json")
+                           .read_text(encoding="utf-8"))
+        by_id = {c["id"]: c for c in cards}
+        for ov in mod.OVERRIDES:
+            card = by_id.get(ov["id"])
+            assert card is not None, f"{ov['id']} missing from cards.json"
+            assert mod.classify(card, ov) == "caught-up", (
+                f"{ov['id']} is not in its pinned state -- run "
+                f"scripts/fix_card_text.py after a wiki refresh")
