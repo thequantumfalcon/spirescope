@@ -37,38 +37,33 @@ def is_valid_code(code: str) -> bool:
 
 
 def _locale_path(code: str, *parts: str) -> Path | None:
-    """Resolve <locales>/<parts...>/<code>.json, or None if it escapes the tree.
+    """The locale file for `code` under <locales>/<parts...>, or None.
 
-    is_valid_code already makes traversal unreachable — [a-z]{2,8} admits no
-    separator and no dot. This is the structural backstop behind it: that guard
-    lives in a single regex, and a regex is one well-meant edit away from
-    admitting a hyphen or a dot ('pt-BR', 'zh.Hant') and, with either, a path
-    fragment. Proving containment after resolution cannot be weakened by
-    loosening the pattern, and it is also the form static analysis recognises
-    as a sanitizer — CodeQL reported every join below as py/path-injection
-    while the regex was the only thing standing between input and the path.
+    The code never becomes part of a path. The directory is enumerated and the
+    code compared against the names actually found there, so a value carrying a
+    separator or a traversal segment matches nothing — there is no constructed
+    path for it to escape from, rather than a constructed path proven safe
+    afterwards.
+
+    is_valid_code rejects such values well before this point. Selecting from
+    what exists makes that guard structural instead of the only line of
+    defence: the regex is one well-meant edit away from admitting a hyphen or
+    a dot ('pt-BR', 'zh.Hant') and with either a path fragment. Building the
+    path and then checking it — containment, resolution, comparing the
+    resolved parent — still reads to static analysis as user input reaching a
+    filesystem call, and CodeQL reported exactly that (py/path-injection) for
+    every such join here. Enumeration removes the flow instead of guarding it.
     """
     if not code:
         return None
-    base = _LOCALES_DIR.joinpath(*parts)
+    wanted = f"{code}.json"
     try:
-        resolved_base = base.resolve()
-        candidate = (base / f"{code}.json").resolve()
-    except (OSError, ValueError):
-        # ValueError, not just OSError: resolve() raises it outright on an
-        # embedded NUL, where the Path.exists() this replaced swallowed it and
-        # returned False. Catching only OSError would make a weakened
-        # is_valid_code crash here instead of falling back to English — the
-        # exact failure this function exists to prevent.
+        for candidate in _LOCALES_DIR.joinpath(*parts).glob("*.json"):
+            if candidate.name == wanted:
+                return candidate
+    except OSError:
         return None
-    # Containment alone is not quite enough: 'de/../..' resolves back inside
-    # the directory as the literal file '...json', so it never escapes but it
-    # does let the code contribute path structure. Requiring the filename to be
-    # exactly the code plus the suffix rejects any separator or traversal
-    # segment outright, whatever it resolves to.
-    if candidate.parent != resolved_base or candidate.name != f"{code}.json":
-        return None
-    return candidate
+    return None
 
 
 def _load_locale(code: str) -> dict:
