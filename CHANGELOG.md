@@ -1,5 +1,39 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **Card text caught up with v0.111.0.** The first wiki refresh since
+  2026-08-08 corrected 19 cards, 7 relics and 2 potions. Five are mechanical
+  rather than cosmetic: Hyperbeam deals 24 and loses Focus for the turn only,
+  Rend costs 1, Forgotten Ritual gains Energy unconditionally, Expect a Fight
+  is reworked to a Block card at cost 3, and Concoct applies Poison on
+  unblocked damage. No entity was added or removed.
+- **Salvo and Splash were re-inverted on every refresh.** v0.111.0 swapped
+  them — Splash is Rare, Salvo is Uncommon — but the map in fix_card_rarity
+  still held the pre-swap pairing, and that script runs after every scrape. It
+  overwrote the correct scraped value each time, and would have kept doing so.
+- **Three cards were pinned to text the wiki still had not published.** Expect
+  a Fight was serving pre-v0.109.0 text, so the refresh reintroduced a clause
+  that patch had removed; Brightest Flame and Guiding Star were each a patch
+  behind. Checked against the published notes rather than against the wiki.
+
+### Internal
+
+- **Card text the wiki lags on is pinned from the patch notes.** The wiki is
+  the primary source for card text and it trails the game, and a scrape that
+  returns a plausible string is indistinguishable from a correct one. Each
+  override records the stale value it expects, so it applies only while the
+  field still matches, no-ops once the wiki catches up, and refuses outright
+  when it matches neither — a later patch will change these cards again, and
+  an override that overwrote whatever it found would pin the game a version or
+  two back while looking deliberate.
+- **The patch manifest covers v0.111.0**, so runs on the current beta build
+  resolve to a patch era instead of none. The changed list is derived from the
+  notes rather than from the scrape diff, which is a different set: the scrape
+  also moved wording the patch never touched, and missed cards it did.
+
 ## v3.1.1
 
 ### Fixed
