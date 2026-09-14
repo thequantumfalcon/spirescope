@@ -545,3 +545,52 @@ class TestCallableWorkflowStaysWithinCallerPermissions:
             "badge.yml's job fetches an artifact from another run, which "
             "needs actions: read; without it the scope is none and the "
             "download 403s into a silently skipped publish")
+
+
+class TestChangelogAlwaysHasAnUnreleasedSection:
+    """Cutting a release must leave an empty Unreleased heading behind it.
+
+    Releasing renames `## Unreleased` to `## vX.Y.Z`. When nothing is put back,
+    the next merges have no section to land in and go unrecorded -- which is
+    exactly what happened after 3.1.1: four changes merged before anyone
+    noticed the heading was gone. A checklist step is forgettable; this is not.
+    """
+
+    CHANGELOG = REPO_ROOT / "CHANGELOG.md"
+
+    def test_unreleased_heading_exists(self):
+        text = self.CHANGELOG.read_text(encoding="utf-8")
+        assert re.search(r"^## Unreleased\s*$", text, re.M), (
+            "CHANGELOG.md has no '## Unreleased' section. If a release was just "
+            "cut, add an empty one above the new version heading so subsequent "
+            "merges have somewhere to go."
+        )
+
+    def test_unreleased_is_the_first_section(self):
+        """It has to sit above the newest version, or entries land under a
+        version that already shipped."""
+        text = self.CHANGELOG.read_text(encoding="utf-8")
+        headings = re.findall(r"^## (.+?)\s*$", text, re.M)
+        assert headings, "CHANGELOG.md has no '## ' sections at all"
+        assert headings[0] == "Unreleased", (
+            f"first section is {headings[0]!r}, expected 'Unreleased' -- "
+            f"anything merged now would be filed under a released version")
+
+    def test_released_sections_are_not_empty(self):
+        """A version heading with nothing under it means a release shipped
+        without its notes, which is how the 3.1.1 gap looked from outside.
+
+        Content, not bullets: v1.0.0 describes the initial release in a single
+        paragraph, which is a perfectly good way to write one.
+        """
+        text = self.CHANGELOG.read_text(encoding="utf-8")
+        parts = re.split(r"^## (.+?)\s*$", text, flags=re.M)[1:]
+        empty = []
+        for name, body in zip(parts[0::2], parts[1::2]):
+            if name == "Unreleased":
+                continue  # legitimately empty right after a release
+            # Anything that is not a sub-heading and not blank counts.
+            if not [ln for ln in body.splitlines()
+                    if ln.strip() and not ln.lstrip().startswith("#")]:
+                empty.append(name)
+        assert not empty, f"version sections with nothing under them: {empty}"

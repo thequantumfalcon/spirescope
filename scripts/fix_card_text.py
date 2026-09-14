@@ -99,9 +99,14 @@ OVERRIDES: list[dict] = [
         "verbatim": False,
         "note": (
             "Changed: card draw moved from this turn to next turn. The notes "
-            "state the effect, not the string; the phrasing follows the "
-            'convention the game already uses elsewhere ("Next turn, gain 1 '
-            'Energy." on Refine Blade). Confirm against the card in game.'
+            "state the effect, not the string, so the replacement is "
+            "reconstructed. It is not a guess at the shape: Predator already "
+            'reads "Deal 15 damage. Next turn, draw 2 cards." -- the identical '
+            "structure with different numbers -- and Glow, Relax and Plot use "
+            'the same "Next turn, draw N cards" phrasing across three other '
+            "characters. What is unconfirmed is only that v0.111.0 used that "
+            "wording for this card. Worth checking against the card in game "
+            "once an install on the beta branch is available."
         ),
         "expect": {
             "description": "Deal 12 damage. Draw 2 cards.",

@@ -18,6 +18,14 @@
   a Fight was serving pre-v0.109.0 text, so the refresh reintroduced a clause
   that patch had removed; Brightest Flame and Guiding Star were each a patch
   behind. Checked against the published notes rather than against the wiki.
+- **Outbreak and Echoing Slash were also re-inverted on every refresh.**
+  v0.110.0 moved Echoing Slash from Rare to Uncommon and reworked Outbreak into
+  a Rare Skill; the map held the old pairing for both, one patch earlier than
+  the same fault in Salvo and Splash. Outbreak showed it plainly — its type and
+  cost already matched the rework, so the scrape had read the card correctly
+  and only the rarity was overwritten afterwards. Every rarity change stated
+  across the v0.109.0, v0.110.0 and v0.111.0 notes was then checked rather than
+  only the two that surfaced: twelve changes, ten already correct.
 
 ### Internal
 
@@ -33,6 +41,26 @@
   resolve to a patch era instead of none. The changed list is derived from the
   notes rather than from the scrape diff, which is a different set: the scrape
   also moved wording the patch never touched, and missed cards it did.
+- **The manifest covers the main branch as well as the beta one.** It held a
+  single main entry, v0.107.1, so a main-branch player's runs resolved to no
+  patch era at all — all 98 in local history did. v0.98.1, v0.98.2, v0.98.3,
+  v0.99.1 and v0.103.2 are now present, branch read from the publisher's own
+  title convention. Four carry an empty changed list because they are bug-fix
+  hotfixes with no balance section; v0.103.2 carries the highlights its notes
+  name and no more, because the notes themselves decline to enumerate a
+  four-patch rollup.
+- **Recorded why the CodeQL threat model stays on `remote`** (ADR 0002).
+  Enabling `remote_and_local` reported 146 alerts where `remote` reported none,
+  119 of them saying the user configured a path and the application read from
+  it. The inputs the user does *not* control — the downloaded bundle, file
+  access after extraction, the fsync walk, third-party mods, locale files —
+  were enumerated and checked one at a time instead, and each is guarded where
+  it arrives.
+- **The changelog now has to keep an Unreleased section.** Cutting 3.1.1
+  renamed it to a version heading and left nothing behind, so the four changes
+  that merged next had nowhere to go and went unrecorded. Three checks in the
+  release-pipeline tests hold the line: the heading exists, it is the first
+  section, and no released section is empty.
 
 ## v3.1.1
 
