@@ -36,6 +36,41 @@ def is_valid_code(code: str) -> bool:
     return bool(_CODE_RE.fullmatch(code or ""))
 
 
+def _locale_path(code: str, *parts: str) -> Path | None:
+    """Resolve <locales>/<parts...>/<code>.json, or None if it escapes the tree.
+
+    is_valid_code already makes traversal unreachable — [a-z]{2,8} admits no
+    separator and no dot. This is the structural backstop behind it: that guard
+    lives in a single regex, and a regex is one well-meant edit away from
+    admitting a hyphen or a dot ('pt-BR', 'zh.Hant') and, with either, a path
+    fragment. Proving containment after resolution cannot be weakened by
+    loosening the pattern, and it is also the form static analysis recognises
+    as a sanitizer — CodeQL reported every join below as py/path-injection
+    while the regex was the only thing standing between input and the path.
+    """
+    if not code:
+        return None
+    base = _LOCALES_DIR.joinpath(*parts)
+    try:
+        resolved_base = base.resolve()
+        candidate = (base / f"{code}.json").resolve()
+    except (OSError, ValueError):
+        # ValueError, not just OSError: resolve() raises it outright on an
+        # embedded NUL, where the Path.exists() this replaced swallowed it and
+        # returned False. Catching only OSError would make a weakened
+        # is_valid_code crash here instead of falling back to English — the
+        # exact failure this function exists to prevent.
+        return None
+    # Containment alone is not quite enough: 'de/../..' resolves back inside
+    # the directory as the literal file '...json', so it never escapes but it
+    # does let the code contribute path structure. Requiring the filename to be
+    # exactly the code plus the suffix rejects any separator or traversal
+    # segment outright, whatever it resolves to.
+    if candidate.parent != resolved_base or candidate.name != f"{code}.json":
+        return None
+    return candidate
+
+
 def _load_locale(code: str) -> dict:
     """Load a locale file, falling back to English.
 
@@ -49,9 +84,11 @@ def _load_locale(code: str) -> dict:
         code = "en"
     if code in _cache:
         return _cache[code]
-    path = _LOCALES_DIR / f"{code}.json"
-    if not path.exists():
-        path = _LOCALES_DIR / "en.json"
+    path = _locale_path(code)
+    if path is None or not path.exists():
+        path = _locale_path("en")
+    if path is None:  # pragma: no cover - "en" is a literal; always contained
+        return {}
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
@@ -108,8 +145,8 @@ def load_content_overlay(code: str = "") -> dict:
         return {}
     if code in _content_cache:
         return _content_cache[code]
-    path = _LOCALES_DIR / "content" / f"{code}.json"
-    if code == "en" or not path.exists():
+    path = _locale_path(code, "content")
+    if code == "en" or path is None or not path.exists():
         _content_cache[code] = {}
         return {}
     try:
@@ -156,7 +193,10 @@ def get_language() -> str:
 
 def set_language(code: str) -> bool:
     """Persist the UI language choice. Only known locales are accepted."""
-    if not is_valid_code(code) or not (_LOCALES_DIR / f"{code}.json").exists():
+    if not is_valid_code(code):
+        return False
+    locale_file = _locale_path(code)
+    if locale_file is None or not locale_file.exists():
         return False
     path = _settings_path()
     try:

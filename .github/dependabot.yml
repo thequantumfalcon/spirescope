@@ -26,3 +26,13 @@ updates:
           - pytest*
           - ruff
           - mypy
+    ignore:
+      # pydantic pins pydantic-core exactly -- pydantic 2.13.4 requires
+      # pydantic-core==2.46.4 -- so a standalone bump can never resolve.
+      # PR #34 (2.46.4 -> 2.48.0) failed every job that installs the lock,
+      # pip-audit included, with ResolutionImpossible. requirements-lock.txt is
+      # pip-compile output, so pydantic-core is a resolved artifact rather than
+      # a declared dependency: it moves only when pydantic moves, and the lock
+      # is regenerated then. Without this the same unmergeable PR returns every
+      # month and masks real audit failures behind a permanently red job.
+      - dependency-name: "pydantic-core"
