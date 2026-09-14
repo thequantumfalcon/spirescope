@@ -36,6 +36,36 @@ def is_valid_code(code: str) -> bool:
     return bool(_CODE_RE.fullmatch(code or ""))
 
 
+def _locale_path(code: str, *parts: str) -> Path | None:
+    """The locale file for `code` under <locales>/<parts...>, or None.
+
+    The code never becomes part of a path. The directory is enumerated and the
+    code compared against the names actually found there, so a value carrying a
+    separator or a traversal segment matches nothing — there is no constructed
+    path for it to escape from, rather than a constructed path proven safe
+    afterwards.
+
+    is_valid_code rejects such values well before this point. Selecting from
+    what exists makes that guard structural instead of the only line of
+    defence: the regex is one well-meant edit away from admitting a hyphen or
+    a dot ('pt-BR', 'zh.Hant') and with either a path fragment. Building the
+    path and then checking it — containment, resolution, comparing the
+    resolved parent — still reads to static analysis as user input reaching a
+    filesystem call, and CodeQL reported exactly that (py/path-injection) for
+    every such join here. Enumeration removes the flow instead of guarding it.
+    """
+    if not code:
+        return None
+    wanted = f"{code}.json"
+    try:
+        for candidate in _LOCALES_DIR.joinpath(*parts).glob("*.json"):
+            if candidate.name == wanted:
+                return candidate
+    except OSError:
+        return None
+    return None
+
+
 def _load_locale(code: str) -> dict:
     """Load a locale file, falling back to English.
 
@@ -49,9 +79,11 @@ def _load_locale(code: str) -> dict:
         code = "en"
     if code in _cache:
         return _cache[code]
-    path = _LOCALES_DIR / f"{code}.json"
-    if not path.exists():
-        path = _LOCALES_DIR / "en.json"
+    path = _locale_path(code)
+    if path is None or not path.exists():
+        path = _locale_path("en")
+    if path is None:  # pragma: no cover - "en" is a literal; always contained
+        return {}
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
@@ -108,8 +140,8 @@ def load_content_overlay(code: str = "") -> dict:
         return {}
     if code in _content_cache:
         return _content_cache[code]
-    path = _LOCALES_DIR / "content" / f"{code}.json"
-    if code == "en" or not path.exists():
+    path = _locale_path(code, "content")
+    if code == "en" or path is None or not path.exists():
         _content_cache[code] = {}
         return {}
     try:
@@ -156,7 +188,10 @@ def get_language() -> str:
 
 def set_language(code: str) -> bool:
     """Persist the UI language choice. Only known locales are accepted."""
-    if not is_valid_code(code) or not (_LOCALES_DIR / f"{code}.json").exists():
+    if not is_valid_code(code):
+        return False
+    locale_file = _locale_path(code)
+    if locale_file is None or not locale_file.exists():
         return False
     path = _settings_path()
     try:
