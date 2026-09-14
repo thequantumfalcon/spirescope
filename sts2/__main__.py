@@ -59,21 +59,39 @@ def _get_version() -> str:
     return VERSION
 
 
-def _canonicalize_card_rarities() -> None:
-    """Run scripts/fix_card_rarity.py after a wiki refresh so the rarity
-    canonicalization (Basic->Starter, deprecated removal, etc.) survives.
-    Silently no-op when the script is absent (e.g. frozen builds)."""
+def _run_post_scrape_script(name: str) -> None:
+    """Run scripts/<name>.py's main() after a wiki refresh.
+
+    Silently no-ops when the script is absent (e.g. frozen builds), which is
+    why these corrections live beside the data rather than inside the fetcher.
+    """
     import importlib.util
     from pathlib import Path
-    script_path = Path(__file__).resolve().parent.parent / "scripts" / "fix_card_rarity.py"
+    script_path = Path(__file__).resolve().parent.parent / "scripts" / f"{name}.py"
     if not script_path.exists():
         return
-    spec = importlib.util.spec_from_file_location("fix_card_rarity", script_path)
+    spec = importlib.util.spec_from_file_location(name, script_path)
     if spec is None or spec.loader is None:
         return
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     module.main(dry_run=False)
+
+
+def _canonicalize_card_rarities() -> None:
+    """Rarity canonicalization (Basic->Starter, deprecated removal, etc.)."""
+    _run_post_scrape_script("fix_card_rarity")
+
+
+def _pin_card_text() -> None:
+    """Re-pin card text the wiki has not caught up on, from patch notes.
+
+    The wiki lags the game, and after the v0.111.0 refresh it was still serving
+    text for three cards that two patches had already changed. A scrape that
+    returns a plausible string is indistinguishable from a correct one, so the
+    corrections are pinned explicitly rather than waited on.
+    """
+    _run_post_scrape_script("fix_card_text")
 
 
 def _env_flag(name: str) -> bool | None:
@@ -130,6 +148,7 @@ def main():
         save_only = "--save-only" in args
         run_fetcher(save_only=save_only)
         _canonicalize_card_rarities()
+        _pin_card_text()
         return
 
     if command == "community":

@@ -121,11 +121,11 @@
     "cost": "0",
     "type": "Skill",
     "rarity": "Event",
-    "description": "Gain 2 Energy. Draw 2 cards. Lose 1 Max HP.",
+    "description": "Gain 2 Energy. Draw 2 cards. Lose 2 Max HP.",
     "keywords": [
       "Draw"
     ],
-    "description_upgraded": "Gain 3 Energy. Draw 3 cards. Lose 1 Max HP.",
+    "description_upgraded": "Gain 3 Energy. Draw 3 cards. Lose 2 Max HP.",
     "fetched_from": "slaythespire.wiki.gg",
     "fetched_at": "2026-09-14"
   },
@@ -3362,11 +3362,11 @@
     "id": "CARD.EXPECT_A_FIGHT",
     "name": "Expect a Fight",
     "character": "Ironclad",
-    "cost": "2",
+    "cost": "3",
     "type": "Skill",
     "rarity": "Uncommon",
-    "description": "Gain 1 Energy for each Attack in your Hand. You cannot gain additional Energy this turn",
-    "description_upgraded": "Gain 1 Energy for each Attack in your Hand. You cannot gain additional Energy this turn",
+    "description": "Gain 15 Block. Gains 5 additional Block for each Strength you have.",
+    "description_upgraded": "Gain 16 Block. Gains 8 additional Block for each Strength you have.",
     "keywords": [],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
@@ -5771,8 +5771,8 @@
     "cost": "1",
     "type": "Attack",
     "rarity": "Common",
-    "description": "Deal 12 damage. Draw 2 cards.",
-    "description_upgraded": "Deal 13 damage. Draw 3 cards.",
+    "description": "Deal 12 damage. Next turn, draw 2 cards.",
+    "description_upgraded": "Deal 13 damage. Next turn, draw 3 cards.",
     "keywords": [
       "Draw"
     ]
