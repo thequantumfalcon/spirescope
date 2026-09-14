@@ -8,6 +8,9 @@ class Card(BaseModel):
     name_en: str = ""  # English name, kept when a locale overlay renames this entity
     character: str  # Ironclad, Silent, Defect, Necrobinder, Regent, Colorless, Curse, Status
     cost: str  # "0", "1", "2", "3", "X", "Unplayable"
+    # Regent cards spend Stars alongside Energy, so the two costs are separate
+    # values, not alternatives. "" means the card has no Star cost.
+    star_cost: str = ""
     type: str  # Attack, Skill, Power, Status, Curse
     rarity: str  # Starter, Common, Uncommon, Rare, Special
     description: str = ""

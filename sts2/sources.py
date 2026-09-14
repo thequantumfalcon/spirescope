@@ -240,11 +240,20 @@ class WikiggSource:
                     "name": name,
                     "character": character,
                     "cost": str(fields.get("Cost", "")) or "Unplayable",
+                    # Regent spends Stars as well as Energy. The modules carry
+                    # StarCost on the 22 cards that have one, and dropping it
+                    # left every Regent card looking free of its real price --
+                    # Alignment reads Cost 0 while actually costing 2 Stars.
+                    "star_cost": str(fields.get("StarCost", "") or ""),
                     "type": str(fields.get("Type", "Skill")),
                     "rarity": _WIKI_RARITY_MAP.get(rarity, rarity),
                     "description": desc,
                     "description_upgraded": _clean_description(upgraded),
                     "keywords": _extract_keywords(desc),
+                    # mp_only has been on the model since schema v2 and nothing
+                    # ever filled it; the modules have carried Multiplayer all
+                    # along.
+                    "mp_only": bool(fields.get("Multiplayer", False)),
                 })
         return sorted(cards, key=lambda c: (c["character"], c["name"]))
 
