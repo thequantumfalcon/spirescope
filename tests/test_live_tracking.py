@@ -114,6 +114,69 @@ class TestDangerUnification:
         assert _hp_danger(_live_run(current_hp=41, max_hp=80))[0] is None
         assert _hp_danger(_live_run(current_hp=10, max_hp=0)) == (None, 0)
 
+    def test_survives_private_scorer_returning_the_wrong_shape(self, monkeypatch):
+        """A drifted risk.py must degrade to HP thresholds, not 500.
+
+        sts2/risk.py is gitignored, so CI never loads it and no test here can
+        see its real signature. That makes the public side's tolerance the only
+        thing standing between a local edit and three broken endpoints:
+        _danger_assessment backs /live, /overlay and the SSE stream at once.
+
+        The call raising was always handled; reading the result was not, so a
+        return type of dataclass/None/str instead of dict raised AttributeError
+        straight past the guard. A stand-in module stands in for the real one so
+        this runs identically with or without risk.py installed.
+        """
+        import sys
+        import types
+
+        from sts2.routes import _danger_assessment
+
+        run = _live_run(current_hp=40, max_hp=80)   # 50% -> "warning" fallback
+
+        for label, impl in (
+            ("dict (the actual contract)", lambda r, k: {"level": "critical"}),
+            ("None", lambda r, k: None),
+            ("bare string", lambda r, k: "critical"),
+            ("list of pairs", lambda r, k: [("level", "critical")]),
+            ("raises", lambda r, k: 1 / 0),
+        ):
+            fake = types.ModuleType("sts2.risk")
+            fake.compute_death_risk = impl
+            monkeypatch.setitem(sys.modules, "sts2.risk", fake)
+            level, hp_pct = _danger_assessment(run, None)
+            assert hp_pct == 50, label
+            if label.startswith("dict"):
+                assert level == "critical", label
+            else:
+                assert level == "warning", f"{label} should fall back to HP"
+
+    def test_private_scorer_signature_contract(self):
+        """When risk.py IS installed, it must still take (run, kb).
+
+        Skips on any checkout without it -- which is every CI run and every
+        public clone. This is the tripwire for editing the module locally:
+        arity drift already degrades safely, but silently, and a scorer that
+        never runs looks exactly like one that is not installed.
+        """
+        import inspect
+
+        pytest = __import__("pytest")
+        try:
+            from sts2.risk import compute_death_risk
+        except ImportError:
+            pytest.skip("sts2/risk.py not installed (expected in CI)")
+
+        params = list(inspect.signature(compute_death_risk).parameters.values())
+        required = [p for p in params
+                    if p.default is inspect.Parameter.empty
+                    and p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)]
+        assert len(required) == 2, (
+            f"routes._danger_assessment calls compute_death_risk(run, kb); "
+            f"it now requires {len(required)} positional args: "
+            f"{[p.name for p in required]}"
+        )
+
     async def test_overlay_renders_computed_hints(self, client):
         """Overlay counter/synergy sections used to be hardwired empty, and
         the synergy line rendered dict reprs when fed real hint objects."""
