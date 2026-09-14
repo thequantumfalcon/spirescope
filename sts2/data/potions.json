@@ -189,7 +189,9 @@
     "id": "POTION.CUNNING_POTION",
     "name": "Cunning Potion",
     "rarity": "Uncommon",
-    "description": "Add 3 Upgraded Shivs into your Hand."
+    "description": "Add 3 Upgraded Shiv into your Hand.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-09-14"
   },
   {
     "id": "POTION.CURE_ALL",
@@ -339,7 +341,9 @@
     "id": "POTION.POT_OF_GHOULS",
     "name": "Pot of Ghouls",
     "rarity": "Rare",
-    "description": "Add 2 Souls into your Hand."
+    "description": "Add 2 Soul into your Hand.",
+    "fetched_from": "slaythespire.wiki.gg",
+    "fetched_at": "2026-09-14"
   },
   {
     "id": "POTION.SHACKLING_POTION",
