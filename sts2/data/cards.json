@@ -6772,7 +6772,7 @@
     "character": "Silent",
     "cost": "1",
     "type": "Attack",
-    "rarity": "Rare",
+    "rarity": "Uncommon",
     "description": "Deal 10 damage to ALL enemies. Repeat this effect for each enemy killed.",
     "description_upgraded": "Deal 13 damage to ALL enemies. Repeat this effect for each enemy killed.",
     "keywords": [],
@@ -7148,7 +7148,7 @@
     "character": "Silent",
     "cost": "3",
     "type": "Skill",
-    "rarity": "Uncommon",
+    "rarity": "Rare",
     "description": "Apply 9 Poison to ALL enemies. Poison triggers immediately.",
     "description_upgraded": "Apply 12 Poison to ALL enemies. Poison triggers immediately.",
     "keywords": [

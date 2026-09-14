@@ -67,7 +67,12 @@ _add("Silent", [
     "Calculated Gamble", "Dash", "Escape Plan", "Expertise", "Expose",
     "Finisher", "Flechettes", "Footwork",
     "Hand Trick", "Haze", "Hidden Daggers", "Infinite Blades", "Leg Sweep",
-    "Memento Mori", "Mirage", "Noxious Fumes", "Outbreak", "Phantom Blades",
+    # Echoing Slash moved Rare -> Uncommon in v0.110.0; Outbreak went the other
+    # way in the same patch, reworked into a Rare Skill. This map held the old
+    # pairing for both, and it runs after every scrape, so it overwrote the
+    # correct scraped rarity each time.
+    "Echoing Slash",
+    "Memento Mori", "Mirage", "Noxious Fumes", "Phantom Blades",
     "Pinpoint", "Pounce", "Precise Cut", "Reflex", "Skewer",
     "Speedster", "Strangle", "Tactician", "Up My Sleeve",
 ], "Uncommon")
@@ -75,8 +80,9 @@ _add("Silent", [
 _add("Silent", ["Predator"], "Common")
 _add("Silent", [
     "Abrasive", "Adrenaline", "Afterimage", "Assassinate",
-    "Blade of Ink", "Bullet Time", "Burst", "Corrosive Wave", "Echoing Slash",
+    "Blade of Ink", "Bullet Time", "Burst", "Corrosive Wave",
     "Envenom", "Fan of Knives", "Grand Finale", "Knife Trap", "Malaise",
+    "Outbreak",
     "Master Planner", "Murder", "Nightmare", "Serpent Form", "Shadow Step",
     "Shadowmeld", "Sneaky", "Storm of Steel", "The Hunt",
     "Tools of the Trade", "Tracking",
