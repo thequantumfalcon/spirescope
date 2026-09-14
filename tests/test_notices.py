@@ -72,20 +72,40 @@ class TestRuntimeClosureCheck:
         assert missing == [], f"undocumented runtime dependencies: {missing}"
 
     def test_colorama_included_when_installed(self):
-        # On a platform where colorama's marker (platform_system ==
-        # "Windows") evaluates true and click is installed, the closure walk
-        # must surface it -- this is what actually exercises the check tool's
-        # marker handling for the M15 case, on whichever platform CI happens
-        # to be Windows.
+        # The M15 invariant: when something already in the closure declares
+        # colorama under a marker that holds here, the walk must surface it.
+        #
+        # The precondition is a *declaration*, not an installation. Keying the
+        # skip off "is colorama importable" conflated the two: click 8.5.0
+        # dropped the dependency outright (requires_dist == []), so on a runner
+        # that still had colorama installed from an earlier resolve the skip
+        # never fired and this asserted a closure entry nothing produces any
+        # more. Deriving the premise from metadata keeps the test meaningful on
+        # Windows with click 8.4.2 and correctly silent once the edge is gone.
         import importlib.metadata as metadata
-        try:
-            metadata.distribution("colorama")
-        except metadata.PackageNotFoundError:
-            import pytest
-            pytest.skip("colorama not installed in this environment")
+
+        import pytest
+        from packaging.requirements import Requirement
+
         direct = check_notices.declared_runtime_requirements()
         names = check_notices.runtime_closure(direct)
-        assert "colorama" in names
+
+        declarers = []
+        for dist in metadata.distributions():
+            if not dist.name or check_notices._normalize(dist.name) not in names:
+                continue
+            for req_str in dist.requires or []:
+                req = Requirement(req_str)
+                if req.name.lower() != "colorama":
+                    continue
+                # Mirror runtime_closure's bare-install marker evaluation.
+                if req.marker is None or req.marker.evaluate({"extra": ""}):
+                    declarers.append(dist.name)
+        if not declarers:
+            pytest.skip("no package in the runtime closure declares colorama here")
+        assert "colorama" in names, (
+            f"declared by {sorted(set(declarers))} but missing from the closure"
+        )
 
 
 class TestScriptEntryPoint:
