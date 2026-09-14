@@ -10,6 +10,15 @@
   implemented the control the bullet described. Removed rather than reworded:
   the honest options were to implement it or to stop claiming it, and
   implementing a logging filter is a feature, not a documentation fix.
+- **The live danger banner could take three pages down at once.** The
+  assessment caught the compound-risk scorer raising, but read the level off
+  its result after the guard rather than inside it, so a scorer returning
+  anything but a mapping — a dataclass, `None`, a bare string — raised
+  `AttributeError` straight past it. `/live`, `/overlay` and the SSE stream
+  share that function, so all three failed together instead of falling back to
+  HP thresholds. The result is read inside the guard now, and the fallback logs
+  at `WARNING`: at `DEBUG` a broken scorer was indistinguishable from the
+  module being absent, which is the normal state of the public build.
 
 ### Internal
 
@@ -33,6 +42,35 @@
   the README reads it from the `badges` branch. The badge is only written when
   a figure was genuinely parsed, so the legs that run plain pytest leave the
   previous value standing rather than publishing a blank.
+- **Locale files are selected by enumeration instead of built from the code.**
+  The path was constructed from the requested language and then guarded. The
+  guard was sound — only `[a-z]{2,8}` is accepted, which carries no separator
+  and no dot — but static analysis read every join as user input reaching a
+  filesystem call, and a single regex is one well-meant edit away from
+  admitting `pt-BR` and with it a path fragment. The directory is enumerated
+  and the code compared against the names found there, so a value carrying a
+  separator matches nothing: there is no constructed path to escape from,
+  rather than one proven safe afterwards. Behaviour is unchanged, checked
+  against the previous implementation across 39 inputs.
+- **A notices test guarded one condition and asserted another.** It skipped
+  when colorama was not importable, then asserted colorama was in the runtime
+  dependency closure. click 8.5.0 drops the dependency outright while pytest
+  still installs colorama on Windows, so the skip stopped firing at the moment
+  the closure entry disappeared, and a test written to catch an undocumented
+  transitive dependency began failing on a bump it was never meant to gate.
+  The premise now comes from package metadata: when something already in the
+  closure declares colorama under a marker that holds here, the walk must
+  surface it, and otherwise the test is correctly silent.
+- **Dependabot no longer opens standalone pydantic-core bumps.** pydantic pins
+  pydantic-core exactly, so they cannot resolve; the open one failed every job
+  that installs the lock, `pip-audit` included, and would have regenerated
+  every month behind a permanently red check.
+- **The attribution scan reads its commit range from the environment** instead
+  of interpolating `${{ github.event.* }}` into the shell. Those values are
+  GitHub-generated SHAs and carried nothing dangerous, but the workflow gates
+  every push and pull request including from forks, and the gate that keeps
+  attribution out of the history should not rest on the shape of an event
+  payload field.
 
 ## v3.1.0
 
