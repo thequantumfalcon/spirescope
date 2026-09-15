@@ -11,7 +11,7 @@
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
 
-**Game data:** current through STS2 **v0.110.0** (refreshed 2026-08-08). Refresh anytime with `python -m sts2 update`.
+**Game data:** current through STS2 **v0.111.0** (refreshed 2026-09-15). Card text follows the **beta** branch; the stable branch is on v0.107.1, so if you play stable some costs and numbers will differ from your game. Refresh anytime with `python -m sts2 update`.
 
 <p align="center">
   <img src="docs/screenshot-dashboard.png" alt="SpireScope Dashboard — your runs, your stats, your data" width="80%">
@@ -32,14 +32,14 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Self-updating game data** — a multi-source pipeline (slaythespire2.gg primary, slaythespire.wiki.gg secondary, save-file discovery third) keeps cards, relics, and potions current; a source run offers new data bundles on startup for one-click, checksum-verified install — no app update needed. Packaged builds keep that check off unless you set `SPIRESCOPE_CHECK_UPDATES=1`, so a downloaded copy makes no unsolicited network call; `python -m sts2 update` refreshes on demand either way.
 - **Patch-era analytics** — every run resolves to a named patch era. Default views scope to the current patch with an all-time toggle; reworked cards and relics carry "Changed in ..." markers with before/after win-rate and pick-rate comparisons (sample-size guarded).
 - **Enchantment display** — enchanted cards show their enchantment in the live tracker and run history.
-- **Main vs beta awareness** — runs badge their game branch; beta-only content is chipped; filter analytics by branch.
+- **Main vs beta awareness** — runs badge their game branch; beta-only content is chipped; filter analytics by branch. "Current patch" views resolve per branch, so a stable player's runs are not filtered out against the newest beta. The card browser says which branch its text follows.
 - **Merged save history** — vanilla and modded save trees merge into one deduplicated history (the game copies saves between them since v0.108.0); runs carry a vanilla/modded origin filter.
 - **Badges** — earned badges with bronze/silver/gold tiers on the Records page.
 - **Languages** — switch under Settings. Navigation and settings are translated into fifteen languages (most page bodies are still English); card, relic and enemy text can be translated too with one command. See [Languages](#languages).
 
 ### Browse & Research
 
-- **Card Browser** — All cards across 5 characters with filters by character, type, rarity, cost, and keyword. Paginated (30 per page).
+- **Card Browser** — All cards across 5 characters with filters by character, type, rarity, cost, and keyword. Paginated (30 per page). Card pages show the upgraded Energy cost where upgrading changes it, and the Star cost Regent cards spend alongside Energy.
 - **Relic & Potion Browser** — Browse and filter all relics and potions
 - **Enemy Guides** — Boss patterns, elite strategies, and encounter tips
 - **Event Guide** — Optimal choices for every event
@@ -345,7 +345,8 @@ SpireScope auto-detects both vanilla and modded paths; history merges across the
 | `/api/reset/stats` | POST | Reset aggregate stats (requires `X-Admin-Token` header) |
 | `/overlay?player=0` | GET | Minimal overlay for OBS browser source or second monitor |
 | `/shutdown` | POST | Gracefully stop SpireScope (localhost only) |
-| `/health` | GET | Health check for monitors |
+| `/health` | GET | Liveness check for monitors (always 200) |
+| `/ready` | GET | Readiness check (503 until card data has loaded) |
 | `/docs` | GET | Interactive API documentation (Swagger UI) |
 
 ## Security
@@ -372,6 +373,18 @@ from source instead.
 Every release publishes a `.sha256` checksum file alongside each archive, so
 a download can be checked against the checksum the build produced. (Local
 builds via `build_exe.py` additionally write a combined `dist/SHA256SUMS.txt`.)
+
+Releases also carry a signed build provenance attestation, which is the
+stronger check: a checksum shows a file matches what was published, while the
+attestation shows it was built by this repository's own GitHub Actions from a
+named tag. With the [GitHub CLI](https://cli.github.com/):
+
+```bash
+gh attestation verify Spirescope-windows.zip --repo thequantumfalcon/spirescope
+```
+
+It exits 0 for a genuine build. Code signing through the SignPath Foundation
+has been applied for; until it lands, this is the verification path.
 
 ## Project Structure
 
@@ -404,9 +417,11 @@ sts2/
   graveyard.py, prophecy.py, hypothesis.py, rivalry.py, cascade.py,
   ghost.py, drift.py, spectral.py, integrity.py,
   behavior.py           # The advanced analytics modules
-  data/              # JSON game data + mods
+  data/              # JSON game data (mods live with your user state, not here)
+  locales/           # Interface translations; content/ holds text built by `localize`
   templates/         # Jinja2 HTML templates (32 templates)
   static/            # CSS, fonts (Cinzel), images, JS
+scripts/             # Post-scrape corrections (rarity map, pinned card text)
 tests/               # pytest + pytest-asyncio, plus 15 Playwright browser tests
 ```
 

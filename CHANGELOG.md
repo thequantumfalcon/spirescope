@@ -13,6 +13,13 @@
   the 1.91 aspect ratio link previews crop to.
 - The card-browser screenshot's alt text claimed a card count as well. Alt text
   describes the image; the number only existed to drift.
+- **The README described data and checks that had moved on.** It gave the
+  game data as current through v0.110.0 when it is v0.111.0, said nothing about
+  card text following the beta branch, listed mods as living in `data/` when
+  they live with user state, and offered only the checksum for verifying a
+  download while releases already carry a provenance attestation. `/ready` was
+  missing from the endpoint table. Every remaining claim was checked against
+  the code or a live response rather than left as written.
 
 ## v3.1.2
 
