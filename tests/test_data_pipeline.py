@@ -769,3 +769,74 @@ class TestCardTextOverrides:
             assert mod.classify(card, ov) == "caught-up", (
                 f"{ov['id']} is not in its pinned state -- run "
                 f"scripts/fix_card_text.py after a wiki refresh")
+
+
+class TestWikiCardFieldsAreNotDropped:
+    """StarCost and Multiplayer reach the card records.
+
+    `mp_only` sat on the model from schema v2 onward and nothing ever filled
+    it, because nothing checked. The wiki modules had carried `Multiplayer` the
+    whole time. `StarCost` was the same story with worse consequences: every
+    Regent card reported only its Energy cost, so Alignment read as free while
+    actually costing 2 Stars.
+
+    These assert the mapping and then the shipped data, because a mapping that
+    works on a fixture and a file that actually carries the values are two
+    different claims.
+    """
+
+    LUA = '''
+    local all_data = {
+      ["Alignment"] = {
+        Cost = 0, StarCost = 2, Color = "Regent",
+        Type = "Skill", Rarity = "Uncommon", Text = "Gain [1|2] Energy."
+      },
+      ["Blaze"] = {
+        Cost = 2, Multiplayer = true, Color = "Ironclad",
+        Type = "Skill", Rarity = "Uncommon", Text = "Give another player [5|7] Strength."
+      },
+      ["Strike"] = {
+        Cost = 1, Color = "Ironclad",
+        Type = "Attack", Rarity = "Basic", Text = "Deal [6|9] damage."
+      }
+    }
+    return all_data
+    '''
+
+    def _cards(self):
+        from sts2.sources import WikiggSource
+        src = WikiggSource()
+        with patch.object(WikiggSource, "_fetch_modules",
+                          return_value={"Module:Cards/StS2 data/Regent": self.LUA}):
+            return {c["name"]: c for c in src.fetch_cards()}
+
+    def test_star_cost_is_carried_through(self):
+        cards = self._cards()
+        assert cards["Alignment"]["star_cost"] == "2"
+        assert cards["Alignment"]["cost"] == "0", "Energy cost is separate, not replaced"
+
+    def test_multiplayer_becomes_mp_only(self):
+        cards = self._cards()
+        assert cards["Blaze"]["mp_only"] is True
+
+    def test_absent_fields_do_not_invent_values(self):
+        """A card with neither key must not gain a Star cost or an mp flag."""
+        cards = self._cards()
+        assert cards["Strike"]["star_cost"] == ""
+        assert cards["Strike"]["mp_only"] is False
+
+    def test_shipped_data_actually_carries_star_costs(self):
+        """Guards the regression that hid mp_only: a mapping can be correct
+        while the data file never gets rewritten."""
+        cards = json.loads((REPO_ROOT / "sts2" / "data" / "cards.json")
+                           .read_text(encoding="utf-8"))
+        with_star = [c for c in cards if c.get("star_cost")]
+        assert with_star, "no shipped card carries a star_cost"
+        assert all(c["star_cost"].isdigit() for c in with_star)
+        # Every one belongs to the character that spends Stars.
+        assert {c["character"] for c in with_star} == {"Regent"}
+
+    def test_shipped_data_actually_carries_mp_only(self):
+        cards = json.loads((REPO_ROOT / "sts2" / "data" / "cards.json")
+                           .read_text(encoding="utf-8"))
+        assert [c for c in cards if c.get("mp_only")], "no shipped card is flagged mp_only"

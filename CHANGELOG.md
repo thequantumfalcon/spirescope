@@ -26,6 +26,14 @@
   and only the rarity was overwritten afterwards. Every rarity change stated
   across the v0.109.0, v0.110.0 and v0.111.0 notes was then checked rather than
   only the two that surfaced: twelve changes, ten already correct.
+- **Regent cards did not show their Star cost.** They spend Stars alongside
+  Energy, and the wiki modules carry `StarCost` on the 22 cards that have one,
+  but the adapter never read it — so Alignment read as free while actually
+  costing 2 Stars. Cards now carry `star_cost` beside `cost`; the two are
+  separate values, not alternatives.
+- **`mp_only` was never filled.** It has been on the card model since schema
+  v2 and nothing populated it, while the wiki modules carried `Multiplayer`
+  the whole time. 37 cards are flagged now.
 
 ### Internal
 
