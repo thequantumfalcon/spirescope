@@ -103,6 +103,29 @@ address macOS Gatekeeper, which needs Apple notarization separately.
 
 ## How to satisfy yourself it's safe
 
+- **Verify the build provenance.** This is the strongest check available, and
+  it is stronger than the checksum: a checksum proves the file matches what
+  was published, which tells you nothing if the publishing itself were
+  tampered with. The provenance attestation is a signed statement that this
+  exact file was produced by GitHub Actions, from this repository, at a named
+  tag — and it cannot be forged without GitHub's signing key.
+
+  With the [GitHub CLI](https://cli.github.com/):
+
+  ```bash
+  gh attestation verify Spirescope-v3.1.1-windows.zip --repo thequantumfalcon/spirescope
+  ```
+
+  It exits 0 when the file is genuine and non-zero otherwise. Add
+  `--format json` to read the detail; for the v3.1.1 Windows build it reports
+  the builder as
+  `.../.github/workflows/release.yml@refs/tags/v3.1.1`, the source repository
+  as this one, and a subject digest equal to the published `.sha256`.
+
+  Nothing needs to be trusted for this except GitHub. It is worth doing before
+  the steps below, because it answers "did this come from the project" rather
+  than "does a scanner dislike the packaging".
+
 - **Read the source** — it's all here, with an automated test suite (including browser tests) that runs on every change.
 - **Check what it does on the network:** the packaged build makes no
   outbound calls unless you opt in with `SPIRESCOPE_CHECK_UPDATES=1`.
