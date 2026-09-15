@@ -22,7 +22,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — all 639 cards with filters and search" width="80%">
+  <img src="docs/screenshot-cards.png" alt="SpireScope Card Browser — every card, with filters and search" width="80%">
 </p>
 
 ## Features

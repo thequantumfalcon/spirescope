@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Fixed
+
+- **The link preview advertised five numbers, all of them wrong.** The social
+  card hard-coded its counts and every one had drifted: 589 cards against 639,
+  298 relics against 312, 170 enemies against 184, 64 events against 67, and
+  613 tests against 1614. It is replaced as the `og:image` by a screenshot of
+  the card browser, which shows the application instead of describing it and
+  cannot go stale that way. Of the three screenshots it is the only one near
+  the 1.91 aspect ratio link previews crop to.
+- The card-browser screenshot's alt text claimed a card count as well. Alt text
+  describes the image; the number only existed to drift.
+
 ## v3.1.2
 
 ### Fixed
