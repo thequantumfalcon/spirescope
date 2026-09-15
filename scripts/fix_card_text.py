@@ -107,13 +107,18 @@ OVERRIDES: list[dict] = [
         "note": (
             "Changed: card draw moved from this turn to next turn. The notes "
             "state the effect, not the string, so the replacement is "
-            "reconstructed. It is not a guess at the shape: Predator already "
-            'reads "Deal 15 damage. Next turn, draw 2 cards." -- the identical '
-            "structure with different numbers -- and Glow, Relax and Plot use "
-            'the same "Next turn, draw N cards" phrasing across three other '
-            "characters. What is unconfirmed is only that v0.111.0 used that "
-            "wording for this card. Worth checking against the card in game "
-            "once an install on the beta branch is available."
+            "reconstructed -- but the wording is not invented. The game's own "
+            "English localisation carries, for Predator, "
+            '"Deal {Damage:diff()} damage.\\nNext turn, draw 2 cards." -- the '
+            "same two clauses in the same order, and the second identical "
+            "character for character to what is written here. Glow and Relax "
+            'use the same "Next turn, draw N cards" form. Checked against the '
+            "installed game rather than against the wiki, so it is the game's "
+            "phrasing and not a scrape of someone's description of it.\n"
+            "Unconfirmed, and the only reason verbatim stays False: that "
+            "v0.111.0 chose this form for THIS card. Its own string in the "
+            "installed build is still the pre-rework one, because stable has "
+            "not taken v0.111.0. Re-check once an install carries it."
         ),
         "expect": {
             "description": "Deal 12 damage. Draw 2 cards.",
