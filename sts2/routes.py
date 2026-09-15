@@ -492,12 +492,20 @@ async def cards(request: Request, character: str = Query(None, max_length=50),
     page = min(page, total_pages)
     start = (page - 1) * _CARDS_PER_PAGE
     paged_cards = card_list[start:start + _CARDS_PER_PAGE]
+    # Card text is scraped from the wiki, which tracks beta. Stable has sat a
+    # long way behind it -- v0.107.1 while beta reached v0.111.0 -- so a player
+    # on stable reads numbers here that their game does not use. Both values
+    # come from the manifest so the line cannot drift from the data.
+    from sts2.patches import current_patch
+    beta_patch = (current_patch("beta") or {}).get("patch", "")
+    main_patch = (current_patch("main") or {}).get("patch", "")
     return a.templates.TemplateResponse(request, "cards.html", {
         "cards": paged_cards, "total_cards": total_cards, "characters": CHARACTERS,
         "selected_character": character, "selected_type": card_type,
         "selected_rarity": rarity, "selected_cost": cost, "selected_keyword": keyword,
         "selected_sort": sort,
         "page": page, "total_pages": total_pages, "card_stats": card_stats,
+        "data_beta_patch": beta_patch, "data_main_patch": main_patch,
     })
 
 

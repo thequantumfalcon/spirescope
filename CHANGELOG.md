@@ -50,6 +50,13 @@
   beside it, and the upgrade block suppressed on authority rather than
   coincidence.
 
+- **The cards page says which branch its text follows.** Card text is scraped
+  from the wiki, which tracks beta, and stable trails it by several patches --
+  v0.107.1 while beta reached v0.111.0. A player on stable was reading costs
+  and numbers their game does not use with nothing on the page saying so. Both
+  versions in the line come from the patch manifest, so it cannot drift from
+  the data, and it disappears on its own once a promotion makes the two agree.
+
 ### Internal
 
 - **Card text the wiki lags on is pinned from the patch notes.** The wiki is

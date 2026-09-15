@@ -3114,3 +3114,36 @@ class TestHostAndBindBoundary:
             plain = await c.get("/?token=test-auth-token")
         assert "secure" in behind_proxy.headers["set-cookie"].lower()
         assert "secure" not in plain.headers["set-cookie"].lower()
+
+
+class TestCardDataBranchNotice:
+    """The cards page says which branch its text follows.
+
+    Card text is scraped from the wiki, which tracks beta. Stable trails it --
+    v0.107.1 while beta reached v0.111.0 -- so a player on stable reads costs
+    and numbers their game does not use, with nothing on the page saying so.
+    """
+
+    async def test_notice_names_both_branches(self, client):
+        from unittest.mock import patch as _patch
+
+        def _fake(branch=""):
+            return {"main": {"patch": "v0.107.1"}, "beta": {"patch": "v0.111.0"}}.get(
+                branch, {"patch": "v0.111.0"})
+
+        with _patch("sts2.patches.current_patch", side_effect=_fake):
+            resp = await client.get("/cards")
+        assert resp.status_code == 200
+        assert "v0.111.0" in resp.text and "v0.107.1" in resp.text
+        assert "Card text follows" in resp.text
+
+    async def test_no_notice_when_the_branches_agree(self, client):
+        """After a beta promotion the two coincide and there is nothing to warn
+        about; the line would be noise."""
+        from unittest.mock import patch as _patch
+
+        with _patch("sts2.patches.current_patch",
+                    side_effect=lambda branch="": {"patch": "v0.111.0"}):
+            resp = await client.get("/cards")
+        assert resp.status_code == 200
+        assert "Card text follows" not in resp.text
