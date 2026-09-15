@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v3.1.2
+
 ### Fixed
 
 - **Card text caught up with v0.111.0.** The first wiki refresh since
