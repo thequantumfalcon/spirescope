@@ -110,3 +110,58 @@ def test_branch_filter_separates_cleanly(tmp_path, monkeypatch):
     assert [r.build_id for r in _filter_runs(runs, branch="main")] == ["v0.107.1"]
     assert [r.build_id for r in _filter_runs(runs, branch="beta")] == ["v0.108.0", "v0.109.0"]
     assert len(_filter_runs(runs, branch=None)) == 4
+
+
+MIXED_BRANCH_MANIFEST = [
+    {"patch": "v0.103.2", "date": "2026-04-17", "branch": "main",
+     "build_ids": ["v0.103.2"], "changed": {"cards": [], "relics": [], "enemies": []}},
+    {"patch": "v0.107.1", "date": "2026-06-19", "branch": "main",
+     "build_ids": ["v0.107.1"], "changed": {"cards": [], "relics": [], "enemies": []}},
+    {"patch": "v0.110.0", "date": "2026-07-31", "branch": "beta",
+     "build_ids": ["v0.110.0"], "changed": {"cards": [], "relics": [], "enemies": []}},
+    {"patch": "v0.111.0", "date": "2026-08-14", "branch": "beta",
+     "build_ids": ["v0.111.0"], "changed": {"cards": [], "relics": [], "enemies": []}},
+]
+
+
+@pytest.fixture
+def _mixed_manifest(tmp_path, monkeypatch):
+    """A manifest where the two branches have diverged, as they really have."""
+    (tmp_path / "patches.json").write_text(json.dumps(MIXED_BRANCH_MANIFEST))
+    monkeypatch.setattr(patch_manifest, "DATA_DIR", tmp_path)
+    patch_manifest.invalidate_cache()
+    yield
+    patch_manifest.invalidate_cache()
+
+
+class TestCurrentPatchIsPerBranch:
+    """"Current" has to mean current *for that branch*.
+
+    Beta is the branch that moves: main sat on v0.107.1 for three months while
+    beta reached v0.111.0. Taking the manifest's newest entry alone therefore
+    always meant beta, and a main-branch player matched nothing -- the
+    current-only filter emptied a 98-run history completely.
+    """
+
+    def test_newest_per_branch(self, _mixed_manifest):
+        assert patch_manifest.current_patch("main")["patch"] == "v0.107.1"
+        assert patch_manifest.current_patch("beta")["patch"] == "v0.111.0"
+
+    def test_unrestricted_call_is_unchanged(self, _mixed_manifest):
+        """Existing callers keep the newest entry overall."""
+        assert patch_manifest.current_patch()["patch"] == "v0.111.0"
+
+    def test_unknown_branch_yields_nothing(self, _mixed_manifest):
+        assert patch_manifest.current_patch("nonsense") is None
+
+    def test_scope_current_keeps_the_newest_on_each_branch(self, _mixed_manifest):
+        runs = [_run("v0.103.2"), _run("v0.107.1"), _run("v0.110.0"),
+                _run("v0.111.0"), _run("v9.9.9")]
+        kept = {r.build_id for r in _filter_runs(runs, scope="current")}
+        assert kept == {"v0.107.1", "v0.111.0"}
+
+    def test_a_main_branch_history_is_not_emptied(self, _mixed_manifest):
+        """The regression itself: every run on the newest main patch was
+        dropped because the comparison was against the newest beta."""
+        runs = [_run("v0.107.1") for _ in range(5)]
+        assert len(_filter_runs(runs, scope="current")) == 5

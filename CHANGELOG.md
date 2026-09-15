@@ -34,6 +34,13 @@
 - **`mp_only` was never filled.** It has been on the card model since schema
   v2 and nothing populated it, while the wiki modules carried `Multiplayer`
   the whole time. 37 cards are flagged now.
+- **The current-patch filter hid every run a main-branch player had.** It
+  compared each run against the newest entry in the manifest, and that is
+  always the newest beta, because beta is the branch that moves — main sat on
+  v0.107.1 for three months while beta reached v0.111.0. Analytics defaults to
+  that filter, so a main-branch player opened the page and saw an empty state
+  with a full run history on disk: 100 runs, none of them matching. "Current"
+  now means the newest patch on the branch a run was actually played on.
 
 ### Internal
 

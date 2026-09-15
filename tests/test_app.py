@@ -944,11 +944,21 @@ async def test_analytics_page(client):
 
 
 async def test_analytics_page_empty_runs(client):
-    """Analytics page with no runs should show empty state."""
+    """Analytics page with no runs should show empty state.
+
+    _get_runs is stubbed as well as _get_analytics. The page reads run history
+    separately -- for the ascension, version, origin and branch pickers -- and
+    defaults to scope="current", so on a machine with real saves it rendered
+    whatever that filter happened to return. It passed only while the
+    current-patch filter was comparing against the newest beta and therefore
+    matching nothing; the moment that was fixed, two real runs on the newest
+    main patch reached the page and the empty state was correctly absent.
+    """
     from unittest.mock import AsyncMock, patch
 
     from sts2.analytics import compute_analytics
-    with patch("sts2.app._get_analytics", new=AsyncMock(return_value=compute_analytics([]))):
+    with patch("sts2.app._get_analytics", new=AsyncMock(return_value=compute_analytics([]))), \
+            patch("sts2.app._get_runs", new=AsyncMock(return_value=[])):
         resp = await client.get("/analytics")
     assert resp.status_code == 200
     assert "No run data yet" in resp.text
