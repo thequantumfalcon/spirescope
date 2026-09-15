@@ -60,6 +60,10 @@ OVERRIDES: list[dict] = [
         ),
         "expect": {
             "cost": "2",
+            # The wiki still carries the pre-rework upgrade discount (2 -> 1).
+            # Pinning the base cost without this one would leave the card
+            # claiming an upgraded cost lower than its own base.
+            "cost_upgraded": "1",
             "description": (
                 "Gain 1 Energy for each Attack in your Hand. You cannot gain "
                 "additional Energy this turn"
@@ -71,6 +75,9 @@ OVERRIDES: list[dict] = [
         },
         "replace": {
             "cost": "3",
+            # v0.111.0 gives one cost, "Cost 3", with the upgrade changing only
+            # the Block numbers -- so upgrading no longer changes the cost.
+            "cost_upgraded": "",
             "description": (
                 "Gain 15 Block. Gains 5 additional Block for each Strength you have."
             ),

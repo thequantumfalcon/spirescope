@@ -11,6 +11,13 @@ class Card(BaseModel):
     # Regent cards spend Stars alongside Energy, so the two costs are separate
     # values, not alternatives. "" means the card has no Star cost.
     star_cost: str = ""
+    # Energy cost once upgraded, when upgrading changes it. "" means unchanged;
+    # every card the source carries this for genuinely differs (Barricade 3->2).
+    cost_upgraded: str = ""
+    # True when the card has no upgraded form at all. Distinct from "upgraded
+    # text happens to equal the base text", which is what comparing the two
+    # strings can tell you and is not the same question.
+    no_upgrade: bool = False
     type: str  # Attack, Skill, Power, Status, Curse
     rarity: str  # Starter, Common, Uncommon, Rare, Special
     description: str = ""

@@ -41,6 +41,14 @@
   that filter, so a main-branch player opened the page and saw an empty state
   with a full run history on disk: 100 runs, none of them matching. "Current"
   now means the newest patch on the branch a run was actually played on.
+- **Upgraded costs and "no upgrade" were discarded too.** `CostPlus` differs
+  from the base cost on all 60 cards that carry it — Barricade 3 to 2, Body
+  Slam to free — and `NoUpgrade` states outright, on 37 cards, that no upgrade
+  exists. The card page had been inferring that second one by comparing the
+  base and upgraded strings, which answers a different question. Both are read
+  now and both are shown: the upgraded cost beside the base one, the Star cost
+  beside it, and the upgrade block suppressed on authority rather than
+  coincidence.
 
 ### Internal
 
