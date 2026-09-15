@@ -128,6 +128,16 @@ def _strip_wiki_templates(s: str) -> str:
 _ICON_RUN_RE = re.compile(r"(?:(\d+)[ \t]*)?((?:@[A-Z]E)+|(?:@ST)+)")
 
 
+def _opt_int_str(value) -> str:
+    """A numeric wiki field as a string, with absence -- not zero -- as "".
+
+    These fields are Lua integers and 0 is a real value: a card whose upgraded
+    cost is 0 becomes free, which is the case a reader most wants to see.
+    Writing `value or ""` reads that as missing and drops 27 of them.
+    """
+    return "" if value is None else str(value)
+
+
 def _convert_icon_runs(s: str) -> str:
     """Render icon runs to text ("1 @CE" -> "1 Energy", "@ST@ST" -> "2 Star").
 
@@ -244,7 +254,20 @@ class WikiggSource:
                     # StarCost on the 22 cards that have one, and dropping it
                     # left every Regent card looking free of its real price --
                     # Alignment reads Cost 0 while actually costing 2 Stars.
-                    "star_cost": str(fields.get("StarCost", "") or ""),
+                    # `x or ""` cannot be used on these: the values are
+                    # integers and 0 is falsy, so it silently discarded the 27
+                    # cards that cost nothing once upgraded -- Body Slam,
+                    # Havoc, Shadow Step -- which are the interesting ones.
+                    # Absence is the only thing that should read as "none".
+                    "star_cost": _opt_int_str(fields.get("StarCost")),
+                    # CostPlus is only present when upgrading changes the cost,
+                    # and it differs from Cost on every card that carries it,
+                    # so it is never redundant with the base cost.
+                    "cost_upgraded": _opt_int_str(fields.get("CostPlus")),
+                    # Authoritative where the card page previously compared the
+                    # base and upgraded strings to guess whether an upgrade
+                    # exists -- two different questions.
+                    "no_upgrade": bool(fields.get("NoUpgrade", False)),
                     "type": str(fields.get("Type", "Skill")),
                     "rarity": _WIKI_RARITY_MAP.get(rarity, rarity),
                     "description": desc,

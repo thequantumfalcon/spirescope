@@ -798,6 +798,18 @@ class TestWikiCardFieldsAreNotDropped:
       ["Strike"] = {
         Cost = 1, Color = "Ironclad",
         Type = "Attack", Rarity = "Basic", Text = "Deal [6|9] damage."
+      },
+      ["Body Slam"] = {
+        Cost = 1, CostPlus = 0, Color = "Ironclad",
+        Type = "Attack", Rarity = "Common", Text = "Deal damage equal to your Block."
+      },
+      ["Barricade"] = {
+        Cost = 3, CostPlus = 2, Color = "Ironclad",
+        Type = "Power", Rarity = "Rare", Text = "Block is no longer removed."
+      },
+      ["Wound"] = {
+        Cost = 0, NoUpgrade = true, Color = "Ironclad",
+        Type = "Status", Rarity = "Special", Text = "Unplayable."
       }
     }
     return all_data
@@ -840,3 +852,27 @@ class TestWikiCardFieldsAreNotDropped:
         cards = json.loads((REPO_ROOT / "sts2" / "data" / "cards.json")
                            .read_text(encoding="utf-8"))
         assert [c for c in cards if c.get("mp_only")], "no shipped card is flagged mp_only"
+
+    def test_an_upgraded_cost_of_zero_survives(self):
+        """`value or ""` reads integer 0 as missing.
+
+        27 cards cost nothing once upgraded -- Body Slam, Havoc, Shadow Step --
+        and that idiom silently dropped every one of them, which is the case a
+        reader most wants to see. Absence is the only thing that means "none".
+        """
+        cards = self._cards()
+        assert cards["Body Slam"]["cost_upgraded"] == "0"
+        assert cards["Barricade"]["cost_upgraded"] == "2"
+        assert cards["Strike"]["cost_upgraded"] == "", "no CostPlus means no value"
+
+    def test_no_upgrade_is_carried_through(self):
+        cards = self._cards()
+        assert cards["Wound"]["no_upgrade"] is True
+        assert cards["Strike"]["no_upgrade"] is False
+
+    def test_shipped_zero_upgraded_costs_are_present(self):
+        """The count is the assertion: the bug above left 32 where 59 belong."""
+        cards = json.loads((REPO_ROOT / "sts2" / "data" / "cards.json")
+                           .read_text(encoding="utf-8"))
+        zero = [c for c in cards if c.get("cost_upgraded") == "0"]
+        assert zero, "no shipped card becomes free when upgraded -- 0 was dropped again"

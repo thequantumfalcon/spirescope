@@ -8,6 +8,13 @@
 <div class="detail-header">
   <h1><span class="char-{{ card.character|lower }}">{{ card.name }}</span>
     <span class="tag tag-cost text-base">{{ card.cost }}</span>
+    {# Upgrading changes the cost on 60 cards (Barricade 3 -> 2). The source
+       only carries this when it genuinely differs, so its presence is the
+       whole condition. #}
+    {% if card.cost_upgraded %}<span class="tag tag-cost text-base text-green"
+      title="Energy cost once upgraded">&rarr; {{ card.cost_upgraded }}</span>{% endif %}
+    {% if card.star_cost %}<span class="tag tag-cost text-base"
+      title="Star cost, spent alongside Energy">{{ card.star_cost }} &starf;</span>{% endif %}
     <span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span>
     <span class="tag tag-{{ card.rarity|lower }}">{{ card.rarity }}</span>
     {% if card.tier %}<span class="tag" style="background:var(--bg3);color:var(--yellow);border:1px solid var(--border);font-size:1rem">{{ card.tier }}-Tier</span>{% endif %}
@@ -28,7 +35,10 @@
    in the overlay is deliberate: an overlay that omits the field falls back to
    the English string (knowledge.py skips absent values), which would put
    English upgrade text under a translated description. #}
-{% if card.description_upgraded and card.description_upgraded != card.description %}
+{# no_upgrade answers this outright where the source sets it (37 cards); the
+   string comparison stays for the rest, where nothing states it either way. #}
+{% if not card.no_upgrade and card.description_upgraded
+      and card.description_upgraded != card.description %}
 <div class="detail-desc card-win"><strong class="text-green">Upgraded:</strong> {{ card.description_upgraded }}</div>
 {% endif %}
 

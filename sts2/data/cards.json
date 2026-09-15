@@ -14,7 +14,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ANOINTED",
@@ -32,7 +34,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.APOTHEOSIS",
@@ -76,7 +80,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BEACON_OF_HOPE",
@@ -93,7 +99,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BEAT_DOWN",
@@ -110,7 +118,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BELIEVE_IN_YOU",
@@ -125,7 +135,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BOLAS",
@@ -140,7 +152,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BRIGHTEST_FLAME",
@@ -155,9 +169,11 @@
     ],
     "description_upgraded": "Gain 3 Energy. Draw 3 cards. Lose 2 Max HP.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BYRD_SWOOP",
@@ -181,7 +197,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "2",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CATASTROPHE",
@@ -198,7 +216,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COORDINATE",
@@ -215,7 +235,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DARK_SHACKLES",
@@ -233,7 +255,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DESPAIR",
@@ -263,7 +287,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DISINTEGRATION",
@@ -290,7 +316,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ENLIGHTENMENT",
@@ -318,7 +346,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.EQUILIBRIUM",
@@ -336,7 +366,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ETERNAL_ARMOR",
@@ -351,7 +383,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.EXTERMINATE",
@@ -377,7 +411,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FEEDING_FRENZY",
@@ -407,7 +443,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FISTICUFFS",
@@ -424,7 +462,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FLASH_OF_STEEL",
@@ -441,7 +481,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FUEL",
@@ -458,7 +500,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GANG_UP",
@@ -473,7 +517,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GIANT_ROCK",
@@ -497,7 +543,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HAND_OF_GREED",
@@ -510,9 +558,11 @@
     "description_upgraded": "Deal 25 damage. If Fatal, gain 25 Gold.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HIDDEN_CACHE",
@@ -525,9 +575,11 @@
     "keywords": [],
     "description_upgraded": "Gain 1 Star. Next turn, gain 4 Star.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HIDDEN_GEM",
@@ -542,9 +594,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HUDDLE_UP",
@@ -560,9 +614,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": true
+    "mp_only": true,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.IMPALE",
@@ -592,7 +648,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.INTERCEPT",
@@ -609,7 +667,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.JACK_OF_ALL_TRADES",
@@ -626,7 +686,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.JACKPOT",
@@ -639,9 +701,11 @@
     "description_upgraded": "Deal 30 damage. Add 3 random Upgraded 0 Energy cards into your Hand.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.KNOCKDOWN",
@@ -656,7 +720,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LANTERN_KEY",
@@ -682,7 +748,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LUMINESCE",
@@ -701,7 +769,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MASTER_OF_STRATEGY",
@@ -719,7 +789,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MAUL",
@@ -745,7 +817,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MIMIC",
@@ -763,7 +837,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MIND_BLAST",
@@ -781,7 +857,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MIND_ROT",
@@ -848,7 +926,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.OMNISLICE",
@@ -863,7 +943,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PAELS_STRIKE",
@@ -889,7 +971,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PANIC_BUTTON",
@@ -907,7 +991,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PREP_TIME",
@@ -922,7 +1008,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PROLONG",
@@ -940,7 +1028,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PROWESS",
@@ -958,7 +1048,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PURITY",
@@ -976,7 +1068,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RALLY",
@@ -993,7 +1087,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RELAX",
@@ -1010,9 +1106,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REND",
@@ -1025,9 +1123,11 @@
     "description_upgraded": "Deal 12 damage. Deals 8 additional damage for each unique debuff on the enemy.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RESTLESSNESS",
@@ -1045,7 +1145,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ROLLING_BOULDER",
@@ -1060,7 +1162,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SALVO",
@@ -1075,9 +1179,11 @@
       "Retain"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SCRAWL",
@@ -1095,7 +1201,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SECRET_TECHNIQUE",
@@ -1113,7 +1221,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SECRET_WEAPON",
@@ -1131,7 +1241,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SEEKER_STRIKE",
@@ -1148,7 +1260,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SHARP_EDGE",
@@ -1180,7 +1294,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SLOTH",
@@ -1202,9 +1318,11 @@
     "description_upgraded": "Choose 1 of 3 random Upgraded Attacks from another character to add into your Hand. It's free to play this turn.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SPOILS_MAP",
@@ -1243,7 +1361,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SWEEPING_GAZE",
@@ -1271,7 +1391,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.THE_BOMB",
@@ -1284,9 +1406,11 @@
     "description_upgraded": "At the end of 3 turns, deal 50 damage to ALL enemies.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.THE_GAMBIT",
@@ -1303,7 +1427,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.THINKING_AHEAD",
@@ -1321,7 +1447,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.THRUMMING_HATCHET",
@@ -1336,7 +1464,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ULTIMATE_DEFEND",
@@ -1353,7 +1483,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ULTIMATE_STRIKE",
@@ -1368,7 +1500,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.VOID",
@@ -1384,9 +1518,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.VOLLEY",
@@ -1399,9 +1535,11 @@
     "description_upgraded": "Deal 14 damage to a random enemy X times.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.WASTE_AWAY",
@@ -1414,9 +1552,11 @@
     "description_upgraded": "Gain 1 less 1 Energy per turn.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.WHISTLE",
@@ -1456,9 +1596,11 @@
       "Ethereal"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.BAD_LUCK",
@@ -1471,9 +1613,11 @@
     "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, lose 13 HP. Eternal.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.CLUMSY",
@@ -1488,9 +1632,11 @@
       "Ethereal"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.CURSE_OF_THE_BELL",
@@ -1503,9 +1649,11 @@
     "description_upgraded": "Unplayable. Eternal.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.DEBT",
@@ -1518,9 +1666,11 @@
     "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, lose 10 Gold.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.DECAY",
@@ -1533,9 +1683,11 @@
     "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, take 2 damage.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.DOUBT",
@@ -1550,9 +1702,11 @@
       "Weak"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.ENTHRALLED",
@@ -1565,9 +1719,11 @@
     "description_upgraded": "If this is in your Hand, it must be played before other cards. Eternal.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.FOLLY",
@@ -1583,9 +1739,11 @@
       "Innate"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.GREED",
@@ -1598,9 +1756,11 @@
     "description_upgraded": "Unplayable. Eternal.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.GUILTY",
@@ -1613,9 +1773,11 @@
     "description_upgraded": "Unplayable. Removed from your Deck after 5 combats.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.INJURY",
@@ -1628,9 +1790,11 @@
     "description_upgraded": "Unplayable.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.NORMALITY",
@@ -1643,9 +1807,11 @@
     "description_upgraded": "Unplayable. You cannot play more than 3 cards this turn.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.POOR_SLEEP",
@@ -1660,9 +1826,11 @@
       "Retain"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.REGRET",
@@ -1675,9 +1843,11 @@
     "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, lose 1 HP for each card in your Hand.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.SHAME",
@@ -1690,9 +1860,11 @@
     "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, gain 1 Frail.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.SPORE_MIND",
@@ -1707,9 +1879,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.WRITHE",
@@ -1724,9 +1898,11 @@
       "Innate"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.ADAPTIVE_STRIKE",
@@ -1741,9 +1917,11 @@
       "Discard"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ALL_FOR_ONE",
@@ -1759,9 +1937,11 @@
     "cost": "2",
     "description_upgraded": "Deal 14 damage. Put ALL 0 Energy cards from your Discard Pile into your Hand.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BALL_LIGHTNING",
@@ -1779,7 +1959,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BARRAGE",
@@ -1796,7 +1978,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BEAM_CELL",
@@ -1813,7 +1997,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BIASED_COGNITION",
@@ -1828,9 +2014,11 @@
       "Focus"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BOOST_AWAY",
@@ -1849,7 +2037,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BOOT_SEQUENCE",
@@ -1868,7 +2058,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BUFFER",
@@ -1883,7 +2075,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BULK_UP",
@@ -1901,7 +2095,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CAPACITOR",
@@ -1916,7 +2112,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CHAOS",
@@ -1933,7 +2131,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CHARGE_BATTERY",
@@ -1950,7 +2150,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CHILL",
@@ -1969,7 +2171,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CLAW",
@@ -1984,7 +2188,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COLD_SNAP",
@@ -2002,7 +2208,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COMPACT",
@@ -2019,7 +2227,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COMPILE_DRIVER",
@@ -2036,7 +2246,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CONSUMING_SHADOW",
@@ -2055,7 +2267,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COOLANT",
@@ -2072,7 +2286,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COOLHEADED",
@@ -2091,7 +2307,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CREATIVE_AI",
@@ -2106,7 +2324,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "2",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DARKNESS",
@@ -2124,7 +2344,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEFEND_DEFECT",
@@ -2154,7 +2376,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DOUBLE_ENERGY",
@@ -2171,7 +2395,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DUALCAST",
@@ -2186,9 +2412,11 @@
       "Evoke"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ECHO_FORM",
@@ -2205,7 +2433,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ENERGY_SURGE",
@@ -2222,7 +2452,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FTL",
@@ -2239,7 +2471,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FERAL",
@@ -2252,9 +2486,11 @@
     "description_upgraded": "The first time you play a 0 Energy Attack each turn, return it to your Hand.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FIGHT_THROUGH",
@@ -2271,9 +2507,11 @@
       "Wound"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FLAK_CANNON",
@@ -2290,7 +2528,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FOCUSED_STRIKE",
@@ -2307,7 +2547,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FUSION",
@@ -2326,7 +2568,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GENETIC_ALGORITHM",
@@ -2342,9 +2586,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GLACIER",
@@ -2363,7 +2609,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GLASSWORK",
@@ -2381,7 +2629,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GO_FOR_THE_EYES",
@@ -2398,7 +2648,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GUNK_UP",
@@ -2416,7 +2668,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HAILSTORM",
@@ -2433,7 +2687,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HELIX_DRILL",
@@ -2448,7 +2704,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HOLOGRAM",
@@ -2467,7 +2725,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HOTFIX",
@@ -2485,7 +2745,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HYPERBEAM",
@@ -2501,9 +2763,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ICE_LANCE",
@@ -2521,7 +2785,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.IGNITION",
@@ -2541,7 +2807,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ITERATION",
@@ -2556,9 +2824,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LEAP",
@@ -2575,7 +2845,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LIGHTNING_ROD",
@@ -2594,7 +2866,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LOOP",
@@ -2609,7 +2883,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MACHINE_LEARNING",
@@ -2626,7 +2902,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.METEOR_STRIKE",
@@ -2644,7 +2922,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MODDED",
@@ -2661,7 +2941,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MOMENTUM_STRIKE",
@@ -2674,9 +2956,11 @@
     "description_upgraded": "Deal 15 damage. Reduce this card's cost to 0 Energy.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MULTI_CAST",
@@ -2691,9 +2975,11 @@
       "Evoke"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NULL",
@@ -2710,9 +2996,11 @@
       "Dark"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.OVERCLOCK",
@@ -2731,7 +3019,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.QUADCAST",
@@ -2748,7 +3038,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RAINBOW",
@@ -2769,7 +3061,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REBOOT",
@@ -2787,7 +3081,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REFRACT",
@@ -2802,9 +3098,11 @@
       "Channel"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ROCKET_PUNCH",
@@ -2819,9 +3117,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SCRAPE",
@@ -2838,9 +3138,11 @@
     "cost": "1",
     "description_upgraded": "Deal 10 damage. Draw 5 cards. Discard all cards drawn this way that do not cost 0 Energy.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SHADOW_SHIELD",
@@ -2859,7 +3161,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SHATTER",
@@ -2877,7 +3181,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SIGNAL_BOOST",
@@ -2894,7 +3200,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SKIM",
@@ -2911,7 +3219,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SMOKESTACK",
@@ -2926,7 +3236,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SPINNER",
@@ -2943,7 +3255,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STORM",
@@ -2961,7 +3275,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STRIKE_DEFECT",
@@ -2988,7 +3304,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SUNDER",
@@ -3002,9 +3320,11 @@
     "keywords": [],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SUPERCRITICAL",
@@ -3021,7 +3341,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SWEEPING_BEAM",
@@ -3038,7 +3360,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SYNCHRONIZE",
@@ -3053,9 +3377,11 @@
       "Focus"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SYNTHESIS",
@@ -3068,9 +3394,11 @@
     "keywords": [],
     "description_upgraded": "Deal 20 damage. The next Power you play costs 0 Energy.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TEMPEST",
@@ -3086,9 +3414,11 @@
       "Lightning"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TESLA_COIL",
@@ -3105,7 +3435,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.THUNDER",
@@ -3121,9 +3453,11 @@
       "Lightning"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TRASH_TO_TREASURE",
@@ -3139,9 +3473,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.UPROAR",
@@ -3158,7 +3494,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.VOLTAIC",
@@ -3177,7 +3515,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.WHITE_NOISE",
@@ -3194,7 +3534,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ZAP",
@@ -3210,9 +3552,11 @@
       "Lightning"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.APOTHEOSIS_EVENT",
@@ -3228,9 +3572,11 @@
       "Innate"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.APPARITION_EVENT",
@@ -3247,9 +3593,11 @@
       "Intangible"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BYRD_SWOOP_EVENT",
@@ -3264,7 +3612,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CALTROPS_EVENT",
@@ -3279,7 +3629,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CLASH_EVENT",
@@ -3294,7 +3646,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DISTRACTION_EVENT",
@@ -3311,7 +3665,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DUAL_WIELD_EVENT",
@@ -3326,7 +3682,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ENLIGHTENMENT_EVENT",
@@ -3343,7 +3701,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ENTRENCH_EVENT",
@@ -3360,7 +3720,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.EXTERMINATE_EVENT",
@@ -3373,9 +3735,11 @@
     "description_upgraded": "Deal 4 damage to ALL enemies 4 times.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FEEDING_FRENZY_EVENT",
@@ -3392,7 +3756,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HELLO_WORLD_EVENT",
@@ -3407,7 +3773,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MAUL_EVENT",
@@ -3420,9 +3788,11 @@
     "description_upgraded": "Deal 6 damage twice. Increase the damage of ALL Maul cards by 3 this combat.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.METAMORPHOSIS",
@@ -3440,7 +3810,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NEOWS_FURY",
@@ -3456,9 +3828,11 @@
     ],
     "description_upgraded": "Deal 14 damage. Put up to 3 cards from your Discard Pile into your Hand. Exhaust.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PECK",
@@ -3473,7 +3847,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REBOUND_EVENT",
@@ -3490,7 +3866,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RIP_AND_TEAR_EVENT",
@@ -3505,7 +3883,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SQUASH_EVENT",
@@ -3522,7 +3902,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STACK_EVENT",
@@ -3540,7 +3922,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TORIC_TOUGHNESS",
@@ -3557,7 +3941,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.WHISTLE_EVENT",
@@ -3572,9 +3958,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.WISH_EVENT",
@@ -3590,9 +3978,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.AGGRESSION",
@@ -3609,7 +3999,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ANGER",
@@ -3626,7 +4018,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ARMAMENTS",
@@ -3643,7 +4037,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ASHEN_STRIKE",
@@ -3660,7 +4056,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BARRICADE",
@@ -3677,7 +4075,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "2",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BASH",
@@ -3692,9 +4092,11 @@
       "Vulnerable"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BATTLE_TRANCE",
@@ -3711,7 +4113,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BLOOD_WALL",
@@ -3728,7 +4132,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BLOODLETTING",
@@ -3744,7 +4150,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BLUDGEON",
@@ -3759,7 +4167,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BODY_SLAM",
@@ -3776,7 +4186,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BRAND",
@@ -3794,7 +4206,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BREAK",
@@ -3811,7 +4225,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BREAKTHROUGH",
@@ -3826,7 +4242,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BULLY",
@@ -3843,7 +4261,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BURNING_PACT",
@@ -3861,7 +4281,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CASCADE",
@@ -3878,7 +4300,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CINDER",
@@ -3893,9 +4317,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COLOSSUS",
@@ -3912,9 +4338,11 @@
     ],
     "last_changed": "v0.108.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CONFLAGRATION",
@@ -3929,7 +4357,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CORRUPTION",
@@ -3944,9 +4374,11 @@
     ],
     "description_upgraded": "Skills cost 0 Energy. Whenever you play a Skill, Exhaust it.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "2",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CRIMSON_MANTLE",
@@ -3961,9 +4393,11 @@
       "Block"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CRUELTY",
@@ -3981,7 +4415,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DARK_EMBRACE",
@@ -3999,7 +4435,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEFEND_IRONCLAD",
@@ -4030,7 +4468,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEMONIC_SHIELD",
@@ -4048,7 +4488,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DISMANTLE",
@@ -4065,7 +4507,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DOMINATE",
@@ -4085,7 +4529,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DRUM_OF_BATTLE",
@@ -4102,9 +4548,11 @@
     ],
     "last_changed": "v0.107.1",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.EVIL_EYE",
@@ -4122,7 +4570,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.EXPECT_A_FIGHT",
@@ -4136,9 +4586,11 @@
     "keywords": [],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FEED",
@@ -4155,7 +4607,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FEEL_NO_PAIN",
@@ -4173,7 +4627,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FIEND_FIRE",
@@ -4190,7 +4646,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FIGHT_ME",
@@ -4207,7 +4665,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FLAME_BARRIER",
@@ -4224,7 +4684,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FORGOTTEN_RITUAL",
@@ -4239,9 +4701,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GRAPPLE",
@@ -4256,9 +4720,11 @@
       "Block"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HAVOC",
@@ -4276,7 +4742,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HEADBUTT",
@@ -4294,7 +4762,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HELLRAISER",
@@ -4311,7 +4781,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HEMOKINESIS",
@@ -4326,7 +4798,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HOWL_FROM_BEYOND",
@@ -4343,7 +4817,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.IMPERVIOUS",
@@ -4361,7 +4837,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.INFERNAL_BLADE",
@@ -4378,7 +4856,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.INFERNO",
@@ -4393,7 +4873,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.INFLAME",
@@ -4410,7 +4892,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.IRON_WAVE",
@@ -4427,7 +4911,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.JUGGERNAUT",
@@ -4442,9 +4928,11 @@
       "Block"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.JUGGLING",
@@ -4459,7 +4947,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MANGLE",
@@ -4474,9 +4964,11 @@
       "Strength"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MOLTEN_FIST",
@@ -4494,7 +4986,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NOT_YET",
@@ -4513,7 +5007,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.OFFERING",
@@ -4531,7 +5027,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ONE_TWO_PUNCH",
@@ -4544,9 +5042,11 @@
     "description_upgraded": "This turn, your next 2 Attacks are played an extra time.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PACTS_END",
@@ -4561,9 +5061,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PERFECTED_STRIKE",
@@ -4578,7 +5080,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PILLAGE",
@@ -4595,7 +5099,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.POMMEL_STRIKE",
@@ -4612,7 +5118,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PRIMAL_FORCE",
@@ -4628,7 +5136,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PYRE",
@@ -4643,7 +5153,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RAGE",
@@ -4660,7 +5172,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RAMPAGE",
@@ -4673,9 +5187,11 @@
     "description_upgraded": "Deal 10 damage. Increase this card's damage by 10 this combat.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RUPTURE",
@@ -4692,7 +5208,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SECOND_WIND",
@@ -4710,7 +5228,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SETUP_STRIKE",
@@ -4725,9 +5245,11 @@
       "Strength"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SHRUG_IT_OFF",
@@ -4745,7 +5267,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SPITE",
@@ -4760,7 +5284,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STAMPEDE",
@@ -4775,7 +5301,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STOKE",
@@ -4792,7 +5320,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STOMP",
@@ -4807,7 +5337,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STONE_ARMOR",
@@ -4822,7 +5354,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STRIKE_IRONCLAD",
@@ -4848,7 +5382,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TANK",
@@ -4861,9 +5397,11 @@
     "description_upgraded": "Take 50% additional damage from enemies. Allies take 50% less damage from enemies.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": true
+    "mp_only": true,
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TAUNT",
@@ -4880,9 +5418,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TEAR_ASUNDER",
@@ -4897,7 +5437,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.THRASH",
@@ -4914,7 +5456,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.THUNDERCLAP",
@@ -4931,7 +5475,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TREMBLE",
@@ -4949,7 +5495,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TRUE_GRIT",
@@ -4967,7 +5515,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TWIN_STRIKE",
@@ -4982,7 +5532,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.UNMOVABLE",
@@ -4999,7 +5551,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.UNRELENTING",
@@ -5012,9 +5566,11 @@
     "description_upgraded": "Deal 20 damage. The next Attack you play costs 0 Energy.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.UPPERCUT",
@@ -5032,7 +5588,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.VICIOUS",
@@ -5050,7 +5608,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.WHIRLWIND",
@@ -5063,9 +5623,11 @@
     "description_upgraded": "Deal 8 damage to ALL enemies X times.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.AFTERLIFE",
@@ -5083,7 +5645,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BANSHEES_CRY",
@@ -5100,7 +5664,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "7",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BLIGHT_STRIKE",
@@ -5115,7 +5681,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BODYGUARD",
@@ -5130,9 +5698,11 @@
       "Summon"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BONE_SHARDS",
@@ -5149,7 +5719,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BORROWED_TIME",
@@ -5164,7 +5736,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BURY",
@@ -5179,7 +5753,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CALCIFY",
@@ -5194,7 +5770,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CALL_OF_THE_VOID",
@@ -5211,7 +5789,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CAPTURE_SPIRIT",
@@ -5227,9 +5807,11 @@
       "Soul"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CLEANSE",
@@ -5248,7 +5830,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COUNTDOWN",
@@ -5263,7 +5847,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DANSE_MACABRE",
@@ -5280,7 +5866,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEATH_MARCH",
@@ -5295,9 +5883,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEATHS_DOOR",
@@ -5314,7 +5904,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEATHBRINGER",
@@ -5331,7 +5923,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEBILITATE",
@@ -5349,7 +5943,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEFEND_NECROBINDER",
@@ -5379,7 +5975,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEFY",
@@ -5398,7 +5996,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DELAY",
@@ -5415,7 +6015,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEMESNE",
@@ -5433,7 +6035,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "2",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEVOUR_LIFE",
@@ -5451,7 +6055,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DIRGE",
@@ -5469,9 +6075,11 @@
       "Soul"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DRAIN_POWER",
@@ -5488,7 +6096,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DREDGE",
@@ -5506,7 +6116,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.EIDOLON",
@@ -5523,9 +6135,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.END_OF_DAYS",
@@ -5540,7 +6154,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ENFEEBLING_TOUCH",
@@ -5558,7 +6174,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ERADICATE",
@@ -5573,9 +6191,11 @@
       "Retain"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FEAR",
@@ -5593,7 +6213,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FETCH",
@@ -5610,7 +6232,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FLATTEN",
@@ -5623,9 +6247,11 @@
     "keywords": [],
     "description_upgraded": "Osty deals 16 damage. This card costs 0 Energy if Osty has attacked this turn.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FORBIDDEN_GRIMOIRE",
@@ -5640,7 +6266,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FRIENDSHIP",
@@ -5655,9 +6283,11 @@
     ],
     "description_upgraded": "Lose 1 Strength. Gain 1 Energy at the start of each turn.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GLIMPSE_BEYOND",
@@ -5674,9 +6304,11 @@
       "Soul"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": true
+    "mp_only": true,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GRAVE_WARDEN",
@@ -5695,7 +6327,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GRAVEBLAST",
@@ -5713,7 +6347,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HANG",
@@ -5728,7 +6364,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HAUNT",
@@ -5745,7 +6383,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HIGH_FIVE",
@@ -5762,7 +6402,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.INVOKE",
@@ -5779,7 +6421,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LEGION_OF_BONE",
@@ -5796,7 +6440,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LETHALITY",
@@ -5813,7 +6459,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MELANCHOLY",
@@ -5830,7 +6478,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MISERY",
@@ -5845,7 +6495,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NECRO_MASTERY",
@@ -5862,7 +6514,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NEGATIVE_PULSE",
@@ -5879,7 +6533,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NEUROSURGE",
@@ -5896,7 +6552,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NO_ESCAPE",
@@ -5911,7 +6569,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.OBLIVION",
@@ -5926,7 +6586,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PAGESTORM",
@@ -5944,7 +6606,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PARSE",
@@ -5962,7 +6626,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.POKE",
@@ -5977,7 +6643,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PROTECTOR",
@@ -5990,9 +6658,11 @@
     "description_upgraded": "Osty deals 15 damage. Deals additional damage equal to Osty's Max HP.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PULL_AGGRO",
@@ -6010,7 +6680,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PULL_FROM_BELOW",
@@ -6027,7 +6699,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PUTREFY",
@@ -6046,7 +6720,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RATTLE",
@@ -6061,7 +6737,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REANIMATE",
@@ -6079,7 +6757,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REAP",
@@ -6096,7 +6776,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REAPER_FORM",
@@ -6111,7 +6793,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REAVE",
@@ -6129,7 +6813,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RIGHT_HAND_HAND",
@@ -6146,7 +6832,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SACRIFICE",
@@ -6162,9 +6850,11 @@
       "Retain"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SCOURGE",
@@ -6181,7 +6871,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SCULPTING_STRIKE",
@@ -6198,7 +6890,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SEANCE",
@@ -6217,7 +6911,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SENTRY_MODE",
@@ -6232,7 +6928,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SEVERANCE",
@@ -6251,7 +6949,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SHARED_FATE",
@@ -6269,7 +6969,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SHROUD",
@@ -6284,9 +6986,11 @@
       "Block"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SIC_EM",
@@ -6303,7 +7007,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SLEIGHT_OF_FLESH",
@@ -6318,7 +7024,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SNAP",
@@ -6335,7 +7043,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SOUL_STORM",
@@ -6353,7 +7063,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SOW",
@@ -6370,7 +7082,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SPIRIT_OF_ASH",
@@ -6388,7 +7102,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SPUR",
@@ -6406,7 +7122,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SQUEEZE",
@@ -6419,9 +7137,11 @@
     "description_upgraded": "Osty deals 30 damage. Deals 6 additional damage for ALL your other Osty Attacks.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STRIKE_NECROBINDER",
@@ -6447,9 +7167,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TIMES_UP",
@@ -6462,9 +7184,11 @@
     "description_upgraded": "Retain. Deal damage equal to the enemy's Doom.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.UNDEATH",
@@ -6482,7 +7206,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.UNLEASH",
@@ -6495,9 +7221,11 @@
     "description_upgraded": "Osty deals 9 damage. Deals additional damage equal to Osty's current HP.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.WISP",
@@ -6514,7 +7242,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BYRDONIS_EGG",
@@ -6527,9 +7257,11 @@
     "description_upgraded": "Unplayable. Can be hatched at a Rest Site.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.LANTERN_KEY_QUEST",
@@ -6542,9 +7274,11 @@
     "description_upgraded": "Unplayable. Unlocks a special event in the next Act.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.SPOILS_MAP_QUEST",
@@ -6557,9 +7291,11 @@
     "description_upgraded": "Unplayable. Marks a site of 600 extra Gold in the next Act.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.ALIGNMENT",
@@ -6574,7 +7310,9 @@
     "star_cost": "2",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ARSENAL",
@@ -6591,7 +7329,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ASTRAL_PULSE",
@@ -6606,7 +7346,9 @@
     "star_cost": "3",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BEGONE",
@@ -6621,7 +7363,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BEAT_INTO_SHAPE",
@@ -6634,9 +7378,11 @@
     "description_upgraded": "Deal 7 damage. Forge 7. Forges an additional 7 for every other time you've hit the enemy this turn.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BIG_BANG",
@@ -6652,9 +7398,11 @@
     ],
     "description_upgraded": "Innate. Draw 1 card. Gain 1 Energy. Gain 1 Star. Forge 5. Exhaust.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BLACK_HOLE",
@@ -6667,9 +7415,11 @@
     "keywords": [],
     "description_upgraded": "Whenever you spend or gain 1 Star, deal 4 damage to ALL enemies.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BOMBARDMENT",
@@ -6686,7 +7436,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BULWARK",
@@ -6703,7 +7455,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BUNDLE_OF_JOY",
@@ -6720,7 +7474,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CHARGE",
@@ -6735,9 +7491,11 @@
     ],
     "description_upgraded": "Choose 2 cards in your Draw Pile to Transform into Minion Dive Bomb+.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CELESTIAL_MIGHT",
@@ -6752,7 +7510,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CHILD_OF_THE_STARS",
@@ -6767,9 +7527,11 @@
       "Block"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CLOAK_OF_STARS",
@@ -6786,7 +7548,9 @@
     "star_cost": "1",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COLLISION_COURSE",
@@ -6802,7 +7566,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COMET",
@@ -6820,7 +7586,9 @@
     "star_cost": "5",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CONQUEROR",
@@ -6835,7 +7603,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CONVERGENCE",
@@ -6850,9 +7620,11 @@
     ],
     "description_upgraded": "Next turn, gain 1 Energy and 2 Star. Retain your Hand this turn.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.COSMIC_INDIFFERENCE",
@@ -6871,7 +7643,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CRASH_LANDING",
@@ -6886,7 +7660,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CRESCENT_SPEAR",
@@ -6899,9 +7675,11 @@
     "keywords": [],
     "description_upgraded": "Deal 8 damage. Deals 3 additional damage for ALL your cards that have a 1 Star cost.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "1",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CRUSH_UNDER",
@@ -6916,9 +7694,11 @@
       "Strength"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DECISIONS_DECISIONS",
@@ -6936,7 +7716,9 @@
     "star_cost": "6",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEFEND_REGENT",
@@ -6964,7 +7746,9 @@
     "star_cost": "4",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DYING_STAR",
@@ -6982,7 +7766,9 @@
     "star_cost": "3",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FALLING_STAR",
@@ -6998,9 +7784,11 @@
       "Weak"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "2",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FOREGONE_CONCLUSION",
@@ -7017,7 +7805,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FURNACE",
@@ -7032,7 +7822,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GUARDS",
@@ -7049,7 +7841,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GAMMA_BLAST",
@@ -7067,7 +7861,9 @@
     "star_cost": "3",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GATHER_LIGHT",
@@ -7082,9 +7878,11 @@
     ],
     "description_upgraded": "Gain 11 Block. Gain 1 Star.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GENESIS",
@@ -7097,9 +7895,11 @@
     "keywords": [],
     "description_upgraded": "At the start of your turn, gain 3 Star.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GLIMMER",
@@ -7116,7 +7916,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GLITTERSTREAM",
@@ -7131,9 +7933,11 @@
       "Block"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GLOW",
@@ -7148,9 +7952,11 @@
     ],
     "description_upgraded": "Gain 2 Star. Draw 1 card. Next turn, draw 1 card",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GUIDING_STAR",
@@ -7167,7 +7973,9 @@
     "star_cost": "2",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HAMMER_TIME",
@@ -7182,7 +7990,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HEAVENLY_DRILL",
@@ -7195,9 +8005,11 @@
     "description_upgraded": "Deal 10 damage X times. Double X if it's 4 or more.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HEGEMONY",
@@ -7212,7 +8024,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HEIRLOOM_HAMMER",
@@ -7227,7 +8041,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.I_AM_INVINCIBLE",
@@ -7245,7 +8061,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.KINGLY_KICK",
@@ -7262,7 +8080,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.KINGLY_PUNCH",
@@ -7279,7 +8099,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.KNOCKOUT_BLOW",
@@ -7292,9 +8114,11 @@
     "description_upgraded": "Deal 38 damage. If this kills an enemy, gain 5 Star.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.KNOW_THY_PLACE",
@@ -7313,7 +8137,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LARGESSE",
@@ -7328,7 +8154,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LUNAR_BLAST",
@@ -7343,7 +8171,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MAKE_IT_SO",
@@ -7358,7 +8188,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MANIFEST_AUTHORITY",
@@ -7375,7 +8207,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.METEOR_SHOWER",
@@ -7393,7 +8227,9 @@
     "star_cost": "2",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MONARCHS_GAZE",
@@ -7410,7 +8246,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MONOLOGUE",
@@ -7427,7 +8265,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NEUTRON_AEGIS",
@@ -7442,7 +8282,9 @@
     "star_cost": "5",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ORBIT",
@@ -7457,7 +8299,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PALE_BLUE_DOT",
@@ -7474,7 +8318,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PARRY",
@@ -7491,7 +8337,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PARTICLE_WALL",
@@ -7508,7 +8356,9 @@
     "star_cost": "2",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PATTER",
@@ -7525,7 +8375,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PHOTON_CUT",
@@ -7542,7 +8394,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PILLAR_OF_CREATION",
@@ -7558,9 +8412,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PROPHESIZE",
@@ -7577,7 +8433,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.QUASAR",
@@ -7592,7 +8450,9 @@
     "star_cost": "2",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RADIATE",
@@ -7605,9 +8465,11 @@
     "keywords": [],
     "description_upgraded": "Deal 4 damage to ALL enemies for each 1 Star gained this turn.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REFINE_BLADE",
@@ -7620,9 +8482,11 @@
     "keywords": [],
     "description_upgraded": "Forge 12. Next turn, gain 1 Energy.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REFLECT",
@@ -7640,7 +8504,9 @@
     "star_cost": "3",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RESONANCE",
@@ -7657,7 +8523,9 @@
     "star_cost": "2",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ROYALTIES",
@@ -7670,9 +8538,11 @@
     "description_upgraded": "At the end of combat, gain 40 Gold.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SEEKING_EDGE",
@@ -7687,7 +8557,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SEVEN_STARS",
@@ -7702,7 +8574,9 @@
     "star_cost": "7",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SHINING_STRIKE",
@@ -7717,9 +8591,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SOLAR_STRIKE",
@@ -7732,9 +8608,11 @@
     "keywords": [],
     "description_upgraded": "Deal 10 damage. Gain 2 Star.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SPECTRUM_SHIFT",
@@ -7749,7 +8627,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SPOILS_OF_BATTLE",
@@ -7764,9 +8644,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STARDUST",
@@ -7781,7 +8663,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STRIKE_REGENT",
@@ -7805,9 +8689,11 @@
     "description_upgraded": "Forge 11. Put Sovereign Blade into your Hand from anywhere.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SUPERMASSIVE",
@@ -7822,7 +8708,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SWORD_SAGE",
@@ -7837,7 +8725,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TERRAFORMING",
@@ -7850,9 +8740,11 @@
     "description_upgraded": "Gain 10 Vigor.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.THE_SEALED_THRONE",
@@ -7865,9 +8757,11 @@
     "description_upgraded": "Whenever you play a card, gain 1 Star.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "3",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.THE_SMITH",
@@ -7882,7 +8776,9 @@
     "star_cost": "4",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TYRANNY",
@@ -7900,7 +8796,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.VENERATE",
@@ -7913,9 +8811,11 @@
     "keywords": [],
     "description_upgraded": "Gain 3 Star.",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.VOID_FORM",
@@ -7932,7 +8832,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.WROUGHT_IN_WAR",
@@ -7947,7 +8849,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ABRASIVE",
@@ -7965,7 +8869,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ACCELERANT",
@@ -7981,9 +8887,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ACCURACY",
@@ -7998,9 +8906,11 @@
       "Shiv"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ACROBATICS",
@@ -8016,9 +8926,11 @@
       "Discard"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ADRENALINE",
@@ -8036,7 +8948,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.AFTERIMAGE",
@@ -8053,7 +8967,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ANTICIPATE",
@@ -8070,7 +8986,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ASSASSINATE",
@@ -8089,7 +9007,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BACKFLIP",
@@ -8107,7 +9027,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BACKSTAB",
@@ -8125,7 +9047,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BLADE_DANCE",
@@ -8141,9 +9065,11 @@
       "Shiv"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BLADE_OF_INK",
@@ -8158,9 +9084,11 @@
       "Shiv"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BLUR",
@@ -8177,7 +9105,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BOUNCING_FLASK",
@@ -8194,7 +9124,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BUBBLE_BUBBLE",
@@ -8211,7 +9143,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BULLET_TIME",
@@ -8228,7 +9162,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "2",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BURST",
@@ -8241,9 +9177,11 @@
     "description_upgraded": "This turn, your next 2 Skills are played an extra time.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CALCULATED_GAMBLE",
@@ -8262,7 +9200,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CLOAK_AND_DAGGER",
@@ -8280,7 +9220,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CORROSIVE_WAVE",
@@ -8298,7 +9240,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DAGGER_SPRAY",
@@ -8313,7 +9257,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DAGGER_THROW",
@@ -8331,7 +9277,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DASH",
@@ -8348,7 +9296,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEADLY_POISON",
@@ -8365,7 +9315,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEFEND_SILENT",
@@ -8380,9 +9332,11 @@
       "Block"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DEFLECT",
@@ -8399,7 +9353,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DODGE_AND_ROLL",
@@ -8416,7 +9372,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ECHOING_SLASH",
@@ -8429,9 +9387,11 @@
     "description_upgraded": "Deal 13 damage to ALL enemies. Repeat this effect for each enemy killed.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ENVENOM",
@@ -8449,7 +9409,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ESCAPE_PLAN",
@@ -8467,7 +9429,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.EXPERTISE",
@@ -8486,7 +9450,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.EXPOSE",
@@ -8506,7 +9472,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FAN_OF_KNIVES",
@@ -8521,9 +9489,11 @@
       "Shiv"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FINISHER",
@@ -8538,7 +9508,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FLANKING",
@@ -8552,9 +9524,11 @@
     "keywords": [],
     "last_changed": "v0.108.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": true
+    "mp_only": true,
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FLECHETTES",
@@ -8569,7 +9543,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FLICK_FLACK",
@@ -8584,7 +9560,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FOOTWORK",
@@ -8601,7 +9579,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.GRAND_FINALE",
@@ -8618,7 +9598,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HAND_TRICK",
@@ -8635,7 +9617,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HAZE",
@@ -8651,9 +9635,11 @@
       "Poison"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.HIDDEN_DAGGERS",
@@ -8669,9 +9655,11 @@
       "Discard"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.INFINITE_BLADES",
@@ -8688,7 +9676,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.KNIFE_TRAP",
@@ -8706,7 +9696,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LEADING_STRIKE",
@@ -8721,9 +9713,11 @@
       "Shiv"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.LEG_SWEEP",
@@ -8741,7 +9735,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MALAISE",
@@ -8758,9 +9754,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MASTER_PLANNER",
@@ -8775,7 +9773,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MEMENTO_MORI",
@@ -8790,9 +9790,11 @@
       "Discard"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MIRAGE",
@@ -8810,9 +9812,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MURDER",
@@ -8829,7 +9833,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "2",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NEUTRALIZE",
@@ -8844,9 +9850,11 @@
       "Weak"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NIGHTMARE",
@@ -8863,7 +9871,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "2",
+    "no_upgrade": false
   },
   {
     "id": "CARD.NOXIOUS_FUMES",
@@ -8880,7 +9890,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.OUTBREAK",
@@ -8896,9 +9908,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PHANTOM_BLADES",
@@ -8914,9 +9928,11 @@
       "Shiv"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PIERCING_WAIL",
@@ -8934,7 +9950,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PINPOINT",
@@ -8949,7 +9967,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.POISONED_STAB",
@@ -8966,7 +9986,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PRECISE_CUT",
@@ -8979,9 +10001,11 @@
     "description_upgraded": "Deal 16 damage. Deals 2 less damage for each other card in your Hand.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PREDATOR",
@@ -8999,7 +10023,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PREPARED",
@@ -9017,7 +10043,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.REFLEX",
@@ -9034,7 +10062,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RICOCHET",
@@ -9049,7 +10079,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SERPENT_FORM",
@@ -9064,7 +10096,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SHADOW_STEP",
@@ -9081,7 +10115,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SHADOWMELD",
@@ -9098,7 +10134,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SKEWER",
@@ -9111,9 +10149,11 @@
     "description_upgraded": "Deal 11 damage X times.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SLICE",
@@ -9128,7 +10168,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SNAKEBITE",
@@ -9146,7 +10188,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SNEAKY",
@@ -9163,7 +10207,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SPEEDSTER",
@@ -9180,7 +10226,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STORM_OF_STEEL",
@@ -9198,7 +10246,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STRANGLE",
@@ -9213,7 +10263,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.STRIKE_SILENT",
@@ -9226,9 +10278,11 @@
     "description_upgraded": "Deal 9 damage.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SUCKER_PUNCH",
@@ -9245,7 +10299,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SUPPRESS",
@@ -9263,7 +10319,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SURVIVOR",
@@ -9279,9 +10337,11 @@
       "Discard"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.THE_HUNT",
@@ -9298,7 +10358,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TOOLS_OF_THE_TRADE",
@@ -9316,7 +10378,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TRACKING",
@@ -9333,7 +10397,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.UNTOUCHABLE",
@@ -9350,7 +10416,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.UP_MY_SLEEVE",
@@ -9365,9 +10433,11 @@
       "Shiv"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.WELL_LAID_PLANS",
@@ -9383,9 +10453,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.WRAITH_FORM",
@@ -9403,7 +10475,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BECKON",
@@ -9416,9 +10490,11 @@
     "description_upgraded": "At the end of your turn, if this is in your Hand, lose 6 HP.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.BURN",
@@ -9431,9 +10507,11 @@
     "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, take 2 damage.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.DAZED",
@@ -9448,9 +10526,11 @@
       "Ethereal"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.DEBRIS",
@@ -9465,9 +10545,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.FRANTIC_ESCAPE",
@@ -9480,9 +10562,11 @@
     "description_upgraded": "Get farther away. Increase Sandpit by 1. Increase the cost of this card by 1.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.INFECTION",
@@ -9495,9 +10579,11 @@
     "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, take 3 damage.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.SLIMED",
@@ -9513,9 +10599,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.SOOT",
@@ -9528,9 +10616,11 @@
     "description_upgraded": "Unplayable.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.TOXIC",
@@ -9545,9 +10635,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.WOUND",
@@ -9560,9 +10652,11 @@
     "description_upgraded": "Unplayable.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.DISINTEGRATION_TOKEN",
@@ -9575,9 +10669,11 @@
     "description_upgraded": "At the end of your turn, take 6/7/8 damage.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.GIANT_ROCK_TOKEN",
@@ -9592,7 +10688,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MIND_ROT_TOKEN",
@@ -9607,9 +10705,11 @@
       "Draw"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.MINION_DIVE_BOMB_TOKEN",
@@ -9626,7 +10726,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MINION_SACRIFICE_TOKEN",
@@ -9644,7 +10746,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MINION_STRIKE_TOKEN",
@@ -9662,7 +10766,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SHIV",
@@ -9677,9 +10783,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SLOTH_TOKEN",
@@ -9692,9 +10800,11 @@
     "description_upgraded": "You cannot play more than 3 cards each turn.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.SOUL",
@@ -9712,7 +10822,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SOVEREIGN_BLADE",
@@ -9727,9 +10839,11 @@
       "Retain"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SWEEPING_GAZE_TOKEN",
@@ -9747,7 +10861,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.POUNCE",
@@ -9760,9 +10876,11 @@
     "description_upgraded": "Deal 20 damage. The next Skill you play costs 0 Energy.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.WITHER",
@@ -9775,9 +10893,11 @@
     "description_upgraded": "Unplayable. At the end of your turn, if this is in your Hand, take 6 damage.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CHRYSALIS",
@@ -9871,7 +10991,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.QUICK_SLASH",
@@ -9962,9 +11084,11 @@
     "keywords": [],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": true
+    "mp_only": true,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TRAINING_STRIKE",
@@ -10027,7 +11151,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.IMITATION_LEARNING",
@@ -10044,7 +11170,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ONE_FOR_ALL",
@@ -10057,9 +11185,11 @@
     "description_upgraded": "EVERYONE'S 0 energy Attacks deal 4 additional damage.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": true
+    "mp_only": true,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SCAVENGE",
@@ -10076,7 +11206,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TURBO",
@@ -10094,7 +11226,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.ABUNDANCE_EVENT",
@@ -10111,9 +11245,11 @@
     "introduced": "v0.109.0",
     "branch": "beta",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MAD_SCIENCE_EVENT",
@@ -10126,9 +11262,11 @@
     "description_upgraded": "Innate Powers cost 1 Energy less.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.OUTMANEUVER_EVENT",
@@ -10143,7 +11281,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BLAZE",
@@ -10160,7 +11300,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.MIDNIGHT",
@@ -10176,9 +11318,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": true
+    "mp_only": true,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.OUTRAGE",
@@ -10195,7 +11339,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CACOPHONY",
@@ -10212,7 +11358,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SOULBOUND",
@@ -10230,7 +11378,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TRANSFIGURE",
@@ -10247,7 +11397,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.UNDERWORLD",
@@ -10262,9 +11414,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": true
+    "mp_only": true,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.VEILPIERCER",
@@ -10279,9 +11433,11 @@
       "Ethereal"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.DOWSING_QUEST",
@@ -10296,9 +11452,11 @@
     "introduced": "v0.109.0",
     "branch": "beta",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": true
   },
   {
     "id": "CARD.CONSTELLATION",
@@ -10316,7 +11474,9 @@
     "star_cost": "2",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.PLOT",
@@ -10333,7 +11493,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.RESERVES",
@@ -10359,9 +11521,11 @@
       "Exhaust"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "5",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TUTOR",
@@ -10380,7 +11544,9 @@
     "mp_only": true,
     "star_cost": "",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "0",
+    "no_upgrade": false
   },
   {
     "id": "CARD.BLADE_SYMPHONY",
@@ -10396,9 +11562,11 @@
     ],
     "last_changed": "v0.109.0",
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": true
+    "mp_only": true,
+    "cost_upgraded": "1",
+    "no_upgrade": false
   },
   {
     "id": "CARD.CONCOCT",
@@ -10414,9 +11582,11 @@
       "Poison"
     ],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": true
+    "mp_only": true,
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.FADE",
@@ -10434,7 +11604,9 @@
     "star_cost": "",
     "mp_only": true,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.TACTICIAN",
@@ -10449,7 +11621,9 @@
     "star_cost": "",
     "mp_only": false,
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14"
+    "fetched_at": "2026-09-15",
+    "cost_upgraded": "",
+    "no_upgrade": false
   },
   {
     "id": "CARD.SCARE",
@@ -10462,8 +11636,10 @@
     "description_upgraded": "Next turn, gain 2 Energy.",
     "keywords": [],
     "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-14",
+    "fetched_at": "2026-09-15",
     "star_cost": "",
-    "mp_only": false
+    "mp_only": false,
+    "cost_upgraded": "",
+    "no_upgrade": false
   }
 ]
