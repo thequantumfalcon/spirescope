@@ -57,10 +57,18 @@ def _filter_runs(runs: list, *, version: str | None = None,
     if version:
         runs = [r for r in runs if r.build_id == version]
     if scope == "current":
-        from sts2.patches import current_patch, era_of
-        current = (current_patch() or {}).get("patch", "")
-        if current:
-            runs = [r for r in runs if era_of(r.build_id) == current]
+        from sts2.patches import branch_of, current_patch, era_of
+        # "Current" is per branch. The manifest's newest entry alone is always
+        # the newest beta, so a main-branch player matched nothing and this
+        # filter emptied their history entirely -- 98 runs of 98.
+        def _on_newest_patch(run) -> bool:
+            newest = current_patch(branch_of(run.build_id)) or current_patch()
+            if newest is None:
+                return False
+            return era_of(run.build_id) == newest.get("patch", "")
+
+        if current_patch():
+            runs = [r for r in runs if _on_newest_patch(r)]
     if origin in ("vanilla", "modded"):
         runs = [r for r in runs if r.origin == origin]
     if branch in ("main", "beta"):

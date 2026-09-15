@@ -102,9 +102,18 @@ def changed_in(entity_id: str) -> str:
     return ""
 
 
-def current_patch() -> dict | None:
-    """The newest patch entry (manifest is ordered oldest first)."""
+def current_patch(branch: str = "") -> dict | None:
+    """The newest patch entry, optionally restricted to one branch.
+
+    Unrestricted this is always the newest beta, because beta is the branch
+    that moves: main sat on v0.107.1 for three months while beta reached
+    v0.111.0. A main-branch player therefore has no runs on the "current"
+    patch at all, which is how a current-only filter came to hide 98 runs
+    out of 98.
+    """
     patches = load_patches()
+    if branch:
+        patches = [p for p in patches if p.get("branch") == branch]
     return patches[-1] if patches else None
 
 
