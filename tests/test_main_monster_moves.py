@@ -18,7 +18,8 @@ def test_act1_monster_moves_match_stats_registry_and_record_hashes():
     hashes = {rec["model_id"]: rec["definition_sha256"] for rec in registry["records"].values()
               if rec["family"] == "Monsters" and rec.get("model_id")}
     assert set(profile["monster_moves"]) == set(proof["reviewed_ids"])
-    assert len(profile["monster_moves"]) == 51
+    assert len(profile["monster_moves"]) == 77
+    assert len(proof["acts"]["ACT1"]) == 51 and len(proof["acts"]["ACT2"]) == 26
     assert set(profile["monster_moves"]) <= set(profile["monster_stats"])
     assert not proof["complete"]
     for identifier, record in profile["monster_moves"].items():
@@ -37,7 +38,9 @@ def test_enemy_moves_are_version_scoped():
     assert nibbit.mechanics_version == "v0.107.1"
     assert nibbit.patterns[0] == "Butt (Attack): 12 (13 at Ascension 9+) damage."
     assert any(line.startswith("Pattern: ") for line in nibbit.patterns)
-    assert kb.mechanics_status()["reviewed_monster_moves"] == 51
+    assert kb.mechanics_status()["reviewed_monster_moves"] == 77
+    demon = kb.get_enemy_by_id("MONSTER.KNOWLEDGE_DEMON")
+    assert demon.mechanics_version == "v0.107.1" and any("Ponder" in line for line in demon.patterns)
     other = KnowledgeBase(game_version="v0.111.0")
     assert other.get_enemy_by_id("MONSTER.NIBBIT").mechanics_version == ""
     assert other.mechanics_status()["reviewed_monster_moves"] == 0
