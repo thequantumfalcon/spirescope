@@ -198,13 +198,18 @@ class TestTagBuildsRunTheRealGates:
             "mypy must be blocking, not continue-on-error")
 
         assert "browser" in jobs
-        browser_text = " ".join(str(s.get("run", "")) for s in jobs["browser"]["steps"])
-        assert "playwright install --with-deps chromium" in browser_text
+        assert jobs["browser"]["needs"] == "browser-engines"
+        assert jobs["browser"]["if"] == "always()"
+        browser_text = " ".join(str(s.get("run", "")) for s in jobs["browser-engines"]["steps"])
+        assert "playwright install --with-deps ${{ matrix.browser }}" in browser_text
+        assert "--browser ${{ matrix.browser }}" in browser_text
+        assert set(jobs["browser-engines"]["strategy"]["matrix"]["browser"]) == {"chromium", "firefox", "webkit"}
         assert "pytest -m browser" in browser_text
 
         assert "build-dist" in jobs, "no wheel build+install+import check job"
         dist_text = " ".join(str(s.get("run", "")) for s in jobs["build-dist"]["steps"])
-        assert "pip install dist/*.whl" in dist_text or "install dist/*.whl" in dist_text
+        assert "pip install --no-deps dist/*.whl" in dist_text
+        assert "--require-hashes -r requirements-runtime-lock.txt" in dist_text
         assert "import sts2.app" in dist_text
 
     def test_required_status_check_names_are_preserved(self):
@@ -215,6 +220,8 @@ class TestTagBuildsRunTheRealGates:
         versions = jobs["test"]["strategy"]["matrix"]["python-version"]
         assert set(versions) == {"3.11", "3.12", "3.13"}
         assert "browser" in jobs
+        assert jobs["browser"]["needs"] == "browser-engines"
+        assert jobs["browser"]["if"] == "always()"
 
 
 class TestNoUnpinnedInstallsBeforePublishing:

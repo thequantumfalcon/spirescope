@@ -168,7 +168,7 @@ jobs:
           rc="${{ steps.tests.outputs.rc }}"
           exit "${rc:-0}"
 
-  browser:
+  browser-engines:
     # Playwright suite: the only tests that exercise the actual JS/CSS
     # (theme persistence, mobile nav, search, contrast). Separate job so a
     # browser download never slows the main matrix.
@@ -204,6 +204,16 @@ jobs:
 
       - name: Run browser tests
         run: pytest -m browser -q --browser ${{ matrix.browser }}
+
+  browser:
+    # Preserve the required branch-protection context, now gating all engines.
+    needs: browser-engines
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require every browser engine
+        run: test "${{ needs.browser-engines.result }}" = "success"
 
   test-windows:
     # New leg (not a required status check -- "test (3.11)" etc. are), so a

@@ -126,3 +126,10 @@ If you are a rights-holder for any of the above and have a concern
 about the way SpireScope cites or uses your work, open an issue at
 https://github.com/thequantumfalcon/spirescope/issues and we will
 respond promptly.
+
+## Swagger UI
+
+The offline API reference bundles Swagger UI 5.33.0 (`swagger-ui-dist`) under
+Apache-2.0. Its verbatim LICENSE and NOTICE are included in
+`sts2/static/swagger/`. The adjacent `provenance.json` records the exact upstream
+URLs and SHA-256 values; checkout and CI preserve and verify those bytes.
