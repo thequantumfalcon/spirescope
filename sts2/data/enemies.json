@@ -1,6 +1,6 @@
 [
   {
-    "id": "BOSS.AEONGLASS",
+    "id": "MONSTER.AEONGLASS",
     "name": "Aeonglass",
     "act": [
       "Act 3"
@@ -79,23 +79,31 @@
     "act": [
       "Act 3"
     ],
-    "type": "normal",
-    "hp_range": "",
-    "patterns": [],
+    "type": "event",
+    "hp_range": "150",
+    "patterns": [
+      "Does not attack. Leaves when its three-turn timer expires."
+    ],
     "tips": [
-      "Part of the Battle Friend V1/V2/V3 trio. Appears as a 3-foe normal encounter in Act 3 (Glory)."
-    ]
+      "One selectable training dummy in the Battleworn Dummy event. Defeat it before the timer expires; the three versions are separate choices."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
   },
   {
     "id": "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_ENCOUNTER",
-    "name": "Battleworn Dummy Event Encounter",
-    "act": [],
-    "type": "normal",
+    "name": "Battleworn Dummy",
+    "act": [
+      "Act 3"
+    ],
+    "type": "event",
     "hp_range": "",
-    "patterns": [],
-    "tips": [
-      "Auto-discovered from save data"
-    ]
+    "patterns": [
+      "Contains one selected dummy: Battle Friend V1 (75 HP), V2 (150 HP), or V3 (300 HP). Each has a three-turn timer."
+    ],
+    "tips": [],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
   },
   {
     "id": "MONSTER.BOWLBUG_EGG",
@@ -1305,14 +1313,18 @@
   },
   {
     "id": "ENCOUNTER.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
-    "name": "Mysterious Knight Event Encounter",
-    "act": [],
-    "type": "normal",
+    "name": "Mysterious Knight",
+    "act": [
+      "Act 2"
+    ],
+    "type": "event",
     "hp_range": "",
-    "patterns": [],
-    "tips": [
-      "Auto-discovered from save data"
-    ]
+    "patterns": [
+      "Contains one Mysterious Knight in The Lantern Key event."
+    ],
+    "tips": [],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
   },
   {
     "id": "MONSTER.MYTE",
@@ -2519,5 +2531,287 @@
       "AoE effective",
       "Easy fight unless you lack multi-target damage"
     ]
+  },
+  {
+    "id": "MONSTER.BATTLE_FRIEND_V1",
+    "name": "Battle Friend V1",
+    "act": [
+      "Act 3"
+    ],
+    "type": "event",
+    "hp_range": "75",
+    "patterns": [
+      "Does not attack. Leaves when its three-turn timer expires."
+    ],
+    "tips": [
+      "One selectable training dummy in the Battleworn Dummy event. Defeat it before the timer expires; the three versions are separate choices."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.BATTLE_FRIEND_V3",
+    "name": "Battle Friend V3",
+    "act": [
+      "Act 3"
+    ],
+    "type": "event",
+    "hp_range": "300",
+    "patterns": [
+      "Does not attack. Leaves when its three-turn timer expires."
+    ],
+    "tips": [
+      "One selectable training dummy in the Battleworn Dummy event. Defeat it before the timer expires; the three versions are separate choices."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.MYSTERIOUS_KNIGHT",
+    "name": "Mysterious Knight",
+    "act": [
+      "Act 2"
+    ],
+    "type": "event",
+    "hp_range": "101 (108 at Ascension 8+)",
+    "patterns": [
+      "Starts with 6 Strength and 6 Plating.",
+      "Opens with Ram: 15 base damage (17 at Ascension 9+), plus Strength.",
+      "Then chooses between Ram, Flail (9 damage twice; 10 at Ascension 9+, plus Strength per hit), and War Chant (gain 3 Strength). War Chant cannot repeat immediately."
+    ],
+    "tips": [
+      "The Lantern Key event fight. Account for its starting Strength when planning Block."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.EYE_WITH_TEETH",
+    "name": "Eye with Teeth",
+    "act": [
+      "Act 1"
+    ],
+    "type": "minion",
+    "hp_range": "6",
+    "patterns": [
+      "Repeatedly adds 3 Dazed to the discard pile.",
+      "An Illusion: revives to full HP after being defeated while the fight continues."
+    ],
+    "tips": [
+      "A summoned ally of Fogmog. Defeating the primary enemy ends the need to handle its illusions."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.PARAFRIGHT",
+    "name": "Parafright",
+    "act": [
+      "Act 2"
+    ],
+    "type": "minion",
+    "hp_range": "21",
+    "patterns": [
+      "Repeatedly attacks for 16 damage (17 at Ascension 9+).",
+      "An Illusion: revives to full HP after being defeated while the fight continues."
+    ],
+    "tips": [
+      "A summoned ally of The Obscura."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.FAT_GREMLIN",
+    "name": "Fat Gremlin",
+    "act": [
+      "Act 1"
+    ],
+    "type": "minion",
+    "hp_range": "13-17 (14-18 at Ascension 8+)",
+    "patterns": [
+      "Wakes up on its first turn, then flees on its next turn."
+    ],
+    "tips": [
+      "Appears with Gremlin Merc. It has no attack move."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.SNEAKY_GREMLIN",
+    "name": "Sneaky Gremlin",
+    "act": [
+      "Act 1"
+    ],
+    "type": "minion",
+    "hp_range": "10-14 (11-15 at Ascension 8+)",
+    "patterns": [
+      "Wakes up on its first turn, then repeatedly tackles for 9 damage (10 at Ascension 9+)."
+    ],
+    "tips": [
+      "Appears with Gremlin Merc."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.GAS_BOMB",
+    "name": "Gas Bomb",
+    "act": [
+      "Act 1"
+    ],
+    "type": "minion",
+    "hp_range": "7 (8 at Ascension 8+)",
+    "patterns": [
+      "Explodes for 8 damage (9 at Ascension 9+), then dies."
+    ],
+    "tips": [
+      "A minion of Living Fog. Defeat it before its turn to prevent the explosion."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.TOUGH_EGG",
+    "name": "Tough Egg",
+    "act": [
+      "Act 2"
+    ],
+    "type": "minion",
+    "hp_range": "14-18 (15-19 at Ascension 8+)",
+    "patterns": [
+      "Hatches into a Hatchling; its maximum and current HP are reset on hatching.",
+      "After hatching, repeatedly nibbles for 4 damage (5 at Ascension 9+)."
+    ],
+    "tips": [
+      "Appears with Ovicopter. The Hatchling keeps the Tough Egg model ID; its display name changes."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.FAKE_MERCHANT_MONSTER",
+    "name": "Fake Merchant",
+    "act": [
+      "Act 2",
+      "Act 3"
+    ],
+    "type": "event",
+    "hp_range": "165 (175 at Ascension 8+)",
+    "patterns": [
+      "Opens with Swipe: 13 damage (15 at Ascension 9+).",
+      "Other moves: Spew Coins attacks 8 times for 2 damage each; Throw Relic deals 9 damage (10 at Ascension 9+) and applies 1 Frail; Enrage grants 2 Strength.",
+      "Moves do not repeat immediately. Throw Relic is followed by an attack."
+    ],
+    "tips": [
+      "The solo Fake Merchant event fight. Strength increases each of the eight Spew Coins hits."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "ENCOUNTER.FAKE_MERCHANT_EVENT_ENCOUNTER",
+    "name": "Fake Merchant",
+    "act": [
+      "Act 2",
+      "Act 3"
+    ],
+    "type": "event",
+    "hp_range": "",
+    "patterns": [
+      "Contains one Fake Merchant."
+    ],
+    "tips": [
+      "A combat option in the solo Fake Merchant event."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "ENCOUNTER.AEONGLASS_BOSS",
+    "name": "Aeonglass",
+    "act": [
+      "Act 3"
+    ],
+    "type": "boss",
+    "hp_range": "",
+    "patterns": [
+      "Contains Aeonglass."
+    ],
+    "tips": [
+      "This record identifies the boss encounter; the monster has its own entry."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.GUARDBOT",
+    "name": "Guardbot",
+    "act": [
+      "Act 3"
+    ],
+    "type": "minion",
+    "hp_range": "16-20 (17-21 at Ascension 8+)",
+    "patterns": [
+      "Repeatedly grants 15 Block to each living Fabricator."
+    ],
+    "tips": [
+      "A bot summoned by Fabricator."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.NOISEBOT",
+    "name": "Noisebot",
+    "act": [
+      "Act 3"
+    ],
+    "type": "minion",
+    "hp_range": "18-23 (19-24 at Ascension 8+)",
+    "patterns": [
+      "Repeatedly adds one Dazed to the discard pile and one Dazed to a random position in the draw pile."
+    ],
+    "tips": [
+      "A bot summoned by Fabricator."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.STABBOT",
+    "name": "Stabbot",
+    "act": [
+      "Act 3"
+    ],
+    "type": "minion",
+    "hp_range": "18-23 (19-24 at Ascension 8+)",
+    "patterns": [
+      "Repeatedly attacks for 11 damage (12 at Ascension 9+) and applies 1 Frail."
+    ],
+    "tips": [
+      "A bot summoned by Fabricator."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
+  },
+  {
+    "id": "MONSTER.ZAPBOT",
+    "name": "Zapbot",
+    "act": [
+      "Act 3"
+    ],
+    "type": "minion",
+    "hp_range": "18-23 (19-24 at Ascension 8+)",
+    "patterns": [
+      "Repeatedly attacks for 14 damage (15 at Ascension 9+).",
+      "Starts with 2 High Voltage, granting it 2 Strength at the end of each of its turns."
+    ],
+    "tips": [
+      "A bot summoned by Fabricator."
+    ],
+    "branch": "main",
+    "mechanics_version": "v0.107.1"
   }
 ]

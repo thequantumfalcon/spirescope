@@ -2,6 +2,15 @@
 {% block page_id %}live{% endblock %}
 {% block title %}Live Run{% endblock %}
 {% block content %}
+{% if analysis and analysis.copy_details %}
+<details class="mb-md" open>
+  <summary>Saved card values</summary>
+  <ul>{% for copy in analysis.copy_details %}
+    <li><strong>{{ copy.name }} ({{ copy.type }})</strong>: {{ copy.description or copy.note }}</li>
+  {% endfor %}</ul>
+  {% if analysis.unmodeled_copies %}<p role="status">{{ analysis.unmodeled_copies }} customized card copies have missing or unsupported saved values. Their effects are excluded from advice.</p>{% endif %}
+</details>
+{% endif %}
 {% if run.active %}
 <div class="live-header">
   <h1>
@@ -99,6 +108,7 @@
   <div>
     {% if analysis %}
     <h2>Deck Analysis</h2>
+    {% if analysis.mechanics_warning %}<p class="text-sm text-muted">{{ analysis.mechanics_warning }}</p>{% endif %}
     <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
       <div class="stat-box"><div class="num text-red">{{ analysis.attacks }}</div><div class="label">Attacks</div></div>
       <div class="stat-box"><div class="num text-accent">{{ analysis.skills }}</div><div class="label">Skills</div></div>
@@ -106,13 +116,14 @@
     </div>
 
     {% if analysis.detected_archetypes %}
-    <h3 class="mt-md">Detected Archetypes</h3>
+    <h3 class="mt-md">Reference Archetype Matches</h3>
+    <p class="text-sm text-muted">Matches use card names; reference strategies may describe another patch.</p>
     {% for arch in analysis.detected_archetypes %}
     <div class="archetype">
       <h3>{{ arch.name }}</h3>
       <p class="text-sm text-muted">Matched: {{ arch.matched_cards|join(', ') }}</p>
       {% if arch.missing_key_cards %}
-      <p class="text-sm text-yellow mt-xs">Missing: {{ arch.missing_key_cards|join(', ') }}</p>
+      <p class="text-sm text-yellow mt-xs">Other cards in the guide: {{ arch.missing_key_cards|join(', ') }}</p>
       {% endif %}
       <p class="mt-sm">{{ arch.strategy }}</p>
     </div>
@@ -120,7 +131,8 @@
     {% endif %}
 
     {% if analysis.weaknesses %}
-    <h3 class="mt-md">Weaknesses</h3>
+    <h3 class="mt-md">Card-text Gaps</h3>
+    <p class="text-sm text-muted">Checks use deck card text. Relics, potions, enchantments and current combat effects can add other answers.</p>
     {% for w in analysis.weaknesses %}
     <div class="card card-loss mb-sm"><p>{{ w }}</p></div>
     {% endfor %}

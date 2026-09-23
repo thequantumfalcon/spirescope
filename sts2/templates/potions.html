@@ -6,7 +6,7 @@
 
 <div class="filters">
   <a href="/potions" {% if not selected_rarity %}class="active"{% endif %}>All Rarities</a>
-  {% for r in ['Common', 'Uncommon', 'Rare'] %}
+  {% for r in ['Common', 'Uncommon', 'Rare', 'Event'] %}
   <a href="/potions?rarity={{ r }}" {% if selected_rarity == r %}class="active"{% endif %}>{{ r }}</a>
   {% endfor %}
 </div>
@@ -17,6 +17,12 @@
   <h3>{{ potion.name }}</h3>
   <p><span class="tag tag-{{ potion.rarity|lower }}">{{ potion.rarity }}</span></p>
   <p>{{ potion.description }}</p>
+  {% if potion.mechanics_version %}
+  <p class="text-xs text-muted">Rules checked for {{ potion.mechanics_version }}.
+    {{ {'CombatOnly': 'Combat only', 'AnyTime': 'Usable outside combat', 'Automatic': 'Automatic use'}.get(potion.usage, potion.usage) }};
+    {{ {'Self': 'your character', 'AnyPlayer': 'choose a player', 'AnyEnemy': 'choose an enemy', 'AllEnemies': 'all enemies', 'RoomDependent': 'target depends on room'}.get(potion.target, potion.target) }}.</p>
+  {% if potion.usage_note %}<p class="text-xs text-muted">{{ potion.usage_note }}</p>{% endif %}
+  {% elif mechanics_status().game_version %}<p class="text-xs text-muted">Reference rules; not verified for {{ mechanics_status().game_version }}.</p>{% endif %}
   {% if potion_stats and potion_stats[potion.id] %}
   {% set ps = potion_stats[potion.id] %}
   <p class="text-xs text-muted mt-xs">

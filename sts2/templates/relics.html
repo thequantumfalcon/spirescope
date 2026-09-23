@@ -13,7 +13,7 @@
 </div>
 <div class="filters">
   <a href="/relics?{% if selected_character %}character={{ selected_character }}{% endif %}" {% if not selected_rarity %}class="active"{% endif %}>All Rarities</a>
-  {% for r in ['Starter', 'Common', 'Uncommon', 'Rare', 'Shop', 'Event'] %}
+  {% for r in ['Starter', 'Common', 'Uncommon', 'Rare', 'Shop', 'Event', 'Ancient'] %}
   <a href="/relics?rarity={{ r }}{% if selected_character %}&character={{ selected_character }}{% endif %}"
      {% if selected_rarity == r %}class="active"{% endif %}>{{ r }}</a>
   {% endfor %}
@@ -29,6 +29,7 @@
      {% if relic.branch == 'beta' %}<span class="tag tag-keyword">Beta only</span>{% endif %}
      <span class="char-{{ relic.character|lower }} text-xs">{{ relic.character }}</span></p>
   <p>{{ relic.description }}</p>
+  {% if relic.mechanics_version %}<p class="text-xs text-muted">Rules checked for {{ relic.mechanics_version }}.</p>{% endif %}
 </a>
 {% endfor %}
 </div>

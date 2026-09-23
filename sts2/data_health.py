@@ -5,6 +5,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
+from sts2.identities import canonical_id
 from sts2.models import Card, Enemy, Epoch, Event, Potion, Relic
 
 FAMILIES: dict[str, type[Card] | type[Enemy] | type[Epoch] | type[Event] | type[Potion] | type[Relic]] = {"cards": Card, "relics": Relic, "potions": Potion,
@@ -27,9 +28,10 @@ def inspect_dataset(root: Path, min_cards: int = 400) -> dict:
             ids = set()
             for row in rows:
                 record = model.model_validate(row, strict=True)
-                if not record.id or record.id in ids:
+                entity_key = canonical_id(record.id)
+                if not entity_key or entity_key in ids:
                     raise ValueError("missing or duplicate identity")
-                ids.add(record.id)
+                ids.add(entity_key)
             counts[family] = len(rows)
             digest.update(name.encode())
             digest.update(raw)
@@ -51,6 +53,11 @@ def inspect_dataset(root: Path, min_cards: int = 400) -> dict:
             raise ValueError("missing data timestamp")
     except (OSError, ValueError) as exc:
         errors.append(f"metadata: {str(exc)[:200]}")
+    try:
+        from sts2.mechanics import read_profiles
+        read_profiles(root / "mechanics.json")
+    except (OSError, ValueError) as exc:
+        errors.append(f"mechanics.json: {str(exc)[:200]}")
     for path in sorted(root.glob("*.json")):
         if path.stem in FAMILIES:
             continue

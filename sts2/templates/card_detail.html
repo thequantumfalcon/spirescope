@@ -25,6 +25,10 @@
   <p class="text-muted">{{ card.character }} &bull; {{ card.id }}</p>
 </div>
 
+{% if card.mechanics_version %}<p class="text-sm text-muted">Base and first-upgrade mechanics checked for {{ card.mechanics_version }}.</p>
+{% elif mechanics_view_version %}<p class="text-sm text-muted">This card's effect is not verified for {{ mechanics_view_version }}. The description below is from the reference catalog.</p>{% endif %}
+{% if card.instance_rule %}<p class="text-sm text-muted">This is the card's general rule. Open Analyze Deck from a saved or live run to see the values and choices for each copy.</p>{% endif %}
+{% if card.sp_only %}<p class="text-sm text-muted">Single-player only.</p>{% endif %}
 <div class="detail-desc">{{ card.description }}</div>
 {# Same guard the deck popover already applies (deck.js): an "Upgraded:" block
    repeating the base description tells the reader nothing. It happens in

@@ -377,3 +377,33 @@ def test_swagger_operations_render_offline_under_csp(page, live_server):
     expect(operation.locator(".live-responses-table")).to_contain_text("200")
     assert all(url.startswith(live_server) for url in requests)
     assert errors == []
+
+
+def test_saved_deck_retains_build_and_customized_copies(page, live_server):
+    errors = []
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.goto(live_server + "/deck")
+    record = {"version": 3, "game_version": "v0.107.1", "instances": [{
+        "card_id": "CARD.MAD_SCIENCE", "upgrade_level": 1, "enchantment": "",
+        "properties": {"ints": {"TinkerTimeType": 2, "TinkerTimeRider": 5}, "unmodeled": False},
+    }]}
+    page.evaluate("value => localStorage.setItem('spirescope_decks', JSON.stringify({Native: value}))", record)
+    page.reload()
+    page.locator("#load-deck").select_option("Native")
+    page.wait_for_url("**/deck/analyze")
+    expect(page.locator("#deck-game-version")).to_have_value("v0.107.1")
+    expect(page.get_by_text("Innate. Gain 8 Block. Draw 3 cards.", exact=False)).to_be_visible()
+    page.once("dialog", lambda dialog: dialog.accept("Saved copy"))
+    page.locator("#save-deck").click()
+    saved = page.evaluate("JSON.parse(localStorage.getItem('spirescope_decks'))")
+    copy = next(value for key, value in saved.items() if key.endswith(" / Saved copy"))
+    assert copy == record
+    # Legacy decks carry no game-build evidence, even when loaded from a main view.
+    page.evaluate("localStorage.setItem('spirescope_decks', JSON.stringify({Legacy: ['CARD.BASH']}))")
+    # Open the builder as a new visit. Playwright Firefox reloads the POST
+    # result as a GET to /deck/analyze, which correctly rejects that method.
+    page.goto(live_server + "/deck")
+    page.locator("#load-deck").select_option("Legacy")
+    expect(page.locator("#deck-game-version")).to_have_value("")
+    expect(page.get_by_text("Game version not verified; analysis uses the reference catalog.")).to_be_visible()
+    assert errors == []

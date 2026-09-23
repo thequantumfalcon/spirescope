@@ -3617,7 +3617,7 @@
     "no_upgrade": false
   },
   {
-    "id": "CARD.CALTROPS_EVENT",
+    "id": "CARD.CALTROPS",
     "name": "Caltrops",
     "character": "Event",
     "cost": "1",
@@ -3634,7 +3634,7 @@
     "no_upgrade": false
   },
   {
-    "id": "CARD.CLASH_EVENT",
+    "id": "CARD.CLASH",
     "name": "Clash",
     "character": "Event",
     "cost": "0",
@@ -3651,7 +3651,7 @@
     "no_upgrade": false
   },
   {
-    "id": "CARD.DISTRACTION_EVENT",
+    "id": "CARD.DISTRACTION",
     "name": "Distraction",
     "character": "Event",
     "cost": "1",
@@ -3670,7 +3670,7 @@
     "no_upgrade": false
   },
   {
-    "id": "CARD.DUAL_WIELD_EVENT",
+    "id": "CARD.DUAL_WIELD",
     "name": "Dual Wield",
     "character": "Event",
     "cost": "1",
@@ -3706,7 +3706,7 @@
     "no_upgrade": false
   },
   {
-    "id": "CARD.ENTRENCH_EVENT",
+    "id": "CARD.ENTRENCH",
     "name": "Entrench",
     "character": "Event",
     "cost": "2",
@@ -3761,7 +3761,7 @@
     "no_upgrade": false
   },
   {
-    "id": "CARD.HELLO_WORLD_EVENT",
+    "id": "CARD.HELLO_WORLD",
     "name": "Hello World",
     "character": "Event",
     "cost": "1",
@@ -3852,7 +3852,7 @@
     "no_upgrade": false
   },
   {
-    "id": "CARD.REBOUND_EVENT",
+    "id": "CARD.REBOUND",
     "name": "Rebound",
     "character": "Event",
     "cost": "1",
@@ -3871,7 +3871,7 @@
     "no_upgrade": false
   },
   {
-    "id": "CARD.RIP_AND_TEAR_EVENT",
+    "id": "CARD.RIP_AND_TEAR",
     "name": "Rip and Tear",
     "character": "Event",
     "cost": "1",
@@ -3907,7 +3907,7 @@
     "no_upgrade": false
   },
   {
-    "id": "CARD.STACK_EVENT",
+    "id": "CARD.STACK",
     "name": "Stack",
     "character": "Event",
     "cost": "1",
@@ -11252,24 +11252,24 @@
     "no_upgrade": false
   },
   {
-    "id": "CARD.MAD_SCIENCE_EVENT",
+    "id": "CARD.MAD_SCIENCE",
     "name": "Mad Science",
     "character": "Event",
     "cost": "1",
-    "type": "Power",
+    "type": "Variable",
     "rarity": "Event",
-    "description": "Powers cost 1 Energy less.",
-    "description_upgraded": "Innate Powers cost 1 Energy less.",
+    "description": "Customized at Tinker Time. Its card type and effects depend on your choices.",
+    "description_upgraded": "Innate. Its card type and effects depend on your choices at Tinker Time.",
     "keywords": [],
-    "fetched_from": "slaythespire.wiki.gg",
-    "fetched_at": "2026-09-15",
+    "fetched_from": "reviewed native model and wiki.gg variants",
+    "fetched_at": "2026-09-22",
     "star_cost": "",
     "mp_only": false,
     "cost_upgraded": "",
     "no_upgrade": false
   },
   {
-    "id": "CARD.OUTMANEUVER_EVENT",
+    "id": "CARD.OUTMANEUVER",
     "name": "Outmaneuver",
     "character": "Event",
     "cost": "1",

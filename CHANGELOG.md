@@ -20,6 +20,10 @@
   entirely from bundled assets under the dashboard content security policy.
 - Bound and coalesce graph analysis work, correct its cache identity, and improve
   the eigensolver for large decks.
+- Remove unsupported deck, live and run-history advice: deck size, card-type
+  ratios, repeated copies, skipped rewards, fixed boss distances, speed-run and
+  death-floor guesses. Analysis reports recorded counts and card-text checks
+  with their game-version scope stated.
 
 ### Release engineering
 

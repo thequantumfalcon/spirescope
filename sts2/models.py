@@ -1,6 +1,8 @@
 """Pydantic models for STS2 game entities."""
 from pydantic import BaseModel, model_validator
 
+from sts2.card_properties import CardProperties
+
 
 class Card(BaseModel):
     id: str
@@ -23,10 +25,16 @@ class Card(BaseModel):
     description: str = ""
     description_upgraded: str = ""
     keywords: list[str] = []
+    keywords_upgraded: list[str] | None = None
+    instance_rule: str = ""
+    instance_note: str = ""
     tier: str = ""  # S, A, B, C, D
     source: str = "base"  # base, mod, discovered
     # Schema v2 — all optional so v1 data files load unchanged
     mp_only: bool = False  # multiplayer-only card
+    sp_only: bool = False  # single-player-only card
+    mechanics_version: str = ""  # exact version of reviewed card mechanics
+    traits_version: str = ""  # reviewed printed costs/type/rarity/player restriction
     branch: str = ""  # main | beta | both ("" = unknown)
     introduced: str = ""  # patch that added it, e.g. "v0.109.0"
     last_changed: str = ""  # patch that last reworked/rebalanced it
@@ -36,6 +44,8 @@ class Card(BaseModel):
 
 
 class Relic(BaseModel):
+    mechanics_version: str = ""
+    mechanics_note: str = ""
     id: str
     name: str
     name_en: str = ""  # English name, kept when a locale overlay renames this entity
@@ -51,6 +61,11 @@ class Relic(BaseModel):
 
 
 class Potion(BaseModel):
+    mechanics_version: str = ""
+    usage: str = ""
+    target: str = ""
+    usage_note: str = ""
+    can_generate_in_combat: bool | None = None
     id: str
     name: str
     name_en: str = ""  # English name, kept when a locale overlay renames this entity
@@ -71,12 +86,17 @@ class Enemy(BaseModel):
     act: list[str] = []  # Which acts they appear in
     type: str = ""  # normal, elite, boss
     hp_range: str = ""  # e.g. "40-44" or "250"
+    stats_version: str = ""  # only initial HP; separate from attack-pattern verification
+    stats_note: str = ""
+    monster_ids: list[str] = []  # declared possible monsters, not simultaneous counts
+    roster_version: str = ""
     patterns: list[str] = []  # Description of attack patterns
     tips: list[str] = []  # Strategy tips
     source: str = "base"
     branch: str = ""
     introduced: str = ""
     last_changed: str = ""  # enemy moves can change per patch (era context)
+    mechanics_version: str = ""  # exact game version used to verify these mechanics
 
 
 class Badge(BaseModel):
@@ -84,6 +104,10 @@ class Badge(BaseModel):
     name: str
     requirement: str = ""  # human-readable earn condition
     source: str = "base"
+    requires_win: bool = False
+    mp_only: bool = False
+    branch: str = ""
+    mechanics_version: str = ""
 
 
 class EventChoice(BaseModel):
@@ -93,6 +117,12 @@ class EventChoice(BaseModel):
 
 
 class Event(BaseModel):
+    kind: str = ""
+    locations: list[str] = []
+    sp_only: bool = False
+    mechanics_version: str = ""
+    availability_note: str = ""
+    is_shared: bool | None = None
     id: str
     name: str
     name_en: str = ""  # English name, kept when a locale overlay renames this entity
@@ -104,6 +134,9 @@ class Event(BaseModel):
 
 
 class Epoch(BaseModel):
+    mechanics_version: str = ""
+    mechanics_note: str = ""
+    source: str = "base"
     id: str
     name: str
     category: str = ""  # core, character, score, act, ancient, mode
@@ -111,7 +144,7 @@ class Epoch(BaseModel):
     requirement: str = ""  # human-readable unlock condition
     unlocks: list[str] = []  # names of cards/relics/potions/etc unlocked
     unlock_type: str = ""  # cards, relics, potions, character, act, ancient, mode
-    status: str = "active"  # active | deprecated (the game deprecates epochs)
+    status: str = "active"  # active | placeholder | deprecated, version-specific
 
 
 class SynergyGroup(BaseModel):
@@ -189,6 +222,7 @@ class RunHistory(BaseModel):
     # enchantment id per card ("" = none) — the id-keyed `enchantments` dict
     # cannot tell two copies of the same card apart.
     deck_upgrades: list[int] = []
+    deck_properties: list[CardProperties | None] = []
     deck_enchantments: list[str] = []
     relics: list[str] = []
     floors: list[RunFloor] = []
@@ -213,6 +247,7 @@ class CurrentRun(BaseModel):
     run_time: int = 0
     deck: list[str] = []
     deck_upgrades: list[bool] = []
+    deck_properties: list[CardProperties | None] = []
     deck_enchantments: list[str] = []  # parallel to deck: enchantment id or ""
     relics: list[str] = []
     potions: list[str] = []

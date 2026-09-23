@@ -187,10 +187,9 @@ def test_short_or_missing_upgrade_list_means_not_upgraded(kb):
 
 
 def test_upgrade_flags_stay_aligned_past_unknown_ids(kb):
-    """Flags are parallel to the raw id list; an unknown id is dropped
-    without shifting the next card's flag onto it."""
+    """Unknown costs stay visible without shifting the next upgrade flag."""
     result = kb.analyze_deck(["FAKE.NOPE", "CARD.BARRICADE"], [False, True])
-    assert result["cost_curve"] == {"2": 1}
+    assert result["cost_curve"] == {"2": 1, "Unknown": 1}
 
 
 def test_non_numeric_costs_do_not_crash_the_curve():
@@ -218,7 +217,7 @@ async def test_live_route_passes_upgrades(client):
          patch.object(app_kb, "analyze_deck", side_effect=real) as spy:
         resp = await client.get("/live")
     assert resp.status_code == 200
-    spy.assert_any_call(run.deck, run.deck_upgrades)
+    spy.assert_any_call(run.deck, run.deck_upgrades, properties=run.deck_properties)
 
 
 async def test_live_block_pick_hint_ignores_keyword_mentions(client):
@@ -240,8 +239,9 @@ def _translated_kb():
     """A KnowledgeBase whose content overlay rewrites every card's text into
     stand-in 'translated' strings that contain none of the English phrases."""
     english = KnowledgeBase(language="en")
-    overlay = {"cards": {
-        c.id: {"name": f"Karte {i}",
+    from sts2.mechanics import mechanics_fingerprint
+    overlay = {"_meta": {"game_version": english.game_version}, "cards": {
+        c.id: {"_mechanics_fingerprint": mechanics_fingerprint(c.model_dump()), "name": f"Karte {i}",
                "description": f"Übersetzter Text {i}.",
                "description_upgraded": f"Übersetzter Text {i}+."}
         for i, c in enumerate(english.cards)

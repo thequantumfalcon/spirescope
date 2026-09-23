@@ -4,6 +4,7 @@ import json
 import logging
 from pathlib import Path
 
+from sts2.card_properties import read_card_properties
 from sts2.config import CHARACTER_IDS, SAVE_DIR, SAVE_DIRS, local_steam_id
 from sts2.models import CurrentRun, PlayerProgress, RunFloor, RunHistory
 
@@ -106,6 +107,23 @@ def _history_upgrade_levels(cards: list[dict]) -> list[int]:
     # The compatible array contract has no nullable elements. Preserve other
     # run facts and mark this field unavailable rather than inventing zeros.
     return [level for level in levels if level is not None] if all(level is not None for level in levels) else []
+
+
+def _current_run_seed(data: dict) -> str:
+    """Native current saves store rng.seed; older fixtures/exports used seed.
+
+    Never manufacture a seed from a dict, number or contradictory fields: it
+    is identity evidence used to join private player state with log telemetry.
+    """
+    def valid(value) -> str:
+        return value if isinstance(value, str) and 0 < len(value) <= 256 and value.isprintable() else ""
+
+    rng = data.get("rng")
+    native = valid(rng.get("seed")) if isinstance(rng, dict) else ""
+    legacy = valid(data.get("seed"))
+    if native and legacy and native != legacy:
+        return ""
+    return native or legacy
 
 
 def get_current_run(player_index: int | None = None) -> CurrentRun:
@@ -232,6 +250,7 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
         deck=deck,
         deck_upgrades=deck_upgrades,
         deck_enchantments=deck_enchantments,
+        deck_properties=[read_card_properties(c.get("props")) for c in deck_entries],
         relics=relics,
         potions=potions,
         events_seen=data.get("events_seen", []),
@@ -239,7 +258,7 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
         player_index=player_index,
         total_players=total_players,
         player_id=str(player.get("id", "") or ""),
-        seed=str(data.get("seed", "") or ""),
+        seed=_current_run_seed(data),
         start_time=int(data["start_time"]) if type(data.get("start_time")) is int else 0,
     )
 
@@ -486,6 +505,7 @@ def get_run_history() -> list[RunHistory]:
                 deck=deck,
                 deck_upgrades=deck_upgrades,
                 deck_enchantments=deck_enchantments,
+                deck_properties=[read_card_properties(c.get("props")) for c in deck_entries],
                 relics=relics,
                 floors=floors,
                 build_id=data.get("build_id", ""),

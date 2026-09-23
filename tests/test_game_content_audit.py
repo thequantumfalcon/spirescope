@@ -95,3 +95,12 @@ def test_cli_refuses_to_write_into_game_or_catalog(tmp_path, monkeypatch):
         audit.main()
     assert exc.value.code == 1
     assert not (tmp_path / "release_info.json").exists()
+
+
+def test_dotted_relic_titles_do_not_inflate_native_model_counts():
+    result = audit.compare({"relics":{
+        "SEA_GLASS.title":"Glass", "SEA_GLASS.DEFECT.title":"Glass variant",
+    }}, {"relics":[{"id":"RELIC.SEA_GLASS"}]})['relics']
+    assert result['native_named_entries'] == 2
+    assert result['candidate_entries'] == result['exact_id_matches'] == 1
+    assert result['localization_variants_not_model_ids'] == {'SEA_GLASS.DEFECT':'SEA_GLASS'}

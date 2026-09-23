@@ -8,6 +8,7 @@ import urllib.request
 from datetime import datetime, timezone
 
 from sts2.config import DATA_DIR
+from sts2.identities import canonical_id, canonical_records
 
 log = logging.getLogger(__name__)
 
@@ -214,7 +215,7 @@ def _load_existing_name_index(filename: str, prefix: str) -> dict[str, str]:
     ambiguous: set[str] = set()
     for item in _load_existing_records(filename):
         name = _norm_name(item.get("name", ""))
-        item_id = item.get("id", "")
+        item_id = canonical_id(item.get("id", ""))
         if name and item_id:
             if index.get(name, item_id) != item_id:
                 ambiguous.add(name)
@@ -241,7 +242,7 @@ def _load_existing_card_index() -> dict[tuple[str, str], str]:
     by_name: dict[str, list[dict]] = {}
     for item in _load_existing_records("cards.json"):
         name = _norm_name(item.get("name", ""))
-        item_id = item.get("id", "")
+        item_id = canonical_id(item.get("id", ""))
         if not (name and item_id):
             continue
         by_name.setdefault(name, []).append(item)
@@ -289,6 +290,7 @@ def _drop_identity_collisions(records: list[dict], source: str, label: str) -> l
     one Mad Science card). Keeping either would be last-wins by another name,
     so neither updates anything.
     """
+    records = [dict(row, id=canonical_id(row["id"])) for row in records]
     counts: dict[str, int] = {}
     for r in records:
         counts[r["id"]] = counts.get(r["id"], 0) + 1
@@ -577,6 +579,19 @@ def _save_update_timestamp():
     path.write_text(datetime.datetime.now(datetime.timezone.utc).isoformat(), encoding="utf-8")
 
 
+# Fields that describe one mechanical revision of an entity. Descriptions with
+# different wording may be equivalent, but cannot prove a safe partial join.
+_MECHANIC_FIELDS = frozenset({
+    "cost", "star_cost", "cost_upgraded", "type", "no_upgrade", "mp_only",
+    "description", "description_upgraded",
+})
+
+
+def _source_field_missing(record: dict, field: str) -> bool:
+    # False and zero are observed values, including no_upgrade and free costs.
+    return field not in record or record[field] in (None, "", [])
+
+
 def _check_source_compatibility(first: dict, second: dict, *, joining: bool = True) -> None:
     """Reject known incompatible mechanics; absent metadata stays unknown."""
     left, right = first.get("branch"), second.get("branch")
@@ -587,6 +602,19 @@ def _check_source_compatibility(first: dict, second: dict, *, joining: bool = Tr
     if joining and first.get("last_changed") and second.get("last_changed"):
         if first["last_changed"] != second["last_changed"]:
             raise ValueError(f"Conflicting source revisions for {first.get('id')}")
+    if joining:
+        filling = {field for field in _MECHANIC_FIELDS
+                   if _source_field_missing(first, field)
+                   and not _source_field_missing(second, field)}
+        conflicts = {field for field in _MECHANIC_FIELDS
+                     if not _source_field_missing(first, field)
+                     and not _source_field_missing(second, field)
+                     and first[field] != second[field]}
+        if filling and conflicts:
+            raise ValueError(
+                f"Conflicting source mechanics for {first.get('id')}: "
+                f"cannot fill {', '.join(sorted(filling))} while "
+                f"{', '.join(sorted(conflicts))} disagree; review the game revision")
 
 
 def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "id") -> list[dict]:
@@ -605,8 +633,8 @@ def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "i
             log.warning("Existing %s is corrupted (%s), overwriting with new data", filename, exc)
             existing = []
 
-    existing_by_id = {item[id_field]: item for item in existing}
-    new_by_id = {item[id_field]: item for item in new_data}
+    existing_by_id = canonical_records(existing, id_field)
+    new_by_id = canonical_records(new_data, id_field)
 
     today = datetime.now(timezone.utc).date().isoformat()
 
@@ -942,7 +970,8 @@ def run_fetcher(save_only: bool = False):
             raise ValueError("Refresh incomplete: all three source families must succeed; no changes installed.")
         if not save_only:
             from sts2.corrections import text
-            text.main(dry_run=False, data_path=staged / "cards.json")
+            if text.main(dry_run=False, data_path=staged / "cards.json"):
+                raise ValueError("Refresh rejected: known game corrections drifted; review the source revision.")
         health = inspect_dataset(staged)
         if not health["ok"]:
             raise ValueError("Refresh rejected: " + "; ".join(health["errors"]))

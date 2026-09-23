@@ -1,0 +1,4020 @@
+{
+  "game_version": "v0.107.1",
+  "game_commit": "59260271",
+  "reviewed_at": "2026-09-22",
+  "complete": false,
+  "method": "Full English template alignment, separately checked automatic keyword sentences, literal canonical values, and recognized literal upgrade deltas. Reviewed formatter rules select IfUpgraded branches and non-combat/non-targeting library branches. Reviewed CalculatedVar/CalculatedDamageVar library previews use CalculationBase with multiplier zero outside combat. Numeric corrections and singular/plural projections must pass strict alignment again; MaxUpgradeLevel zero excludes upgrade text. Unresolved templates, missing variants, reworks and saved-instance rules received explicit native definition/helper review and factual paraphrases. This covers printed base/first-upgrade rules, not a complete combat simulator or certification of other entity families.",
+  "limits": "Base and first upgrade only. Runtime effects, per-instance customization, enchantments, relic interactions and higher upgrades are not simulated. Matching the game description does not prove the game implements that description without bugs.",
+  "canonical_english_card_table_sha256": "6a0d5fb09efa975ff65bde2e1a8cc597d2585d302bf44d9ff9c0e203e411db36",
+  "native_template_matches": [
+    "CARD.ABRASIVE",
+    "CARD.ACCELERANT",
+    "CARD.ACROBATICS",
+    "CARD.ADAPTIVE_STRIKE",
+    "CARD.ADRENALINE",
+    "CARD.AFTERIMAGE",
+    "CARD.AFTERLIFE",
+    "CARD.AGGRESSION",
+    "CARD.ALCHEMIZE",
+    "CARD.ALIGNMENT",
+    "CARD.ALL_FOR_ONE",
+    "CARD.ANGER",
+    "CARD.ANOINTED",
+    "CARD.ARMAMENTS",
+    "CARD.ARSENAL",
+    "CARD.ASCENDERS_BANE",
+    "CARD.ASHEN_STRIKE",
+    "CARD.ASSASSINATE",
+    "CARD.ASTRAL_PULSE",
+    "CARD.AUTOMATION",
+    "CARD.BACKFLIP",
+    "CARD.BACKSTAB",
+    "CARD.BAD_LUCK",
+    "CARD.BALL_LIGHTNING",
+    "CARD.BANSHEES_CRY",
+    "CARD.BARRAGE",
+    "CARD.BARRICADE",
+    "CARD.BASH",
+    "CARD.BATTLE_TRANCE",
+    "CARD.BEACON_OF_HOPE",
+    "CARD.BEAM_CELL",
+    "CARD.BEAT_DOWN",
+    "CARD.BEAT_INTO_SHAPE",
+    "CARD.BECKON",
+    "CARD.BEGONE",
+    "CARD.BELIEVE_IN_YOU",
+    "CARD.BIG_BANG",
+    "CARD.BLACK_HOLE",
+    "CARD.BLIGHT_STRIKE",
+    "CARD.BLOODLETTING",
+    "CARD.BLOOD_WALL",
+    "CARD.BLUDGEON",
+    "CARD.BLUR",
+    "CARD.BODYGUARD",
+    "CARD.BODY_SLAM",
+    "CARD.BOLAS",
+    "CARD.BOMBARDMENT",
+    "CARD.BONE_SHARDS",
+    "CARD.BOOST_AWAY",
+    "CARD.BOOT_SEQUENCE",
+    "CARD.BORROWED_TIME",
+    "CARD.BOUNCING_FLASK",
+    "CARD.BRAND",
+    "CARD.BREAK",
+    "CARD.BREAKTHROUGH",
+    "CARD.BUBBLE_BUBBLE",
+    "CARD.BUFFER",
+    "CARD.BULK_UP",
+    "CARD.BULLET_TIME",
+    "CARD.BULLY",
+    "CARD.BULWARK",
+    "CARD.BUNDLE_OF_JOY",
+    "CARD.BURN",
+    "CARD.BURNING_PACT",
+    "CARD.BURST",
+    "CARD.BURY",
+    "CARD.BYRDONIS_EGG",
+    "CARD.CALAMITY",
+    "CARD.CALCIFY",
+    "CARD.CALCULATED_GAMBLE",
+    "CARD.CALL_OF_THE_VOID",
+    "CARD.CALTROPS",
+    "CARD.CAPACITOR",
+    "CARD.CASCADE",
+    "CARD.CATASTROPHE",
+    "CARD.CELESTIAL_MIGHT",
+    "CARD.CHAOS",
+    "CARD.CHARGE_BATTERY",
+    "CARD.CHILD_OF_THE_STARS",
+    "CARD.CHILL",
+    "CARD.CLASH",
+    "CARD.CLAW",
+    "CARD.CLEANSE",
+    "CARD.CLOAK_AND_DAGGER",
+    "CARD.CLOAK_OF_STARS",
+    "CARD.CLUMSY",
+    "CARD.COLD_SNAP",
+    "CARD.COMET",
+    "CARD.COMPACT",
+    "CARD.COMPILE_DRIVER",
+    "CARD.CONFLAGRATION",
+    "CARD.CONQUEROR",
+    "CARD.CONSUMING_SHADOW",
+    "CARD.CONVERGENCE",
+    "CARD.COOLANT",
+    "CARD.COOLHEADED",
+    "CARD.COORDINATE",
+    "CARD.CORROSIVE_WAVE",
+    "CARD.CORRUPTION",
+    "CARD.COSMIC_INDIFFERENCE",
+    "CARD.COUNTDOWN",
+    "CARD.CRASH_LANDING",
+    "CARD.CREATIVE_AI",
+    "CARD.CRESCENT_SPEAR",
+    "CARD.CRUELTY",
+    "CARD.CURSE_OF_THE_BELL",
+    "CARD.DAGGER_SPRAY",
+    "CARD.DAGGER_THROW",
+    "CARD.DANSE_MACABRE",
+    "CARD.DARKNESS",
+    "CARD.DARK_EMBRACE",
+    "CARD.DARK_SHACKLES",
+    "CARD.DASH",
+    "CARD.DAZED",
+    "CARD.DEADLY_POISON",
+    "CARD.DEATHBRINGER",
+    "CARD.DEATHS_DOOR",
+    "CARD.DEATH_MARCH",
+    "CARD.DEBILITATE",
+    "CARD.DEBRIS",
+    "CARD.DEBT",
+    "CARD.DECAY",
+    "CARD.DECISIONS_DECISIONS",
+    "CARD.DEFEND_SILENT",
+    "CARD.DEFILE",
+    "CARD.DEFLECT",
+    "CARD.DEFRAGMENT",
+    "CARD.DEFY",
+    "CARD.DELAY",
+    "CARD.DEMESNE",
+    "CARD.DEMONIC_SHIELD",
+    "CARD.DEVOUR_LIFE",
+    "CARD.DISCOVERY",
+    "CARD.DISINTEGRATION",
+    "CARD.DISMANTLE",
+    "CARD.DISTRACTION",
+    "CARD.DODGE_AND_ROLL",
+    "CARD.DOMINATE",
+    "CARD.DOUBLE_ENERGY",
+    "CARD.DOUBT",
+    "CARD.DRAIN_POWER",
+    "CARD.DRAMATIC_ENTRANCE",
+    "CARD.DREDGE",
+    "CARD.DRUM_OF_BATTLE",
+    "CARD.DUALCAST",
+    "CARD.DUAL_WIELD",
+    "CARD.DYING_STAR",
+    "CARD.ECHOING_SLASH",
+    "CARD.ECHO_FORM",
+    "CARD.END_OF_DAYS",
+    "CARD.ENERGY_SURGE",
+    "CARD.ENFEEBLING_TOUCH",
+    "CARD.ENTHRALLED",
+    "CARD.ENTRENCH",
+    "CARD.ENTROPY",
+    "CARD.ENVENOM",
+    "CARD.EQUILIBRIUM",
+    "CARD.ERADICATE",
+    "CARD.ESCAPE_PLAN",
+    "CARD.ETERNAL_ARMOR",
+    "CARD.EVIL_EYE",
+    "CARD.EXPOSE",
+    "CARD.FALLING_STAR",
+    "CARD.FASTEN",
+    "CARD.FEAR",
+    "CARD.FEED",
+    "CARD.FEEL_NO_PAIN",
+    "CARD.FERAL",
+    "CARD.FETCH",
+    "CARD.FIEND_FIRE",
+    "CARD.FIGHT_ME",
+    "CARD.FINESSE",
+    "CARD.FINISHER",
+    "CARD.FISTICUFFS",
+    "CARD.FLAK_CANNON",
+    "CARD.FLAME_BARRIER",
+    "CARD.FLASH_OF_STEEL",
+    "CARD.FLATTEN",
+    "CARD.FLECHETTES",
+    "CARD.FOCUSED_STRIKE",
+    "CARD.FOLLY",
+    "CARD.FOOTWORK",
+    "CARD.FORBIDDEN_GRIMOIRE",
+    "CARD.FOREGONE_CONCLUSION",
+    "CARD.FRANTIC_ESCAPE",
+    "CARD.FRIENDSHIP",
+    "CARD.FTL",
+    "CARD.FURNACE",
+    "CARD.FUSION",
+    "CARD.GAMMA_BLAST",
+    "CARD.GANG_UP",
+    "CARD.GATHER_LIGHT",
+    "CARD.GENESIS",
+    "CARD.GLACIER",
+    "CARD.GLASSWORK",
+    "CARD.GLIMMER",
+    "CARD.GLITTERSTREAM",
+    "CARD.GLOW",
+    "CARD.GOLD_AXE",
+    "CARD.GO_FOR_THE_EYES",
+    "CARD.GRAND_FINALE",
+    "CARD.GRAVEBLAST",
+    "CARD.GRAVE_WARDEN",
+    "CARD.GREED",
+    "CARD.GUARDS",
+    "CARD.GUILTY",
+    "CARD.GUNK_UP",
+    "CARD.HAILSTORM",
+    "CARD.HAMMER_TIME",
+    "CARD.HAND_OF_GREED",
+    "CARD.HAND_TRICK",
+    "CARD.HANG",
+    "CARD.HAVOC",
+    "CARD.HEADBUTT",
+    "CARD.HEAVENLY_DRILL",
+    "CARD.HEGEMONY",
+    "CARD.HEIRLOOM_HAMMER",
+    "CARD.HELLO_WORLD",
+    "CARD.HELLRAISER",
+    "CARD.HEMOKINESIS",
+    "CARD.HIDDEN_CACHE",
+    "CARD.HIGH_FIVE",
+    "CARD.HOLOGRAM",
+    "CARD.HOTFIX",
+    "CARD.ICE_LANCE",
+    "CARD.IGNITION",
+    "CARD.IMPATIENCE",
+    "CARD.IMPERVIOUS",
+    "CARD.INFECTION",
+    "CARD.INFERNAL_BLADE",
+    "CARD.INFERNO",
+    "CARD.INFINITE_BLADES",
+    "CARD.INFLAME",
+    "CARD.INJURY",
+    "CARD.INTERCEPT",
+    "CARD.INVOKE",
+    "CARD.IRON_WAVE",
+    "CARD.I_AM_INVINCIBLE",
+    "CARD.JACKPOT",
+    "CARD.JACK_OF_ALL_TRADES",
+    "CARD.JUGGLING",
+    "CARD.KINGLY_KICK",
+    "CARD.KINGLY_PUNCH",
+    "CARD.KNIFE_TRAP",
+    "CARD.KNOCKDOWN",
+    "CARD.KNOCKOUT_BLOW",
+    "CARD.KNOW_THY_PLACE",
+    "CARD.LANTERN_KEY",
+    "CARD.LARGESSE",
+    "CARD.LEAP",
+    "CARD.LEG_SWEEP",
+    "CARD.LETHALITY",
+    "CARD.LIFT",
+    "CARD.LIGHTNING_ROD",
+    "CARD.LOOP",
+    "CARD.LUMINESCE",
+    "CARD.LUNAR_BLAST",
+    "CARD.MACHINE_LEARNING",
+    "CARD.MAKE_IT_SO",
+    "CARD.MALAISE",
+    "CARD.MANIFEST_AUTHORITY",
+    "CARD.MASTER_OF_STRATEGY",
+    "CARD.MASTER_PLANNER",
+    "CARD.MAYHEM",
+    "CARD.MELANCHOLY",
+    "CARD.MEMENTO_MORI",
+    "CARD.METAMORPHOSIS",
+    "CARD.METEOR_SHOWER",
+    "CARD.METEOR_STRIKE",
+    "CARD.MIMIC",
+    "CARD.MIND_BLAST",
+    "CARD.MIND_ROT",
+    "CARD.MISERY",
+    "CARD.MODDED",
+    "CARD.MOLTEN_FIST",
+    "CARD.MONARCHS_GAZE",
+    "CARD.MONOLOGUE",
+    "CARD.MULTI_CAST",
+    "CARD.MURDER",
+    "CARD.NECRO_MASTERY",
+    "CARD.NEGATIVE_PULSE",
+    "CARD.NEOWS_FURY",
+    "CARD.NEUROSURGE",
+    "CARD.NEUTRALIZE",
+    "CARD.NEUTRON_AEGIS",
+    "CARD.NIGHTMARE",
+    "CARD.NORMALITY",
+    "CARD.NOSTALGIA",
+    "CARD.NOT_YET",
+    "CARD.NOXIOUS_FUMES",
+    "CARD.NO_ESCAPE",
+    "CARD.OBLIVION",
+    "CARD.OFFERING",
+    "CARD.OMNISLICE",
+    "CARD.ONE_TWO_PUNCH",
+    "CARD.ORBIT",
+    "CARD.OUTMANEUVER",
+    "CARD.OVERCLOCK",
+    "CARD.PAGESTORM",
+    "CARD.PALE_BLUE_DOT",
+    "CARD.PANACHE",
+    "CARD.PANIC_BUTTON",
+    "CARD.PARRY",
+    "CARD.PARSE",
+    "CARD.PARTICLE_WALL",
+    "CARD.PATTER",
+    "CARD.PECK",
+    "CARD.PERFECTED_STRIKE",
+    "CARD.PHOTON_CUT",
+    "CARD.PIERCING_WAIL",
+    "CARD.PILLAGE",
+    "CARD.PINPOINT",
+    "CARD.POISONED_STAB",
+    "CARD.POKE",
+    "CARD.POMMEL_STRIKE",
+    "CARD.POOR_SLEEP",
+    "CARD.POUNCE",
+    "CARD.PRECISE_CUT",
+    "CARD.PREDATOR",
+    "CARD.PREPARED",
+    "CARD.PREP_TIME",
+    "CARD.PRIMAL_FORCE",
+    "CARD.PRODUCTION",
+    "CARD.PROLONG",
+    "CARD.PROPHESIZE",
+    "CARD.PROTECTOR",
+    "CARD.PROWESS",
+    "CARD.PULL_AGGRO",
+    "CARD.PULL_FROM_BELOW",
+    "CARD.PURITY",
+    "CARD.PUTREFY",
+    "CARD.PYRE",
+    "CARD.QUADCAST",
+    "CARD.QUASAR",
+    "CARD.RADIATE",
+    "CARD.RAGE",
+    "CARD.RAINBOW",
+    "CARD.RALLY",
+    "CARD.RATTLE",
+    "CARD.REANIMATE",
+    "CARD.REAP",
+    "CARD.REAPER_FORM",
+    "CARD.REBOOT",
+    "CARD.REBOUND",
+    "CARD.REFLECT",
+    "CARD.REFLEX",
+    "CARD.REGRET",
+    "CARD.RESONANCE",
+    "CARD.RESTLESSNESS",
+    "CARD.RICOCHET",
+    "CARD.RIGHT_HAND_HAND",
+    "CARD.RIP_AND_TEAR",
+    "CARD.ROLLING_BOULDER",
+    "CARD.ROYALTIES",
+    "CARD.ROYAL_GAMBLE",
+    "CARD.RUPTURE",
+    "CARD.SALVO",
+    "CARD.SCAVENGE",
+    "CARD.SCOURGE",
+    "CARD.SCRAPE",
+    "CARD.SCRAWL",
+    "CARD.SCULPTING_STRIKE",
+    "CARD.SEANCE",
+    "CARD.SECOND_WIND",
+    "CARD.SECRET_TECHNIQUE",
+    "CARD.SECRET_WEAPON",
+    "CARD.SEEKER_STRIKE",
+    "CARD.SEEKING_EDGE",
+    "CARD.SENTRY_MODE",
+    "CARD.SERPENT_FORM",
+    "CARD.SEVEN_STARS",
+    "CARD.SEVERANCE",
+    "CARD.SHADOWMELD",
+    "CARD.SHADOW_SHIELD",
+    "CARD.SHADOW_STEP",
+    "CARD.SHAME",
+    "CARD.SHARED_FATE",
+    "CARD.SHINING_STRIKE",
+    "CARD.SHOCKWAVE",
+    "CARD.SHRUG_IT_OFF",
+    "CARD.SIC_EM",
+    "CARD.SIGNAL_BOOST",
+    "CARD.SKEWER",
+    "CARD.SKIM",
+    "CARD.SLEIGHT_OF_FLESH",
+    "CARD.SLICE",
+    "CARD.SLIMED",
+    "CARD.SLOTH",
+    "CARD.SMOKESTACK",
+    "CARD.SNAKEBITE",
+    "CARD.SNAP",
+    "CARD.SNEAKY",
+    "CARD.SOLAR_STRIKE",
+    "CARD.SOOT",
+    "CARD.SOUL",
+    "CARD.SOW",
+    "CARD.SPECTRUM_SHIFT",
+    "CARD.SPEEDSTER",
+    "CARD.SPINNER",
+    "CARD.SPIRIT_OF_ASH",
+    "CARD.SPITE",
+    "CARD.SPLASH",
+    "CARD.SPOILS_MAP",
+    "CARD.SPORE_MIND",
+    "CARD.SPUR",
+    "CARD.SQUEEZE",
+    "CARD.STACK",
+    "CARD.STAMPEDE",
+    "CARD.STARDUST",
+    "CARD.STOKE",
+    "CARD.STOMP",
+    "CARD.STONE_ARMOR",
+    "CARD.STORM",
+    "CARD.STORM_OF_STEEL",
+    "CARD.STRANGLE",
+    "CARD.STRATAGEM",
+    "CARD.STRIKE_SILENT",
+    "CARD.SUBROUTINE",
+    "CARD.SUCKER_PUNCH",
+    "CARD.SUPERCRITICAL",
+    "CARD.SUPERMASSIVE",
+    "CARD.SUPPRESS",
+    "CARD.SURVIVOR",
+    "CARD.SWEEPING_BEAM",
+    "CARD.SWORD_BOOMERANG",
+    "CARD.SWORD_SAGE",
+    "CARD.SYNTHESIS",
+    "CARD.TACTICIAN",
+    "CARD.TAG_TEAM",
+    "CARD.TEAR_ASUNDER",
+    "CARD.TEMPEST",
+    "CARD.TESLA_COIL",
+    "CARD.THE_BOMB",
+    "CARD.THE_GAMBIT",
+    "CARD.THE_HUNT",
+    "CARD.THE_SEALED_THRONE",
+    "CARD.THE_SMITH",
+    "CARD.THINKING_AHEAD",
+    "CARD.THRASH",
+    "CARD.THRUMMING_HATCHET",
+    "CARD.THUNDERCLAP",
+    "CARD.TOOLS_OF_THE_TRADE",
+    "CARD.TORIC_TOUGHNESS",
+    "CARD.TOXIC",
+    "CARD.TRANSFIGURE",
+    "CARD.TREMBLE",
+    "CARD.TRUE_GRIT",
+    "CARD.TURBO",
+    "CARD.TWIN_STRIKE",
+    "CARD.TYRANNY",
+    "CARD.ULTIMATE_DEFEND",
+    "CARD.ULTIMATE_STRIKE",
+    "CARD.UNDEATH",
+    "CARD.UNLEASH",
+    "CARD.UNMOVABLE",
+    "CARD.UNRELENTING",
+    "CARD.UNTOUCHABLE",
+    "CARD.UPPERCUT",
+    "CARD.UPROAR",
+    "CARD.VEILPIERCER",
+    "CARD.VENERATE",
+    "CARD.VICIOUS",
+    "CARD.VOID",
+    "CARD.VOID_FORM",
+    "CARD.VOLLEY",
+    "CARD.VOLTAIC",
+    "CARD.WASTE_AWAY",
+    "CARD.WHIRLWIND",
+    "CARD.WHITE_NOISE",
+    "CARD.WISP",
+    "CARD.WITHER",
+    "CARD.WOUND",
+    "CARD.WRAITH_FORM",
+    "CARD.WRITHE",
+    "CARD.WROUGHT_IN_WAR",
+    "CARD.ZAP"
+  ],
+  "reviewed_card_ids": [
+    "CARD.ABRASIVE",
+    "CARD.ACCELERANT",
+    "CARD.ACCURACY",
+    "CARD.ACROBATICS",
+    "CARD.ADAPTIVE_STRIKE",
+    "CARD.ADRENALINE",
+    "CARD.AFTERIMAGE",
+    "CARD.AFTERLIFE",
+    "CARD.AGGRESSION",
+    "CARD.ALCHEMIZE",
+    "CARD.ALIGNMENT",
+    "CARD.ALL_FOR_ONE",
+    "CARD.ANGER",
+    "CARD.ANOINTED",
+    "CARD.ANTICIPATE",
+    "CARD.APOTHEOSIS",
+    "CARD.APPARITION",
+    "CARD.ARMAMENTS",
+    "CARD.ARSENAL",
+    "CARD.ASCENDERS_BANE",
+    "CARD.ASHEN_STRIKE",
+    "CARD.ASSASSINATE",
+    "CARD.ASTRAL_PULSE",
+    "CARD.AUTOMATION",
+    "CARD.BACKFLIP",
+    "CARD.BACKSTAB",
+    "CARD.BAD_LUCK",
+    "CARD.BALL_LIGHTNING",
+    "CARD.BANSHEES_CRY",
+    "CARD.BARRAGE",
+    "CARD.BARRICADE",
+    "CARD.BASH",
+    "CARD.BATTLE_TRANCE",
+    "CARD.BEACON_OF_HOPE",
+    "CARD.BEAM_CELL",
+    "CARD.BEAT_DOWN",
+    "CARD.BEAT_INTO_SHAPE",
+    "CARD.BECKON",
+    "CARD.BEGONE",
+    "CARD.BELIEVE_IN_YOU",
+    "CARD.BIASED_COGNITION",
+    "CARD.BIG_BANG",
+    "CARD.BLACK_HOLE",
+    "CARD.BLADE_DANCE",
+    "CARD.BLADE_OF_INK",
+    "CARD.BLIGHT_STRIKE",
+    "CARD.BLOODLETTING",
+    "CARD.BLOOD_WALL",
+    "CARD.BLUDGEON",
+    "CARD.BLUR",
+    "CARD.BODYGUARD",
+    "CARD.BODY_SLAM",
+    "CARD.BOLAS",
+    "CARD.BOMBARDMENT",
+    "CARD.BONE_SHARDS",
+    "CARD.BOOST_AWAY",
+    "CARD.BOOT_SEQUENCE",
+    "CARD.BORROWED_TIME",
+    "CARD.BOUNCING_FLASK",
+    "CARD.BRAND",
+    "CARD.BREAK",
+    "CARD.BREAKTHROUGH",
+    "CARD.BRIGHTEST_FLAME",
+    "CARD.BUBBLE_BUBBLE",
+    "CARD.BUFFER",
+    "CARD.BULK_UP",
+    "CARD.BULLET_TIME",
+    "CARD.BULLY",
+    "CARD.BULWARK",
+    "CARD.BUNDLE_OF_JOY",
+    "CARD.BURN",
+    "CARD.BURNING_PACT",
+    "CARD.BURST",
+    "CARD.BURY",
+    "CARD.BYRDONIS_EGG",
+    "CARD.BYRD_SWOOP",
+    "CARD.CALAMITY",
+    "CARD.CALCIFY",
+    "CARD.CALCULATED_GAMBLE",
+    "CARD.CALL_OF_THE_VOID",
+    "CARD.CALTROPS",
+    "CARD.CAPACITOR",
+    "CARD.CAPTURE_SPIRIT",
+    "CARD.CASCADE",
+    "CARD.CATASTROPHE",
+    "CARD.CELESTIAL_MIGHT",
+    "CARD.CHAOS",
+    "CARD.CHARGE",
+    "CARD.CHARGE_BATTERY",
+    "CARD.CHILD_OF_THE_STARS",
+    "CARD.CHILL",
+    "CARD.CINDER",
+    "CARD.CLASH",
+    "CARD.CLAW",
+    "CARD.CLEANSE",
+    "CARD.CLOAK_AND_DAGGER",
+    "CARD.CLOAK_OF_STARS",
+    "CARD.CLUMSY",
+    "CARD.COLD_SNAP",
+    "CARD.COLLISION_COURSE",
+    "CARD.COLOSSUS",
+    "CARD.COMET",
+    "CARD.COMPACT",
+    "CARD.COMPILE_DRIVER",
+    "CARD.CONFLAGRATION",
+    "CARD.CONQUEROR",
+    "CARD.CONSUMING_SHADOW",
+    "CARD.CONVERGENCE",
+    "CARD.COOLANT",
+    "CARD.COOLHEADED",
+    "CARD.COORDINATE",
+    "CARD.CORROSIVE_WAVE",
+    "CARD.CORRUPTION",
+    "CARD.COSMIC_INDIFFERENCE",
+    "CARD.COUNTDOWN",
+    "CARD.CRASH_LANDING",
+    "CARD.CREATIVE_AI",
+    "CARD.CRESCENT_SPEAR",
+    "CARD.CRIMSON_MANTLE",
+    "CARD.CRUELTY",
+    "CARD.CRUSH_UNDER",
+    "CARD.CURSE_OF_THE_BELL",
+    "CARD.DAGGER_SPRAY",
+    "CARD.DAGGER_THROW",
+    "CARD.DANSE_MACABRE",
+    "CARD.DARKNESS",
+    "CARD.DARK_EMBRACE",
+    "CARD.DARK_SHACKLES",
+    "CARD.DASH",
+    "CARD.DAZED",
+    "CARD.DEADLY_POISON",
+    "CARD.DEATHBRINGER",
+    "CARD.DEATHS_DOOR",
+    "CARD.DEATH_MARCH",
+    "CARD.DEBILITATE",
+    "CARD.DEBRIS",
+    "CARD.DEBT",
+    "CARD.DECAY",
+    "CARD.DECISIONS_DECISIONS",
+    "CARD.DEFEND_DEFECT",
+    "CARD.DEFEND_IRONCLAD",
+    "CARD.DEFEND_NECROBINDER",
+    "CARD.DEFEND_REGENT",
+    "CARD.DEFEND_SILENT",
+    "CARD.DEFILE",
+    "CARD.DEFLECT",
+    "CARD.DEFRAGMENT",
+    "CARD.DEFY",
+    "CARD.DELAY",
+    "CARD.DEMESNE",
+    "CARD.DEMONIC_SHIELD",
+    "CARD.DEMON_FORM",
+    "CARD.DEVASTATE",
+    "CARD.DEVOUR_LIFE",
+    "CARD.DIRGE",
+    "CARD.DISCOVERY",
+    "CARD.DISINTEGRATION",
+    "CARD.DISMANTLE",
+    "CARD.DISTRACTION",
+    "CARD.DODGE_AND_ROLL",
+    "CARD.DOMINATE",
+    "CARD.DOUBLE_ENERGY",
+    "CARD.DOUBT",
+    "CARD.DRAIN_POWER",
+    "CARD.DRAMATIC_ENTRANCE",
+    "CARD.DREDGE",
+    "CARD.DRUM_OF_BATTLE",
+    "CARD.DUALCAST",
+    "CARD.DUAL_WIELD",
+    "CARD.DYING_STAR",
+    "CARD.ECHOING_SLASH",
+    "CARD.ECHO_FORM",
+    "CARD.EIDOLON",
+    "CARD.END_OF_DAYS",
+    "CARD.ENERGY_SURGE",
+    "CARD.ENFEEBLING_TOUCH",
+    "CARD.ENLIGHTENMENT",
+    "CARD.ENTHRALLED",
+    "CARD.ENTRENCH",
+    "CARD.ENTROPY",
+    "CARD.ENVENOM",
+    "CARD.EQUILIBRIUM",
+    "CARD.ERADICATE",
+    "CARD.ESCAPE_PLAN",
+    "CARD.ETERNAL_ARMOR",
+    "CARD.EVIL_EYE",
+    "CARD.EXPECT_A_FIGHT",
+    "CARD.EXPERTISE",
+    "CARD.EXPOSE",
+    "CARD.EXTERMINATE",
+    "CARD.FALLING_STAR",
+    "CARD.FAN_OF_KNIVES",
+    "CARD.FASTEN",
+    "CARD.FEAR",
+    "CARD.FEED",
+    "CARD.FEEDING_FRENZY",
+    "CARD.FEEL_NO_PAIN",
+    "CARD.FERAL",
+    "CARD.FETCH",
+    "CARD.FIEND_FIRE",
+    "CARD.FIGHT_ME",
+    "CARD.FIGHT_THROUGH",
+    "CARD.FINESSE",
+    "CARD.FINISHER",
+    "CARD.FISTICUFFS",
+    "CARD.FLAK_CANNON",
+    "CARD.FLAME_BARRIER",
+    "CARD.FLANKING",
+    "CARD.FLASH_OF_STEEL",
+    "CARD.FLATTEN",
+    "CARD.FLECHETTES",
+    "CARD.FLICK_FLACK",
+    "CARD.FOCUSED_STRIKE",
+    "CARD.FOLLY",
+    "CARD.FOOTWORK",
+    "CARD.FORBIDDEN_GRIMOIRE",
+    "CARD.FOREGONE_CONCLUSION",
+    "CARD.FORGOTTEN_RITUAL",
+    "CARD.FRANTIC_ESCAPE",
+    "CARD.FRIENDSHIP",
+    "CARD.FTL",
+    "CARD.FUEL",
+    "CARD.FURNACE",
+    "CARD.FUSION",
+    "CARD.GAMMA_BLAST",
+    "CARD.GANG_UP",
+    "CARD.GATHER_LIGHT",
+    "CARD.GENESIS",
+    "CARD.GENETIC_ALGORITHM",
+    "CARD.GIANT_ROCK",
+    "CARD.GLACIER",
+    "CARD.GLASSWORK",
+    "CARD.GLIMMER",
+    "CARD.GLIMPSE_BEYOND",
+    "CARD.GLITTERSTREAM",
+    "CARD.GLOW",
+    "CARD.GOLD_AXE",
+    "CARD.GO_FOR_THE_EYES",
+    "CARD.GRAND_FINALE",
+    "CARD.GRAVEBLAST",
+    "CARD.GRAVE_WARDEN",
+    "CARD.GREED",
+    "CARD.GUARDS",
+    "CARD.GUIDING_STAR",
+    "CARD.GUILTY",
+    "CARD.GUNK_UP",
+    "CARD.HAILSTORM",
+    "CARD.HAMMER_TIME",
+    "CARD.HAND_OF_GREED",
+    "CARD.HAND_TRICK",
+    "CARD.HANG",
+    "CARD.HAUNT",
+    "CARD.HAVOC",
+    "CARD.HAZE",
+    "CARD.HEADBUTT",
+    "CARD.HEAVENLY_DRILL",
+    "CARD.HEGEMONY",
+    "CARD.HEIRLOOM_HAMMER",
+    "CARD.HELIX_DRILL",
+    "CARD.HELLO_WORLD",
+    "CARD.HELLRAISER",
+    "CARD.HEMOKINESIS",
+    "CARD.HIDDEN_CACHE",
+    "CARD.HIDDEN_DAGGERS",
+    "CARD.HIDDEN_GEM",
+    "CARD.HIGH_FIVE",
+    "CARD.HOLOGRAM",
+    "CARD.HOTFIX",
+    "CARD.HOWL_FROM_BEYOND",
+    "CARD.HUDDLE_UP",
+    "CARD.HYPERBEAM",
+    "CARD.ICE_LANCE",
+    "CARD.IGNITION",
+    "CARD.IMPATIENCE",
+    "CARD.IMPERVIOUS",
+    "CARD.INFECTION",
+    "CARD.INFERNAL_BLADE",
+    "CARD.INFERNO",
+    "CARD.INFINITE_BLADES",
+    "CARD.INFLAME",
+    "CARD.INJURY",
+    "CARD.INTERCEPT",
+    "CARD.INVOKE",
+    "CARD.IRON_WAVE",
+    "CARD.ITERATION",
+    "CARD.I_AM_INVINCIBLE",
+    "CARD.JACKPOT",
+    "CARD.JACK_OF_ALL_TRADES",
+    "CARD.JUGGERNAUT",
+    "CARD.JUGGLING",
+    "CARD.KINGLY_KICK",
+    "CARD.KINGLY_PUNCH",
+    "CARD.KNIFE_TRAP",
+    "CARD.KNOCKDOWN",
+    "CARD.KNOCKOUT_BLOW",
+    "CARD.KNOW_THY_PLACE",
+    "CARD.LANTERN_KEY",
+    "CARD.LARGESSE",
+    "CARD.LEADING_STRIKE",
+    "CARD.LEAP",
+    "CARD.LEGION_OF_BONE",
+    "CARD.LEG_SWEEP",
+    "CARD.LETHALITY",
+    "CARD.LIFT",
+    "CARD.LIGHTNING_ROD",
+    "CARD.LOOP",
+    "CARD.LUMINESCE",
+    "CARD.LUNAR_BLAST",
+    "CARD.MACHINE_LEARNING",
+    "CARD.MAD_SCIENCE",
+    "CARD.MAKE_IT_SO",
+    "CARD.MALAISE",
+    "CARD.MANGLE",
+    "CARD.MANIFEST_AUTHORITY",
+    "CARD.MASTER_OF_STRATEGY",
+    "CARD.MASTER_PLANNER",
+    "CARD.MAUL",
+    "CARD.MAYHEM",
+    "CARD.MELANCHOLY",
+    "CARD.MEMENTO_MORI",
+    "CARD.METAMORPHOSIS",
+    "CARD.METEOR_SHOWER",
+    "CARD.METEOR_STRIKE",
+    "CARD.MIMIC",
+    "CARD.MIND_BLAST",
+    "CARD.MIND_ROT",
+    "CARD.MINION_DIVE_BOMB",
+    "CARD.MINION_SACRIFICE",
+    "CARD.MINION_STRIKE",
+    "CARD.MIRAGE",
+    "CARD.MISERY",
+    "CARD.MODDED",
+    "CARD.MOLTEN_FIST",
+    "CARD.MOMENTUM_STRIKE",
+    "CARD.MONARCHS_GAZE",
+    "CARD.MONOLOGUE",
+    "CARD.MULTI_CAST",
+    "CARD.MURDER",
+    "CARD.NECRO_MASTERY",
+    "CARD.NEGATIVE_PULSE",
+    "CARD.NEOWS_FURY",
+    "CARD.NEUROSURGE",
+    "CARD.NEUTRALIZE",
+    "CARD.NEUTRON_AEGIS",
+    "CARD.NIGHTMARE",
+    "CARD.NORMALITY",
+    "CARD.NOSTALGIA",
+    "CARD.NOT_YET",
+    "CARD.NOXIOUS_FUMES",
+    "CARD.NO_ESCAPE",
+    "CARD.NULL",
+    "CARD.OBLIVION",
+    "CARD.OFFERING",
+    "CARD.OMNISLICE",
+    "CARD.ONE_TWO_PUNCH",
+    "CARD.ORBIT",
+    "CARD.OUTBREAK",
+    "CARD.OUTMANEUVER",
+    "CARD.OVERCLOCK",
+    "CARD.PACTS_END",
+    "CARD.PAGESTORM",
+    "CARD.PALE_BLUE_DOT",
+    "CARD.PANACHE",
+    "CARD.PANIC_BUTTON",
+    "CARD.PARRY",
+    "CARD.PARSE",
+    "CARD.PARTICLE_WALL",
+    "CARD.PATTER",
+    "CARD.PECK",
+    "CARD.PERFECTED_STRIKE",
+    "CARD.PHANTOM_BLADES",
+    "CARD.PHOTON_CUT",
+    "CARD.PIERCING_WAIL",
+    "CARD.PILLAGE",
+    "CARD.PILLAR_OF_CREATION",
+    "CARD.PINPOINT",
+    "CARD.POISONED_STAB",
+    "CARD.POKE",
+    "CARD.POMMEL_STRIKE",
+    "CARD.POOR_SLEEP",
+    "CARD.POUNCE",
+    "CARD.PRECISE_CUT",
+    "CARD.PREDATOR",
+    "CARD.PREPARED",
+    "CARD.PREP_TIME",
+    "CARD.PRIMAL_FORCE",
+    "CARD.PRODUCTION",
+    "CARD.PROLONG",
+    "CARD.PROPHESIZE",
+    "CARD.PROTECTOR",
+    "CARD.PROWESS",
+    "CARD.PULL_AGGRO",
+    "CARD.PULL_FROM_BELOW",
+    "CARD.PURITY",
+    "CARD.PUTREFY",
+    "CARD.PYRE",
+    "CARD.QUADCAST",
+    "CARD.QUASAR",
+    "CARD.RADIATE",
+    "CARD.RAGE",
+    "CARD.RAINBOW",
+    "CARD.RALLY",
+    "CARD.RAMPAGE",
+    "CARD.RATTLE",
+    "CARD.REANIMATE",
+    "CARD.REAP",
+    "CARD.REAPER_FORM",
+    "CARD.REAVE",
+    "CARD.REBOOT",
+    "CARD.REBOUND",
+    "CARD.REFINE_BLADE",
+    "CARD.REFLECT",
+    "CARD.REFLEX",
+    "CARD.REFRACT",
+    "CARD.REGRET",
+    "CARD.RELAX",
+    "CARD.REND",
+    "CARD.RESONANCE",
+    "CARD.RESTLESSNESS",
+    "CARD.RICOCHET",
+    "CARD.RIGHT_HAND_HAND",
+    "CARD.RIP_AND_TEAR",
+    "CARD.ROCKET_PUNCH",
+    "CARD.ROLLING_BOULDER",
+    "CARD.ROYALTIES",
+    "CARD.ROYAL_GAMBLE",
+    "CARD.RUPTURE",
+    "CARD.SACRIFICE",
+    "CARD.SALVO",
+    "CARD.SCARE",
+    "CARD.SCAVENGE",
+    "CARD.SCOURGE",
+    "CARD.SCRAPE",
+    "CARD.SCRAWL",
+    "CARD.SCULPTING_STRIKE",
+    "CARD.SEANCE",
+    "CARD.SECOND_WIND",
+    "CARD.SECRET_TECHNIQUE",
+    "CARD.SECRET_WEAPON",
+    "CARD.SEEKER_STRIKE",
+    "CARD.SEEKING_EDGE",
+    "CARD.SENTRY_MODE",
+    "CARD.SERPENT_FORM",
+    "CARD.SETUP_STRIKE",
+    "CARD.SEVEN_STARS",
+    "CARD.SEVERANCE",
+    "CARD.SHADOWMELD",
+    "CARD.SHADOW_SHIELD",
+    "CARD.SHADOW_STEP",
+    "CARD.SHAME",
+    "CARD.SHARED_FATE",
+    "CARD.SHATTER",
+    "CARD.SHINING_STRIKE",
+    "CARD.SHIV",
+    "CARD.SHOCKWAVE",
+    "CARD.SHROUD",
+    "CARD.SHRUG_IT_OFF",
+    "CARD.SIC_EM",
+    "CARD.SIGNAL_BOOST",
+    "CARD.SKEWER",
+    "CARD.SKIM",
+    "CARD.SLEIGHT_OF_FLESH",
+    "CARD.SLICE",
+    "CARD.SLIMED",
+    "CARD.SLOTH",
+    "CARD.SMOKESTACK",
+    "CARD.SNAKEBITE",
+    "CARD.SNAP",
+    "CARD.SNEAKY",
+    "CARD.SOLAR_STRIKE",
+    "CARD.SOOT",
+    "CARD.SOUL",
+    "CARD.SOUL_STORM",
+    "CARD.SOVEREIGN_BLADE",
+    "CARD.SOW",
+    "CARD.SPECTRUM_SHIFT",
+    "CARD.SPEEDSTER",
+    "CARD.SPINNER",
+    "CARD.SPIRIT_OF_ASH",
+    "CARD.SPITE",
+    "CARD.SPLASH",
+    "CARD.SPOILS_MAP",
+    "CARD.SPOILS_OF_BATTLE",
+    "CARD.SPORE_MIND",
+    "CARD.SPUR",
+    "CARD.SQUASH",
+    "CARD.SQUEEZE",
+    "CARD.STACK",
+    "CARD.STAMPEDE",
+    "CARD.STARDUST",
+    "CARD.STOKE",
+    "CARD.STOMP",
+    "CARD.STONE_ARMOR",
+    "CARD.STORM",
+    "CARD.STORM_OF_STEEL",
+    "CARD.STRANGLE",
+    "CARD.STRATAGEM",
+    "CARD.STRIKE_DEFECT",
+    "CARD.STRIKE_IRONCLAD",
+    "CARD.STRIKE_NECROBINDER",
+    "CARD.STRIKE_REGENT",
+    "CARD.STRIKE_SILENT",
+    "CARD.SUBROUTINE",
+    "CARD.SUCKER_PUNCH",
+    "CARD.SUMMON_FORTH",
+    "CARD.SUNDER",
+    "CARD.SUPERCRITICAL",
+    "CARD.SUPERMASSIVE",
+    "CARD.SUPPRESS",
+    "CARD.SURVIVOR",
+    "CARD.SWEEPING_BEAM",
+    "CARD.SWEEPING_GAZE",
+    "CARD.SWORD_BOOMERANG",
+    "CARD.SWORD_SAGE",
+    "CARD.SYNCHRONIZE",
+    "CARD.SYNTHESIS",
+    "CARD.TACTICIAN",
+    "CARD.TAG_TEAM",
+    "CARD.TANK",
+    "CARD.TAUNT",
+    "CARD.TEAR_ASUNDER",
+    "CARD.TEMPEST",
+    "CARD.TERRAFORMING",
+    "CARD.TESLA_COIL",
+    "CARD.THE_BOMB",
+    "CARD.THE_GAMBIT",
+    "CARD.THE_HUNT",
+    "CARD.THE_SCYTHE",
+    "CARD.THE_SEALED_THRONE",
+    "CARD.THE_SMITH",
+    "CARD.THINKING_AHEAD",
+    "CARD.THRASH",
+    "CARD.THRUMMING_HATCHET",
+    "CARD.THUNDER",
+    "CARD.THUNDERCLAP",
+    "CARD.TIMES_UP",
+    "CARD.TOOLS_OF_THE_TRADE",
+    "CARD.TORIC_TOUGHNESS",
+    "CARD.TOXIC",
+    "CARD.TRACKING",
+    "CARD.TRANSFIGURE",
+    "CARD.TRASH_TO_TREASURE",
+    "CARD.TREMBLE",
+    "CARD.TRUE_GRIT",
+    "CARD.TURBO",
+    "CARD.TWIN_STRIKE",
+    "CARD.TYRANNY",
+    "CARD.ULTIMATE_DEFEND",
+    "CARD.ULTIMATE_STRIKE",
+    "CARD.UNDEATH",
+    "CARD.UNLEASH",
+    "CARD.UNMOVABLE",
+    "CARD.UNRELENTING",
+    "CARD.UNTOUCHABLE",
+    "CARD.UPPERCUT",
+    "CARD.UPROAR",
+    "CARD.UP_MY_SLEEVE",
+    "CARD.VEILPIERCER",
+    "CARD.VENERATE",
+    "CARD.VICIOUS",
+    "CARD.VOID",
+    "CARD.VOID_FORM",
+    "CARD.VOLLEY",
+    "CARD.VOLTAIC",
+    "CARD.WASTE_AWAY",
+    "CARD.WELL_LAID_PLANS",
+    "CARD.WHIRLWIND",
+    "CARD.WHISTLE",
+    "CARD.WHITE_NOISE",
+    "CARD.WISH",
+    "CARD.WISP",
+    "CARD.WITHER",
+    "CARD.WOUND",
+    "CARD.WRAITH_FORM",
+    "CARD.WRITHE",
+    "CARD.WROUGHT_IN_WAR",
+    "CARD.ZAP"
+  ],
+  "unreviewed_card_ids": [],
+  "card_records": {
+    "CARD.ABRASIVE": {
+      "definition_sha256": "843912702bf205461319e5d85fc5dafe230134f9f8af5359097f79b7880fa1ba",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b6416bef7e78e39e1d1ae29e4ecaaa93a899871064c36ed95cf3bda4235b197b"
+    },
+    "CARD.ACCELERANT": {
+      "definition_sha256": "19bd79a95c03d076213dac4a64eec8673e39c5f457cb5b186d18c2c538e15560",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "32f2c8c1e81fa34141539069688846ebb26e2513fd0ff063ad833e3e7085db0b"
+    },
+    "CARD.ACCURACY": {
+      "definition_sha256": "1b3831369faab98080eb841161ea57eb53cc0e24cfd8451d0290e516819362e3",
+      "verification": "native-review",
+      "mechanics_record_sha256": "5968e4e95d2fd67f64daec88efa8b11b1d95cfff4fae2ba18f39db8f5bace298"
+    },
+    "CARD.ACROBATICS": {
+      "definition_sha256": "3ee3ccd097acd1f4593ab643653b0f283d114e11b7a3bb62c77dc84d73d17c2a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7bb43e59569a908efaa62ff69b36fc557591312c11075aa27637c23755efbc3c"
+    },
+    "CARD.ADAPTIVE_STRIKE": {
+      "definition_sha256": "1a88562b426047126700e2b83e437a924dbf007408d034c224bd924fd16bce93",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "789ba21ab2237fdf7b76802f397e2366e3e76eeae720c4cb91a938cfe4800b46"
+    },
+    "CARD.ADRENALINE": {
+      "definition_sha256": "596def70723291255840c345b0be949a930fe14713560034bd25cae2abd1de92",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7c483d8af64d57af114f6c2fcace5405c53cdfdb66490c996f9770528cd7e319"
+    },
+    "CARD.AFTERIMAGE": {
+      "definition_sha256": "d12345eee2d43210d2610b9189a88f906d22a32b8bd1361af03802955b435e09",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8fb75af663ec7df309d93be7838113eebc9225f12c6f0f4ab41f654b5ce98de8"
+    },
+    "CARD.AFTERLIFE": {
+      "definition_sha256": "7f49271434af09edd4b3e37ced557e0a40fd4f4db574ade91eda8d032c548a53",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "15d34712741c806891f88f14347bee219b96f82f4ba63f7ea5f11ac8c6f8d76d"
+    },
+    "CARD.AGGRESSION": {
+      "definition_sha256": "f93b9da1d02671aa49f21db9f84948e35242caa8b85df8954722d5b362f4956c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "09f896f8adf4af1c3537ff2b21833680fa543a1060f0421b348dd460d62c4a0d"
+    },
+    "CARD.ALCHEMIZE": {
+      "definition_sha256": "20e8ef13db6541354d9de2c5192f28f8550165fb091a723db96b49dc280b2d17",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3cbe9456d971498e78d37dcb3e137470b3052988923d8d6f8c701294256d3306"
+    },
+    "CARD.ALIGNMENT": {
+      "definition_sha256": "11cc0bb52ec28fe10a019218fdb729a5840c10b89268a3ec52677963e44a5482",
+      "verification": "native-review",
+      "mechanics_record_sha256": "02e44a3c64120a830ee99092f429cdbd31154c4a291b7c1ae25c8f4cc32f6559"
+    },
+    "CARD.ALL_FOR_ONE": {
+      "definition_sha256": "e5b572f3c3853ef94ca0371761424fc521184722604c7c4b897fb01eb751ddbd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9b0b1a227742f3fd9baf6739e4e782ed5d4c0ee9f85ed16d6e7ffd82412d44ad"
+    },
+    "CARD.ANGER": {
+      "definition_sha256": "29c2089f03c9a9fba166986bf4e8e7461ae1cd033eb589c8c3fcd1627b541d03",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "41d9bfd0f304d515290b4e2240baf8f729644f9e559deab7b43cd582e7b9cbc5"
+    },
+    "CARD.ANOINTED": {
+      "definition_sha256": "05212198a2bc7a249d6aff9ebaae399e73910153f7917f66539dd72891bf730f",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "20b6196c5fbf8ae4d6e0c558b3e31b651afa77d36f84358eb5b493ee1d4655e8"
+    },
+    "CARD.ANTICIPATE": {
+      "definition_sha256": "26b5c93d81c06fb1d57927a37ca3182239c58e884e69a4e58c77aad17c9791c2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ab5d366fa0fadc6a8518c90cf9f20fb73311db8d63a21d42e992b0a2f857090c"
+    },
+    "CARD.APOTHEOSIS": {
+      "definition_sha256": "3ab8ef346a89a5f51919409d3f8df8bb20db369b7de71af1e5c5173ba2381ac5",
+      "verification": "native-review",
+      "mechanics_record_sha256": "21dc13c2b88b56155dcca57e97039b15beb4144b2124622ad1791e274052e06e"
+    },
+    "CARD.APPARITION": {
+      "definition_sha256": "3fbc6d258876089b50205f5ef4d980ce2ab75e5389b625c98be5bdbc89f5617e",
+      "verification": "native-review",
+      "mechanics_record_sha256": "cd8a920f8c140d9c824333960f1759855f0f5fda10c8218596d8271ea9ead0c0"
+    },
+    "CARD.ARMAMENTS": {
+      "definition_sha256": "1d9aafe923fea28d05883a6b847396ab42b2cb008ae60eff22acbc1ac9b6ac26",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c738eb3c0ee2ccfbf9d21bd84717fc948bd176df2aca5460702b1a3f51c4b7bc"
+    },
+    "CARD.ARSENAL": {
+      "definition_sha256": "7db4bfb9b191a9edd0773cc5e67cf90e0a62cd0c9e3137cb2310c03b05241965",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c28806d48f6353d7ed5b21747b73509cbf9c66ce70ee35507d2afbabe1afb4e7"
+    },
+    "CARD.ASCENDERS_BANE": {
+      "definition_sha256": "925e1855c5c743605c99c5366fed7e2951563da4671b52cb05b8fcf9b913448f",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "788e9ab892801905992f5fd781574c41967fbbf1597e3ad0eb90bb2aefb97078"
+    },
+    "CARD.ASHEN_STRIKE": {
+      "definition_sha256": "7024789ffbcf1e36cd296f9cce1b8909a61bf01728152e1b9f558572dcb6e01c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "76415137b002ed8f559817b4888de10a2a91c40fff3180ffb0a96f772ae2f785"
+    },
+    "CARD.ASSASSINATE": {
+      "definition_sha256": "641e52f31209915e6352d5563c37d6a41a94fc876598298299f68673ab04aade",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8d7ac74dc756408401733dd45c34d17957b03c51cb2192439a34c120c84965dc"
+    },
+    "CARD.ASTRAL_PULSE": {
+      "definition_sha256": "3761654ced162e3959d7aff778019d56022111c9ff4a575d5d63784d5692a316",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "115ab1dbd0cba687307f49cd480d4590eb46e76f870bd6dd5ba61566e3be9f83"
+    },
+    "CARD.AUTOMATION": {
+      "definition_sha256": "ba82aadb118b9c54fc86d9531cd9b3e3fecd0cc3f2b237ccaf7cc96639511c16",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "54db97b2d54f5abfde1f615c644f1702e4afb05aece23fdcc7da04ce53b73592"
+    },
+    "CARD.BACKFLIP": {
+      "definition_sha256": "af5ff7bc9381a70cbc39af78a55f5ca845855bafb90e62292365fc086ee10f10",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "49fe56d2cd381cb1e8cd9c9a45f380304b424dd89a148a5a875d965d80533033"
+    },
+    "CARD.BACKSTAB": {
+      "definition_sha256": "188bcd1fd35303a83e1678772008965db52abf105b510a782a6faff83c279bc4",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a6782e7844d923df46db6afb0474c43c7c15d451bc3004a91c882eda7a21f06c"
+    },
+    "CARD.BAD_LUCK": {
+      "definition_sha256": "1c44414ab445f1266aa3650e6cdee3711839a11dfada22241536d79a6f0ecf8b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "980aa00d9912d54054d5af5c37f9ec87aaa0f15494ddd68da2ff673e618ece2f"
+    },
+    "CARD.BALL_LIGHTNING": {
+      "definition_sha256": "d0bb9e80bde1e149051efee29630432a68b112951d0e93fddf49465d0b5527a4",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9bdddf5f24e7d6bc4fcc46f72dfc5fbc40aba6482de3a977f39b4c7b6d57bd0c"
+    },
+    "CARD.BANSHEES_CRY": {
+      "definition_sha256": "d7a3aa240c2206cd9558e119a34450c9d5aba06dc8988159712fde490bd8d7b0",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "589edec008f8e4418c2ab690a5a59850eb1ff3f84ab4d7f19e719727cd6521b7"
+    },
+    "CARD.BARRAGE": {
+      "definition_sha256": "302eccaa1a15fe931947927fa0995df5651dc88e4ea1dcd4c00276f101f85d8c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b6dd1e8d3ec15ccc10cae46396a138d4d8555b1553abefa7f92be213e9d34483"
+    },
+    "CARD.BARRICADE": {
+      "definition_sha256": "71b82ac3b4c8e22d7b1b2606d296b6760b27c80ffce8999c87764bf3aa0e6f21",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d8bb7b0f77c388ff7872e9533abf67a1c01591073c344f8ca7be74c70d650fd8"
+    },
+    "CARD.BASH": {
+      "definition_sha256": "368bb650d332984a512142ad3dc5870339b0814b1b92a9abca7f06910efec9f7",
+      "verification": "native-review",
+      "mechanics_record_sha256": "1502ed06e20c4b2d37f6f8be1cdadc2e0c259c3b0c22d3f0bcbe3ab4587ecb6c"
+    },
+    "CARD.BATTLE_TRANCE": {
+      "definition_sha256": "572c91bff78707a7eb406dc893f17377d1c733db4dbbd4609fb5a70f53ebea88",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "baad488c3f955338dfcbf4adcbb4260862701ee957ac2aaaa0f1682d44dd5e07"
+    },
+    "CARD.BEACON_OF_HOPE": {
+      "definition_sha256": "7ba726a7b19d67dd481528c3cdbd7ca9d37149ca34ab8f5cd8456b9506ae9058",
+      "verification": "native-review",
+      "mechanics_record_sha256": "bed8d42772120831e5d386d8783e647a7598b338f83de7ef36934ceb11c77f02"
+    },
+    "CARD.BEAM_CELL": {
+      "definition_sha256": "96fb4526cb8b6031c5b4fecb144c5850216a89b8a6f0edc9e6034f1bdf650c51",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "457a9f25a836e25e78f4b25609001772fbc6347641bbfd99f33f45a6f0acb2b2"
+    },
+    "CARD.BEAT_DOWN": {
+      "definition_sha256": "e1d99a1d3913d65689378cc25eabad76b35a03b5c87f736dc502a50803384ef9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "be387f13abf82178035d31270676a501a7dbbd83889392511ce225c57e64223f"
+    },
+    "CARD.BEAT_INTO_SHAPE": {
+      "definition_sha256": "ac7e25af8bcbcd3f1e0cb8e707ec9cd786790f686b004d59eae2e7e7cc15f784",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "2b8fda0ab6a635c344a938922117e38b81bdcb2332315437d99d1cd7a0d4b143"
+    },
+    "CARD.BECKON": {
+      "definition_sha256": "c0ae5c8d49273b34c5159ccf9530dcaf37358d362fad721c95e9c7c03d7fe54d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "779b921f7d7528d3ca5028b1467b0c1e45bb28eb23d29c3ee6dda151599ae6ef"
+    },
+    "CARD.BEGONE": {
+      "definition_sha256": "c57e60ded621f13fc423c5414df4d91aee25ceb77b1441b8c351a1e358e8d6c6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1b221f299a7ec59939e7d1f2524eadea7bb6c9133e55c78ccc110910188ad01c"
+    },
+    "CARD.BELIEVE_IN_YOU": {
+      "definition_sha256": "753231e2ccad9dd32c67c309dfd4844acbaf90c79dda2d1559c2923cda37dcea",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1517b9322b4d04ca5d6e384cc6a5182469092d564788118dd8338b7820c32740"
+    },
+    "CARD.BIASED_COGNITION": {
+      "definition_sha256": "d32362d80d791b7bb61d8d0770ff31d20fdee5149634e001f849ef361598fcda",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "34c33b54df57c1b28eaae6d7659bdc4af057453bc3c65d38a011f0cd7713f592"
+    },
+    "CARD.BIG_BANG": {
+      "definition_sha256": "2408dc337338333514c2e0fa1cd77ab0109f2c6d11925b2669c3bbccf541f0e8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9e3c905eb0fb5e9218bad83e44e5bdc18f7d9cb85bd5a59bab724db4d91337d5"
+    },
+    "CARD.BLACK_HOLE": {
+      "definition_sha256": "5b965164a7a7b954c261033e9a10514de179d3be7614ad4e521048c7e7803dbd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "44c7094e1ae89dc77849708ef7fd85e5042e3c412c6db10d4b5410bab05a609c"
+    },
+    "CARD.BLADE_DANCE": {
+      "definition_sha256": "54bcb906b97d99882db1a72781208faf47bdc8c4bab3ba1e0b4898f590323931",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "374964d6aa15863afad32c493044fa6770a1936f991c129f71fff52dc94839f4"
+    },
+    "CARD.BLADE_OF_INK": {
+      "definition_sha256": "5a26ad70ae161d588dcd0257819d200e09f9b018ac5f6f878864d4a6d581b585",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "aa5e9f68153a6c3f2ba893a2790e66414f57e0524fbb42bafc9a41aef168af1f"
+    },
+    "CARD.BLIGHT_STRIKE": {
+      "definition_sha256": "e246395457ee49e7bffc56773b38c5f890a241ff71de53170d68721fa10afa22",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "521abb87e046e8adeac212d30f2c33400f233c42bbc1937ff871d72b2db0057c"
+    },
+    "CARD.BLOODLETTING": {
+      "definition_sha256": "3787518b201654ff4b0cc050eaa0c61237d0ee3a1b0a147c37a50a66e98c323f",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c23537a5f3adcaa7f491ee6f780ee1d7923c2a697799d0315d1c71e4099029a7"
+    },
+    "CARD.BLOOD_WALL": {
+      "definition_sha256": "2ce56cad532dec9dc04fe8cdfebb5af4d867f97b40d56faa11b2b31883b7165e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7dd6f4ed47c23d57b1ccfa719680747a7cf77012cff154840fac8bb93d3eac8a"
+    },
+    "CARD.BLUDGEON": {
+      "definition_sha256": "2770f0c34b301cc901d0f9865192f83847b7d4c0687ff393c9d36e21fd9c6ab8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6bc0534cc5ec166f726630975f87061de657b8bce7ac6c093cea4a6ea66a8ad2"
+    },
+    "CARD.BLUR": {
+      "definition_sha256": "d9db2f6fb8620fa36edc5ab1aa64f518eb677a533b7273f895e34a8a0bc14cb0",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "df830af5f52dcbbfb3dd947f78ccbdbce87e80fe22f887c7268927f4aa6bc0fd"
+    },
+    "CARD.BODYGUARD": {
+      "definition_sha256": "816ce685ac63760e71dae614e6ef094ae7915f860a8efe4fdf6764794c9f0ad0",
+      "verification": "native-review",
+      "mechanics_record_sha256": "668410ddd4dc0417e40e70fbb3bfad711a2819ee9444ff71aa79ffce336d7346"
+    },
+    "CARD.BODY_SLAM": {
+      "definition_sha256": "b554a0550946c792f2564eb1bb1a2f028679ab3a39c6d5166ffc5f9d3089b4d3",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "996642de47a75df8efc719c57e86de1b8c8ae9286c9eb559eb02fcb61b73f95d"
+    },
+    "CARD.BOLAS": {
+      "definition_sha256": "95608c36495758b4f515e968ac7c3a677bc525818b0d0abac10532b25bc6cc21",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7817fe777b766274bbbdf762d9247e759a1a80038d75039d6b46a7051bbdd6b7"
+    },
+    "CARD.BOMBARDMENT": {
+      "definition_sha256": "97634c7f31f70efa8eeb486a4a0312f9ecb7f2e8d549747fe0c026a8e45178a4",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9b45811961cdd65def4d8927a433f2e6cb95fce0825c7821ee18a5696af70f44"
+    },
+    "CARD.BONE_SHARDS": {
+      "definition_sha256": "cfd26780e5f0dbbc58dc11f181f06c767927b945d1acba62171c80440e75646c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3d23534d5dd5653c85d5b7a8ff1de3454061f7fff14b8971a21316a0430a17b6"
+    },
+    "CARD.BOOST_AWAY": {
+      "definition_sha256": "4d6d954ea4e6a1b65ad3b811ed6f0b18c783f2e35dc101262605ac9434736cb6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ddf1336151a3a8d12d109479c572fc4a76575d224eb1f9546167e04cd7d1ceff"
+    },
+    "CARD.BOOT_SEQUENCE": {
+      "definition_sha256": "13098d5077f51bee11ec1fba35300e68188f5a3c1386f7793c189abd3c9e744e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "da4482147c984f81deff547285f393e6d382017090ddc476791d315a4e9ab378"
+    },
+    "CARD.BORROWED_TIME": {
+      "definition_sha256": "8ef62926b53baa1ec27360569c3970683e9b051e83460d582c9f58934f6c3ebf",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a931a61c406ba000c8a94a2a0fe7a3e12361db5945a5a597c9b1390346de8828"
+    },
+    "CARD.BOUNCING_FLASK": {
+      "definition_sha256": "7efcd4ec4532ff53bcdfdee4c07c71e9091ebfb2ba0375ea41c6937e7a704401",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "733c36ae05ffc2438f80d716bb9eac0aba6f0e820932f1ccd2e42d3402665360"
+    },
+    "CARD.BRAND": {
+      "definition_sha256": "a446f7f575b20e103fbf23f5bdc90ad48b9570d7e8a0f08fa2eaf3a78676dede",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7b695c398624649f03ea459b5755fb71d84f459716ae12ef034b5c6d3f732e39"
+    },
+    "CARD.BREAK": {
+      "definition_sha256": "911170f2aef4662fb0c22de295f55c5844e0811663e1cdd002cfe046c8581312",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b2f74320395877459c64a2f44931cd67edd5ec6ddd250df3d61822c4cb6a49de"
+    },
+    "CARD.BREAKTHROUGH": {
+      "definition_sha256": "ecf88399ce7afd4ca6c49766c54956b72929bef1259570d0f9a62d27913f0110",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1033e94d7bf605de80fbac394a7a75d1fb9c46cfda40bfe733157d68a2c5765a"
+    },
+    "CARD.BRIGHTEST_FLAME": {
+      "definition_sha256": "a2046806e0fd1a4f33a9c102c0573de5f4f8a9d2363eed7d29794d3fd5c0c829",
+      "verification": "native-review",
+      "mechanics_record_sha256": "7030fb73aa62377b30b768cb4e4d81fe55de139b5fda6c94bd949a27a7f6335e"
+    },
+    "CARD.BUBBLE_BUBBLE": {
+      "definition_sha256": "0a84db11191ff8464658b324e118d69ccd89eda4e841ec5d8e9a34f53779d36d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "bb463b3d90399c2da659a779ef83b5521984e04b7d4b24b6c2bc254fc8d8cfcc"
+    },
+    "CARD.BUFFER": {
+      "definition_sha256": "fad565757c0114230a231ea28e19602c7f5a566cc4fbb3491833d1242e7ca1a1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1827cfcaa65149ad1e5ad711908abf5ea376c09847a1bfe9352cee7e9fbb5dad"
+    },
+    "CARD.BULK_UP": {
+      "definition_sha256": "23731da07be709d8b900fbe8cb1753d1367bd9bed1bbd13de6c750b79900c9c5",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "94f8ed2fb3e65e491e78d8bac268e4f2b7b0d0c07d7ee62b9428bb47cb628357"
+    },
+    "CARD.BULLET_TIME": {
+      "definition_sha256": "7ff652e8714818299f9d80606b79be2787e85757c7e517205e5fa0e99dcffd64",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1ae0355d059694619beb340c80c479b0b57c41af2332990ee73f33bf6a224005"
+    },
+    "CARD.BULLY": {
+      "definition_sha256": "779897707970d9e46565efeab5e1c2e17e6ddb8fe327c474661c280bf01fce78",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "051f6f9fbab7a853e9c4fa5499dcdf0d93d215bb25a0240c1ce3e20422e422df"
+    },
+    "CARD.BULWARK": {
+      "definition_sha256": "bbefc1d44240f11a8b4f2a4c9107e2cb002e17e272dd07c6245dfcde52c8790a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ba78e3452f37cc3bcab5d5a21134d948fc8cadfbf71d0d0d0d8d47419d92aec6"
+    },
+    "CARD.BUNDLE_OF_JOY": {
+      "definition_sha256": "e320767b94a84c96dfe903edf3444950fa5485cec89eefafd8fc44ff8f2c0cfa",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "45d50fd86235a6260f1090ca2c3acfb279a3574eeeec8753c6f5c7113fe27584"
+    },
+    "CARD.BURN": {
+      "definition_sha256": "2254a3b91589159c83bf53e1f5e96b145aba0a2ef729350621dbd098b0345742",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a05edb275b084c0d7708470d9236257b3fda992241a8c02519a85d2aa4f05799"
+    },
+    "CARD.BURNING_PACT": {
+      "definition_sha256": "b802324268261d68dec777a4198b9532b86a1e9633b7e2de62c4d88f9c096ef5",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6031e495ecadb52af46c2e8623548c498d6fd09cd2dbe269c43f8dba11968e81"
+    },
+    "CARD.BURST": {
+      "definition_sha256": "fbc7c872bb7edeff969c5b852c6a5cfd2e65b22a4f77559433fd275617b7a9b1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c80a845d6c5a7a1ae118496f2d36694c493c6e75fbe65dc2fef6aea453b824ad"
+    },
+    "CARD.BURY": {
+      "definition_sha256": "1c6897c12ba021ed5c987109679bacf2cf0938fcce361e6297de3923642ae810",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "08f861abe41f62f770daac4ac20232305576f86018299bb1c99908f771f8c951"
+    },
+    "CARD.BYRDONIS_EGG": {
+      "definition_sha256": "a67ffe2dee74f31811e7f18f515a89e84cafe9b24ed47fb5e3d4f315ce2ee533",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1a92227fce842eb84174e60c93f16ab0242dbd3a10f8b3150abc9a185776fad3"
+    },
+    "CARD.BYRD_SWOOP": {
+      "definition_sha256": "ceca1dceac7cebdfb20f46bffdc19a7433ffade275e5bad054de6003634a1b62",
+      "verification": "native-review",
+      "mechanics_record_sha256": "d271065def0bea1ef6a53f24b540797ff39201b99347164969351db271c6e0d9"
+    },
+    "CARD.CALAMITY": {
+      "definition_sha256": "6736be4159c7f52c7751bd8e859cc88b3e48df2ab053b8aaeed44811fc4f74bc",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "cd31d98ee4186b64535589c033faf66889a7f5a9f5ea2f7854bd0d81494be44e"
+    },
+    "CARD.CALCIFY": {
+      "definition_sha256": "a173f6d8c8cca17dc4f0ad3e8457cd159ba1233bd10e5eb27d3640e6eedd50ff",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "15d3644def7bcd99ed547e7196f4d08dab4ed2b152bbd5c809761ff02264e855"
+    },
+    "CARD.CALCULATED_GAMBLE": {
+      "definition_sha256": "a6a430cc9751d56b6b25ebe14fb6b434beccaa544c9d712307b51bb70db1f3e0",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e2bd7d32978a580f7fd366d4a624f2bf8003eafa236dc8e3a7ab23f282587c0d"
+    },
+    "CARD.CALL_OF_THE_VOID": {
+      "definition_sha256": "29b703fa598a0b827a93ff24ec4779815d176d173b19ad7c322a2ecf331688d4",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "021392eb6d4d10d2a8310224dee437ae89250aeaee48f4e1662bd5e8ab3ed58e"
+    },
+    "CARD.CALTROPS": {
+      "definition_sha256": "f9c72350cf4b00e486509a7eb6bd041f2ee32a1e66cf92bbce1d315855e16b82",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b4c51b3cd2056900ec0f6cfcf87e1579c96bf5b7ebc1044c701db3023eceb142"
+    },
+    "CARD.CAPACITOR": {
+      "definition_sha256": "0b11188751cb4c31779afadf7d692eb8ad63ecf5d40239f1bc5febb064a1b3a3",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1f68db2f2b86ef8ffd762f78bd0c53f6568b051b171d13079804b084161c7262"
+    },
+    "CARD.CAPTURE_SPIRIT": {
+      "definition_sha256": "59b06f4ee647e2c4ddcb4a13cde3d47fe0695addd5ebf4b21f124b7f4357260e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b9d5506d948a027f0e6777bce33c8037605edab968b827696bc578f1c8c0cb05"
+    },
+    "CARD.CASCADE": {
+      "definition_sha256": "1609222e13b28784d26afa5d7629940ae9c7062760aa5f9e845ad9ee676c4f6e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3209aeac65dfdc02b743780716cbafc9608e82b06b590eb4df672fbbf71625e2"
+    },
+    "CARD.CATASTROPHE": {
+      "definition_sha256": "7f177b6a6484a31682bf81e8f6b7eee8eaa3cfcf269eba667b42d204fd4ada84",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b6fc69dfb5e418cd46ba92dcc3c00efd94a6aeae70f751c3f207f5a123c2e613"
+    },
+    "CARD.CELESTIAL_MIGHT": {
+      "definition_sha256": "e018a04aeb227865df894240ffc5654219820ce7072e862fbfa754a841406de7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "203e7165da4494faa1afa8f52bddfb9c2e426169097ce3a9499448fcd8adf4b3"
+    },
+    "CARD.CHAOS": {
+      "definition_sha256": "0ee78c5c1bfb13270d365726f46209922d10724cc6efb4babbfac6906a7c1003",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6fdd146d588550dc980b0a56654235467cdaf919b54c799eea5bd7819c9bb480"
+    },
+    "CARD.CHARGE": {
+      "definition_sha256": "9d8485138192d311a570642e1f062646c40e47978bda3c2556bdd0e63bfb4b10",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d79df727244f71474a1a49cd48192f1f8e6d3689665b8da5dbfca1f1ec4090f7"
+    },
+    "CARD.CHARGE_BATTERY": {
+      "definition_sha256": "cfe5c04e8f6e0958f696a62d1b3dcf57d8d4770e73b294c0f551a3035f966875",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4ac87b75b41b2c2f958d2600c7764676a3135a7372658ae2b6648306138df2fd"
+    },
+    "CARD.CHILD_OF_THE_STARS": {
+      "definition_sha256": "01dc8626eac2915d047fa2935282b2c3c9e82c7db74eb0a489a204317d50fb05",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "345721cb9e086a68430adc49f9a6e20158e3570b7225b002238c363712f0370e"
+    },
+    "CARD.CHILL": {
+      "definition_sha256": "6813629e9d1534464db39791543c70274e3d2f26e109a99cb59462e378b060f7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "85c8c126cafe3660eba35eedb986c69616603d1d21f84764e2163f06105f7a6d"
+    },
+    "CARD.CINDER": {
+      "definition_sha256": "b7ad61466591c09416980950d3629bfe28f7a41c7f88b40bfeef02d20c55d96f",
+      "verification": "native-review",
+      "mechanics_record_sha256": "20c7f167d49aa8dcde41ffe4a7e77abde65ea2d7686636204a374a23371e8f6e"
+    },
+    "CARD.CLASH": {
+      "definition_sha256": "27e2c844738c12dc84a5476982425284eb7bfd62ace2decc5fb65acebbc55d29",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6637a016e551af68a7daed5c2a24b1efb710afd65afb325dd6af6de1e5186116"
+    },
+    "CARD.CLAW": {
+      "definition_sha256": "6144cae49dcf511b873a57dd3841e1d1ec54e782a2f2c930f42b0799618e0ebe",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3eb16cd72b8c7b1ec51b3cfc14c660ce657c2fb29a01aaac3c3e4459d2d75dc8"
+    },
+    "CARD.CLEANSE": {
+      "definition_sha256": "0763799828ca7c9d34aa23c0bd08e810360bf5cf6ffd76d21ad724f8cff8e0ba",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d9c2ba9b60f7d06964a647b46e1bff053958f5fa4c0339c5dff523ba03e6b057"
+    },
+    "CARD.CLOAK_AND_DAGGER": {
+      "definition_sha256": "a3718a26288db1ebad580dd390d0877f2cd92e95635d9f0348785b16af1533b3",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "edd7d40573b2787c87c8dab1a9e212b53c16801d84ccc5caefd434ceda3b5be8"
+    },
+    "CARD.CLOAK_OF_STARS": {
+      "definition_sha256": "8cdf84059d9e0f2f2c9ee6c64aec9aac059762dde2067b96e5d3b3caa9d57098",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f34801438d266e8fd66c69b02553545a95e75484ba8ca403abd6940c23578cf2"
+    },
+    "CARD.CLUMSY": {
+      "definition_sha256": "0fe828ebf5f551cbb24c1fc4f085ef36ad63dd6a816461494b5adff3cbf847f7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "69f8181d9196f60b5444176e5610bd44b2b18f74ed85d169b6165c67302da260"
+    },
+    "CARD.COLD_SNAP": {
+      "definition_sha256": "3f9f0bf5d57489d697bd6447086ca7c378e702860edddc6755f01b6f2ac409cd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c854017077de36b718144eaa1e2910b0cfef7f489f5a7498cc112076febc1413"
+    },
+    "CARD.COLLISION_COURSE": {
+      "definition_sha256": "61f6f97abaf0f4fdd5cf1e648e990fbdc0cf8a059a91af2beec8b267062e4763",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e9f838a7a353989fd9021d8a3534e22af7f142aa547fa7dbfeea2eb70e240bed"
+    },
+    "CARD.COLOSSUS": {
+      "definition_sha256": "7deb9179bd046acf49527bf9a2dfbd261747bc6e81027f362d136dbeef22b7fa",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "888e74f6b08983c6f2a9e4bc7bed24f7285eace11e896a1437d4e9ce520ead14"
+    },
+    "CARD.COMET": {
+      "definition_sha256": "5eb5e3daaa24f2fe6efa1123b4213b565207ed7f907a534c9d3a3ec421ca99ab",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "933ae45d8fd311025256f944368f68654565ee73289a527f8f3142ba67a9986f"
+    },
+    "CARD.COMPACT": {
+      "definition_sha256": "84f1e17a05bbb29473d786fbab2d5a3257000c8a0947d66d17213dace1e4b0ff",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3f6ce15437f0438ee127bc585b5336bba91c93f23072feece96c2e8996d339b6"
+    },
+    "CARD.COMPILE_DRIVER": {
+      "definition_sha256": "2f35e163b2e741a746b985ccbd0dc3e1a2dac759e088489733ca31cc3a1f32cc",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "905cbc6bba1f8f6462fd302fd12265dd8e17a091d7d3c899396af9d95c28db36"
+    },
+    "CARD.CONFLAGRATION": {
+      "definition_sha256": "2824cf8a8e7256b8a362d824e04e3848d34c908d3fee010c2949e5facbfb39d8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f2b6656c44da0c42aeb71c8e1f695614d5a8f05d3c064c5473cd130faeebbcf9"
+    },
+    "CARD.CONQUEROR": {
+      "definition_sha256": "ea9c91026ce3c600f32b922c0852d01f896de611f0aaf3b2add4bb867b990ba1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "75de93a14c6c62feb903148751d2a0dba599c7753cfa1387a0454ebb4a519191"
+    },
+    "CARD.CONSUMING_SHADOW": {
+      "definition_sha256": "31f8e6092750a11ec22a3e07312fd698743ae649a9125d1747c2fb92949a56f6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3f1a010fac1e14668f2b472f494f79143ee5dc7d080cf3133c8c2d8ab0dfad23"
+    },
+    "CARD.CONVERGENCE": {
+      "definition_sha256": "0f4b6698aac50d9b43c9d19de535d799c757326020200e34d2bf878cd80da447",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7c000a5e8006d82351fe61ccd7512a1dd60aa1ef06090bfa105019a22fa4d9e4"
+    },
+    "CARD.COOLANT": {
+      "definition_sha256": "475edfa96adf432bd57ba658ba8bc20ae09d91a739bc022531f35f8ce8bd0912",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f9ea90b49da2e86187d866bf748dbe42cec2cafa41b0f67172d06f7cefed489f"
+    },
+    "CARD.COOLHEADED": {
+      "definition_sha256": "b64886265eacf6f6124f72189bac7ac3c8fa97fa2af7c9b8b8f327914fde2eac",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "15c90c89cf1974113690a20eaf34049aeac04ac569442ee4146ce66dcbd2269f"
+    },
+    "CARD.COORDINATE": {
+      "definition_sha256": "e13c6beba491c6b86e729f88eb7c975a654db2da3f17d98669a7b375eec005e0",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b75a26e014095bb7b2bbebd52b7c2f0055f57ae4499e28bb406c1f1b6b008f67"
+    },
+    "CARD.CORROSIVE_WAVE": {
+      "definition_sha256": "709fd2df850eb1e285f6b4868f61cca3b9cba9f680a60ecab69a13d11dec6556",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "836011b2c348e96a341fad94f8e1d8a4fdbfdad6a7f749c2abd8c51622df6630"
+    },
+    "CARD.CORRUPTION": {
+      "definition_sha256": "86d7a2632443ca7d763c957f93c66c6dd440bbcb7770b440f59c1098bba75ed2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "edc2b2d12508fa470228328ff50060df82ab6a74599d14b914292cf89f18a89e"
+    },
+    "CARD.COSMIC_INDIFFERENCE": {
+      "definition_sha256": "c91ab32bb934ec6b2cdad70880edba1ecbe5cb4f935d214fbc5cb24783dfa933",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "963b212d191d3f9474b68085e4bdf06db4864994daba2575e436fd0ecfe75b53"
+    },
+    "CARD.COUNTDOWN": {
+      "definition_sha256": "2eb0b14a4435c9710f33f3f30c31910c7da3a67a1ad0531c536a7f875bd38412",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "443a69ecac3ade5ae0e3d771062b7bf36aa9cb0ac432561e01fb31850576f32f"
+    },
+    "CARD.CRASH_LANDING": {
+      "definition_sha256": "92717292112b6dbf0e1314dfd7f23d1949e14d44ffe223978a535f674a64eb46",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "76425b8a940b583aae372fcb21de80cb5685a9a8fc0c2c8d1b727ba685af31c8"
+    },
+    "CARD.CREATIVE_AI": {
+      "definition_sha256": "b69cded42a10e284d767a373a74e229c4d2c0956deeb61d7fdf0e7d30e692c67",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "0385d81c1a8aebfe5870c849306ad28788feca60a37f341d82ccca95de4ee166"
+    },
+    "CARD.CRESCENT_SPEAR": {
+      "definition_sha256": "2d6b91217f68569565b696d5d1d0d31be45e005bc8734aaf5d4b7daeb1bb277f",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "47582ef7682e1375594416a1779fc0c7db411c54d0f062e99d22a4bb8f81dd6b"
+    },
+    "CARD.CRIMSON_MANTLE": {
+      "definition_sha256": "46e68d6155ed33d5453c4427592828d4589e9e2c670666ff53dde1ee760de723",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "50b034d335ca6fbcbf995c9e98998141bbeef4d4d54e8bd6d4dcf980b4559857"
+    },
+    "CARD.CRUELTY": {
+      "definition_sha256": "a395863cfb5d8d79dc37cdae9ef2ec8bcf5df8d6fa8a21796cacf9bb46dcfa34",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f6e02726da2a04d0d5273220b85e90a3aff3a8416790fabcacbf251908c2ea27"
+    },
+    "CARD.CRUSH_UNDER": {
+      "definition_sha256": "9813bfe31141757b14491d574619a2a8ad8d24ec18e64d936e72f3ef028df30c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "bb4220fc69219497912f660c78bacfcf0d5ae8a9f195aeb109d8a9576d653dfe"
+    },
+    "CARD.CURSE_OF_THE_BELL": {
+      "definition_sha256": "20cfef1bd15b560174fa76e5d4525c322861a4403d0f34c69a3bbfdfd8946721",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1538014c07d5d7fca319025a6b280a9afd3354647c3142f7e6bc98e648129e3d"
+    },
+    "CARD.DAGGER_SPRAY": {
+      "definition_sha256": "9cbbefdb1e5f2bbecb237132f09f1d752eb866f577c12b9a2ca2e6965f23e8af",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f08b59830a05597166a10482b19a7b7509e1c93be68f4fa5d0fcb2c17704b9f7"
+    },
+    "CARD.DAGGER_THROW": {
+      "definition_sha256": "16e143c698f1ff3b866e261f3083c98d919878afc4af5b507fea7f9bf1c8d913",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e9e90057aa6ea3d51e614906c631ac9c4122b71892f9291a21844312d17f9f8f"
+    },
+    "CARD.DANSE_MACABRE": {
+      "definition_sha256": "08ff2d2cdecf843c1d00a3a3643ded4df77ce087707a0316b639105cbf733b85",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ddb9d39ad41c5fd567fd55ddd0862630fa1b8781c23f0655bb3095c2b8dadde5"
+    },
+    "CARD.DARKNESS": {
+      "definition_sha256": "4608170256635176c1236b6bc8166eb7bd6849d8488d02c141a6fde8e0a07e43",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "231fd6394e432463cb93dec91daa25410cb2a7a746111c43c6e279dd085b3ccd"
+    },
+    "CARD.DARK_EMBRACE": {
+      "definition_sha256": "8c01995865f494962c9a456cf5cbee438a393825049de60b939ee8eda501ef24",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "5695e1b875a97a32ec44ea074696ebd504b69f91caf6867ca105692e6499da70"
+    },
+    "CARD.DARK_SHACKLES": {
+      "definition_sha256": "bac2c6dd2bc3683dfad19d012c8802eea8b1a85ee99439ad80201ade01fc9826",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "39c391b55d6ebca0e7cc53e4cb13fb3a5f917c09defe040872f1aee84243d1f4"
+    },
+    "CARD.DASH": {
+      "definition_sha256": "780ba979d8a812967a4a8346bd6b628746f9e71ac8d4f818ef965c5eecd5d570",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c97d25c0ea9b262efbab6b47f4e7ce88516c099cae64c17b1748338ab151ce28"
+    },
+    "CARD.DAZED": {
+      "definition_sha256": "41ef3c48ad9459d39d364f2f38863bbd15827e01fe2b48a243b40444cec0a28b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "111c0df3c55bac3b574b2feed3292d1e23552a772e1e08349f44631fa3e80660"
+    },
+    "CARD.DEADLY_POISON": {
+      "definition_sha256": "cd1d91f32d2638f938a845d5bdeb9306da6e0966d7d47b28c53c50281f6803b8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "79cd9a6edd75524b43c935fcfcef005c7e4935416095be1a38acfdf74514253f"
+    },
+    "CARD.DEATHBRINGER": {
+      "definition_sha256": "83294d5e426351afb06ed7ff5981d9daf909881d70e77a56ba8f72f6bdc29bae",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4118e77423fa9f74184450994aa53a152a9bc75c47bac8ebb5f3b29ca6f39384"
+    },
+    "CARD.DEATHS_DOOR": {
+      "definition_sha256": "58e3493f3683dac5801fd095817519fd225e8a9e89cb9701b65a68df6c0abb5e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ffa3d8f734602636be856fe502174b90c543ef2ca06ba04ad2dba726908e2dd6"
+    },
+    "CARD.DEATH_MARCH": {
+      "definition_sha256": "28b1fbc8476078e0eab57ef44b3a115bff15e951a9d006bad4e2462773077de5",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e2ecc1b04d3da737235b4b0f2ce3a34e7f698445fe9436b12864ce2b664328d3"
+    },
+    "CARD.DEBILITATE": {
+      "definition_sha256": "4c6d686041b3da145da8683c6f9f865cb7d0f9cb2451475f83ea1812db859813",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "923e2d9733abd6653b0093fce8181caa06355d60f4a34c7f1821595b44b1cdab"
+    },
+    "CARD.DEBRIS": {
+      "definition_sha256": "f4123f7c2960eb2029980206b8a8ad7b2bc9f64b074410049710391c288088a7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "5b8dac8b1572d32abfa43c9e765dbd39eeb629f29ed27009d14257cac8da5b5a"
+    },
+    "CARD.DEBT": {
+      "definition_sha256": "b2755e65a61fbed4442398e53dd718f971db42d351cae7d762f9d3c637b467d1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9526a871c81b383b6aed1a555aafd86a27d445c1be1cc363c1a568a0d73e3f3b"
+    },
+    "CARD.DECAY": {
+      "definition_sha256": "897edb12e9e1dc06bd21ed0cccc6ba71d3ffb2284c366f46f97ac42233dd2b3b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e19c72635eb761e96b4cfb756af41dba0f977c3f0063a4648486be316e246181"
+    },
+    "CARD.DECISIONS_DECISIONS": {
+      "definition_sha256": "1221c869d3e8b707f0b7bc8a564bd4c4940dcbd3c32fea51daad4c48f0fc8f9b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d05601b9c4c04de469fafaf2dfd23fc3ce9db7cc359a75425638cf1500b95d89"
+    },
+    "CARD.DEFEND_DEFECT": {
+      "definition_sha256": "a00a470ff4f40eb861fbdb9f864e58b00e82a1fdbfe7c19f1e039d56acab3b2d",
+      "verification": "native-review",
+      "mechanics_record_sha256": "3cae2035c39e23139c30fad21a1ad35fb4b7b88dfeace8dc34875faac284ec81"
+    },
+    "CARD.DEFEND_IRONCLAD": {
+      "definition_sha256": "f2707481e0be1a5e856cab0dc788fb520e80fe3dff9c0a0f53869b857b8c7740",
+      "verification": "native-review",
+      "mechanics_record_sha256": "148eb60de123c0c094f911c1d1497936e54e55c3d191a31c53b8724ff395f42a"
+    },
+    "CARD.DEFEND_NECROBINDER": {
+      "definition_sha256": "ceb7107226d792e0f45d981083ddceee235d7e37ef9af9c87beffbc2bdadeeaf",
+      "verification": "native-review",
+      "mechanics_record_sha256": "93d4d49ca0ecf9688230e3ea09a93d9dfe6c49030cf392ecd770f7d9bcab0b97"
+    },
+    "CARD.DEFEND_REGENT": {
+      "definition_sha256": "021b06891f3e34c491f488ac1e675dfe681aa8b2fdb41cec6b4bb4f7a17dccdb",
+      "verification": "native-review",
+      "mechanics_record_sha256": "c810687c17382ffff9e359ec0baf5eb2b2c0ca09f87a37aceb3251614234311b"
+    },
+    "CARD.DEFEND_SILENT": {
+      "definition_sha256": "25e86818896023e41d83487a01b026b686cbbe9234540cd67606c990574e5087",
+      "verification": "native-review",
+      "mechanics_record_sha256": "17f51290c75cec7475930eb682149d553fa3e2b25ff99d9e72285181e07d50e1"
+    },
+    "CARD.DEFILE": {
+      "definition_sha256": "0fc8c885eb605ee639d57e4c332210fada41cb9cb2dd50025085b3e477a49aa3",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b43569ccd687d18a9b5c9cbd83bc47895d989c2f400012a57c544c4fff285e5d"
+    },
+    "CARD.DEFLECT": {
+      "definition_sha256": "e8a6861b7493f848458bc45d5f8bfbd66bcd1a49f97ea4075153cd32c0dab828",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "847a24bebdd0c045b3538845a26b834fe659dbca340a5362ef7fdbfa9e992aab"
+    },
+    "CARD.DEFRAGMENT": {
+      "definition_sha256": "80ee08a81619587aafe7c152604d933367c9a12798c8e9da82a6742f2155df80",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "13150e7d29a12360c95479c66a4228cceaa27f9228a337552bcc55785ff94a83"
+    },
+    "CARD.DEFY": {
+      "definition_sha256": "829fc7282d99e13651e6afd0c93302a82c0141d7b939a3792464f2dc4b582982",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b80d75d33cdcdad81aef164a485610228be728603012d48a8fcea4e1dfb1af32"
+    },
+    "CARD.DELAY": {
+      "definition_sha256": "0bc2b13723fe7664c463439e0e40fa81383d8eef2e97b81521b4c761bba0e250",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9b0cf86f3adde8248bc850b45caccd8da5656be84b7dfa6a87ba3c425d1a5a12"
+    },
+    "CARD.DEMESNE": {
+      "definition_sha256": "7322b33f92542ede59e7b7064e2db50691beba5b31ce89188187628ac495518b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ca3978914143b1866b38035b175d78d83ea1a1b8e6a3f762ef03a75237db23c9"
+    },
+    "CARD.DEMONIC_SHIELD": {
+      "definition_sha256": "69fea0b8ae81d1b823da636eb8654317c9be610bb5aedc150ddbb7b87afc1b59",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9d69722b880712c8c6ffd4bd51267f7e4dc4f54ee215ae0a9481380b73413bb8"
+    },
+    "CARD.DEMON_FORM": {
+      "definition_sha256": "668a291971ddf0f55638f93fab2a87a479598f5a285076dff72b82edbb7dcf7a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "60a34eee4854889fc75a4b8f1c4350853690f08c18e689b474f7875f72a0dd14"
+    },
+    "CARD.DEVASTATE": {
+      "definition_sha256": "ce4431fe90666351b6cec8fc02e8d5da575e79d316d0710198ac5f7376383e1a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b55bc1a20cac6457e5458428e6e362c6e09a9d876bce61e3c81fe646e0a26416"
+    },
+    "CARD.DEVOUR_LIFE": {
+      "definition_sha256": "7aed7cd2eb8a22d9c98ce5903e42872621f44555a98e2f2858feb6efcb4cd988",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8602bc4d8c898ca26a9116f0a69a6b12a73a282da97442a7b565fdbdfee25bec"
+    },
+    "CARD.DIRGE": {
+      "definition_sha256": "482c53cbd2745abdf38abac723980d4b290c9712d2c60e559795925afe80a38a",
+      "verification": "native-review",
+      "mechanics_record_sha256": "33fff9153e725acbc797ed63e2ee024b0246cf319ec4aa3e9f1c51c26f145d5e"
+    },
+    "CARD.DISCOVERY": {
+      "definition_sha256": "99dcb58c864bbda3d6d5a4a7809961a522422fa69cdb4892f91244ea03071ff1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "0f70a072b2dd88806b3aa71a34c1db26be9bf7459c7f836fd7b79bfefa8e1feb"
+    },
+    "CARD.DISINTEGRATION": {
+      "definition_sha256": "0da71e3058c4264e9cf426af54ee45c104d74c1ab8cb926648df9cc03d25622f",
+      "verification": "native-review",
+      "mechanics_record_sha256": "585a46ca7b7505efaa85dba0d778c612d37620b0009fcdd4c597ccdcdb3119d7"
+    },
+    "CARD.DISMANTLE": {
+      "definition_sha256": "f05eee5269c09b30362631cc022d55c7c9ffe50926fa6f12b1a7312ab22e9853",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a2016da3fab8350476a4fbc2de316a6c8c4de2a3e3dca6b8d6a2fddd2881dd93"
+    },
+    "CARD.DISTRACTION": {
+      "definition_sha256": "cbd1f8baef9c280f02b486381513bcbcaf99e5fd951020c442c635f4a700f781",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "36ee2c0efa51af9109f1d6eda05993428f4d3d7d3f103f926871e33dfeb9b448"
+    },
+    "CARD.DODGE_AND_ROLL": {
+      "definition_sha256": "563426cc9f6e184ae58491a315e5bbfad9634f870aaf987748d5bbbf42ca3b10",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b95e9d5f5f9b038732015018619fbb62957edd5241b4e45654b54eda7e10ea1f"
+    },
+    "CARD.DOMINATE": {
+      "definition_sha256": "a1dc4446e5f82c80480718c920c9309667898a564a127c46e56fd8e6e9f52e7e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b5f6f87a0b19e2b4ec7a950ca1c71ba72c25c222439978876ded8f80e312fa28"
+    },
+    "CARD.DOUBLE_ENERGY": {
+      "definition_sha256": "c774265cad4b3603f2ca915a1e429234be99e3856ef49460b715e1538977f114",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "190414ddf0eff1003169ad4152667c72ec00c9ab8420879311c51b317b65662e"
+    },
+    "CARD.DOUBT": {
+      "definition_sha256": "6e3184762798b81592fdd2f18b951eba0b7e669454349be62809fa4bb9168238",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9fdcec11fe5eacab1d73d34c2194ebe2e1ea948b57793f409cc58a48c403241c"
+    },
+    "CARD.DRAIN_POWER": {
+      "definition_sha256": "ff6e3e5c86484fa4cee0418191b1a69b486cab23d7a24b90045c4524a688443e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "34d3ae6e6330d674506ea0a0916253c1854967dd6fb3ba7408f5c2a8c4b4cad0"
+    },
+    "CARD.DRAMATIC_ENTRANCE": {
+      "definition_sha256": "ff8788cf3f2e463abfc63c8dfdeec569a53d9042e664b2a34ac59b913234c28e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e8d2df58a71ab891ca156398a9d70fef96c96c805f7cb069bbad6f63494be861"
+    },
+    "CARD.DREDGE": {
+      "definition_sha256": "759c07b552069d79bdcebcd1070d7bf60d81a5f9ff29a65765f72b85cc1b7868",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "eb7703d989d48aa21b2f546d5d4258290a3c1a359c6fd753cd588d3a5701a7e0"
+    },
+    "CARD.DRUM_OF_BATTLE": {
+      "definition_sha256": "a6a0c53a80614a1069b08675b71ddba1c9d15218de5a243c6075f91c899dd884",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "baf01714981c033c52631f76b306c7fe3e1f7119bb5b511cdd14e4beae8952cf"
+    },
+    "CARD.DUALCAST": {
+      "definition_sha256": "2d7bf8a2d2f0a87d8e4e3c840c763d4eab882d231fc8c790b734583d40275b34",
+      "verification": "native-review",
+      "mechanics_record_sha256": "e4659c72e8904f1e1c7190671968f80c2a3bd106ab4895e03cd47a12491b244a"
+    },
+    "CARD.DUAL_WIELD": {
+      "definition_sha256": "72f282dbfd18a1c8c58b941dbb8b77542887d27ee07ec58e1bc505f12bb81458",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b17026bac451faae67ebcdd3b11b168384bab856174d663ce2562bb5637574f8"
+    },
+    "CARD.DYING_STAR": {
+      "definition_sha256": "3b4a54a520c9ebb50bc7357ddb784e1c6dc5e900d45ef5d55591cd3018ba238b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a43ff9a429629013338906c79374a5f51d0407e752224fb83180541a9e304d4a"
+    },
+    "CARD.ECHOING_SLASH": {
+      "definition_sha256": "4aa690c52090f3009f14f6b0094c48eb1933c0d13782871d11870f56cea602aa",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9f86fe222ae3506c7edd0982bef4546323d8e8fc4cecc4a48cd76a1d51f15704"
+    },
+    "CARD.ECHO_FORM": {
+      "definition_sha256": "145775f40b276faf46f8bf3179f98aa9dd7eaf5265aff067fad555d68f827f13",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f22c22ad8a2c225aadcd119985b03247294730260cebd5c0f24f39cdf94a18fe"
+    },
+    "CARD.EIDOLON": {
+      "definition_sha256": "80f00bd6e7cdd8fb73aaf6bf1363dd6ccc432dd1224babd97ea3f84d437e7709",
+      "verification": "native-review",
+      "mechanics_record_sha256": "8f3d2b9f31cdaeef3d80fd03148984a83cf4ef465bbbb4301186e61f45d4dc2a"
+    },
+    "CARD.END_OF_DAYS": {
+      "definition_sha256": "1708eb91fef4a81e881fb0c0e87e69b62443fec0277ec38fe34642221ae4e5a6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "0b7bed302fb6bafd03a2f7dc8caeb9de697b46874205b1c2568966dc671b1b0d"
+    },
+    "CARD.ENERGY_SURGE": {
+      "definition_sha256": "755a2ca0ea91f4e84b252bb9e18d89cae71d08325780e70034f6c6122b26b504",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "77ca9304122f2636c4fa5c8ac39232e9f0fb4c9dc5ef372dafa1b8952be14a28"
+    },
+    "CARD.ENFEEBLING_TOUCH": {
+      "definition_sha256": "44c113e51ec4a68a2f1b644818909490d10bea16c572e0397efbc677515132c1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "95a0ef119151ec9f06198480854ed5fb3180871131171d548ed32a04a38e3bf2"
+    },
+    "CARD.ENLIGHTENMENT": {
+      "definition_sha256": "0728fb65a7941754fc7d71dcdd221f25e770ccae922a6531df434ae4e8538d5d",
+      "verification": "native-review",
+      "mechanics_record_sha256": "dee8da4404dcefb600fc2d11f6478ef0fa5ed2149b14d40aa81db1cfe5f03868"
+    },
+    "CARD.ENTHRALLED": {
+      "definition_sha256": "6f6e17ea1dc154aeabee91a65659440228e5c1f3e676eebe053b474d7c212e86",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c62de309eb1c9bc996623b2c90a174eaadd1cf034d395a979a18c2335a8edcef"
+    },
+    "CARD.ENTRENCH": {
+      "definition_sha256": "d128bcff993470b5e832c4d37ebdeeda416913c2e8a912fc7d25498ff0988f32",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "68dffe9954c4ff15c23aaa188963cda539f9c21f118ccad3e6c7887fc19740b6"
+    },
+    "CARD.ENTROPY": {
+      "definition_sha256": "4a1f4481db250e11d4abc9390fb2050b8dc4691b2b273cd2c6ce71e72f7ff15c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a235a8c41435a02b581e87964d87f62dabfec8b5819d8e8dad97c41132710292"
+    },
+    "CARD.ENVENOM": {
+      "definition_sha256": "a844d07c07afee5265ddc070cfbd5fb37451e52444228702b687d54a6bb5ea39",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d8b5db5149d461468f4d2424ca900492112e43b23b373edc3c2094330f085137"
+    },
+    "CARD.EQUILIBRIUM": {
+      "definition_sha256": "a60082a80030edab52ff481e91d14081c6aa28c72e68ee1e2bc6fe4f152fa834",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8791f8fd0531a9274a417b59cdb100a6a1639bc71890f4443ccbe654a1a329c3"
+    },
+    "CARD.ERADICATE": {
+      "definition_sha256": "cac78c1930fa19d0cf5a484830cd667d43703594bf6c8be9d442509c2bffcb96",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "626fe83600b97b878b4c8a981fd36edfa25a325b92f75e46ec10b91bd1fe1876"
+    },
+    "CARD.ESCAPE_PLAN": {
+      "definition_sha256": "f0fdedc7e8317b534002ba6a1e3ee56ec787b539f3a1dacbd20848255fde30c5",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1af692a3e65ab6a14be54830e5babb50581be38f3ca618094b61104854197c38"
+    },
+    "CARD.ETERNAL_ARMOR": {
+      "definition_sha256": "f9bf2c3bcc83b6859732e66253ee27b4da41a0b3053825db6e708e164e87d639",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "197780acd11b177b7d7eb185295c5b095c30b6bdfa1e7b77116e38a900fce99d"
+    },
+    "CARD.EVIL_EYE": {
+      "definition_sha256": "e0dd0995e6aa163633e0d5722d6c7f35683294104a2e7f343fb4e81002a486de",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3ba14c9b076b79125ba98c5b426f670a5d4c1c7e3f80e59866a5c5aed4e0e674"
+    },
+    "CARD.EXPECT_A_FIGHT": {
+      "definition_sha256": "75afb2bf5aa6262d3e2a01bce0d456b87731b87c4956c9499b9dd03e9c2b826f",
+      "verification": "native-review",
+      "mechanics_record_sha256": "4454fd012d8118c43d8e1bfd894e1fbd95023bc050be5d4cb58d34970e8fe080"
+    },
+    "CARD.EXPERTISE": {
+      "definition_sha256": "8745d2a756df32a75a478da186262087b228fe2f12ad157bbc54064515fda2a7",
+      "verification": "native-review",
+      "mechanics_record_sha256": "877aa440f564af7ae23a117ebfeccf26cd851fc15ee324349276599bc248987c"
+    },
+    "CARD.EXPOSE": {
+      "definition_sha256": "25961f8cb11d70c97bba910b5c07e27759df217bfd2271bbe334d2e3f3720a3b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "335e97d42bb6de529eb8b060ff9f57383772f30ce8ac93f7769c0568493722c2"
+    },
+    "CARD.EXTERMINATE": {
+      "definition_sha256": "9897141a5ba69815c18f4612ed86d5b4d6ff1418a5dbf465c72f38e81a896bcc",
+      "verification": "native-review",
+      "mechanics_record_sha256": "340bdb84ead2eec02281ae813f1bc5ee2cbf6095bea2ba9e49d069fe282a3db9"
+    },
+    "CARD.FALLING_STAR": {
+      "definition_sha256": "ea2c7c7f5f1e28e14a469ac2c0d1e0317d7b207ec78c262f2dad14f2a50d023f",
+      "verification": "native-review",
+      "mechanics_record_sha256": "2ff361429f82932266eabf403ec6ad8094622ee9f79c5b2a8f5712bc58670467"
+    },
+    "CARD.FAN_OF_KNIVES": {
+      "definition_sha256": "5e94917294b3819aa1d87223bf1a6499970a0cb5a2914809287c26a7ab96e339",
+      "verification": "native-review",
+      "mechanics_record_sha256": "6332a830b5830bcf241f524fe0b39f7672c81043f99868baf69bf9f7f0b0012d"
+    },
+    "CARD.FASTEN": {
+      "definition_sha256": "ce1b7729f701daa29b39f1f42ba34b5aefff7553c06e840eda44911b0392393e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e41464aa4a41a2071bb1b4a3d872e8550c525c3e897adf725eac43ca6f9a5aef"
+    },
+    "CARD.FEAR": {
+      "definition_sha256": "1235970b4fed5497b5925594fb9feb78a3238f054d6e33d814adb931af5c7c89",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3fff15b4e7c3a76a5cc434bc8f4919c05d4aa77018ac1281662d83be90c3685f"
+    },
+    "CARD.FEED": {
+      "definition_sha256": "e2ed8ecbf992205df6032f182a23a351b8f32c7358d38552048e1db904ddf525",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9624f625047d16c959d33b48a04e654c9020fe04d14e0b6c768086cde3d133ec"
+    },
+    "CARD.FEEDING_FRENZY": {
+      "definition_sha256": "1b5249517d986ccae7c54a8c6127572536646d42b46b94de2c61d0627a26bade",
+      "verification": "native-review",
+      "mechanics_record_sha256": "f35616ddc6bbb217de14da0eb6621152eb2094b90e688e0b23ee3928351bf567"
+    },
+    "CARD.FEEL_NO_PAIN": {
+      "definition_sha256": "e9b652eb19a412b5f748528ef586d489d6402782405024ef117f17ec2b19257d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c7ce7ea4b0813c800946674b7b8450995cab4227866ff2f5b02b2b206a59b1c5"
+    },
+    "CARD.FERAL": {
+      "definition_sha256": "d447bba0ac462ade9c23895552101152d1a2dab6aa446f80c7e1884816b1d2ca",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e7d2ca189f7f372ee43afc99d745b02c62071bf580d847c08117cc11b8e5c6a9"
+    },
+    "CARD.FETCH": {
+      "definition_sha256": "2ca1279f5ea82c5352cf407e3261af4571cd89a6e7462eadcfe99fbc9090772a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "2905c8722fdb2464f8491a6ce2e220fd5b53851eccf92e64be72daaa98650cfe"
+    },
+    "CARD.FIEND_FIRE": {
+      "definition_sha256": "d13c22a1cc57fdc71ceb86811d03c7463b1e12d4984618c36f4228329437a329",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6ae26747b5fe6e55652fa23e2918f57503fab436ee54db331a506295b2294b83"
+    },
+    "CARD.FIGHT_ME": {
+      "definition_sha256": "37d5267fc20684e8d320112cf0f4c7900b4e630e31b96338e9d1a5ae0b2e172d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f029f25a03812d38888a77c4b746d2897c6c03878ab8f2ed179d5db9bb9ef1da"
+    },
+    "CARD.FIGHT_THROUGH": {
+      "definition_sha256": "d4a4e9e323cebf6d6d986b6b509bd8f9d0e61b78777e888c2fa7c3a18c0991ff",
+      "verification": "native-review",
+      "mechanics_record_sha256": "8a776d8fe54a7623fb11fb5d5b3ed15c47ef4dd23f0093a321ee0018d38ea1bd"
+    },
+    "CARD.FINESSE": {
+      "definition_sha256": "85a0628a4605f6e85d304d0de2614534bf4a1138203682f6a8817a7b30331752",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7255801338eb2fbae7fb4d5b3d0e292230e8e61114f096de976cd45ae51bdfef"
+    },
+    "CARD.FINISHER": {
+      "definition_sha256": "abf82cba30d51edbc1fe7627c52d3395540395997b7a38245a9eb320e409e14a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "33cbaa19d24bc861de15e450be738ec511fc6e79f225bced13ca4a3871582693"
+    },
+    "CARD.FISTICUFFS": {
+      "definition_sha256": "bbba478020027640e6acad0d8b5102d1647b93d12097133203ec85baa04e4572",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "193bb8d46f518214e915bb44afc4809d2f018f433fdab79564b6937ce9270c3c"
+    },
+    "CARD.FLAK_CANNON": {
+      "definition_sha256": "d68a5a73f91af8d75f1d9e65aa6b345575a6dcbb32c2cfb1581ed140a5c02f82",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "70c2cb5d41acf86d0ef308efee97cca8d06768b06f7fecb8d7d0fc33e50c2c6d"
+    },
+    "CARD.FLAME_BARRIER": {
+      "definition_sha256": "8f3cf2ecc74813d99dafec741623da84af9ee9f20df8b7ebeb04137e085618d2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8e1c3ed862df62051b52663bd8dc355141860e96b7805a3bfa80402d60e8cb9e"
+    },
+    "CARD.FLANKING": {
+      "definition_sha256": "f288eb5459f3522fd7e6f5a863c7cbf9b12909d6aa59613b172e9703b691b00f",
+      "verification": "native-review",
+      "mechanics_record_sha256": "dd4f45831e34451780a62b103098cf1a266ad82324401a1ce1f446ec517457fd"
+    },
+    "CARD.FLASH_OF_STEEL": {
+      "definition_sha256": "9f1e61b4f05b9e3674233975b6f9d2d8eac07c7992173332144cb50132d7e7bd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ef62f19e416bea962b5ca7b6517129a0fe7bcb4424daae6e30fcb739c10183c4"
+    },
+    "CARD.FLATTEN": {
+      "definition_sha256": "e176507e590ca59da8f374a2a3b7dadb6b09b79b0c2583b28b6e441a2064f0da",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a22b0e1c1a9cf3c60c336916a80717869ae6c21d7e19fb404f3c1c0329264f03"
+    },
+    "CARD.FLECHETTES": {
+      "definition_sha256": "a61e58427508f0528cd6fb9a3168dec451a6b2a05881cf0ea4c7046c972c43b7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "2ea836a2bd23c238c2ffe4dd7fad3000107731673c793bcd69c511affd5730e6"
+    },
+    "CARD.FLICK_FLACK": {
+      "definition_sha256": "a488535c8b761ee6a8ca6ba49ffc8c8dc58139cd7ef96463688abb7ba79362dd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ad2a2981a0ba42451f8c4be594e0665e30c0f6710b6c8d854c207921164eb91f"
+    },
+    "CARD.FOCUSED_STRIKE": {
+      "definition_sha256": "1e46ae69f3bd226c2549dfd80cd5c2991447486a9c09c92ce0d1a408b40e6d81",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "887a14bfaf7393d77b55f3c1c22794b56fe147e57e85084466c1e71b439c132d"
+    },
+    "CARD.FOLLY": {
+      "definition_sha256": "271ebb531b636946ad8f69ba21a061cdcc48fe0405dd7d739d865c316bdbf603",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "597512ebb28c1a3f5c1d876fc95152f56a06990b36365c0c43f4797b682fd433"
+    },
+    "CARD.FOOTWORK": {
+      "definition_sha256": "03c45f76eb2ac123d7211be498fec4b4598084360f31a670740e138a584a0e47",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "809cdf0a45504c38e5648fd9ccb777709a22e21e5eaa6745b88bd3204aa898f7"
+    },
+    "CARD.FORBIDDEN_GRIMOIRE": {
+      "definition_sha256": "4de00541ab8d5499a061c1cbb5265f2a446f10bec1ca776ed86acb372d07a91a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d252fa120d8c5250ea653aff8583e6af7c8226a40c4be98c75333eba25ae907b"
+    },
+    "CARD.FOREGONE_CONCLUSION": {
+      "definition_sha256": "7ed93b39e93b8a0aac10e4d8e5f6ec06533edee97924bc87bed057f6481a981c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8dfe9cf8bc20d9718f85e8760d700a2630dc88195f1f47c532da92ead9d399a6"
+    },
+    "CARD.FORGOTTEN_RITUAL": {
+      "definition_sha256": "73102d95acdb93d50706a4660cd71978441088ed659c688a4932a815da77e291",
+      "verification": "native-review",
+      "mechanics_record_sha256": "cee4759b6b8b2aa9352970196d39b674968179734629dbfb1047b0c943893548"
+    },
+    "CARD.FRANTIC_ESCAPE": {
+      "definition_sha256": "b0abddb2f008fc590b37d2f86d4cb4ec2ee68c7941c4e39c950b294252a96e33",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "cf7ed1ae73901bf9b08b2eb1ebe9d976146f626d947d336c73feda7012107813"
+    },
+    "CARD.FRIENDSHIP": {
+      "definition_sha256": "4a16209e43ebd9311e8ba5d96769acf098b5ba4790c23bb88fa7975cca04323b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "5426ac21948af9038f4b0a5a47c5beaf57386fc4e1291de600b809f20813b6be"
+    },
+    "CARD.FTL": {
+      "definition_sha256": "c41a2abf65fe522441d9c6186a625cae5a5fcc94b4dc08494bae27345c154554",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c7eadb6d1305dd9015d11c970b75c45f4019ae7bb0fc2fbaac054fdf85425eb4"
+    },
+    "CARD.FUEL": {
+      "definition_sha256": "fc58b69eb082422943f8652481a114f8a9205822a6fd1438846c0b7ebf23ba01",
+      "verification": "native-review",
+      "mechanics_record_sha256": "ff47df23ed8cac501ccec1bcb2257b61fb1aad38ceea029fdf80c19a8752caca"
+    },
+    "CARD.FURNACE": {
+      "definition_sha256": "9fbcf33c00789d08cdc6126fc7b7b608dcb8198c74dd38abf6936a429dc75055",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "dfcaea372af645eab76753da0ec9c3698c06d6ff0abe4479db1530ab0e3564d7"
+    },
+    "CARD.FUSION": {
+      "definition_sha256": "9bc22b636506283a9a0b4729a8074758816ceaf77347c1f70740fc81b69cdb3b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "76be44fe67ee6903f50adb6210480496169d1aeef12684d5ea949910309179e3"
+    },
+    "CARD.GAMMA_BLAST": {
+      "definition_sha256": "255648db13cd7927248f806f0da80a6c4b2cace34598e77114e9e8ea3fb38e89",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d57999d97042253c06a0e7d65679f90298675119ec63267b8dc8638cd4053755"
+    },
+    "CARD.GANG_UP": {
+      "definition_sha256": "1a78be032f5d036e5163a74df5b8ea9bf5dee05b78a89fc642683d8552ae8423",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "01de9f774bbf393906d73aecc9876c2d5af9f0f9dad0b27a3ba5aa78ae1d663a"
+    },
+    "CARD.GATHER_LIGHT": {
+      "definition_sha256": "9156fbc9c36875b7058f0523a2c18db47c6dbb381ff7a5f0bb0877faca1fd1b9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a22829e40047f2a9703c17926f5f713fc62267193568c9348dcce59d1ebd118a"
+    },
+    "CARD.GENESIS": {
+      "definition_sha256": "1fd6a920305a1d7000c985dc3a45d37e5002d79df5c0a51a479841484cb9dbb2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9e7af3e2b31730d568b23d586a25d3fd98e246577fe727a09a37bd989138f204"
+    },
+    "CARD.GENETIC_ALGORITHM": {
+      "definition_sha256": "46099861de8b952e5c6c86f68ec6f2ac2cf109a802c9b19b4f70eb4a89d56377",
+      "verification": "native-review",
+      "mechanics_record_sha256": "8f685758c25e6f927bcc709318594aca396dfdb7e3548d1c0390ad9cebd43667"
+    },
+    "CARD.GIANT_ROCK": {
+      "definition_sha256": "926eaa638821e22bc2d6090c8d017d19f3655182fea0347dcae99946e850ad75",
+      "verification": "native-review",
+      "mechanics_record_sha256": "a407d8c637a3c30cb60a8c664a8b7b6e748611eb23f6c001ec0d1fcfb17ca231"
+    },
+    "CARD.GLACIER": {
+      "definition_sha256": "bb7ce87df0c7fc7171921411334126a527155e7ad30ceef6857fc6c5647f8e8e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7fd0226fc773a43f1150cf8c2f94578aa3b8049051327f4fc8e02f46ea52a703"
+    },
+    "CARD.GLASSWORK": {
+      "definition_sha256": "2839877755bca869e9e00c6d9f2c5f375c0871fcba79638b08ff71d3aeb36d00",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "882765ab0c19b80b45726e377af70caced1d7f8d6e05f7a18c340361d5dd61e6"
+    },
+    "CARD.GLIMMER": {
+      "definition_sha256": "a7783eb2abf42cc1ccf0b2bb4c1cc0eaa6d0abcfb0a702fd5bf757e303b1c9a8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "19225fa2a4d2b80ea544a2fec4955063b033aa5a77eebbb09e1f8cbdf891321c"
+    },
+    "CARD.GLIMPSE_BEYOND": {
+      "definition_sha256": "470a8aa25922cee4aff2652c06b370d252c3286b8e18da828c1e7268dc69d6e9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "5e95e534e752d16c399f838e5fb1066de1e174933d7b8b83a43f5a731b135f7b"
+    },
+    "CARD.GLITTERSTREAM": {
+      "definition_sha256": "07a11d9182a59adf52bee4236ca65d395ff769474b4aa8e59554a24f0f89a4ec",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "43fb611a2ab38bfdb2a0e5e6b39632a246746133f6fb6a56eef3e600d772535d"
+    },
+    "CARD.GLOW": {
+      "definition_sha256": "a2c4b6442d75fd166c83c4525ddcedfd46768f013242e1f676bb6c672d57e255",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b7649ee2f240ff5c40e22ff813086cfccea2ed244f1a52d2ad14a0d7a5115b2a"
+    },
+    "CARD.GOLD_AXE": {
+      "definition_sha256": "cdef1685aa2b1269bb618d40ddd8be68e7f951628edde8e3739010a0d448d698",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "62b7d298c1b41a13ac02602cd585721778192484300064c261214d83f7b1fff2"
+    },
+    "CARD.GO_FOR_THE_EYES": {
+      "definition_sha256": "173a7ac268df350072dfe2b4d7c8c1ad2f42d892afe87b174e05f3d3e2007dec",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "58170fbf2fe34de0642882f62c4193d95ef65aff4abd65b485f3ea816ef61539"
+    },
+    "CARD.GRAND_FINALE": {
+      "definition_sha256": "a26ee84f13f42f9365ad5d332be95c8aacf2db8d8ebfdc02bb5dbefbc7658bb2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d9a65aed369d1e45cd02d1dfa0cac38f2c8719825c8fef784ebc28c296ff0547"
+    },
+    "CARD.GRAVEBLAST": {
+      "definition_sha256": "c5128439d9d507399e51886f7c4d426444d0a2e6f28b650f39e792542cad8f8c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f5d501f5818d4f0b8d65b7febf156e7d21d7572cd3ddd020f76eea56ef1fd536"
+    },
+    "CARD.GRAVE_WARDEN": {
+      "definition_sha256": "6d2297767442a1ea792d78e0b583aeff17b02008b57a1814ffeab418850a17bc",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "59760d8c20c581c837a266c5670fe36c9e4c95e2fdb3bed1dd0fcc450525cd9b"
+    },
+    "CARD.GREED": {
+      "definition_sha256": "78a8f7553237b8472509f3629c26399876604b3b6c11eeb918658320419a3cdb",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8e829343b00af2c7c76a8807ec367694b0c53e1fbe2bb0634d4c072122f73fd4"
+    },
+    "CARD.GUARDS": {
+      "definition_sha256": "6c647575ed00694bb6221504922e052d220dae928b1710d02b202e95ab232502",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "04efd126f10243aa4339853296342ea7986f1ae70ef12c565984bfd37ee541e1"
+    },
+    "CARD.GUIDING_STAR": {
+      "definition_sha256": "c74e67ba825b8e63d5198db841eb48e68206e2e1389fe1cb3bec1aacf412c716",
+      "verification": "native-review",
+      "mechanics_record_sha256": "37181fbc259e5d4831aa9a3f6bcd8efe28570e4530d38791145fb77eaf5dad0d"
+    },
+    "CARD.GUILTY": {
+      "definition_sha256": "1125b97547539071dcf980d39d57d46944e134792410c9800c3ad9394af2677c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3e993842298d0833ead6d1024c2bb69a7c1244b2d89999a33bb530c3a77a1d69"
+    },
+    "CARD.GUNK_UP": {
+      "definition_sha256": "b7a1711046f0d00edfa2500a9070128973c83e5284bc4ffa278247eeed9b42d6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "15cb5aeb8d737a31cddd0027ad6d69c165a05724b7c7e91f0840b7a553f6e402"
+    },
+    "CARD.HAILSTORM": {
+      "definition_sha256": "f0e7fc03b8af26d3a43dd7252b621731ed37b92b7e63dd042607d86258c4fba7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e484d0af3d9ce229c599260558a7871911b88e700b9e1f17024c8327f6bfa8c2"
+    },
+    "CARD.HAMMER_TIME": {
+      "definition_sha256": "fcf83a6081ef6f93ed07aecc28b39d959eef578d915b40d75d9fad7f9b6709f2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e6764ce4efa9ad8641c82435afbd9353245c0a6be3a6b8ca9b83df4964b3c5d0"
+    },
+    "CARD.HAND_OF_GREED": {
+      "definition_sha256": "3c3921a3fc1bfe988fce69e4aad7e44fed2e0702d5f4923509178266596e44b6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "74978aea96754624fca973b6add24e2439fbb0d504cbdd6dbba3657bcb66d365"
+    },
+    "CARD.HAND_TRICK": {
+      "definition_sha256": "6a1e1cb1d3a1b1bbd2a0eb0ac513af90c28ed66364f2b344b0a3ab73cf0cd9ef",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f136b40a147eecda4d763fe6c4ead9468ced7a5f607c1a86001498efc1737313"
+    },
+    "CARD.HANG": {
+      "definition_sha256": "219debc28fd662f8476c1c3685bdfb8fa6611b1c29e96e7fe6416311c9c37ab7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "978c25bb26119397bdeffe4d1e764dfa8d0647d3af65b59a742b60fcfdc181df"
+    },
+    "CARD.HAUNT": {
+      "definition_sha256": "0d6bcfd7052b25fc046aeb581111e6e475474d0e018ea5fb25ac4c90e8879362",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "44cb43af643f7b11c9eb1333f35031c539c036da338c68fc414a31711f2c4bce"
+    },
+    "CARD.HAVOC": {
+      "definition_sha256": "d4bc82f11ad9ef1ac000709dae9d57df51e7253049821e2a238d85ebdfc355bc",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "db7e6494b6f5df9ea9ee4a57d47d7954a7929119611672b84cfa25b2733e604e"
+    },
+    "CARD.HAZE": {
+      "definition_sha256": "088a80866ed9bfa6856955df4dea06fa83c07eac097d8f32b647ed298f99f6e7",
+      "verification": "native-review",
+      "mechanics_record_sha256": "a880376fa0889a4d7657a3b92289ea56e95eecb76177bc6bd9228e2fa7d92b5c"
+    },
+    "CARD.HEADBUTT": {
+      "definition_sha256": "bed1dd135e0dcf0bbf1329231e30cd2c6aeb98d094670dbc243672dc287be77c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c18ae72f5ee83041440b97de42c615b4671a1530012f4857a8c2b64128aaf498"
+    },
+    "CARD.HEAVENLY_DRILL": {
+      "definition_sha256": "78bf069074806960b60ab8f9e4afd46edd80a9c64d3539c96599aa028d0746ec",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4394967330d37e0e0f471d36e27f17213cda1b9afc65f734545250488271bcc5"
+    },
+    "CARD.HEGEMONY": {
+      "definition_sha256": "d8cc180228fcbec6e37adf5d4525579acccc1421c59ee3e19d2ceb305e9b925c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ccc904e3baeb15213540b9e6b1d7bc7db93f3086cd4b3f276b41005189cb0a51"
+    },
+    "CARD.HEIRLOOM_HAMMER": {
+      "definition_sha256": "80bbb193aca91b2da639944f2c71f8d7fb44f84f4352ec8d734d17dc39046c7a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "33bb6b37814922cc6c653d741a3361ac4dbcf98a7e7e62b8a69d2506bed947a6"
+    },
+    "CARD.HELIX_DRILL": {
+      "definition_sha256": "58954bc6019e2faa631879bd0718c7a69a1bc080fb7b77739b8a95baa7e81a31",
+      "verification": "native-review",
+      "mechanics_record_sha256": "9920fa5f32149fe62d40dd70910b0dd7f77c8998bc25e17da51d3a40cefc18da"
+    },
+    "CARD.HELLO_WORLD": {
+      "definition_sha256": "a82baaa93fd2e890496c5cc99249047f45010758646a65d4a65bd85506740540",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "19629f4396e48f4b32033117a151b42568d17bc4f328fcccd85a22abf2bfe15e"
+    },
+    "CARD.HELLRAISER": {
+      "definition_sha256": "48e8afb46028a32de0a7d01dea6a0269a9d4d079723e2ed4664e2afe451330c8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6a918a82f2a78681efcf5397a72a416770d34e01cd342bf8d9a18348cd25a9c9"
+    },
+    "CARD.HEMOKINESIS": {
+      "definition_sha256": "7c6c14611887c121058c70268677e8f90f61c44b68cf6bab25d3324bc86d2003",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c61c70ff27ab8619a2bc1dd239be0cd68f7584433ff44465aa8c35a085a1aa5d"
+    },
+    "CARD.HIDDEN_CACHE": {
+      "definition_sha256": "f86ed3388aa6aba9a069c251b95cd14bf8068c3c306950015298743c2dbe7fde",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "bc9997bf09b3e69d24c2839cee002c2519e2e60f2c4a8ae307abd87a1edeaca8"
+    },
+    "CARD.HIDDEN_DAGGERS": {
+      "definition_sha256": "fa912b7557d5ec253b9f522b1cbee24b8fd0d231499e56d14f4eb53e1fafa191",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "dcc48b979e5fa926dba5bab3cba832dcd0283be3c5b2338ad974d74b14cd30ac"
+    },
+    "CARD.HIDDEN_GEM": {
+      "definition_sha256": "ba70510031541a6326222dccfd4a9b9e52db4d9e7f9c5ce64d38fb65d37ab265",
+      "verification": "native-review",
+      "mechanics_record_sha256": "d607e61c7d52bf66b9480c14f8513d753b4fdf9b2b06de779a40afb71255b9e6"
+    },
+    "CARD.HIGH_FIVE": {
+      "definition_sha256": "306734b3e1d637656f91369c90d0fa185ac07bd369387bb63d0da36eaeb8d4cc",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "872b673efa379d400a30ca66bef222cb34f0499812bf7a52eb964793524e3c64"
+    },
+    "CARD.HOLOGRAM": {
+      "definition_sha256": "359226c94f37b81d2c4021fc3983a10fa42048afeaca3121dec58d4cdcff2abf",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9ca1de7ebdbbbc70ecd6cd7681c8a1e86155535b7e7b6adb328f58b5a5109248"
+    },
+    "CARD.HOTFIX": {
+      "definition_sha256": "07941b7a73bcae0be3db0ae9c4c52e3956b299e5637d1db323b4848577d5ceee",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "cd134576033031efebe2585e61439aab920c2a6bb4aef330a07a0bd077e154f8"
+    },
+    "CARD.HOWL_FROM_BEYOND": {
+      "definition_sha256": "140f3bc98dd8d3634fb50c6a9101478c07857598a6449412956763ecf1ed65e0",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6edcdc9fcd3fe2ba71532d9eb1b4f30dee460d5ca46004ce9cc90845ce1ddba4"
+    },
+    "CARD.HUDDLE_UP": {
+      "definition_sha256": "135ba5cb454216ee383674b03dec4a5e185277044738c701d1896f1101c25187",
+      "verification": "native-review",
+      "mechanics_record_sha256": "a7331b9e55ed8a70d008bfaf66d65093aebf2a42fc16157c21aa6b87e636a2ad"
+    },
+    "CARD.HYPERBEAM": {
+      "definition_sha256": "ea830fe96ac227a59384790af3a8d566b7fd02c808238a0ce9cbe07875c00b75",
+      "verification": "native-review",
+      "mechanics_record_sha256": "8348c8ed9d3ddd86285602b9a5417da1488b955ec3e791ba61f33584f62021cf"
+    },
+    "CARD.ICE_LANCE": {
+      "definition_sha256": "1aad28338b4a0c084157e579043b008dfe0509a154ea76f0ab9efff1500d67a9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "db6c9b0f1d4efe7068303092a572524a0d187a864d0515248c5922b105a5dea5"
+    },
+    "CARD.IGNITION": {
+      "definition_sha256": "aa8517695241e98b75708d1f89bb3a3fe16fbffecf66982c3324441ceace33d7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "48a2100ac50f70314e6608375141e1dccc1ee4739cb40f56b331c8b3acf90f6e"
+    },
+    "CARD.IMPATIENCE": {
+      "definition_sha256": "2126d193c7b7df9e39c61dee6c2a50460d409c6db615ded0c0d2a254365ee584",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b110efb63f909e5c6133fa12e880226bc1b6c7f17d70c662f011b13cae600fb6"
+    },
+    "CARD.IMPERVIOUS": {
+      "definition_sha256": "9a97b3091857c8f7ed35281b9ca1fa20af707bc56c17df651fec464e9bb79552",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8acbc48705368f1af31946e0268f4a7fa1e61bfd6a574f5a08c17d0baee416a1"
+    },
+    "CARD.INFECTION": {
+      "definition_sha256": "88d297b6cfd86d987d2129824e0a7c1124a8ecfb3cbc300e202ca93cae449c55",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d60df1a26b1f45410788372261006ac5b403ceb54318ad585b22028cd4629491"
+    },
+    "CARD.INFERNAL_BLADE": {
+      "definition_sha256": "f74fdf5b2750e2ded89ceb780ffd4d762dd57488ad21584e1c9eaa82f679dc0b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d73319f7e35213d7f121d733382dddc11e0e148316caf6ee1b1e7d65dfee10a0"
+    },
+    "CARD.INFERNO": {
+      "definition_sha256": "61a885725e242acb055502b51479c7fc9f9410aaa627f67812f61af87de27919",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "db0b7b6e709f04390fa85793d6481c7844740c2e6bd0d67f24f213ddf67c9ab3"
+    },
+    "CARD.INFINITE_BLADES": {
+      "definition_sha256": "ec83b9606e634e3d0217b894b66962aecf704fc407ad1e3e025262ff5ec17349",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6e2848637d3ac96b6a95c6772adc98cd1bf77202c5916f3df6429b6274d42f34"
+    },
+    "CARD.INFLAME": {
+      "definition_sha256": "adacf6eebe8337b67563e62dfee2bb3370fb65ff99bb5072ae2360cf966ad810",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "dc2565e11738c9047115e5e2a8d820fb8ced5352b6024e883efaba3e97a2a4d2"
+    },
+    "CARD.INJURY": {
+      "definition_sha256": "1ee52eb32a79f085cca2178f438ed0936bbd68df50604206111edf0b97c8b87b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ac39ae4ed43e313e6b0a5be61c05384814ea12b94205d4a3fa3327336a067813"
+    },
+    "CARD.INTERCEPT": {
+      "definition_sha256": "4cefce329a9cf1b15e53101f404c330b6e5d15172db9e22c0d8938cb941f7def",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "249e3b61b3b2c466b0d0f40bbab6e653d1cd127701dd38085309dc08b52d7a4d"
+    },
+    "CARD.INVOKE": {
+      "definition_sha256": "07bde3a87ceb4a4ed319cbe2add70420a27a28b5df3de024b8533a0cc0930ce9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "269c7e0e776a920206c2a11dba4df715f0baff9a98990042896a64c81d4d0d08"
+    },
+    "CARD.IRON_WAVE": {
+      "definition_sha256": "842df21871b44f19af5e9848dc71ebfb5fe9c9832aa308584b95a0b20b0f2ca4",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "507a1743fa2c57a6a8187e58c9253da21c965c42ce1181c4506fc6048579dc7b"
+    },
+    "CARD.ITERATION": {
+      "definition_sha256": "2cc576d0ea121620db870864534cfc224c5287d6b41971caf20a466bfed9cbd8",
+      "verification": "native-review",
+      "mechanics_record_sha256": "bfd7a8c2c99ba9e3071f99682b0d3f44c0cd7839f8cee6ed4568639d522af405"
+    },
+    "CARD.I_AM_INVINCIBLE": {
+      "definition_sha256": "945e46c1024e31f14b7972e879b9184fff56cb111df2b071a4abe49bd735c600",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "744216925f4f3e84b4e4a9957cf54666b674722a249a8e25050c46e44775c77c"
+    },
+    "CARD.JACKPOT": {
+      "definition_sha256": "f0e1abc6980c30d0973dbdd743cc1fff954d28bd4bdcaba18f0d81a971b0ebfd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7b462a50c022aaefbb839934607e57d7c2050419fa15e93fe2f54f53e632f434"
+    },
+    "CARD.JACK_OF_ALL_TRADES": {
+      "definition_sha256": "7d813767f5c49a263af53f51c8b2f3b89e0f6450a383f275aa774702e223754b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b42a17290bebd26e0349b91826c6bc534dfa996d6867cb3812dc0984abb3de4d"
+    },
+    "CARD.JUGGERNAUT": {
+      "definition_sha256": "7b2ac0d9d3e9f2771b6d6b15876cf99ff589a380ce4b4d72e0c2c214a2451579",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9f2fe0470ce2bf4ae7cb2dd264a30ba8f85ced268e56d49a00d0dee33d214eb9"
+    },
+    "CARD.JUGGLING": {
+      "definition_sha256": "0a4d2a82704fe2d3b381ac3f7c298a4f4f911ac7b5dd754ab6ba49f56b190290",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "91b4277598c350b6d24817117a8889adb9b29abb0f150b7f478f8c45a5834375"
+    },
+    "CARD.KINGLY_KICK": {
+      "definition_sha256": "7331a66fa7d2051421b7ae9faf52a1bfa14475b554c5b2c99af8dd7c28fb802e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "15d3fe5502a5a80906d0852f0b3f2dc64ec78d83a3eb313825b58630d190ca54"
+    },
+    "CARD.KINGLY_PUNCH": {
+      "definition_sha256": "b6d62ed260819854265ad141cd774198aac4b4e251fd477fa6e0d15f01f9cd6b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fd0d988ffb92fe5b2dc95e48c5f7f9fbea676141ec5ffd83656efd80403be068"
+    },
+    "CARD.KNIFE_TRAP": {
+      "definition_sha256": "f3c10f7c0a7640198af13f8fc323e6bd181b02f0e86880c470fb477a3a0b6ecb",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8fa850fbe91d2fa34ffb3e8d08670987156c7602834b706421cff13f6095e26b"
+    },
+    "CARD.KNOCKDOWN": {
+      "definition_sha256": "522fe25a3158f40d571e3e5e55c701036646a50fbf9634914c562ade225e0e24",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6283550ac3f930440eeb5d52a9112512b56c1d1a5c06bd9611581b7a0f17a1d0"
+    },
+    "CARD.KNOCKOUT_BLOW": {
+      "definition_sha256": "68be652df79d16f3314890f84e4938ce66fdccee9f82bf0555e585c04ec99f3a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "57a1304de57a77babd8d5130ec0ecdb470ecb187ed7285bda375b57230756246"
+    },
+    "CARD.KNOW_THY_PLACE": {
+      "definition_sha256": "702dfb79f2b3108047af64ddc81154c6def2f9c091ba16d2fd06b0c15eab0754",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a197810dbcddd2f99801c149a4b7041206e42eaaedcb703f6ef35600bc4302a1"
+    },
+    "CARD.LANTERN_KEY": {
+      "definition_sha256": "0d4abca8483a588c0e4d81b48ee1a2b1171bab6705d8ac4931dc4877728a9c7a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4dc6be583b8a452b2a7640209bc3cfeb39f3086527eac3031218862a2115c037"
+    },
+    "CARD.LARGESSE": {
+      "definition_sha256": "7c90cca31168f9cb3afa13ccf7a11db41bee921081dbfe2c64f30f25f3193a70",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1fb3d8eaa942b7525c1c89d50bd4d9baca296d7cb0f0dcf51ada92e4ef47c07c"
+    },
+    "CARD.LEADING_STRIKE": {
+      "definition_sha256": "646991734cf6bb35b6e2af44eaa02b7d616b9de77a4ec3b9309984a3e0744ec7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d091be0b1721ede47424badd5a709175415535202524b1517789b598bf381ef6"
+    },
+    "CARD.LEAP": {
+      "definition_sha256": "debd1d5bf376315b796e09c1d6bf6ea3bccca72a5b107cd6dfb5318b3330b412",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "5f7a6953a34b6e4775c5893970f156bce25470b7bdec7435eed335bff64fd026"
+    },
+    "CARD.LEGION_OF_BONE": {
+      "definition_sha256": "c211ef29e35fd3898413ba599000adc67c4bcfcfba772188ea106e66a89f4ee4",
+      "verification": "native-review",
+      "mechanics_record_sha256": "34c168eac10159ca6815890593dbae2db296970ddc4f82883d8363b6b981a9d8"
+    },
+    "CARD.LEG_SWEEP": {
+      "definition_sha256": "55f1343a3695ae050255c37ba05f206d9e6fbaa806692bfc1f2399c932999273",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fbe2b6507bba6e49718f9b68666ccfe1eff8b464386d8283d356ad590aa0b349"
+    },
+    "CARD.LETHALITY": {
+      "definition_sha256": "13b66d1eaf1fb0a6405fb39ad64a59e0f99fc605c8c5b3162171981bc7a97cf6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "0d4175a2f767b43239a8f84bde6d0c5f5dcea7d622a2c7ca52866d85604daee1"
+    },
+    "CARD.LIFT": {
+      "definition_sha256": "132c5456f78f281ffe5ecc28690c64705cf52e326a93f0db24880a5b4fbb276c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "50b5c4efe2fc273a971dfdee186568b1b3427c2e685567282241f1adac099a7b"
+    },
+    "CARD.LIGHTNING_ROD": {
+      "definition_sha256": "31ddac80b7adba0b8fe39323e171212ff7b3ebaad53622bc1ec6d52ed3de97f7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9a32527411816070d4a1e2721d2e3f9382b587f8a41d41ac5d257a77a44e6f99"
+    },
+    "CARD.LOOP": {
+      "definition_sha256": "0fdf0ed7c92c23008a44839943b7ded8f1388d071a2e5151da3bc60c34070dcd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "60509f1ddcdc33f36ca38ee82a93ee9416bf40115eb5d4ff82f626ac32145cdb"
+    },
+    "CARD.LUMINESCE": {
+      "definition_sha256": "5dc2356ec246dd6e482315eb5d1929ae5167097f7845c3b5eeeeadeef0389f4e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "eb1241451cdac8494c3b2cf5b14d5618fd88cb533850fdc9d18440127f4c7979"
+    },
+    "CARD.LUNAR_BLAST": {
+      "definition_sha256": "ba80f56275cd34be092ddbb903a9a88df47435432d5413ea19aa5ab3d134a26a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "88e2919504394592a6f68c00e4cb03a81be8af76bf4ac68a525d3b2101d32abd"
+    },
+    "CARD.MACHINE_LEARNING": {
+      "definition_sha256": "e2e27bb834e58797417f16ef65dbf03eb45c39e35ceec4e7286a7d6929769d01",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fb03aa951dbeca4a75ca832de79833d3b4d56f87949356c721e82a7aa4077ae7"
+    },
+    "CARD.MAD_SCIENCE": {
+      "definition_sha256": "fbaba47a2a7e8a53dfcc57b253104546f520af02e097aebc9aee0e4de7ce325c",
+      "verification": "native-review",
+      "mechanics_record_sha256": "05dae4192cc04b4739b28641c3c7b9c354d8f17f7aa9071fc9d1466a5051b355"
+    },
+    "CARD.MAKE_IT_SO": {
+      "definition_sha256": "9be55e43ba34b4944920f37741c55ddd7cddaa7f0f991394d8693f195b913af1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "04e65dd1cb1b2fd9046074c4b705c27283183a75a834f334be876c75a19e007e"
+    },
+    "CARD.MALAISE": {
+      "definition_sha256": "bc019caf7edfffcf25a95346ad140e36df2cad298a7f36ebf62d7ed25035b3c7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "5f43cc5d7552c096e240a5b3721cd4300e59a21da23f78d1d26f9cfb499362db"
+    },
+    "CARD.MANGLE": {
+      "definition_sha256": "e51907ffcc7c766f0baf42cdc41ecbdd7b562b884c46d666d86c9b2939526ad3",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c3e0216dc9b67953f0e9e5fc28bfb70264dc58d2d267b20e95afc10315370a24"
+    },
+    "CARD.MANIFEST_AUTHORITY": {
+      "definition_sha256": "25eb61f438b18860ac777b88c2af1b30c6899854f0012f529dd7c1dad865326a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "63dffe28c4b443c81b18b0f2b7d5aa94d659029acca94d2c5bea9b64ba51f6ee"
+    },
+    "CARD.MASTER_OF_STRATEGY": {
+      "definition_sha256": "ef725d32991f06711aa635b46ef68695397434fcd6205ac0c1b9c088b44da567",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "100c0540bb22f620b8952970bc89e49a2cd5b2b7ccf4d1c1d58d74197be8ee0a"
+    },
+    "CARD.MASTER_PLANNER": {
+      "definition_sha256": "baeffbc86a2ea03730c1ac517999c16f889ba6bb5156820552bb142456187ef3",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "519a29ff9a2db8438944b4c1139bdba7a25d46a9f1867a7938d2ef7deaf9232d"
+    },
+    "CARD.MAUL": {
+      "definition_sha256": "dc3d637cedd551a7e456db94ac34cdf16c5bb8ae5ad4de9ea481cb2f0faef8dd",
+      "verification": "native-review",
+      "mechanics_record_sha256": "f00efa66ddb4e871605f2da2b7f3e2139e9b9b33e5d307a6ed3a01768bef27a6"
+    },
+    "CARD.MAYHEM": {
+      "definition_sha256": "44ba1bae9a87c5720044d0aa20c4ee67882cacfc583a8e20660e7fd7f78fcf9c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "08cd9d6a99b2b2826f0fecddcefa11f50035b5d475d0635e925a098125f6d69f"
+    },
+    "CARD.MELANCHOLY": {
+      "definition_sha256": "279b0fa826477e3005eeaf60791f412acf0ad5cf45c4d85b562a01ab4a6185f9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d9f0357780ed0961dcb0efaae4b0f1a05ffcbc28e8ccb973b2b90112c703d5a5"
+    },
+    "CARD.MEMENTO_MORI": {
+      "definition_sha256": "420746d47e4b8ffc37bab2d0a973144a40f6f5e2e354eae8959e5399efadb31a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "56b6a902046006402fae4b63d406875093e75ea758a8147e36a8e88049ab97a6"
+    },
+    "CARD.METAMORPHOSIS": {
+      "definition_sha256": "b593c2d5396bead186db818d49ca386bd64e3c1169cbd6fd4f203c82058b5bac",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "5021e7e4368d000083be35fdbfe6e98e0289c6bb60c61481b199ca29dde96c6a"
+    },
+    "CARD.METEOR_SHOWER": {
+      "definition_sha256": "655b7dd31300653de27736e0abf07de0ab124fb4171e06bca357bee85e7b76e2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9726123660705c66077644b2b92a3aa4100fedba619dc6987c026f5d41d5a65f"
+    },
+    "CARD.METEOR_STRIKE": {
+      "definition_sha256": "7d8ec3a8445234b5e3499431b1af86c2a136d43b608f4cd0be3c82f4584edb65",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "504fa29a3c7140561c44ba40bc3db3cce5416aed8e7244f7978560b10f7ea138"
+    },
+    "CARD.MIMIC": {
+      "definition_sha256": "ab3e0495c093f94c5f5786e3e0946b4c211ce78c3e75e7e989dbbf51e73536d9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8d9f2a0c414d4074e6de15053c964e911ac2b3926eec083af3f2d603cbd3204d"
+    },
+    "CARD.MIND_BLAST": {
+      "definition_sha256": "af712e2b502103be25c39a4770ee69f33850c1e9c73ef06cbb1da4cd51c0d614",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4030ab5e58810658f126ce044aa9859cf998b87c1528cfdb8d22f19884855fd8"
+    },
+    "CARD.MIND_ROT": {
+      "definition_sha256": "149192c67b9fd63661c14c07ba060d5a3c195a3ce506069f6895d546a3eb0c7e",
+      "verification": "native-review",
+      "mechanics_record_sha256": "bb205602b10944f2446f25c8e37af4df7b7b51232ff08785af6bf36e2fcb1acf"
+    },
+    "CARD.MINION_DIVE_BOMB": {
+      "definition_sha256": "df40b6a2fb44036650977326fe09574fed310423c3bc513d899111775ef328db",
+      "verification": "native-review",
+      "mechanics_record_sha256": "dcaabc5628c988049b7a9a900ffba9425f37636b85ab68d01fd645a901f26d4d"
+    },
+    "CARD.MINION_SACRIFICE": {
+      "definition_sha256": "97986e9ae36522a79848ef3ecd8e257a958dc2f11c26cd284bb0f98c5487e1aa",
+      "verification": "native-review",
+      "mechanics_record_sha256": "ffe34dce7ec270ecf58f56fb4a8853bf4f4c275df1512051e68381bf5f48e5ed"
+    },
+    "CARD.MINION_STRIKE": {
+      "definition_sha256": "921d8c7ba497a2d9cb8cc3bfbd28451c65215e6f708f44be7a10457ab9d1b0ed",
+      "verification": "native-review",
+      "mechanics_record_sha256": "720389302312f800276fef7166f37ce24127cdf1fe694340b6af54feb7a95d18"
+    },
+    "CARD.MIRAGE": {
+      "definition_sha256": "f0c310c4c137e81a20e8c6e18197aa70cd2badcad2ddb0af67f27c9ef310a417",
+      "verification": "native-review",
+      "mechanics_record_sha256": "a601f5c64a219e720ad7f77f5f0c1a6fca6da719e61fe7401ced92a7c961431e"
+    },
+    "CARD.MISERY": {
+      "definition_sha256": "e6c70e66680e9d2763ba6eb3e0f8c3d18fc4b033720df0175f7ea42b71ae0f5b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4244d31529c444304d7a3c6750fb5bc241757065f2e01d9a9e87e01ab6d1c9e1"
+    },
+    "CARD.MODDED": {
+      "definition_sha256": "4194c771e787042a57ca5b72ac7663cf5cc232fcbbf7a6f1c448bfd3fc7bf689",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "62e02b18d06f02caa27db9b75c19fb96ee805b660184086e5369b0f2c167e35f"
+    },
+    "CARD.MOLTEN_FIST": {
+      "definition_sha256": "35a3922f45fd0a09dcf7a4cb894a352deb0f4d9d221d8ec4c9d5d5564d41b8a5",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4b42cccbb18ace4102d197e7893439a6f0b62a737731343309f73319408d6fc6"
+    },
+    "CARD.MOMENTUM_STRIKE": {
+      "definition_sha256": "ea8895abef902caae1cfe0d8cec9c01a4b91a3c328bf1b229d9a59997dba80c1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "168d5293d672139a940fb61f154fb38f5e36f308b6326b71800f06763e85ba60"
+    },
+    "CARD.MONARCHS_GAZE": {
+      "definition_sha256": "1d5a2a461be6d16d7b5968fc02f95f9e38e31981f867c1787359b94bd55f2516",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d9bc6c4c045f9109774e575e7c73f09fc38fe4f1f714dfe1426a0be297da3341"
+    },
+    "CARD.MONOLOGUE": {
+      "definition_sha256": "e9d8c9192a5388a9084c4b285e199760c47c3e2fe3fe6a670c076ac810dd85ce",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e215dd900c689d0cbfb2040979b878d55f806ea2861c4ae51f597040634a7dba"
+    },
+    "CARD.MULTI_CAST": {
+      "definition_sha256": "a0125b82240f6f4c74cf49a4a473c32e88f0cf5686710a284a85fe3cf7060786",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f58552cdefe400371d345e2821f5980dd1621b6f9583b88c01902a067f199944"
+    },
+    "CARD.MURDER": {
+      "definition_sha256": "e3ae0b9f078df6e6a7255107c0c5bc354904d29c08f030b4c6e8b2f49df11f46",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "21cbfc32ac6e54f8eb7975afdd79a50ed1bb2c4d59bde8871f1469ecf5cf872c"
+    },
+    "CARD.NECRO_MASTERY": {
+      "definition_sha256": "a771c61406c3f323f9a3ff9f9ff5e1a49cb63b0cc5f5960a4c12c32531dd665b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4acdbccc7a281810a6b8a09a0ed68fcdf5c94b29a57bf9b22702e4a895579935"
+    },
+    "CARD.NEGATIVE_PULSE": {
+      "definition_sha256": "4832fda7188590ab9bd76ebe65cadce00ed68b3bfd56685d51555769ca0f033b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "afd8d87784297366d048014058f9edf9d1a28c6d3ccdb7f0e51319c43ee5e041"
+    },
+    "CARD.NEOWS_FURY": {
+      "definition_sha256": "4bc8f48bd05abe24469c04e2f2a3ad19df6b9d37f46912b152c774c575cfeead",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3fcd3b1dc741bc16ac889ea3f5395df127bae10dc836e2b4aef6810cd808fa2c"
+    },
+    "CARD.NEUROSURGE": {
+      "definition_sha256": "ab869a93bc81ecd36c37975288c9109575d2566aa5e69099cb0954e1d1c04f76",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "0e36c60559b542fb1526da238a6bc2306c02a06aaa9f5cc6741e04b8701d6ee9"
+    },
+    "CARD.NEUTRALIZE": {
+      "definition_sha256": "9bc078c0a842d8d74385793a40ffc5af0ae4e8ebf41ce186f59b2597894a7f1d",
+      "verification": "native-review",
+      "mechanics_record_sha256": "8bd047c77ff2dbbc261a0880059bf54cd462dccb29210c7bb39389d8c7842ac5"
+    },
+    "CARD.NEUTRON_AEGIS": {
+      "definition_sha256": "01dcac8dce7dc4390e7d8a1acdabd383427f690a3f0a67276c1592949188c41d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "27def7dfc1de4a226b616da812852a1cb18a3d14653aaea7e9e8499ebdb0f85b"
+    },
+    "CARD.NIGHTMARE": {
+      "definition_sha256": "df136395aa21bf42eaf1a7a97b65ff8fbd9afb07639534e12d61ed9711ebdd32",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "300981d832e28481406d1bb5816cfb43e31bfadbb1899a0abb245b8d4b91a99a"
+    },
+    "CARD.NORMALITY": {
+      "definition_sha256": "177e12660baab850601af1f06d27857b8add259f11444fff36957e1448eea545",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8f8f526b2205f117f39fb2d596002feafc73821aaccfc11a29e794cff09d2202"
+    },
+    "CARD.NOSTALGIA": {
+      "definition_sha256": "09b033d8ad51337a2a22e0bf423e5783d3bfa6ca582299a4813fc2c8918f4a34",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "369f8ffe55bc0b653fb488b43011473e5a179b9f1510f312ef43d1452745093a"
+    },
+    "CARD.NOT_YET": {
+      "definition_sha256": "21ef8b51093329ca22f1fb830b3d18c39863cf8c5deb94339a15c0dbaf2923a2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7338cc73c3532e49c994b0d460c25e30b4884483a4db1ba839fecd9f203e1a37"
+    },
+    "CARD.NOXIOUS_FUMES": {
+      "definition_sha256": "ebffac99f31337c8e236db34fccdc228e354efb5743ff4549390669973d40909",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a047fa41ceeecfe496e059795dbc17abb69f4262e4f8700dfa08a74f97a5c56e"
+    },
+    "CARD.NO_ESCAPE": {
+      "definition_sha256": "a075f57a30b6aeb3aba73b2ff8a5a3622a9004f59978588b54e278234afc4953",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "0e971d259b04512debe4cc4ff9f81f3dce802d8edc5d852c5f606f24a2ffa998"
+    },
+    "CARD.NULL": {
+      "definition_sha256": "fa7337f20d62db089bfb9ad60dab58a0f5e1294dbec2a5fd65997acb3c52c2e6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a2b476d49c6d5f82dea81cb91b1f284c4ee91fd4a7cf9ea873014beb946c7f09"
+    },
+    "CARD.OBLIVION": {
+      "definition_sha256": "61a8f3ae6bcf1e749e39f31586a2805d3366ab36037d2ae48d031abbaf9e17bc",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "65ea6525f4c701818236083c0605f89957eaaaec8bbde095044df1a9e4d3c36c"
+    },
+    "CARD.OFFERING": {
+      "definition_sha256": "4c46c4634993cbecb34b587c5b2a83477a722da86339fb3b24e6ebd0a3147db1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "37513d98abd258d40992fb82b78f8d87799702467a1132b627dfee1d81155adf"
+    },
+    "CARD.OMNISLICE": {
+      "definition_sha256": "610cf768ec77cc3b9ea2268572ce144a7d78025ad4d888266bc98ce52612a0dd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e04106a18683eede977ba5c3920805b46178407b436427ec66dde1a0e2d794fc"
+    },
+    "CARD.ONE_TWO_PUNCH": {
+      "definition_sha256": "c6b3cf08f00742415d55da841989c93c1ca5576beceb3b11858265df1c32e2e3",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f311f40dc3fc2efeaf3daf4d8a464e4b5cce773d3b3f06f3915740102bdd32a4"
+    },
+    "CARD.ORBIT": {
+      "definition_sha256": "2aaa828db88b30417ba7da82e21b8e9d98b349fed4922c9094d66838dd11108b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e9a64fd5cbd03f239dac9f9fa8ff0286d60239c2b9eb26e23870c776ec5c790a"
+    },
+    "CARD.OUTBREAK": {
+      "definition_sha256": "7c5b6eadfec6292fc8a3b2820d910ccee8b397a6787b01474cdc92283c4d0afa",
+      "verification": "native-review",
+      "mechanics_record_sha256": "6d95ab97c4efe310e2f8c5ac72c1c0909fb5fd03855e32f322b175526285554c"
+    },
+    "CARD.OUTMANEUVER": {
+      "definition_sha256": "a6c434ae73be446d426227784c637c8b948269c7c9acd606feee3387f84b0b0a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "68716fb5f85e0c1da89bfb47780972e68a57bbd5bd30d1a9e00cc3e27cb2303d"
+    },
+    "CARD.OVERCLOCK": {
+      "definition_sha256": "24bfb8491d417607a49c4494f3cec602d24b628410c0d290ae7090b143b70d7c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3d1e3357abc6520f109ceab33b7f6b4ef178b9c937f94635e97e8d992d60636b"
+    },
+    "CARD.PACTS_END": {
+      "definition_sha256": "c924fae262fbe5b9c429436e31ed6076e47bae12f322ed42301ce71086901052",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "562cc3b5ea96a3bac5dceb80e1a18da5aaafdaf7a5fbaf1da4051cf00d3bbc97"
+    },
+    "CARD.PAGESTORM": {
+      "definition_sha256": "48663c59a21b52d2707a3bad6562627049604d20e5868b1f6101e49338f6867c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "78b46094911bfc62ba1d4a094467170455b55239f122117299dd128a47408a1c"
+    },
+    "CARD.PALE_BLUE_DOT": {
+      "definition_sha256": "6b083637be867b7f029d62ad2961ed9dfda3e80ae2f46de1882af6fa11747b99",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d9ed0fb71cf04a2de2e6cbbe801434f06669be5ec565f92f07ed7884e392b496"
+    },
+    "CARD.PANACHE": {
+      "definition_sha256": "699682dd9480bb42d7c4e172ea0e5b8c678ed06241a15641fef76cf1562e208c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e5d709df9ceed08452d5be085b5ae210795feb012f88970dccad70a16e3197cd"
+    },
+    "CARD.PANIC_BUTTON": {
+      "definition_sha256": "d9a8c212c323a5500f39d9bb5755fec01beecb37c2f7b4d9f8fdee200ff721ce",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d8a340b58850d1d5ed10b9492223b394124c6c97c9b510b46d33003c5cb15ced"
+    },
+    "CARD.PARRY": {
+      "definition_sha256": "bceeb01804cf753adeac19cd6fcd902631d6ed48ff75b3423c005272b4be95a2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6300bc6797a1c8c26bd52214deb26f529b9022bb363aacb1a3d6d51ef1e6bdfa"
+    },
+    "CARD.PARSE": {
+      "definition_sha256": "325796abe39edaa2cf8525ed7ae89129bb3c510a15f1049efcef754160dc4ff5",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c49f73af767ea69ae0e3c48c8468de3ec0f9a72881b67c14bfc14504407af9b5"
+    },
+    "CARD.PARTICLE_WALL": {
+      "definition_sha256": "26235ede8005cfaf554b2b5fa8adf882868cd15a8ab06462482f966bbad14841",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b26d2370148dc8efec48df9e1fd0ee4cbc1caf3c1919f7507d77384d8d2092f4"
+    },
+    "CARD.PATTER": {
+      "definition_sha256": "42f928df93254ea0021df4ea6f244e8acc9523f29448b577497101453bd150c0",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "899d3f79d94fdefde9bb047e9e4bb773e7fdbd09ba9984ac9f749bc194e5cec7"
+    },
+    "CARD.PECK": {
+      "definition_sha256": "8146822ab09bb6fd4a32d9280478f4d2366f5e87c4e190d3f2e0200104b3812d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fe83944d81a6d2290847405d9a9d4d880bdee0fd5d7e0cf08d4c6b31f1f488ef"
+    },
+    "CARD.PERFECTED_STRIKE": {
+      "definition_sha256": "d3c99b130922f4ed892e14a7f05278fc474d03d3a27ecd7301cc977e177735c7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "de38ac8a4d37860cceb0e0641908fc980c011ae6e75d1adba1e35881470a0acd"
+    },
+    "CARD.PHANTOM_BLADES": {
+      "definition_sha256": "3f3dcd26011d47aa228a612b0cb4df77e24996341c8614e97ab440a68245370b",
+      "verification": "native-review",
+      "mechanics_record_sha256": "348921cfef671e0802646f56c95a2b02ca4a18f157d9302bcc3067ba366838c4"
+    },
+    "CARD.PHOTON_CUT": {
+      "definition_sha256": "7e3acb3bc16045824c999f7a9631853bbcdfa1f65e741295035cc51615026ac7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "29b080a3c746e08c2f91140f3f7c08b4789c880cdee491a71989ae97ec428699"
+    },
+    "CARD.PIERCING_WAIL": {
+      "definition_sha256": "4e8d6589796661beeb40b1951585c619c545a4dc2b64aa37fb45e3e33db8d5bd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "40cc93277c4f7735581c94e85fb15b073ddbba9c5ce0ee51af367833b36ce1e5"
+    },
+    "CARD.PILLAGE": {
+      "definition_sha256": "2590dc1223707c3b0f93d1c58ae914b54db0de346bf44a66e416dfde8ab3b6ed",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "98ab5e24f8e0f2a17ea7c8e883157136a5ad83dad4fe8b9c837f40aa7b57c3b0"
+    },
+    "CARD.PILLAR_OF_CREATION": {
+      "definition_sha256": "d2651393f03294ae817482edc92be1617cbba6a6b01c6ebda33a3c7c728dcc89",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ac2e6e7225d76710f78e07bef22d38fe0b9f9fce5f5447c130d95835ec4c4d72"
+    },
+    "CARD.PINPOINT": {
+      "definition_sha256": "f509bcae77ac7b2cdf640622cdf4b04b6cb604df21e71e66e703a33bbd401159",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ced7e7f006e67394568a090cc8109f9b56b378df46c053b1d0d5074ce391d2a2"
+    },
+    "CARD.POISONED_STAB": {
+      "definition_sha256": "c05010b97f467a087514a6ed643f4053b521f28c591683092364f9857fdb7977",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "edb8d9eedc44fd614faec26ebd125f15b04f6d2c73eb1e0677f66427beccd140"
+    },
+    "CARD.POKE": {
+      "definition_sha256": "beca78353903c8d64077d5b3ac0e7beaf9c88c0a75f662fa4e26fe4f9e3a7477",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d4cb253ce27e1088c55c688e14b4ee305e8268ab7c775226abfa7f7bc15f2a7f"
+    },
+    "CARD.POMMEL_STRIKE": {
+      "definition_sha256": "3a3330a2970eda5de7a717121aa9f7973b918ded9da5678240e514740f56a681",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7cb3ca99dfa825c6cdc762636b3a226849f030b668382e684b0f7b4c0f8c8404"
+    },
+    "CARD.POOR_SLEEP": {
+      "definition_sha256": "59d992c87cc20ef898eb6fc9202e7e76354ff057a6136e18bcdf0ae649b65328",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f7cf5df4299ccad91d0d212661ae558da6dfbca1e3922ec6a2d0373df139a066"
+    },
+    "CARD.POUNCE": {
+      "definition_sha256": "5de1ebf9872b75cbae3cbac6f3cf9ab72ca05e23f122a1e21441af280b94c44c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "659f25d4ff5771e8adaf4c68a6673cb2024a89473a9cf050de095a924f835a0d"
+    },
+    "CARD.PRECISE_CUT": {
+      "definition_sha256": "1b3b09041347d0a8811737aac71b48e1a92e99d462e519156cf238829adefcfb",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "19acbc4664a5e13b7117e08b55ed0c55ba1c8448fa34645c3ec4119ea5280ff2"
+    },
+    "CARD.PREDATOR": {
+      "definition_sha256": "d0251ad7738be76d72036b6c745fa7a1eb7d6098bf4484d2d7b13ceb50082b42",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "971ac602232886105835fc0a5163520f5f8d2300b4b4bf67586e4169fd18461f"
+    },
+    "CARD.PREPARED": {
+      "definition_sha256": "55f51600963dd8a97a7320265e58d3b11d2072272da5737c06f837be4dfb15b6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "41a0716c8cc64620160ea588bac228eff1620169c06e8d70be2d65504d9e0178"
+    },
+    "CARD.PREP_TIME": {
+      "definition_sha256": "898cef0b15c076358b9c466a71e4f07e581291be1056f747fa57a9784dc7d62e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9039b918984a42d9dfe9d7fc06a83ca48d1cbcc50a1d7e7b7c2d63a402c6f768"
+    },
+    "CARD.PRIMAL_FORCE": {
+      "definition_sha256": "688d0745593b8b71db07fe55d542e162a7a6dc9780278144071dab369f353ccb",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "03f8539bc9ee8b5cae966b4da5b8778f34e433b7add0900467c80ad9ca9931f4"
+    },
+    "CARD.PRODUCTION": {
+      "definition_sha256": "bf2933b37bf8c7d64eb5a426ec139b85adb0b24b1f7999fc90b8af3e91356d35",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "83771c068c4bfe009f223ae19b4defae4dfe6ae2bd29660b483909fbd2c924a9"
+    },
+    "CARD.PROLONG": {
+      "definition_sha256": "7f5d268f6b2562f19a274ee4488471b691a6c72d4eb60c174bbd02f4dcb0b148",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8a7aaafa26f357738d9594608da46715ce7e24ab1fcfbd2398523e1c4322a2c6"
+    },
+    "CARD.PROPHESIZE": {
+      "definition_sha256": "4304a410bbe530b8c01e0d30c4ef288fa283a4f5026018cae601321f04b57060",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e1959fd072bbecc0fa07dd56e2ef191bbdd2ccd100a949e04cd10b56d12ad4be"
+    },
+    "CARD.PROTECTOR": {
+      "definition_sha256": "bd6ad3e7a2fc270e0f3e814191b0ec2715bb20738e15ffe72461ff2556db448f",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6f9436d35337172d052b1c86bf84d84de0e832f1881d940757a8c37f25ad0859"
+    },
+    "CARD.PROWESS": {
+      "definition_sha256": "dcd2a9c500df46e23a0fc9ddfca6218b6240ee2c9eb213c7dba09a1756a2bc96",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ebbdc2856f9823553d3658cd322bc25bbf1b183697a412b0f9a7a79f34ace89d"
+    },
+    "CARD.PULL_AGGRO": {
+      "definition_sha256": "f2fc24c54400d610bca7e747ab729006260ed9e8f4f572f9246ce43aed8bc9d2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8d2a8f23efdd405bbbefd165cd517f1b92ded5e8fe68aef400dd610de464a829"
+    },
+    "CARD.PULL_FROM_BELOW": {
+      "definition_sha256": "3790b492941c27f38a4452431f35644c4e7652e61e396c68a139431f67dcc6ab",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "10b81f4d3d8a4e20e48e6f07745517f39ab6630412abbf681e34378310c398f4"
+    },
+    "CARD.PURITY": {
+      "definition_sha256": "bbecb9e6be82ea50bc8b36454b34007bdb29d0c42c564de889d234645bcd09e5",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "dcc5f4179ec8da28aeaf779c241142fbaff3e56af594b246e47df78d90672d79"
+    },
+    "CARD.PUTREFY": {
+      "definition_sha256": "368d28350b2490e01058958194f51bc678bca0277988acb37a64b4bdcbd26264",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "40cb3c0f8ad9a8ac4c5f4110c1ce3ccabc400f5481acbbae25414579b79a85af"
+    },
+    "CARD.PYRE": {
+      "definition_sha256": "762838f7db1f5110ff3d462fc9cb103638a8c9199db95ad96684de05afa62fbd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "45fcfe50baa28f7015d5edcb5dbb80eef893cba39d0505cac2f8feb65cae935d"
+    },
+    "CARD.QUADCAST": {
+      "definition_sha256": "58ecc05a609b75ed2c51a907338b7917e00f7aae3aabd22c08a2f13da06676bb",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d4f365bc9b8f3c3d357c583d5a44c17b80eb37c50e34a043d9376e6df4f7ab69"
+    },
+    "CARD.QUASAR": {
+      "definition_sha256": "9753310d5e4065a089224425cccc50096ba65255e1c102457f7b9eb9174d9ea6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8a12cd8895b43129e0072ef488ee4c2157d6fb6f08b901e2d0bf701499e0c867"
+    },
+    "CARD.RADIATE": {
+      "definition_sha256": "7301268b8f58d82fb9f85803b81f4b269a3cb29b0b4578de2d63ad8651a6b0ec",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7d3f08bbd9e37cda55c6b0f7529fc473b57f58482870d776f97b39df811c1384"
+    },
+    "CARD.RAGE": {
+      "definition_sha256": "ca126d5e9f49350158798985389427f9c124a07474fa0ed9fa1a06fdcfa9f08a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4451f04590bbd5329c2381c76859f9fb34862c817585aa3f1b8ed922e15a93ca"
+    },
+    "CARD.RAINBOW": {
+      "definition_sha256": "5b8716db0d6d7a59d5768d8fffa5909cdc26e0d3f4e6c8d787fd1999d95d01fe",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "305d32b4794091eea4c5d2c32f0fc678a8c740a79bb2cc17a520f4ef934338dd"
+    },
+    "CARD.RALLY": {
+      "definition_sha256": "99ab0b13502a14f6e945165157b5288c8a78abb5a30e02e4334c25770b07ddbb",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "eaac8ce78d0b08973b9c3bc638f6c0cfaa91484e41340cf2c2f83b75b93f1dbd"
+    },
+    "CARD.RAMPAGE": {
+      "definition_sha256": "aea1b8eda1a15597c0263b20c5e1aa85e62fd861d0d2cf3263a779758a94f96c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "eb17f223b34eccf638b93018d9e3620cd24754032792ae4f132ae5b14b42130c"
+    },
+    "CARD.RATTLE": {
+      "definition_sha256": "3b49cac2cdbb6ed86f1c7f85f10868c00e734c87ecfa3a1164fd671377bbdd09",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ca594e3e523779dff53db35c1e94b1d43705b4ae62e60acaee51e95b39c1ba0b"
+    },
+    "CARD.REANIMATE": {
+      "definition_sha256": "fdee3dba7ea0e2cb66e7f35e03201bc6c0fabb511ce3d5854abb6f809213ebfd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "694eda1062960328157d337fcd73355dd2891691399dbcccec040a7b45a581b9"
+    },
+    "CARD.REAP": {
+      "definition_sha256": "00ed805293c2399097dec9c7aa09fa6014f07ee261bfe4d8bc71c9de295ee0dc",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9f42a1bfa635dee5b4faf14090cdf11948d9aa437a070c75dd8de41768fb43b6"
+    },
+    "CARD.REAPER_FORM": {
+      "definition_sha256": "7f420745b00ca927ab6ec2ee49b85dc7c3bb58c4af2e39d692ad5f8637e171ee",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "521b48d057212f313651e9b5f0cba4544d9b47db15edb32d0228627d322b1ce0"
+    },
+    "CARD.REAVE": {
+      "definition_sha256": "b0b312ae9e5c63831d8c2c667450c6e19076281a7ae697b8df62599e6fac1de3",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "dd3391b052caf1e6871af1db338d7ad8be8b294c1ffd090d3404bc5fbd3aff18"
+    },
+    "CARD.REBOOT": {
+      "definition_sha256": "3c51a4658014f1733a028b4ec412c5dba3284f0c53fa67883eee044694e96a23",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7da5b0c5a4b67de469641704e5d0ef210387fda586d2f8eb1962fd5b4ef05fab"
+    },
+    "CARD.REBOUND": {
+      "definition_sha256": "c8cf811c0e60984ceec3fdf06304faaa37d67815d7efc325386c33ae8da961de",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c658070a2d7d906226ed9a3a91fe4ed9316084f60cb7e614238ff473cc016820"
+    },
+    "CARD.REFINE_BLADE": {
+      "definition_sha256": "4e50fcbe6b5a9b18e5b7924288283fd1d8662728240eb7be35e993c8eb909711",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "142a01f0ff2335e19450752ce6f12e18c2196bb9a9b025712427b232f8115f66"
+    },
+    "CARD.REFLECT": {
+      "definition_sha256": "ba36932afda165dc53dbc8cc94b6e7206ad9c4a589e5d57326945a518940007b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "076529fda0e8fbc0cb38081368409815468acfef86baafe1cecfa7711154a3dd"
+    },
+    "CARD.REFLEX": {
+      "definition_sha256": "9da35e8290ad693e532dbc718e9f03c937d8a21703bdaa96d893b75441411690",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d4dc2b549879a6bd3530aff7ec2db234e06021affd765fe95fa227ba0f26638a"
+    },
+    "CARD.REFRACT": {
+      "definition_sha256": "ad80176df566970209837a9d53ac690959afd48d988e0cb697edcde3a012af81",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "458ca30fc9ef12f6aa2d64b84cbf5d78065d7a7ea8cb008150fdf0f87cf42658"
+    },
+    "CARD.REGRET": {
+      "definition_sha256": "ea8405d6cc3872aae3f8afa488d4b555100bcf314d25be5ecda123e816ee380e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "caecdc6109344cb50e40453d9664b800abcd34b0299c054e8a0d6b4dc1d8c254"
+    },
+    "CARD.RELAX": {
+      "definition_sha256": "f79aade2bb4872d8455cad1bd7132e9b096f10eae836652bc442b5f86627ec74",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8f435276e41d2a865c7e1cd2cef17b3baf9bdefdabfa856ef1902916828ce0e4"
+    },
+    "CARD.REND": {
+      "definition_sha256": "9d7bfa322752781386245d461fea132cad51f128d918b9fae728ca34cb408ca6",
+      "verification": "native-review",
+      "mechanics_record_sha256": "3e98a25eea02d9eff08f1f305c3c17cab8caca0a9ed61e6648e6a2a3180babc1"
+    },
+    "CARD.RESONANCE": {
+      "definition_sha256": "2a8a6ae215db0168c96ea8c8c6014beb21da09d6fd12eeb6cd456b0e3045ca32",
+      "verification": "native-review",
+      "mechanics_record_sha256": "6d557e50857f237723182839caac1cd3f26bf9338a2c0d27bf9dea30b19ea825"
+    },
+    "CARD.RESTLESSNESS": {
+      "definition_sha256": "4b1e3e021ef4895af56c55c333c26f157b8d5c82b7490b75d235b289ec572aee",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7183ce8936bd88946f3dcd08ca1db88eb05556b94ff5fff5d63b299010af5c99"
+    },
+    "CARD.RICOCHET": {
+      "definition_sha256": "bfcd8a72977aa3d0f4b832b528dd253e29f8983ddb924c6e7d1f88f49f085df0",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "760bedddb67ca799f890730aec2e0ee2fcf7972addc3970d383b4485a06bf2ec"
+    },
+    "CARD.RIGHT_HAND_HAND": {
+      "definition_sha256": "bef45f4019e409c563b3dbb0d98efe2a502b9957f48633e58cffc5f16f116b55",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "249fab8d55f1085abca3cafc8c4fc9f3c9b3ba98ce20ad4c552666407f20ca7b"
+    },
+    "CARD.RIP_AND_TEAR": {
+      "definition_sha256": "9f317be579ae88109a685bfca10802a2127bc9543ec7a9d985b5a769c2e88fed",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "446a75dbeae11e70c3a17d79b69ad952a8521ab875bd39e84d4f16d9b3c37b03"
+    },
+    "CARD.ROCKET_PUNCH": {
+      "definition_sha256": "793a2992e8fa6106ebb41ffce172fa5ab8d297d78e90aaf1ae1b1d74c49c2eb2",
+      "verification": "native-review",
+      "mechanics_record_sha256": "31cb6428bd94c49ef1ae1adb9f3764d8836363c13e3703bece3d35656dc73eb0"
+    },
+    "CARD.ROLLING_BOULDER": {
+      "definition_sha256": "f8c07804e68278dd49bf341d82243b1dd39460cdd174e21710c9fd762d1e6920",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8af5e1c92b283553b872957a843a245292e4774cfa7c753ccf5503a0cf42442f"
+    },
+    "CARD.ROYALTIES": {
+      "definition_sha256": "a548eab6ebb6351bf6c4ccae0198e0f3d27232f0d16100bd15ddc795dfb209a7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "546a5374214219c64f22d6fabc8d6ad00f4ccfba4380723e48852e8dae9da268"
+    },
+    "CARD.ROYAL_GAMBLE": {
+      "definition_sha256": "3c9a02cf06acc2aeeb8fc3c534ba421daee5219ee783e119aca7ccfb00d77335",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ff2157f1685fe3ebc6066c4dc3728cfd2cd2960b759ae0f3c2ff85901b50e80a"
+    },
+    "CARD.RUPTURE": {
+      "definition_sha256": "910670cb0b0b8e2b443acc2c737a99c03b458a3fadbad4335e6b0f2858d62d79",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "0d2875a037237390fc17601abff9016d09c8c08fd69425d554408956df796de2"
+    },
+    "CARD.SACRIFICE": {
+      "definition_sha256": "d955080d07b2ff9071a41dbc849ea350ecd33fc0ab2be7b60663104951560c15",
+      "verification": "native-review",
+      "mechanics_record_sha256": "39cc09ac1f806f4a15f367ff7d8aaa28e861c9689cedc0e2a5c7e128baf68182"
+    },
+    "CARD.SALVO": {
+      "definition_sha256": "dccc6a8b36518975c874b7de92773e5b88c6d6defc4f7572fe02812746839eda",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "5094fa73418016369dca3c251b3809a13d03592dd07841f843d363fee3371e54"
+    },
+    "CARD.SCARE": {
+      "definition_sha256": "d06012626a93a767479dae8befba2d7ac331f3d4439c951a6412a557e2476a7b",
+      "verification": "native-review",
+      "mechanics_record_sha256": "1c25c90aa2983701595432904110ad388c99d2987bf477c1978f41cf2d443ad9"
+    },
+    "CARD.SCAVENGE": {
+      "definition_sha256": "bc86cd1b7f165a1ad964cb370643ea58ecfa49994f46894980ea982e99b6f4ad",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3cba194d8a2e7d72ed007ccbae73d0fc74ab6e8bf5ec8675dea31ccf0624109a"
+    },
+    "CARD.SCOURGE": {
+      "definition_sha256": "444d96fd6de948321d63994f6c08576269c24bb15f90a5e839a4db268a43454e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7c1de1af3125a6725e9ee801092838f7690e648e28f58f9a370bf95043df3e32"
+    },
+    "CARD.SCRAPE": {
+      "definition_sha256": "d71435b2f759a6fcc8475581d902f5bb7c13c259f730573e21528b740969086b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "98adb85586c09fa83d6754dd6ec3bf323f80314afd518cdfe2572e8d1404d25c"
+    },
+    "CARD.SCRAWL": {
+      "definition_sha256": "db3c8b5029e23ea1d271f4f28b4022948d712ab055ea7df2bd6659be4a5bca1e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fc6847265bb0fdd07712f90e14ce138cebdf0c94405fe47f756b266511b908a0"
+    },
+    "CARD.SCULPTING_STRIKE": {
+      "definition_sha256": "ebfd8ce460cddfda505c8ff679af37a55195639730241b3f36782e26a30efc2f",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f34c50464f14522a0a10f5bb258ace510a0994617493d8a8a4dff4f74b3aab81"
+    },
+    "CARD.SEANCE": {
+      "definition_sha256": "513762220e50a60a8bc15fa8a7f72ec3f8f654820ad576012ea21a053bfa3c10",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "84b24b6dec628f749ca7d2c44f4957a459a0d2e22d7aa79641f8f7137250467a"
+    },
+    "CARD.SECOND_WIND": {
+      "definition_sha256": "dcfc892a918145a24ad9e11eaa945b0f07f147547a27b100469b31516b5c494d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "270aa333a45a006a3e770d74ac3875f8f9b83a43902c3740dc04f15c267548c3"
+    },
+    "CARD.SECRET_TECHNIQUE": {
+      "definition_sha256": "aa5b12ddbaeeaba43d5cf078558fabf9a0a2fe14bda15f4622b7055e1fdacedf",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "151b98a93168c89c94d043b8afbc758dbefd2fa8ce67d48ab9c3c660d41c438b"
+    },
+    "CARD.SECRET_WEAPON": {
+      "definition_sha256": "239b6344406eb9e3e1c8f38164042aa1d51ff684a063e712ac8e6242db5e080b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6e51fa93b22833c55b09fef006a9664f2a0aa883ea2da43b79effef95e2e8f23"
+    },
+    "CARD.SEEKER_STRIKE": {
+      "definition_sha256": "fc4909129f5d1fd2d50f56262176477bfd7bcc56af7925bea9101ba9774ba985",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "792d0c30d4b11f57e968f76e1c1328659548b97d3ad8315d7dd8d224dc24b522"
+    },
+    "CARD.SEEKING_EDGE": {
+      "definition_sha256": "05c53d4d26966738dde10b867f3a2781b64bdc8635d6edce0c36e4cfd2fd3709",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "509e5e59eedba605b92205a26c1be9ffdfd400adf3e6ca62eab13ef2c865402f"
+    },
+    "CARD.SENTRY_MODE": {
+      "definition_sha256": "b098187fa03ce0c8989af7109919b77fd76480c193894ca5da705a6c8ecf672e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "0d7b64592f8875da89206900245a6d541715c8b1727b6ce8eb889b169cf3c18d"
+    },
+    "CARD.SERPENT_FORM": {
+      "definition_sha256": "588fe81c3cfbc57b1fa0ec7d4648e7b50e6f546abe52bad2ca80fa807e48bc1e",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b46cf93035b3b452a39052c2ea9ba16c8e9682c939572bdf80ee8a3531cfe054"
+    },
+    "CARD.SETUP_STRIKE": {
+      "definition_sha256": "608e2c4aadffa5b2521f23e802a64bc9be00457bf6ab207540b089401468af5d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "da5113745338e61fe0472b832cfb64d1c9fba7a93c3941f69c812d277899eabb"
+    },
+    "CARD.SEVEN_STARS": {
+      "definition_sha256": "5abfed38d28232eb66eb4a717800ea5e3a18384318c6017b4276e8163953a4fd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c9b1335a505655be46bf858b599a795f5e3d57136f8ebc54141d051a7a1a518b"
+    },
+    "CARD.SEVERANCE": {
+      "definition_sha256": "b2cafb1dc1eb89f7bc89936a5dac0904802cbf692535dabb8d85bbb09b1b5a75",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "319a8290c8f69d742e46c6f5a16c4d9abb2b013618aa1a5fef7268319058eeb5"
+    },
+    "CARD.SHADOWMELD": {
+      "definition_sha256": "4dde9d38e58455ac734468c98ea3140fbb609c1422bb5df2fcb83ead612fff29",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d2f40491e9db73f22a94338ff0ea8666442345159c4e63d1a042fa3c85ac86ad"
+    },
+    "CARD.SHADOW_SHIELD": {
+      "definition_sha256": "64c041d79287563a802956994e14dec26679a8682a34d9a6ee57ecb6f17f76fd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "90dbd80b7ce195ac9da02d9ee0c0980bf487832793bfbe18eaac08fdf6a72ffe"
+    },
+    "CARD.SHADOW_STEP": {
+      "definition_sha256": "c5997898c8af2c90b99a2a077bedf1db1f0487068f5aa379e1d043d3286ec9e2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "31bb3cf963a12e97aceac984808e02dfa8b98cdf80f35bac7e5cd5e92664d115"
+    },
+    "CARD.SHAME": {
+      "definition_sha256": "1cc217782a947fbf45d4f2938c39ea19fe977b79ec0c34b0f7d957282582f4c1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fa781adfa6c8cdba6659f5c3bbf8e72352c72f82c8ca8934d557f8a1c35bc1e2"
+    },
+    "CARD.SHARED_FATE": {
+      "definition_sha256": "4eeebeae45dd26a774a13bc49bbc0eed605321fa4a0237764a62717fffe912ea",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fb9ecf0e67fc79b4e289cecca7eba19785de27b0f72f269460a09120ab7b3dad"
+    },
+    "CARD.SHATTER": {
+      "definition_sha256": "34c5bfb51652ba99a8edce91848ced04c00046b178accdd7fe6241ea1ac14489",
+      "verification": "native-review",
+      "mechanics_record_sha256": "73407eaf277d91f19a7d706859dba640e9497a2d52ca1bcae82896ca5e8a8f7f"
+    },
+    "CARD.SHINING_STRIKE": {
+      "definition_sha256": "a1ece514461bf694436c8a90c48259453a5dc8f20f425307ddae7838752fa1b2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4e4c9b697e612affd06fa93fa2557c24f0d0612c82d4a4b7facb415d9d7df392"
+    },
+    "CARD.SHIV": {
+      "definition_sha256": "2927176cfd1a2f181556a39ae8fd0ea28b4fe6c6d107f632819426f3ad0f8178",
+      "verification": "native-review",
+      "mechanics_record_sha256": "cbdbabe441fceb9b513459bbd74571ec75f8a1ead3850c5e396afe68520a0d01"
+    },
+    "CARD.SHOCKWAVE": {
+      "definition_sha256": "0a64fe72bfaf7033c59887a85d1c2797f3d359b0c446849d5275d114ee43eb24",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6a103514dc4402361f6f73528b3ad26fe1f1bb103c46c2b6a7bd53046d223fce"
+    },
+    "CARD.SHROUD": {
+      "definition_sha256": "1f93f4d38921d5540da089a59d9d0f34e05ebdeb577dc4959bb40227b8585902",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "48dc7d0589bae24dc64f4687292cb56c7b70310caf34afd97c94c30531c51ef4"
+    },
+    "CARD.SHRUG_IT_OFF": {
+      "definition_sha256": "4ddebe1b0328ce5ebceca212b97bb5989d4492d94b29568c4e3c442a6bb19870",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "5b9f8b3323fcb76e27783b6ae0bce45fd05860800dfea4afd5c4ec25544d4b47"
+    },
+    "CARD.SIC_EM": {
+      "definition_sha256": "eb5f2730c3aefd531d71816a7dddd0c9ae6b97f28534c30aae4b2ef58034ddc7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b2034217494b2ac5ed2cc6841ea2b79820d526d2342e425a860fab9ea20319f9"
+    },
+    "CARD.SIGNAL_BOOST": {
+      "definition_sha256": "0fe35fb6b625fc51c5471f8c59e3ffb3dafc8e2d70108ffbf6ae96d6f13cc156",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "bdb7165baffe252340925402945639595f4105a80208b48bb32199c85a4c08f9"
+    },
+    "CARD.SKEWER": {
+      "definition_sha256": "2db8763b17732870a8fa63839ba42856da290de25db1d59619a8a4397d716f42",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fef400c83755d7e7b165fb9bce25557eba7cf1b54621ffb86848096c029c805e"
+    },
+    "CARD.SKIM": {
+      "definition_sha256": "72a6bb5a3c3d9de2862c80e0ab4470407a846f35d233850d0b9dbf5a7075739c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4024395a18301dd2e5968b3c0cae10a169b95f50dad75dec3530473c078f1fce"
+    },
+    "CARD.SLEIGHT_OF_FLESH": {
+      "definition_sha256": "1d3dc9bd2029f5875dad71f36e3d1fded97457d5176a8e7747e4ed391f3d66c6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "80ebf0c1827f9ed776c49394ae4da094a28f5cf14756d0f88cf16374c96fdc1a"
+    },
+    "CARD.SLICE": {
+      "definition_sha256": "70c77e9b035557547d313400a38b3369a6a5389406ddf5c635ed7eacf0ad4bc9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "2e46e5c9c00d6f02160aa633931e3f57985d2ec8bbe6e77225ea25d0d7717faf"
+    },
+    "CARD.SLIMED": {
+      "definition_sha256": "024372f85032a09464fa15bc5b2113f79e4b89a6f4f415182007901ebd4d37a8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "bce86e6b19212b217457e13994b68db34cb576308609cb6b564eaf365055d1cd"
+    },
+    "CARD.SLOTH": {
+      "definition_sha256": "adaa602017854a7ad2fdb9d20e76c5b6a6c09546d5deae951d31bc21c0f9c736",
+      "verification": "native-review",
+      "mechanics_record_sha256": "0b988ebd9d13858de34904585be8e3824ebe4d50d302a9698ae59ce1e2735904"
+    },
+    "CARD.SMOKESTACK": {
+      "definition_sha256": "5ec4835dc881ed3d16e140f242943354240be6a38afefa726ee52386676a99d2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a177b4d4486217317f0a6959afae8304d54d97d2510d9979ad322530480bddfc"
+    },
+    "CARD.SNAKEBITE": {
+      "definition_sha256": "8f6957b96c1ba47877fd7957158e739a921d4a7e7e4bbcd13c6e3fcf46b013ec",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "975b95957bffdfb3b4ecf0647f8d2915fa94f3e5a9d1bf8c5eedc0a80f32e94e"
+    },
+    "CARD.SNAP": {
+      "definition_sha256": "1e406351febd0b311ff7ba1c6c124852c787aef0c9a4698794b871e07e918e86",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4e7f932ef7f0e540f9126c1a9ff21072b63550c52cd9b6a1398fcbd92e2b48af"
+    },
+    "CARD.SNEAKY": {
+      "definition_sha256": "cd141755e2780c4accb2d026396cd8510e36560debf98b67fadfe45017a10e10",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d57669ea47f5ace8ccf63af613ea71635a763afd3b809cfedd63da4900d14b03"
+    },
+    "CARD.SOLAR_STRIKE": {
+      "definition_sha256": "f2b88136ed313819fcfc2e2c7dc787f8616d40abc047d327e00027ce46781507",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ec73b31c038b71fc8c18e974954659a5a787aec39a0287c74101aa3b24dc52f4"
+    },
+    "CARD.SOOT": {
+      "definition_sha256": "30b333d443fe7c303485625de86c7287997550d3638f636a969d64fd518f78cf",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "707b9c3c167ddc2639ae0a97871a634029188f8c3d3c32a5215b382140732ea3"
+    },
+    "CARD.SOUL": {
+      "definition_sha256": "154b685466724c6dca52e9a1c42f8f0ad9e756a2a6ee8d8a89c62a136596d547",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "46ddf530863193e773997afbb9ea0b3fe5e5ea42b28c7194124e8a7bd876bb7f"
+    },
+    "CARD.SOUL_STORM": {
+      "definition_sha256": "04599c208bd462548a8cd6b5c38566495f2d6d46e7f6db2f1c92a869e3fe9566",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3d1cdcbd9dcae8dbf74bc84e7e5c88dfb6dce8afde5a70e3ae2ceb7864b1a595"
+    },
+    "CARD.SOVEREIGN_BLADE": {
+      "definition_sha256": "3df4ed58fb0fea598d1c9aa4b850f1b034b1ed4de61c2d36073fbe3d02a378a9",
+      "verification": "native-review",
+      "mechanics_record_sha256": "7aa038b60836e2d1e6f626c0a0a035d77b6507c2c214d86cc772b9064e341817"
+    },
+    "CARD.SOW": {
+      "definition_sha256": "bd0fc8ac35dbd0b3feda80b89f53ba0cfabf099c1984b3ee691e5f4d13bc3750",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "70183937f049d8c0ae56c6b621aced0c3d296c6fd58945345504faf72ae8f9ee"
+    },
+    "CARD.SPECTRUM_SHIFT": {
+      "definition_sha256": "a3a784a1f783c2971b68b2d8b5b0cb465782eda67c79a084f52e146b9743ccaf",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a3ca462de998f373644321e6f856604f5891c9eb6e9928d3a27b233ffc2661d6"
+    },
+    "CARD.SPEEDSTER": {
+      "definition_sha256": "72f77a1d35d8682dd692482301ae73fa5294e26618534c37f508773825f54192",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f2de4f1a3acef90ae9d3407acc622bf51cd0d92635bc462bf935c144ef78804e"
+    },
+    "CARD.SPINNER": {
+      "definition_sha256": "6bf366f838e614627fb585ca9bf776568bf34cdbcde79a24288e5308228449c1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ed574cf737aed092a86b916b32598abb17dbba7890839f3f15cbae815cefc897"
+    },
+    "CARD.SPIRIT_OF_ASH": {
+      "definition_sha256": "cd8ff4867fc3503b67eca3ccda0b187120e422776d4b8b9b4acde944269aa636",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1084347ebe6e1c75848deb8927002067b952e93c5ac9954dad15e6957fa0cecb"
+    },
+    "CARD.SPITE": {
+      "definition_sha256": "790529f8b68821a35fa0c5ae285d46db80f60586067db46b8d429b1e53495132",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fe20c4665078e82a1eea55fbd3a4deb9b9bd51e9816675f787593ea51a9c8930"
+    },
+    "CARD.SPLASH": {
+      "definition_sha256": "0735d029391add3173dd0a7c88746ed6144ade93faa97141505fbd1cd9ec2e48",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a52d593d9f77cc135aad84bc6ec96b860337361fa9bb1775efa57ac3f216989a"
+    },
+    "CARD.SPOILS_MAP": {
+      "definition_sha256": "ec2d0e8018a9b3a05915af3d2e68175d1fc3d03abfe71c47d2427010231b49a5",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7a7a9ea29b21647b1fe4e38f785a0f216ac5ba68aec188ba9aa93e047c60aa77"
+    },
+    "CARD.SPOILS_OF_BATTLE": {
+      "definition_sha256": "761e48f72785fb0f2c67f7ea350fb0a33fc1264a040c71625424aba0acf1aee9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8535f513122e04ce69f6c7be5f6e75dfe1be144aeee2145f028df00a46842cfd"
+    },
+    "CARD.SPORE_MIND": {
+      "definition_sha256": "0a124fb84322075b31df6df5703d00907abf285979fbb54d5e67ca2a32d4cab1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "95d6b0a6f5e80325e0995d5645d65647d6992f942c5739382a3278217fdecf42"
+    },
+    "CARD.SPUR": {
+      "definition_sha256": "2fb973ab743fec2185162f0fc24891bf99c8edf3d589faeb3ce1c07f9a7dd90c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "45b855582161016c461967bbb5368347bb8ffb27bdd55b10867817a6a2b05f4a"
+    },
+    "CARD.SQUASH": {
+      "definition_sha256": "4623ba476a114bc69f4dfe187a29cf33166fd7a8d40d1f56d5c7c7ea24fb7650",
+      "verification": "native-review",
+      "mechanics_record_sha256": "37c9c6edfceb6f80b4d512d9bc9c3b9bbaf1d2dd13a41cc569617383ff697c0d"
+    },
+    "CARD.SQUEEZE": {
+      "definition_sha256": "11ab0f3dfaec2974b5a7a4fe278522deaf056d7ca339614e208f8b263f1bd7ab",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "ace0d75784617842c07ad14bdfc21ef625073e9677d4e4cd53abac011b820627"
+    },
+    "CARD.STACK": {
+      "definition_sha256": "1d9938545472b2698b0a8cbb40d884b94d6ea5f6e41abdc3a7b8e4ed16235efc",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a7ed4bc94c6bb6e312d0bc57ff185c31436b63085cde86aa52bad0b612d23179"
+    },
+    "CARD.STAMPEDE": {
+      "definition_sha256": "85bb2ae1cd06a165b134172482c972643d5ff9685a0102da3cfae2da0eba6c0c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a8018189efc118f5d0a75cc24a1cef5b75eeebeb47421979b902e9c8321f11b9"
+    },
+    "CARD.STARDUST": {
+      "definition_sha256": "958e00cc08531ed548eb965975f6eb5bb86a48d6c311e00989959b5dcc9a62b7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d7b81225809f1bfc121536d5ba8cd2155acdacf7c42d7df488407891ee66bca5"
+    },
+    "CARD.STOKE": {
+      "definition_sha256": "d3c70d52fe6678775d0279ed0b1e810806b0cf29999c3c74b2ed8e8a282090b6",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "dff8142f8890be782674493204b867afed1ee6c5e5c1e6cb92f7e5e9c7c850ef"
+    },
+    "CARD.STOMP": {
+      "definition_sha256": "0cdf6de7d279ff5fb1f3bfe99dd8eab793b137b86d4c5d67e26665bb1cc50882",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a04f6f73f79da12172b89320d94abea436e8fdf5948ab83e84e55f05045294ed"
+    },
+    "CARD.STONE_ARMOR": {
+      "definition_sha256": "208b95d5af886537f7526ce104226b6eec00c0156063062fd6e1c39cbaa3f230",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1ab1691083e0dc3c012e0ef38e9d094f823667eeb516bceecdf9f9f8a2479af6"
+    },
+    "CARD.STORM": {
+      "definition_sha256": "50884d5636320c78fbf85d1d80df8546f3b46a740e90e72714f4ff1c0daf2070",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a1ba854844aa21374b0805541b601bb5e896ecf6ca5f8f02b9124d88145a9fb4"
+    },
+    "CARD.STORM_OF_STEEL": {
+      "definition_sha256": "859016a4e80c8d4c587dc3687b8ef456fad4a4bed2fce84d0e606005b42bb975",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "af173560479fc59df2b233f8302b19b29933f1fb4ba7044699f429e18024b9d4"
+    },
+    "CARD.STRANGLE": {
+      "definition_sha256": "476d8845a191468db23b2b821e79992a63f4495e0675eb8c8d40b948725fc356",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fa7d00ac7bf2fe7c58c7b95e66a1b1c2b1c251eecd356312c85cef826b475815"
+    },
+    "CARD.STRATAGEM": {
+      "definition_sha256": "785b0736883f97e009b55bffcc4d4c1c71a9f2d99ba4e5dce7900c973f24242b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6553572377993b35fb96c2e798bcc3a6b3969cbf3cae35b38286e8c64b7abe15"
+    },
+    "CARD.STRIKE_DEFECT": {
+      "definition_sha256": "b18cce213619124466e4a8100ddc2763a4d7da387e208fce964c7efc89006c35",
+      "verification": "native-review",
+      "mechanics_record_sha256": "7bc9db802a73024f6cbfaa16996b43fa5bdce469681352661f5c3a47625fa2ed"
+    },
+    "CARD.STRIKE_IRONCLAD": {
+      "definition_sha256": "b9514c7880abc575abc7a6e572273e1cb64a4a092192f83af7d4e3b6c211c388",
+      "verification": "native-review",
+      "mechanics_record_sha256": "a81d73c696973217afaea5fe2441ba91a7090fadc9586342959078ce5637ee87"
+    },
+    "CARD.STRIKE_NECROBINDER": {
+      "definition_sha256": "b7d5741bf19d7c50289fe90e338bb0b49d59775542e9275df39a13c81cd74bbd",
+      "verification": "native-review",
+      "mechanics_record_sha256": "9794c5d9cdedf2498cbbc0029631343c736c49f16fd9cf82fd61e058dc6b5609"
+    },
+    "CARD.STRIKE_REGENT": {
+      "definition_sha256": "cf4dd825b5040a3d8ed24c9cdff56c0e51b63687b7890ca25f2880ef11a15e41",
+      "verification": "native-review",
+      "mechanics_record_sha256": "e159158c658fc484db9e83a7f546f420871666695fc5dec9c2e25f47c42698f4"
+    },
+    "CARD.STRIKE_SILENT": {
+      "definition_sha256": "9aaaeb4e5302cc2a9f9617bfd5a09da6f7d45ba4dbe7c3c181932e363dc01406",
+      "verification": "native-review",
+      "mechanics_record_sha256": "5829b859b5b6c49dd60ed074cb5ff169923be286fb641d9f11923797832b80ce"
+    },
+    "CARD.SUBROUTINE": {
+      "definition_sha256": "bfff698d1f8ccffac1e04e661d341a1126a0cad4af0cc008d32f61a321328b8b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fd5bd9993ac228a1d499e581ef5a2583cf47fe1ec1d0afbd5b850f28a4f25a85"
+    },
+    "CARD.SUCKER_PUNCH": {
+      "definition_sha256": "799c7f061d722a44f0b0b2ec3976cd36b20cea491e71134c6414a1d2d728fbf0",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "49c043f76d3b133061537298409a935ce878afd667167ee6d2a3adf4075bf3b1"
+    },
+    "CARD.SUMMON_FORTH": {
+      "definition_sha256": "e6bd1b3723b0ff86e0f73338e3fd40ca1753c981e36ea29ba039d89b7424ee1e",
+      "verification": "native-review",
+      "mechanics_record_sha256": "9bd8127fe67f63bb4e9ddc276e90552367ebd5695d0cfd010a4ab45b5e6dd2b8"
+    },
+    "CARD.SUNDER": {
+      "definition_sha256": "1e122dc02f22ed5654d2d5ed1505ea865b1906ee255d3c13d3e82d17078a6d25",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "88706e532391b43a33c780bd8fdc0e5c7284fe6cf81b91503a9783d2e543bb67"
+    },
+    "CARD.SUPERCRITICAL": {
+      "definition_sha256": "b0a1305b978e70a93ca69568ebe8c4fb9a8e6591f7a56c3b8df266505f1dca65",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1a74751068407095d524183062d14107cafdeafd1fdb0aa2a0d16db8c391af85"
+    },
+    "CARD.SUPERMASSIVE": {
+      "definition_sha256": "cab8c2c2ca8a51d0d6be54325dba98e3d02243aa5ead21bdcb43d37435b53225",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "2546a6b238a785c91aa2208d9ab026ff58b1f0f598cc8ddfbac8f5a941cee4ff"
+    },
+    "CARD.SUPPRESS": {
+      "definition_sha256": "93f8c53bb21c4e97864cad94540eccf0812ea21d5944f8e8dda707725325a82c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "fb284bea1ae9f46331891b6ca7e68a9bf18f6db37285028db6a8261ed13bbf6a"
+    },
+    "CARD.SURVIVOR": {
+      "definition_sha256": "caf7dba79c93a1eb1afd6b1e583644009fd2adf3845581f283405182f0f3daf0",
+      "verification": "native-review",
+      "mechanics_record_sha256": "9312881d0477d062702bfe57bf660da26d737e2e078ef9b4c2751035b7605f37"
+    },
+    "CARD.SWEEPING_BEAM": {
+      "definition_sha256": "98f5e2a8cd8f7f1fc4f1521968e43225d8ac835d43a131048b096cf33eb91903",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d60aef6e14bccdbfdb7e797f5eef2474dddd90a03810fcc05f851be9e21357e3"
+    },
+    "CARD.SWEEPING_GAZE": {
+      "definition_sha256": "22c8123b341ff05910f74c328021bac6be1e80210371a049bbe21c44bc1a39e1",
+      "verification": "native-review",
+      "mechanics_record_sha256": "9c3460ac37118bb2678ec585a6a1fcdd135f16838130384f13763e388dc91dcb"
+    },
+    "CARD.SWORD_BOOMERANG": {
+      "definition_sha256": "c2158cac3112be02890e281ac32cd61ff13efc048a8f97e2fd71ee2ab265aa2d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f0f225c329d3062285147d687fe471f3d255cfe97a0b0443a8c59a3cbcf320d5"
+    },
+    "CARD.SWORD_SAGE": {
+      "definition_sha256": "945d041dcb8e3665cdf88c191977054351a5ea5430a9d113e0180900ebb1c4d1",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "0b667fc23c60c714bfad2dac847c4a536ce0b75aa5173e07d78f6b571b8c5e5c"
+    },
+    "CARD.SYNCHRONIZE": {
+      "definition_sha256": "b9df189e785cd457e9cd0efbf3d7ea088ee3214a539343f89d424c9299d0bd13",
+      "verification": "native-review",
+      "mechanics_record_sha256": "7566f87789d94b1d514ab7404d5021903868d6c33fd20c25dc1f1f248393dd9e"
+    },
+    "CARD.SYNTHESIS": {
+      "definition_sha256": "155fb5b084a379443a464a5441602529cbf294ced35f0c041f0b167fdfce9042",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "a1e68389a2ff1242b8ebe87b40a130ad41a2e8135ee8b2325230dde7e12ff608"
+    },
+    "CARD.TACTICIAN": {
+      "definition_sha256": "c08e162652f37088de6be037ac0120c18bb3ac374b7094bfc5097328d069275d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "97110692945d7f9ba3b2991bd29acadf972c989f231f67b3c1cdeece5b0b1796"
+    },
+    "CARD.TAG_TEAM": {
+      "definition_sha256": "5fddff13e9855599f4403bfdc3b50d723d55528f8f5725d337915cb76008df48",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4d86894e0f4fef0470531a0ff42c310c4eaf2ed0657ca64ffa44eef11d1be75f"
+    },
+    "CARD.TANK": {
+      "definition_sha256": "7d8a24c77c1548fa6972430e4c20d2d3da18481388029e33d615cd3983a2034a",
+      "verification": "native-review",
+      "mechanics_record_sha256": "a5482df8808540e9848584da18c01e6c865e72496de2d44aa729565b36f4ae97"
+    },
+    "CARD.TAUNT": {
+      "definition_sha256": "8a0bb5f3d10f5e8ec6a9cf685dacfe687a5fc84f5346a61204b3205f1858d4d4",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b9e1ef6884ce1f59e02bb5027e0b6028d57dfe1abf32a117aaadf211e62b9646"
+    },
+    "CARD.TEAR_ASUNDER": {
+      "definition_sha256": "420206af4340353b34934718085ab27ed69c4b72783e169bf0403c8b23d2e8b8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "3cfe84c36eb8453f755e7614e124a3ed81360ddec5637d93c1f8de5fd176aabf"
+    },
+    "CARD.TEMPEST": {
+      "definition_sha256": "acc641ea29bf188362ec100b4e6bf234e65a50fb11313abafbf07449e4e7e8ee",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c29054f63585332d34bd67f238bbcb60392d869010e77b0740412d3641352079"
+    },
+    "CARD.TERRAFORMING": {
+      "definition_sha256": "b2a3ca9a8cfbd61a65a6859e590f720dc41c15566554c90fb07bb7ee64f8861d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "bf28da894ed2a9fca6b63b7d551871ec2b60f38dc409c2d0e27eb7dbd67ed206"
+    },
+    "CARD.TESLA_COIL": {
+      "definition_sha256": "cc8a3414dffb183c41e02a86e17cf4ae13c5d4f45d6dac8ef411a69408831557",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b1383235f70d4a15dc357f8aaccde5e4a203e9329073d251ca07e257f51c7ba5"
+    },
+    "CARD.THE_BOMB": {
+      "definition_sha256": "284f6da9ffcb96b9f9ad58a9f5cd6dd30958b8f931462d9b55566356e3cc17a9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "23032a913f9bfec6a87613e1975aa0c7ac8b7141403868629ba43c497a9975a3"
+    },
+    "CARD.THE_GAMBIT": {
+      "definition_sha256": "3b0cd76789632e3fc98d0cbf1c31c14264aad52af00485a2a1470c6e1bb5032c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "924396b8a0d2ce78863249bb376bb2b5aebec18b42d5dcb80935453270d8e2ca"
+    },
+    "CARD.THE_HUNT": {
+      "definition_sha256": "a9ec857702fe6973cf3204eae2bd331c09a57a6d5dfb0886f8aa55704dd7e5d9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9f16b811ade58a8dc567bbfb11cfd473c5b9d6f303314a52188c172d7910e00d"
+    },
+    "CARD.THE_SCYTHE": {
+      "definition_sha256": "5097151929df20e4595fbdbcdce2facd4804c2e3fbe960a23294400b95028d08",
+      "verification": "native-review",
+      "mechanics_record_sha256": "81795fc772423c50fc116c9b6f0a76279bf96f71316f56fb950e48cfca0b664e"
+    },
+    "CARD.THE_SEALED_THRONE": {
+      "definition_sha256": "59e21db2e0c4b14964bcd0514ec25f35539275a95c722cdedd03f8c984ceb52a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d1aa7c2b1f63f69b2ab9a5aff136741710a217c06c24705d858b4f555e3b9e7e"
+    },
+    "CARD.THE_SMITH": {
+      "definition_sha256": "12564858507d99f15aba39e98d5c4fab7429eb31ee783468a7d10ac8a768aaea",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9e72b41b280208b140ff0abe9fbaedac03add8e401a8afb78768472e4dcff865"
+    },
+    "CARD.THINKING_AHEAD": {
+      "definition_sha256": "5fc8e7dc2da50d9b140bfa37bc90f01bc69662107f9c4d1e1c949bb1e287c87c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9214209de0b5d5a0114e850bdd2bde98cbd67f54bfefc750aece76efacffb289"
+    },
+    "CARD.THRASH": {
+      "definition_sha256": "f2b5b5395f30bc61ff798b5e44bb581077db3645fa942634a01147be279082d8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1d8639578ae02b3830d5662a5a2222f9da3b04804973ada189dcf57150b65373"
+    },
+    "CARD.THRUMMING_HATCHET": {
+      "definition_sha256": "0927e84911ebec43fa71be5838066eede3f5201cea87fc6a04055c7a848440bb",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "40e7d06b32c871f9052829ccb8304df43239ff5654cae150b02c25a58c5d0cf3"
+    },
+    "CARD.THUNDER": {
+      "definition_sha256": "97923adc92a93634af2eb0ab2781d213e8514f7a64f04c775821a7088ed9fd58",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "d1de64f1f1fec30e5eb172f1bdb46198239ee6f9da60b4c220a867c263426f30"
+    },
+    "CARD.THUNDERCLAP": {
+      "definition_sha256": "e37f9e89989c192156cd650e8ba6b6d316e9e4aa9fd0f04a0a8ef90399620e81",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "43c79873b81e7cf8bcfe3fbbc8d651c6182e3d97beefc7db2359356d44a61cba"
+    },
+    "CARD.TIMES_UP": {
+      "definition_sha256": "5231066fd958aa9c1b4fb62d200fd6d3cd1f809ba62aeec4e5b7a447b9a4d72a",
+      "verification": "native-review",
+      "mechanics_record_sha256": "d6920c96c6f4e3ff5809c63b72833c2c5e84c70c0264384994ede9580cd5cd60"
+    },
+    "CARD.TOOLS_OF_THE_TRADE": {
+      "definition_sha256": "4d24692c24b6d2926b8b8a71cda7f90473f99ef298a84ef6499a4fd5f7e07fd7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "29e97ce25d31dd8dced7a652a9afda3eb5b9552144dacc1eca9639b8c05ae82f"
+    },
+    "CARD.TORIC_TOUGHNESS": {
+      "definition_sha256": "5886ac4138c2f28dcd347d1edd7ed2bc60f88645cba9f0d09d3a7c58fd25e8a3",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "f7556fb2653bf8b675a938d81c8ff700663134a9d9acb4f175a3936728508e38"
+    },
+    "CARD.TOXIC": {
+      "definition_sha256": "063496971d7b28426accbf00049da3f743247dd62d768e584e62e01ced74cd5f",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "7fcfad1af1594ff0ac598bde96b737f4f87e06a52338b57eb54d45dfee56860d"
+    },
+    "CARD.TRACKING": {
+      "definition_sha256": "31a0526085956446c92082e663fcce256ba1a4a0ae07fe002f33546422789739",
+      "verification": "native-review",
+      "mechanics_record_sha256": "7b239f42ea0f844d1eead0415b7eeef39ef7e2adcedb2dbede91e3e5bda6bf3e"
+    },
+    "CARD.TRANSFIGURE": {
+      "definition_sha256": "3a4a97ae091e60974f496158c0f0d6884845b031fa2813cf782fc050796a0fb3",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "82a1e7c4c3d32218269e187859a51882503909787baad0ad0d3b962d10f0d47c"
+    },
+    "CARD.TRASH_TO_TREASURE": {
+      "definition_sha256": "2b3ac85c20875972ee3b708d998b22b4a7471240a7061092b87de120b97c4c3e",
+      "verification": "native-review",
+      "mechanics_record_sha256": "4127c6798344f8ba2d3f0fafde338851ae456859130514d7a771a14f12478297"
+    },
+    "CARD.TREMBLE": {
+      "definition_sha256": "87308806d019335117c87fec728f399f91ac329d4b534d0f5ecce977b71bc9cd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "4fb9c118e5b911a4af1c8f442a01ee59210b806e7d219f3613b7e3886bdb56fc"
+    },
+    "CARD.TRUE_GRIT": {
+      "definition_sha256": "7d34fdf40fbbba5389b200cac9746ac0597471744c1db16ac23f16b83f97956d",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "277440ea6607ab6d25f0682ffcce454c230107ba9b9d95226aae28efd8791463"
+    },
+    "CARD.TURBO": {
+      "definition_sha256": "5fd4e6995e9d6f0848f91e0a54181ae2348da7f80e01ea4634e278182bb95a50",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1915dac3cb5b848850b91b4bd5be265a3d701123ec5533632b5bb759065b786f"
+    },
+    "CARD.TWIN_STRIKE": {
+      "definition_sha256": "87131a9fa3797d8bc26be299aafc745ab698082346b98cbf6ac91d2697f63b29",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "09258be139a2432c061038e952b41dc546ce2f05349bfa4050927f8294fd0dd8"
+    },
+    "CARD.TYRANNY": {
+      "definition_sha256": "49fa5f5bb168f7e4efa80f0d41bb95794ec87712d90555fb7d370b9abdea80d9",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b4830bd6effbc2b7f07432acab8c5807fc3fb152ab1c4ee432d434a300de91d0"
+    },
+    "CARD.ULTIMATE_DEFEND": {
+      "definition_sha256": "acc4506e2154e01f069412c7220e708efba32b7c01d3d563c0cc34c72866d019",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "39e6cd91064497b26edb752e79396d8e7df38c80fdc8d14a46355a5a9b1ea14d"
+    },
+    "CARD.ULTIMATE_STRIKE": {
+      "definition_sha256": "69145457f0797e77f629422dc6d1a5a74a4fbe350f29f19234afef8191ca23ca",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e17598774222fc9bc08acb2b9ffc6e92caf3d9469fcd31d162655d217c452250"
+    },
+    "CARD.UNDEATH": {
+      "definition_sha256": "9b0d9aa4c55349b2c9df9ebcca602f83b1b400c54ed93ef0c46449135293356b",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "220118daa9aa542c7cfe5592ea695d11f3879b4ed5920e408fc53fbef6c7bd73"
+    },
+    "CARD.UNLEASH": {
+      "definition_sha256": "601495e26590e4a46b1c4b61e12929b1f4ca3a096c52ce36ba4a9b3d79dda11c",
+      "verification": "native-review",
+      "mechanics_record_sha256": "df997ca9dbf5b65be980391a83b2a1aba6ecd8d6d5d621f339fdb7af2e01b4f0"
+    },
+    "CARD.UNMOVABLE": {
+      "definition_sha256": "77495e893e781107168673e5e593d994a3035a61d929408752ccae444de4c906",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "326d6e51b31720f82839df10ed3e12184a59de887d99380a12c8c1c998e72587"
+    },
+    "CARD.UNRELENTING": {
+      "definition_sha256": "50640fe1545fc2d3ee11f0fdcda98910bacadb8a3c1ad648c32f35846cfa51ca",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "521a287e6b8372afbcbda0bb15a9196287da0adb52e74bff3ec338e010f1776e"
+    },
+    "CARD.UNTOUCHABLE": {
+      "definition_sha256": "5dcd00a2acc555cae537fd8300fb57d42f3536fc38384cf6615153f58dc30534",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "9f81c18a4ae7a3f59db364232fd8b2d534320b31610e209ae708d36f579197a9"
+    },
+    "CARD.UPPERCUT": {
+      "definition_sha256": "a9d2d834247eb1b141fb0e80d33bf1108f0bf6620bd044caf1face8c285aa1fd",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6b81b3d00abbc40120803206cfef48990478fd1802b2a4a25df48e83b6d3bd3f"
+    },
+    "CARD.UPROAR": {
+      "definition_sha256": "0f2379efedf3e2dfcc4d30bcb424d7ca20088d67e36007b35fbde9884400b133",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "6cd84c6cf65a07120033a5229a31cf76b55bedfe01a39fc50c5c37554abfccb7"
+    },
+    "CARD.UP_MY_SLEEVE": {
+      "definition_sha256": "f393be8684d4ac67f89d097a4c99b495e7781da2342719a63e0ce77a87cbeb79",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1b323ffcfa34822e49bdc4ac92d5d25db7a7b5c5197ca93f650f3eeadefcf126"
+    },
+    "CARD.VEILPIERCER": {
+      "definition_sha256": "ab0dd265fc6fd8cf273605f8758748ef8a9d6b7c018272c6953f5f81a708d59f",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "69fd858e1cb24a3ee797b9a5dcfbe1bd73f0b5b7bfcffad026c0b5819657313f"
+    },
+    "CARD.VENERATE": {
+      "definition_sha256": "d77e9c87ed23042d59811a27c8fb4c8a8f8b73c2aba96030dfdc1e8e3ff44f14",
+      "verification": "native-review",
+      "mechanics_record_sha256": "6d3610dd2ce6b330a91e3cc983f623245f0d7fa29b72f2f811930145c8cdc1e4"
+    },
+    "CARD.VICIOUS": {
+      "definition_sha256": "61ce974ed2486108fa6f779ea573054c855d2d643429b52313988e8862271d7c",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "2312b6215a444ee9edc5311c0ddc4712c1e6b480011e3ab17e0e7f9ba8d3d735"
+    },
+    "CARD.VOID": {
+      "definition_sha256": "6b25feaae5c92b592a870b9e12d6674be56ade35cffc89fe2f7277eafc08dca7",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c640789a391d83a7254a85ffc824ea6662365979b057f1c6773988f8638a8537"
+    },
+    "CARD.VOID_FORM": {
+      "definition_sha256": "ff2d5ef3ef259e46d082159a5c3ea5d2238cfea1cfd0616e89dc828d85efb1fc",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "c45153993735b4dec7fdd36b2768db5321daa9cbd6ad79a642bbd642cdf32a07"
+    },
+    "CARD.VOLLEY": {
+      "definition_sha256": "d70c9ae05130ed4164a4479041ca1dd19ea6df4030caff5b9b5178ac744b35cb",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e545e2d9ca71a481d69753c1a7ab619b6a734f6f04c8b087f55ab4c9338252a2"
+    },
+    "CARD.VOLTAIC": {
+      "definition_sha256": "2d79fa1d508620b6dc25f224d3a2dd52986833aeeeac20562dd5cbc5981b74e4",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e8498d1521fc21efec4f62152338b07ff935ec7e38992fa217708ea963193c7a"
+    },
+    "CARD.WASTE_AWAY": {
+      "definition_sha256": "af1fe139fd4fc8b01c11fe35af2e41ee3e98f28552e9e74014db6977614ed0d1",
+      "verification": "native-review",
+      "mechanics_record_sha256": "4ceda2a7b9c48d05fbcbef28712b803be7488050fe4a748d5ff9bf57c9602f01"
+    },
+    "CARD.WELL_LAID_PLANS": {
+      "definition_sha256": "02c8a0b7f6cd3eb0436da7f99538d3fd7a8a21510bddf3de0e9e97cc6b1c68c5",
+      "verification": "native-review",
+      "mechanics_record_sha256": "0e84f0eb9d0638d3b3cf9fca05f3c3f8b02fa42fdd2f6a9e36a1371d842acb5c"
+    },
+    "CARD.WHIRLWIND": {
+      "definition_sha256": "ffdb3485ce9ae1ed83f8cb076faf6aa4020813131e05e26ee5731220914aafe2",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "8b87792e092c42761340e8d9ab2d86a0cb9cb21cfb1152d61904fedf27239e1b"
+    },
+    "CARD.WHISTLE": {
+      "definition_sha256": "fa5e22f422f107182b70512120aad5a27f74e6531693889434c29590d00fecdd",
+      "verification": "native-review",
+      "mechanics_record_sha256": "3811fbda72a48780eb4bac4bbc1edbd4981c0fdf498ed4d62db5b1bb3769dcba"
+    },
+    "CARD.WHITE_NOISE": {
+      "definition_sha256": "1432351c11dca0f7e7cd746b1af0c916d2ac96507c37122070b5873338266ba0",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "256d1df90e8774e0878a43beae24de9f08f81338417b676d44a457af39cd5c27"
+    },
+    "CARD.WISH": {
+      "definition_sha256": "a867f9e38fb5a13b409c5babc5543badc35badc67fe33fdeb079636dff7755c5",
+      "verification": "native-review",
+      "mechanics_record_sha256": "2be47db1984ce24ac6a1ea69be6fc459cfe0c7443e7af217109e901782d11906"
+    },
+    "CARD.WISP": {
+      "definition_sha256": "bd9f68c54de55057dca6735f869702bd4ca51ed5805076e5079102ad736dc8c8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "b47d0a7b1915935558bb61fa4397d4b45060651e82de17d4d1130a7fa7a73825"
+    },
+    "CARD.WITHER": {
+      "definition_sha256": "6d22af0c8f57b9811e76c1bcbac6790b2d172a2b6b22e4dae11e1da0b744419a",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "e1a4319a53b9bb0688c9c81832925b7b73ad86182edb30ff998a8a3fb4143184"
+    },
+    "CARD.WOUND": {
+      "definition_sha256": "ea09c03f00a01be6c0fcc78f4ce861b5ac9d90406d59e63a65e175c74dc74121",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1b081d8d4a566ec67d10fead6e81a59cba4976b2b8f5e0ef87bd345e168098d9"
+    },
+    "CARD.WRAITH_FORM": {
+      "definition_sha256": "08a69b811b6892c62554792df30c5f3e15d33b917e72404508de98724c9534a8",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "cae5d8ab179e9c27a115ff8a9e7605cb2c2b0bfe3ed8c0c1144f9928b637a2a0"
+    },
+    "CARD.WRITHE": {
+      "definition_sha256": "371f3181463bb371c6ab0672b351bdd9c65325c4623496e3bb9cd4ae18082114",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "1c84a42b251e39e01d7b4072fa88055d1973867e106c5126d9ca35bdf62b069d"
+    },
+    "CARD.WROUGHT_IN_WAR": {
+      "definition_sha256": "860ab45c0d35d4f96f4f214f5fa0bdcfb2955df8b540660c7769bbea4434b44f",
+      "verification": "native-template-alignment",
+      "mechanics_record_sha256": "cecaf76ee7232b1feb40bd115717cde4e14470a022f8806d4170030efdab7590"
+    },
+    "CARD.ZAP": {
+      "definition_sha256": "55e8218c56549cbeeb99d7d8e6d6ab8e90b3b5a430a8bb28039fc54cd0720430",
+      "verification": "native-review",
+      "mechanics_record_sha256": "b56bdd8aa0e05b60ae1c2e85ac0d2ea1009e7c6cd3c1ac77f00f8fb6eae667aa"
+    }
+  },
+  "native_number_projections": [
+    "CARD.ANTICIPATE",
+    "CARD.BIASED_COGNITION",
+    "CARD.BLADE_DANCE",
+    "CARD.BLADE_OF_INK",
+    "CARD.CAPTURE_SPIRIT",
+    "CARD.CHARGE",
+    "CARD.COLLISION_COURSE",
+    "CARD.COLOSSUS",
+    "CARD.CRIMSON_MANTLE",
+    "CARD.CRUSH_UNDER",
+    "CARD.DEMON_FORM",
+    "CARD.DEVASTATE",
+    "CARD.FLICK_FLACK",
+    "CARD.GLIMPSE_BEYOND",
+    "CARD.HAUNT",
+    "CARD.HIDDEN_DAGGERS",
+    "CARD.HOWL_FROM_BEYOND",
+    "CARD.JUGGERNAUT",
+    "CARD.LEADING_STRIKE",
+    "CARD.MANGLE",
+    "CARD.MOMENTUM_STRIKE",
+    "CARD.NULL",
+    "CARD.PACTS_END",
+    "CARD.PILLAR_OF_CREATION",
+    "CARD.RAMPAGE",
+    "CARD.REAVE",
+    "CARD.REFINE_BLADE",
+    "CARD.REFRACT",
+    "CARD.RELAX",
+    "CARD.SETUP_STRIKE",
+    "CARD.SHROUD",
+    "CARD.SOUL_STORM",
+    "CARD.SPOILS_OF_BATTLE",
+    "CARD.SUNDER",
+    "CARD.TAUNT",
+    "CARD.TERRAFORMING",
+    "CARD.THUNDER",
+    "CARD.UP_MY_SLEEVE",
+    "CARD.WITHER"
+  ],
+  "instance_rules": {
+    "CARD.GENETIC_ALGORITHM": "CurrentBlock must equal 1 + IncreasedBlock; base/upgraded permanent increment 3/4.",
+    "CARD.THE_SCYTHE": "CurrentDamage must equal 13 + IncreasedDamage; base/upgraded permanent increment 4/5.",
+    "CARD.MAD_SCIENCE": "Saved TinkerTimeType and TinkerTimeRider select the reviewed type and one of nine event effects; upgrading adds Innate."
+  },
+  "helper_definition_sha256": {
+    "MegaCrit.Sts2.Core.Models/CardModel": "2e0c6eea66dfc1098c82386fa15838c6d376a83953a895c028b4f2ef60816919",
+    "MegaCrit.Sts2.Core.Localization.DynamicVars/DynamicVarSet": "3b248aee3658e2fc22e3effb4ca8896aaf4fed6ff3ae3012c624a2e726638ee8",
+    "MegaCrit.Sts2.Core.Localization.DynamicVars/CalculatedVar": "2d0d37a16f14817e250f9ac6cbe6954c8aa3540882fb9bde22d0c4592ffbca39",
+    "MegaCrit.Sts2.Core.Localization.DynamicVars/CalculatedDamageVar": "fd576b2e76f45503db579ce27f3370be182ba737e1946b1f06e32ebc76b40094",
+    "MegaCrit.Sts2.Core.Saves.Runs/SavedProperties": "86ba060afb917ab6500bd2f6995adb63a939896d227b6cbd3182b46eae92bdd7",
+    "MegaCrit.Sts2.Core.Saves.Runs/SerializableCard": "e51450e2aa321d2e4060ca73371b74a99ac8fdb21433b87e7396a5f09032823b",
+    "MegaCrit.Sts2.Core.Models.Events/TinkerTime": "8deed294ff2ccd7b452379ba78df190e7c8c1eef563d845b9bebe5a5a2c40dde",
+    "MegaCrit.Sts2.Core.Models.Powers/FlankingPower": "3b236392e7ce1e578137a0b4384c67fa6c6b6247f690cacd1641f07890d43749",
+    "MegaCrit.Sts2.Core.Models.Powers/TankPower": "a0a049bdb4de4df697c7917dd6f36b46ab7b9f689ddbd09454d4573c25383bb8",
+    "MegaCrit.Sts2.Core.Models.Powers/GuardedPower": "593b32d070ab3838ea323aae39eff09adf150df27cfd96f90e019a679a9089de",
+    "MegaCrit.Sts2.Core.Models.Powers/TrackingPower": "661faa5c70589a3df5181d43aa4571dd9ce13d5b66ef6a1d1a2b8868fb6b562e",
+    "MegaCrit.Sts2.Core.Models.Powers/IterationPower": "24027c14ac29fa1713092ad9c23411cb6369e271bb136aa88e2553e09e9815a3",
+    "MegaCrit.Sts2.Core.Models.Powers/PhantomBladesPower": "37fa919f21536318ec4a73ee31e95d74cb7922ebce8bc364a805683db0079371",
+    "MegaCrit.Sts2.Core.Models.Powers/SynchronizePower": "2c93d2199c2db586191169b033ebb8bf20046f8b42cbb2fe2c289dd86d4a96ab",
+    "MegaCrit.Sts2.Core.Models.Powers/TrashToTreasurePower": "0dcc9c857c42d27a40b2b08bec0b1434cbfe3f66846c7fa8da470426ff6f0947",
+    "MegaCrit.Sts2.Core.Models.Powers/CuriousPower": "29761d0618952415c9776f192ff2cba09a13b023409a774666db9d1a313a72e7",
+    "MegaCrit.Sts2.Core.Models.Powers/ImprovementPower": "e6e1cf00387038223cae65477192d63ce0f4ba09c8b59bc435ffc9f0653dea33",
+    "MegaCrit.Sts2.Core.Models.Powers/StranglePower": "b62b0cee78456da85e0ceec4b478106c5a5d510217cc81975fb4f4cdc796c0b3"
+  }
+}

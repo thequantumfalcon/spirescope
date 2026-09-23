@@ -1,0 +1,1492 @@
+{
+  "game_version": "v0.107.1",
+  "game_commit": "59260271",
+  "reviewed_at": "2026-09-22",
+  "complete": false,
+  "scope": "General relic rules and rarity for the independently reviewed registered main pool.",
+  "method": "Strict complete English template alignment with literal native values for 258 entries. The other 38 received native definition review for reworks, formatter branches, default counters, names, enchantments and wording. Explicit notes distinguish observed implementation/printed-description disagreements. Current counters, stored choices, all availability conditions and cross-entity interactions are not simulated.",
+  "reviewed_ids": [
+    "RELIC.AKABEKO",
+    "RELIC.ALCHEMICAL_COFFER",
+    "RELIC.AMETHYST_AUBERGINE",
+    "RELIC.ANCHOR",
+    "RELIC.ARCANE_SCROLL",
+    "RELIC.ARCHAIC_TOOTH",
+    "RELIC.ART_OF_WAR",
+    "RELIC.ASTROLABE",
+    "RELIC.BAG_OF_MARBLES",
+    "RELIC.BAG_OF_PREPARATION",
+    "RELIC.BEATING_REMNANT",
+    "RELIC.BEAUTIFUL_BRACELET",
+    "RELIC.BELLOWS",
+    "RELIC.BELT_BUCKLE",
+    "RELIC.BIG_HAT",
+    "RELIC.BIG_MUSHROOM",
+    "RELIC.BIIIG_HUG",
+    "RELIC.BING_BONG",
+    "RELIC.BLACK_BLOOD",
+    "RELIC.BLACK_STAR",
+    "RELIC.BLESSED_ANTLER",
+    "RELIC.BLOOD_SOAKED_ROSE",
+    "RELIC.BLOOD_VIAL",
+    "RELIC.BONE_FLUTE",
+    "RELIC.BONE_TEA",
+    "RELIC.BOOKMARK",
+    "RELIC.BOOK_OF_FIVE_RINGS",
+    "RELIC.BOOK_REPAIR_KNIFE",
+    "RELIC.BOOMING_CONCH",
+    "RELIC.BOUND_PHYLACTERY",
+    "RELIC.BOWLER_HAT",
+    "RELIC.BREAD",
+    "RELIC.BRILLIANT_SCARF",
+    "RELIC.BRIMSTONE",
+    "RELIC.BRONZE_SCALES",
+    "RELIC.BURNING_BLOOD",
+    "RELIC.BURNING_STICKS",
+    "RELIC.BYRDPIP",
+    "RELIC.CALLING_BELL",
+    "RELIC.CANDELABRA",
+    "RELIC.CAPTAINS_WHEEL",
+    "RELIC.CAULDRON",
+    "RELIC.CENTENNIAL_PUZZLE",
+    "RELIC.CHANDELIER",
+    "RELIC.CHARONS_ASHES",
+    "RELIC.CHEMICAL_X",
+    "RELIC.CHOICES_PARADOX",
+    "RELIC.CHOSEN_CHEESE",
+    "RELIC.CIRCLET",
+    "RELIC.CLAWS",
+    "RELIC.CLOAK_CLASP",
+    "RELIC.CRACKED_CORE",
+    "RELIC.CROSSBOW",
+    "RELIC.CURSED_PEARL",
+    "RELIC.DARKSTONE_PERIAPT",
+    "RELIC.DATA_DISK",
+    "RELIC.DAUGHTER_OF_THE_WIND",
+    "RELIC.DELICATE_FROND",
+    "RELIC.DEMON_TONGUE",
+    "RELIC.DIAMOND_DIADEM",
+    "RELIC.DINGY_RUG",
+    "RELIC.DISTINGUISHED_CAPE",
+    "RELIC.DIVINE_DESTINY",
+    "RELIC.DIVINE_RIGHT",
+    "RELIC.DOLLYS_MIRROR",
+    "RELIC.DRAGON_FRUIT",
+    "RELIC.DREAM_CATCHER",
+    "RELIC.DRIFTWOOD",
+    "RELIC.DUSTY_TOME",
+    "RELIC.ECTOPLASM",
+    "RELIC.ELECTRIC_SHRYMP",
+    "RELIC.EMBER_TEA",
+    "RELIC.EMOTION_CHIP",
+    "RELIC.EMPTY_CAGE",
+    "RELIC.ETERNAL_FEATHER",
+    "RELIC.FAKE_ANCHOR",
+    "RELIC.FAKE_BLOOD_VIAL",
+    "RELIC.FAKE_HAPPY_FLOWER",
+    "RELIC.FAKE_LEES_WAFFLE",
+    "RELIC.FAKE_MANGO",
+    "RELIC.FAKE_MERCHANTS_RUG",
+    "RELIC.FAKE_ORICHALCUM",
+    "RELIC.FAKE_SNECKO_EYE",
+    "RELIC.FAKE_STRIKE_DUMMY",
+    "RELIC.FAKE_VENERABLE_TEA_SET",
+    "RELIC.FENCING_MANUAL",
+    "RELIC.FESTIVE_POPPER",
+    "RELIC.FIDDLE",
+    "RELIC.FISHING_ROD",
+    "RELIC.FORGOTTEN_SOUL",
+    "RELIC.FRAGRANT_MUSHROOM",
+    "RELIC.FRESNEL_LENS",
+    "RELIC.FROZEN_EGG",
+    "RELIC.FUNERARY_MASK",
+    "RELIC.FUR_COAT",
+    "RELIC.GALACTIC_DUST",
+    "RELIC.GAMBLING_CHIP",
+    "RELIC.GAME_PIECE",
+    "RELIC.GHOST_SEED",
+    "RELIC.GIRYA",
+    "RELIC.GLASS_EYE",
+    "RELIC.GLITTER",
+    "RELIC.GNARLED_HAMMER",
+    "RELIC.GOLDEN_COMPASS",
+    "RELIC.GOLDEN_PEARL",
+    "RELIC.GOLD_PLATED_CABLES",
+    "RELIC.GORGET",
+    "RELIC.GREMLIN_HORN",
+    "RELIC.HAND_DRILL",
+    "RELIC.HAPPY_FLOWER",
+    "RELIC.HEFTY_TABLET",
+    "RELIC.HELICAL_DART",
+    "RELIC.HISTORY_COURSE",
+    "RELIC.HORN_CLEAT",
+    "RELIC.ICE_CREAM",
+    "RELIC.INFUSED_CORE",
+    "RELIC.INTIMIDATING_HELMET",
+    "RELIC.IRON_CLUB",
+    "RELIC.IVORY_TILE",
+    "RELIC.JEWELED_MASK",
+    "RELIC.JEWELRY_BOX",
+    "RELIC.JOSS_PAPER",
+    "RELIC.JUZU_BRACELET",
+    "RELIC.KALEIDOSCOPE",
+    "RELIC.KIFUDA",
+    "RELIC.KUNAI",
+    "RELIC.KUSARIGAMA",
+    "RELIC.LANTERN",
+    "RELIC.LARGE_CAPSULE",
+    "RELIC.LASTING_CANDY",
+    "RELIC.LAVA_LAMP",
+    "RELIC.LAVA_ROCK",
+    "RELIC.LEAD_PAPERWEIGHT",
+    "RELIC.LEAFY_POULTICE",
+    "RELIC.LEES_WAFFLE",
+    "RELIC.LETTER_OPENER",
+    "RELIC.LIZARD_TAIL",
+    "RELIC.LOOMING_FRUIT",
+    "RELIC.LORDS_PARASOL",
+    "RELIC.LOST_COFFER",
+    "RELIC.LOST_WISP",
+    "RELIC.LUCKY_FYSH",
+    "RELIC.LUNAR_PASTRY",
+    "RELIC.MANGO",
+    "RELIC.MASSIVE_SCROLL",
+    "RELIC.MAW_BANK",
+    "RELIC.MEAL_TICKET",
+    "RELIC.MEAT_CLEAVER",
+    "RELIC.MEAT_ON_THE_BONE",
+    "RELIC.MEMBERSHIP_CARD",
+    "RELIC.MERCURY_HOURGLASS",
+    "RELIC.METRONOME",
+    "RELIC.MINIATURE_CANNON",
+    "RELIC.MINIATURE_TENT",
+    "RELIC.MINI_REGENT",
+    "RELIC.MOLTEN_EGG",
+    "RELIC.MR_STRUGGLES",
+    "RELIC.MUMMIFIED_HAND",
+    "RELIC.MUSIC_BOX",
+    "RELIC.MYSTIC_LIGHTER",
+    "RELIC.NEOWS_BONES",
+    "RELIC.NEOWS_TALISMAN",
+    "RELIC.NEOWS_TORMENT",
+    "RELIC.NEW_LEAF",
+    "RELIC.NINJA_SCROLL",
+    "RELIC.NUNCHAKU",
+    "RELIC.NUTRITIOUS_OYSTER",
+    "RELIC.NUTRITIOUS_SOUP",
+    "RELIC.ODDLY_SMOOTH_STONE",
+    "RELIC.OLD_COIN",
+    "RELIC.ORANGE_DOUGH",
+    "RELIC.ORICHALCUM",
+    "RELIC.ORNAMENTAL_FAN",
+    "RELIC.ORRERY",
+    "RELIC.PAELS_BLOOD",
+    "RELIC.PAELS_CLAW",
+    "RELIC.PAELS_EYE",
+    "RELIC.PAELS_FLESH",
+    "RELIC.PAELS_GROWTH",
+    "RELIC.PAELS_HORN",
+    "RELIC.PAELS_LEGION",
+    "RELIC.PAELS_TEARS",
+    "RELIC.PAELS_TOOTH",
+    "RELIC.PAELS_WING",
+    "RELIC.PANDORAS_BOX",
+    "RELIC.PANTOGRAPH",
+    "RELIC.PAPER_KRANE",
+    "RELIC.PAPER_PHROG",
+    "RELIC.PARRYING_SHIELD",
+    "RELIC.PEAR",
+    "RELIC.PENDULUM",
+    "RELIC.PEN_NIB",
+    "RELIC.PERMAFROST",
+    "RELIC.PETRIFIED_TOAD",
+    "RELIC.PHIAL_HOLSTER",
+    "RELIC.PHILOSOPHERS_STONE",
+    "RELIC.PHYLACTERY_UNBOUND",
+    "RELIC.PLANISPHERE",
+    "RELIC.POCKETWATCH",
+    "RELIC.POLLINOUS_CORE",
+    "RELIC.POMANDER",
+    "RELIC.POTION_BELT",
+    "RELIC.POWER_CELL",
+    "RELIC.PRAYER_WHEEL",
+    "RELIC.PRECARIOUS_SHEARS",
+    "RELIC.PRECISE_SCISSORS",
+    "RELIC.PRESERVED_FOG",
+    "RELIC.PRISMATIC_GEM",
+    "RELIC.PUMPKIN_CANDLE",
+    "RELIC.PUNCH_DAGGER",
+    "RELIC.RADIANT_PEARL",
+    "RELIC.RAINBOW_RING",
+    "RELIC.RAZOR_TOOTH",
+    "RELIC.RED_MASK",
+    "RELIC.RED_SKULL",
+    "RELIC.REGALITE",
+    "RELIC.REGAL_PILLOW",
+    "RELIC.REPTILE_TRINKET",
+    "RELIC.RINGING_TRIANGLE",
+    "RELIC.RING_OF_THE_DRAKE",
+    "RELIC.RING_OF_THE_SNAKE",
+    "RELIC.RIPPLE_BASIN",
+    "RELIC.ROYAL_POISON",
+    "RELIC.ROYAL_STAMP",
+    "RELIC.RUINED_HELMET",
+    "RELIC.RUNIC_CAPACITOR",
+    "RELIC.RUNIC_PYRAMID",
+    "RELIC.SAI",
+    "RELIC.SAND_CASTLE",
+    "RELIC.SCREAMING_FLAGON",
+    "RELIC.SCROLL_BOXES",
+    "RELIC.SEAL_OF_GOLD",
+    "RELIC.SEA_GLASS",
+    "RELIC.SELF_FORMING_CLAY",
+    "RELIC.SERE_TALON",
+    "RELIC.SHOVEL",
+    "RELIC.SHURIKEN",
+    "RELIC.SIGNET_RING",
+    "RELIC.SILKEN_TRESS",
+    "RELIC.SILVER_CRUCIBLE",
+    "RELIC.SLING_OF_COURAGE",
+    "RELIC.SMALL_CAPSULE",
+    "RELIC.SNECKO_EYE",
+    "RELIC.SNECKO_SKULL",
+    "RELIC.SOZU",
+    "RELIC.SPARKLING_ROUGE",
+    "RELIC.SPIKED_GAUNTLETS",
+    "RELIC.STONE_CALENDAR",
+    "RELIC.STONE_CRACKER",
+    "RELIC.STONE_HUMIDIFIER",
+    "RELIC.STORYBOOK",
+    "RELIC.STRAWBERRY",
+    "RELIC.STRIKE_DUMMY",
+    "RELIC.STURDY_CLAMP",
+    "RELIC.SWORD_OF_JADE",
+    "RELIC.SWORD_OF_STONE",
+    "RELIC.SYMBIOTIC_VIRUS",
+    "RELIC.TANXS_WHISTLE",
+    "RELIC.TEA_OF_DISCOURTESY",
+    "RELIC.THE_ABACUS",
+    "RELIC.THE_BOOT",
+    "RELIC.THE_COURIER",
+    "RELIC.THROWING_AXE",
+    "RELIC.TINGSHA",
+    "RELIC.TINY_MAILBOX",
+    "RELIC.TOASTY_MITTENS",
+    "RELIC.TOOLBOX",
+    "RELIC.TOUCH_OF_OROBAS",
+    "RELIC.TOUGH_BANDAGES",
+    "RELIC.TOXIC_EGG",
+    "RELIC.TOY_BOX",
+    "RELIC.TRI_BOOMERANG",
+    "RELIC.TUNGSTEN_ROD",
+    "RELIC.TUNING_FORK",
+    "RELIC.TWISTED_FUNNEL",
+    "RELIC.UNCEASING_TOP",
+    "RELIC.UNDYING_SIGIL",
+    "RELIC.UNSETTLING_LAMP",
+    "RELIC.VAJRA",
+    "RELIC.VAMBRACE",
+    "RELIC.VELVET_CHOKER",
+    "RELIC.VENERABLE_TEA_SET",
+    "RELIC.VERY_HOT_COCOA",
+    "RELIC.VEXING_PUZZLEBOX",
+    "RELIC.VITRUVIAN_MINION",
+    "RELIC.WAR_HAMMER",
+    "RELIC.WAR_PAINT",
+    "RELIC.WHETSTONE",
+    "RELIC.WHISPERING_EARRING",
+    "RELIC.WHITE_BEAST_STATUE",
+    "RELIC.WHITE_STAR",
+    "RELIC.WINGED_BOOTS",
+    "RELIC.WING_CHARM",
+    "RELIC.WONGOS_MYSTERY_TICKET",
+    "RELIC.WONGO_CUSTOMER_APPRECIATION_BADGE",
+    "RELIC.YUMMY_COOKIE"
+  ],
+  "records": {
+    "RELIC.AKABEKO": {
+      "definition_sha256": "9830d073950698faa2093a9f5a819cef82ff6ce6d0cc61f6e760f32ddb66e8f1",
+      "mechanics_record_sha256": "73945fe1d98ea89968a3342251e74787375fa7f94ec20832b3071247bb631ede"
+    },
+    "RELIC.ALCHEMICAL_COFFER": {
+      "definition_sha256": "dad43aa45dc0568be7649bfea518e3627083b45a0bb0ec2a231bc2c678e24dbc",
+      "mechanics_record_sha256": "cb0f090bef5a4fa06f5d4edfe5f5e44bea966a8335169f0314708246347592d3"
+    },
+    "RELIC.AMETHYST_AUBERGINE": {
+      "definition_sha256": "59f3533e35ad801483504882dd62b788bdd6e125f3b67b58b7e42c10b966ed99",
+      "mechanics_record_sha256": "febabb45535c7cae8ea7f864abd08335a6440b8a13e460ca5f1aae9c00e34d60"
+    },
+    "RELIC.ANCHOR": {
+      "definition_sha256": "98ff3fac934c05c8e555fc4c4a445d0b738ade5b6981b96905c002dcdc0b6a3f",
+      "mechanics_record_sha256": "836f3c31a7f61082cb25b79ef3c28d8d107ed124158a1e24f1320d0c21696126"
+    },
+    "RELIC.ARCANE_SCROLL": {
+      "definition_sha256": "eabd745376504e970df173c16792db4b80dc4f99d7c0391cc25d359c1b5ced83",
+      "mechanics_record_sha256": "8cb853f8c1fdc72fcdf5bc13bce1a75566bfa631244276395bf8501c11f172da"
+    },
+    "RELIC.ARCHAIC_TOOTH": {
+      "definition_sha256": "90352ca4f6f728900dc9ea520280d63a491b18cdefec34b0822001ba3b1c8fab",
+      "mechanics_record_sha256": "c44c0b2df9f2cde5668c03b3e4e60a551998373b8289fbbb208efe30b349c6a2"
+    },
+    "RELIC.ART_OF_WAR": {
+      "definition_sha256": "e23963ead3ca613bc8a7b94b1acdd6954b3b4d56652e9e4511ec8de208ab1a53",
+      "mechanics_record_sha256": "00d68db7748836e2f6d68329ecb941cd61977d9498cde93b4d8fe695c8a619ff"
+    },
+    "RELIC.ASTROLABE": {
+      "definition_sha256": "40cd9b942196872739d0ec8590c681b5cb9746b24a63be28c92e84b5b3a791dc",
+      "mechanics_record_sha256": "4cae5625ae0166afdb195464998ae24082d2b99226f6111ab9205ba44978a0cc"
+    },
+    "RELIC.BAG_OF_MARBLES": {
+      "definition_sha256": "b7732368b40c8b5f8672b945a43f8a5d174ae70025da693bc271097cd9a51507",
+      "mechanics_record_sha256": "94a5a7a1cde85f2c5614feafc33f802501167c58c009cf666e8c13c1cd0b4f41"
+    },
+    "RELIC.BAG_OF_PREPARATION": {
+      "definition_sha256": "eacd8ae84497413deb98844719df3a6dcd1626642609660e02d947a6b73b3b5a",
+      "mechanics_record_sha256": "613007d1a9c10c4c304510b26c0206951b74ff72696e4e72424686cc084215ec"
+    },
+    "RELIC.BEATING_REMNANT": {
+      "definition_sha256": "ce18187be2a6006b74fc30627da617813f43f8f478b6e9a50eefcfffbc50dc01",
+      "mechanics_record_sha256": "b35ef024bb9aa920b201bc5c74a1394a503a2c4dfdfd36bcdeee5da16ec2f79d"
+    },
+    "RELIC.BEAUTIFUL_BRACELET": {
+      "definition_sha256": "272da308d4165885a6ffebfc635169684439cf02cbe22d0ada1994005a6e60c2",
+      "mechanics_record_sha256": "1503792c78e2cf16377abd691e30c548db9384d05a5bf241b2c9b06db02ef287"
+    },
+    "RELIC.BELLOWS": {
+      "definition_sha256": "8ce21c07e3e136efea0655c1d7028131bd91f08156ac9628a8653418bb64d47c",
+      "mechanics_record_sha256": "f0056f2a2ef82dd7a3ccd123bb4709f1f355f4146a87b680b360e50a8bbde360"
+    },
+    "RELIC.BELT_BUCKLE": {
+      "definition_sha256": "860e63d5cd988cffb84c4b63178adc7a018b4071be2e783900766cb5096d158a",
+      "mechanics_record_sha256": "45968d2c2892f7981f1c71f00c6caf80512294c09ad56e861195f3faefd96cc0"
+    },
+    "RELIC.BIG_HAT": {
+      "definition_sha256": "1d34d43209bd648c88adf52867bd39f95cb973849d5dfe5131a559fec56beb92",
+      "mechanics_record_sha256": "6b91be96857db42f274f6d8182a89f913e3a5989d10dfaf14ce7bc7f9abead16"
+    },
+    "RELIC.BIG_MUSHROOM": {
+      "definition_sha256": "1ae4612bf38153236819d1eef9639c3dbe0fcccf846002aab52764febff2da4b",
+      "mechanics_record_sha256": "9d648a7b148ca7a3a92553a73de0b1306c741400fe52e4d6ed82a30fc556d697"
+    },
+    "RELIC.BIIIG_HUG": {
+      "definition_sha256": "42fd9229890804c543ed593da217cb33244e976593e08132094ed7024a984ff4",
+      "mechanics_record_sha256": "f941c04e4034921130c039fe85f10fa198dea5c219ed97448a63036edd6a86f1"
+    },
+    "RELIC.BING_BONG": {
+      "definition_sha256": "7446cda65ad33bbd45bfc8af8188360ae5c5944996beb3788cb147054e0e3673",
+      "mechanics_record_sha256": "e508c35c5b23c1584728ad0b303b8e9a0abf8ebb486ce5477b0bbfcc303293c1"
+    },
+    "RELIC.BLACK_BLOOD": {
+      "definition_sha256": "10c4527d76977872177344e215b745b4decf97efd4be353c0513d2bb0dcb9e35",
+      "mechanics_record_sha256": "e10e2cf2d2f7fb5dd15e39aec2d8ba8c1ba924931372414c5df698d16002524d"
+    },
+    "RELIC.BLACK_STAR": {
+      "definition_sha256": "371cd9d9cc175ea364e5e0fc519b6020ecbd8d8c2a91b98187cb432397b6bedf",
+      "mechanics_record_sha256": "3577f91d0d406ee40933072df60183521490a032b7709bd60398843bf026c35e"
+    },
+    "RELIC.BLESSED_ANTLER": {
+      "definition_sha256": "ecaef3a2c4b84669d016fbca64c3be3f29886a4bbfd5ed09e5633164b63a9b83",
+      "mechanics_record_sha256": "d31a504a19d42ca595b6c1013ade6d4951508899b347bd29c502a1455e513a93"
+    },
+    "RELIC.BLOOD_SOAKED_ROSE": {
+      "definition_sha256": "af608a0c48bdfaa8f77518efe70066e4d583dce2d9d3221f93ba21adfeb8c642",
+      "mechanics_record_sha256": "d4d36665c633c69024c24b2fc34cfbf4351db9124390d886bb84858dc1d60394"
+    },
+    "RELIC.BLOOD_VIAL": {
+      "definition_sha256": "abf8d39062447c2cfc857ad2d8b10682fed23b05f7bd1d5a656add38574cad56",
+      "mechanics_record_sha256": "4c0caa95bc99af493676baaafbb1677dbf0a50e7a07b34d5e9252d77b231a683"
+    },
+    "RELIC.BONE_FLUTE": {
+      "definition_sha256": "e19b9221887899c7d2d559e2478f310241a0a71ffa7731fe6ca53ff17e2c33e8",
+      "mechanics_record_sha256": "6911dda4049e95656e1933779d323c8c6a341223688381f7597a72c8d6c31f8b"
+    },
+    "RELIC.BONE_TEA": {
+      "definition_sha256": "53d7719be1e78f550de0b38ea64b7fc6030b327debedacd8adbc9da778ed02af",
+      "mechanics_record_sha256": "42a1dbed4f594cd0e0e42f66f14996ced8aaa5480e41260c14aabae553e4ca96"
+    },
+    "RELIC.BOOKMARK": {
+      "definition_sha256": "03807e14008c7f754264a2ee0582cfed2c20c11541916cc789aafa6d268e018f",
+      "mechanics_record_sha256": "2be7ae4289046b6af5fdc60d772ec994a54c21043846cb96f985eb2740f4a74c"
+    },
+    "RELIC.BOOK_OF_FIVE_RINGS": {
+      "definition_sha256": "d5221a3d85bc9a7c9dd1579bbbbd22539d74fed1d8d9e9399352de961f4f3cab",
+      "mechanics_record_sha256": "78a04dc1fe31803d9dd9b201b809833a2b6c7cb5472e8ece4c3e2bf7cdc05193"
+    },
+    "RELIC.BOOK_REPAIR_KNIFE": {
+      "definition_sha256": "86c31c0e368ec042e25f2b1604ae281f1ee5759f581b0f681f70a371b4671984",
+      "mechanics_record_sha256": "3240ee7ec07f7f796876cde8b824e88e1298b4562f2d20cac6406e59a4f18a05"
+    },
+    "RELIC.BOOMING_CONCH": {
+      "definition_sha256": "2c918532e9ef8ef9ef8039640d4caddc1820d040dadd9bfc6ef96b020e6f6adb",
+      "mechanics_record_sha256": "3474ce0b733b52a2108564b76b0b8c47f973ec5470ff866f3af5e0414d558da6"
+    },
+    "RELIC.BOUND_PHYLACTERY": {
+      "definition_sha256": "2f43f01ffdaa9f22cbe884a9dfa6d3095017ce18a6d3359291dc93af96ea5eac",
+      "mechanics_record_sha256": "bede82e55fdba2b667f23df5a296a2ce8bb764058337eb15c7daa4f8961cb68f"
+    },
+    "RELIC.BOWLER_HAT": {
+      "definition_sha256": "08a67eb28b82670f7448623a0da9bab4edb9039ed190f3e98d3c8dccef972c5a",
+      "mechanics_record_sha256": "cadb83e45d413d2f0faa150b88e1dbe58c53a7cfa0c45f90f608eed928de4693"
+    },
+    "RELIC.BREAD": {
+      "definition_sha256": "c92e600ab2ac01cdf8bc46a9aedb27e9fa5c2189a9608e0bc5311c6a506dfdab",
+      "mechanics_record_sha256": "534f9b063fe4d72fd4c392e706782f30453db24666a81cef2d4776817fc0a340"
+    },
+    "RELIC.BRILLIANT_SCARF": {
+      "definition_sha256": "457e775fa8a740f0277478597e766d7dbfd26310947a42f5887e4499ff8e9d4c",
+      "mechanics_record_sha256": "c0ceccad35159ae5bd16d702bc49d59e507cb13449f21ff5cfbf2cbb93008fb4"
+    },
+    "RELIC.BRIMSTONE": {
+      "definition_sha256": "a0dd24b9ee088f61b29920b3809dd8f229d8be3a98c2f8453abbaf6282faa8e0",
+      "mechanics_record_sha256": "868b00112932190e2f749f256a2457f33afa9d425f06657520deb7b0b71ad3e6"
+    },
+    "RELIC.BRONZE_SCALES": {
+      "definition_sha256": "e8384062180cd7238d96dcfb19023e5f1235bfeb32584b73e53e548b7d2cc3b7",
+      "mechanics_record_sha256": "7174598ec015984dcfc0deb1e6685011da20b789024b9d5f044121bf1b766dc5"
+    },
+    "RELIC.BURNING_BLOOD": {
+      "definition_sha256": "31fba8ba9a3e64f48c28ea463851fdb33d5f210e181da3a1ee56a53f128020be",
+      "mechanics_record_sha256": "2a4a921c077b8cb6dc65d87c761cb2b773c9502aaf87469501cca8b2fc5848fa"
+    },
+    "RELIC.BURNING_STICKS": {
+      "definition_sha256": "eca2b3559028efe244a04d3ba510d9c7d16c3fe10c5356aad0de9fe9cf4335f5",
+      "mechanics_record_sha256": "9c53b6be1da6d205b54c2c70dcddf4d8faaaffdca0e51baf50e34d640689e990"
+    },
+    "RELIC.BYRDPIP": {
+      "definition_sha256": "d409ee6c9a01726692451583f64935790da7a336aef881cd54a77a3b2a77001c",
+      "mechanics_record_sha256": "046d4eb7fd295b94e698780ed3995279e637d4cc9e36f359bb22c5e1cf4deffb"
+    },
+    "RELIC.CALLING_BELL": {
+      "definition_sha256": "d14d071b73f697816c35d048ccc1714f39adc3591c437e0730c6557f043c2fcb",
+      "mechanics_record_sha256": "bd937b81b58ce2fdc2fa6e1b5332b630f298bd514ce76f3f22cc3429010c9d13"
+    },
+    "RELIC.CANDELABRA": {
+      "definition_sha256": "4d0df94401557ab0c30880eb54ef440974b7a400eaea066ad780636988397fca",
+      "mechanics_record_sha256": "ee4346e50223b521999393049df8d573b7f793979f1c089dac373dae6b4856f4"
+    },
+    "RELIC.CAPTAINS_WHEEL": {
+      "definition_sha256": "779fdaacd8df73c32009d56a21a2164c963361e04dd91c73c87c802a6e5ffb9c",
+      "mechanics_record_sha256": "e33ae41304fe006816e635c740a0ee773b55dc2b380c4c8bac034fa282cb42d5"
+    },
+    "RELIC.CAULDRON": {
+      "definition_sha256": "76e102424c3b2f1c215eb8a38290987a275af962859eb3d54d39f564626b4ddd",
+      "mechanics_record_sha256": "bbf8b09d3ad16d76dd96374f3d5860a408a7e2af59644b8ca20e5d4f078ca98e"
+    },
+    "RELIC.CENTENNIAL_PUZZLE": {
+      "definition_sha256": "f7645036f0fb53e6d5b5bf1fe20f6f30efbf25ddc3508e25937e1fed81d399be",
+      "mechanics_record_sha256": "d551af7d2e3397e120109c935ee18aeed2e4f78cd96d4a43a3bf8f273d1eec6d"
+    },
+    "RELIC.CHANDELIER": {
+      "definition_sha256": "c227c2467e89726f43025893db32c0489b593ecdadfeab7352f98681985a0553",
+      "mechanics_record_sha256": "6a919367964423420fdc09b258021896fd9d8c35315595aa635205dab7276b0f"
+    },
+    "RELIC.CHARONS_ASHES": {
+      "definition_sha256": "3fc02c10a0383654496839c7fb0b47012e5601f1f61349a113d24a91d3b7c784",
+      "mechanics_record_sha256": "82c1b984692510e692ca481d7b2090a2bf6a3ecdc92576ab312de16e554879e1"
+    },
+    "RELIC.CHEMICAL_X": {
+      "definition_sha256": "86d1b7f27cbc9e6de97f1f7f14f616bb6b8dcf3022e993301d6648ee353561c4",
+      "mechanics_record_sha256": "b6a72e0dc7a5b7e92e42ec1acdfc291c608e96438d1c3d776da1ce859367bad4"
+    },
+    "RELIC.CHOICES_PARADOX": {
+      "definition_sha256": "348908ceee13245d09f08a3811273e45b35b91562a4bb65efd2cfe155426c85b",
+      "mechanics_record_sha256": "82bccfca51512fb5ed36fa7ee905867640fe03afdb8d7421c2b0251444cef82f"
+    },
+    "RELIC.CHOSEN_CHEESE": {
+      "definition_sha256": "c871eafc231db7cd82b6f7e01a52ed6ef4d4f061f83278f5d32af0abe5177083",
+      "mechanics_record_sha256": "62190d5742fda03a833df631704c2d371e49fb7685465959eef714c028e79a9b"
+    },
+    "RELIC.CIRCLET": {
+      "definition_sha256": "c6cc1772002a01ff519a12a26e98568ef3b1fa88d17198b32c4d31ecec1e9a06",
+      "mechanics_record_sha256": "ee0d14898bed2a058a33217d4a0a47d11ba4cd17de07227cf3f144655fec759c"
+    },
+    "RELIC.CLAWS": {
+      "definition_sha256": "35cf7a686399737cdb0264e492f33838b030f2c763cbf809383cf7fe844f0b62",
+      "mechanics_record_sha256": "e0217c23884d7f51d94cd7ff7201cd4b52b31e242d14ea32ab0df61e64168f41"
+    },
+    "RELIC.CLOAK_CLASP": {
+      "definition_sha256": "75ac4318ed01a96762daf6aff676fd8f8fa2f5ee806a5aca8e5ce2501fa41315",
+      "mechanics_record_sha256": "57d96763eca18664231e21e98eaf20ac59744ad7b3fe26f2a303c93661607db4"
+    },
+    "RELIC.CRACKED_CORE": {
+      "definition_sha256": "40f3c1a27dafe3933911587ffe7bc9dad32e0767a31677e98f2eaa2cca6a4d7d",
+      "mechanics_record_sha256": "4ac549b15aca5b92621476e6a340411489e7ce51bf2c20d793b2148b3284777c"
+    },
+    "RELIC.CROSSBOW": {
+      "definition_sha256": "bfa426b3aaf4be1309fcf286dec412d21cf53562130f5d4a742b50ec7937d84e",
+      "mechanics_record_sha256": "cb310f17bb25ba03899b118f230e5a7d454ed217fd59be51dfa3e06aa3abd4b7"
+    },
+    "RELIC.CURSED_PEARL": {
+      "definition_sha256": "1b803e433c688503f84815e2901b488172bd125b366d1af5790f9806d7bbda83",
+      "mechanics_record_sha256": "22f676a81c68bf626843e1b03f6cba9a7667732a895713977e147b78a663763f"
+    },
+    "RELIC.DARKSTONE_PERIAPT": {
+      "definition_sha256": "5665d04871e816f3d265677dba2f8c2db67e1ca75f664eaa308262e51b9ed690",
+      "mechanics_record_sha256": "344c3fb99ca96864177263d0b29cbe9aceb7e3bb7058a8170f8ff163d23e982f"
+    },
+    "RELIC.DATA_DISK": {
+      "definition_sha256": "8e5544dff7e15f3b2be6cdc414961c72a9edf033229b7be09df9bfc363400f9a",
+      "mechanics_record_sha256": "200e93a31a58a5e79f367a9998854e562c83d2c18b33b028224bc4ddc3ed5363"
+    },
+    "RELIC.DAUGHTER_OF_THE_WIND": {
+      "definition_sha256": "eaa60675beccf94e4fb250c39311e6bc2ec4eed8a280503f51d8739ba63f7312",
+      "mechanics_record_sha256": "220908a3ba07f451f5fb6c73ce0acf541e4b61e38994336ebaa12cc3d4aab0b7"
+    },
+    "RELIC.DELICATE_FROND": {
+      "definition_sha256": "57014cd2fca5615f90d315f99a347a8a76fcfb91f382e9e0a28cf981e9eb2207",
+      "mechanics_record_sha256": "86f2eb31f360f5fb543e6178cba442266fac455eeffe59860229c9cdd28083de"
+    },
+    "RELIC.DEMON_TONGUE": {
+      "definition_sha256": "1c29bfc23f1c5b4e9a7b2eb57df62371bcf329e1030cc2adcf22815630be00e3",
+      "mechanics_record_sha256": "d9cbc961efb358dcf3b6ba009164c03413b3bb28f22e756fe5d88d8b0d7a59d9"
+    },
+    "RELIC.DIAMOND_DIADEM": {
+      "definition_sha256": "ac009fe45c7f396eb2c955ca47f2935c750ef909fdb0038217f252da22e6740f",
+      "mechanics_record_sha256": "5cd792c35f13ff55be475436e02ac39079bd1a3fe53884f1491002295707847a"
+    },
+    "RELIC.DINGY_RUG": {
+      "definition_sha256": "5e26343e9ccd5a8502f60cd41230b406da786ec43205767c2bbd0d1ddc216bd2",
+      "mechanics_record_sha256": "bcde3dcce0f94fa77770ae4baa055e0617a9afdd9e68479026b4b7ddb0e5da3e"
+    },
+    "RELIC.DISTINGUISHED_CAPE": {
+      "definition_sha256": "53c4b3a2993ae9c05d93d3b9c00ef63b9396ae73ebc51ce390db3a1f838a018c",
+      "mechanics_record_sha256": "62099d9c0b9707430bbccb77b337f2e00e44011e7b6b40ddc2a9316de28bee91"
+    },
+    "RELIC.DIVINE_DESTINY": {
+      "definition_sha256": "13e69a023e2d54d1f4a257d3ae5cd3d461de156b985d03ee17251dd211619071",
+      "mechanics_record_sha256": "51e8438ee62dd92911434269f9308afd6990ff27abf09a3eef3feb5870aac269"
+    },
+    "RELIC.DIVINE_RIGHT": {
+      "definition_sha256": "ef14501b8c60ef746470f82e9cb0ac4c36d4d7af7ffa71d137f3c0bf2c6052fc",
+      "mechanics_record_sha256": "ac4dff6e28e27e5a25433a8403ea8e9938c4ac88aca72435badb17ce98dc88ac"
+    },
+    "RELIC.DOLLYS_MIRROR": {
+      "definition_sha256": "b9c34c6903d11e36e9fdf72197b52632da3cd42f09ae068b5d8a45f3f8d9faab",
+      "mechanics_record_sha256": "38c5d01ff9538af7a1916145e3bcf8cf0361c1b12cbaed9fd64538f4f16535ad"
+    },
+    "RELIC.DRAGON_FRUIT": {
+      "definition_sha256": "4914df6dc4fc7da532cf7be4be1898ce8c8cb2ac53d4fd53109d9ee22ce0b19a",
+      "mechanics_record_sha256": "6ff68a9951b2c0f52b8c860351eca81c17f99a9928002672aa246b08524f7ff2"
+    },
+    "RELIC.DREAM_CATCHER": {
+      "definition_sha256": "0fd6aa6000854137c24ea7cf2dbfd7f21ce6e479767752808a7f42cbeef2cb08",
+      "mechanics_record_sha256": "e7dc4bdc74d37acc31526d7352eb5c6cdcc2567f60506817a059d4d2e735be2e"
+    },
+    "RELIC.DRIFTWOOD": {
+      "definition_sha256": "3c65f9ae8b6386c4e4c0b93f817432a57705a39240b65b128e907ff01201ca56",
+      "mechanics_record_sha256": "8dcc19ab16ac22c10bb716f624ae0e12e245a24d774ec212c0894c4a78b3a70a"
+    },
+    "RELIC.DUSTY_TOME": {
+      "definition_sha256": "5827f26305687d17a79b79d8764684b80c433f123acd0baee796f8effb18b213",
+      "mechanics_record_sha256": "1b267ad38ec17cbf7894cfc5e3f495a4d672b0b103a4f62a7feffba8474818ab"
+    },
+    "RELIC.ECTOPLASM": {
+      "definition_sha256": "1b77126b1327c3d8549c0ddbe105a5237bd6bcb51816c4175ebae0e9793af374",
+      "mechanics_record_sha256": "51edf0e9d7b49aea805da4176cd7aea78f01f6039283e727123fd7b341be507f"
+    },
+    "RELIC.ELECTRIC_SHRYMP": {
+      "definition_sha256": "86c23229644cd22b0b3f213e61072016af5159d443b1c5d336684a060256d43e",
+      "mechanics_record_sha256": "60fc5834ce5b23ea5232d3a53e8d384997a339a918112a8d0a7a5b9f21154c11"
+    },
+    "RELIC.EMBER_TEA": {
+      "definition_sha256": "659a9fe36eed0030a6b65d660b6b068be1a827557093cbeb2ec6a2a9a59a6a52",
+      "mechanics_record_sha256": "d5c726900542286907bda34a25477d6a449930965c4b83a21ef6e62b26df3cbe"
+    },
+    "RELIC.EMOTION_CHIP": {
+      "definition_sha256": "fd07683fd6db89c00a7bbf809cc7aa55ee6be64761f32fc9153b5d11b62412c9",
+      "mechanics_record_sha256": "f588e6ee3b44f788acba3c6822aa102a63b3fc5697326ae67cbc5a77f306e682"
+    },
+    "RELIC.EMPTY_CAGE": {
+      "definition_sha256": "e3914ef17da0f19f29ab5a811579d56e8e76e354990029ab355ffa99ef0b467f",
+      "mechanics_record_sha256": "6df7b7de49553edc9da080392140aba348191a9da434cda18706a2e8d1de0d51"
+    },
+    "RELIC.ETERNAL_FEATHER": {
+      "definition_sha256": "5f3d2237bd7abafe9e29273fe482a798f5e87ec8a64979787ff04878c44d237b",
+      "mechanics_record_sha256": "200289d754fa52a08b76608088d136a7fc724fb3638f1bd13dfeb91292231a51"
+    },
+    "RELIC.FAKE_ANCHOR": {
+      "definition_sha256": "cebcd73581a376c8554f9f48d8a8ccd11691a9d4420a53e1b4e1b759f9ead478",
+      "mechanics_record_sha256": "d3b6f379a4e805d252d5234cea920bdef80afec862399187bf1a8e50faeb3318"
+    },
+    "RELIC.FAKE_BLOOD_VIAL": {
+      "definition_sha256": "c8e2dc6d0da77d82e8efcc80312214455dcd8551e4aa88e8d8b5da59479e18b0",
+      "mechanics_record_sha256": "a2c0974d96bd78dade0f2d703a94efab056a02df762188108b492a44ce68583e"
+    },
+    "RELIC.FAKE_HAPPY_FLOWER": {
+      "definition_sha256": "a9cb825590c51d337830f5dd368b8117adfb2bcaf3037104af91096a1f846e26",
+      "mechanics_record_sha256": "ba986f6a8d9b98eec8dbfb5c8bb49d71446837914153b1ea359f1d81795e94d6"
+    },
+    "RELIC.FAKE_LEES_WAFFLE": {
+      "definition_sha256": "51de16476caa44e6c254d26088d98f97f0d4249407edf71bf9e23bcf86f3c144",
+      "mechanics_record_sha256": "8ea00f8024894861ade463e83c7e90a1ffba817716c39c901a68eef8e4546ee5"
+    },
+    "RELIC.FAKE_MANGO": {
+      "definition_sha256": "60265d18b59426a8ba6f22e77f7cdb2d96854780d642b18afe788ab6508a0d7a",
+      "mechanics_record_sha256": "0ecc40e117bbb505b475631e0b41616d8b3f0211a931554388e5ce169164bf4b"
+    },
+    "RELIC.FAKE_MERCHANTS_RUG": {
+      "definition_sha256": "0b9c0c7b21c71e9c74d8c36d8ccd680c63264b453271dc3a2bb1b4df3f94fc67",
+      "mechanics_record_sha256": "974049ef05ba2c59fc2fe0ed8468f0e9e1bfd6d979d300ceeb8061cccc71669e"
+    },
+    "RELIC.FAKE_ORICHALCUM": {
+      "definition_sha256": "19898aff7669a04cf96df195f44b521bdc03786c6675b824c73dee374ab4a52f",
+      "mechanics_record_sha256": "9da63b91a2c71ffc30facc3bc48eedf05fa8deac15ab5f2f3dfde9f52c981c82"
+    },
+    "RELIC.FAKE_SNECKO_EYE": {
+      "definition_sha256": "2aaa92e06de3319bcaa2f0b6098e049916fcf9c7ed573852782ca4c86dc8cb46",
+      "mechanics_record_sha256": "557c1f308f8bba37b18211ca164b70f10890372a49461c846465909fa5f8f2c3"
+    },
+    "RELIC.FAKE_STRIKE_DUMMY": {
+      "definition_sha256": "e496856ab5aa4b00beadf5ade4bbbaebcecdf1aed1d63fe557be243a55e3ed2d",
+      "mechanics_record_sha256": "3b4683836462ca48a8db4d22000166076f5edd3405914db7469a074f4670cce9"
+    },
+    "RELIC.FAKE_VENERABLE_TEA_SET": {
+      "definition_sha256": "7cc418ea8791ad7cef5a5b80d17401fba454762cf733b862b3583573d964efbf",
+      "mechanics_record_sha256": "9d4e9b75560eada4af82b61db8ad958390c31744fdc7dbcf2100b78c976f6fb1"
+    },
+    "RELIC.FENCING_MANUAL": {
+      "definition_sha256": "28e6ad831d8dfb4d43f38888a51c60c84038fae5791dbc165507a6e1d6d44248",
+      "mechanics_record_sha256": "34b511eba84806e8122e050601a115a10dee19d11a1df5dd26efa8bafe4b8e4b"
+    },
+    "RELIC.FESTIVE_POPPER": {
+      "definition_sha256": "5e182352e86b9e3263fa43fa903e426524194f82fcb70b819eb5cb1d7f77bea2",
+      "mechanics_record_sha256": "d6d2d05e2a71c1d74fdb5d014a8835768c0b2eb726de03b36e8071b77a7b798f"
+    },
+    "RELIC.FIDDLE": {
+      "definition_sha256": "25c81448c3022a3326c720199033045f99b7d2ae10dc57fc432a745d31ed2d15",
+      "mechanics_record_sha256": "8027b7f04bf9f913cc7ebdc3aa8ff8748895e9e2a6705c9c3dd5c8441bc31e27"
+    },
+    "RELIC.FISHING_ROD": {
+      "definition_sha256": "11223b914e2f53009d3a19211c794a1607879df387abc8916862cb47b7f80ee3",
+      "mechanics_record_sha256": "67d7d9a9c8f123ede7a746b49ba44b98289abac47e751a7b7405901cfa29fb5b"
+    },
+    "RELIC.FORGOTTEN_SOUL": {
+      "definition_sha256": "2b8384567b2d2f07405ce88a3c956bdee3e163bc5cc60499a939763fb24789ac",
+      "mechanics_record_sha256": "c6a83efe05879739d7adbce145459c0eae5b00c55fd01d4de775014f27560a45"
+    },
+    "RELIC.FRAGRANT_MUSHROOM": {
+      "definition_sha256": "e4fa785eb885e2feed7025e1b2ec1da07050191b6dbe13a59c77bd58feea3d32",
+      "mechanics_record_sha256": "c739a0a67e7c71848e539459d94e072d10f1b4958eccccdab261b1194bd63295"
+    },
+    "RELIC.FRESNEL_LENS": {
+      "definition_sha256": "d5d1047c713d3f9a7aa90e2c059be75d2b98c490515604e03368070c8c51ca29",
+      "mechanics_record_sha256": "a2bd7369ce8f6cec67a82f4bd01ee0dc40f8bf2b5216782e7397a75856c8ce00"
+    },
+    "RELIC.FROZEN_EGG": {
+      "definition_sha256": "aec5a53b6e8522d976c1f25f971b9015e142b5e5c436855856f6db45883eef64",
+      "mechanics_record_sha256": "c97d4a1b2bc38f9029b1d14978ce4c4d2dc7bd5382a150ae51a22cd9cd58e062"
+    },
+    "RELIC.FUNERARY_MASK": {
+      "definition_sha256": "12a6069dd9097ae7ba215b7177913a13cadc34e815988ca911e48883db2d55a5",
+      "mechanics_record_sha256": "2ee89f950a7ccac7329b036f9a9c7e9f296e9e223d86ee344fe3cf91b93d3213"
+    },
+    "RELIC.FUR_COAT": {
+      "definition_sha256": "8056d59d831baca66e3ac490e7436d9d3c36a4cc795f32d99b083bff12fb4811",
+      "mechanics_record_sha256": "6f380a4612f8f8978fd63c6e1b6362b0f0a85184b3095f9e858836dea3b5e2b9"
+    },
+    "RELIC.GALACTIC_DUST": {
+      "definition_sha256": "4dbbec7a0f7d08241d8f885387f8a8294f4ecfbafe25d7b3c467198c8203344a",
+      "mechanics_record_sha256": "2daa67ee967487c499a364939cacb39577a2b5fa63fe13090b55835fc4c06228"
+    },
+    "RELIC.GAMBLING_CHIP": {
+      "definition_sha256": "2fdc2bcebb168ab0e8320447de000ca949a9221be8a552e851e9596e79bda9ce",
+      "mechanics_record_sha256": "a72e3e88da3bbc45565a5c2972a91d3fd4a31edf52fccd62f2abd0bb5c261a83"
+    },
+    "RELIC.GAME_PIECE": {
+      "definition_sha256": "34f9ee4fd7f277c46e6d45dee0daf5e6fdf0d9242e52497892cb591fa35f2acd",
+      "mechanics_record_sha256": "f33a02c0374147d6d5aeba48e8ea14984ec32d0bfc81b1e947ba48a874a51831"
+    },
+    "RELIC.GHOST_SEED": {
+      "definition_sha256": "d702bfbc26515c8260af8f0c0cb89f5c808bc7ae0ba46cd5ecd2c974739b3b79",
+      "mechanics_record_sha256": "be3f2fe93a8a62dc1fb5a916a9b8574708f168dcb83d6b8ec6f18c9578e26fee"
+    },
+    "RELIC.GIRYA": {
+      "definition_sha256": "f661b2052bf27786adfbb2e132917c2b9eacada7716bc65c547e0d96f2f2c29d",
+      "mechanics_record_sha256": "65fc102dbdfd6cd19033c620d084ed2452797e5970008397666b3366c40e3497"
+    },
+    "RELIC.GLASS_EYE": {
+      "definition_sha256": "60cf6f0050b44bd8c166710f2716621a2fd753e6d4827ccb242307663cc80cce",
+      "mechanics_record_sha256": "e84d9342596e0f263f7f2cc8f0cd0fad7ea93a497323db2e3839aa5539931595"
+    },
+    "RELIC.GLITTER": {
+      "definition_sha256": "505eb47ba8ea3897a583a4549744e8bdd8a0629e0e3560f5afff723af71017f9",
+      "mechanics_record_sha256": "61bedeb0032c9d8e5dabefb67e52ef486aa4d4256a6d9a7cd218460d4dc0a26a"
+    },
+    "RELIC.GNARLED_HAMMER": {
+      "definition_sha256": "a6e869cb75e3778103778f47c6f52dd9332cad4638fb05fae8036d6a4ea03d53",
+      "mechanics_record_sha256": "176b7611a06be59ec68860876cefeca8dfccfb8ab9e60d49317d8f8c37d1c44d"
+    },
+    "RELIC.GOLDEN_COMPASS": {
+      "definition_sha256": "42c762bb01f547f72cb138f56e117906362ec24e45e9b63d78b2b24fd384bf56",
+      "mechanics_record_sha256": "3ea7019de390b73edf5ced873d60a8d14b974cb0b644cd7458111b23454ecea0"
+    },
+    "RELIC.GOLDEN_PEARL": {
+      "definition_sha256": "aefb5939930f8c29c46093dc2fd65c40ddd54a59f3d20fba13fca119b31b1cc2",
+      "mechanics_record_sha256": "565ec727842a603ef2f48b96d91514a0d10639597d445067087249730a4d8056"
+    },
+    "RELIC.GOLD_PLATED_CABLES": {
+      "definition_sha256": "a926de60d7795220a13500dec580e1022514f68f5c4853f7f33b3315dd627b87",
+      "mechanics_record_sha256": "68525f20f4e87db8f54b0524b20efeee96772a7f394973c7db6ed35cd5757997"
+    },
+    "RELIC.GORGET": {
+      "definition_sha256": "28db32949fc3678c6818d1738976d766b44602d3b33e016559716b65f49528c0",
+      "mechanics_record_sha256": "36b2364ff11a9cdcd7cdcdb8b2ae230f11de0349d590aabbf4f2592ff243bc9d"
+    },
+    "RELIC.GREMLIN_HORN": {
+      "definition_sha256": "efd3596289c07e81978ff5856183cfe3d24ab3ca99eb79efb056b6705dad3d2a",
+      "mechanics_record_sha256": "b8d41dc48525b13e895eaa07483860727c48b3de64b9a442896bced9c8fc667a"
+    },
+    "RELIC.HAND_DRILL": {
+      "definition_sha256": "fc1490c4487a1d9e1e3664b276f32030ac101ddefb4087f1432d378bd3d9196f",
+      "mechanics_record_sha256": "78514bb4d6c8d594231eed364fd7c9a071ceaf52814fa83763d57e179f186943"
+    },
+    "RELIC.HAPPY_FLOWER": {
+      "definition_sha256": "b9ec4d3da0083557829c4859b5cc708036f4e4c412a60e5def2b1e780258b89d",
+      "mechanics_record_sha256": "58fb77596c9045e026f445a698a2c1b59fe69739c111a7314446a51506428ffa"
+    },
+    "RELIC.HEFTY_TABLET": {
+      "definition_sha256": "fba80305dafa18c29b55f9b054c5ec85da80dad870c19ddb721ac386667caa60",
+      "mechanics_record_sha256": "dfd08a2ebff7ed7c934af0fdac46188f8ac779709cdd0e52573981370d8de634"
+    },
+    "RELIC.HELICAL_DART": {
+      "definition_sha256": "432deaa5ac8c4e695e390d0bacef2956b04ac8d42ed3369294853d5f153c3e21",
+      "mechanics_record_sha256": "8c1c215580e693938cb214f2fb6c14c130efa4eb2ac41d0728033e44280226ca"
+    },
+    "RELIC.HISTORY_COURSE": {
+      "definition_sha256": "52e276e91f28d1e748bb3066846ee7140fd38b4a1d4295a364e3ef6cd32d8913",
+      "mechanics_record_sha256": "78cb283d45fccf6a8090e1a151edd3d3c201d2f97d37e068890be7b504c473e8"
+    },
+    "RELIC.HORN_CLEAT": {
+      "definition_sha256": "3133977859920dc0c3802f2dd83109ac49a2a03d56432b84a814aa6367b75405",
+      "mechanics_record_sha256": "b6eeca39136ac61826c073a9e3f2d78dc893b6e376e3de3eefaae15c03bd8eae"
+    },
+    "RELIC.ICE_CREAM": {
+      "definition_sha256": "2984b432e1b1bef5f6eebc9cacf5b13d7c2a380ce987b9a6fab898907c36ac36",
+      "mechanics_record_sha256": "a46fa4c384b535b632cfd647554abbe55e46a10659b102d6afb75f9ce55a15fc"
+    },
+    "RELIC.INFUSED_CORE": {
+      "definition_sha256": "47576c5b01c16a84556a0b01ef86d34b7482618ce09b2454c66941221f97e12d",
+      "mechanics_record_sha256": "354d72653689a23f317a974866c8449ef8b6d7ef5860b2d9b7ea849c77c580cd"
+    },
+    "RELIC.INTIMIDATING_HELMET": {
+      "definition_sha256": "ac36a4c3c3a9422e690b01e9934a88713323c6306a13da54a0049036898eeced",
+      "mechanics_record_sha256": "b0d991b454cc64ca88adb5959b8a60c61836599489733933719de78bf26b1d59"
+    },
+    "RELIC.IRON_CLUB": {
+      "definition_sha256": "427bb4a254261a9447f0f07f44a1497acb055ac3b597a64cbe33112d02e88a64",
+      "mechanics_record_sha256": "f3713f6c20eeda4e1f8ef20d7638f2e9554559ffb16e23c9bf08a28a40e9b143"
+    },
+    "RELIC.IVORY_TILE": {
+      "definition_sha256": "f2a51b2ed8a5b9c11aba24389ad28fc31f3c13b15cb54cbc9d918098cfcf32c1",
+      "mechanics_record_sha256": "c3ce484414561619ed5d5ed28476885ae31405972ba7cf5f038184c505e3f91e"
+    },
+    "RELIC.JEWELED_MASK": {
+      "definition_sha256": "4644779aa6c0d91b9af7e622255334784ea2d4f244bea283edbb87d75987f190",
+      "mechanics_record_sha256": "44638d09fd9fac3fee6fa42b956e39c43efdf4f8d93677b9ad8829f3016aea4b"
+    },
+    "RELIC.JEWELRY_BOX": {
+      "definition_sha256": "2f0e58263e30eb2424729bc2939944957b4f955217e26b6a9cf564aaca8bf562",
+      "mechanics_record_sha256": "6b4bd30523d01c7a6020ba9346969828fc6b81b41dfbdf756813e9ae8b355c33"
+    },
+    "RELIC.JOSS_PAPER": {
+      "definition_sha256": "04747430a9331da625ee5d6ac9f1aa8525731fc9551753141056d777cf9d5394",
+      "mechanics_record_sha256": "96834a47e8ff11c1ac47662f5f8f5f3a8dc7627e91ef6e5e9a86472993ca2dcc"
+    },
+    "RELIC.JUZU_BRACELET": {
+      "definition_sha256": "b8ea3a98fe6c025fd9c5cf946f113634529e3a7c7b0fa25d3e9a75ba48004a5b",
+      "mechanics_record_sha256": "7314f2123db8b2330cdaf6f82ff7c032e22014ed02176f36b8b06cf24eee59a0"
+    },
+    "RELIC.KALEIDOSCOPE": {
+      "definition_sha256": "454fc4b785cfda483d243298557900a6655ffba32a06625c76b0abb2fe817a93",
+      "mechanics_record_sha256": "b5458650c641d088a7b7b175ca7d644391b250df68a46d12c17fbb23f30be277"
+    },
+    "RELIC.KIFUDA": {
+      "definition_sha256": "65e8a72f00764c2e86c402ab466153ff11205adb186cde6a96b9b0eaaa83670e",
+      "mechanics_record_sha256": "59597000a3062016712934533edac8c01baf693e8b1bb07e2edbc89332e97d12"
+    },
+    "RELIC.KUNAI": {
+      "definition_sha256": "bb48d7cf19478b640767541970003600c6fb2a63e8024ca302b5ca8d6a1303a3",
+      "mechanics_record_sha256": "01943de11a18a3d826a8d4a10ec1faac3ad8da7eac673e143ccd345bd28389ab"
+    },
+    "RELIC.KUSARIGAMA": {
+      "definition_sha256": "b112114270aece981c780520f6b28d8dfc51b7503cf97f65cc833467c0b4cea3",
+      "mechanics_record_sha256": "e01264e7e2ce9a2c271b06e567fa0678a1b14422a3e1b4f91e8d0b49d795be91"
+    },
+    "RELIC.LANTERN": {
+      "definition_sha256": "5f94cfba304860c3e63b9e64e249b79c8214f448075767962abac4607a57fbb9",
+      "mechanics_record_sha256": "7c3a674a95e8d2e3b3062e9d6b56f675abe80ed41a9202a6b7589d5c622090c5"
+    },
+    "RELIC.LARGE_CAPSULE": {
+      "definition_sha256": "9334abe165bee7677d92f281451e53c2cb23d1715674e848c75848c0ea6fe301",
+      "mechanics_record_sha256": "cc614b09042029fed418de46e93b8cab0e246c37096a1a60762fd22e5d35d264"
+    },
+    "RELIC.LASTING_CANDY": {
+      "definition_sha256": "801946313b3b6d574dd42665c7d1490396d04d163a8a7183007eb3ef170270dd",
+      "mechanics_record_sha256": "b820302be7393781cd4ae692113b6d4b5bfa0a6e89338e2129464f098c9c893e"
+    },
+    "RELIC.LAVA_LAMP": {
+      "definition_sha256": "6b9cb312d88eb5c78af6ceabdb53f2411febf3f1069f8d57fa77cdd06026242f",
+      "mechanics_record_sha256": "2e7b4c44fd2568dd3b0e2483d0ef53eff8ff2ce0515e0a592a400cc2ab56ab80"
+    },
+    "RELIC.LAVA_ROCK": {
+      "definition_sha256": "21a8a39249c142cd86afc342425289583f67ad6c5faa7ab7692517ee381e868d",
+      "mechanics_record_sha256": "9b261a0c5646c84ff82e814a20eb5989c6c7a4b3f1cecba46d847dae4047c897"
+    },
+    "RELIC.LEAD_PAPERWEIGHT": {
+      "definition_sha256": "f0ba899063c95c0125f24047ef179e93e96ad10b4650d0a187ba2719de72478c",
+      "mechanics_record_sha256": "2db933b6b48b8ef321bc2452968cbda1fc855d586749e7b480deb76ea6017b84"
+    },
+    "RELIC.LEAFY_POULTICE": {
+      "definition_sha256": "5b3024e25256087792a079ba8ba3347f6833d8346dfa5db0e829a21cb6a13858",
+      "mechanics_record_sha256": "4b080bd6d00149d9f1b5dcbc8b7da797d8c92443a260f08a2d65cd3a28c4a061"
+    },
+    "RELIC.LEES_WAFFLE": {
+      "definition_sha256": "f196ef79d95b68155195e8171448c098fdc2342a3935f4c88de3a66a9521a019",
+      "mechanics_record_sha256": "6c9484c2f0b909a4542a64f35a37c938704c8d2d5b352454f13c01dfe6dc9717"
+    },
+    "RELIC.LETTER_OPENER": {
+      "definition_sha256": "5cd2960d0aaaa19d794d518f3a6b80157668d5c8a866eef512eb2486b3584d9c",
+      "mechanics_record_sha256": "4b087a81f06643b3839292e12b59b1b8e5f0edac57861f626a29a14d27f229d5"
+    },
+    "RELIC.LIZARD_TAIL": {
+      "definition_sha256": "a9423ed11b35a3874e293da8488d6ca817e66a893de5bf7f53246955f0db5f08",
+      "mechanics_record_sha256": "3f665bd81b37411139a697f5e57c14bfea88c499311abf8058e6d4a34b9ca86a"
+    },
+    "RELIC.LOOMING_FRUIT": {
+      "definition_sha256": "37aaa8935c88bfce9776f51d7df4370731896d3d8570b07d385d47216daa0fbd",
+      "mechanics_record_sha256": "066a2c8a83889fc0bf2a7e6e010d0c7ddce27a83f4e15e6fea5e4c35d60f4e01"
+    },
+    "RELIC.LORDS_PARASOL": {
+      "definition_sha256": "70a71afe9eecf1e3c2ae38b2eada99d79f283fb6594311aca87161caf230bb00",
+      "mechanics_record_sha256": "783be348e344347e1e6a221ef6077485f710f2bb743ecea4a8e9e5b47107171b"
+    },
+    "RELIC.LOST_COFFER": {
+      "definition_sha256": "18b093f60d5c22964977b5509defb3ec2a3a1ef177e30c2c0c2e957a23bcbb29",
+      "mechanics_record_sha256": "4f426be4b9e167f85964850a5397e05808c95e0b67dba60a6668b89e8b65a3fd"
+    },
+    "RELIC.LOST_WISP": {
+      "definition_sha256": "728b375c3312e5e0d90ba858b47f787f208f2aedd725ee012ac2d10383f5bae3",
+      "mechanics_record_sha256": "b9d7316e98d02a936a50c5dd5d042c11c907970c927204f692bca44d91ecc8f8"
+    },
+    "RELIC.LUCKY_FYSH": {
+      "definition_sha256": "a013ec2f29b21af6f09b9add8c41606b45e1e85224d2d32b359dc6e832bc88e3",
+      "mechanics_record_sha256": "722c0e286a975b6aa9b2064dbe1297ddea4e3f13e098fa519ff9cf86d474a0eb"
+    },
+    "RELIC.LUNAR_PASTRY": {
+      "definition_sha256": "de3cd67046d43d896c7420a641d81680e7d10c4298a713ac7f9328e5b9f12a34",
+      "mechanics_record_sha256": "7a1966795adf0350c65fdc7506a99066b12ed42d3c02e0f34316a038b3b89b18"
+    },
+    "RELIC.MANGO": {
+      "definition_sha256": "e76c97e377e887229e3492d9bcf3cda05fec8c476335b5a59e240af050857e2a",
+      "mechanics_record_sha256": "3ed4744e542514310c3fdb0a17ef3f49d1e8b3cc029836f26e010108f6a25609"
+    },
+    "RELIC.MASSIVE_SCROLL": {
+      "definition_sha256": "2690eb2bb5ee1b049004a83e6f4cf7819eea03a7c867b121f802c7c5ec21c3da",
+      "mechanics_record_sha256": "6f2e5e0683c3957c2bb2b3c6b1264a6e89b65e14ad5a58c201eb3e2339054297"
+    },
+    "RELIC.MAW_BANK": {
+      "definition_sha256": "e5e1730c5bd76a6da7c058a923c8862dff9ab9faf2bc077c36bf8bffb2b18530",
+      "mechanics_record_sha256": "9608c84e87706d0cf1d75620953dd6a85d6bc37221144280e1261d7bf353dd1e"
+    },
+    "RELIC.MEAL_TICKET": {
+      "definition_sha256": "bb5680ce54ecfcdf32fea90758d9fa223cfd03fc806e5d84802674a0a3b24c59",
+      "mechanics_record_sha256": "f02c6da5b3a2648c69071b77b4d927bb35e4ec48aff33d71af603f14023e467c"
+    },
+    "RELIC.MEAT_CLEAVER": {
+      "definition_sha256": "7afde0bde5327a5552954983f53bd7435ac63a931dc1f7888342f53eb44aa5c8",
+      "mechanics_record_sha256": "8ca0615e4887d22cb460d8be56a538cb9a80f4240dd19cfd7d6c278af445bec0"
+    },
+    "RELIC.MEAT_ON_THE_BONE": {
+      "definition_sha256": "ec1ba2f6be333d98fa2d0b869a11ff38ba74836ef6a0bb83fa967b1cd3cba0e7",
+      "mechanics_record_sha256": "6ebb53b88ae426462156aed261d075c804caaa76247a914bc608caa59051fcbc"
+    },
+    "RELIC.MEMBERSHIP_CARD": {
+      "definition_sha256": "d32f6da3398dcc99a71289c1d19411ca6523acacba7e635bd8e09e8d5735b4e7",
+      "mechanics_record_sha256": "f56520d51efd28bdf6c21fd9dd31b4447addbd413f12cfec501dacb575b7176e"
+    },
+    "RELIC.MERCURY_HOURGLASS": {
+      "definition_sha256": "916280bc3a6627c90ed9ff2868adafcdb1f59f7941427156fc61a957d2147a50",
+      "mechanics_record_sha256": "ea33deb4f5ff1903d829805136b65138c00448559ef7af12f9e3bf77dc36dd78"
+    },
+    "RELIC.METRONOME": {
+      "definition_sha256": "c1cd02df521af182c852c593ff4ff840c0087cd912f1e7c31596a4a223acdf54",
+      "mechanics_record_sha256": "de1727dbfecb89644bbdb93bf6f65ec3f1a6d8f83cd341d8c808211689a51084"
+    },
+    "RELIC.MINIATURE_CANNON": {
+      "definition_sha256": "05f5868866ecd2fef9774e3466a63d57254d81f23e949a373cf3bdd9e8a3252d",
+      "mechanics_record_sha256": "8ca29e3762bc89e85f0500d20a85d292c3ad3f4e8bac3ce8f1c5a6c57386195c"
+    },
+    "RELIC.MINIATURE_TENT": {
+      "definition_sha256": "3c7d4a9f2b7abe226730c9036a7659595a1324c6e07ef6dcb7af29e7a2496737",
+      "mechanics_record_sha256": "094d29e52b4cb4d11ed32235acc3af49bce338dd935cb4c13049b4a7734156d5"
+    },
+    "RELIC.MINI_REGENT": {
+      "definition_sha256": "2d4323e61d24f80129d8e0cc8805254f7359360c45b6e1702219ad3e58922cb5",
+      "mechanics_record_sha256": "9ead91b3cca2127e266ec9a9c92203d70ff1f5218bf006d59a7c5557c018c7a2"
+    },
+    "RELIC.MOLTEN_EGG": {
+      "definition_sha256": "90cbfbecffcbeb45a3672ee6c5eb8f8123df8c67a6c999da2640aeb88709035d",
+      "mechanics_record_sha256": "583a7e07f97d666b207567da05b811cb1d9014ffab1a89144f0f0f2b2800c5a4"
+    },
+    "RELIC.MR_STRUGGLES": {
+      "definition_sha256": "8d1944ef8a94433c1251f9e9c5af24aacfd2db1a883ff21445095892083e58ab",
+      "mechanics_record_sha256": "2e64e06fb6c70c415965feecdf8778b0dc948631c1fc699f34f4e01658b9061e"
+    },
+    "RELIC.MUMMIFIED_HAND": {
+      "definition_sha256": "0bd21d0452d23178bf35fd826337240b294949ed6b9687aa7f8a682dd1fd47d4",
+      "mechanics_record_sha256": "cb971487bfb7de85f3c393ddf9f91112df9cecd67d35f20fca5a23d5fc1ede5b"
+    },
+    "RELIC.MUSIC_BOX": {
+      "definition_sha256": "2d8c255e081979c6f2a634c99be8c621ab1b4a380b094233c0110c142c494942",
+      "mechanics_record_sha256": "95c2613fc7134956a6a76f56fea94bf9817996f705425338f539cd3b3176ebc5"
+    },
+    "RELIC.MYSTIC_LIGHTER": {
+      "definition_sha256": "9f03ea019c5050e6cd08f590b8123513988b4dd0dd8eec2e680f6642ff1cb1d4",
+      "mechanics_record_sha256": "5709781f6f399ad1479efe8414f826256d4c3c6e4a8d679a506b79cb63fd1329"
+    },
+    "RELIC.NEOWS_BONES": {
+      "definition_sha256": "b48efa4ddbced3291cc24b3a04febdbded0ce7496b0c75589ba68106d1017083",
+      "mechanics_record_sha256": "abcb099e36ff48a4dc8b8d859db28c7d4d62b4e5ebfd45ad6d52452787fa9e63"
+    },
+    "RELIC.NEOWS_TALISMAN": {
+      "definition_sha256": "0ffc51f1bfd0ee42bab82a0627237c2fa1733417c7994d04903479f640333c01",
+      "mechanics_record_sha256": "774c37bf49baad7fe5720f4375195d71ef3a14594f4f30ee62f79f17e430d461"
+    },
+    "RELIC.NEOWS_TORMENT": {
+      "definition_sha256": "01ab3f42278e11b463bdb169ff85cd8afe7973786d5aa171298543f673559ee3",
+      "mechanics_record_sha256": "8505da9471e02a88c50ff3425927e166ed2c6bfdff25b5393a20643c294969bb"
+    },
+    "RELIC.NEW_LEAF": {
+      "definition_sha256": "b51bb2ed41fdf5c7ebf4d89c807e551caa6131b9430a6e0fe2eed2c8ab8b2c8c",
+      "mechanics_record_sha256": "3293ba93be4694aa817c8810cba31f933eaee9db72287418c73058a5133d5fe7"
+    },
+    "RELIC.NINJA_SCROLL": {
+      "definition_sha256": "eb1d8df3a7d0bf99da257c02b2d26c101ae522ee9a1747cf1cce38e84fa4cdfe",
+      "mechanics_record_sha256": "4c903a4a3c838fb5c668d1bcc538e0a558021dfa625260543a105cabdb3f414e"
+    },
+    "RELIC.NUNCHAKU": {
+      "definition_sha256": "8ea6106cfd41e1cb3bc5e0485dfd067aa1e33e3c367ac836f04c8097d5d65ecb",
+      "mechanics_record_sha256": "78b37bab456144a843d237c2eb74052c4db934267a38fac532e6f3946bc6813f"
+    },
+    "RELIC.NUTRITIOUS_OYSTER": {
+      "definition_sha256": "9153f3de2830a0cb283885cad8350eea9b34e3e1b96eff342ec4e0bf409c6dd3",
+      "mechanics_record_sha256": "10316c31809c618fbce1e6f4baf59b4fb28a1cfa3222729676f648393dd189b2"
+    },
+    "RELIC.NUTRITIOUS_SOUP": {
+      "definition_sha256": "4f3550177969082d71b31ea73ac20a244ddf8bb67a934e61fbce15854ef88197",
+      "mechanics_record_sha256": "f703b48aca606d11da2627d24893ab193c5e0f1d658efde956d45abdd2f56021"
+    },
+    "RELIC.ODDLY_SMOOTH_STONE": {
+      "definition_sha256": "9d271ac71df30cd48a649b51ac01051c32a2b207e290e7ca9e6b6722f9219fbd",
+      "mechanics_record_sha256": "5390249a84ff5bf18b9aa58288bd9fbeb5a9a1f2ebf93401c15c28720ff9d909"
+    },
+    "RELIC.OLD_COIN": {
+      "definition_sha256": "7b2264737b59b6d74fcd82fff956a498b197774f5e743059c5cf614677b42d54",
+      "mechanics_record_sha256": "c03461bf3bb80a9c3f9f8f33f54389e033d69da7f85df8f4e9cc6e83e27e8161"
+    },
+    "RELIC.ORANGE_DOUGH": {
+      "definition_sha256": "28008d69f709665184a21dde94e629a4ab9e8bfc0c59cfa014a17c53fd21de11",
+      "mechanics_record_sha256": "454da8ef7dda1c0b5d06e1974c472a4419eb71830159bf8dcc0e17f12903ac0e"
+    },
+    "RELIC.ORICHALCUM": {
+      "definition_sha256": "75f295aa8fd693ec6dd81e2fab24f048d5b8bcb2d9de906ec93859f044cb7826",
+      "mechanics_record_sha256": "aa3a5c7baf4f219b30011368bc8a26f6bd3c6f6e56980f523e1affd4a5168980"
+    },
+    "RELIC.ORNAMENTAL_FAN": {
+      "definition_sha256": "9757638c32682400389a5ff510f0053c1fc8846a134559d48160cf39a6e8ec48",
+      "mechanics_record_sha256": "2161c95000e3ff2a504edffad3aaf4c04ea41f1e8cbc10a43d4037819b265280"
+    },
+    "RELIC.ORRERY": {
+      "definition_sha256": "edcd9692994c134a718de4a9d3ee44abd9519c3961b947c5417c1be7f20b697c",
+      "mechanics_record_sha256": "ed41f1a013b476b58362bde988d539fbb0544473fdd566a111464102e989139e"
+    },
+    "RELIC.PAELS_BLOOD": {
+      "definition_sha256": "cb81740f0a4c67b887f2ca9d7cb7c2687cea9bece83328345c3f3ebb61b2c52a",
+      "mechanics_record_sha256": "d68c90b9e76f2f79afe732984781b9f3e503cb64420b1214b17a72f4401db0cf"
+    },
+    "RELIC.PAELS_CLAW": {
+      "definition_sha256": "b178f36b520389743cd1d6888a2664933c8fb3188273bd9041bdda6b5ef32aa1",
+      "mechanics_record_sha256": "a41d6eab577062d90585c271d57fefabaa7145e276b447936239f0fcbcce9598"
+    },
+    "RELIC.PAELS_EYE": {
+      "definition_sha256": "053d28f51e9364d3edd275791a8400026faaad9ab6b5b829783ff140206d2a09",
+      "mechanics_record_sha256": "cc37a5dfc9da39660a10a3114ec62c9757ddcbf7e5b295b46812a4b94049b112"
+    },
+    "RELIC.PAELS_FLESH": {
+      "definition_sha256": "c0b37d85548c8eda1e5ec8283444c47628a29fcdab4e47d65d1425ff6d43037d",
+      "mechanics_record_sha256": "3e120c429ab28176c2abe236bd4d6ecfc3dc13f9a5c75d291415b347e9f18459"
+    },
+    "RELIC.PAELS_GROWTH": {
+      "definition_sha256": "09068dd3f2ecaf6a6dbf607f35d314dfcf1b3e1b7856df5875533ffc5a6a8194",
+      "mechanics_record_sha256": "30dd305390bda4af00b6b9a2afb2ddf47ce99376e79e90a1186fe1bf59569d60"
+    },
+    "RELIC.PAELS_HORN": {
+      "definition_sha256": "48feb9b51f0cba55fc5b007a613270f4d3d71804b497b675792092ee69a6724b",
+      "mechanics_record_sha256": "b3d15a69cddf3bed84f6c2693905ddf42d34042eba7cd5e3a69eae216c11d6ed"
+    },
+    "RELIC.PAELS_LEGION": {
+      "definition_sha256": "3abab827243cb26b1f6ddf5d67e17f503559dca582c19b02bebdcdcf363bbbb1",
+      "mechanics_record_sha256": "3316de541d98a4b72b4c5e40f081e325827714d6942dbb11e921042465de1538"
+    },
+    "RELIC.PAELS_TEARS": {
+      "definition_sha256": "616621a64ceb83d62b93a5ad935478970fc78662c3cd48e00d2dfbee66ee42df",
+      "mechanics_record_sha256": "1ac382828aa92ec37dd21ddf8f8c79d584c4eabf79356960e4031aaf205be232"
+    },
+    "RELIC.PAELS_TOOTH": {
+      "definition_sha256": "07143ec9bea0bfb05508ebbc9cbf8dbd62d3571294bed8c0aec5d366651e4efc",
+      "mechanics_record_sha256": "ec62e23e7e8d4184db0ee83023293cbb162738fc47efae4f2a610114cabeb6dc"
+    },
+    "RELIC.PAELS_WING": {
+      "definition_sha256": "d99f86bb92cc6a0c6fb753ffe4a0a517ff76d815f55c08001630625f86857430",
+      "mechanics_record_sha256": "d9bb113e766619dbd20856c595100909009282a961a7bee3a12215e6b1275019"
+    },
+    "RELIC.PANDORAS_BOX": {
+      "definition_sha256": "fde8d4ed05ab3bffdef3c7402475800f07ccc44a67f22b7a530976ad78db9ca7",
+      "mechanics_record_sha256": "f0f1f64105de55c0d07677276300e231fb32a743dcba975ec0ecd4ec2302b0e6"
+    },
+    "RELIC.PANTOGRAPH": {
+      "definition_sha256": "ef3b9dccda9320794e1113859932e6dece3d50a3613a19bf8fcc687dc3187f04",
+      "mechanics_record_sha256": "169c4cb441574ae44c0337b577b46a160663c8e188c5dc34ea03cc9f942ab141"
+    },
+    "RELIC.PAPER_KRANE": {
+      "definition_sha256": "3e5f2ab5f2036e61c21a3a9021aacf0cc95a9b947d634ffd67a7a0e431f31606",
+      "mechanics_record_sha256": "f93137237e599a8292f05fe6b7683caedca0a28f3599b1c855bd6580c99253be"
+    },
+    "RELIC.PAPER_PHROG": {
+      "definition_sha256": "a4e1e2330d7b651a82386d5454a9c32039ee812d82ebbc48e7bc3198b9e307c8",
+      "mechanics_record_sha256": "78a6ebd00047becda2426d6b855f95831dd5ca9e71fd2539968849d8511a11e2"
+    },
+    "RELIC.PARRYING_SHIELD": {
+      "definition_sha256": "793c17645dfbbe9aaa75bde59c2be3a7715b767126e8f21b407886f8d6b52e53",
+      "mechanics_record_sha256": "70a37aeb26f2a9b5fb613fe830965cbf9e6abe55de394b084c65c30d0c5fb26a"
+    },
+    "RELIC.PEAR": {
+      "definition_sha256": "87c39f523195105ffad7f240251af0873ea3dc88bc8e113db3790f764ff8e19f",
+      "mechanics_record_sha256": "7bf21b4db0272f8e729aa610c77c35f0ea3f57855a7d66d1cd9e194c50fc965f"
+    },
+    "RELIC.PENDULUM": {
+      "definition_sha256": "348a11de259d9a3a8450fd6cdf030a21f05c7f9ed1765a04a32b9642eedc52bf",
+      "mechanics_record_sha256": "3e4ca8e4f0fa227346bfb91d9165b669a04a4d56d8d7e94a6ff09d5bb501a5fd"
+    },
+    "RELIC.PEN_NIB": {
+      "definition_sha256": "00d76bae480cd2eecd7e698a7f3d96641190f92b2b5efa8800e84059792c1c47",
+      "mechanics_record_sha256": "f44092b86cf2043f737df46a12df9959f934d70ce60777b99a3ae6648cfd2179"
+    },
+    "RELIC.PERMAFROST": {
+      "definition_sha256": "0c85a2f04a6c0275b0aae2686c92a7ec1ed803afd23c3b9f93d12b821bee1034",
+      "mechanics_record_sha256": "3fee654f3f9dedef65ef411e35da962824ffbcfa1c18e2389e2cdb3dd7533380"
+    },
+    "RELIC.PETRIFIED_TOAD": {
+      "definition_sha256": "752203f1b5953df8fd9af65f038d256f2cde8df6fc195518cf14006c1af70439",
+      "mechanics_record_sha256": "d5148d16f55044a06b278ec419d0430d9ccdcddf26b52bff452ecac3b198aab8"
+    },
+    "RELIC.PHIAL_HOLSTER": {
+      "definition_sha256": "dadb65062e363fd8ff0a6df8ac1c6876c67339534d89e845ca18fde4dc29fe34",
+      "mechanics_record_sha256": "bd8f4ad7e97e2ace15ffdca4e24c7b5a86587a2b96af46c8745b4e32a658b60d"
+    },
+    "RELIC.PHILOSOPHERS_STONE": {
+      "definition_sha256": "380de5267b699e661b33788bee393c793f326fe9668c9ab8a7d5195e1c171bc5",
+      "mechanics_record_sha256": "fbffb264dd003e86c97ca1f79ddd5665ee43532a3f57f61a552e18d77fc959be"
+    },
+    "RELIC.PHYLACTERY_UNBOUND": {
+      "definition_sha256": "7340fdbc9e8e533fc1ddf50c516c6ea543fb866f6c938f17dee95a23d9f400b0",
+      "mechanics_record_sha256": "174dcdd1b47ff76458b915899aa7060a8fb47f5d81d1e4e2239ee71f7e16ff57"
+    },
+    "RELIC.PLANISPHERE": {
+      "definition_sha256": "95b115178a88ff3d6be88a8586c3413c8184dd480200fa2d2090dce628dfefce",
+      "mechanics_record_sha256": "93b76de16e2d84b136745848b510bda760fbe01fe1f17bb7d7a7474cedab3ae0"
+    },
+    "RELIC.POCKETWATCH": {
+      "definition_sha256": "3edba3e227bd844eea5e98b3db8c2cbe1864f8df22ad341e07003a6f7c040908",
+      "mechanics_record_sha256": "c3a30a7ff3cd8292157cc5d97f37e147205dec55f5d153e55d11851e3c81d2cc"
+    },
+    "RELIC.POLLINOUS_CORE": {
+      "definition_sha256": "58d3bed387d66ccb814a0064c3cbd40303e7fb4b65b2801d373054763071b76e",
+      "mechanics_record_sha256": "2ae2b8cc2e89a781149c8471f7ead9d1a97ec23ac2da0db0ec3ca4425226a2a3"
+    },
+    "RELIC.POMANDER": {
+      "definition_sha256": "bb6349ff81efe7c0753b9200824095b15233c7aef425011c8556be508c70673b",
+      "mechanics_record_sha256": "f7a60626edf04a1f35d8b265f3a98c3d31ae05711502690e60d34e736676752d"
+    },
+    "RELIC.POTION_BELT": {
+      "definition_sha256": "23350bf9f3e8666a395580317ffa822a5a7609ab1629a5296c8be8c88811b277",
+      "mechanics_record_sha256": "6b8e6261f34f0f49b3fccecc103734ff5ab07d0318bc3a8668875c4c52f8722a"
+    },
+    "RELIC.POWER_CELL": {
+      "definition_sha256": "8664d2057055e28661a7296219417c6a8aefd8c6507fc5de22852c049fa344dc",
+      "mechanics_record_sha256": "9dec1980f75a9a47997e9f59cf7bb2066afb75a5cc7ac64f904d40a0ef2ef5c7"
+    },
+    "RELIC.PRAYER_WHEEL": {
+      "definition_sha256": "4a2667a79695d082cb2cb9de0d61a4f786801f89e3db2803f7b24f06c2828cf9",
+      "mechanics_record_sha256": "64e63bb60b1601b3274099c07cf2724d6267b678e5d478a2e7faee43f61c541a"
+    },
+    "RELIC.PRECARIOUS_SHEARS": {
+      "definition_sha256": "a97b07b298c989c0a0843f95876e8cf58670fb525fb449ed5c127c6504b6a3c0",
+      "mechanics_record_sha256": "2ef22b16f7439862c72af3099a9692cc932a95a7d0c675af8038096c83c6ba6d"
+    },
+    "RELIC.PRECISE_SCISSORS": {
+      "definition_sha256": "7424ab04ad194529d5b8432ceca9fd1700232737f6eac3b0f7254fe052090611",
+      "mechanics_record_sha256": "14cc0b92c404bbc00daee6c1ad11fdc7bd18b9de44b55fbe44c7408a43dc89a7"
+    },
+    "RELIC.PRESERVED_FOG": {
+      "definition_sha256": "6d9ebf8110fd55ec6e258ffa0a56b007185df3db80157d6e5a75e448a4638ba3",
+      "mechanics_record_sha256": "c1c008515c6b46b0579c3e5dc448c14770d9f17f3bec8e9d18a5e4f67d4d8825"
+    },
+    "RELIC.PRISMATIC_GEM": {
+      "definition_sha256": "bfc7bdc2a1701fb665991987d295b8065d142e9b55b14f34d3a7c4eb809a991f",
+      "mechanics_record_sha256": "16b578401fef35cfa356e8863f7419913f7e82d32333bfb9bbb3a1f851d416f7"
+    },
+    "RELIC.PUMPKIN_CANDLE": {
+      "definition_sha256": "46b9d1b08ffa0a4336c1be84dc2b0f6147e40a0d1a3c5f27a25d21f1446a854b",
+      "mechanics_record_sha256": "a69818747cd2b812692bec84860fe18f2e641b7680ae3cdfca7a0d918d6a817a"
+    },
+    "RELIC.PUNCH_DAGGER": {
+      "definition_sha256": "c8375eb3f32473c7f818671cc9ba2ff055b5b8c4f2191ca8b234fe5b6d0c37e9",
+      "mechanics_record_sha256": "5e77773d561852f76dc76156e61ea4ea0105165926283f80af3a4f5611162697"
+    },
+    "RELIC.RADIANT_PEARL": {
+      "definition_sha256": "e45921485827b7ea4f50e67fbe0e81f36931f4c793b0d0aa15cc31b9d2a6f798",
+      "mechanics_record_sha256": "759ef7189705a12697c6661e51964289a3faa6e6746dc88d411f9b29be36d23d"
+    },
+    "RELIC.RAINBOW_RING": {
+      "definition_sha256": "da0037c87a9901c408094cf76a142d1da59e84eadb4774d3ec5322a64f76a977",
+      "mechanics_record_sha256": "e6e020e3866d4e43cec01f66823a2e259b6cda963697ae82e6ddc9881a7e72a2"
+    },
+    "RELIC.RAZOR_TOOTH": {
+      "definition_sha256": "411407b14ab21d23593b6808b25eb952fd4f876555491828407899413aa1f39a",
+      "mechanics_record_sha256": "3f1dfbad9d399de3bc3aafbf0551db481ae96446e0fedd939827f598b3e3362d"
+    },
+    "RELIC.RED_MASK": {
+      "definition_sha256": "af6b08546432a8d8b7b46f3b6f4c2bcbaa0a6e4cc30a1e049093609c01d72727",
+      "mechanics_record_sha256": "553cdd2a668cb987ef1e7d9ccf874d8936eecb1ae7540aa3e6b73f261ec79af9"
+    },
+    "RELIC.RED_SKULL": {
+      "definition_sha256": "69a66d7b4953b5fbfaecb892e7460bc3e0959a7ce1638be28cf71a0428c7de32",
+      "mechanics_record_sha256": "583708354722e4b9a0371abfd0c6a988ed34fbba526a1c203e90c91f5bddf3aa"
+    },
+    "RELIC.REGALITE": {
+      "definition_sha256": "977f2edd5321aec7c3ef617d0b2c70fa375c63b344fa5e946c87bad72484d6a9",
+      "mechanics_record_sha256": "b71d9e113188d40e1c535873eae2ba4647e5fe569d0bb15ca96b2810e0c82f06"
+    },
+    "RELIC.REGAL_PILLOW": {
+      "definition_sha256": "85c34e64bcf0a77b47b991b5241b241af467f71075c33c347df296259b67196a",
+      "mechanics_record_sha256": "5d722b69d88885f6caf1924baa8994a93009903c78a53195691bb6ebfd2f5786"
+    },
+    "RELIC.REPTILE_TRINKET": {
+      "definition_sha256": "7b1977f36988d20b9d19a3837c19649d61abe7e05fd260b6fb11f30922623f2e",
+      "mechanics_record_sha256": "b244fd0111d40d36b8598dcca894746c5e3d3ea5cc966e7a304024f49d893dc6"
+    },
+    "RELIC.RINGING_TRIANGLE": {
+      "definition_sha256": "a308897b83c3e544a12e6cc06cd6e8d24b26ca936fe4166d6cc19a4b07126255",
+      "mechanics_record_sha256": "c354c9fbcea39c2b6fdc54b0d41cc1997e38d99d6ddbe2088c156ad7cbf11fe9"
+    },
+    "RELIC.RING_OF_THE_DRAKE": {
+      "definition_sha256": "0098c3db30287962fbdc0ea1ee97fdca0751f1749059c1c027c8394c2a0bd9b7",
+      "mechanics_record_sha256": "3f1cf593bac2acdc30750c1e3caf3fe4e56ac1179bcbd1f4d73d4a477fa67bd9"
+    },
+    "RELIC.RING_OF_THE_SNAKE": {
+      "definition_sha256": "321c41c14c4ce0dd326d77aa7d11514c18da410d0f58e48367e1055a973e2610",
+      "mechanics_record_sha256": "e92ed24443d2e22a36d4c4010b086cdfccc117371f259cf51b5c4ba1c7db2ae4"
+    },
+    "RELIC.RIPPLE_BASIN": {
+      "definition_sha256": "e849490ee4fe8dc38ea645df20eb5233aae6af8ab965bfe24c11793c4c46ece7",
+      "mechanics_record_sha256": "1868f46a59ec423ccd05b56a57c8305c661145184dc74adc93bea8959e17ae64"
+    },
+    "RELIC.ROYAL_POISON": {
+      "definition_sha256": "79d4f5ed5e22eb7a497ddd0642b7eeeb6600ed90aa2fabac4bfa20a5986ec444",
+      "mechanics_record_sha256": "4da400b8a71da762e9df6b47149d9867ea22ee3ae3ba7da920b28c3b1f9865d3"
+    },
+    "RELIC.ROYAL_STAMP": {
+      "definition_sha256": "40d1a611916277df573e146683e1b5ab921e9188c21420be327cba56df18d6c6",
+      "mechanics_record_sha256": "a0c7b16434edc1ecbb27d813b2257e2ae8aadcd88ee4eb2b8db72a24ae5cc6bb"
+    },
+    "RELIC.RUINED_HELMET": {
+      "definition_sha256": "e5952b7724fd38381d248fbb0d38755695e6afa9d9809f1929fd2fffda5160c6",
+      "mechanics_record_sha256": "3f174b0ec51174a6cc667d0074916e13aeffad91381648ae3a2c9e556a195579"
+    },
+    "RELIC.RUNIC_CAPACITOR": {
+      "definition_sha256": "3f5ebef0654babaa36e019886799d0c77b39493c12f66fe8fb17f4569cd0981d",
+      "mechanics_record_sha256": "74d7473ba824ddecee036f7a2343f776757d2ff3e4e6e4c4ff1a16085663eba5"
+    },
+    "RELIC.RUNIC_PYRAMID": {
+      "definition_sha256": "35d7d24f8037ed1ea3cc273feb3f7e0216865b4469da8be6352ce94c7b82dca0",
+      "mechanics_record_sha256": "8effdd3992f15cd7ef550b9c11f583e8d01519752f3aaaba387ae9bf0b7fc93d"
+    },
+    "RELIC.SAI": {
+      "definition_sha256": "49bf579ad10937264e4a1fc8280809dde99c322393e78ea0539f8d51d755f094",
+      "mechanics_record_sha256": "c4649ccf6514b4c324ee67987d8513eafbcf2bc3162ede391e4817446ac50807"
+    },
+    "RELIC.SAND_CASTLE": {
+      "definition_sha256": "d1c52bc62e986500a9233f1672a9771503ae962319c553e672ccf777f702697b",
+      "mechanics_record_sha256": "012abaf5d42080e11c4507714f662597dab68522829e285eafff80d719b90bd8"
+    },
+    "RELIC.SCREAMING_FLAGON": {
+      "definition_sha256": "7395ea69243cb1a4f93009ef257dc87c98a6e8298f91d24ce0aed3d48c8f2e40",
+      "mechanics_record_sha256": "3b067232d54f70cd878bb1b81043bf1e66119f46a971d951d5ad781f4ccc76b1"
+    },
+    "RELIC.SCROLL_BOXES": {
+      "definition_sha256": "6049a885980117cf519d04731172f1875703cbded52dc70456178f70f4e960fd",
+      "mechanics_record_sha256": "11364529d19d0e1b3ea1126d41677bdfdae40e456e32868f898b978e451702f0"
+    },
+    "RELIC.SEAL_OF_GOLD": {
+      "definition_sha256": "6b0397f5fc34675a9e470fe1f5c637ab538da6ffdc6ef3017229ce2d28d2c6f0",
+      "mechanics_record_sha256": "d74ca2157a017c22bb126808f4047acddeae9228a83c75e79178310932f80429"
+    },
+    "RELIC.SEA_GLASS": {
+      "definition_sha256": "a8282988ccbb5aca3295efde40e64cba2ab070b3df15bde932c582bbb99d8944",
+      "mechanics_record_sha256": "22914e35f2866e08571f408d21751fe4668446f58796c5e5fc674cf728bd79bf"
+    },
+    "RELIC.SELF_FORMING_CLAY": {
+      "definition_sha256": "c67dff243bb62af45f53fa2bb9a94d1bb30066a34ad0d730a44a04c44dd73ad7",
+      "mechanics_record_sha256": "7e5bea0e35aa49699a44e0c282bcd46be4495472f210dc9e8a060f87f676000d"
+    },
+    "RELIC.SERE_TALON": {
+      "definition_sha256": "7da5f7020726ae3c961dec0fc70df3d0a98b5ab94073fac6f32ccf4039837b51",
+      "mechanics_record_sha256": "5fec9d8a388f9e6d7f1be1ce1ba9f802800b2af9bc4cb29d0f2f104c9a84a4be"
+    },
+    "RELIC.SHOVEL": {
+      "definition_sha256": "c447504ba362307f5b3080c7951910b83f4b71d4d8b5f36bc738dadf5f580833",
+      "mechanics_record_sha256": "24931c557eb38977e867212540e640f01d4f419a9876932b6b3bc960c90d6e31"
+    },
+    "RELIC.SHURIKEN": {
+      "definition_sha256": "84e88016f29547096b35597e17833a4856818beced7da4901d911a00f4b42786",
+      "mechanics_record_sha256": "8902f04c5e8ca1c451700c810fe49f5a7bec354f8d87a096a51c93a61de740df"
+    },
+    "RELIC.SIGNET_RING": {
+      "definition_sha256": "08886f64bba23dded181c114145a6cee6b579c217aac140e2a0270fa1f842059",
+      "mechanics_record_sha256": "fdd49481c73c82802004e901a61699e00fe6bc6623e58ee24989d5a86a532bf8"
+    },
+    "RELIC.SILKEN_TRESS": {
+      "definition_sha256": "090f137bf91354c1af950b4dcc2f5bd87e0e6aff8ef6d4cfc888843d9140e2e4",
+      "mechanics_record_sha256": "06f94824701530d056dea0ca582851f8187ab5640393c1c4064eb244f8385f38"
+    },
+    "RELIC.SILVER_CRUCIBLE": {
+      "definition_sha256": "3bfaac956339f8fcab7b01911c41080bf4cd39224b19c1d5ed523e0ee6c04359",
+      "mechanics_record_sha256": "b5c7b12635c3dc98867b98d73bed2b482bf38fc6060e7a4b1866862e569b68a7"
+    },
+    "RELIC.SLING_OF_COURAGE": {
+      "definition_sha256": "c7405661e6647e334d69c34e4e793e8468f6468e21110a074a307969f80d7314",
+      "mechanics_record_sha256": "c447b4b1e98231fe64525678fd1d370f4cdb8e6ebdf0a23d0193c94943ff2f10"
+    },
+    "RELIC.SMALL_CAPSULE": {
+      "definition_sha256": "cfb272ab5e3257470dfaa8feb8dde7c67ea0c7c486d8009bad9caa5d3c25b2b2",
+      "mechanics_record_sha256": "901d70ca1f2976c17ac15c35d2d8514af6d027dfd0316f8f0e6772550f7b815c"
+    },
+    "RELIC.SNECKO_EYE": {
+      "definition_sha256": "121fc0295cc47ff00e9e9bae0cc7cb0bd26e074dd82a08694026ce8d80a5ed64",
+      "mechanics_record_sha256": "4b158c0c5171be9757b799ed1a0ecd5622d257027512b2dc5bb8bd18a9118c1e"
+    },
+    "RELIC.SNECKO_SKULL": {
+      "definition_sha256": "4d954b0eb98b5c1f15a383015bdc715f900203a9e622da2b81598c61ff19db7d",
+      "mechanics_record_sha256": "387442dea21c7055837b6406a7bb5b03e823925cc132098c0d5e9cb8a48e1f5e"
+    },
+    "RELIC.SOZU": {
+      "definition_sha256": "f91bf90297f47bd2b9dac224078f2c1cd8f4604d981a9a5a3b5ce7461ecfc250",
+      "mechanics_record_sha256": "1ea16f14cb7f974ab368372941cf03cc7c9b72044cd7b810eee30dde14fd547f"
+    },
+    "RELIC.SPARKLING_ROUGE": {
+      "definition_sha256": "b227dc365984af3432368f0919767681cbfd0838294b6b629870de96f26c909e",
+      "mechanics_record_sha256": "ff2d477c58db3266a8f79a053d59cddfd2ba9a857940226cddcec3e91f6eaa63"
+    },
+    "RELIC.SPIKED_GAUNTLETS": {
+      "definition_sha256": "78733958b4e5af1b410fcd4b12112836d43b3c1df2957edf363e7352d41eaac8",
+      "mechanics_record_sha256": "99ef0de4d6c999c388ed417de56d8481b7e9197287d8da1cd61d90382b981229"
+    },
+    "RELIC.STONE_CALENDAR": {
+      "definition_sha256": "8d76aea271f42aa65add76121ab50b965fd2be7fd369fbe301a1bb6349cf1fab",
+      "mechanics_record_sha256": "2b02726a45212810323752b6f70016975f767d228448969de202757f6edb9abd"
+    },
+    "RELIC.STONE_CRACKER": {
+      "definition_sha256": "91625cf37608a41ee28be8df6ff254f57fac6bb79c68a4e57cacc5d800bdb9f2",
+      "mechanics_record_sha256": "002f1c7b2f365868e90fea9bfc0de7a10ddfa26460e3f3302abc24d4ad3d15ad"
+    },
+    "RELIC.STONE_HUMIDIFIER": {
+      "definition_sha256": "f495f06e200b31704f5ed577a3ed260a9ea4bcd0ac957966f95f345a7c02ab47",
+      "mechanics_record_sha256": "5bd6debd21d027e6e6703a8a0a8dcacdb5662ff5af3e56cf48eabb92c47f693e"
+    },
+    "RELIC.STORYBOOK": {
+      "definition_sha256": "0847791283c30cd2977998bec7b6015228727617fe95bb5d87164c106600cb9f",
+      "mechanics_record_sha256": "ff3daf1c4a34d9da006e0802ed75d6ca02745e2ddd4a7fdd7a885a7f9b66ea7c"
+    },
+    "RELIC.STRAWBERRY": {
+      "definition_sha256": "2dcaa250e85d9bf5aceade5a472003aceb7a0a9976b3975ea89cce8eb4fbc1cd",
+      "mechanics_record_sha256": "24c7429f9763a0b993ae89899ca31460c7afba75288f7c9f412737691f1a1261"
+    },
+    "RELIC.STRIKE_DUMMY": {
+      "definition_sha256": "b2644e4578edaa03100f4e88f9a7b1f6992c414fb4e1aa73dd5af1b9fc5d0238",
+      "mechanics_record_sha256": "86e35a81315ce35fcfb5a3e0c8ad4f7cb331f0ba48396badd3c5cb137798ea13"
+    },
+    "RELIC.STURDY_CLAMP": {
+      "definition_sha256": "b4af1e8341e94ce45095b2c2aa62cc2a2d7ea4ac72ae70dd989b1a54382781de",
+      "mechanics_record_sha256": "663e1a928e50a64779754aa7f93996cd8ba52071149dfa43d368b5a228faee6a"
+    },
+    "RELIC.SWORD_OF_JADE": {
+      "definition_sha256": "ac076ada1d74acd3a6a80ff48dd50341bb65753d5b702a71fb950d349ecc4116",
+      "mechanics_record_sha256": "77226ba0fc22d26a90798c82ea4a4a661d596df7fc169668a6d33bf2c7477aeb"
+    },
+    "RELIC.SWORD_OF_STONE": {
+      "definition_sha256": "a33f24ba9483daab1cd75ac4161efb980236b80ee1dc49c86a5a654fe6d3d196",
+      "mechanics_record_sha256": "f5c43a7fea81bdeccd0f69e457063e5cb6ca23fa4955d93e13025a2f8fc4e603"
+    },
+    "RELIC.SYMBIOTIC_VIRUS": {
+      "definition_sha256": "22c6555a79c8fba8053ef370b675ab11b676a3d6ab5be4fb78e70380fbf92c63",
+      "mechanics_record_sha256": "3ac0837a9d387718e1fce5298d17df5a54f5617419ed4d41d0cae3553e0530ba"
+    },
+    "RELIC.TANXS_WHISTLE": {
+      "definition_sha256": "72f36d38b260e5f1fbebb7188a17ea0924b880a9ea23a4b97516672e93aa0f7f",
+      "mechanics_record_sha256": "b412718b166246b5b16afe3c2345514a6fdc325538049f6cd4a93e5a00240f71"
+    },
+    "RELIC.TEA_OF_DISCOURTESY": {
+      "definition_sha256": "f88dd42ac45c179cafb4a900e0e1d40fdab521b8bac97f48ed50889099b04b6f",
+      "mechanics_record_sha256": "cd8ed8e17f3d6144719659595931d14654ec3b0e0b6d25c47b81a2bbe1a8ad57"
+    },
+    "RELIC.THE_ABACUS": {
+      "definition_sha256": "934cf5666c28725bc372fcf3268f69b069644e83aae470750530f306eff89546",
+      "mechanics_record_sha256": "a98567afa620a48dbaca0c1fa7e59ac5e07e48ad11378fd8de475c88d4efec0a"
+    },
+    "RELIC.THE_BOOT": {
+      "definition_sha256": "29950f1eab051c52efd4ca5daaa157e390d397a660dd88560339aeb90615fc86",
+      "mechanics_record_sha256": "7964848a908574a6723ad7963963c40a91c42d91fae642f70fdb833652203e51"
+    },
+    "RELIC.THE_COURIER": {
+      "definition_sha256": "7a008927c51cc9d4079997f88838e65a7bdfab8612b92d502d4f999c760d89e6",
+      "mechanics_record_sha256": "0e6a53be927f286a380c552601958f816724ce35de4839462ece509967aca051"
+    },
+    "RELIC.THROWING_AXE": {
+      "definition_sha256": "284e439904b8861d4d06f097a3d9bea6281bcb29c79d0819a37b3be9ad2e334f",
+      "mechanics_record_sha256": "c23e98b77f75f435015d712d9f03af1e940a986a748950994b58e5c13c797b8f"
+    },
+    "RELIC.TINGSHA": {
+      "definition_sha256": "a0bc3e5558babcddb0f145a467c740476cb07c669c11df7c4358a5a377b850b3",
+      "mechanics_record_sha256": "21bf3c4ebc859dee7686022dfdaf7804a944666b88db9145f5fa239e2913c82a"
+    },
+    "RELIC.TINY_MAILBOX": {
+      "definition_sha256": "f35a567b7e9da044bf93f673b4da0824cee6ffd699954751d341fc65fedbeeeb",
+      "mechanics_record_sha256": "72fca1b67c9c581aa0fef5ae7d933f3556c6306908b64260144ded2d6932f791"
+    },
+    "RELIC.TOASTY_MITTENS": {
+      "definition_sha256": "e9fc650353af30b49bf80c6da752d110657e3033c604ec1d103b4b4170f93e65",
+      "mechanics_record_sha256": "e1bb6c94689ab2c1d8c131264729cb28b157021720235f829f751508d5d16fff"
+    },
+    "RELIC.TOOLBOX": {
+      "definition_sha256": "7cab88c919fa476747367b9cd7cbc2647ae7a826878af00f2c7ff7fb7f3e37a6",
+      "mechanics_record_sha256": "6ce9c52cc6ef09bb864126055229a83f5c59f6c906a29ddeaede90f74a7bb960"
+    },
+    "RELIC.TOUCH_OF_OROBAS": {
+      "definition_sha256": "48acb77fa4da966d310629db2ff1f36137da3145447b5b65f2c039186f6d3e32",
+      "mechanics_record_sha256": "ac616f08d649e74fad24dc2b531ec28b772c8520578a96ec8a09de2b4f913c36"
+    },
+    "RELIC.TOUGH_BANDAGES": {
+      "definition_sha256": "7713a46cf28a67a8cc3aa622030bfc7ea69ae8d2e9cc3c416305fade348e2aad",
+      "mechanics_record_sha256": "795104960fe0a8fcc064c103ec8540eeabeae682537be7b648eb6d1eb9045b4f"
+    },
+    "RELIC.TOXIC_EGG": {
+      "definition_sha256": "63039163f5079f4663ebd0ae84b277c4678c7d3ada3ad4bf717469dc8af1e027",
+      "mechanics_record_sha256": "e686c75dd971910af476e80fa61714cfc53ae23a8b67e6331ebd2c5ef96cd871"
+    },
+    "RELIC.TOY_BOX": {
+      "definition_sha256": "593daf3098d43b7e3f341f6f5acb5abed125f77d09e705787100d75bfcf70fd6",
+      "mechanics_record_sha256": "f6b437c5594443a99a1c9d4f116ceda51a1d986de6204a80bd8b58bae659ba00"
+    },
+    "RELIC.TRI_BOOMERANG": {
+      "definition_sha256": "e8016f86246a295247d5432a9f604d47f68da4fac0932ae8411896e4d8a89725",
+      "mechanics_record_sha256": "73a73adebb8ece1e796b2acc764c26b825a988711a37fd5ac04e12ab75205c7c"
+    },
+    "RELIC.TUNGSTEN_ROD": {
+      "definition_sha256": "cc0cff46dd907d89e5e4b8bb5c3f78e920b557a36ccc2d614242b785dad83d92",
+      "mechanics_record_sha256": "4e70026660fb3575a1c578cf682825a8f4df2fff8bda5416da98cdf445ab1981"
+    },
+    "RELIC.TUNING_FORK": {
+      "definition_sha256": "dedf6ee6982716a8405bf8a926980b9ca496af1131b130cae6c546c28d0a63f9",
+      "mechanics_record_sha256": "f8d4af175aa2fd22c90aa0a35f0623ded98fe0e1dc5da0ab6fdbb41e393f21c6"
+    },
+    "RELIC.TWISTED_FUNNEL": {
+      "definition_sha256": "f3c5dcec16fe810e2717d35e52b84cf12c08c004311907f19d162916347c2d6f",
+      "mechanics_record_sha256": "a06bc2211c5ddcddecafc841132c213c92ae13b793d4a617435d67794bf140f0"
+    },
+    "RELIC.UNCEASING_TOP": {
+      "definition_sha256": "8b5cce4ca6f9cb69fd3a5555bd1e5ecbc8e6a797640eafd0f99207c2531adfb6",
+      "mechanics_record_sha256": "38b0f95193d118a86cd5539356722cb57c4f1fcba2fc6b40fe8d62c77d901303"
+    },
+    "RELIC.UNDYING_SIGIL": {
+      "definition_sha256": "31430245db2163662f74b53a9ed0bcefb338d714907cf45dc0af0ccca66237a4",
+      "mechanics_record_sha256": "4945ce0401e8956ffefedfededcc18668ae5527280e2ab9b5befecbe5ef7962a"
+    },
+    "RELIC.UNSETTLING_LAMP": {
+      "definition_sha256": "15593f1802a8d32588eefbe2ea67bec959b5e2e850a771491b71f10f6d079013",
+      "mechanics_record_sha256": "e0267f6b810dc3ac4651c6e8d646a3493cf2f6ffaeb49e4e3463ea1fdb813198"
+    },
+    "RELIC.VAJRA": {
+      "definition_sha256": "a64a6f1095845ef116f8cbfb0b8711ebfdf1a2fd31af942de9d69ff356a63ed8",
+      "mechanics_record_sha256": "d7015242dfd230c5d304fa6ea486d69158f98c9bceecaca72417d79eab391381"
+    },
+    "RELIC.VAMBRACE": {
+      "definition_sha256": "06f1b1706f4c30425b3d5b4d36901381f69bb3e39896684aee7d56c814a50686",
+      "mechanics_record_sha256": "f4a6b3d7e865c7a3c5a9022e59975fd0011a51a0b3e154d4e57522ef78e1c686"
+    },
+    "RELIC.VELVET_CHOKER": {
+      "definition_sha256": "fce1765ed52d7c67a63377d1852a2e9e7a94e7b0734fb04a04039d756338ed62",
+      "mechanics_record_sha256": "9bad9f08040d8e1a8f4d372dc4d8e3b1dc0d61b7a7fd709f27b379f2e74a1822"
+    },
+    "RELIC.VENERABLE_TEA_SET": {
+      "definition_sha256": "73676273a2f06723d7a74614d2600530606dd6ad393dd11e698b27b30cf608d5",
+      "mechanics_record_sha256": "19d39273c681650be5d36a9627011416f4126ac57792becda331fc78176b4ddc"
+    },
+    "RELIC.VERY_HOT_COCOA": {
+      "definition_sha256": "4779eab578ba15e26e83ea3e6c51ec261eaeed65011b99f61ade10ecff0cbd7c",
+      "mechanics_record_sha256": "5257587bb883c298affe1250fcaf90be9ba0dde729a1010b2536bbda017e0c9d"
+    },
+    "RELIC.VEXING_PUZZLEBOX": {
+      "definition_sha256": "7a384f3f5378bdea1afea9050a15a8f99f5a46363261200d9fc7352573552db4",
+      "mechanics_record_sha256": "4d3faed5b781f8b39e7edf0d4dae9d45a101d9c55e2849e387283e99b4c6977b"
+    },
+    "RELIC.VITRUVIAN_MINION": {
+      "definition_sha256": "b526aa5f2152331da911dfe2168c7be91c5e61b5174b52f338eb850c501cd1bc",
+      "mechanics_record_sha256": "bd9f8f84e6dc404161658ab8737386f31cb8e5d503f45f6282961e023eb464ce"
+    },
+    "RELIC.WAR_HAMMER": {
+      "definition_sha256": "953e57c7d32846b421e9742cb287ef2f63aadd14a85930595f557ded9c0ed695",
+      "mechanics_record_sha256": "e88cae15dc6af4b1cc3f7c5da95d2ced22eed4d737724610f180e17443868c60"
+    },
+    "RELIC.WAR_PAINT": {
+      "definition_sha256": "898cfd36c7a76da4454700cdf19566f1406eafb434823830914ccf6a9f4234d6",
+      "mechanics_record_sha256": "cf0f7df6a9ca35d4ed0cd26c19ea74116469b07c159322a0d73604a693493fad"
+    },
+    "RELIC.WHETSTONE": {
+      "definition_sha256": "45b465e6d17369add45a92abfe455b95a07e9701ea1a8460d8deeade301160ad",
+      "mechanics_record_sha256": "e5bcc48c438786d7f0d1e51e8dc9d1f6af837b23220e5ad769d3079a8a01ed83"
+    },
+    "RELIC.WHISPERING_EARRING": {
+      "definition_sha256": "03095decbb2a557c2d0edf2cae5418dc899fb49bf45ff2190c85d5ded854e57b",
+      "mechanics_record_sha256": "10302962f09d37268dfe5c54706774b733caae5fc16a8d6a82c4f9cfeba2f4fa"
+    },
+    "RELIC.WHITE_BEAST_STATUE": {
+      "definition_sha256": "e19e8b6b47e69e52e8eafb6dccdafce618a091e0103780ca6e25722887513878",
+      "mechanics_record_sha256": "4ad3a05c68b835c928eb43df591a1d7f6a6722b6ff70097abf008f8fae554acd"
+    },
+    "RELIC.WHITE_STAR": {
+      "definition_sha256": "c6b7bcce31a38d9a0587feea331f7ddb966a994641a9ff86f91e124ad05ca5d7",
+      "mechanics_record_sha256": "7bd87ff6f17f65c88cc1917c9a5f343007e2bbf2beb5ac042b570180c670c008"
+    },
+    "RELIC.WINGED_BOOTS": {
+      "definition_sha256": "54fd8fbff5402199fbe1fec313ee1332edd02c1a90afbb4e12819d47cbbbb8fa",
+      "mechanics_record_sha256": "f206b90dba1c651b8a131e453d78c29f5bf0ec0231f21d557d8ed75666c9e3ee"
+    },
+    "RELIC.WING_CHARM": {
+      "definition_sha256": "c1f5f7bc6965bb3c9fa1f0692ffe79d0c9a1365d88aa49f8fc823aedef200534",
+      "mechanics_record_sha256": "87b584227e0d7521e8e98778759b613a72aea9d11158c6cdbc0ffb0ca472570e"
+    },
+    "RELIC.WONGOS_MYSTERY_TICKET": {
+      "definition_sha256": "005a872b116ceefb7c43c6ab99549b10b1c0e380767903cc8de6787dd1a8ed1e",
+      "mechanics_record_sha256": "93dd4b50dc68e9a3644bba8a37f7ef20c399d1251ac622abc15e2a0164ac951c"
+    },
+    "RELIC.WONGO_CUSTOMER_APPRECIATION_BADGE": {
+      "definition_sha256": "96367b0126f15cff0536f7aebc330ff8e591db165bd981de1b29cf3f1611f2a6",
+      "mechanics_record_sha256": "4d2c5673b910ebb4f74abf87e778e4418a8aeca9f714196f4a8db8de5d38e876"
+    },
+    "RELIC.YUMMY_COOKIE": {
+      "definition_sha256": "f95edd4932a09f5f1d56318263551f0eb1e29406939abcc8f4497cfe302856dd",
+      "mechanics_record_sha256": "331b38c523c32a4c554de34b80d855b91bdfcd18be04e8ac92a22f65f9d4981e"
+    }
+  }
+}

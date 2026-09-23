@@ -4,7 +4,8 @@ import logging
 import re
 from typing import Any
 
-from sts2.config import DATA_DIR, MODS_DIR
+from sts2.config import DATA_DIR, GAME_INSTALL_DIR, MODS_DIR
+from sts2.identities import canonical_id, identity_index
 from sts2.models import (
     Badge,
     Card,
@@ -70,7 +71,8 @@ _CARD_DRAW_RE = re.compile(
     r"\bdraw (?:\d+|X|that many)(?: additional)? cards?\b|\bdraw cards until\b"
     # Tutors move cards from the Draw Pile to the Hand, which is a draw that
     # picks its card ("Put a Skill from your Draw Pile into your Hand")
-    r"|\b(?:from|in) your Draw Pile (?:to add )?into your Hand\b",
+    r"|\b(?:from|in) your Draw Pile (?:to add )?into your Hand\b"
+    r"|\bchoose a card from your Draw Pile and move it to your Hand\b",
     re.IGNORECASE)
 
 
@@ -90,7 +92,19 @@ def hits_all_enemies(text: str) -> bool:
 
 
 class KnowledgeBase:
-    def __init__(self, language: str = ""):
+    def __init__(self, language: str = "", game_version: str | None = None):
+        from sts2.mechanics import read_profiles, select_game_version
+        try:
+            self.mechanics_profiles = read_profiles(DATA_DIR / "mechanics.json")
+        except (OSError, ValueError):
+            log.warning("Versioned mechanics unavailable", exc_info=True)
+            self.mechanics_profiles = {}
+        # Explicit history versions do not inherit the currently installed game.
+        self.game_version = (select_game_version(GAME_INSTALL_DIR, self.mechanics_profiles)
+                             if game_version is None else game_version)
+        self.mechanics_profile = self.mechanics_profiles.get(self.game_version)
+        self.overlay_descriptions_applied = 0
+        self.overlay_descriptions_skipped = 0
         # Explicit language beats the ambient setting: the caller that just
         # persisted a new choice must not re-resolve it (STS2_LANG wins there)
         self.language = language
@@ -114,6 +128,7 @@ class KnowledgeBase:
         self._potions_by_id: dict[str, Potion] = {}
         self._strategies_by_char: dict[str, CharacterStrategy] = {}
         self._epochs_by_id: dict[str, Epoch] = {}
+        self._badges_by_id: dict[str, Badge] = {}
         # Canonical English (description, description_upgraded) for cards the
         # content overlay translated; analysis reads these, not display text
         self._card_text_en: dict[str, tuple[str, str]] = {}
@@ -124,6 +139,23 @@ class KnowledgeBase:
         self._all_names: list[str] = []
 
         self._load_all()
+        from sts2.mechanics import (
+            apply_card_profile,
+            apply_enemy_profile,
+            apply_epoch_profile,
+            apply_event_profile,
+            apply_potion_profile,
+            apply_relic_profile,
+        )
+        self._reference_cards = identity_index({card.id: card for card in self.cards})
+        self._reference_relics = identity_index({relic.id: relic for relic in self.relics})
+        self._reference_enemies = identity_index({enemy.id: enemy for enemy in self.enemies})
+        self.cards = [apply_card_profile(card, self.mechanics_profile) for card in self.cards]
+        self.relics = [apply_relic_profile(relic, self.mechanics_profile) for relic in self.relics]
+        self.potions = [apply_potion_profile(potion, self.mechanics_profile) for potion in self.potions]
+        self.enemies = [apply_enemy_profile(enemy, self.mechanics_profile) for enemy in self.enemies]
+        self.epochs = [apply_epoch_profile(epoch, self.mechanics_profile) for epoch in self.epochs]
+        self.events = [apply_event_profile(event, self.mechanics_profile) for event in self.events]
         self._load_mods()
         self._load_community_data()
         self._discover_from_saves()
@@ -212,6 +244,7 @@ class KnowledgeBase:
         _build_indexes so search matches the translated names.
         """
         from sts2.i18n import load_content_overlay
+        from sts2.mechanics import overlay_matches
         try:
             overlay = load_content_overlay(self.language)
         except Exception as exc:  # never let a locale file stop startup
@@ -224,6 +257,7 @@ class KnowledgeBase:
             entries = overlay.get(family)
             if not isinstance(entries, dict) or not entries:
                 continue
+            entries = identity_index(entries)
             for model in models:
                 if getattr(model, "source", "") == "mod":
                     continue
@@ -233,7 +267,20 @@ class KnowledgeBase:
                 if family == "cards" and model.id not in self._card_text_en:
                     self._card_text_en[model.id] = (
                         model.description, model.description_upgraded)
+                compatible = overlay_matches(entry, model.model_dump(),
+                                             overlay.get("_meta"), self.game_version)
                 for field in ("name", "description", "description_upgraded"):
+                    # A renamed card must not acquire another build's name.
+                    traits = self.mechanics_profile.card_traits.get(model.id) if self.mechanics_profile else None
+                    meta = overlay.get("_meta")
+                    if field == "name" and traits and traits.name and (
+                            not isinstance(meta, dict) or meta.get("game_version") != self.game_version):
+                        continue
+                    if field != "name" and entry.get(field):
+                        if not compatible:
+                            self.overlay_descriptions_skipped += 1
+                            continue
+                        self.overlay_descriptions_applied += 1
                     value = entry.get(field)
                     # setattr bypasses pydantic validation, so a malformed
                     # overlay value would only detonate later in indexing
@@ -244,6 +291,49 @@ class KnowledgeBase:
                     if field == "name" and not model.name_en:
                         model.name_en = model.name
                     setattr(model, field, value)
+
+    def card_for_version(self, card_id: str, game_version: str | None = None) -> Card | None:
+        """Version-specific English mechanics without mutating display cards."""
+        from sts2.mechanics import apply_card_profile
+        card = self.get_card_by_id(card_id)
+        if card is None or card.source == "mod" or game_version is None or game_version == self.game_version:
+            return card
+        reference = self._reference_cards.get(card_id, card)
+        return apply_card_profile(reference, self.mechanics_profiles.get(game_version))
+
+    def relic_for_version(self, relic_id: str, game_version: str | None = None) -> Relic | None:
+        from sts2.mechanics import apply_relic_profile
+        relic = self.get_relic_by_id(relic_id)
+        if relic is None or relic.source == "mod" or game_version is None or game_version == self.game_version:
+            return relic
+        reference = self._reference_relics.get(relic_id, relic)
+        return apply_relic_profile(reference, self.mechanics_profiles.get(game_version))
+
+    def enemy_for_version(self, enemy_id: str, game_version: str | None = None) -> Enemy | None:
+        from sts2.mechanics import apply_enemy_profile
+        enemy = self.get_enemy_by_id(enemy_id)
+        if enemy is None or enemy.source == "mod" or game_version is None or game_version == self.game_version:
+            return enemy
+        reference = self._reference_enemies.get(enemy_id, enemy)
+        return apply_enemy_profile(reference, self.mechanics_profiles.get(game_version))
+
+    def mechanics_status(self, game_version: str | None = None) -> dict:
+        version = self.game_version if game_version is None else game_version
+        profile = self.mechanics_profiles.get(version)
+        return {
+            "game_version": version,
+            "branch": profile.branch if profile else "",
+            "reviewed_cards": len(profile.cards) if profile else 0,
+            "reviewed_traits": len(profile.card_traits) if profile else 0,
+            "reviewed_potions": len(profile.potions) if profile else 0,
+            "reviewed_relics": len(profile.relics) if profile else 0,
+            "reviewed_monster_stats": len(profile.monster_stats) if profile else 0,
+            "reviewed_encounters": len(profile.encounter_rosters) if profile else 0,
+            "reviewed_epochs": len(profile.epochs) if profile else 0,
+            "reviewed_events": len(profile.events) if profile else 0,
+            "complete": bool(profile and profile.complete),
+            "overlay_descriptions_skipped": self.overlay_descriptions_skipped,
+        }
 
     def english_name(self, model) -> str:
         """Name to use for joins against English-keyed data."""
@@ -262,10 +352,10 @@ class KnowledgeBase:
         """Load mod data from JSON files in the mods directory."""
         if not MODS_DIR.exists():
             return
-        existing_card_ids = {c.id for c in self.cards}
-        existing_relic_ids = {r.id for r in self.relics}
-        existing_potion_ids = {p.id for p in self.potions}
-        existing_enemy_ids = {e.id for e in self.enemies}
+        existing_card_ids = {canonical_id(c.id) for c in self.cards}
+        existing_relic_ids = {canonical_id(r.id) for r in self.relics}
+        existing_potion_ids = {canonical_id(p.id) for p in self.potions}
+        existing_enemy_ids = {canonical_id(e.id) for e in self.enemies}
         for mod_file in sorted(MODS_DIR.glob("*.json")):
             try:
                 data = json.loads(mod_file.read_text(encoding="utf-8"))
@@ -315,10 +405,10 @@ class KnowledgeBase:
                 d = _ns(d)
                 try:
                     card = Card(**d, source="mod")
-                    if card.id in existing_card_ids:
+                    if canonical_id(card.id) in existing_card_ids:
                         log.warning("Mod %s: card %s conflicts with base, skipped", mod_name, card.id)
                         continue
-                    existing_card_ids.add(card.id)
+                    existing_card_ids.add(canonical_id(card.id))
                     self.cards.append(card)
                 except Exception as exc:
                     log.warning("Mod %s: skipping malformed card: %s", mod_name, exc)
@@ -326,10 +416,10 @@ class KnowledgeBase:
                 d = _ns(d)
                 try:
                     relic = Relic(**d, source="mod")
-                    if relic.id in existing_relic_ids:
+                    if canonical_id(relic.id) in existing_relic_ids:
                         log.warning("Mod %s: relic %s conflicts with base, skipped", mod_name, relic.id)
                         continue
-                    existing_relic_ids.add(relic.id)
+                    existing_relic_ids.add(canonical_id(relic.id))
                     self.relics.append(relic)
                 except Exception as exc:
                     log.warning("Mod %s: skipping malformed relic: %s", mod_name, exc)
@@ -337,9 +427,9 @@ class KnowledgeBase:
                 d = _ns(d)
                 try:
                     potion = Potion(**d, source="mod")
-                    if potion.id in existing_potion_ids:
+                    if canonical_id(potion.id) in existing_potion_ids:
                         continue
-                    existing_potion_ids.add(potion.id)
+                    existing_potion_ids.add(canonical_id(potion.id))
                     self.potions.append(potion)
                 except Exception as exc:
                     log.warning("Mod %s: skipping malformed potion: %s", mod_name, exc)
@@ -347,9 +437,9 @@ class KnowledgeBase:
                 d = _ns(d)
                 try:
                     enemy = Enemy(**d, source="mod")
-                    if enemy.id in existing_enemy_ids:
+                    if canonical_id(enemy.id) in existing_enemy_ids:
                         continue
-                    existing_enemy_ids.add(enemy.id)
+                    existing_enemy_ids.add(canonical_id(enemy.id))
                     self.enemies.append(enemy)
                 except Exception as exc:
                     log.warning("Mod %s: skipping malformed enemy: %s", mod_name, exc)
@@ -390,42 +480,42 @@ class KnowledgeBase:
             if not progress:
                 return
 
-            existing_card_ids = {c.id for c in self.cards}
-            existing_relic_ids = {r.id for r in self.relics}
-            existing_potion_ids = {p.id for p in self.potions}
-            existing_enemy_ids = {e.id for e in self.enemies}
-            existing_event_ids = {e.id for e in self.events}
+            existing_card_ids = {canonical_id(c.id) for c in self.cards}
+            existing_relic_ids = {canonical_id(r.id) for r in self.relics}
+            existing_potion_ids = {canonical_id(p.id) for p in self.potions}
+            existing_enemy_ids = {canonical_id(e.id) for e in self.enemies}
+            existing_event_ids = {canonical_id(e.id) for e in self.events}
 
             # Discover cards from discovered_cards
             for card_id in progress.discovered_cards:
-                if card_id in existing_card_ids:
+                if canonical_id(card_id) in existing_card_ids:
                     continue
-                existing_card_ids.add(card_id)
+                existing_card_ids.add(canonical_id(card_id))
                 name = card_id.split(".", 1)[-1].replace("_", " ").title() if "." in card_id else card_id
                 self.cards.append(Card(id=card_id, name=name, character="Unknown",
                                        cost="?", type="Unknown", rarity="Unknown", source="discovered"))
 
             # Discover relics from discovered_relics
             for relic_id in progress.discovered_relics:
-                if relic_id in existing_relic_ids:
+                if canonical_id(relic_id) in existing_relic_ids:
                     continue
-                existing_relic_ids.add(relic_id)
+                existing_relic_ids.add(canonical_id(relic_id))
                 name = relic_id.split(".", 1)[-1].replace("_", " ").title() if "." in relic_id else relic_id
                 self.relics.append(Relic(id=relic_id, name=name, source="discovered"))
 
             # Discover potions from discovered_potions
             for potion_id in progress.discovered_potions:
-                if potion_id in existing_potion_ids:
+                if canonical_id(potion_id) in existing_potion_ids:
                     continue
-                existing_potion_ids.add(potion_id)
+                existing_potion_ids.add(canonical_id(potion_id))
                 name = potion_id.split(".", 1)[-1].replace("_", " ").title() if "." in potion_id else potion_id
                 self.potions.append(Potion(id=potion_id, name=name, source="discovered"))
 
             # Discover enemies from enemy_stats and encounter_stats
             for enemy_id in list(progress.enemy_stats.keys()) + list(progress.encounter_stats.keys()):
-                if enemy_id in existing_enemy_ids:
+                if canonical_id(enemy_id) in existing_enemy_ids:
                     continue
-                existing_enemy_ids.add(enemy_id)
+                existing_enemy_ids.add(canonical_id(enemy_id))
                 name = enemy_id.split(".", 1)[-1].replace("_", " ").title() if "." in enemy_id else enemy_id
                 # Token-match the suffix segment so "SUB_BOSS_SKILLS" doesn't
                 # type as boss just because "BOSS" appears as a substring.
@@ -445,9 +535,9 @@ class KnowledgeBase:
 
             # Discover events
             for event_id in progress.discovered_events:
-                if event_id in existing_event_ids:
+                if canonical_id(event_id) in existing_event_ids:
                     continue
-                existing_event_ids.add(event_id)
+                existing_event_ids.add(canonical_id(event_id))
                 name = event_id.split(".", 1)[-1].replace("_", " ").title() if "." in event_id else event_id
                 self.events.append(Event(id=event_id, name=name,
                                          description="Auto-discovered from your save data",
@@ -469,6 +559,13 @@ class KnowledgeBase:
             self._strategies_by_char[s.character.lower()] = s
         for ep in self.epochs:
             self._epochs_by_id[ep.id] = ep
+        for badge in self.badges:
+            self._badges_by_id[badge.id] = badge
+
+        self._cards_by_id = identity_index(self._cards_by_id)
+        self._relics_by_id = identity_index(self._relics_by_id)
+        self._potions_by_id = identity_index(self._potions_by_id)
+        self._enemies_by_id = identity_index(self._enemies_by_id)
 
         # Build search index with pre-lowered text for fast substring/token matching
         for card in self.cards:
@@ -587,6 +684,9 @@ class KnowledgeBase:
             result = [c for c in result if any(kw in k.lower() for k in c.keywords)]
         return result
 
+    def get_badge_by_id(self, badge_id: str) -> Badge | None:
+        return self._badges_by_id.get(badge_id)
+
     def get_card_by_id(self, card_id: str) -> Card | None:
         return self._cards_by_id.get(card_id)
 
@@ -600,6 +700,9 @@ class KnowledgeBase:
 
     def get_relic_by_id(self, relic_id: str) -> Relic | None:
         return self._relics_by_id.get(relic_id)
+
+    def get_potion_by_id(self, potion_id: str) -> Potion | None:
+        return self._potions_by_id.get(potion_id)
 
     def get_potions(self, rarity: str | None = None) -> list[Potion]:
         result = self.potions
@@ -647,7 +750,7 @@ class KnowledgeBase:
 
         synergies = []
         for other in self.cards:
-            if other.id == card_id:
+            if canonical_id(other.id) == canonical_id(card.id):
                 continue
             if other.character in _NON_DRAFTABLE:
                 continue
@@ -659,7 +762,9 @@ class KnowledgeBase:
         return synergies
 
     def analyze_deck(self, card_ids: list[str],
-                     upgrades: list[bool] | None = None) -> dict:
+                     upgrades: list[bool] | None = None,
+                     game_version: str | None = None,
+                     properties=None) -> dict:
         """Analyze a deck composition.
 
         upgrades, when given, is parallel to card_ids (CurrentRun.deck_upgrades):
@@ -667,8 +772,19 @@ class KnowledgeBase:
         count as not upgraded.
         """
         flags = list(upgrades or [])
-        raw = [(self.get_card_by_id(cid), i < len(flags) and bool(flags[i]))
+        version = self.game_version if game_version is None else game_version
+        raw = [(self.card_for_version(cid, game_version), i < len(flags) and bool(flags[i]))
                for i, cid in enumerate(card_ids)]
+        from sts2.card_properties import card_copy
+        saved = properties or []
+        raw = [(card_copy(card, saved[i] if i < len(saved) else None) if card else None, up)
+               for i, (card, up) in enumerate(raw)]
+        unmodeled_copies = sum(bool(c and c.instance_rule and not c.description) for c, _ in raw)
+        unverified = sum(card is not None and card.source != "mod"
+                         and bool(version) and card.mechanics_version != version
+                         for card, _ in raw)
+        unverified_traits = sum(card is None or (card.source != "mod" and bool(version)
+                                and card.traits_version != version) for card, _ in raw)
         instances = [(c, up) for c, up in raw if c is not None]
         cards = [c for c, _ in instances]
 
@@ -681,24 +797,28 @@ class KnowledgeBase:
         character = chars.pop() if len(chars) == 1 else "Mixed"
 
         # Filter out discovered/unknown-type cards for ratio checks
-        typed_cards = [c for c in cards if c.type != "Unknown"]
+        typed_cards = [c for c in cards if c.type != "Unknown"
+                       and (not version or c.traits_version == version or c.source == "mod")]
 
         # Count types
-        attacks = [c for c in cards if c.type == "Attack"]
-        skills = [c for c in cards if c.type == "Skill"]
-        powers = [c for c in cards if c.type == "Power"]
+        attacks = [c for c in typed_cards if c.type == "Attack"]
+        skills = [c for c in typed_cards if c.type == "Skill"]
+        powers = [c for c in typed_cards if c.type == "Power"]
 
         # Keyword frequency
         keyword_freq: dict[str, int] = {}
-        for c in cards:
-            for kw in c.keywords:
+        for c, upgraded in instances:
+            if version and c.mechanics_version != version and c.source != "mod":
+                continue
+            keywords = c.keywords_upgraded if upgraded and c.keywords_upgraded is not None else c.keywords
+            for kw in keywords:
                 keyword_freq[kw] = keyword_freq.get(kw, 0) + 1
         top_keywords = sorted(keyword_freq.items(), key=lambda x: -x[1])
 
         # Detect archetypes
         strategy = self.get_strategy(character) if character != "Mixed" else None
         detected_archetypes = []
-        if strategy:
+        if strategy and not unverified and not unmodeled_copies:
             for arch in strategy.archetypes:
                 arch_cards = set(name.lower() for name in arch.key_cards)
                 deck_names = set(self.english_name(c).lower() for c in cards)
@@ -717,68 +837,68 @@ class KnowledgeBase:
         numeric_costs: list[int] = []
         for c, upgraded in instances:
             cost = (c.cost_upgraded if upgraded and c.cost_upgraded else c.cost) or ""
+            if version and c.traits_version != version and c.source != "mod":
+                cost = "Unknown"
             cost_curve[cost] = cost_curve.get(cost, 0) + 1
             by_type = cost_curve_by_type.setdefault(cost, {})
-            by_type[c.type] = by_type.get(c.type, 0) + 1
+            kind = c.type if not version or c.traits_version == version or c.source == "mod" else "Unknown"
+            by_type[kind] = by_type.get(kind, 0) + 1
             if cost.isdigit():
                 numeric_costs.append(int(cost))
 
-        avg_cost = round(sum(numeric_costs) / len(numeric_costs), 1) if numeric_costs else 0.0
-        energy_per_hand = round(avg_cost * 5, 1)
+        missing_cards = len(card_ids) - len(cards)
+        if missing_cards:
+            cost_curve["Unknown"] = cost_curve.get("Unknown", 0) + missing_cards
+            cost_curve_by_type.setdefault("Unknown", {})["Unknown"] = (
+                cost_curve_by_type.get("Unknown", {}).get("Unknown", 0) + missing_cards)
+        mean_cost = sum(numeric_costs) / len(numeric_costs) if numeric_costs else 0.0
+        avg_cost = round(mean_cost, 1)
+        # A descriptive five-card estimate, not the player's Energy budget.
+        # Round only after multiplication so the displayed mean does not bias it.
+        energy_per_hand = round(mean_cost * 5, 1)
 
         # Mechanics come from canonical English card text, never from display
         # keywords (a keyword marks a mention, not a capability) and never
         # from the localized description (a language setting must not change
         # the advice).
-        texts = [self.card_text_en(c, upgraded) for c, upgraded in instances]
+        texts = [("" if version and c.mechanics_version != version and c.source != "mod" else
+                  self.card_text_en(c, upgraded) if not c.instance_rule and (game_version is None or game_version == self.game_version)
+                  else (c.description_upgraded if upgraded and c.description_upgraded else c.description))
+                 for c, upgraded in instances]
         has_block = any(grants_block(t) for t in texts)
         unknown_mechanics = len(card_ids) - len(cards) + sum(not t or c.source == "discovered" for (c, _), t in zip(instances, texts))
 
-        # Weaknesses
+        # Card-text observations. Counts alone cannot establish deck quality,
+        # damage output, defense, draw consistency or an affordable opening hand.
         weaknesses = []
-        tc = len(typed_cards) or 1  # avoid division by zero
-        if len(attacks) < tc * 0.3:
-            weaknesses.append("Low attack count — may struggle to kill enemies quickly")
-        if len(skills) < tc * 0.2:
-            weaknesses.append("Few skills — limited defensive options")
-        if not has_block:
-            weaknesses.append("Block generation unknown — some card mechanics are unavailable" if unknown_mechanics else "No Block generation — vulnerable to damage")
-        # No card carries an "AoE" keyword — the game never emits one and the
-        # fetcher does not derive one, so keying on keyword_freq made this
-        # weakness fire on every deck ever analysed. Read the card text, which
-        # is where the signal actually lives.
-        if not any(hits_all_enemies(t) for t in texts):
-            weaknesses.append("AoE coverage unknown — some card mechanics are unavailable" if unknown_mechanics else "No AoE — vulnerable to multi-enemy fights")
-        if not any(draws_cards(t) for t in texts):
-            weaknesses.append("Card draw unknown — some card mechanics are unavailable" if unknown_mechanics else "No card draw — may stall in longer fights")
-        if tc > 30:
-            weaknesses.append("Deck is bloated (>30 cards) — key cards drawn less often")
-        if tc < 15:
-            weaknesses.append("Deck is very thin (<15 cards) — may cycle too fast")
-
-        # Mana curve warnings
-        high_cost = sum(v for k, v in cost_curve.items() if k.isdigit() and int(k) >= 3)
-        zero_cost = cost_curve.get("0", 0)
-        if high_cost > tc * 0.4:
-            weaknesses.append(f"Heavy mana curve — {high_cost}/{tc} cards cost 3+. Add cheap cards or energy relics.")
-        if len(powers) >= 4 and zero_cost < 2:
-            weaknesses.append(f"{len(powers)} Powers but only {zero_cost} zero-cost cards — setup turns will be slow.")
-        if zero_cost > tc * 0.5:
-            weaknesses.append("Over half your deck is 0-cost — may lack impactful plays.")
-
-        # Strengths
         strengths = []
-        if 18 <= tc <= 25:
-            strengths.append("Good deck size — consistent draws without bloat")
-        if has_block and any(kw in keyword_freq for kw in ("Strength", "Poison", "Lightning")):
-            strengths.append("Balanced offense and defense — both scaling and Block present")
-        if detected_archetypes:
-            strengths.append(f"Clear archetype: {detected_archetypes[0]['name']}")
+        if has_block:
+            strengths.append("Block generation detected in card text.")
+        else:
+            weaknesses.append("Block generation unknown — some card mechanics are unavailable" if unknown_mechanics else "No Block generation detected in card text.")
+        if any(hits_all_enemies(t) for t in texts):
+            strengths.append("Effects targeting all enemies detected in card text.")
+        else:
+            weaknesses.append("AoE coverage unknown — some card mechanics are unavailable" if unknown_mechanics else "No AoE detected in card text.")
+        if any(draws_cards(t) for t in texts):
+            strengths.append("Card draw or draw-pile selection detected in card text.")
+        else:
+            weaknesses.append("Card draw unknown — some card mechanics are unavailable" if unknown_mechanics else "No card draw detected in card text.")
 
         return {
             "character": character,
             "deck_size": len(card_ids),
             "unknown_mechanics": unknown_mechanics,
+            "mechanics_version": version,
+            "unverified_mechanics": unverified,
+            "unverified_traits": unverified_traits,
+            "unmodeled_copies": unmodeled_copies,
+            "copy_details": [{"card_id": c.id, "name": c.name, "type": c.type,
+                              "description": c.description_upgraded if up and c.description_upgraded else c.description,
+                              "note": c.instance_note} for c, up in instances if c.instance_rule],
+            "mechanics_warning": (
+                f"Effects for {unverified} cards are not verified for {version} and are excluded from effect-based advice."
+                if unverified else ("Game version not verified; analysis uses the reference catalog." if not version else "")),
             "attacks": len(attacks),
             "skills": len(skills),
             "powers": len(powers),
@@ -786,6 +906,7 @@ class KnowledgeBase:
             "cost_curve_by_type": dict(sorted(cost_curve_by_type.items(), key=lambda kv: (0, int(kv[0])) if kv[0].isdigit() else (1, kv[0]))),
             "avg_cost": avg_cost,
             "energy_per_hand": energy_per_hand,
+            "numeric_cost_cards": len(numeric_costs),
             "top_keywords": top_keywords[:8],
             "detected_archetypes": detected_archetypes,
             "weaknesses": weaknesses,
@@ -837,7 +958,8 @@ class KnowledgeBase:
             status["last_updated"] = get_last_updated()
         return status
 
-    def get_counter_cards(self, enemy: "Enemy", limit: int = 8) -> list[Card]:
+    def get_counter_cards(self, enemy: "Enemy", limit: int = 8,
+                          *, game_version: str | None = None) -> list[Card]:
         """Find cards that counter an enemy based on keyword heuristics.
 
         Analyzes enemy tips/patterns for damage, scaling, multi-attack hints,
@@ -846,6 +968,9 @@ class KnowledgeBase:
         if not enemy:
             return []
 
+        version = self.game_version if game_version is None else game_version
+        if version and enemy.mechanics_version != version:
+            return []
         enemy_text = " ".join(enemy.tips + enemy.patterns).lower()
 
         # Determine what the enemy does → what counters it
@@ -896,15 +1021,21 @@ class KnowledgeBase:
             # relationship that does not exist.
             return []
 
-        # Score each card
+        # Only compatible card mechanics can support version-specific advice.
         scored: list[tuple[float, Card]] = []
-        for card in self.cards:
+        for display_card in self.cards:
+            card = self.card_for_version(display_card.id, version)
+            if card is None or (version and card.mechanics_version != version):
+                continue
+            if card.instance_rule:
+                continue  # needs actual saved properties, absent from a catalog suggestion
             if card.character in ("Status", "Curse"):
                 continue
             if not card.keywords:
                 continue
             score = sum(need_keywords.get(kw, 0) for kw in card.keywords
-                        if kw != "Block" or grants_block(self.card_text_en(card)))
+                        if kw != "Block" or grants_block(
+                            self.card_text_en(card) if version == self.game_version else card.description))
             if score > 0:
                 # Bonus for uncommon/rare (more impactful)
                 if card.rarity in ("Uncommon", "Rare"):
@@ -958,6 +1089,9 @@ class KnowledgeBase:
         enemy = self._enemies_by_id.get(entity_id)
         if enemy:
             return enemy.name
+        badge = self._badges_by_id.get(entity_id)
+        if badge:
+            return badge.name
         # Fallback: strip prefix and format
         if "." in entity_id:
             return entity_id.split(".", 1)[1].replace("_", " ").title()

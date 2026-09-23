@@ -308,7 +308,7 @@ class TestCoaching:
         with patch("sts2.routes.get_current_run", return_value=mock_run):
             resp = await client.get("/live")
         assert resp.status_code == 200
-        assert "WARNING" in resp.text or "warning" in resp.text.lower()
+        assert "WARNING: 31% HP" in resp.text
 
     async def test_no_danger_healthy_hp(self, client):
         from sts2.models import CurrentRun

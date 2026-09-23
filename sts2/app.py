@@ -166,6 +166,7 @@ _migrated = migrate_state_from_data_dir()
 if _migrated:
     log.info("Migrated user state out of the data directory: %s", ", ".join(_migrated))
 kb = KnowledgeBase()
+templates.env.globals["mechanics_status"] = lambda version=None: kb.mechanics_status(version)
 
 _CSRF_SECRET = secrets.token_bytes(32)
 _CSRF_MAX_AGE = 14400  # 4 hours

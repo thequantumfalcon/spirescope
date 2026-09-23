@@ -1,0 +1,397 @@
+{
+  "game_version": "v0.107.1",
+  "game_commit": "59260271",
+  "reviewed_at": "2026-09-23",
+  "complete": false,
+  "scope": "All 65 main registered events/Ancients: option summaries, base costs/rewards, local eligibility, Ancient offer grouping/selection, and normal act-pool placement. Not a complete event simulator.",
+  "method": "Manual native handler, dynamic-variable and helper review; independently checked against the registered event set. Act pools are intersected with explicit entry restrictions, Lantern Key forced-event behavior and Ancient allocation. Shared event handling is distinct from multiplayer eligibility. Repeated costs, HP versus Max HP, random integer bounds, reward choices and Ancient eligibility/weighting are preserved. Crystal Sphere's complete reward board, all cross-entity hooks, custom act order and runtime offer state are not simulated or certified.",
+  "reviewed_ids": [
+    "EVENT.ABYSSAL_BATHS",
+    "EVENT.AMALGAMATOR",
+    "EVENT.AROMA_OF_CHAOS",
+    "EVENT.BATTLEWORN_DUMMY",
+    "EVENT.BRAIN_LEECH",
+    "EVENT.BUGSLAYER",
+    "EVENT.BYRDONIS_NEST",
+    "EVENT.COLORFUL_PHILOSOPHERS",
+    "EVENT.COLOSSAL_FLOWER",
+    "EVENT.CRYSTAL_SPHERE",
+    "EVENT.DARV",
+    "EVENT.DENSE_VEGETATION",
+    "EVENT.DOLL_ROOM",
+    "EVENT.DOORS_OF_LIGHT_AND_DARK",
+    "EVENT.DROWNING_BEACON",
+    "EVENT.ENDLESS_CONVEYOR",
+    "EVENT.FAKE_MERCHANT",
+    "EVENT.FIELD_OF_MAN_SIZED_HOLES",
+    "EVENT.GRAVE_OF_THE_FORGOTTEN",
+    "EVENT.HUNGRY_FOR_MUSHROOMS",
+    "EVENT.INFESTED_AUTOMATON",
+    "EVENT.JUNGLE_MAZE_ADVENTURE",
+    "EVENT.LOST_WISP",
+    "EVENT.LUMINOUS_CHOIR",
+    "EVENT.MORPHIC_GROVE",
+    "EVENT.NEOW",
+    "EVENT.NONUPEIPE",
+    "EVENT.OROBAS",
+    "EVENT.PAEL",
+    "EVENT.POTION_COURIER",
+    "EVENT.PUNCH_OFF",
+    "EVENT.RANWID_THE_ELDER",
+    "EVENT.REFLECTIONS",
+    "EVENT.RELIC_TRADER",
+    "EVENT.ROOM_FULL_OF_CHEESE",
+    "EVENT.ROUND_TEA_PARTY",
+    "EVENT.SAPPHIRE_SEED",
+    "EVENT.SELF_HELP_BOOK",
+    "EVENT.SLIPPERY_BRIDGE",
+    "EVENT.SPIRALING_WHIRLPOOL",
+    "EVENT.SPIRIT_GRAFTER",
+    "EVENT.STONE_OF_ALL_TIME",
+    "EVENT.SUNKEN_STATUE",
+    "EVENT.SUNKEN_TREASURY",
+    "EVENT.SYMBIOTE",
+    "EVENT.TABLET_OF_TRUTH",
+    "EVENT.TANX",
+    "EVENT.TEA_MASTER",
+    "EVENT.TEZCATARA",
+    "EVENT.THE_FUTURE_OF_POTIONS",
+    "EVENT.THE_LANTERN_KEY",
+    "EVENT.THE_LEGENDS_WERE_TRUE",
+    "EVENT.THIS_OR_THAT",
+    "EVENT.TINKER_TIME",
+    "EVENT.TRASH_HEAP",
+    "EVENT.TRIAL",
+    "EVENT.UNREST_SITE",
+    "EVENT.VAKUU",
+    "EVENT.WAR_HISTORIAN_REPY",
+    "EVENT.WATERLOGGED_SCRIPTORIUM",
+    "EVENT.WELCOME_TO_WONGOS",
+    "EVENT.WELLSPRING",
+    "EVENT.WHISPERING_HOLLOW",
+    "EVENT.WOOD_CARVINGS",
+    "EVENT.ZEN_WEAVER"
+  ],
+  "unreviewed_ids": [],
+  "helper_hashes": {
+    "MegaCrit.Sts2.Core.Models/EventModel.cs": "db2477e59bcb027d6891f436443c0e5ed2c7f4bf2dfb370683d90b6413ef7146",
+    "MegaCrit.Sts2.Core.Entities.Players/Player.cs": "4672a42656cec2b61d7f720000a462648b12d303d92af92d21c0ac3325d156db",
+    "MegaCrit.Sts2.Core.Commands/CreatureCmd.cs": "f52882086d141dea85b8de65b8e526db5418e390d3f5ba3f2191d3d7f8a6420b",
+    "MegaCrit.Sts2.Core.Models.Encounters/BattlewornDummyEventEncounter.cs": "492799d74bbca2e7f840e86f2504538f89cc303583dff9ba9ae7639f290cef08",
+    "MegaCrit.Sts2.Core.Models.Powers/BattlewornDummyTimeLimitPower.cs": "23ac088a8bac66ca30804788e1162bb2c23725da1d605ec8fe7c14053d32a929",
+    "MegaCrit.Sts2.Core.Random/Rng.cs": "99a404a807dae7b3c786821b3c287e6518b573f58265f98feaa63132748b7f40",
+    "MegaCrit.Sts2.Core.Entities.RestSite/HealRestSiteOption.cs": "96a924eab3900260312e14cbdb8edf86fa1723efb4f105dacbb7e9f3a6b99d9e",
+    "MegaCrit.Sts2.Core.Events.Custom.CrystalSphereEvent/CrystalSphereMinigame.cs": "d8ee23a122046485a20648a7993aa8edad0812513cd9ec5e2f8bef3728584421",
+    "MegaCrit.Sts2.Core.Models.Relics/BigMushroom.cs": "1ae4612bf38153236819d1eef9639c3dbe0fcccf846002aab52764febff2da4b",
+    "MegaCrit.Sts2.Core.Models.Relics/FragrantMushroom.cs": "e4fa785eb885e2feed7025e1b2ec1da07050191b6dbe13a59c77bd58feea3d32",
+    "MegaCrit.Sts2.Core.Models.Enchantments/PerfectFit.cs": "d78b98df8693c9527f9536c3a3376ea322ce0750cbbdab2d31a8deca0f3caa33",
+    "MegaCrit.Sts2.Core.Models.Enchantments/SoulsPower.cs": "3144f630de831e91c6572f38346b136c51141c79c21bbf0984d5f6b1c4c23aec",
+    "MegaCrit.Sts2.Core.Models.Enchantments/Sown.cs": "fadb10496fc943c5f094de456eb73a7d64dd58104bd920ee2f9c70d95d502e1c",
+    "MegaCrit.Sts2.Core.Models.Enchantments/Spiral.cs": "846fafdcc376d712cc2e1313477781055cc938c833c8a7ae2d1516bffc145f4c",
+    "MegaCrit.Sts2.Core.Localization.DynamicVars/DynamicVar.cs": "eed3e61ffdb97c93d78fc13932ac7fb8a524bf2e794dc18c68577f945ef7f40f",
+    "MegaCrit.Sts2.Core.Models.Cards/LanternKey.cs": "0d4abca8483a588c0e4d81b48ee1a2b1171bab6705d8ac4931dc4877728a9c7a",
+    "MegaCrit.Sts2.Core.Models.Enchantments/Steady.cs": "d999e603f048e30cb4644806984e08a40ae5fe3218904fd84a56510f35ccb2eb",
+    "MegaCrit.Sts2.Core.Models.Enchantments/Slither.cs": "5a8d07070b85e1857f02b54e0274fa219a98298996f6415fd3edd61f9789e995",
+    "MegaCrit.Sts2.Core.Models.Cards/MadScience.cs": "fbaba47a2a7e8a53dfcc57b253104546f520af02e097aebc9aee0e4de7ce325c",
+    "MegaCrit.Sts2.Core.Entities.Merchant/MerchantRelicEntry.cs": "4cca8a8683c197449bd6e17f9df1e2829f28665c80c74694f6b31bbb37488463",
+    "MegaCrit.Sts2.Core.Nodes.Events.Custom/NFakeMerchant.cs": "0f25901b23106e7d77ef749b8354e1878d7d89ddb431b9b8b04ac2eb3f18f0d9",
+    "MegaCrit.Sts2.Core.Models.Relics/RoyalPoison.cs": "79d4f5ed5e22eb7a497ddd0642b7eeeb6600ed90aa2fabac4bfa20a5986ec444",
+    "MegaCrit.Sts2.Core.Models.Relics/WongosMysteryTicket.cs": "005a872b116ceefb7c43c6ab99549b10b1c0e380767903cc8de6787dd1a8ed1e",
+    "MegaCrit.Sts2.Core.Models.Potions/FoulPotion.cs": "5fb3b0fed42e91677b0cb6d49c4a7e6422406c357f61e8cca1c0ca7cc5d5913c",
+    "MegaCrit.Sts2.Core.Models.Relics/FakeAnchor.cs": "cebcd73581a376c8554f9f48d8a8ccd11691a9d4420a53e1b4e1b759f9ead478",
+    "MegaCrit.Sts2.Core.Models.Relics/FakeBloodVial.cs": "c8e2dc6d0da77d82e8efcc80312214455dcd8551e4aa88e8d8b5da59479e18b0",
+    "MegaCrit.Sts2.Core.Models.Relics/FakeHappyFlower.cs": "a9cb825590c51d337830f5dd368b8117adfb2bcaf3037104af91096a1f846e26",
+    "MegaCrit.Sts2.Core.Models.Relics/FakeLeesWaffle.cs": "51de16476caa44e6c254d26088d98f97f0d4249407edf71bf9e23bcf86f3c144",
+    "MegaCrit.Sts2.Core.Models.Relics/FakeMango.cs": "60265d18b59426a8ba6f22e77f7cdb2d96854780d642b18afe788ab6508a0d7a",
+    "MegaCrit.Sts2.Core.Models.Relics/FakeOrichalcum.cs": "19898aff7669a04cf96df195f44b521bdc03786c6675b824c73dee374ab4a52f",
+    "MegaCrit.Sts2.Core.Models.Relics/FakeSneckoEye.cs": "2aaa92e06de3319bcaa2f0b6098e049916fcf9c7ed573852782ca4c86dc8cb46",
+    "MegaCrit.Sts2.Core.Models.Relics/FakeStrikeDummy.cs": "e496856ab5aa4b00beadf5ade4bbbaebcecdf1aed1d63fe557be243a55e3ed2d",
+    "MegaCrit.Sts2.Core.Models.Relics/FakeVenerableTeaSet.cs": "7cc418ea8791ad7cef5a5b80d17401fba454762cf733b862b3583573d964efbf",
+    "MegaCrit.Sts2.Core.Models/AncientEventModel.cs": "1e721b13dc512b05d2d0e8cb208701a5ca902026f59b645f16aaff5a37725105",
+    "MegaCrit.Sts2.Core.Models/RelicModel.cs": "7fd67b3aa8c84e325aeb207e3375c98b1ad301ee68d64841523fdb01ee7c9eb6",
+    "MegaCrit.Sts2.Core.Models/EnchantmentModel.cs": "3bb36197749db36c0776b52fe2b1c1a0faaec2b66f623277c48427906784210c",
+    "MegaCrit.Sts2.Core.Entities.Ascension/AscensionLevel.cs": "be085612a3e08058582bf045f1e8808ad5a3032d9212438f4b295ceb7ffce5ef",
+    "MegaCrit.Sts2.Core.Models.Relics/DustyTome.cs": "5827f26305687d17a79b79d8764684b80c433f123acd0baee796f8effb18b213",
+    "MegaCrit.Sts2.Core.Models.Relics/TouchOfOrobas.cs": "48acb77fa4da966d310629db2ff1f36137da3145447b5b65f2c039186f6d3e32",
+    "MegaCrit.Sts2.Core.Models.Relics/ArchaicTooth.cs": "90352ca4f6f728900dc9ea520280d63a491b18cdefec34b0822001ba3b1c8fab",
+    "MegaCrit.Sts2.Core.Models.Relics/DistinguishedCape.cs": "53c4b3a2993ae9c05d93d3b9c00ef63b9396ae73ebc51ce390db3a1f838a018c",
+    "MegaCrit.Sts2.Core.Models.Relics/Kaleidoscope.cs": "454fc4b785cfda483d243298557900a6655ffba32a06625c76b0abb2fe817a93",
+    "MegaCrit.Sts2.Core.Models.Relics/ScrollBoxes.cs": "6049a885980117cf519d04731172f1875703cbded52dc70456178f70f4e960fd",
+    "MegaCrit.Sts2.Core.Models.Relics/MassiveScroll.cs": "2690eb2bb5ee1b049004a83e6f4cf7819eea03a7c867b121f802c7c5ec21c3da",
+    "MegaCrit.Sts2.Core.Models.Relics/SilverCrucible.cs": "3bfaac956339f8fcab7b01911c41080bf4cd39224b19c1d5ed523e0ee6c04359",
+    "MegaCrit.Sts2.Core.Models.Relics/WingedBoots.cs": "54fd8fbff5402199fbe1fec313ee1332edd02c1a90afbb4e12819d47cbbbb8fa",
+    "MegaCrit.Sts2.Core.Models.Enchantments/Swift.cs": "fe26a7f3c0d452121e4234ca5e0280d1285baff834b403aba7ea3e176f5995f7",
+    "MegaCrit.Sts2.Core.Models.Enchantments/Instinct.cs": "07bd12f12f1a0c6e5d7ac67b119e3aef4056dbf38c99b743ddde414087d9a725",
+    "MegaCrit.Sts2.Core.Models.Enchantments/Goopy.cs": "19d2be6a8583c65d161a15b99e09b68532c5031ddb7b21266d2f7bcee97b3989",
+    "MegaCrit.Sts2.Core.Models/ModelDb.cs": "7144c6e265fc4484e40860f4ec7cb288c677a63256675222010f66ab628d6e4f",
+    "MegaCrit.Sts2.Core.Models/ActModel.cs": "55f3a43c7e055aff1e35985c0cd229f22a271698a82b0d0a24a3f01320dcab0b",
+    "MegaCrit.Sts2.Core.Runs/RunManager.cs": "1c4d11b1b2261f2e5a0e7338866d0ca8c219152567700c9608d23f46a15258e1",
+    "MegaCrit.Sts2.Core.Unlocks/UnlockState.cs": "1fdd00d0734f78f98edefea81c58b288d0ff6a21da714f2a6cb63e1b9341cc62",
+    "MegaCrit.Sts2.Core.Models.Acts/Overgrowth.cs": "61ff9d71f9b17f2f6a2f7f51f64bbfaa6752ec8cf7e75b4d291f2b0f89dc232b",
+    "MegaCrit.Sts2.Core.Models.Acts/Underdocks.cs": "b5f91ba221afa5ca83ca92290f481c8bef88c28f1ff8272f780f2540700964fb",
+    "MegaCrit.Sts2.Core.Models.Acts/Hive.cs": "085d95a7ea0418ada9e8544efdc97afc01c4bada90eca76fd65d3755c62c784e",
+    "MegaCrit.Sts2.Core.Models.Acts/Glory.cs": "d70575f5ac62dda4c1e80d424955c412eb00248e127caaa2751a2775db4b03d0"
+  },
+  "records": {
+    "EVENT.ABYSSAL_BATHS": {
+      "definition_sha256": "0c18e44f010512e3a5b895c7995164152299187a2f6d414e8eda3b8551e0b498",
+      "mechanics_record_sha256": "540a094eaa14a4eea6417d963aead64346d1bb3a9316373ae1cb669c723a0bc4"
+    },
+    "EVENT.AMALGAMATOR": {
+      "definition_sha256": "3fe52907ba8957a1782348dc840aaec7536e51e8c4c63378c26237df7585060d",
+      "mechanics_record_sha256": "5564aa85e1ef9b6c0b001bd08d01c1c5eb5449955b0efbab08579badf3340bb7"
+    },
+    "EVENT.AROMA_OF_CHAOS": {
+      "definition_sha256": "bebbe67ed13d94fb5546c87d92262ace605c52f5c88ab5a6b01f970581fc2dfb",
+      "mechanics_record_sha256": "4c68e7ea21c9d16d67d4758e633caf108242ab4958db6b3c373491ae1a1b0ca3"
+    },
+    "EVENT.BATTLEWORN_DUMMY": {
+      "definition_sha256": "2b0158263444e706c1a57b1f9d54f6cc1294339b67a14701b68e05f6446f000a",
+      "mechanics_record_sha256": "15faa565e40be641a84f973083cc21e7b5da9d316947438917c8a0543ab9c6d3"
+    },
+    "EVENT.BRAIN_LEECH": {
+      "definition_sha256": "257da258d153d523bd76b20dd2f4930a413fd115ca6e20fac511bdd4248121f7",
+      "mechanics_record_sha256": "4c52c9d28abcc18eb39c2e7c5fd6ab70da6eb01854c420365594c2ab449ae81c"
+    },
+    "EVENT.BUGSLAYER": {
+      "definition_sha256": "772fd742b0fefeb21a2f849a9d78524e5b7291bf99306cc71c9cd71fe34ce11b",
+      "mechanics_record_sha256": "fca359340dd03839b05855c4721aa4e1086b3e4f1eb61b37d4ff79f520fbc92c"
+    },
+    "EVENT.BYRDONIS_NEST": {
+      "definition_sha256": "408c80d0f97fd369e56b9209a65a24da66992e1c2259937b5a152631eac6d40e",
+      "mechanics_record_sha256": "df1905e6b8767a7075d303d65b3f8f3e290e010d0de23cac5290dbe2ee838fa0"
+    },
+    "EVENT.COLORFUL_PHILOSOPHERS": {
+      "definition_sha256": "275cd45e34eea3221c5335ac5742918518f9c60ae5ec0fa262a27436a892b38f",
+      "mechanics_record_sha256": "1ed66dd27f7a34b8d3f798d06638f2ca367737d532b6ff750aa6e681c55493b3"
+    },
+    "EVENT.COLOSSAL_FLOWER": {
+      "definition_sha256": "bb623a8b816ed8477b2185999af535b16d08cb31950620eec255e4ad6b13b6df",
+      "mechanics_record_sha256": "589f116a6dc77012ffd159da996bc55a1a3b5cdad38286df58ddcd281a8e909f"
+    },
+    "EVENT.CRYSTAL_SPHERE": {
+      "definition_sha256": "888afb8462f2f32c0dab110f3f7aa50964382e17d5fa24b8ed6e47c0876b182e",
+      "mechanics_record_sha256": "86c0f5f8fbdb55aa88fdfc8df7e2f778ee0482bf7bcdc7c840ebdf8768787c26"
+    },
+    "EVENT.DARV": {
+      "definition_sha256": "fee7ae46423e58b75f81b8af4fe4967ae28bafbc12e7665e90fe96589f43c451",
+      "mechanics_record_sha256": "df16de259d43b1010542a91af5fffedb2dc8e903b185c2bf0243bdc395e1457d"
+    },
+    "EVENT.DENSE_VEGETATION": {
+      "definition_sha256": "30111c5079d078af1d77fab3c0f1a412e9f9dc2bf046ab101eb7ab77af07d9e9",
+      "mechanics_record_sha256": "93d2c387c64b40963bfe2f4e405376cc56c1966d6ff2a642fe89866c5cc923dd"
+    },
+    "EVENT.DOLL_ROOM": {
+      "definition_sha256": "290dd18e3e975420cd5ff1a94750e6980e0420ff442a4cb220f5de4be783989c",
+      "mechanics_record_sha256": "d8dc3a2170b063f9b5edcf9686f58944a376d5298ba2a7fe03ae904ef13e98ac"
+    },
+    "EVENT.DOORS_OF_LIGHT_AND_DARK": {
+      "definition_sha256": "dd3d4ffd117c133f5ffb9970517bee466fbf64a62047c05a01cf47891c5bcbb1",
+      "mechanics_record_sha256": "2c18684be2b3f1ee9d2c74d1f216e458f0da403af768962371a2c8f69b65191b"
+    },
+    "EVENT.DROWNING_BEACON": {
+      "definition_sha256": "90cd88f0f9b8966dc68d3fa31d970fd1ecd2e8cb921d75ce210722494cb5b485",
+      "mechanics_record_sha256": "97b5ad146a257fb7c482fc920eb0ec63be79574a96d844aa990cab5e85ec7519"
+    },
+    "EVENT.ENDLESS_CONVEYOR": {
+      "definition_sha256": "411671108fb41a80cac3c89a58a71e947c0715a666f70281ecb9e78ae141b7ff",
+      "mechanics_record_sha256": "d6d1d522a5a6282189f15d0fe394a7991e460d126ded97954055b44fc7709736"
+    },
+    "EVENT.FAKE_MERCHANT": {
+      "definition_sha256": "557635f7534969c62bdcca4d19b9bb19c00c3ec2cfa585932e291037be7b62e0",
+      "mechanics_record_sha256": "30a08f3451af541b5e63a186f41337c1a6d0d95daf893a24ac53d5a528d71a01"
+    },
+    "EVENT.FIELD_OF_MAN_SIZED_HOLES": {
+      "definition_sha256": "32e713203454c923b43f45a6f9d34ee95beadb9ab0f64e40928ae91a5febd590",
+      "mechanics_record_sha256": "6c791a47348a2b16baa86ea7b7a5895be2c77cd1b08410af4d8a76bc00eeced3"
+    },
+    "EVENT.GRAVE_OF_THE_FORGOTTEN": {
+      "definition_sha256": "651ff2f100b9964313a2d6b23e15104a86e4458509adbbc0c2602aac09481be6",
+      "mechanics_record_sha256": "552214385d9c2340494d3d107242bdb3eb65ceccbd2845237e0d8e7e745fa254"
+    },
+    "EVENT.HUNGRY_FOR_MUSHROOMS": {
+      "definition_sha256": "da5872f6298892d71e7bcf571842bc39ffe0d15521ead55da84aa356066c487c",
+      "mechanics_record_sha256": "e5d6fb7751ab5c4db85877153531b49099bf659f4a8e4c2946255f9e1ced569e"
+    },
+    "EVENT.INFESTED_AUTOMATON": {
+      "definition_sha256": "e6bebde83ee0efbd36afb0411ec75816efac07095848e3cb75f61bb0a77403b3",
+      "mechanics_record_sha256": "97aa4c2f5d8a0c16e426caa953cfd42f384120623435761d8a4e2b66e4caa8d5"
+    },
+    "EVENT.JUNGLE_MAZE_ADVENTURE": {
+      "definition_sha256": "06000356af1201b69c1ce9e4ef1d3506ff96b98665924c64df6f3820f0dbc944",
+      "mechanics_record_sha256": "90c893c25b86026ecde3bf4927452f9b3b23ec74f87ccb978f183bb8288362dc"
+    },
+    "EVENT.LOST_WISP": {
+      "definition_sha256": "df8684ee5931787ed00b8dd7e57aaf26309254d63177dc62e83ea43f01ac0306",
+      "mechanics_record_sha256": "779b0c3f4c083a189846d54138d2a5abe1324f8f9bec2d83ee3bee267008d42a"
+    },
+    "EVENT.LUMINOUS_CHOIR": {
+      "definition_sha256": "c680ab0135aadf18e00e8e757e47e9b915f691887f153b996b4a6886c2c56b01",
+      "mechanics_record_sha256": "5b529789de8726e386f4753fb0883a6c9aa7e1aa386f15f60dcce71084764f84"
+    },
+    "EVENT.MORPHIC_GROVE": {
+      "definition_sha256": "673f0f585cb8a2c164dde8ec68214b0e156c70d047fbbdd9470d73cb1d74918a",
+      "mechanics_record_sha256": "656b37eda337123e4da06f2eafd14c633f0d96f4a9b8bdf9ef74a0ec7b9474c2"
+    },
+    "EVENT.NEOW": {
+      "definition_sha256": "8fde3bbfb6c36f8f23546a3738ececf94b3ae6b49c709fdd895c0b611c684000",
+      "mechanics_record_sha256": "7d847a79a1db7fb6fa7de6f6ce6b39cb36da4f31f512f84546ae91e54c9991bd"
+    },
+    "EVENT.NONUPEIPE": {
+      "definition_sha256": "2e20507e3f6b7f16f507feafb0a6860e23bec7a6b602fa5e344f46540655eb31",
+      "mechanics_record_sha256": "c159b99c41226b35edf797b7fccc9a18ad9d106abe67a9eec73e24a5edf2bb7d"
+    },
+    "EVENT.OROBAS": {
+      "definition_sha256": "323d5fec032314c04fc51f76ee3eae10b81242589e87cc996397cfd530bd53c6",
+      "mechanics_record_sha256": "bbea93ce344b96a1e0bbaa3e35867e85c622005cbd9d5015e6f07fc781cba55c"
+    },
+    "EVENT.PAEL": {
+      "definition_sha256": "54008fb185c0b04760b5b2896111827dc48d173dd1683f10afc695782d8c50b3",
+      "mechanics_record_sha256": "d049dfffc3f5b2e55251c37d24eb5b2ba33b0977c0a33ee3b07aa47aba13afe3"
+    },
+    "EVENT.POTION_COURIER": {
+      "definition_sha256": "5a26b63bbbf329c1ac7dee6a5c6d82768f5a3d3d7def574b5d36db39fe0c45d5",
+      "mechanics_record_sha256": "09ae2fa920dd28fcd39678faf2fb39bb4e2318f4b545aa8b19150bea8bfd52e6"
+    },
+    "EVENT.PUNCH_OFF": {
+      "definition_sha256": "18846e81c9d180471c943d3449693db5414c9af9dd4603eaa455a41391a37ec2",
+      "mechanics_record_sha256": "c54467c9e0ada7439a5d1f5e1de0f8759db603211caa3e82698edf95cfc8ef9b"
+    },
+    "EVENT.RANWID_THE_ELDER": {
+      "definition_sha256": "4aeff0aa39c11edbe8e24ec5fd29abf16096a95f0378bebcf4d4de02b937f94c",
+      "mechanics_record_sha256": "608fa35761f27e48e099f0fb55d319231b05da272a2083f73f7b264d92c6dfe2"
+    },
+    "EVENT.REFLECTIONS": {
+      "definition_sha256": "bb894825b5321da122b6620e0085275dd655dd0cef0ebd798fad8417b1345f1c",
+      "mechanics_record_sha256": "ee312c203ff9a03ecf1c807651e07e940cddffbe177ef12e2545437bb04c1873"
+    },
+    "EVENT.RELIC_TRADER": {
+      "definition_sha256": "5419dab9b0224633381e754fd78157e352c77e8a79f2ebd0281ada39dbffc28c",
+      "mechanics_record_sha256": "2a7eb53475f7b773ef32eceae6511b1e33070840aaaa712241484b7fe2f79930"
+    },
+    "EVENT.ROOM_FULL_OF_CHEESE": {
+      "definition_sha256": "66ab46a17577db79d2b070c858b2f491225cd45119bd34733705585249d96c72",
+      "mechanics_record_sha256": "0f3bec731d3c95b04f0966b0460c4727c7e34ef84dbe1e1c05f0c43bd30a1901"
+    },
+    "EVENT.ROUND_TEA_PARTY": {
+      "definition_sha256": "9e0d686605e1a60286afd52dc3f4b04393ed4a97a3db6a8dfcc42ed20ede19d3",
+      "mechanics_record_sha256": "4f333c0944d9d9c13ba9cf592ca7cad053e4d825e794aa96dc53f514797f04a0"
+    },
+    "EVENT.SAPPHIRE_SEED": {
+      "definition_sha256": "746ef166fc1a60c67da2927152d867a52211a1b9d5556cbd4d5e2f87ded95cf8",
+      "mechanics_record_sha256": "d1fd047bb386f256b30658fe7b2ce5954a309645bf547aaf269631c4634a2a5c"
+    },
+    "EVENT.SELF_HELP_BOOK": {
+      "definition_sha256": "efaa3eeaf96fb3ca30477b12e1598bdb8374d58b87880f8129efa888ee6ed46e",
+      "mechanics_record_sha256": "f35b85ce43012e74fa25048391546e00d60cf7d71a12f743cac2a7fd346e00b4"
+    },
+    "EVENT.SLIPPERY_BRIDGE": {
+      "definition_sha256": "2b1863f7d08b809c55eba455bd8482c71ea85e1c848ae3f71eeedd3283ddc818",
+      "mechanics_record_sha256": "e7bb945198a179303fa9b5536393e6217c376f515c8598bb425860c48aa77845"
+    },
+    "EVENT.SPIRALING_WHIRLPOOL": {
+      "definition_sha256": "a4b472bc58f0e0884c8873aaec97d8e2e6e0eddbf084413356e3c024e8d08955",
+      "mechanics_record_sha256": "f2723d5a245b8b2052d4f2e2226bfd8012d2cd7ddd7fee54cd9ba7cae2749843"
+    },
+    "EVENT.SPIRIT_GRAFTER": {
+      "definition_sha256": "8581027042de5886e930d3c92ca1ac813a50b767f1f404c6e19252a73677eb84",
+      "mechanics_record_sha256": "0981a2e5d754188145f5752f458b414dbb26ad41c4c4b6550cc1e38ca8ad0109"
+    },
+    "EVENT.STONE_OF_ALL_TIME": {
+      "definition_sha256": "fbf680e9d471b9b7a9e947a717cdf8f6df546b71b803ad6caef83710a1d8ef0e",
+      "mechanics_record_sha256": "c43658d50ae4a7f1afe97d6799a5d2d2fb9641fb111abb9bc2f6b0da48e77431"
+    },
+    "EVENT.SUNKEN_STATUE": {
+      "definition_sha256": "1d41fb47a50b37eeab6e028d8bfb2cdf084a91293c6caf944b1cda86e68b2acc",
+      "mechanics_record_sha256": "c11b0d427a9850d16c5c1df109ffe79d100e3985cbff9bb1c0072c1855465ec8"
+    },
+    "EVENT.SUNKEN_TREASURY": {
+      "definition_sha256": "eb117f6e7b2b8b8e211599f157fa99617e5f834e1dce7c8b0db6569901c9aa77",
+      "mechanics_record_sha256": "dbb4889182f032b08130d2e8d90c4a076c899bab63bf1de0411cf29757667a90"
+    },
+    "EVENT.SYMBIOTE": {
+      "definition_sha256": "eb2f1b0bc9c18dbca1770e3149629eeb840559d151053479b903a96db19dcb1d",
+      "mechanics_record_sha256": "c8963a7c4cceb0cc76d19e24ffb3e002f692c438fafa190a793deff084f34ec9"
+    },
+    "EVENT.TABLET_OF_TRUTH": {
+      "definition_sha256": "9771d5cb6f7c76ba38b4f343160c0e113ac13a067403164fba54992da5d20dee",
+      "mechanics_record_sha256": "57119702917636b59830f36035c8a1a4fb383ee655670ee100668970b27441e2"
+    },
+    "EVENT.TANX": {
+      "definition_sha256": "6ecc93471b8c7824f00015989c2b89a286f64e90ae304fbe5d752be4ff03851c",
+      "mechanics_record_sha256": "d896364e78c4b75605a956c5d478bb4d7a71c209ee99c2fa83f0e6b641b711db"
+    },
+    "EVENT.TEA_MASTER": {
+      "definition_sha256": "fc390aab07ab209f6e9526de52642bf1b5008e60c4e3c5cb5297904cae536198",
+      "mechanics_record_sha256": "fcda5b8e7bceb392b9db453109552861cbd48f9207d4e8c96b87f0337bd287f0"
+    },
+    "EVENT.TEZCATARA": {
+      "definition_sha256": "7370a6a92febec7e0fc403451abe331a2f696251947469c76dc270ad4ce3bcb2",
+      "mechanics_record_sha256": "7858333c759ceca99c415894125fe28cf1c642fb57d85bcadd239fc6cf1e6fb1"
+    },
+    "EVENT.THE_FUTURE_OF_POTIONS": {
+      "definition_sha256": "78f9d366a76996b8cb2e3b44a6bda61991adeea879d2f89f8202af45524d7388",
+      "mechanics_record_sha256": "6002f1fc926ca5188fab33094822f8c99db8946c6d66e9368e6eb12a5640a749"
+    },
+    "EVENT.THE_LANTERN_KEY": {
+      "definition_sha256": "0eacfc8fd3911a0f86a64c7231cf8932bebbd6a3fbdc0b7ca41c734f112a4454",
+      "mechanics_record_sha256": "b74d7c23229721152fccd2b8648b1aab60ce3243bcd0a7bd690f7d37de58f854"
+    },
+    "EVENT.THE_LEGENDS_WERE_TRUE": {
+      "definition_sha256": "2e7d7f499ef8639f7b1dee099c29947b705878267121be25822ee8906d003ab5",
+      "mechanics_record_sha256": "41aff2a1a4248ff1396430bbf3c4f92b79a95ab12390c8a7a94e6d66057d7c59"
+    },
+    "EVENT.THIS_OR_THAT": {
+      "definition_sha256": "222702a8da5b83ef92c80212d8a55025391ad16b288772e565a7fb3179fbdbf1",
+      "mechanics_record_sha256": "c7422a28e3478b7f2d3c53ecc9781e3a853aa0c8a44f8d60cd766309d394a651"
+    },
+    "EVENT.TINKER_TIME": {
+      "definition_sha256": "8deed294ff2ccd7b452379ba78df190e7c8c1eef563d845b9bebe5a5a2c40dde",
+      "mechanics_record_sha256": "f59fd24a7e794f60e8146ba5a30fc484ce91b4596bc217b90b1850eb527b5745"
+    },
+    "EVENT.TRASH_HEAP": {
+      "definition_sha256": "e6c2c2fe15e46192a509ce3b4c6f2f7930effff532d77df01f994a3ae29bd226",
+      "mechanics_record_sha256": "317bdca442afb3c3279b8d620e4dc4f99c8459b6b6593e1ee78aacbf4dd0eaff"
+    },
+    "EVENT.TRIAL": {
+      "definition_sha256": "46c716d2e077dfc10e0decdaba192880c34d12fbf5102815c1730f76b1bbe716",
+      "mechanics_record_sha256": "9cdb8b67b7b2ed9e074dffe6e853e94503c10b67a1c2b8c42500951b9a5b217b"
+    },
+    "EVENT.UNREST_SITE": {
+      "definition_sha256": "9d86af0cf155f27fbe3c7093cad2893af563267c409429df03a5da8c9d4add62",
+      "mechanics_record_sha256": "e749a19ca1a63dafcacc809f1a63575ad1cece877ee9fa757dc73ab0e8e6b621"
+    },
+    "EVENT.VAKUU": {
+      "definition_sha256": "79cccc5976bccd788138433d1e3f16a59260bc468dcd373dc3baf3c1b6d56cf0",
+      "mechanics_record_sha256": "d0bb029e625ee1972e4083a3825a32c328c13cc1504afb39bc6fb18f8625a5b6"
+    },
+    "EVENT.WAR_HISTORIAN_REPY": {
+      "definition_sha256": "1e88ffab7cd63423e6c7b7b07afe6ab8683b689cb1f4b3b22d336be3716ac299",
+      "mechanics_record_sha256": "caedc56da5e7b1cf94f08f0d0e3cc5784d068679646da8ed21d885d4b156e8af"
+    },
+    "EVENT.WATERLOGGED_SCRIPTORIUM": {
+      "definition_sha256": "06f6e6a0fc8821ad02411ca8481479496ddb42b1cf72b0e77e904173b8b4e4f0",
+      "mechanics_record_sha256": "4bb35331b72a8eb136480464fae51ae8e321648a7d7aa9f4276dca8defeae195"
+    },
+    "EVENT.WELCOME_TO_WONGOS": {
+      "definition_sha256": "60f6e916e718960d1d5c117ccd134337e725c9fffd114cd4765d4ca96c7f23b8",
+      "mechanics_record_sha256": "807875f305eb7aa5630ba220c40f3aa2e73cd50ad7c70f114520389c6901b8b0"
+    },
+    "EVENT.WELLSPRING": {
+      "definition_sha256": "c57cfe5da7bc023f4758c518741d61f205eebd0da6d3b4d501cd8d599428d0d9",
+      "mechanics_record_sha256": "2dfccf849214b7f705ab3b0a590db959f9753eebfc39f40551e990cdb3b23b10"
+    },
+    "EVENT.WHISPERING_HOLLOW": {
+      "definition_sha256": "822e082cab4023a4c55d10c129ee178860c54f2c96cd4f463f629b0dcb5f51ab",
+      "mechanics_record_sha256": "99b014e59efca1b6e10615f9f4ea00c0f280f1a2a098529fd2cc8fadc11fb95c"
+    },
+    "EVENT.WOOD_CARVINGS": {
+      "definition_sha256": "55912c1de946e15f2259d69f69333e8831f8fa4ae75cc760ff386186fcc03dfa",
+      "mechanics_record_sha256": "42ae751ecd19afe7c87837fd73edf7a48cd81e920323b0b76341755616f12b01"
+    },
+    "EVENT.ZEN_WEAVER": {
+      "definition_sha256": "c06fba76f9c342710be0306dddf2df8dcb885802a4b59afd3737940a60de8bf5",
+      "mechanics_record_sha256": "ba193bb3e538b42f8539f143b9c80692d28e0608b7b4f2fd95a443fd3334ed41"
+    }
+  }
+}

@@ -7,10 +7,34 @@
 <p class="breadcrumb"><a href="/enemies">Enemies</a> &rsaquo; {{ enemy.name }}</p>
 <div class="detail-header">
   <h1>{{ enemy.name }}
+    <span class="tag">{{ 'Encounter' if enemy.id.startswith('ENCOUNTER.') else 'Monster' }}</span>
     <span class="tag {% if enemy.type == 'boss' %}tag-attack{% elif enemy.type == 'elite' %}tag-power{% else %}tag-skill{% endif %}">{{ enemy.type }}</span>
   </h1>
   <p class="text-muted">{{ enemy.act|join(', ') }}{% if enemy.hp_range %} &bull; HP: {{ enemy.hp_range }}{% endif %}{% if danger %} &bull; Danger: <span class="danger-{{ danger.grade|lower }}">{{ danger.grade }}</span> (avg {{ danger.avg_damage }} dmg, {{ danger.fights }} fights){% endif %}</p>
 </div>
+{% if enemy.stats_version %}
+<p class="text-sm text-muted">Initial HP checked for {{ enemy.stats_version }}. {{ enemy.stats_note }}</p>
+{% elif enemy.hp_range %}
+<p class="text-sm text-muted">Reference HP{% if mechanics_view_version %}; not verified for {{ mechanics_view_version }}{% endif %}.</p>
+{% endif %}
+{% if enemy.mechanics_version %}
+<p class="text-sm text-muted">Patterns checked for {{ enemy.mechanics_version }}{% if mechanics_view_version and enemy.mechanics_version != mechanics_view_version %}; not verified for {{ mechanics_view_version }}{% endif %}.</p>
+{% elif enemy.patterns or enemy.tips %}
+<p class="text-sm text-muted">Reference patterns and strategy{% if mechanics_view_version %}; not verified for {{ mechanics_view_version }}{% endif %}.</p>
+{% endif %}
+
+{% if enemy.roster_version %}
+<h2>Possible Monsters</h2>
+<p class="text-sm text-muted">Roster and room type checked for {{ enemy.roster_version }}. These are possible participants, including variants and summons where listed by the game. They do not all appear together; counts and encounter-specific modifiers are not calculated here.</p>
+<div class="grid grid-2">
+{% for monster in possible_monsters %}
+<a class="card card-link" href="/enemies/{{ monster.id }}?game_version={{ mechanics_view_version|urlencode }}">
+  <h3>{{ monster.name }}</h3>
+  {% if monster.hp_range %}<p>Initial HP: {{ monster.hp_range }}</p>{% endif %}
+</a>
+{% endfor %}
+</div>
+{% endif %}
 
 {% if enemy.patterns %}
 <h2>Attack Patterns</h2>
@@ -41,7 +65,7 @@
 <p class="text-sm text-muted mb-sm">Cards with keywords that help against this enemy's patterns.</p>
 <div class="grid grid-3">
 {% for card in counter_cards %}
-<a href="/cards/{{ card.id }}" class="card card-link">
+<a href="/cards/{{ card.id }}?game_version={{ mechanics_view_version|urlencode }}" class="card card-link">
   <h3><span class="char-{{ card.character|lower }}">{{ card.name }}</span> <span class="tag tag-cost">{{ card.cost }}</span></h3>
   <p><span class="tag tag-{{ card.type|lower }}">{{ card.type }}</span> <span class="char-{{ card.character|lower }} text-xs">{{ card.character }}</span></p>
   <p class="text-sm">{{ card.description[:80] }}{% if card.description|length > 80 %}...{% endif %}</p>

@@ -23,10 +23,13 @@
 {% for enemy in enemies %}
 <a href="/enemies/{{ enemy.id }}" class="card card-link">
   <h3>{{ enemy.name }}
+    <span class="tag">{{ 'Encounter' if enemy.id.startswith('ENCOUNTER.') else 'Monster' }}</span>
     <span class="tag {% if enemy.type == 'boss' %}tag-attack{% elif enemy.type == 'elite' %}tag-power{% else %}tag-skill{% endif %}">{{ enemy.type }}</span>
   </h3>
   <p>{{ enemy.act|join(', ') }}{% if enemy.hp_range %} &bull; HP: {{ enemy.hp_range }}{% endif %}</p>
-  {% if enemy.tips %}<p class="text-sm text-green">{{ enemy.tips[0] }}</p>{% endif %}
+  {% if enemy.roster_version %}<p class="text-sm text-muted">{{ enemy.monster_ids|length }} possible monster types; roster checked for {{ enemy.roster_version }}.</p>{% endif %}
+  {% if enemy.stats_version %}<p class="text-sm text-muted">Initial HP: {{ enemy.stats_version }}; scaling and modifiers excluded.</p>{% endif %}
+  {% if enemy.tips %}<p class="text-sm text-muted">Reference strategy: {{ enemy.tips[0] }}</p>{% endif %}
 </a>
 {% endfor %}
 </div>

@@ -171,7 +171,7 @@ async def test_deck_copy_metadata_roundtrip(client):
     import html
     import re
     value = re.search('id="deck-instances"[^>]*value=\'(.*?)\'', response.text).group(1)
-    assert json.loads(html.unescape(value)) == instances
+    assert json.loads(html.unescape(value)) == [{**item, "properties": None} for item in instances]
     assert "enchantment effects that are not modeled" in response.text
 
 
@@ -328,3 +328,46 @@ def test_importing_package_does_not_resolve_user_configuration():
     code = "import sys, sts2; assert 'sts2.config' not in sys.modules; assert sts2.__version__; print('ok')"
     result = subprocess.run([sys.executable,"-c",code],capture_output=True,text=True,timeout=10)
     assert result.returncode == 0, result.stderr
+
+
+def test_correction_drift_rejects_entire_refresh_without_writing(dataset, monkeypatch):
+    from sts2 import sources
+    from sts2.fetcher import run_fetcher
+    _sources(monkeypatch, dataset)
+    source_class = sources.Sts2ggSource
+    original = source_class.fetch_cards
+
+    def drift(self):
+        rows = original(self)
+        for row in rows:
+            if row['id'] == 'CARD.GUIDING_STAR':
+                row['star_cost'] = '7'  # neither reviewed revision
+        return rows
+
+    monkeypatch.setattr(source_class, 'fetch_cards', drift)
+    before = {p.name:p.read_bytes() for p in dataset.glob('*') if p.is_file()}
+    with pytest.raises(ValueError, match='corrections drifted'):
+        run_fetcher()
+    assert {p.name:p.read_bytes() for p in dataset.glob('*') if p.is_file()} == before
+
+
+def test_star_cost_correction_repairs_partial_beta_refresh(dataset, monkeypatch):
+    from sts2 import sources
+    from sts2.fetcher import run_fetcher
+    _sources(monkeypatch, dataset)
+    source_class = sources.Sts2ggSource
+    original = source_class.fetch_cards
+
+    def stale(self):
+        rows = original(self)
+        for row in rows:
+            if row['id'] == 'CARD.GUIDING_STAR':
+                row['star_cost'] = '2'
+        return rows
+
+    monkeypatch.setattr(source_class, 'fetch_cards', stale)
+    report = run_fetcher()
+    assert 'error' not in report
+    star = next(row for row in json.loads((dataset/'cards.json').read_text(encoding='utf-8'))
+                if row['id'] == 'CARD.GUIDING_STAR')
+    assert star['star_cost'] == '1' and 'Next turn' in star['description']

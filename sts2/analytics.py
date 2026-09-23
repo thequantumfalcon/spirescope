@@ -2,6 +2,7 @@
 from collections import Counter, defaultdict
 from typing import Any
 
+from sts2.identities import canonical_id, canonical_run
 from sts2.models import PlayerProgress, RunHistory
 
 # Mega Crit's shipped characters. Modded characters (Komeijikoishi, Hina,
@@ -72,6 +73,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
     - deadly_encounters: encounters with highest loss rates
     - winning_deck_traits: what winning decks have in common
     """
+    runs = [canonical_run(run) for run in runs]
     if not runs:
         return {"overview": {"total": 0}, "hp_tracking": [], "death_floors": [],
                 "ascension_curve": [], "card_quality": [], "damage_percentiles": []}
@@ -707,92 +709,109 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
     return result
 
 
-def analyze_run(run: RunHistory, kb=None) -> dict:
-    """Generate post-mortem insights for a single run.
+def _death_floor(run: RunHistory) -> int:
+    """The floor number recorded on the run's last floor; 0 when unrecorded.
 
-    Pass kb (KnowledgeBase) for card-type-aware analysis: deck balance,
-    defensive gap detection, and card stacking warnings.
+    len(run.floors) is not a floor number: exported histories can omit floors
+    and the parser stores each floor's own number.
     """
-    insights = []
-    total_damage = sum(f.damage_taken for f in run.floors)
+    return run.floors[-1].floor if run.floors else 0
+
+
+def _deck_text_analysis(run: RunHistory, kb) -> dict | None:
+    """analyze_deck for the run's own recorded game version.
+
+    None when the version is unrecorded or no card resolves: the installed
+    game's card text must not stand in for the text this run was played with.
+    A recorded but unreviewed version comes back with every card unknown.
+    """
+    if not run.deck or not run.build_id:
+        return None
+    try:
+        analysis = kb.analyze_deck(run.deck, [bool(u) for u in run.deck_upgrades],
+                                   game_version=run.build_id, properties=run.deck_properties)
+    except Exception:
+        return None
+    return None if "error" in analysis else analysis
+
+
+def analyze_run(run: RunHistory, kb=None) -> dict:
+    """Post-mortem observations for a single run.
+
+    Every insight describes recorded data with its scope stated. Deck size,
+    relic count, card-type ratios and repeated copies are counted, never
+    graded: nothing in the run history establishes what a winning deck looks
+    like. With kb, the final deck's card text is checked for the run's own
+    recorded game version only.
+    """
+    insights: list[dict[str, str]] = []
     combat_floors = [f for f in run.floors if _is_combat(f)]
+    combat_damage = sum(f.damage_taken for f in combat_floors)
+    other_damage = sum(f.damage_taken for f in run.floors) - combat_damage
 
-    # Deck size analysis
-    if len(run.deck) > 30:
-        insights.append({"type": "warning", "text": f"Bloated deck ({len(run.deck)} cards) — key cards drawn less often. Consider skipping weak picks."})
-    elif len(run.deck) < 12:
-        insights.append({"type": "warning", "text": f"Very thin deck ({len(run.deck)} cards) — risky if key cards get exhausted."})
-    elif 15 <= len(run.deck) <= 25:
-        insights.append({"type": "good", "text": f"Healthy deck size ({len(run.deck)} cards)."})
-
-    # Damage spikes — find the single worst hit
+    # Largest single-combat damage
     if combat_floors:
         worst = max(combat_floors, key=lambda f: f.damage_taken)
-        if worst.damage_taken > 30:
-            enc_name = worst.encounter or "unknown"
-            insights.append({"type": "bad", "text": f"Took {worst.damage_taken} damage on floor {worst.floor} ({enc_name}) — your biggest spike. Consider more Block for this fight."})
+        if worst.damage_taken > 0:
+            where = f" on floor {worst.floor}" if worst.floor > 0 else ""
+            insights.append({"type": "info", "text": f"Largest single-combat damage: {worst.damage_taken}{where} ({worst.encounter or 'unknown encounter'})."})
 
-    # Low HP danger zones
+    # Floors recorded below 20% HP
     danger_floors = [f for f in run.floors if f.max_hp > 0 and f.current_hp / f.max_hp < 0.2]
-    if len(danger_floors) >= 3:
-        insights.append({"type": "warning", "text": f"Dropped below 20% HP on {len(danger_floors)} floors — consider prioritizing healing or Block."})
+    if danger_floors:
+        insights.append({"type": "info", "text": f"HP recorded below 20% of max on {len(danger_floors)} of {len(run.floors)} floors."})
 
-    # Cards picked analysis
+    # Card picks
     cards_picked = [c for f in run.floors for c in f.cards_picked]
-    if run.floors and len(cards_picked) == 0:
-        insights.append({"type": "warning", "text": "No card rewards picked this run — skipping all rewards weakens your deck."})
+    if run.floors and not cards_picked:
+        insights.append({"type": "info", "text": f"No card picks recorded across {len(run.floors)} floor{'s' if len(run.floors) != 1 else ''}."})
 
-    # Relics
-    if len(run.relics) >= 8:
-        insights.append({"type": "good", "text": f"Collected {len(run.relics)} relics — strong relic game."})
-    elif len(run.relics) <= 2 and len(run.floors) > 20:
-        insights.append({"type": "warning", "text": f"Only {len(run.relics)} relics by floor {len(run.floors)} — try fighting more elites for relic drops."})
+    # Damage totals: only combat floors are combats; event and other damage
+    # is reported separately rather than folded into the combat figure.
+    if combat_floors:
+        plural = "s" if len(combat_floors) != 1 else ""
+        text = f"{combat_damage} damage taken across {len(combat_floors)} combat{plural}"
+        if other_damage > 0:
+            text += f", plus {other_damage} on non-combat floors"
+        insights.append({"type": "info", "text": text + "."})
 
-    # Win-specific
+    # Outcome. run_time 0 means the time was not recorded, not a fast run.
     if run.win:
-        time_min = run.run_time / 60
-        if time_min < 20:
-            insights.append({"type": "good", "text": f"Speed run! Completed in {time_min:.0f} minutes."})
-        insights.append({"type": "good", "text": f"Victory with {total_damage} total damage taken across {len(combat_floors)} combats."})
-    else:
-        if run.killed_by:
-            insights.append({"type": "bad", "text": f"Killed by {run.killed_by} on floor {len(run.floors)}."})
+        if run.run_time > 0:
+            insights.append({"type": "good", "text": f"Victory after {run.run_time // 60} min {run.run_time % 60} s."})
+        else:
+            insights.append({"type": "good", "text": "Victory; run time not recorded."})
+    elif run.killed_by:
+        floor = _death_floor(run)
+        where = f" on floor {floor}" if floor > 0 else ""
+        insights.append({"type": "bad", "text": f"Killed by {run.killed_by}{where}."})
 
-    # KB-powered insights: deck balance, defensive gaps, card stacking
     if kb and run.deck:
-        try:
-            typed = [kb.get_card_by_id(c) for c in run.deck]
-            typed = [c for c in typed if c]
-            if typed:
-                n = len(typed)
-                skl = sum(1 for c in typed if getattr(c, "type", "") == "Skill")
-                skl_pct = round(skl / n * 100)
-                if skl_pct < 20:
-                    insights.append({"type": "warning",
-                        "text": f"Only {skl_pct}% Skills ({skl}/{n}) — severely limited defense. Winning decks average ~40% Skills."})
-                elif skl_pct < 30:
-                    insights.append({"type": "warning",
-                        "text": f"{skl_pct}% Skills ({skl}/{n}) — below average defense."})
+        # Card-text checks, scoped to the run's recorded game version
+        if not run.build_id:
+            insights.append({"type": "info", "text": "Game version not recorded for this run; card text was not checked."})
+        else:
+            analysis = _deck_text_analysis(run, kb)
+            if analysis is None:
+                insights.append({"type": "info", "text": f"None of the {len(run.deck)} recorded card IDs resolved; card text was not checked."})
+            elif analysis["unknown_mechanics"] >= len(run.deck):
+                insights.append({"type": "info", "text": f"Card text is not verified for game version {run.build_id}; effect checks were skipped."})
+            else:
+                typed = analysis["attacks"] + analysis["skills"] + analysis["powers"]
+                if typed:
+                    insights.append({"type": "info", "text": (
+                        f"Final deck by card type: {analysis['attacks']} Attack, {analysis['skills']} Skill, "
+                        f"{analysis['powers']} Power ({typed} of {len(run.deck)} cards typed for {run.build_id}).")})
+                checks = "; ".join(c.rstrip(".") for c in analysis["strengths"] + analysis["weaknesses"])
+                insights.append({"type": "info", "text": f"Final deck card text ({run.build_id}): {checks}."})
 
-                # Defensive gap
-                kw_set: set[str] = set()
-                for c in typed:
-                    kw_set.update(getattr(c, "keywords", []))
-                has_block = any(k in kw_set for k in ("Block", "Dexterity", "Frost"))
-                if not has_block:
-                    severity = "bad" if not run.win else "warning"
-                    insights.append({"type": severity,
-                        "text": "Zero Block/defensive keywords in entire deck — this is the #1 cause of early deaths."})
-        except Exception:
-            pass
-
-        # Card stacking
+        # Repeated copies: a count, not a penalty
         try:
-            stacked = [(cid, cnt) for cid, cnt in Counter(run.deck).items() if cnt >= 3]
-            if stacked:
-                names = [kb.id_to_name(cid) for cid, _ in stacked[:3]]
-                insights.append({"type": "warning",
-                    "text": f"Card stacking: {', '.join(names)} — diminishing returns from duplicates."})
+            repeated = sorted(((cnt, cid) for cid, cnt in Counter(run.deck).items() if cnt >= 3), reverse=True)
+            if repeated:
+                shown = ", ".join(f"{kb.id_to_name(cid)} ×{cnt}" for cnt, cid in repeated[:3])
+                more = f" and {len(repeated) - 3} more" if len(repeated) > 3 else ""
+                insights.append({"type": "info", "text": f"Repeated copies in final deck: {shown}{more}."})
         except Exception:
             pass
 
@@ -800,43 +819,51 @@ def analyze_run(run: RunHistory, kb=None) -> dict:
 
 
 def analyze_run_patterns(runs: list[RunHistory], kb=None) -> list[dict]:
-    """Detect recurring patterns across multiple runs."""
+    """Recurring observations across the most recent runs.
+
+    Deaths are grouped by the act the save recorded; losses without a recorded
+    act are reported as uncounted rather than estimated from floor numbers.
+    Card-text checks use each run's own recorded game version.
+    """
     if len(runs) < 3:
         return []
 
-    patterns = []
+    patterns: list[dict] = []
     recent = runs[:10]
 
-    # Pattern: consistently skipping defense
+    # Pattern: final deck text without Block generation
     if kb:
-        defense_skip = 0
+        no_block = 0
+        unchecked = 0
         for run in recent:
-            typed = [kb.get_card_by_id(c) for c in run.deck]
-            typed = [c for c in typed if c]
-            kw_set: set[str] = set()
-            for c in typed:
-                kw_set.update(getattr(c, "keywords", []))
-            if not any(k in kw_set for k in ("Block", "Dexterity", "Frost")):
-                defense_skip += 1
-        if defense_skip >= len(recent) * 0.6:
-            patterns.append({
-                "type": "recurring",
-                "text": f"Defense neglected in {defense_skip}/{len(recent)} recent runs — this is a consistent blind spot.",
-                "severity": "high",
-            })
+            analysis = _deck_text_analysis(run, kb)
+            if analysis is None or analysis["unknown_mechanics"]:
+                unchecked += 1
+            elif any(w.startswith("No Block generation") for w in analysis["weaknesses"]):
+                no_block += 1
+        if no_block >= 3:
+            text = f"No Block generation detected in the final deck's card text in {no_block} of your last {len(recent)} runs."
+            if unchecked:
+                text += f" {unchecked} runs could not be checked for their recorded game version."
+            patterns.append({"type": "recurring", "text": text, "severity": "info"})
 
-    # Pattern: dying in same act repeatedly
+    # Pattern: dying in the same recorded act repeatedly
     death_acts: Counter = Counter()
+    unrecorded = 0
     for run in recent:
-        if not run.win and run.floors:
-            death_acts[_floor_act(run.floors[-1])] += 1
-    for act, count in death_acts.items():
+        if run.win or not run.floors:
+            continue
+        act = run.floors[-1].act
+        if act > 0:
+            death_acts[act] += 1
+        else:
+            unrecorded += 1
+    for act, count in sorted(death_acts.items()):
         if count >= 3:
-            patterns.append({
-                "type": "recurring",
-                "text": f"Died in Act {act} in {count} of your last {len(recent)} runs — review Act {act} strategy.",
-                "severity": "medium",
-            })
+            text = f"Died in Act {act} in {count} of your last {len(recent)} runs."
+            if unrecorded:
+                text += f" {unrecorded} losses have no recorded act and are not counted."
+            patterns.append({"type": "recurring", "text": text, "severity": "info"})
 
     return patterns
 
@@ -1010,6 +1037,8 @@ def compute_era_split(runs: list, entity_id: str, patch_name: str) -> dict | Non
     pivot = era_index(patch_name)
     if pivot < 0:
         return None
+    entity_id = canonical_id(entity_id)
+    runs = [canonical_run(run) for run in runs]
     before_runs: list[Any] = []
     after_runs: list[Any] = []
     for r in runs:

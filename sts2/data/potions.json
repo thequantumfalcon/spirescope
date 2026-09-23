@@ -180,7 +180,7 @@
     "description": "Summon 15."
   },
   {
-    "id": "POTION.CLARITY_EXTRACT",
+    "id": "POTION.CLARITY",
     "name": "Clarity Extract",
     "rarity": "Uncommon",
     "description": "Draw 1 card. At the start of your next 3 turns, draw 1 additional card."

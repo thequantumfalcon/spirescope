@@ -28,9 +28,9 @@ re-read the notes.
 reconstructed from them. Reconstructed entries are printed separately: the
 mechanical change is certain, the exact in-game phrasing is not.
 
-Not representable here: v0.111.0 also changed Regent Star costs (Alignment
-3 -> 2, Guiding Star 2 -> 1). A card record has `cost` but no star field, so
-there is nothing to pin -- that needs a schema change, not an override.
+The schema now carries Star costs. Separate guarded overrides cover the
+v0.111.0 Alignment and Guiding Star changes, including a source that updates
+text before it updates cost. Unrecognized drift rejects the refresh.
 
 Usage:
     python scripts/fix_card_text.py            # apply
@@ -48,6 +48,24 @@ CARDS_PATH = Path(__file__).resolve().parents[1] / "data" / "cards.json"
 # replaces, and the value to write. Keys in `expect` and `replace` are card
 # fields; every key in `expect` must also appear in `replace`.
 OVERRIDES: list[dict] = [
+    {
+        "id": "CARD.ALIGNMENT",
+        "source": "v0.111.0 (2026-08-14)",
+        "source_url": "https://store.steampowered.com/news/app/2868840/view/671751488532383386",
+        "verbatim": False,
+        "note": "Star cost reduced from 3 to 2; Energy cost remains separate.",
+        "expect": {"star_cost": "3"},
+        "replace": {"star_cost": "2"},
+    },
+    {
+        "id": "CARD.GUIDING_STAR",
+        "source": "v0.111.0 (2026-08-14)",
+        "source_url": "https://store.steampowered.com/news/app/2868840/view/671751488532383386",
+        "verbatim": False,
+        "note": "Star cost reduced from 2 to 1, alongside the next-turn draw change.",
+        "expect": {"star_cost": "2"},
+        "replace": {"star_cost": "1"},
+    },
     {
         "id": "CARD.EXPECT_A_FIGHT",
         "source": "v0.111.0 (2026-08-14)",
@@ -186,17 +204,18 @@ def main(dry_run: bool = False, data_path: Path | None = None) -> int:
     for line in drifted:
         print(f"  ::warning::DRIFTED: {line}", file=sys.stderr)
 
+    if drifted:
+        return 1  # Never write a partially accepted correction set.
+
     if applied and not dry_run:
         cards_path.write_text(
             json.dumps(cards, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )
-        print(f"  Wrote {len(cards)} cards to {CARDS_PATH}")
+        print(f"  Wrote {len(cards)} cards to {cards_path}")
     elif not applied:
         print("  No card text needed pinning.")
 
-    # Drift is a warning, not a failure: a refresh should still complete, and
-    # the operator sees the line. Exit non-zero only when asked to check.
-    return 1 if (drifted and dry_run) else 0
+    return 0
 
 
 if __name__ == "__main__":

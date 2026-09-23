@@ -6,6 +6,7 @@ import logging
 import math
 from pathlib import Path
 
+from sts2.identities import canonical_run
 from sts2.models import RunHistory
 from sts2.persist import write_text_atomic
 
@@ -36,7 +37,8 @@ def compute_aggregate_stats(runs: list[RunHistory]) -> dict:
     character_stats: dict[str, dict] = {}
     ascension_stats: dict[int, dict] = {}
 
-    for run in runs:
+    for original in runs:
+        run = canonical_run(original)
         # Character stats
         cs = character_stats.setdefault(run.character, {"wins": 0, "total": 0})
         cs["total"] += 1

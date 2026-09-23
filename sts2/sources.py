@@ -256,7 +256,19 @@ class WikiggSource:
         modules = self._fetch_modules(_WIKI_CARD_MODULES)
         cards = []
         for title, content in modules.items():
-            for raw_name, fields in _parse_lua_table(content).items():
+            entries = _parse_lua_table(content)
+            variant_types: dict[str, set[str]] = {}
+            for variant_name, variant in entries.items():
+                if variant.get("NoList") is True and variant.get("Type"):
+                    variant_types.setdefault(_strip_char_suffix(variant_name), set()).add(variant["Type"])
+            for raw_name, fields in entries.items():
+                # The module explicitly marks presentation-only variants:
+                # customized Mad Science examples and Wither's upgraded image.
+                # They are not separate base-card records. Respect the flag
+                # before resolving names or they suppress the canonical card
+                # as an apparent identity collision.
+                if fields.get("NoList") is True:
+                    continue
                 name = _strip_char_suffix(raw_name)
                 character = fields.get("Color", "") or title.rsplit("/", 1)[-1]
                 if character == "The Regent":
@@ -292,7 +304,10 @@ class WikiggSource:
                     # base and upgraded strings to guess whether an upgrade
                     # exists -- two different questions.
                     "no_upgrade": bool(fields.get("NoUpgrade", False)),
-                    "type": str(fields.get("Type", "Skill")),
+                    # A customizable card may be Attack, Skill or Power. Do not
+                    # turn one example into universal deck-analysis mechanics.
+                    "type": ("Variable" if len(variant_types.get(name, set())) > 1
+                             else str(fields.get("Type", "Skill"))),
                     "rarity": _WIKI_RARITY_MAP.get(rarity, rarity),
                     "description": desc,
                     "description_upgraded": _clean_description(upgraded),

@@ -5,8 +5,9 @@ own Slay the Spire 2 install and writes one overlay per language into
 sts2/locales/content/, where the knowledge base picks them up (see i18n.py).
 
 Nothing is downloaded and nothing is redistributed: the text comes from the
-copy of the game already on this machine, so it always matches the version
-being played rather than a snapshot that goes stale on the next patch.
+copy of the game already on this machine. Its templates are aligned with the
+app catalog, whose mechanics may target a different game branch. The overlay
+records the actual installed release identity; this is not a compatibility claim.
 
 The awkward part is that the game stores descriptions as templates
 ("Deal {Damage} damage.") with the numbers held elsewhere. Each English
@@ -23,6 +24,7 @@ import struct
 from pathlib import Path
 
 from sts2.config import DATA_DIR, GAME_INSTALL_DIR
+from sts2.game_version import read_game_release
 
 log = logging.getLogger(__name__)
 
@@ -376,7 +378,7 @@ def token_pattern(tok, reg, outer_name=None):
     return None  # TEXT etc.
 
 
-def extract_english(template, shipped):
+def extract_english(template, shipped, *, strict=False):
     """Align English template against shipped English text.
     Returns (values, branches) dicts name->list, or None on failure."""
     elems = parse_template(template)
@@ -400,7 +402,7 @@ def extract_english(template, shipped):
         pattern = pattern[:-6] + r"\.?\s*"
     shipped_n = norm_shipped(shipped)
     try:
-        m = re.search(pattern, shipped_n)
+        m = (re.fullmatch if strict else re.search)(pattern, shipped_n)
     except re.error:
         return None
     if not m or not m.group(0).strip():
@@ -665,11 +667,28 @@ def resolve_key(key, catalog_keys):
                 return base
     return None
 
-def _build_all():
+def _build_all(release=None):
     OUT.mkdir(parents=True, exist_ok=True)
     app = {}
     for fn in ["cards", "relics", "potions", "enemies", "events"]:
         app[fn] = json.loads((APP / f"{fn}.json").read_text(encoding="utf-8"))
+
+    from sts2.mechanics import (
+        apply_card_profile,
+        apply_potion_profile,
+        apply_relic_profile,
+        read_profiles,
+    )
+    from sts2.models import Card, Potion, Relic
+    profiles = read_profiles(APP / "mechanics.json")
+    profile = profiles.get((release or {}).get("game_version", ""))
+    if profile and (release or {}).get("game_commit") == profile.game_commit:
+        app["cards"] = [apply_card_profile(Card(**row), profile).model_dump()
+                        for row in app["cards"]]
+        app["potions"] = [apply_potion_profile(Potion(**row), profile).model_dump()
+                          for row in app["potions"]]
+        app["relics"] = [apply_relic_profile(Relic(**row), profile).model_dump()
+                         for row in app["relics"]]
 
     eng = {fn: load("eng", fn) for fn in
            ["cards", "relics", "potions", "monsters", "encounters", "events",
@@ -705,7 +724,7 @@ def _build_all():
     card_keys = sorted({k[:-len(".description")] for k in eng["cards"]
                         if k.endswith(".description")})
     # Spot-check sampling, not cryptography.
-    sample = random.sample(card_keys, 20)  # nosec B311
+    sample = random.sample(card_keys, min(20, len(card_keys)))  # nosec B311
     tokname_re = re.compile(r"\{([A-Za-z0-9_]+)[:}]")
     mismatches = []
     for key in sample:
@@ -748,15 +767,11 @@ def _build_all():
             tpl = eng[section].get(ck + ".description", "")
             variants = {}
             shipped_desc = item.get("description", "") or ""
-            if not needs_alignment(tpl):
-                variants["base"] = ({}, {}, {})
-            else:
-                res = extract_english(tpl, shipped_desc) if shipped_desc else None
-                if res is None and shipped_desc:
-                    res = fallback_single_number(tpl, shipped_desc)
-                    if res is not None:
-                        stats_fallback[section] += 1
-                variants["base"] = res
+            # Matching a number is insufficient: a rework can keep the
+            # number while changing the target, timing or effect. Require the
+            # entire English template to match; otherwise keep English text.
+            variants["base"] = (extract_english(tpl, shipped_desc, strict=True)
+                                if tpl and shipped_desc else None)
             if section == "cards":
                 up = item.get("description_upgraded", "") or ""
                 if not up:
@@ -768,13 +783,8 @@ def _build_all():
                     # never see (6 cards x 13 languages), restating the base
                     # description back at them.
                     variants["up"] = None
-                elif not needs_alignment(tpl):
-                    variants["up"] = ({}, {}, {})
                 else:
-                    upres = extract_english(tpl, up)
-                    if upres is None:
-                        upres = fallback_single_number(tpl, up)
-                    variants["up"] = upres
+                    variants["up"] = extract_english(tpl, up, strict=True)
             aligned[(section, sid)] = variants
             if variants["base"] is not None:
                 stats_align[section][0] += 1
@@ -785,7 +795,7 @@ def _build_all():
           + ", ".join(f"{s}: {v[0]} ok ({stats_fallback[s]} via single-number "
                       f"fallback) / {v[1]} fail" for s, v in stats_align.items()))
     for s in uncovered:
-        log.debug(f"  {s}: {len(uncovered[s])} shipped ids not in 0.107.1 catalog "
+        log.debug(f"  {s}: {len(uncovered[s])} shipped ids not in installed localization "
               f"(skipped): {uncovered[s][:8]}{'...' if len(uncovered[s]) > 8 else ''}")
 
     # enemy/event key resolution
@@ -827,7 +837,8 @@ def _build_all():
         loc = {fn: load(lang, fn) for fn in
                ["cards", "relics", "potions", "monsters", "encounters", "events"]}
         out = {"_meta": {"language_native": NATIVE[lang],
-                         "game_version": "0.107.1",
+                         "game_version": "",
+                         **(release or {}),
                          "source": "official game localization"},
                "cards": {}, "relics": {}, "potions": {}, "enemies": {}, "events": {}}
         cnt = {"cards_ok": 0, "cards_fail": 0, "cards_upgraded": 0,
@@ -886,6 +897,8 @@ def _build_all():
                             cnt["cards_upgraded"] += 1
                         except RenderFail:
                             pass
+                from sts2.mechanics import mechanics_fingerprint
+                entry["_mechanics_fingerprint"] = mechanics_fingerprint(item)
                 out[section][sid] = entry
                 cnt[section + "_ok"] += 1
         for sid, (fname, lockey) in enemy_map.items():
@@ -958,7 +971,7 @@ def run(langs=None, game_dir=None) -> list:
         raise LocalizeError("This game install has no translatable languages")
 
     OUT.mkdir(parents=True, exist_ok=True)
-    _build_all()
+    _build_all(read_game_release(Path(game_dir or GAME_INSTALL_DIR)))
 
     # The builder names files by game locale; the app looks them up by app code
     written = []

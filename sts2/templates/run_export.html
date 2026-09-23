@@ -53,7 +53,7 @@
     <h2>Run Analysis</h2>
     <div class="grid grid-2">
     {% for insight in run_analysis.insights %}
-    <div class="card {% if insight.type == 'warning' %}card-caution{% elif insight.type == 'good' %}card-win{% else %}card-loss{% endif %} mb-sm">
+    <div class="card {% if insight.type == 'warning' %}card-caution{% elif insight.type == 'good' %}card-win{% elif insight.type == 'bad' %}card-loss{% endif %} mb-sm">
       <p>{{ insight.text }}</p>
     </div>
     {% endfor %}

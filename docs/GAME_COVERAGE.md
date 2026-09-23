@@ -1,11 +1,11 @@
 # Game compatibility and completion plan
 
-Reviewed 2026-09-22. The engineering candidate is substantially repaired, but
+Reviewed 2026-09-23. The engineering candidate is substantially repaired, but
 complete game coverage and a stable release are not yet demonstrated.
 
 ## Verified baseline
 
-The official Steam announcement feed retrieved on the review date lists
+The official Steam announcement feed retrieved on 2026-09-22 lists
 [main v0.107.1](https://store.steampowered.com/news/app/2868840/view/710026912607505280)
 (19 June) and
 [beta v0.111.0](https://store.steampowered.com/news/app/2868840/view/671751488532383386)
@@ -17,28 +17,33 @@ A local Windows installation independently reports v0.107.1, game commit
 `59260271`, in `release_info.json`; its Steam manifest records build `23811903`.
 Steam build numbers, game commits, patch names, and save-file build identifiers
 are different identifiers. Only map them when the relationship is observed.
-The audit did not update Steam, switch branches, execute the game, or alter saves.
+The user subsequently launched this main build. The integration check reads its
+save and log without changing either. Steam and its selected branch were not
+changed. No separate beta installation is available for native verification.
 
-The bundled catalog includes beta mechanics. Expect a Fight has the v0.111.0
-Block/Strength effect, while the installed main build's template still grants
-Energy per Attack. Hyperbeam has temporary Focus loss in the catalog and
-unqualified Focus loss in that main build. This confirms the disclosed branch
-difference; it does not establish either branch's complete correctness.
+The reference catalog includes beta mechanics. The candidate now selects a
+separate reviewed main mechanics profile when the installed version **and commit**
+match v0.107.1 / `59260271`. Expect a Fight uses main's Energy-per-Attack effect;
+the reference catalog retains the later Block/Strength effect. Hyperbeam and
+the Scare/Sidestep rename likewise use the selected version. An unidentified
+installation or historical version does not inherit a claim of verification.
 
 A field-level v0.111.0 check found Guiding Star already had next-turn draw
 but still cost 2 Stars. The candidate now corrects its Star cost to 1, matching
 the official notes linked above. This is a targeted beta-catalog correction;
 the old data-fetch timestamp is retained and no complete-refresh claim is made.
-The updater still needs versioned expectations so later source drift cannot
-silently reintroduce such a partially updated record.
+The current candidate adds guarded Star-cost expectations and rejects
+unrecognized correction drift. A complete branch/build-specific dataset remains
+necessary; those targeted checks do not certify every card.
 
 The public app release remains v3.1.2. The repaired executable candidate was
 qualified at `24947e7e58d027617e9e74191b2ab8eb67c46a75` in
 [PR #60](https://github.com/thequantumfalcon/spirescope/pull/60), with
 [CI](https://github.com/thequantumfalcon/spirescope/actions/runs/35807577729) and
 [Windows/macOS artifact rehearsal](https://github.com/thequantumfalcon/spirescope/actions/runs/35807670327).
-The content-audit tool, this document and the Guiding Star correction were
-added after that executable build; its archived data predates that correction.
+The content audit, versioned main profile, saved-card properties and live-seed
+repair all postdate that executable build. Those archives and earlier remote
+CI results do not qualify the current uncommitted candidate.
 
 ## What changed after the installed main release
 
@@ -62,49 +67,250 @@ in progress. Their announcement is not evidence that they have shipped. The
 installed archive also contains helper/test/unused entries; a name in an archive
 is not sufficient evidence of a released character, achievement, or encounter.
 
-## Installed-build inventory findings
+## Reviewed native identity baseline
 
-`scripts/audit_game_content.py` reads English localization tables directly from
-the installed Godot pack. It excludes explicitly marked mock/deprecated entries,
-TODO titles and specified interface helpers, then compares identifiers. Other
-unused entries may remain. These are named candidates, **not active pool totals**.
+The initial localization audit was an investigation queue, not an active-content
+count. The follow-up inspected the installed assembly's model registry, character
+and shared pools, epoch-supplied potions, act/event encounters, static encounter
+collections, Fabricator spawn sets and badge registry. It did not execute the
+game. The reviewed identifiers and definition hashes are preserved in
+[the v0.107.1 baseline](game-baselines/v0.107.1.json); native source and descriptions
+remain private. Regression checks compare this independent baseline with the
+bundled catalog and verify runtime enemy lookups.
 
-| Family | Native candidates | Exact catalog ID matches | Follow-up |
-| --- | ---: | ---: | --- |
-| Cards | 599 | 588 | 11 potential Event aliases; mechanics/availability unverified |
-| Relics | 308 | 297 | 11 potential fake/name aliases; preserve dotted Sea Glass variants |
-| Potions | 63 | 62 | Clarity / Clarity Extract identity requires verification |
-| Monsters | 122 | 90 | 32 candidates to classify: includes summons, helpers, parts and possible omissions |
-| Encounters | 89 | 84 | 5 encounter IDs unresolved; do not substitute monster records silently |
-| Events | 57 | 57 | Identity coverage only; option outcomes and conditions need review |
-| Ancients | 9 | 8 | The Architect requires explicit classification/coverage |
-| Epochs | 57 | 57 | 11 additional native TODO entries excluded; unlock logic unverified |
-| Badges | 25 | 11 | 14 identifiers absent; all 11 shipped requirements are blank |
+| Reviewed main-build scope | Expected native IDs | Catalog matches |
+| --- | ---: | ---: |
+| Non-deprecated cards in registered pools/starting decks | 577 | 577 |
+| Non-deprecated relics in registered pools/starting relics | 296 | 296 |
+| Non-deprecated potions in registered pools, excluding mocks | 63 | 63 |
+| Act-pool and event-referenced encounters | 85 | 85 |
+| Monsters in those encounters and reviewed spawn collections | 107 | 107 |
+| Ordinary events and Ancients in act/shared pools | 65 | 65 |
+| Badges registered by BadgePool, using literal save IDs | 23 | 23 |
 
-The catalog has 639 cards, 312 relics, 65 potions, 184 combined enemy/encounter
-records, 67 combined event/Ancient records, 57 epochs and 11 badges. These totals
-are not comparable to a single active-content count. Extra records can be beta,
-historical, curated aliases or unused content; retain them until classified.
+These are identity checks, **not complete mechanics or runtime availability
+certification**. Unlock state, reward eligibility, pets, special ending content,
+all game modes and beta still require separate review. Five playable character
+registrations are present. The four act models are Overgrowth and Underdocks
+(alternative Act 1s), Hive (Act 2), and Glory (Act 3).
 
-Sixteen card records lack base descriptions; 51 lack upgraded descriptions.
-Some may be unavailable or non-upgradable, so classify before adding text.
-Of 184 mixed monster/encounter records, 138 lack HP and 139 lack patterns. An
-encounter need not have one HP value, so split the schemas before measuring
-tactical completeness. Six events lack choices, including records needing
-special handling. Eight epoch records lack requirements and unlock details; these are discovery
-placeholders in the shipped catalog. Verify availability and requirements rather
-than treating their presence as complete unlock support.
+The current uncommitted candidate includes these repairs:
 
-Branch metadata is absent on 636/639 cards, 310/312 relics and 64/65 potions.
-The source merger rejects *known* incompatible branches but cannot identify a
-conflict when metadata is missing. Refresh success is not a compatibility gate.
+- Twenty-four explicit legacy-to-native mappings, verified against native model
+  identities. Old links and overlays still resolve. Analytics and aggregate
+  statistics join the spellings on copies without rewriting raw run exports.
+  A spot check of fourteen formerly unresolved native IDs from historical saves
+  now resolves all fourteen.
+- Sixteen additional monster/encounter entries, including the event dummies,
+  Mysterious Knight, Fake Merchant, Aeonglass's encounter, illusions and Fabricator
+  bots. Battle Friend V2's incorrect three-enemy-fight description is replaced:
+  the event offers one of three dummies. Reviewed mechanics are labeled main
+  v0.107.1; their presence does not verify beta mechanics.
+- All twenty-three registered badge requirements, including win/co-op conditions
+  and applicable tiers. The Records page uses their catalog names and shows
+  requirements and recorded badges even without run-history files. Helper model
+  class names and the unregistered Favorite Card/Whomper localization entries
+  are not invented as earned-badge identities.
+- Wiki presentation variants marked `NoList` no longer suppress the canonical
+  Mad Science/Wither records. Mad Science is displayed as customizable, with a
+  variable type; the previous catalog incorrectly promised one specific Power
+  effect for every copy. The main profile now reads the saved type and rider
+  effect for all nine Tinker Time choices. Missing, malformed or unsupported
+  properties remain explicit and are excluded from effect-based advice.
+- Localization overlay metadata reads the selected installation's release
+  identity. Missing metadata stays unknown instead of claiming v0.107.1.
+- Cross-source filling of mechanical fields is rejected when the sources also
+  disagree on supplied mechanics. Guarded Alignment/Guiding Star cost corrections
+  accompany the existing beta text corrections; unrecognized correction drift
+  rejects the whole refresh before installing any data.
 
-Additional native tables cover characters, acts, powers, enchantments,
-afflictions, orbs, keywords, intents, ascension, modes, modifiers and achievements.
-These do not have dedicated structured catalogs in Spirescope. Some mechanics
-already participate in text, live records or analysis; audit each feature before
-calling an entire system unsupported. Achievements and unused character entries
-especially require active-pool confirmation.
+The source mismatch is reproducible: wiki.gg Regent module revision `46536`,
+timestamp `2026-08-14T03:28:15Z`, still describes Guiding Star's main-branch
+immediate draw and 2-Star cost. Its revision timestamp cannot establish beta
+compatibility. The new guard prevents a demonstrated partial join; it does not
+prove compatibility when sources omit the conflicting evidence.
+
+## Reviewed main card rules and saved copies
+
+The versioned profile in `sts2/data/mechanics.json` now covers printed traits and
+base/first-upgrade rules for all **577** cards in the independent main pool.
+[The card review record](game-baselines/v0.107.1-card-mechanics.json) preserves
+the reviewed IDs, definition/helper hashes, method and limitations. Most rules
+were checked by strict full-template alignment and native values; reworks,
+missing upgrade text, conditional descriptions and saved-instance rules received
+separate review. Native text/source stays private. The four Knowledge Demon
+choices are identified as choices, not ordinary Energy-cost cards.
+
+The selected profile reaches card pages, deck analysis and historical deck/card
+links. Historical versions remain explicit; browser-saved decks retain the
+version and each copy's properties. Older deck formats remain version-unknown.
+Genetic Algorithm and The Scythe use each copy's consistent saved permanent value.
+Mad Science uses its saved Attack/Skill/Power type and event effect. Upgraded
+copies use their own keyword mentions, including added Innate and removed
+Exhaust/Ethereal. Malformed, missing or foreign-build properties are not guessed.
+
+Derived localization descriptions require both matching version metadata and a
+fingerprint of the exact English mechanics. Full template matching rejects
+translations that would omit timing, targeting, extra effects or upgrade-only
+keywords. Legacy overlays may supply display names; a known version-specific
+rename cannot be overwritten by a foreign-version name. This can leave English
+fallback text until a compatible translation is available.
+
+The running game exposed a native save integration defect: its seed is stored
+at `rng.seed`, while the reader used only a legacy top-level field. The corrected
+reader accepts native/legacy agreement and rejects conflicts and malformed values.
+A read-only live check then matched the save to the log and read seven card plays
+without replacing saved HP, gold, deck or floor. This is evidence for that repair,
+not a complete gameplay or same-seed replay qualification.
+
+**Scope remains bounded.** Printed rules and the supported saved properties are
+not a combat simulator. Temporary combat changes, enchantment effects, repeated
+upgrades beyond the reviewed first upgrade and all possible card interactions
+are not certified. This card review does not certify other entity families or beta;
+separate reviewed family scopes are described below. The overall profile and game-coverage reports retain `complete: false`.
+
+## Reviewed main relics, potions, monsters, encounters and epochs
+
+The same exact-version profile now includes general rules and rarity for all
+**296 relics**, and printed rules, rarity, targeting, usage timing and combat
+generation flags for all **63 potions**. The review records are
+[relic mechanics](game-baselines/v0.107.1-relic-mechanics.json) and
+[potion mechanics](game-baselines/v0.107.1-potion-mechanics.json). Reworks and
+conditional text received separate native definition review. Historical relic
+links preserve the run's version. Current relic counters, stored selections and
+all cross-item interactions are not simulated. Jeweled Mask explicitly records
+the observed discrepancy between its printed combat-long free effect and the
+installed implementation's opening-turn duration.
+
+Initial HP is reviewed for all **107 monsters**, including the Ascension 8
+threshold. These are base ranges before multiplayer scaling, encounter effects,
+powers or modifiers. [The HP review](game-baselines/v0.107.1-monster-stats.json)
+keeps this verification separate from attack patterns. Unverified enemy patterns
+cannot drive card suggestions for a known game version; suggested cards must
+also have compatible mechanics. Cards requiring saved per-copy properties are
+excluded from catalog-only counter suggestions.
+
+Declared possible-monster sets and room types are reviewed for all **85
+encounters**. [The roster review](game-baselines/v0.107.1-encounter-rosters.json)
+covers literal declarations, static collections and Fabricator's spawn sets.
+Encounter pages link to versioned monster health. Possible participants are not
+simultaneous counts or a guaranteed starting lineup; generation probabilities,
+all summons and encounter-specific adjustments remain outside this review.
+
+Requirements and reward lists are reviewed for all **57 registered epochs**.
+[The timeline review](game-baselines/v0.107.1-epoch-mechanics.json) includes the
+18-step score-bar sequence, per-step thresholds, one-unlock-per-run limit and
+overflow cap. Daily mode requires playing all five characters and then winning
+a Standard run, not a victory with each character. Character epoch 7 is checked
+at exactly Ascension 1. Main's alternate Act 2 and Act 3 timeline entries are
+obtainable placeholders, not playable acts. All eight previously blank epoch
+entries have reviewed main information. The Epochs catalog now renders without
+a save; completion percentages still require observed progress. Slot reachability
+and multiplayer progression persistence are not simulated or qualified.
+
+## Reviewed main events and Ancient offers
+
+All **65 registered main events/Ancients** have reviewed option summaries,
+base costs/rewards, local entry conditions and normal act-pool placement.
+[The event review](game-baselines/v0.107.1-event-mechanics.json) records the
+definition/helper hashes and exact scope. This includes all **8 Ancients**,
+their separate offer groups, selection weights, deck/relic requirements and
+Neow's modifier-run opening actions. Ancient healing uses the actual Ascension
+2 threshold. The main profile corrects **36** missing or different act labels;
+Act 1 locations distinguish Overgrowth from Underdocks. Ancient entries are
+labeled separately from ordinary events.
+
+The review corrects material reference errors: Dense Vegetation costs HP for
+Gold rather than removing a card; Drowning Beacon loses Max HP; Crystal Sphere
+reveals a reward board rather than future map encounters. Repeatable choices
+retain escalating costs, and rewards distinguish direct grants from selectable
+offers. Leaving Wongo's can downgrade a card. Its points and badge relic are
+separate from score-bar progression. Fake Merchant is solo only; the native
+shared-event flag does not imply multiplayer eligibility. Its displayed prices
+include shop variation, and fighting awards the remaining stock rather than
+re-awarding purchased items.
+
+Act filters use reviewed main pool membership and explicit act restrictions.
+Timeline-gated events and Lantern Key's forced Act 3 event are distinguished.
+This is a catalog of rules, not a prediction of current random offers. The full
+Crystal Sphere reward board, every cross-entity hook, custom act ordering,
+runtime offer state and special ending sequence are not certified by this
+review. Foreign builds and extra reference records remain visibly unverified.
+
+## Native registry inventory and advice limits
+
+[The complete native model registry inventory](game-baselines/v0.107.1-model-registry.json)
+resolves all **1,624 registered model types** to unique definition hashes. Of
+these, **1,193** match the bounded card/relic/potion/monster/encounter/event
+reviews above. This is an inventory, not a completion percentage: it includes
+mock models, deprecated placeholders and infrastructure. Three companion models
+and the Architect event, encounter and visual creature are identified separately.
+The remaining model families are explicit review queues. Epochs, intents,
+keywords, modes and other systems outside this registry still need separate
+accounting; registry membership does not establish playable availability.
+
+A further live review exposed unsupported advice based only on deck size,
+card-type ratios, repeated cards, zero-cost counts and fixed boss-floor numbers.
+Those automatic claims are removed. Deck/live analysis now labels its effect
+observations and gaps as card-text checks, with the omitted sources of effects
+stated. Cost summaries show the known numeric Energy-cost sample and a
+five-card estimate calculated before rounding. Unknown IDs remain in the
+cost curve; all-variable samples display Unknown. There is no invented
+15-Energy hand budget or promise about how many cards can be played. Keyword
+connectivity keeps its mathematical score but is labeled as connections;
+reference archetype matches are explicitly based on names and may describe
+another patch. These repairs do not introduce a combat simulator.
+
+Run-history analysis had the same problem. Post-mortem insights graded deck
+size, relic count, card-type ratios and repeated copies, called skipped
+rewards a weakness, treated an unrecorded run time as a speed run, folded
+event damage into a combat total, used the number of recorded floors as the
+death floor and estimated death acts from floor numbers. They now report the
+recorded counts, combat and non-combat damage separately, the floor number
+the save stored, and only the acts the save recorded; losses without a
+recorded act are reported as uncounted. Card-text checks on a finished run
+use that run's own recorded game version and say so when the version is
+unrecorded or unreviewed instead of borrowing the installed game's card text.
+
+## Remaining content findings
+
+The current catalog has 639 cards, 312 relics, 65 potions, 200 mixed monster/
+encounter records, 67 event/Ancient records, 57 epochs and 23 badges. Extra rows
+may represent beta, historical content, curated variants or discovery entries.
+Do not delete them merely because they are outside a reviewed main pool.
+
+The localization audit now separates dotted Sea Glass character titles from
+serialized model IDs. Those are variants of one native relic, although the
+catalog retains its existing curated variants for compatibility. Localization
+also contains unused names, pets, transformations and helpers. For example,
+Hatchling is a display-name change of Tough Egg, not another monster ModelId.
+
+The reference catalog still has sixteen blank base descriptions and 51 blank
+upgraded descriptions; these counts describe the unversioned reference rows.
+All sixteen base blanks are outside the reviewed main pools. The main profile
+now supplies reviewed rules for every main card, with no upgrade text required
+for cards that cannot upgrade. The unversioned reference still has five blank
+relic descriptions, 139 mixed monster/encounter rows without HP and 136 without
+patterns. The selected main profile supplies all reviewed relic rules and
+monster HP, and treats encounter rosters separately. Six reference events lack
+choices; the main profile supplies reviewed summaries for all 65 registered main events/Ancients. Eight reference epoch entries remain blank, while the main profile
+supplies reviewed information for all 57. These reference-file counts are
+investigation queues, not counts of missing selected-main behavior. The 23
+registered badges have requirements; beta changes and gameplay persistence
+still require verification.
+
+Branch metadata remains absent on 636/639 cards, 310/312 relics and 64/65 potions.
+The catalog still mixes information collected at different revisions. Versioned
+mechanics now cover the bounded main scopes above. Enemy move/state-machine
+behavior, full event simulations, other systems and beta remain review work. These
+profiles and refresh guards do not establish unreviewed families' or beta's
+compatibility.
+
+Characters, acts, powers, enchantments, afflictions, orbs, keywords, intents,
+ascension, modes, modifiers and achievements need a feature-by-feature audit.
+Some already participate in live records or analysis. A model definition alone
+does not prove a shipped feature; neither does absence of a dedicated JSON file
+prove that the app has no support for it.
 
 ## Ordered execution and acceptance
 
@@ -114,18 +320,19 @@ especially require active-pool confirmation.
    revisions and actual pool membership for both. Build a patch-impact ledger
    for every changed entity, field and integration since v0.107.1. Completion:
    every item has evidence or an explicit unresolved status.
-2. **Repair identity and availability.** Verify the 23 candidate aliases using
-   native model/save IDs and runtime lookup; use explicit mappings with collision
-   tests. Separate monsters from encounters and Ancients from ordinary events.
+2. **Repair identity and availability.** The 24 reviewed compatibility
+   mappings and the main pool identity baseline are implemented. Continue with
+   beta, special ending content, pets, availability and collision checks. Separate monsters from encounters and Ancients from ordinary events.
    Classify active, generated, co-op, removed, deprecated, placeholder and modded
    records. Preserve old identifiers for history. Completion: every expected
    native ID resolves appropriately; no speculative alias or missing-name fallback
    is counted as complete support.
 3. **Make data compatible with the selected build.** Maintain explicit main/beta
-   datasets or versioned mechanics with provenance. Select from installed/run
-   evidence, expose unknown/mismatched versions, and prevent mixing mechanics in
-   updates, overlays, deck analysis and patch statistics. Remove the hardcoded
-   v0.107.1 overlay metadata and verify installed release information. Prioritize
+   datasets or versioned mechanics with provenance. The main card, relic, potion, monster HP, encounter roster, epoch and event
+   profiles, plus saved-card-copy support, are implemented within the scopes above. Extend the same evidence boundaries to
+   other families and beta; expose unknown/mismatched versions and prevent mixing mechanics in
+   updates, overlays, deck analysis and patch statistics. Overlay generation now records actual installed release metadata;
+   use that evidence when selecting and validating compatible mechanics. Prioritize
    main because it is the installed build, while retaining beta as a separately
    qualified target. Completion: known divergent cards render and analyze using
    the correct branch; unknown versions cannot silently pass as verified.

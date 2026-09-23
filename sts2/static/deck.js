@@ -2,6 +2,7 @@
   var KEY = 'spirescope_decks';
   var MAX_QTY = 100;
   var copies = {};
+  var versionInput = document.getElementById("deck-game-version");
   var instanceInput = document.getElementById("deck-instances");
   var cardQtys = {};
   var cardCharacter = {};
@@ -62,7 +63,7 @@
     if (qty > (cardQtys[cardId] || 0) && totalSelected() >= 100) return;
     if (copies[cardId] && qty < copies[cardId].length) copies[cardId] = copies[cardId].slice(0, qty);
     cardQtys[cardId] = qty;
-    var el = document.querySelector('.deck-card[data-card-id="' + cardId + '"]');
+    var el = document.querySelector('.deck-card[data-card-id="' + CSS.escape(cardId) + '"]');
     if (!el) return;
     var qtyEl = el.querySelector('.qty-count');
     if (qtyEl) qtyEl.textContent = qty;
@@ -70,7 +71,9 @@
   }
 
   function setQuantities(data) {
-    var restored = data && data.version === 2 ? data.instances : null;
+    var restored = data && (data.version === 2 || data.version === 3) ? data.instances : null;
+    var savedVersion = data && data.version === 3 && typeof data.game_version === 'string' ? data.game_version : '';
+    if (versionInput) versionInput.value = savedVersion;
     if (restored) {
       data = restored.map(function(item) { return item.card_id; });
     }
@@ -83,7 +86,7 @@
       var counts = {};
       data.forEach(function(id) { counts[id] = (counts[id] || 0) + 1; });
       for (var id in counts) {
-        if (id in cardQtys) setCardQty(id, counts[id]);
+        setCardQty(id, counts[id]);
       }
     } else if (data && typeof data === 'object') {
       // New format: {card_id: qty}
@@ -136,7 +139,7 @@
     sel.innerHTML = '<option value="">Load saved deck...</option>';
     Object.keys(decks).sort().forEach(function(name) {
       var d = decks[name];
-      var count = d.version === 2 ? d.instances.length : (Array.isArray(d) ? d.length : deckCardCount(d));
+      var count = (d.version === 2 || d.version === 3) ? d.instances.length : (Array.isArray(d) ? d.length : deckCardCount(d));
       var o = document.createElement('option'); o.value = name; o.textContent = name + ' (' + count + ' cards)';
       sel.appendChild(o);
     });
@@ -151,7 +154,7 @@
       var name = prompt('Deck name (saving as ' + character + '):');
       if (!name) return;
       var key = character + ' / ' + name;
-      var decks = getDecks(); decks[key] = {version: 2, instances: selectedInstances()}; saveDecks(decks);
+      var decks = getDecks(); decks[key] = {version: 3, game_version: versionInput ? versionInput.value : "", instances: selectedInstances()}; saveDecks(decks);
       refreshSelect();
     });
   }
@@ -160,7 +163,12 @@
     loadSel.addEventListener('change', function() {
       var name = this.value; if (!name) return;
       var decks = getDecks();
-      if (decks[name]) setQuantities(decks[name]);
+      if (decks[name]) {
+        setQuantities(decks[name]);
+        // Refresh descriptions and compatibility status using the saved build.
+        // Old deck formats have no build evidence and remain explicitly unknown.
+        if (form) form.requestSubmit();
+      }
     });
   }
   var deleteBtn = document.getElementById('delete-deck');
@@ -470,8 +478,12 @@
 
   /* ── Post-submit restoration (reads from data attribute, CSP-safe) ── */
   var initEl = document.getElementById('deck-init-data');
-  if (initEl) {
+  if (initEl && !Object.keys(copies).length) {
+    // Legacy pages may have only quantities. Modern pages already restored
+    // exact copies above; replaying quantities would erase their metadata.
+    var pageVersion = versionInput ? versionInput.value : '';
     try { setQuantities(JSON.parse(initEl.getAttribute('data-selected'))); } catch(e) {}
+    if (versionInput) versionInput.value = pageVersion;
   }
   updateCounts();
 

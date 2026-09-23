@@ -1,0 +1,441 @@
+{
+  "game_version": "v0.107.1",
+  "game_commit": "59260271",
+  "reviewed_at": "2026-09-22",
+  "complete": false,
+  "scope": "Declared possible-monster rosters and room types for the 85 independently inventoried main encounters.",
+  "method": "77 complete literal AllPossibleMonsters declarations; 8 separately reviewed static collections, unions and Fabricator spawn sets. RoomType declarations are literal. This records possible participants, not simultaneous counts, starting lineups, generation probabilities, all summons or encounter-specific stat adjustments.",
+  "reviewed_ids": [
+    "ENCOUNTER.AEONGLASS_BOSS",
+    "ENCOUNTER.AXEBOTS_NORMAL",
+    "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_ENCOUNTER",
+    "ENCOUNTER.BOWLBUGS_NORMAL",
+    "ENCOUNTER.BOWLBUGS_WEAK",
+    "ENCOUNTER.BYGONE_EFFIGY_ELITE",
+    "ENCOUNTER.BYRDONIS_ELITE",
+    "ENCOUNTER.CEREMONIAL_BEAST_BOSS",
+    "ENCOUNTER.CHOMPERS_NORMAL",
+    "ENCOUNTER.CONSTRUCT_MENAGERIE_NORMAL",
+    "ENCOUNTER.CORPSE_SLUGS_NORMAL",
+    "ENCOUNTER.CORPSE_SLUGS_WEAK",
+    "ENCOUNTER.CUBEX_CONSTRUCT_NORMAL",
+    "ENCOUNTER.CULTISTS_NORMAL",
+    "ENCOUNTER.DECIMILLIPEDE_ELITE",
+    "ENCOUNTER.DENSE_VEGETATION_EVENT_ENCOUNTER",
+    "ENCOUNTER.DEVOTED_SCULPTOR_WEAK",
+    "ENCOUNTER.ENTOMANCER_ELITE",
+    "ENCOUNTER.EXOSKELETONS_NORMAL",
+    "ENCOUNTER.EXOSKELETONS_WEAK",
+    "ENCOUNTER.FABRICATOR_NORMAL",
+    "ENCOUNTER.FAKE_MERCHANT_EVENT_ENCOUNTER",
+    "ENCOUNTER.FLYCONID_NORMAL",
+    "ENCOUNTER.FOGMOG_NORMAL",
+    "ENCOUNTER.FOSSIL_STALKER_NORMAL",
+    "ENCOUNTER.FROG_KNIGHT_NORMAL",
+    "ENCOUNTER.FUZZY_WURM_CRAWLER_WEAK",
+    "ENCOUNTER.GLOBE_HEAD_NORMAL",
+    "ENCOUNTER.GREMLIN_MERC_NORMAL",
+    "ENCOUNTER.HAUNTED_SHIP_NORMAL",
+    "ENCOUNTER.HUNTER_KILLER_NORMAL",
+    "ENCOUNTER.INFESTED_PRISMS_ELITE",
+    "ENCOUNTER.INKLETS_NORMAL",
+    "ENCOUNTER.KAISER_CRAB_BOSS",
+    "ENCOUNTER.KNIGHTS_ELITE",
+    "ENCOUNTER.KNOWLEDGE_DEMON_BOSS",
+    "ENCOUNTER.LAGAVULIN_MATRIARCH_BOSS",
+    "ENCOUNTER.LIVING_FOG_NORMAL",
+    "ENCOUNTER.LOUSE_PROGENITOR_NORMAL",
+    "ENCOUNTER.MAWLER_NORMAL",
+    "ENCOUNTER.MECHA_KNIGHT_ELITE",
+    "ENCOUNTER.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+    "ENCOUNTER.MYTES_NORMAL",
+    "ENCOUNTER.NIBBITS_NORMAL",
+    "ENCOUNTER.NIBBITS_WEAK",
+    "ENCOUNTER.OVERGROWTH_CRAWLERS",
+    "ENCOUNTER.OVICOPTER_NORMAL",
+    "ENCOUNTER.OWL_MAGISTRATE_NORMAL",
+    "ENCOUNTER.PHANTASMAL_GARDENERS_ELITE",
+    "ENCOUNTER.PHROG_PARASITE_ELITE",
+    "ENCOUNTER.PUNCH_CONSTRUCT_NORMAL",
+    "ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER",
+    "ENCOUNTER.QUEEN_BOSS",
+    "ENCOUNTER.RUBY_RAIDERS_NORMAL",
+    "ENCOUNTER.SCROLLS_OF_BITING_NORMAL",
+    "ENCOUNTER.SCROLLS_OF_BITING_WEAK",
+    "ENCOUNTER.SEAPUNK_NORMAL",
+    "ENCOUNTER.SEAPUNK_WEAK",
+    "ENCOUNTER.SEWER_CLAM_NORMAL",
+    "ENCOUNTER.SHRINKER_BEETLE_WEAK",
+    "ENCOUNTER.SKULKING_COLONY_ELITE",
+    "ENCOUNTER.SLIMED_BERSERKER_NORMAL",
+    "ENCOUNTER.SLIMES_NORMAL",
+    "ENCOUNTER.SLIMES_WEAK",
+    "ENCOUNTER.SLITHERING_STRANGLER_NORMAL",
+    "ENCOUNTER.SLUDGE_SPINNER_WEAK",
+    "ENCOUNTER.SLUMBERING_BEETLE_NORMAL",
+    "ENCOUNTER.SNAPPING_JAXFRUIT_NORMAL",
+    "ENCOUNTER.SOUL_FYSH_BOSS",
+    "ENCOUNTER.SOUL_NEXUS_ELITE",
+    "ENCOUNTER.SPINY_TOAD_NORMAL",
+    "ENCOUNTER.TERROR_EEL_ELITE",
+    "ENCOUNTER.TEST_SUBJECT_BOSS",
+    "ENCOUNTER.THE_INSATIABLE_BOSS",
+    "ENCOUNTER.THE_KIN_BOSS",
+    "ENCOUNTER.THE_LOST_AND_FORGOTTEN_NORMAL",
+    "ENCOUNTER.THE_OBSCURA_NORMAL",
+    "ENCOUNTER.THIEVING_HOPPER_WEAK",
+    "ENCOUNTER.TOADPOLES_WEAK",
+    "ENCOUNTER.TUNNELER_WEAK",
+    "ENCOUNTER.TURRET_OPERATOR_WEAK",
+    "ENCOUNTER.TWO_TAILED_RATS_NORMAL",
+    "ENCOUNTER.VANTOM_BOSS",
+    "ENCOUNTER.VINE_SHAMBLER_NORMAL",
+    "ENCOUNTER.WATERFALL_GIANT_BOSS"
+  ],
+  "helper_hashes": {
+    "MegaCrit.Sts2.Core.Models/EncounterModel.cs": "6eaa2f804db14af9d8c90b75ee0762c9b807fcf9d0cfb093b3f217501da89f90",
+    "MegaCrit.Sts2.Core.Models.Monsters/Fabricator.cs": "7a78bc8f844f4c92eb877957510dd8d3f1450d9b8eb3bf3f59ebb5bf47678c75"
+  },
+  "records": {
+    "ENCOUNTER.AEONGLASS_BOSS": {
+      "definition_sha256": "4a4bce9de986094ad8f24c56ddafe18741fd0ef92867b405993bd946f1a04fba",
+      "roster_record_sha256": "f7fed3307805926b60e3e536fc1471b33c955724df95101137a4729744c8a071"
+    },
+    "ENCOUNTER.AXEBOTS_NORMAL": {
+      "definition_sha256": "3a0e7dc63f498284ffc034a5ae6a8651bdaf4e330567ff7a4f0ee9a164e66637",
+      "roster_record_sha256": "7b1920f47db6d6cefcfb924e9cf503fc2385e8567d0f958aa46ec77d75bd79fb"
+    },
+    "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_ENCOUNTER": {
+      "definition_sha256": "492799d74bbca2e7f840e86f2504538f89cc303583dff9ba9ae7639f290cef08",
+      "roster_record_sha256": "af6fe71370c9cfa8e776a30a10804fddb1ea220032506dc231e5610a038547af"
+    },
+    "ENCOUNTER.BOWLBUGS_NORMAL": {
+      "definition_sha256": "9825e8ed31f14a2ca08e5b0e2cc790962362bf59f682b9bf62d9354ad831f0e4",
+      "roster_record_sha256": "d2c654ad101eba136a8950d54329efd30a9b4e261f6af6555b669bb85da2a7c8"
+    },
+    "ENCOUNTER.BOWLBUGS_WEAK": {
+      "definition_sha256": "7507c76268d014e7cb13ec1e4342aaf1efb5831317324a612f7fd62c1777ebfc",
+      "roster_record_sha256": "65c97c2e024a5022888f82a7ec33d4a402613e03d8976cc44b720554aaaae3cc"
+    },
+    "ENCOUNTER.BYGONE_EFFIGY_ELITE": {
+      "definition_sha256": "f7437870dfd57c72bd6f51220775759cb5598a0f342ee28cb6c22adcf29a8331",
+      "roster_record_sha256": "72516b5f6d629ace6c939a208a360f905af1b6a6cb9ff9d09e719ebc968312ab"
+    },
+    "ENCOUNTER.BYRDONIS_ELITE": {
+      "definition_sha256": "839f6504977f75de8895517e432b2eb7ca16e6caf86479e93bd8036049a34330",
+      "roster_record_sha256": "716eef1e3105d0d3e8bfbfbce0e2c78b1cff3fedc292b048adb19766f5590a03"
+    },
+    "ENCOUNTER.CEREMONIAL_BEAST_BOSS": {
+      "definition_sha256": "423692a5d8cfdc20af64817ee972c93ca9089da3d6403de7d8e3955a03c3af25",
+      "roster_record_sha256": "e1a20f7f39167b3efd0184ed6d1148f4e9890559824a77189bd9341bebbb680d"
+    },
+    "ENCOUNTER.CHOMPERS_NORMAL": {
+      "definition_sha256": "4a818e6532f6de8ba09835d2b21d325ee045885be579c58ee869f38802302827",
+      "roster_record_sha256": "f03ec3337e9b6ffb3462d635afa5210417247e39c2c08cdc9406553dca0aa37f"
+    },
+    "ENCOUNTER.CONSTRUCT_MENAGERIE_NORMAL": {
+      "definition_sha256": "287f31b8fdf6c8b429f9b35e668aa59dad2cef65cfa7142d7e576c416870fcb3",
+      "roster_record_sha256": "51c16e376695b8d9a677992485a1b180c04adae06da2853f357d2fce797baf24"
+    },
+    "ENCOUNTER.CORPSE_SLUGS_NORMAL": {
+      "definition_sha256": "2544670a94e60b0034c616cb99a368f0068347267372f2f57dfc9de09b682c3e",
+      "roster_record_sha256": "3d19f1a8d527616e2c29ad9d3742a988ce17226f8878812791a4fb12d21e91c8"
+    },
+    "ENCOUNTER.CORPSE_SLUGS_WEAK": {
+      "definition_sha256": "8b63878122e5b09a96510dabe2546ad9aa9e4a796d6df144d464a54994bba0f2",
+      "roster_record_sha256": "4cf3dc310ebfde0cd10e205eecffb9e2f4f52671c0f2fa4f36fbc57c2c4fe750"
+    },
+    "ENCOUNTER.CUBEX_CONSTRUCT_NORMAL": {
+      "definition_sha256": "dbea21586a703966af38d642a69beed341be7074d389bd1bbbf3dcf85e797fc9",
+      "roster_record_sha256": "472f676cdbf2fda20fba9ec9379e13cd6c812732f571e5291bc7b9ebd0e5e3e6"
+    },
+    "ENCOUNTER.CULTISTS_NORMAL": {
+      "definition_sha256": "7b8ecee4b24b67203de229b5109c1a6c6e4b120f8141cbed296fd3a8399904df",
+      "roster_record_sha256": "4f808088951d7378b6f362dc34ae1e870287c7b5c3f5a9b43b21d3a42c0c4ebe"
+    },
+    "ENCOUNTER.DECIMILLIPEDE_ELITE": {
+      "definition_sha256": "0da9ea28ff0171a652192f3e4306767b3e07f4517bd903c97ede9f5b430a7572",
+      "roster_record_sha256": "833218622c8a219fc11a47329763fc9632518ec3710ea1abf2edd63301f50179"
+    },
+    "ENCOUNTER.DENSE_VEGETATION_EVENT_ENCOUNTER": {
+      "definition_sha256": "275c12c3e1ca00a1cc4cf176518973ea5b967558f4a53d00acc7264116fa6bdf",
+      "roster_record_sha256": "53e2b6a25d0318646d9d68ae48af1c7a05be12bdbd28b54e54a9eced2128d827"
+    },
+    "ENCOUNTER.DEVOTED_SCULPTOR_WEAK": {
+      "definition_sha256": "4a2542328d2f57d88aa167c0501f99b782c86f1e52f0e679e9640e3eaac7ed72",
+      "roster_record_sha256": "48f4f18a11669886b0711c6757b7dafcc58c5d4be789d08b77f629d089aafc7f"
+    },
+    "ENCOUNTER.ENTOMANCER_ELITE": {
+      "definition_sha256": "50a2390b9328c24aaeec0732864dbf7de583e57007910ab41f42c514b687f736",
+      "roster_record_sha256": "0e16a0532e96fcdedb7c71c19b586f961d031a802e4915530d4f345f23dee6fd"
+    },
+    "ENCOUNTER.EXOSKELETONS_NORMAL": {
+      "definition_sha256": "edc6c4b778ec0f53e4bfbcec77c65929feebd7cf911ad37f1b015032320b9e23",
+      "roster_record_sha256": "5e2f81c173709df86295793c783bc2862629140997db8f603a228ddff5a568d3"
+    },
+    "ENCOUNTER.EXOSKELETONS_WEAK": {
+      "definition_sha256": "3c804d173bd5305f335dc8903987b792ff189ed91267d7938a6ee1ff169f7b7f",
+      "roster_record_sha256": "0f8479fd8546bd5a66ed73d88c8476d835b70a1545379d269233e537a8dae5cb"
+    },
+    "ENCOUNTER.FABRICATOR_NORMAL": {
+      "definition_sha256": "0390ef0151a229f5b827b4ad77bed3feb39bd9331e9f06a916c6cae86de0966d",
+      "roster_record_sha256": "b9a2b57701e6411bc4911c7889ba6dc11455e7888994ed6dbd40b7cef7dcbcf0"
+    },
+    "ENCOUNTER.FAKE_MERCHANT_EVENT_ENCOUNTER": {
+      "definition_sha256": "c89809e8021159cda1abef403fbf4775e136e27341fd5afb71d77d983d344e45",
+      "roster_record_sha256": "fcd6989c81de0d2377e6ba309cf67f9a62d3b0093519d8b464d115d984ed0083"
+    },
+    "ENCOUNTER.FLYCONID_NORMAL": {
+      "definition_sha256": "9c0d5915405eb4f653b55178906290bcd6e797fe5d0cb2e5b7374e2017e4c5eb",
+      "roster_record_sha256": "12191b795d3889bf06d4f2c1f901a108181a423945f6bb0a681ef4dc1961adb6"
+    },
+    "ENCOUNTER.FOGMOG_NORMAL": {
+      "definition_sha256": "a998845b7f23e2492eb26e21b8bbfc202da5fc94d444cba0c5545605f462a3f3",
+      "roster_record_sha256": "e73f1b96a826f9f1eb9cae2d45acd7aebe8546bcec39854204049c581061d444"
+    },
+    "ENCOUNTER.FOSSIL_STALKER_NORMAL": {
+      "definition_sha256": "8e2fb9b37d0f9fcfb0be7b74050cfed82a89e4de98ae1de710d768eb20fc72dd",
+      "roster_record_sha256": "445b61c1c3677fe8b3a06b2d52e6c7959c2545268399d9c4030489dfb6a770f6"
+    },
+    "ENCOUNTER.FROG_KNIGHT_NORMAL": {
+      "definition_sha256": "91ea3468c6309284cc386d98cf17895fc0cfff337eeebc09a859d989a5500f96",
+      "roster_record_sha256": "ab76bb42d7252dad1cbd38ffbe44d6b5abfe5976fa28756223abc8f37dfe3837"
+    },
+    "ENCOUNTER.FUZZY_WURM_CRAWLER_WEAK": {
+      "definition_sha256": "306bae08ec4ffc05936242ab7749bfe24e8facf79cbdbe4e3d4bc84d9a25bd0e",
+      "roster_record_sha256": "b0428a418fc588619aac3016842a476179cc562befe592a8454f449ca1f8964b"
+    },
+    "ENCOUNTER.GLOBE_HEAD_NORMAL": {
+      "definition_sha256": "3b2ff707027b05fffac4407ea88a6bacd420b559968e4cb76b93f311bb11498f",
+      "roster_record_sha256": "87cabf4cf30cb4cca608e8ff9300be975968587eb953b270fe4157900d8ffe1e"
+    },
+    "ENCOUNTER.GREMLIN_MERC_NORMAL": {
+      "definition_sha256": "0d68c699af2cd9778313d5707cfa5afe5c4b9bb4203fd392c2a2e9e52b1319ee",
+      "roster_record_sha256": "48f1ef03482f9a09fa770e625fb34440581810a23be945b4db0be88fd7d7fba0"
+    },
+    "ENCOUNTER.HAUNTED_SHIP_NORMAL": {
+      "definition_sha256": "67e13e2cced232196d069d1414c4adff53ecfc944d7e05e832e9ed0894cce00f",
+      "roster_record_sha256": "222c33891c943c149967cac5a74c3552b78c419ef62f29288d6a33b173a89e35"
+    },
+    "ENCOUNTER.HUNTER_KILLER_NORMAL": {
+      "definition_sha256": "23196401f9a10864dde0982dfd5f4e37ff15da086a2f04c98fd42274958f0c9c",
+      "roster_record_sha256": "777efcc3212cd9e317e811d54a724680d319d3112a9804d7c8e44160a6455d1a"
+    },
+    "ENCOUNTER.INFESTED_PRISMS_ELITE": {
+      "definition_sha256": "113529e21714e7eed5756845f2f7ab0ff841b8e3c07a31bccb6b5b841cec7eae",
+      "roster_record_sha256": "213195e1da183948d4aa5fbcabfd10cb4fa97836a6a9c10eae8ea90419828d40"
+    },
+    "ENCOUNTER.INKLETS_NORMAL": {
+      "definition_sha256": "701493790cfac154a8f7a49e82c455654b384757818e3b5b5dd50650607e5139",
+      "roster_record_sha256": "35ed70ef1ccc3d1b385342279671ec223395c0f5f2834de76de4bb46dff92be3"
+    },
+    "ENCOUNTER.KAISER_CRAB_BOSS": {
+      "definition_sha256": "07c9dfac1e3d99521efc9d55550e3aa089259f28a677ff71b5d456f632117e55",
+      "roster_record_sha256": "a80bc5a0e2d902866f80a847bb0441dc215da51686ac8a7b085f832ed028a26f"
+    },
+    "ENCOUNTER.KNIGHTS_ELITE": {
+      "definition_sha256": "1eed609a722c25e51764424e03707f9828d4ccd7bda8e7ffbd9256bd63ecb166",
+      "roster_record_sha256": "db782cf99eca7cee961166d08ae3196da79494b7ba086ee10ef0c26da4455a70"
+    },
+    "ENCOUNTER.KNOWLEDGE_DEMON_BOSS": {
+      "definition_sha256": "7e6f57fd52e38caa7a85f2824a6982049e3cf449cfdfd4864fa101a9b4eb75ad",
+      "roster_record_sha256": "7f93e819ea44dba6fc2368df4fa96835d98f33e1bf17939ae4c2ff0663976287"
+    },
+    "ENCOUNTER.LAGAVULIN_MATRIARCH_BOSS": {
+      "definition_sha256": "a9acc143be107e4608acb4072487b5647321e385860770ace3197d0b5775a420",
+      "roster_record_sha256": "9ac6a2d3dfcfb1c9f944f52f33fa22ee37344a272f9778426cfc38c75bce2df3"
+    },
+    "ENCOUNTER.LIVING_FOG_NORMAL": {
+      "definition_sha256": "7ab2f325cd780943141153c3f20c2b46d948c3757364e4d0dad792216d12c669",
+      "roster_record_sha256": "522f5ca77c1750414b4b00214ccc031415f085913f8eb56d77051f47ebee5423"
+    },
+    "ENCOUNTER.LOUSE_PROGENITOR_NORMAL": {
+      "definition_sha256": "2255bfdcc6b6e4171adec4223ccd7c89e88233e28b15380f9e9e9235c7a8e350",
+      "roster_record_sha256": "aa24682e847ea4603205a7f5036d4b5ecbb63c4e3722f08d9f9077ca0c4d9bfd"
+    },
+    "ENCOUNTER.MAWLER_NORMAL": {
+      "definition_sha256": "86b8ddea688444d729b279f6e5df181d80d8afd62452960d83795941e5e72f42",
+      "roster_record_sha256": "a4bf52a8de48bf8dcaf7a986b0f44e14d2e108a55861ce3ac2d17874f4d918c5"
+    },
+    "ENCOUNTER.MECHA_KNIGHT_ELITE": {
+      "definition_sha256": "7a2b8bceaeaa640c49ead31fafa282da09b7727ffd14aacbfe5e81adad44bae8",
+      "roster_record_sha256": "bb3d48963f836b08c885a52fa7f4a7e85861ea97541ba9fd5b1418910c7c8689"
+    },
+    "ENCOUNTER.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER": {
+      "definition_sha256": "f61dace2f57c326e564a5b3ab581addf5a87299c93f6b580af25549df9ceadf1",
+      "roster_record_sha256": "7493ffb11d0f9e5b66cd71bf1c51924c7ae22dcf319a37d872500a3b95476971"
+    },
+    "ENCOUNTER.MYTES_NORMAL": {
+      "definition_sha256": "19d319a0db7ed7646e3400985394e0a20095ba333e27dc57c44f6fb23d0ad097",
+      "roster_record_sha256": "880b9841867df33873d9716e685ba5652e26e7eec19a3d2bc2ae1de06797f446"
+    },
+    "ENCOUNTER.NIBBITS_NORMAL": {
+      "definition_sha256": "a5b84e1df56a5e85785ab654b899777db8baee453481de4faf140f7420f2edd9",
+      "roster_record_sha256": "2f23fde233c7f64726c47e9eb5354f2a2968d5fabef191de587071cf9dda0fe0"
+    },
+    "ENCOUNTER.NIBBITS_WEAK": {
+      "definition_sha256": "fa2354ed95db89c0d43cc2307cf2d6570a0a8c8028d9fd861ca432c52a0727b4",
+      "roster_record_sha256": "9eb702a5f7b9eaf9340c6069d0564636b2818e95a1904b391e404aef4ccf84f0"
+    },
+    "ENCOUNTER.OVERGROWTH_CRAWLERS": {
+      "definition_sha256": "19522315b75732f6b94cc09b63c2916edf626c226ee8efdb82be7af33ca8ff5f",
+      "roster_record_sha256": "0e7b2a94a21c6ff461e9121f9c3773f7ed892dcc800fcc21febcb7ba0623f010"
+    },
+    "ENCOUNTER.OVICOPTER_NORMAL": {
+      "definition_sha256": "79e1cc10a71566b316b20a23e7b7d447bdbf98896c2aca697d0af01e83422525",
+      "roster_record_sha256": "8ef671e491432f85ce83967fc37f09d8b5a6db2580597c08c15663dbeec121a1"
+    },
+    "ENCOUNTER.OWL_MAGISTRATE_NORMAL": {
+      "definition_sha256": "7d5b86b240f933ced98332eaa50e3e3eee5483ce12176e31a9e6c9ea8908b571",
+      "roster_record_sha256": "e32c652fcd3a404d8bee05aed8782134bb8f4b7d5a7c3ce03b88330c969ffbc6"
+    },
+    "ENCOUNTER.PHANTASMAL_GARDENERS_ELITE": {
+      "definition_sha256": "bed10f5feebd36d498891cbff36cf61d47b2485a02b1e86d6543a44ef4fb3841",
+      "roster_record_sha256": "aabdd515bea56b7aba7a40a60a679d00fb0dccb3b0dd6f2f1327affb729c4dc2"
+    },
+    "ENCOUNTER.PHROG_PARASITE_ELITE": {
+      "definition_sha256": "7c886e8ebf7db10427f78cbd958f85132d1311e8fc2b0e6f5c84aef5af4a67d6",
+      "roster_record_sha256": "0a4b1493a314db8e724f9132e489c000fff6de74d05a8f9774ada134ae701367"
+    },
+    "ENCOUNTER.PUNCH_CONSTRUCT_NORMAL": {
+      "definition_sha256": "0d920c1c446333d1a39b16a9814baa5f95a09a70a13e01900b36047907f406fa",
+      "roster_record_sha256": "078768617382b1a7144e46be109b92d70829387cee30dac8d59438f41365cb19"
+    },
+    "ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER": {
+      "definition_sha256": "b299a564e5bceb0e6aecda0eb13b5bb1374ddc75705e37039123ac5b07bd8060",
+      "roster_record_sha256": "cb421d74b8f13ffaece6d32597798a71e41699862abe570d3ae55d0c79eaac18"
+    },
+    "ENCOUNTER.QUEEN_BOSS": {
+      "definition_sha256": "a951d1d566e97cd332ddb614b084bcfde242e8d5ca31839ec2a411943e76bc55",
+      "roster_record_sha256": "15876d20a8ffb3cafb8fe1f4135ec552455fcd9d804285b79a92fe21741077eb"
+    },
+    "ENCOUNTER.RUBY_RAIDERS_NORMAL": {
+      "definition_sha256": "ce3789a28fb2c5f2e6645473ef806f6bcce236b47fb476f3c092db1b262a5f19",
+      "roster_record_sha256": "e3856092d20396b594c8d15177b882e1384f11eddb26028eee8f079bb4d98f2f"
+    },
+    "ENCOUNTER.SCROLLS_OF_BITING_NORMAL": {
+      "definition_sha256": "abf3819e25f9a5f642b5641f4c233492b95392b084b0af5d1758e33f8f78366b",
+      "roster_record_sha256": "b72ed4b03bc12c79a19716668d985d2e730b540c84837c5e8390962176a9bb8b"
+    },
+    "ENCOUNTER.SCROLLS_OF_BITING_WEAK": {
+      "definition_sha256": "290585aedc2b83455d1c28608dfbbc9af689ae8e4449ad98802772237fba7e2c",
+      "roster_record_sha256": "7d92e86db5d95d8ded89d66c5e6a86ce2d2c2e646a38ee63a8feeda15a5f6d31"
+    },
+    "ENCOUNTER.SEAPUNK_NORMAL": {
+      "definition_sha256": "c16009043b6802db13d35de88667dff611bb3f6cf3e6cd06b69801b0d514cd14",
+      "roster_record_sha256": "ad663b58f07f75c911079182c3d338a9d00e94e460cde1f3aea0cd8394c08789"
+    },
+    "ENCOUNTER.SEAPUNK_WEAK": {
+      "definition_sha256": "9ddbeb8262f02d729998124f684bfcb6f090848d8ab17ba41f64dae36a9773b9",
+      "roster_record_sha256": "12512a2e3fafc78f2066d41e2e3ae580b3a24fc7a24632625fa2fa3fedcbf9d9"
+    },
+    "ENCOUNTER.SEWER_CLAM_NORMAL": {
+      "definition_sha256": "6f3cf30ed9c1e731740eb55fc0eec13931ef5c5e1a84886ff34bb877a8b5db62",
+      "roster_record_sha256": "17847e694746b8f0c91343eaca66b10c7a0d946b62ce027118522361a303332d"
+    },
+    "ENCOUNTER.SHRINKER_BEETLE_WEAK": {
+      "definition_sha256": "188392adb5585394338ce8ffd4be9bfb1f84fd15f66a7f3f07447e04b7731b98",
+      "roster_record_sha256": "720200970e805a04e142a159081da28ccb9bc6ac0d40095b9cab47187bf52801"
+    },
+    "ENCOUNTER.SKULKING_COLONY_ELITE": {
+      "definition_sha256": "1aafa59bf3ac06b6781da281dddd65d6f063a5aa65c463321b89ebb3badd3b2d",
+      "roster_record_sha256": "fc004c7c967f21146a10551cd55a71e7a759dc9eb10a3740a04f082483869466"
+    },
+    "ENCOUNTER.SLIMED_BERSERKER_NORMAL": {
+      "definition_sha256": "e1659ca8f79cc932f7b825951bed44043a0faa373ba5443ed700ae510df1a1aa",
+      "roster_record_sha256": "0afb08fb7ee9feed5f24ecaccde8f8b2718417e4e44a57ca3b3d8bcf70297884"
+    },
+    "ENCOUNTER.SLIMES_NORMAL": {
+      "definition_sha256": "0c53efaaf3053551c55be100f69cfe3dfe5f32f6fac03f57db77d85c54db1c74",
+      "roster_record_sha256": "fad1120958c16b4fa9ad2cbb9650b635f14ad704891f6f3c65f1199ecfd813ed"
+    },
+    "ENCOUNTER.SLIMES_WEAK": {
+      "definition_sha256": "e28277926221eb06799873115b096e9b48a8672446754da75c5ae902beede7ec",
+      "roster_record_sha256": "1191ae428811151c270700c77ff2b7019477968bfa555e29e8b5c5c717b562fe"
+    },
+    "ENCOUNTER.SLITHERING_STRANGLER_NORMAL": {
+      "definition_sha256": "6303054f9e6b1809fe058179f5fe0a5a2b834255e300dd1e1b065c4ad37ccae3",
+      "roster_record_sha256": "de32576f3ed8ce2c22b53a84e2694e8541c4ef0c469e93ddce262bc28aaa42db"
+    },
+    "ENCOUNTER.SLUDGE_SPINNER_WEAK": {
+      "definition_sha256": "c11a81ed470fd487585947411ad589d2d40192befa4d7dd546cd0c35b8f29ff6",
+      "roster_record_sha256": "6f835b2ce2dfbc7943aa331a6ff058484ff0d15850f3990b7863dec533a71c03"
+    },
+    "ENCOUNTER.SLUMBERING_BEETLE_NORMAL": {
+      "definition_sha256": "0ae40808e8c225cbcc724dc14b4439c44a9dbdbd0c849d64d58e10cf90cc0932",
+      "roster_record_sha256": "c38cfe57ebb01631ab7eb9ee187a7cc920f981ffcf95a83642fb7c71f9581cd2"
+    },
+    "ENCOUNTER.SNAPPING_JAXFRUIT_NORMAL": {
+      "definition_sha256": "0a98fdd512aff75b5b1ff5876d7f9770a19cd38ef24e660c42ec9a0efd4a2548",
+      "roster_record_sha256": "a693b56280b8ec9bca42cf2068a7f5b8eb8307208f0a2cfa827710172b3b90ca"
+    },
+    "ENCOUNTER.SOUL_FYSH_BOSS": {
+      "definition_sha256": "a5cc41556f7878a644b630643f71a0bd43cb396a75fbcb7fe48640bf7607cd89",
+      "roster_record_sha256": "ea002d726e55780b942888a54a4e5547234aa6eada7bc50c724db92cd839ba1b"
+    },
+    "ENCOUNTER.SOUL_NEXUS_ELITE": {
+      "definition_sha256": "cd2209ee4d926e810ca322b91a0b9c7e2204ce8fead23e9d0f3c610904ff1c70",
+      "roster_record_sha256": "2466c1ddb1d5247652fec37650b10e035f9e8257f410d623e707b8f8047cb1b6"
+    },
+    "ENCOUNTER.SPINY_TOAD_NORMAL": {
+      "definition_sha256": "bdc0df997f8ac1628e4d722ad9f73ff72cf053f93b64d9d649fe5770d1327ed5",
+      "roster_record_sha256": "515056fdfb7ee6c1fc84f4df93c528219c1ce7776d30a0442ae85d60663a7956"
+    },
+    "ENCOUNTER.TERROR_EEL_ELITE": {
+      "definition_sha256": "5800407b7b8f6220ff37f73dda4d4add466bbc9db1c5c20f807d97ae057becf1",
+      "roster_record_sha256": "5f6fd49245647a2360f8c673ff2d25f9f33ec2655e39db91b5fab0172f52bc66"
+    },
+    "ENCOUNTER.TEST_SUBJECT_BOSS": {
+      "definition_sha256": "4b0128135b7281f606ad8142c996e3061c387640f2285854db351945745aa39f",
+      "roster_record_sha256": "26466d78ddb9c4c2cc48743357a21421ccfe3bffee9a3ca9dcc4a964dcd2747b"
+    },
+    "ENCOUNTER.THE_INSATIABLE_BOSS": {
+      "definition_sha256": "ea72f7e7e41fceb2c2afb65bf91e47cd1ec876b69be880df5d0b7f311ac6f217",
+      "roster_record_sha256": "690e3df876cb01fd797aa8d85eb17b2fbe743f67994709b5a8b25185af793d3e"
+    },
+    "ENCOUNTER.THE_KIN_BOSS": {
+      "definition_sha256": "eae6f5da4e04c1512fdd01f24838f5e659812162088259f4764573d057df076f",
+      "roster_record_sha256": "314f9cabae13e3d2ce3129458032f9a52c52eb84d413fd4253e2c8e9dc0427ba"
+    },
+    "ENCOUNTER.THE_LOST_AND_FORGOTTEN_NORMAL": {
+      "definition_sha256": "e77c9493a7adbdea9b732c98fdf3daefe20c8d86df5da0356598834c20f94ef0",
+      "roster_record_sha256": "dffe1dc6c555ae0a6d3c9140872a809e97dc0ee9e9e26b472ede388fd3a266fc"
+    },
+    "ENCOUNTER.THE_OBSCURA_NORMAL": {
+      "definition_sha256": "e3ef94c067e79aaed8465490e070397481e75a40150ee0405eb4581d5de71d92",
+      "roster_record_sha256": "e750532abe78a52e62f19748ade91c25b9e08c9aec638993fcbf4aaa27179f8f"
+    },
+    "ENCOUNTER.THIEVING_HOPPER_WEAK": {
+      "definition_sha256": "dadf66ac4d10376057a33300f5cd2e5e71923279cf4a45dc1320a7aedb429624",
+      "roster_record_sha256": "356720f1cf7ef058e9b6bc270514b4bf9f7d3b3b76566ea379325a84acb53941"
+    },
+    "ENCOUNTER.TOADPOLES_WEAK": {
+      "definition_sha256": "f88dc5d5d31aa51c13e6f754b9a2d2d0a831476366ef0e331e2bee8c862fa112",
+      "roster_record_sha256": "bea831a9553e77384f23cc075bfa2b8e470cb04aa2e18895e2c7d7f8ac1cfb4f"
+    },
+    "ENCOUNTER.TUNNELER_WEAK": {
+      "definition_sha256": "013ac46c54b228d412a28c18294b5a65d3623a28fa28388e5a856d24ca1e0fae",
+      "roster_record_sha256": "ed27b10d7e05e678107af5893cd01b0ca9c157904170813eb7e86952763c206f"
+    },
+    "ENCOUNTER.TURRET_OPERATOR_WEAK": {
+      "definition_sha256": "83b3a97a251256242c6b49ca6a64972c21eacd49e7969f5036feb8b0ec241a62",
+      "roster_record_sha256": "5a178089e044a984ec4c4a0ff710c6521b065d58adaa03f0006c76e73c039b90"
+    },
+    "ENCOUNTER.TWO_TAILED_RATS_NORMAL": {
+      "definition_sha256": "bafd98026caa6f58b946ae0733af47c9757e893fc8d3f73429767b0f91451a05",
+      "roster_record_sha256": "063b3066562b3ce8aa425122e016aa7db66b84a23932fd49922ae3a654c29ea7"
+    },
+    "ENCOUNTER.VANTOM_BOSS": {
+      "definition_sha256": "e72862d131895f8f2c8cb79e98d10d95d04454e874f4eaba8e94a7f0c0b3834b",
+      "roster_record_sha256": "7ad82955a3bd9358667693d5830f41041b7f60c49e357e641039f6614d0b3e64"
+    },
+    "ENCOUNTER.VINE_SHAMBLER_NORMAL": {
+      "definition_sha256": "3dcfa74acd36704d39019ad673c0bed43d3910b0154b486ab8af19455ff7d8ea",
+      "roster_record_sha256": "4783c68eebb2306e920669d74d6573687a7c6769c0bacc05d3404374c5c6c106"
+    },
+    "ENCOUNTER.WATERFALL_GIANT_BOSS": {
+      "definition_sha256": "a45cdecd5a82caf08df5377c3c0375a9f56267515382f0155570cdda0e5e3297",
+      "roster_record_sha256": "56955d230e2dcb452abf6cd4c6b93f01abbdb3f270d9e208b0dfbadff304cc03"
+    }
+  }
+}

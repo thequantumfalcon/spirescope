@@ -53,6 +53,13 @@
     <button class="shortcuts-btn" aria-label="Keyboard shortcuts" aria-haspopup="dialog" aria-controls="shortcut-overlay">?</button>
   </nav>
   <main id="main" class="container" data-page="{% block page_id %}home{% endblock %}">
+    {% set mechanics = mechanics_status(mechanics_view_version|default(none)) %}
+    {% if not mechanics.complete %}
+    <p class="text-sm text-muted" role="status">
+      {% if mechanics.game_version %}Game {{ mechanics.game_version }}: {{ mechanics.reviewed_cards }} cards have reviewed mechanics for this version.{% else %}Game version not verified.{% endif %}
+      The remaining catalog may describe other game versions. <a href="/settings#game-compatibility">Compatibility details</a>
+    </p>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
   <footer>

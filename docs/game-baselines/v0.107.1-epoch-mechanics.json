@@ -1,0 +1,399 @@
+{
+  "game_version": "v0.107.1",
+  "game_commit": "59260271",
+  "reviewed_at": "2026-09-22",
+  "complete": false,
+  "scope": "Requirements, reward lists and placeholder classification for 57 registered main timeline epochs.",
+  "method": "Independent EpochIds registry; literal per-epoch reward declarations; reviewed ProgressSaveManager acquisition checks, Standard-mode guard, Neow-to-Silent grant, SaveManager score-bar order and NGameOverScreen thresholds/overflow. Reward activation requires revealing an obtained epoch. Slot reachability, multiplayer progress persistence and historical/beta unlock changes are not simulated or certified.",
+  "registered_ids": [
+    "ACT2_B_EPOCH",
+    "ACT3_B_EPOCH",
+    "COLORLESS1_EPOCH",
+    "COLORLESS2_EPOCH",
+    "COLORLESS3_EPOCH",
+    "COLORLESS4_EPOCH",
+    "COLORLESS5_EPOCH",
+    "CUSTOM_AND_SEEDS_EPOCH",
+    "DAILY_RUN_EPOCH",
+    "DARV_EPOCH",
+    "DEFECT1_EPOCH",
+    "DEFECT2_EPOCH",
+    "DEFECT3_EPOCH",
+    "DEFECT4_EPOCH",
+    "DEFECT5_EPOCH",
+    "DEFECT6_EPOCH",
+    "DEFECT7_EPOCH",
+    "EVENT1_EPOCH",
+    "EVENT2_EPOCH",
+    "EVENT3_EPOCH",
+    "IRONCLAD2_EPOCH",
+    "IRONCLAD3_EPOCH",
+    "IRONCLAD4_EPOCH",
+    "IRONCLAD5_EPOCH",
+    "IRONCLAD6_EPOCH",
+    "IRONCLAD7_EPOCH",
+    "NECROBINDER1_EPOCH",
+    "NECROBINDER2_EPOCH",
+    "NECROBINDER3_EPOCH",
+    "NECROBINDER4_EPOCH",
+    "NECROBINDER5_EPOCH",
+    "NECROBINDER6_EPOCH",
+    "NECROBINDER7_EPOCH",
+    "NEOW_EPOCH",
+    "OROBAS_EPOCH",
+    "POTION1_EPOCH",
+    "POTION2_EPOCH",
+    "REGENT1_EPOCH",
+    "REGENT2_EPOCH",
+    "REGENT3_EPOCH",
+    "REGENT4_EPOCH",
+    "REGENT5_EPOCH",
+    "REGENT6_EPOCH",
+    "REGENT7_EPOCH",
+    "RELIC1_EPOCH",
+    "RELIC2_EPOCH",
+    "RELIC3_EPOCH",
+    "RELIC4_EPOCH",
+    "RELIC5_EPOCH",
+    "SILENT1_EPOCH",
+    "SILENT2_EPOCH",
+    "SILENT3_EPOCH",
+    "SILENT4_EPOCH",
+    "SILENT5_EPOCH",
+    "SILENT6_EPOCH",
+    "SILENT7_EPOCH",
+    "UNDERDOCKS_EPOCH"
+  ],
+  "score_unlocks": [
+    {
+      "id": "COLORLESS1_EPOCH",
+      "step": 1,
+      "threshold": 200
+    },
+    {
+      "id": "RELIC1_EPOCH",
+      "step": 2,
+      "threshold": 500
+    },
+    {
+      "id": "POTION1_EPOCH",
+      "step": 3,
+      "threshold": 750
+    },
+    {
+      "id": "UNDERDOCKS_EPOCH",
+      "step": 4,
+      "threshold": 1000
+    },
+    {
+      "id": "COLORLESS2_EPOCH",
+      "step": 5,
+      "threshold": 1250
+    },
+    {
+      "id": "RELIC2_EPOCH",
+      "step": 6,
+      "threshold": 1500
+    },
+    {
+      "id": "POTION2_EPOCH",
+      "step": 7,
+      "threshold": 1600
+    },
+    {
+      "id": "ACT2_B_EPOCH",
+      "step": 8,
+      "threshold": 1700
+    },
+    {
+      "id": "COLORLESS3_EPOCH",
+      "step": 9,
+      "threshold": 1800
+    },
+    {
+      "id": "RELIC3_EPOCH",
+      "step": 10,
+      "threshold": 1900
+    },
+    {
+      "id": "ACT3_B_EPOCH",
+      "step": 11,
+      "threshold": 2000
+    },
+    {
+      "id": "COLORLESS4_EPOCH",
+      "step": 12,
+      "threshold": 2100
+    },
+    {
+      "id": "RELIC4_EPOCH",
+      "step": 13,
+      "threshold": 2200
+    },
+    {
+      "id": "EVENT1_EPOCH",
+      "step": 14,
+      "threshold": 2300
+    },
+    {
+      "id": "COLORLESS5_EPOCH",
+      "step": 15,
+      "threshold": 2400
+    },
+    {
+      "id": "RELIC5_EPOCH",
+      "step": 16,
+      "threshold": 2500
+    },
+    {
+      "id": "EVENT2_EPOCH",
+      "step": 17,
+      "threshold": 2500
+    },
+    {
+      "id": "EVENT3_EPOCH",
+      "step": 18,
+      "threshold": 2500
+    }
+  ],
+  "helper_hashes": {
+    "MegaCrit.Sts2.Core.Timeline/EpochModel.cs": "799d38293bb1ec1774ed74c8a6afdb822790fcac2f7946cc2f4094ce18847992",
+    "MegaCrit.Sts2.Core.Saves/SaveManager.cs": "8374c73fdf06f0c32ce0a4c5487c13dcd322154a24c8291dd879230950a7ac59",
+    "MegaCrit.Sts2.Core.Saves.Managers/ProgressSaveManager.cs": "52e1db6417e67754fe26c10f8748f4f5da780efd7db4b9605ca06db8dc397ec4",
+    "MegaCrit.Sts2.Core.Runs/GameModeExtension.cs": "a033f752ffc2f07302de454d8ba0d14fcd68c5457c5c2af0af3b1c97a366635a",
+    "MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen/NGameOverScreen.cs": "f12f3176767587c12ce8911ccd7829178036420878d1a532c54f15392a165fa2",
+    "MegaCrit.Sts2.Core.Models/ActModel.cs": "55f3a43c7e055aff1e35985c0cd229f22a271698a82b0d0a24a3f01320dcab0b",
+    "MegaCrit.Sts2.Core.Models.CardPools/ColorlessCardPool.cs": "cf145555a76ab0676d9731a621fe896321266d139800ba2c049e808bb8fbc128",
+    "MegaCrit.Sts2.Core.Models.RelicPools/SharedRelicPool.cs": "7643b1f257757dd0504e0a3e8a2fc3097061ccbe0ada8333f0961284ed87d28d"
+  },
+  "records": {
+    "ACT2_B_EPOCH": {
+      "definition_sha256": "a38c6eb10551f1bf6fa09639503a4a35701118239cfe76ff3ea0e60454ec767a",
+      "mechanics_record_sha256": "0ce3c4824e64c4f5171bfcbe25ec730d99e3b08d634eda4bc62bdb7a0fcb041b"
+    },
+    "ACT3_B_EPOCH": {
+      "definition_sha256": "552635df97815b328b6a21637b569381a60cca1cb56eb72d91cc258859a2cece",
+      "mechanics_record_sha256": "9e856d5589c3b6e98cca19c06011a8c2f6add11346178e38be74a5c9d28322e3"
+    },
+    "COLORLESS1_EPOCH": {
+      "definition_sha256": "93d170b408f5f455b45447e77034579442fd2e5d44c2359670ddb06615ac0ca5",
+      "mechanics_record_sha256": "efeed7a69684117b014ab8edfb3f677e1be68a9db7aa4670a2944aa7d155d488"
+    },
+    "COLORLESS2_EPOCH": {
+      "definition_sha256": "1a4735175e959805d28fa6b456a074f7d8c1681b04e1ba5f7fdc83de960e5e84",
+      "mechanics_record_sha256": "19adf7a9e3bcefa468935d78b6740142029a83a906be3d6a6711152065012fe8"
+    },
+    "COLORLESS3_EPOCH": {
+      "definition_sha256": "3cf3c98e3fd2797433a9cbfb050827fc8ebc48dc8a39a6108e081f12537482f7",
+      "mechanics_record_sha256": "7ebafcfc50a7f7eb806c6ce43442579e53f328a08f972da459b00dfdc55db35a"
+    },
+    "COLORLESS4_EPOCH": {
+      "definition_sha256": "4bbe92d90a9340842d00147c81c7551efc653a5085fdbc094308fac92cbcd4b7",
+      "mechanics_record_sha256": "16e20afc03d2d0a24da98a8f31520bd078aac3551bdda82f464eab8b98549a29"
+    },
+    "COLORLESS5_EPOCH": {
+      "definition_sha256": "f97ca3798af391272f95cccb0e08ad4df26aada6f4d9568e09a537d881326e16",
+      "mechanics_record_sha256": "1b4e6874a94dbd227d3dc2cca3c69114110c889cf1310443ff7f66df04c95ae8"
+    },
+    "CUSTOM_AND_SEEDS_EPOCH": {
+      "definition_sha256": "898d32c05b6f32d23670fa45bc2e97706d822fca58811cc46a7b5dbca556e15b",
+      "mechanics_record_sha256": "ca745c5237228897f406ae7981b53128dada0c50c76807652ed7ae645b0fc104"
+    },
+    "DAILY_RUN_EPOCH": {
+      "definition_sha256": "081d637c5716558c6c0bae05fd6b6d03a88998ebc8ff090079303e65bcb2aa8d",
+      "mechanics_record_sha256": "c13be7534b69101001459a83f82ae1c6e0eababc249aca42c50482f7b335afa7"
+    },
+    "DARV_EPOCH": {
+      "definition_sha256": "1f5f3f249ab155bb94621c9da07855f67979c75e1dafa5aa5c58e1c257cacc55",
+      "mechanics_record_sha256": "a1ef74f89ebc616df3b1e52bcaae415dd5dffd4c228fc59d3d6459df2be704ce"
+    },
+    "DEFECT1_EPOCH": {
+      "definition_sha256": "472749c763769ff963d2a7b5b25aaa5deb159720cd1afd302c0c42057e59861d",
+      "mechanics_record_sha256": "289ae14b6374e6afcc245f45e162f965786265290eeae641d480a954fe08c284"
+    },
+    "DEFECT2_EPOCH": {
+      "definition_sha256": "c53cff9d8c28f22d9f6ad6d5bd75b731e2c315cdae513b76eaccaa9556bff749",
+      "mechanics_record_sha256": "d57cb4be925b5f6749369611bb9f8e86bb8df34366947660f00b0588ad804c0c"
+    },
+    "DEFECT3_EPOCH": {
+      "definition_sha256": "fb679c85133a323637c95ee07dfd7cd6c6e38c711b856d8d496e15d7bff60a7c",
+      "mechanics_record_sha256": "aa4809931a35da11f13d60d82e8213e019bf71e18f1ecc692c43b7ea168e1c30"
+    },
+    "DEFECT4_EPOCH": {
+      "definition_sha256": "eb627e667264bdcd4a325ebd43d2f8270a761f2fdf96c8eaac393dce117bbe46",
+      "mechanics_record_sha256": "f2dd11c772eb9972d1d0306b613bd5793198d8d752ebbf0b55a38a55b0d68745"
+    },
+    "DEFECT5_EPOCH": {
+      "definition_sha256": "685d88426aa56c20a900f4de5a956acaa513f483c058eb9a907f1a7a8a3f7f8c",
+      "mechanics_record_sha256": "38365637264a1e16701942a183d4b0760bb5a8cff54bf5f3f30daf1edf4db256"
+    },
+    "DEFECT6_EPOCH": {
+      "definition_sha256": "4479914200512bcfed18d9bfd2526c5acc61028256cab042652b146e198e5b68",
+      "mechanics_record_sha256": "2ae9024b1492e86e1133313b8d97337cbc9237026921067aea66a671ab457088"
+    },
+    "DEFECT7_EPOCH": {
+      "definition_sha256": "cbebdbd458d33a8a3d80b5c346a2e80391efd25fb13b26f787ce7bf31262db70",
+      "mechanics_record_sha256": "fc49530906276193728c8d397c35dffd45c394cd52725e1f248954f91ebb1528"
+    },
+    "EVENT1_EPOCH": {
+      "definition_sha256": "0c766a17589bec04fada0bbd42a302c5c477d338d7466f91121ba227a6596de0",
+      "mechanics_record_sha256": "e0e44f9ebb931257bdc5e6772b71008e8311fe355858ec4db20529f935cbf811"
+    },
+    "EVENT2_EPOCH": {
+      "definition_sha256": "bbfd971e7bbbe596051db2cbd07ead9ddc491ddc912b4f1e43f156fb95a7573e",
+      "mechanics_record_sha256": "f1471dc98d2fc542df332e81e3be205abad24e3913df7f8823e7fa509dd6d483"
+    },
+    "EVENT3_EPOCH": {
+      "definition_sha256": "98687a86aa4123fc177bc4e8a286dbf3b8da35d1d39ccb964383f248a0bdb824",
+      "mechanics_record_sha256": "4b33054c779f7e6f012954d02a7cd81e881fa6dde0774e234127578b0fc1be6f"
+    },
+    "IRONCLAD2_EPOCH": {
+      "definition_sha256": "099a11187ed0fc8ee7ac3c815728f2fb580a81a83edb30f875db9de8066ee521",
+      "mechanics_record_sha256": "b2c11676b231fa8256088a225428c7f3bac48dea8113e9984fbc2dd39b1d4764"
+    },
+    "IRONCLAD3_EPOCH": {
+      "definition_sha256": "07904f37484a6510fa23eae0cd4bb59f50b9b359c359e990839a70d40ddf78d0",
+      "mechanics_record_sha256": "867fd7de3e0f53500fc618b847f02ae35919b54f8dfa5d8efd55b65c524bb0b6"
+    },
+    "IRONCLAD4_EPOCH": {
+      "definition_sha256": "9c03f2e5800f8b50085d0e225a7a7a59713b7ef0bc85f4bb2611c0085d0e787d",
+      "mechanics_record_sha256": "5b6e17d1bc5e167a179d7a351a9301aa9a7206b3e201d0d45622201e4e0681b2"
+    },
+    "IRONCLAD5_EPOCH": {
+      "definition_sha256": "1ffe6337e0b82548a4a853d218b262412acda13584601a8146355fa772dc57bb",
+      "mechanics_record_sha256": "a0ca42314020c1696759a31cd40b326e257e62027b66338f0a2f82576690bbad"
+    },
+    "IRONCLAD6_EPOCH": {
+      "definition_sha256": "1eff02e10e1fa5d92d9a9e93376ebdcd10c2a374433d85ed32e912ae011d4b4c",
+      "mechanics_record_sha256": "cab470fa170274e869826c578cdcbe1d6c2cf46984d1e62cdee3a53e04b9bb33"
+    },
+    "IRONCLAD7_EPOCH": {
+      "definition_sha256": "04f8b459ddae398ec51f2942e0da25bb4183b35baf83585a8d49333861725d6e",
+      "mechanics_record_sha256": "0a58ae0c59a32baa245e6d14450c9a8d164a30cdf0810e21d720ddc88179fa12"
+    },
+    "NECROBINDER1_EPOCH": {
+      "definition_sha256": "7fc16fb3e5422aa28e7cb75cb7326050266b870473361d46c4b90c5fd26fbaf7",
+      "mechanics_record_sha256": "961671440187a24386b0a0875c45863bf9336f9c20132ea5a032504ce9b9fa00"
+    },
+    "NECROBINDER2_EPOCH": {
+      "definition_sha256": "31f26c404d60e361b022eee02d24e5696347ff968d583d75b2f3576f55c6312a",
+      "mechanics_record_sha256": "a9393e426cd3fb2c21f8c8314afc512a27227b7e20d4caac005ed54e43501a69"
+    },
+    "NECROBINDER3_EPOCH": {
+      "definition_sha256": "48bf061374f397932b40b482f6e9c2e64bd75629224796463c0471bad8923604",
+      "mechanics_record_sha256": "05f73aa0d71d4dcf6ce6a1a8a25ca0ad4e8f686171ea2080e52071b436aef393"
+    },
+    "NECROBINDER4_EPOCH": {
+      "definition_sha256": "a37283c23ad5535b7b80b02e4278d7fc7fd2f4dcf1ef059100ce99a8db322fa7",
+      "mechanics_record_sha256": "18848f512f75d345b6e6698b2b4b3e45a0307bfcf3b48dd60e8c27239da2b888"
+    },
+    "NECROBINDER5_EPOCH": {
+      "definition_sha256": "5f84cf29fb3ba5dca09e5cbd0ab7c843402d6cb3260f4f116e2021b2f0e4193d",
+      "mechanics_record_sha256": "fe98376ae7755500d19b9688b8ebae8a703fd6810aca5d812c48b1ebe4a404a4"
+    },
+    "NECROBINDER6_EPOCH": {
+      "definition_sha256": "095837b7d32ce70c1ab87e2bb426072261206d31249f8aa5bdb5d955d84111d9",
+      "mechanics_record_sha256": "0febf4b630678f0ffaeaecb6f2c690668937e74835b8c699373bfef91234fd97"
+    },
+    "NECROBINDER7_EPOCH": {
+      "definition_sha256": "8e909f2cff97604b8a58ef41d3f6695adcec03032190aecca18cd1694bca69d8",
+      "mechanics_record_sha256": "3d526fe8c42cfca8590846b06538d6ecb12058118c1cbd20f815d1962001e355"
+    },
+    "NEOW_EPOCH": {
+      "definition_sha256": "067cb5f0398051b87f34f7873e9499840c25e8c78fb59ccafa293fd46310ea26",
+      "mechanics_record_sha256": "632dec48491f001c8d6cf093a43835ca526954779f0ea2427c2a049dd34a19a2"
+    },
+    "OROBAS_EPOCH": {
+      "definition_sha256": "ec39b5372ef2609a295f415ae960c39376336703ba2c982ebd59634c5114653f",
+      "mechanics_record_sha256": "a4d77ed6ce844e9ea4461178ee10bd3995f12da7390b56149283f7b5bfb745c2"
+    },
+    "POTION1_EPOCH": {
+      "definition_sha256": "f875386ba1394b545682abe532a93c98ac52a68e84ebccb64037ef4cf3d1c5c3",
+      "mechanics_record_sha256": "7898ba90c6442ce9e598aeb871aa36c0a5d0c420e4e8d22b365f3275cdd09bb3"
+    },
+    "POTION2_EPOCH": {
+      "definition_sha256": "ed74ca4f79f7728f8fa50ffd705611d8d8ebfb6b34a09f4e443a182d94c2ccb7",
+      "mechanics_record_sha256": "fcd722ee9ca3c78bc7c55a9f5ecf9299da8f1bcbc226696f2d315970db51a72c"
+    },
+    "REGENT1_EPOCH": {
+      "definition_sha256": "1622c0cf15a1200170b5789c531dd9ff037b9296208ae699a53b8094d5687961",
+      "mechanics_record_sha256": "03294f6c22cb8985ef2a463da47171557093684e6bc200364c91bd7488263922"
+    },
+    "REGENT2_EPOCH": {
+      "definition_sha256": "80102b6d07c20acf0de61ce6e32710347c332ca7153c9d5dbe7df8a3fd2f2099",
+      "mechanics_record_sha256": "5e8d3e1bb6af4bce00fa85f55230ac9cac262339991974c4f7f0f1a6036536d8"
+    },
+    "REGENT3_EPOCH": {
+      "definition_sha256": "583360fb9ffcc89f9ee9db941c1774492c532ba2504ffb3a71e3ae5c2f79e13b",
+      "mechanics_record_sha256": "c6cf7eee37dd86cac6d99f66f8bd806fec0a71ab0113777c336fac773a402d2e"
+    },
+    "REGENT4_EPOCH": {
+      "definition_sha256": "9dd59561950d6bce64dcb8014877bdb0307451a40bfb722e08e2d05da7a59b0b",
+      "mechanics_record_sha256": "48e0d40ccd1020e8b02083313174b6786e66978a03c45f79e4cdfa6ee75d6058"
+    },
+    "REGENT5_EPOCH": {
+      "definition_sha256": "eca124eae3d53a69f12ec609d901f0f3d1d944e507d09fb1f09a036c5573a1c1",
+      "mechanics_record_sha256": "4bd50a2d13b33a4a391b498b9f5655202543c3bfb6eb334b25ba044851ad4644"
+    },
+    "REGENT6_EPOCH": {
+      "definition_sha256": "887c971634120a60fde1a3daaa607b024e84e516fa6f1bc42bd56d1d2b9837a3",
+      "mechanics_record_sha256": "a8edc77e479a033ed2ebcb637a93dad4d7616527ba624f156ee133e744294f34"
+    },
+    "REGENT7_EPOCH": {
+      "definition_sha256": "6a8ba49584212de52580ffbe3eb0158d7ef257137e5b0692d2e151fd9ac991f4",
+      "mechanics_record_sha256": "8fef0fa5bb49942f55282dba511813cb252388b63321f6137112c87cb76ebcbb"
+    },
+    "RELIC1_EPOCH": {
+      "definition_sha256": "dda22d09b11d6ecc7abf7467d6e1d6f9499817dfc5d3971970db931fbb0c039a",
+      "mechanics_record_sha256": "d754e4a00ba46c8971f11d6fdd72084cba97f63a1e1d04eb069f97628d18ee8d"
+    },
+    "RELIC2_EPOCH": {
+      "definition_sha256": "97e5cf303807910adef9482e15b6302a248206cb05e038a8e7ab25c95159225d",
+      "mechanics_record_sha256": "d3f3755a0aa45f3e7d4c323f076d0548fec0f59e5bb253bb8dd93fac943193f0"
+    },
+    "RELIC3_EPOCH": {
+      "definition_sha256": "942be5d5bfa5dfac83239171682c79a896199e6cb53bed96053c7609c3edefdd",
+      "mechanics_record_sha256": "1a7fea7a75165eda45efc1c62055a346cbacb8276cbb8fff3c87448556fe9260"
+    },
+    "RELIC4_EPOCH": {
+      "definition_sha256": "e2ca949a022be076f1af1819852486114aa60fa1abb2e107d85b367df69e038c",
+      "mechanics_record_sha256": "9480b9595d3b9080929a3c4427152a432c49d668fb47731cfc0e457cb577a5a5"
+    },
+    "RELIC5_EPOCH": {
+      "definition_sha256": "dd364889a7288d11545f23b8ec3306d5615dd56d467ee7c18fdfff70cf3b7b59",
+      "mechanics_record_sha256": "2498035211b6403b19ea90a3fc07fdf6170177ba061dd43f172e936df6fc73fe"
+    },
+    "SILENT1_EPOCH": {
+      "definition_sha256": "6505846b718cababedfb286f590c52f45b9ba8a01018e669519b30afe4481a9e",
+      "mechanics_record_sha256": "8c356749197017b0ba05c95059e68bbf491cebe6f789013680357be19ae381b3"
+    },
+    "SILENT2_EPOCH": {
+      "definition_sha256": "9676206ca104239726349356c91634d497e12acb4596243bbf49b26d95ab2224",
+      "mechanics_record_sha256": "ef628e5ae59f6e0591f3030d916b110e0096b49451a58118ad5da56f2c34c0d6"
+    },
+    "SILENT3_EPOCH": {
+      "definition_sha256": "893dcf9577c7617accc592937aa72cfe9df7cabc11851fb938b648b9dc351215",
+      "mechanics_record_sha256": "09503e86c50d5072842014b3cee63c9ddcb8e8d58c49940d8d90539c3bd0b9e4"
+    },
+    "SILENT4_EPOCH": {
+      "definition_sha256": "c58a6f6d905786bcd707f474e91b10299d2a6c1fd9afcbe888f67564bed55ae3",
+      "mechanics_record_sha256": "aad8861549abfa984ed4ff5fcc93b1ed4e5920c4684cf523b9fde5e90f24ba81"
+    },
+    "SILENT5_EPOCH": {
+      "definition_sha256": "16366d8f1f62066dae09ea3714628ae0c1bace3f56c25b651f37d70a4a71f797",
+      "mechanics_record_sha256": "46af87c96b444a422452be9136ac1cb07bb5e1aa63fe12f28be7c5d3d103e67a"
+    },
+    "SILENT6_EPOCH": {
+      "definition_sha256": "f5ee808cd07fc72521df1c1b2ad906de1c85be5280d64a55ae65f587c8222b1d",
+      "mechanics_record_sha256": "91fcd8757d609c50c2aea7fcfa97bd2270babe71061cf5c3ab5a3477b926217a"
+    },
+    "SILENT7_EPOCH": {
+      "definition_sha256": "e92115afdffb162dca78fdbd20323a4c0233932174ae8ea9639ccbe1037f5beb",
+      "mechanics_record_sha256": "d1b7903d1210c3301ef4a4f29c00aaae683fd568526bd8741f1d1320f4629649"
+    },
+    "UNDERDOCKS_EPOCH": {
+      "definition_sha256": "6313cb3dbde8bf39c9ede32ca97f514476c39c9e8782d13dbcb0cbe580568cf8",
+      "mechanics_record_sha256": "8cca2686b92b6a0a39484dde44b258f63449d49735da56d544ee6892c17a39f4"
+    }
+  }
+}

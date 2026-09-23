@@ -122,7 +122,8 @@ def native_ids(table: dict, suffix: str, *, variants: bool = False) -> dict[str,
         return {key.split(".", 1)[0]: value for key, value in table.items()
                 if re.fullmatch(r"[A-Z0-9_]+\.(?:title|bronzeTitle|silverTitle|goldTitle)", key)}
     # Nested option/move titles are not entities. Uppercase dotted variants
-    # (e.g. SEA_GLASS.DEFECT) are distinct and must not be truncated to DEFECT.
+    # (e.g. SEA_GLASS.DEFECT) are distinct localization variants. They are
+    # retained for review, not treated as separate serialized ModelIds.
     identifier = r"[A-Z0-9_]+(?:\.[A-Z0-9_]+)*" if variants else r"[A-Z0-9_]+"
     pattern = rf"({identifier})\.{suffix}"
     return {match[1]: value for key, value in table.items()
@@ -159,7 +160,8 @@ def compare(tables: dict, catalogs: dict) -> dict:
         native = native_ids(tables.get(family, {}), suffix, variants=family == "relics")
         excluded = {key: reason for key, title in native.items()
                     if (reason := excluded_reason(key, title))}
-        candidates = set(native) - excluded.keys()
+        variants = {key: key.split(".", 1)[0] for key in native if "." in key}
+        candidates = set(native) - excluded.keys() - variants.keys()
         records = catalogs.get(filename, []) if filename else []
         ids = {}
         for record in records:
@@ -177,6 +179,7 @@ def compare(tables: dict, catalogs: dict) -> dict:
             "table_present": family in tables,
             "catalog": filename,
             "native_named_entries": len(native),
+            "localization_variants_not_model_ids": variants,
             "excluded_entries": excluded,
             "candidate_entries": len(candidates),
             "catalog_records_in_namespace": len(ids),

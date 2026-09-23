@@ -8,7 +8,8 @@
 
 {% if not progress %}
 <p class="text-muted mt-lg mb-lg">No save data found. Play some Slay the Spire 2 and your epoch progress will appear here.</p>
-{% else %}
+{% endif %}
+{% if progress %}
 
 <div class="stat-grid mb-lg">
   <div class="stat-box">
@@ -26,6 +27,8 @@
   <div class="collection-bar-fill" style="width:{{ epoch_pct }}%"></div>
   <span class="collection-bar-label">{{ epoch_pct }}%</span>
 </div>
+
+{% endif %}
 
 <div class="filters mb-sm">
   <a href="/epochs" {% if not selected_category %}class="active"{% endif %}>All</a>
@@ -61,6 +64,10 @@
     <span class="tag tag-{{ ep.category }}">{{ ep.category|title }}</span>
   </div>
   {% if ep.status == 'deprecated' %}<p class="text-sm text-muted">Deprecated — removed from the game and no longer earnable.</p>{% endif %}
+  {% if ep.mechanics_version %}<p class="text-sm text-muted">Requirements and rewards checked for {{ ep.mechanics_version }}.</p>
+  {% else %}<p class="text-sm text-muted">Reference requirements and rewards; not verified for the selected game version.</p>{% endif %}
+  {% if ep.status == 'placeholder' %}<p class="text-sm text-muted">Placeholder reward: this timeline entry does not unlock a playable act in this build.</p>{% endif %}
+  {% if ep.mechanics_note %}<p class="text-sm text-muted">{{ ep.mechanics_note }}</p>{% endif %}
   {% if ep.character %}
   <p class="text-xs char-{{ ep.character|lower }} mb-xs">{{ ep.character }}</p>
   {% endif %}
@@ -87,5 +94,4 @@
 <p class="text-muted mt-lg">No epochs match the selected filters.</p>
 {% endif %}
 
-{% endif %}
 {% endblock %}

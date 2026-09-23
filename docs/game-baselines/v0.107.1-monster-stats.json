@@ -1,0 +1,567 @@
+{
+  "game_version": "v0.107.1",
+  "game_commit": "59260271",
+  "reviewed_at": "2026-09-22",
+  "complete": false,
+  "scope": "Initial HP for the 107 monsters in the independently reviewed main encounter/spawn pools.",
+  "method": "Resolve literal initial HP, named-property references and inherited definitions. Review AscensionHelper and AscensionLevel thresholds; evaluate levels 0, 8 and 9. All higher-level HP changes begin at Ascension 8. Verify Creature.SetUniqueMonsterHpValue uses these inclusive bounds. Excludes multiplayer scaling, encounter adjustments, powers, modifiers and attack-pattern review.",
+  "reviewed_ids": [
+    "MONSTER.AEONGLASS",
+    "MONSTER.ASSASSIN_RUBY_RAIDER",
+    "MONSTER.AXEBOT",
+    "MONSTER.AXE_RUBY_RAIDER",
+    "MONSTER.BATTLE_FRIEND_V1",
+    "MONSTER.BATTLE_FRIEND_V2",
+    "MONSTER.BATTLE_FRIEND_V3",
+    "MONSTER.BOWLBUG_EGG",
+    "MONSTER.BOWLBUG_NECTAR",
+    "MONSTER.BOWLBUG_ROCK",
+    "MONSTER.BOWLBUG_SILK",
+    "MONSTER.BRUTE_RUBY_RAIDER",
+    "MONSTER.BYGONE_EFFIGY",
+    "MONSTER.BYRDONIS",
+    "MONSTER.CALCIFIED_CULTIST",
+    "MONSTER.CEREMONIAL_BEAST",
+    "MONSTER.CHOMPER",
+    "MONSTER.CORPSE_SLUG",
+    "MONSTER.CROSSBOW_RUBY_RAIDER",
+    "MONSTER.CRUSHER",
+    "MONSTER.CUBEX_CONSTRUCT",
+    "MONSTER.DAMP_CULTIST",
+    "MONSTER.DECIMILLIPEDE_SEGMENT_BACK",
+    "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+    "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+    "MONSTER.DEVOTED_SCULPTOR",
+    "MONSTER.ENTOMANCER",
+    "MONSTER.EXOSKELETON",
+    "MONSTER.EYE_WITH_TEETH",
+    "MONSTER.FABRICATOR",
+    "MONSTER.FAKE_MERCHANT_MONSTER",
+    "MONSTER.FAT_GREMLIN",
+    "MONSTER.FLAIL_KNIGHT",
+    "MONSTER.FLYCONID",
+    "MONSTER.FOGMOG",
+    "MONSTER.FOSSIL_STALKER",
+    "MONSTER.FROG_KNIGHT",
+    "MONSTER.FUZZY_WURM_CRAWLER",
+    "MONSTER.GAS_BOMB",
+    "MONSTER.GLOBE_HEAD",
+    "MONSTER.GREMLIN_MERC",
+    "MONSTER.GUARDBOT",
+    "MONSTER.HAUNTED_SHIP",
+    "MONSTER.HUNTER_KILLER",
+    "MONSTER.INFESTED_PRISM",
+    "MONSTER.INKLET",
+    "MONSTER.KIN_FOLLOWER",
+    "MONSTER.KIN_PRIEST",
+    "MONSTER.KNOWLEDGE_DEMON",
+    "MONSTER.LAGAVULIN_MATRIARCH",
+    "MONSTER.LEAF_SLIME_M",
+    "MONSTER.LEAF_SLIME_S",
+    "MONSTER.LIVING_FOG",
+    "MONSTER.LIVING_SHIELD",
+    "MONSTER.LOUSE_PROGENITOR",
+    "MONSTER.MAGI_KNIGHT",
+    "MONSTER.MAWLER",
+    "MONSTER.MECHA_KNIGHT",
+    "MONSTER.MYSTERIOUS_KNIGHT",
+    "MONSTER.MYTE",
+    "MONSTER.NIBBIT",
+    "MONSTER.NOISEBOT",
+    "MONSTER.OVICOPTER",
+    "MONSTER.OWL_MAGISTRATE",
+    "MONSTER.PARAFRIGHT",
+    "MONSTER.PHANTASMAL_GARDENER",
+    "MONSTER.PHROG_PARASITE",
+    "MONSTER.PUNCH_CONSTRUCT",
+    "MONSTER.QUEEN",
+    "MONSTER.ROCKET",
+    "MONSTER.SCROLL_OF_BITING",
+    "MONSTER.SEAPUNK",
+    "MONSTER.SEWER_CLAM",
+    "MONSTER.SHRINKER_BEETLE",
+    "MONSTER.SKULKING_COLONY",
+    "MONSTER.SLIMED_BERSERKER",
+    "MONSTER.SLITHERING_STRANGLER",
+    "MONSTER.SLUDGE_SPINNER",
+    "MONSTER.SLUMBERING_BEETLE",
+    "MONSTER.SNAPPING_JAXFRUIT",
+    "MONSTER.SNEAKY_GREMLIN",
+    "MONSTER.SOUL_FYSH",
+    "MONSTER.SOUL_NEXUS",
+    "MONSTER.SPECTRAL_KNIGHT",
+    "MONSTER.SPINY_TOAD",
+    "MONSTER.STABBOT",
+    "MONSTER.TERROR_EEL",
+    "MONSTER.TEST_SUBJECT",
+    "MONSTER.THE_FORGOTTEN",
+    "MONSTER.THE_INSATIABLE",
+    "MONSTER.THE_LOST",
+    "MONSTER.THE_OBSCURA",
+    "MONSTER.THIEVING_HOPPER",
+    "MONSTER.TOADPOLE",
+    "MONSTER.TORCH_HEAD_AMALGAM",
+    "MONSTER.TOUGH_EGG",
+    "MONSTER.TRACKER_RUBY_RAIDER",
+    "MONSTER.TUNNELER",
+    "MONSTER.TURRET_OPERATOR",
+    "MONSTER.TWIG_SLIME_M",
+    "MONSTER.TWIG_SLIME_S",
+    "MONSTER.TWO_TAILED_RAT",
+    "MONSTER.VANTOM",
+    "MONSTER.VINE_SHAMBLER",
+    "MONSTER.WATERFALL_GIANT",
+    "MONSTER.WRIGGLER",
+    "MONSTER.ZAPBOT"
+  ],
+  "helpers": {
+    "MegaCrit.Sts2.Core.Entities.Ascension/AscensionLevel.cs": "be085612a3e08058582bf045f1e8808ad5a3032d9212438f4b295ceb7ffce5ef",
+    "MegaCrit.Sts2.Core.Entities.Creatures/Creature.cs": "d65cb7c1be3b3f7730f5844b5bac113e0097d8a6b5af08787073177832aa49fa",
+    "MegaCrit.Sts2.Core.Helpers/AscensionHelper.cs": "9105f9af7392590a59a7818fed209dd8d3ee817f8995d9a5566786536b515f8a",
+    "MegaCrit.Sts2.Core.Models.Monsters/Architect.cs": "04d50610fd0f35299f122a7b3b5c622dcd4e6d4fc3533687a8f239f2a4864871",
+    "MegaCrit.Sts2.Core.Models.Monsters/BigDummy.cs": "1917319a8eeed429b7f413acde7feda8b36d62d39e25c4508c8944454e3cac8d",
+    "MegaCrit.Sts2.Core.Models.Monsters/Byrdpip.cs": "4eccc5691dfbe9dc5c0f0d4ba3f544db2370cb3efe396753f94628be36fa31a9",
+    "MegaCrit.Sts2.Core.Models.Monsters/DecimillipedeSegment.cs": "f5b988e3fc11345f615946e195711eb9e19b135fae309488758d2cde532f613d",
+    "MegaCrit.Sts2.Core.Models.Monsters/DeprecatedMonster.cs": "4b814ba56f8cccc831c940f9733d4815b7f175e7c57a8c8e9fab2a028073d3ef",
+    "MegaCrit.Sts2.Core.Models.Monsters/MultiAttackMoveMonster.cs": "7770c888853562d9dcf20c224026780b0012dd81fe61a28293c8c10274f6ec21",
+    "MegaCrit.Sts2.Core.Models.Monsters/OneHpMonster.cs": "f5d5449dd8f57340346ac13502454a3e0ddedd25aabd3d20f6c05dcae3502907",
+    "MegaCrit.Sts2.Core.Models.Monsters/Osty.cs": "5817a0bc9532f5bc91d93f893b8eb125ba23f5e8333f6dc31df6ee12d26d483c",
+    "MegaCrit.Sts2.Core.Models.Monsters/PaelsLegion.cs": "21e4f6a74f7b357eacbaea1d754ed004913c55d4c80ecac96f01830a63adcd3b",
+    "MegaCrit.Sts2.Core.Models.Monsters/SingleAttackMoveMonster.cs": "d9bf0ce715f23e765428d7f1019b7a3e90c87013be46d0eb57b1b8e217ea13ab",
+    "MegaCrit.Sts2.Core.Models.Monsters/TenHpMonster.cs": "ef44faf2987f4b0f32d9f31b369897ea50fbc58baaf591b78633b31e0b71ce9c",
+    "MegaCrit.Sts2.Core.Models.Monsters/TheAdversaryMkOne.cs": "6782166eddc8dfdabafd139f52b273d392911bc889a86a536666c7a6734a873c",
+    "MegaCrit.Sts2.Core.Models.Monsters/TheAdversaryMkThree.cs": "29c86ff19eda1fc9352f9ba9b663f3a3c83e164829da394888021136aebf7cb5",
+    "MegaCrit.Sts2.Core.Models.Monsters/TheAdversaryMkTwo.cs": "24b8765466589165e3e95dc8cb5116e9a284bbe5d54d2f0bf946efe77dcab72f",
+    "MegaCrit.Sts2.Core.Models/MonsterModel.cs": "e67b2cae2d32f8990cd710e75bb16bb6fc6a18ac4a0c461dbae45696e132477a"
+  },
+  "records": {
+    "MONSTER.AEONGLASS": {
+      "definition_sha256": "c4be5ff6ae048de1139f9ac2a030835574cd1ae7de53fa0d064957545cbc06b6",
+      "stats_record_sha256": "4f43c60915dadc9107e6cca5e17a2489909f7f4172812f0a69afa994117c642a"
+    },
+    "MONSTER.ASSASSIN_RUBY_RAIDER": {
+      "definition_sha256": "1ded70b4d0a355ab0d0b14e5cdafb3576df1c0504b88aaa837c66fa6744b6564",
+      "stats_record_sha256": "a1847e23fb5efc4ded29c2de47d850179ad618faf4b5817c48a7b23eb12027dd"
+    },
+    "MONSTER.AXEBOT": {
+      "definition_sha256": "7b6c69c3f530b143a053b1d69e94a58d1c37a0bb91adf76568ed2ccfb67a7247",
+      "stats_record_sha256": "6a4e0033aaaafe88c081edd78ff066c1698cfc8d5cb2e582d6a166e9dd42d2d9"
+    },
+    "MONSTER.AXE_RUBY_RAIDER": {
+      "definition_sha256": "3ba51c335698440e17d819ff2f25b4f0668c83b490e373198934b5814739f38d",
+      "stats_record_sha256": "6b71b1648721d52ea6daa7cd1aec0f80bd804e617c833f51241922890d3ecda3"
+    },
+    "MONSTER.BATTLE_FRIEND_V1": {
+      "definition_sha256": "f8fdadfbaae369a19293360c688b770c9e77a651b9cafb72a219fd6eda818d24",
+      "stats_record_sha256": "9c682647f54ef9d8c072681bd68120d9a7284fe25bdf502a8a0c985ca5d6f76e"
+    },
+    "MONSTER.BATTLE_FRIEND_V2": {
+      "definition_sha256": "12b0b40825f04a59481571a0c4f27d274a60360028aa29f9ec59bf0717acb3cf",
+      "stats_record_sha256": "31a0466f9986137bf37a2fc112199ac9de0e31a31215e946bd8f3c569b859d73"
+    },
+    "MONSTER.BATTLE_FRIEND_V3": {
+      "definition_sha256": "26338b5a71e0a5b414fb141f061b93117d598480cb6f2126868aa47d5b097822",
+      "stats_record_sha256": "c4da93e47614cebd995b29883fd9e8691d9a8b86714896c1b57cfc5a0fd5a538"
+    },
+    "MONSTER.BOWLBUG_EGG": {
+      "definition_sha256": "c7bdba96f3ae387cbe6189e5a844d6f05d3fcf0a5aa9e5e06d276ba723c8d1ec",
+      "stats_record_sha256": "657a8e9a229b340536deb8ade7a0de5bfcc5ef869a382a36611f096694f218fd"
+    },
+    "MONSTER.BOWLBUG_NECTAR": {
+      "definition_sha256": "961b69c0d4dcb4426ce4f4240a8235c95009d89f5852e8686b812b24ec6054ee",
+      "stats_record_sha256": "bd4103f7dc019e7ac29630a2086016fecc13750a4247fde932c724c385eb6a23"
+    },
+    "MONSTER.BOWLBUG_ROCK": {
+      "definition_sha256": "ce3a0d2019b8422bf3b4b98bbd8f99299a8483c702dc8336321834abcc5d8ffd",
+      "stats_record_sha256": "9737d6289bdb18f7146c6299f7b9a51ff499da837244032b7ebc33bead980dbc"
+    },
+    "MONSTER.BOWLBUG_SILK": {
+      "definition_sha256": "b18fa6abf66e9df9567cb781a589b90ccaf359ec1ba00d4883d3628713c69175",
+      "stats_record_sha256": "25d2bf138b741e33a99b1f64f057f8dd2f5f7873f76ac30b25848d4fe383b301"
+    },
+    "MONSTER.BRUTE_RUBY_RAIDER": {
+      "definition_sha256": "3b99a34ef4bf1eb2a1acb2d7ce8adaf5c722e594ac6842a3c2d028cf2a74b4f9",
+      "stats_record_sha256": "b163070ef383044b94434291124fc5aca0fcc1c8f004088d9d63e4829a79f4d2"
+    },
+    "MONSTER.BYGONE_EFFIGY": {
+      "definition_sha256": "8fedd470cb6d997997e4144dc289b7ff40b1acfaeaa5dc660b61bc71ef18cd72",
+      "stats_record_sha256": "d02314f8e035bc0ce7e1fdb67add642f5b4d1cc6aea0fe6772784f2b3b912ffd"
+    },
+    "MONSTER.BYRDONIS": {
+      "definition_sha256": "5d8f5592396162db13f7b7a2978303a20ab32f92e2f3f485add3ab4dbfb0fc69",
+      "stats_record_sha256": "b1d73cfc2f5a01bfea3cb923719684cea0af732f9831e9b19aef240a0d6b9b80"
+    },
+    "MONSTER.CALCIFIED_CULTIST": {
+      "definition_sha256": "9a91ad1f81beacfde0de7457313a67052c1db4c774976ad4b1c37c6f4d2b67ce",
+      "stats_record_sha256": "0ea42f062ba51250548c9b6556919b491a0d5f7fa9c3d4d454ba21a4f9d816a0"
+    },
+    "MONSTER.CEREMONIAL_BEAST": {
+      "definition_sha256": "cecf869f380e0e67d7d295b3337de1755a6bb0b804ce91b3ccc0644e0caf8a21",
+      "stats_record_sha256": "964b23f8667c6a23a53e0bed39fa6dcbddb6d72a56cceab5b32d177c157a8b15"
+    },
+    "MONSTER.CHOMPER": {
+      "definition_sha256": "4f30b538b0f8fe1405bd3d73786250066790b50fbaf89ec951f9cb02f5f58b0d",
+      "stats_record_sha256": "e2d3e75bc226b9aabb14841cd2c11397cb12a278d0eebd2155df67e305d0a082"
+    },
+    "MONSTER.CORPSE_SLUG": {
+      "definition_sha256": "9751c826847380eac6c74ac0eaa9806d3bc0a8997d8f3ea1cbc1a695aeaef71d",
+      "stats_record_sha256": "a0a6b546aa8089f075951544d0f28441c6dfd3e46d497ff8da370807fa2de82e"
+    },
+    "MONSTER.CROSSBOW_RUBY_RAIDER": {
+      "definition_sha256": "1e8bc45eea94eb686aa9c29ad3cd7cea6c78ab9358a4da82132664d2df24c116",
+      "stats_record_sha256": "b28c7390e1811fa4e3a410f1fdef6f32459e06323e02cf1c1f0282934b573478"
+    },
+    "MONSTER.CRUSHER": {
+      "definition_sha256": "0d3ad00edf1156840ef0709f00fb8a8452e1056b3aed34bbb67e20588df7c7ca",
+      "stats_record_sha256": "6c27d52ad9d9cfd22d57882f48918424475cd1749584d569ee0ae215714701bd"
+    },
+    "MONSTER.CUBEX_CONSTRUCT": {
+      "definition_sha256": "179a141152ee7adffe79dbb1f9e30fd8bb7c42ecb13ef1f3a6554ce8dfb058d8",
+      "stats_record_sha256": "df8a86b19ec97a0b8cfb3e3e31e541832ba8106fc1b70c85317fe5a9154cdf1d"
+    },
+    "MONSTER.DAMP_CULTIST": {
+      "definition_sha256": "d0f0da6376a3857c8ff7f39457e81854e09facf0ba496abf5a2f724a5f216ecc",
+      "stats_record_sha256": "85a4c5c569a1c129ca0e5a5d3e69ec8ba6d3dbfd2eeb18f9f65e7a066e140fb6"
+    },
+    "MONSTER.DECIMILLIPEDE_SEGMENT_BACK": {
+      "definition_sha256": "09870ee18413e3b0640f3b150877716044b1d6e6c5749f813707d5da236ccc0d",
+      "stats_record_sha256": "9bb44ada39da6aa969bd51b6743782f5ec91f4b9df344bc2c9dd40980786dffa"
+    },
+    "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT": {
+      "definition_sha256": "7ed4e0d788273e19ab3ba0d012c5df83ee995b99948aea8eb36f931f32dfb3b0",
+      "stats_record_sha256": "b3b8b478f562dd14bd89781597dd17cbd7a645cc027ebd87f84d273c7a860bce"
+    },
+    "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE": {
+      "definition_sha256": "2c0726b24bb74447ba184ebfaac719d48c2bdd9be36a08afdcb7f5a2460c7aaa",
+      "stats_record_sha256": "39c6be61cee9fcd875c01ed26b65d48fa5a26ea82e095a8b7ecb889030dce340"
+    },
+    "MONSTER.DEVOTED_SCULPTOR": {
+      "definition_sha256": "3a3149c0c5ab743d7d2c18b9d302c61d94b5d3bf4ebdb0851dd446689b3c5217",
+      "stats_record_sha256": "bb6a0f9b7d4e17b0191e4a0aab6d7a7ca20f0b0845379b0e58e0770a71c57d7f"
+    },
+    "MONSTER.ENTOMANCER": {
+      "definition_sha256": "6ab2649bb015400c567f84076bdabfa74286e79cc63bcec1cdbb4bc8977d658c",
+      "stats_record_sha256": "527f56d939559213e0070a58b16bb59ea122df62b437d0da9ca783f48cc090a5"
+    },
+    "MONSTER.EXOSKELETON": {
+      "definition_sha256": "e0f2e7828c3d0f22cbe176112dfd95ec7dc29f9617db9d37052561c49a007d1d",
+      "stats_record_sha256": "1f7e686d49c1ae473a9b49a28e10d600ec4cbb9b64f7a33e5f1a5ca61844e9f6"
+    },
+    "MONSTER.EYE_WITH_TEETH": {
+      "definition_sha256": "19add9828268c055d7549e4784fd7c6157b45cb030888cf6e6b8e990e8797d29",
+      "stats_record_sha256": "ba158e090c3caf718a5795e1554b86afb508ee976e0647d1688acd13a44243b2"
+    },
+    "MONSTER.FABRICATOR": {
+      "definition_sha256": "7a78bc8f844f4c92eb877957510dd8d3f1450d9b8eb3bf3f59ebb5bf47678c75",
+      "stats_record_sha256": "fbc6b843935467241715cb6ecebb18a5edecd00c12b824b978d864bcbba8d79f"
+    },
+    "MONSTER.FAKE_MERCHANT_MONSTER": {
+      "definition_sha256": "166d54d0a2992dc8cef22ebd81bf90dca1370b99113801471ac8e0cb6e9745f8",
+      "stats_record_sha256": "b0118dd0940e91846cbf425dd0ac111c77e04750e6f80b1ee79339a9054b77a0"
+    },
+    "MONSTER.FAT_GREMLIN": {
+      "definition_sha256": "838247477921bdbd2d9eab3c05109be1dac8b00033417e4d2cdc15aa15534472",
+      "stats_record_sha256": "868ed54b80900e43d6b145582a69a7835bd8ebb7bb449393765ec04cd0c296f2"
+    },
+    "MONSTER.FLAIL_KNIGHT": {
+      "definition_sha256": "f5b7c0f3666b0bc1c7033682f96c6d56db0b7b03e249ec82d6c09b265a8a5afb",
+      "stats_record_sha256": "748edc3b34534063d7c91e98dda9848f7698e39777dcf31aaaffcc910e25b575"
+    },
+    "MONSTER.FLYCONID": {
+      "definition_sha256": "7757a4fe33cf738c8cc7ee1f20d0065ed8ea802fb64c3237645565557f3df599",
+      "stats_record_sha256": "9052a19e6ad2dd5fac1425c5df221bc4901808e1c2050237427058735c3f62d1"
+    },
+    "MONSTER.FOGMOG": {
+      "definition_sha256": "2ad0311f9f2c369c90fb0838e03c23609a760bce167cfed4f9f35028ba2bd037",
+      "stats_record_sha256": "95401bec9433ad1b99262aed007d13cf9088edfd0e3d87c9563958fbaefc43ae"
+    },
+    "MONSTER.FOSSIL_STALKER": {
+      "definition_sha256": "7600f67781749d7bc48567d9e319481ed2f8afbd1abce031100bec9c5fba4ad4",
+      "stats_record_sha256": "d0252001176ebf1695be94a98fd0dbf984b1e9e44253c778b4390be0c3439f9c"
+    },
+    "MONSTER.FROG_KNIGHT": {
+      "definition_sha256": "00913af20ac39aa5a41b6d4a0b9b4ada1339a9317797ed40f16fef58d758c018",
+      "stats_record_sha256": "e8cb1dba62c77075e5f84ba033f2ffaf0ce69887bb53646d89d2b2acc750ab2c"
+    },
+    "MONSTER.FUZZY_WURM_CRAWLER": {
+      "definition_sha256": "1b985c2625c86375a377bb8f124e339cba9af66ce4c6b7d0d5f4548662ce8bb8",
+      "stats_record_sha256": "9ee3b2fee92d1ed20364b3c5f0dfd5dbb2f913e8b2d319dc1b1a4cdc37f5baf5"
+    },
+    "MONSTER.GAS_BOMB": {
+      "definition_sha256": "65089c1e1e51dbeb1151ef54ecc44d3ee24b0ff820092c460d81a8a29a35b7d0",
+      "stats_record_sha256": "1180b451a26889b88433cfc595c226a01fc494e27dae9f9d2965e99ff8d71dd6"
+    },
+    "MONSTER.GLOBE_HEAD": {
+      "definition_sha256": "d5918b7ca415a0a3e7979f534aa8e62aedb3672823fae0b95cae60386076a083",
+      "stats_record_sha256": "28777890d88d455f66619962f4e8c3953b122f0534bbabd20c63cefcb24be13f"
+    },
+    "MONSTER.GREMLIN_MERC": {
+      "definition_sha256": "c797fc8dff23fb3a2d6366ac257ee044f66d0bac6bfddc3f5b9f4bd302ddcf9c",
+      "stats_record_sha256": "cd391e189acb85ee5ad9461fde441694fd8f89e5c887633607363de2d5612562"
+    },
+    "MONSTER.GUARDBOT": {
+      "definition_sha256": "6efc28480ec4ca9f43b190d703ac18c961209a765940db652a999d974d9e1753",
+      "stats_record_sha256": "a06f643397d81b531528d3b1b83b8af41eb13174f355cd806383d21e5c733485"
+    },
+    "MONSTER.HAUNTED_SHIP": {
+      "definition_sha256": "156a0dba14b61c567084d9beda14455cb0bbbf0bebfe3d56a4581c41891ab89e",
+      "stats_record_sha256": "ea5525720256eb206a02afd6ceddda842056cc932c488a532a2a1584186d0bf3"
+    },
+    "MONSTER.HUNTER_KILLER": {
+      "definition_sha256": "c88493d1f465fd15d927c4fa8e054ecfb8e064e662f937406f8953880c677460",
+      "stats_record_sha256": "433658cc957dcaa7a6c712be96f34c5d04cf4aea38921349bfff094e5d632026"
+    },
+    "MONSTER.INFESTED_PRISM": {
+      "definition_sha256": "6b7406f9e08509e8bf87b338207d79cf6c7f87991027d7e2b96346238952b690",
+      "stats_record_sha256": "57ecd947883f692fd7aadf0b1e8c08b819776cb51ff4b4a46f39f19e6473d131"
+    },
+    "MONSTER.INKLET": {
+      "definition_sha256": "04bf5f68788f176f946872688364898b698b7d69139954d6bd4b2dd3c8bad475",
+      "stats_record_sha256": "10c00f3577d208a4d8837ec20bd370aa6372935bb16ba269263788a0d926f032"
+    },
+    "MONSTER.KIN_FOLLOWER": {
+      "definition_sha256": "0f67cb923b10b2555efe7b8029b26673b9273430313e4b8784b35aefb5468020",
+      "stats_record_sha256": "f38012b021898c0c75d3d206534b862e85c970d6aeb9fcd5a7e4412a6eb5cc7c"
+    },
+    "MONSTER.KIN_PRIEST": {
+      "definition_sha256": "0abb61a23090075044ad13429f25db1ede66e02ea4d2e193264d1a56cf5148e1",
+      "stats_record_sha256": "e07baff11630ca5c34d328a3942a771e905573b60abbde946518c9f5a80aa48a"
+    },
+    "MONSTER.KNOWLEDGE_DEMON": {
+      "definition_sha256": "0c5158e000a2b0833b796dfe32a13311266c9f8575e788eb8de88193f68a7643",
+      "stats_record_sha256": "6f3ab42d5174a9259aaad9a6965334a0b051db153002808803dd8e40e5dd018a"
+    },
+    "MONSTER.LAGAVULIN_MATRIARCH": {
+      "definition_sha256": "b779e5c08fa421499bedca32e6c9c04b3bb5ee0b0d080bed56778517a4cffd78",
+      "stats_record_sha256": "7abc4ed4e192b68098971c2f8e4622a77c08c0475737453b9d57f367d602e17f"
+    },
+    "MONSTER.LEAF_SLIME_M": {
+      "definition_sha256": "3a044a8d00944d164be7ea9385500083cb56832bbde64a3ff04679958546d793",
+      "stats_record_sha256": "9ec86f51e95ff261366f2fd13c27f7b0ca889b043d2cd69bfc677b6e4d563756"
+    },
+    "MONSTER.LEAF_SLIME_S": {
+      "definition_sha256": "6db6f1ccc681f86ca48584827b4276c9881297e3c5cb07ddf7516735d9779815",
+      "stats_record_sha256": "208f16626cedfd5334153a3f7a07d3309433bf9e39f7970a6728225250de7d3d"
+    },
+    "MONSTER.LIVING_FOG": {
+      "definition_sha256": "ffb31757b0ab5deb508f6b2784227f9fbac7b99691ab1c615fbce2b0176ab0d5",
+      "stats_record_sha256": "d3999f3471b99be4a5a618d31df6c9364146a9273de80c5df695f9e4bf0321a4"
+    },
+    "MONSTER.LIVING_SHIELD": {
+      "definition_sha256": "e6d281e37d81061832d54cd2b42052a4c4898eba5699da7aceed9a66396553e7",
+      "stats_record_sha256": "deba148071544cc0e620cbacf467a5e9cbfcce982ed0f74bce4322972bd2e82c"
+    },
+    "MONSTER.LOUSE_PROGENITOR": {
+      "definition_sha256": "b0bdb5d2a7e64382c803b3d776f0b4df24ae3e16a5f1614d98480a041f7c43a4",
+      "stats_record_sha256": "ddb9f97107db6572a811efa025da71d1b52be179d7dacf24212bc932a1ad7879"
+    },
+    "MONSTER.MAGI_KNIGHT": {
+      "definition_sha256": "2444b26f50b7dbd88cbbe707bc7aadadb85e2569104a601bd5495f9a9f626fff",
+      "stats_record_sha256": "94d2b209972d0d95dcb431aee304acd12cfd9199a52deb500bc1bd6594a227ed"
+    },
+    "MONSTER.MAWLER": {
+      "definition_sha256": "7de9da00958288c7aa3025ce150238cc10a5827050b9ea87d597ba61e056de98",
+      "stats_record_sha256": "0224f710261f5b669bc1ff129114deca6cd801c1fc70486196cf280c1bc594d9"
+    },
+    "MONSTER.MECHA_KNIGHT": {
+      "definition_sha256": "b542bb93962c858258ec1a10980cf17412ddb394ba79d4e0c11c364053bbfdd0",
+      "stats_record_sha256": "f62baf49dbcb06341786de64338aeaaff94d60fff069057dfca3c7d221d8a12d"
+    },
+    "MONSTER.MYSTERIOUS_KNIGHT": {
+      "definition_sha256": "580f6f13e750e948c2bba0cc540d39e99a2c225e80dc17797a6dec73178c9978",
+      "stats_record_sha256": "66b989843dab0583e4d2dca6c4482bf044aea6f49eef56d7cf43d2cf82b1e7dc"
+    },
+    "MONSTER.MYTE": {
+      "definition_sha256": "37e1f1aea3a5ed18312b0cafa85383a9a52f5a2202e628a65276233c87cf8f23",
+      "stats_record_sha256": "5c3fc1827f8fe94fdb9d9562c94695071c9d431e46acf9f98dafbcf0cdda04f2"
+    },
+    "MONSTER.NIBBIT": {
+      "definition_sha256": "5f027dafe55d5be0d4001188ff010cbb087b3c0c9f5b069cd03713b33ea02912",
+      "stats_record_sha256": "2738e95a77e8c73eadaa8d4c63720e73d9ed5e773e2ccf32771bfcb315110d0a"
+    },
+    "MONSTER.NOISEBOT": {
+      "definition_sha256": "61948818ecc06fd4b0d5200f249efb0787a26836680ac99bfe526b6ffc1cfaf4",
+      "stats_record_sha256": "d199dbc9030acf6e253a45a04865bd32e476bad1bf5c73b2afcbe74edb926eb2"
+    },
+    "MONSTER.OVICOPTER": {
+      "definition_sha256": "70b6714d1dba0b06e69d0c1c9bebd662d917dd43f41ffbbb73d6736fee5b992c",
+      "stats_record_sha256": "fbd6530b13b43b0cbaff4c7a997a2ca028a2d1c7b8b3d4208262a532d32d7f13"
+    },
+    "MONSTER.OWL_MAGISTRATE": {
+      "definition_sha256": "159fa2cd43f15f52db2dcd0b0cb8e49b9f347ac362e3ea90b8ce4a6133599480",
+      "stats_record_sha256": "15b63e884e05759cf4c08a1fcd3b9c65fbf341a917e592dc6839093518ab7102"
+    },
+    "MONSTER.PARAFRIGHT": {
+      "definition_sha256": "09efc24ace885927654f414fa5386a353f6fc6fc0f3934b965db22ba8da65b0c",
+      "stats_record_sha256": "9c416d59c7f58ee862fbfaf0867cdcde7734491cb09c63db0f9fa3ebb6f0de1d"
+    },
+    "MONSTER.PHANTASMAL_GARDENER": {
+      "definition_sha256": "99bff217af84a3f9e31530f394bb72fbe0256089c36ed5616b98aa11ee3c1a9f",
+      "stats_record_sha256": "84d45c7a0f3aa568a5a7bfc527a4031330d9fb93b08f4f0e9a745c15d0fbe639"
+    },
+    "MONSTER.PHROG_PARASITE": {
+      "definition_sha256": "9716e37f502e678a1153d6e946b1a2c6f9b53b217fc1b34784a3a317751b91ef",
+      "stats_record_sha256": "b08dd23292855ac254e07b47959c6cf453afa823ef9d92b0def6108c4e5197ee"
+    },
+    "MONSTER.PUNCH_CONSTRUCT": {
+      "definition_sha256": "389c64af1b2eb8da881ef51b5f9addf19f5b5f659b706235263c062a2fcc2d7e",
+      "stats_record_sha256": "2cb8e764c24376c80e8ee378a0a0771c4c9b2ae9fa042c50103d8bff6b3de148"
+    },
+    "MONSTER.QUEEN": {
+      "definition_sha256": "24b3a50000378f84d41d96076bd68a1fafffb665757ab143f9382477ab61944a",
+      "stats_record_sha256": "7ca430aaff19708c84f96878def879e8364fe2153b707f9cbba1d8f4e03b5e70"
+    },
+    "MONSTER.ROCKET": {
+      "definition_sha256": "3b9b3ff7a6c28b59ed11933348793b2de59d0b912cf37cc347219e0ebba166aa",
+      "stats_record_sha256": "8c80e067c3ce4864922e0f66f5d7d0a82627dd6b4a41f85896a6eeb161f3fa82"
+    },
+    "MONSTER.SCROLL_OF_BITING": {
+      "definition_sha256": "8e52d930a32782aad93be2eef6f87199e1b320dc969813cdfc5f384292a489bc",
+      "stats_record_sha256": "bb173a34d4581e653b911adf7fac27cd97fdae6937ed52534508ca925697e92a"
+    },
+    "MONSTER.SEAPUNK": {
+      "definition_sha256": "5502426b447c4f7f3d40cdc046d945eae91037d7f90db72816aff5de0ed5d594",
+      "stats_record_sha256": "2cb645d69cd63d11e0a485bc8ec7c8766bf4308f0e29c87786da88d044fe7762"
+    },
+    "MONSTER.SEWER_CLAM": {
+      "definition_sha256": "ca9f3c24098ca3f783a16c0454d113a1ede94c5cceb833d9e8b1f6efa6717708",
+      "stats_record_sha256": "ae7e7cc637adf994bbd48146f61b38fab0d4288c20cc0b85191a763dc90fad25"
+    },
+    "MONSTER.SHRINKER_BEETLE": {
+      "definition_sha256": "91969dc1ad9b68ece0dc42cf84461e6988724b3438091bfd007a288534d686ab",
+      "stats_record_sha256": "a7d416fdad6819d23ebda06b4afda80a9dc08c119e72a6f66e033d0221486fda"
+    },
+    "MONSTER.SKULKING_COLONY": {
+      "definition_sha256": "b0ee03b9a2a8f3d436a5c4d16a35f037b1f7ed20d3d01fb288e8418c8e86f0e0",
+      "stats_record_sha256": "73a8634f28d66aa210dd9a05d395d1b3be80f776f1b319903430bb49bb697ac2"
+    },
+    "MONSTER.SLIMED_BERSERKER": {
+      "definition_sha256": "7088ce925bcd227302977998173aded28c5ac33861a51fdff463ebf436a925a5",
+      "stats_record_sha256": "b11b09b46f03e73b7ba22d5521005456e6ae23fdc430438efbddbb0f9071c843"
+    },
+    "MONSTER.SLITHERING_STRANGLER": {
+      "definition_sha256": "d300724b95c294ae62cfc5d2dadad851884dd0f1e512684cfb4a7eed36a18b9c",
+      "stats_record_sha256": "3d339a7dd0fa44ec30c99430e4829b9e9db27e94aa10bc1086fb355d3dfb9475"
+    },
+    "MONSTER.SLUDGE_SPINNER": {
+      "definition_sha256": "8fe29f4f22d2725e732394828e154800518cfc85c2d85ae680677f7fc356e315",
+      "stats_record_sha256": "a552bd7e1addd992021c3005721ab7465517bd51e4babc18865f52ec461e8670"
+    },
+    "MONSTER.SLUMBERING_BEETLE": {
+      "definition_sha256": "40b3f4868e894c67552be9e74ce8e0fa81d10373c8dd163f519c73202482ad2e",
+      "stats_record_sha256": "5deec79e0b7b9a96d5b74579c1e8f682ca0575b61ba37025aa7d92447c53332b"
+    },
+    "MONSTER.SNAPPING_JAXFRUIT": {
+      "definition_sha256": "d8f124d4fb907f790cb6ff24c558fc836cd45900ec334c0da288dde7bf092957",
+      "stats_record_sha256": "63746f74d6febe7ea8bb5aa968b94ddd1d0d7ffd728be0dfa06517c7da06127d"
+    },
+    "MONSTER.SNEAKY_GREMLIN": {
+      "definition_sha256": "ad35c5bfcd96bad7cedd5e616340ea399653705fd88c205bacfc4cb817215725",
+      "stats_record_sha256": "1990ca607ff5ee8114b61ef1129b263a89bd18ae99ac790033028432d6876540"
+    },
+    "MONSTER.SOUL_FYSH": {
+      "definition_sha256": "ac118a01aef90c979783e045100ca765cc794551ea33b873276a20befbaba1d7",
+      "stats_record_sha256": "a639ba27169ac2122667849e55b5c34ccbba7503553a5b5dd1751534df1417e4"
+    },
+    "MONSTER.SOUL_NEXUS": {
+      "definition_sha256": "38d213e39424dd2a8218e53f724e8f8c937bfa8403f0f57ccaa36f9bed9f244b",
+      "stats_record_sha256": "c5c896f36068700c1d583674806eb08ec2f18aae8e26f37869d471b88d5dbaec"
+    },
+    "MONSTER.SPECTRAL_KNIGHT": {
+      "definition_sha256": "2304a3b673a334a8e7431c39504a0fc26c58393791d63f780a04c0175e7eabde",
+      "stats_record_sha256": "032d234a2d4ecc6c86b510b33c6cc91aafe9e2558a32565ca822706dd107dd4e"
+    },
+    "MONSTER.SPINY_TOAD": {
+      "definition_sha256": "7001b793bebd741f17e9a78ca564d17600d34c65f82da53c580e0c981fbcdfbc",
+      "stats_record_sha256": "9aa5e9b211dc9174e6690ab12b26e91efa7eb5d1c145d5d3cdd3054afad8f6a9"
+    },
+    "MONSTER.STABBOT": {
+      "definition_sha256": "f705f81b577321c520e9349a15c499811a485e9151a241545e33c9efea18a091",
+      "stats_record_sha256": "369bd88c0c58ed6ef2ee667ceef5c81b9cc58ad86905611d25d2f8e89f459b04"
+    },
+    "MONSTER.TERROR_EEL": {
+      "definition_sha256": "17c0ed7405e6656600b6d0afbc116751759172ca2dfaa881fed9800ff95cfe6c",
+      "stats_record_sha256": "c6887de0cb3641534e871cf9e3008fe0d75d8b5646332e7570ca934451339d89"
+    },
+    "MONSTER.TEST_SUBJECT": {
+      "definition_sha256": "5eca8c4805c68bea0660aa18039cd712d2cd3afbcc2d5186cc044facb60dad08",
+      "stats_record_sha256": "bbe074688fee7a6e356872bd04b76ad7fff886e9025d864505ad6883e685654e"
+    },
+    "MONSTER.THE_FORGOTTEN": {
+      "definition_sha256": "dbcfb89ae0a4298a1da4ee196bed1ae17c48b41e77ea383c1a1333868fd89238",
+      "stats_record_sha256": "e15272c8440bdf7ee326f664b4b095ca38530658763170c05807f1caa4d818ca"
+    },
+    "MONSTER.THE_INSATIABLE": {
+      "definition_sha256": "7691ddc7f524425d96ec710d85165102adcf72e16fe9442d18cb13cb8521663d",
+      "stats_record_sha256": "2c49b17e3315ba1bb94a9ed1ab83a2a8631ab842419c4b77ce55f00d258c063f"
+    },
+    "MONSTER.THE_LOST": {
+      "definition_sha256": "564b08d314fab67ac4b9370b7da00d9bd6508a652672c7ee07e76f2507d0fc2c",
+      "stats_record_sha256": "5a2e869957bee6b18d1f14a4bc6b326815fa667b95584f8e0de56cbf276b4d61"
+    },
+    "MONSTER.THE_OBSCURA": {
+      "definition_sha256": "3e71a7c73c4b5f79c19dbc1effee11421684c80a903e43c9d18032395c4f1b34",
+      "stats_record_sha256": "204d2ca97b36fe2ec51e5c65d782a2a08f89b0f527151cde3918f796bd34cc1b"
+    },
+    "MONSTER.THIEVING_HOPPER": {
+      "definition_sha256": "f8ff0d2ecb0200d7f5d66969645ca6d701739e63770efc5835c7301f4f9b265e",
+      "stats_record_sha256": "b5d29c5287a195e88434fae06183d2b16bc0ad22b6d627ade5554e46303917b9"
+    },
+    "MONSTER.TOADPOLE": {
+      "definition_sha256": "b19b55f6fae0431eb30a2aaa14b6fc98288f6f2d288638d3972731f09f2725c9",
+      "stats_record_sha256": "3bb389da7d2f6e1cee81876adcc28c0eafccef62352968d30f74141090db847d"
+    },
+    "MONSTER.TORCH_HEAD_AMALGAM": {
+      "definition_sha256": "56f5d1a740e75656d09165db7ff85aca88ad86b5ff9ef3234efdca24cd918915",
+      "stats_record_sha256": "466d852689776dc116e32e940dedcfff02d7ea00dd4837a857073b776fedb2dc"
+    },
+    "MONSTER.TOUGH_EGG": {
+      "definition_sha256": "69896d188d19e7d89406b5b2420f6f9b9942e20e1eb6f95b1606e894639dacce",
+      "stats_record_sha256": "7b2cb0c2fb93a7458977401d2c5a09e0e29c71fd8a7e3c0b64ca1a6e96f1050c"
+    },
+    "MONSTER.TRACKER_RUBY_RAIDER": {
+      "definition_sha256": "d4a177e9a9668f6c185482d4b8ec00746818391f1d9fa86421bfc0569afdc6ad",
+      "stats_record_sha256": "cc35c663a5a257032e0ad13feacf7f8a5a8197193ce5272058522091393729e8"
+    },
+    "MONSTER.TUNNELER": {
+      "definition_sha256": "8cbe1bd6864c9b38af0e81fdfeb7a5660fd5e60edc54f8d93917a8ee876d2221",
+      "stats_record_sha256": "756bd33e3d8d17070c96908c50aadb7d04cdea9f5335f5fbbe070bff7182e0b9"
+    },
+    "MONSTER.TURRET_OPERATOR": {
+      "definition_sha256": "049648efa3b3c7b7aa80d6e9fe225c9002b63fef6cdf96b9e086858f3eb2a2f5",
+      "stats_record_sha256": "c519bb92edc747a4ea292555851456628eb087bd262d19463452af8df005eeb2"
+    },
+    "MONSTER.TWIG_SLIME_M": {
+      "definition_sha256": "c2f054fa762d13e72544ac9b4318295e7c5a9f05db5ae7c33e4950540b020e30",
+      "stats_record_sha256": "44208abf83e1cb9659ffa1165e19c3952104779b21482a9748216e7630d530e2"
+    },
+    "MONSTER.TWIG_SLIME_S": {
+      "definition_sha256": "20df69868780ab61d8fd0e33aaeda150928ab98bc35c5276a2271563c4b46c0b",
+      "stats_record_sha256": "baa22bc438e988d03f21811a41bf529357503ebd86d36d0268ea17c2020649ab"
+    },
+    "MONSTER.TWO_TAILED_RAT": {
+      "definition_sha256": "e50556be2187d67a41044f471d7d3270511b2aed9a599f7ef6b33d558b9aa1fb",
+      "stats_record_sha256": "7cbbc69b833d3e1b0078661c265845d7fd71d3fa77ad32e0f4606af3db4d9457"
+    },
+    "MONSTER.VANTOM": {
+      "definition_sha256": "476c9b05288a7446c25a65d1099490146b8aebe9de0fe1f1dc6b65e44b357469",
+      "stats_record_sha256": "a9ad4a8b26dff8de216ae6b94748135a72548097ddb02f0e6d56fdf1f259cec3"
+    },
+    "MONSTER.VINE_SHAMBLER": {
+      "definition_sha256": "f11dc9dcf84b569801a2444a2b05a0eb7775e0a770931f60057047f98da83eb5",
+      "stats_record_sha256": "783881738697209d8cf98e824dcbb971bf5b07d8918a7566d816e4da7d6832d3"
+    },
+    "MONSTER.WATERFALL_GIANT": {
+      "definition_sha256": "957bcde9afeec1ee7cd414a3d69296990942dd2c1161b02c18a833975103c80f",
+      "stats_record_sha256": "12722e26c1f41fac75d8e84608f257a2a42c41eca86fc23a362a7354c08afcbf"
+    },
+    "MONSTER.WRIGGLER": {
+      "definition_sha256": "2d008f4cd9cbe791dc96012a137faa6d6fd7c5696b698ea2f6c67e720320e87a",
+      "stats_record_sha256": "b5467e76396589a417f4670c1bbb207aaff874faf4857bd3519f25f10c7ca65a"
+    },
+    "MONSTER.ZAPBOT": {
+      "definition_sha256": "0bd56b1111c8fbd3acdc7592e83d7f4e9a7dfe6338ffd2f490862c2603a2ab32",
+      "stats_record_sha256": "db8a7c7fcd124b6f67a4619ee39c8524c7ea534f89f331390cc4e5ab9540ca50"
+    }
+  }
+}
