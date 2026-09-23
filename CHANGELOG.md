@@ -23,7 +23,7 @@
 
 ### Release engineering
 
-- Qualify desktop builds on CPython 3.13.15, inventory bundled runtime packages
+- Qualify desktop builds on CPython 3.14.7, inventory bundled runtime packages
   and include them in attested SBOMs; use a hashed runtime lock for Docker.
 - Run actual executable install, corrupt-update and recovery checks after final
   runtime cleanup. Dry-run artifact names identify the exact candidate commit.

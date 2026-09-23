@@ -310,3 +310,21 @@ def test_malformed_hypothesis_conditions_do_not_break_evaluation(tmp_path, monke
         "size": {"condition_type": "deck_size", "params": {"max_size": "many"}},
         "good": {"condition_type": "character", "params": {"character": "Ironclad"}}}))
     assert set(hypothesis.load_hypotheses()) == {"good"}
+
+
+def test_validator_loads_argument_even_when_config_was_imported_first(dataset, tmp_path):
+    empty = tmp_path / "wrong-data"
+    empty.mkdir()
+    code = "import sts2.config; from sts2.data_health import validate_command; import sys; sys.exit(validate_command(sys.argv[1:]))"
+    env = {**os.environ, "STS2_DATA_DIR":str(empty)}
+    result = subprocess.run([sys.executable,"-c",code,str(dataset)],env=env,
+                            capture_output=True,text=True,timeout=30)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert json.loads(result.stdout.splitlines()[-1])["ok"]
+    assert not list(empty.iterdir())
+
+
+def test_importing_package_does_not_resolve_user_configuration():
+    code = "import sys, sts2; assert 'sts2.config' not in sys.modules; assert sts2.__version__; print('ok')"
+    result = subprocess.run([sys.executable,"-c",code],capture_output=True,text=True,timeout=10)
+    assert result.returncode == 0, result.stderr

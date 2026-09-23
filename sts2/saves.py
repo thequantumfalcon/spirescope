@@ -339,6 +339,30 @@ def get_progress() -> PlayerProgress | None:
     )
 
 
+def _read_history_files(history_dir: Path):
+    """Overlap slow file opens with four readers; retain input order and bounds."""
+    from concurrent.futures import ThreadPoolExecutor
+    from itertools import islice
+
+    def read(path):
+        try:
+            if path.stat().st_size > _MAX_SAVE_FILE_SIZE:
+                log.warning("Skipping oversized run file %s (> %d bytes)", path.name, _MAX_SAVE_FILE_SIZE)
+                return None
+            raw = path.read_bytes()
+            return path, raw, hashlib.sha256(raw).hexdigest()
+        except OSError as exc:
+            log.warning("Failed to read run file %s: %s", path.name, exc)
+            return None
+
+    paths = iter(history_dir.glob("*.run"))
+    with ThreadPoolExecutor(max_workers=4, thread_name_prefix="history-read") as pool:
+        while batch := list(islice(paths, 32)):
+            for result in pool.map(read, batch):
+                if result is not None:
+                    yield result
+
+
 def get_run_history() -> list[RunHistory]:
     """Read all completed run history files, merged across save trees.
 
@@ -354,17 +378,7 @@ def get_run_history() -> list[RunHistory]:
         history_dir = save_dir / "history"
         if not history_dir.exists():
             continue
-        for run_file in history_dir.glob("*.run"):
-            try:
-                if run_file.stat().st_size > _MAX_SAVE_FILE_SIZE:
-                    log.warning("Skipping oversized run file %s (> %d bytes)",
-                                run_file.name, _MAX_SAVE_FILE_SIZE)
-                    continue
-                raw = run_file.read_bytes()
-                digest = hashlib.sha256(raw).hexdigest()
-            except OSError as e:
-                log.warning("Failed to read run file %s: %s", run_file.name, e)
-                continue
+        for run_file, raw, digest in _read_history_files(history_dir):
             stem = run_file.stem
             if stem not in first_digest:
                 first_digest[stem] = digest
@@ -444,7 +458,7 @@ def get_run_history() -> list[RunHistory]:
                         current_hp=p_stats.get("current_hp", 0),
                         max_hp=p_stats.get("max_hp", 0),
                         gold=p_stats.get("current_gold", 0),
-                gold_observed="current_gold" in p_stats,
+                        gold_observed="current_gold" in p_stats,
                         cards_offered=cards_offered,
                         cards_picked=cards_picked,
                         potions_used=[p for p in p_stats.get("potion_used", []) if p],

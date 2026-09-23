@@ -41,7 +41,7 @@ changed documentation, not application behavior. Development is on
 
 The isolated public checkout excludes private modules, personal overlays, and
 working build files. Windows source checks cover Python 3.11 and the locked
-desktop Python 3.13.15 environment. Lint and type checks cover the public package;
+desktop Python 3.14.7 environment (3.13 was also exercised). Lint and type checks cover the public package;
 Chromium checks include real Swagger operations with external requests blocked.
 The final local source run passed 1,756 tests (one skipped), with 89.40% branch
 coverage against the 88% gate; all 19 Chromium tests passed. Mypy checked 40
@@ -106,3 +106,20 @@ The detailed reviewed plan, recovery hashes and per-finding evidence are retaine
 locally under `build/stability-plan-2026-09-22` and
 `build/diagnosis-verification-2026-09-22`. Those directories can contain local
 diagnostic paths and are intentionally excluded from distribution.
+
+## Native runtime maintenance
+
+The initial 3.13.15 candidate bundled OpenSSL 3.0.21. Public support for 3.0
+ended on 7 September 2026 ([OpenSSL notice](https://openssl-library.org/post/2026-09-16-eol30/)).
+Desktop qualification therefore moved to Python 3.14.7; its Windows distribution
+reports OpenSSL 3.5.7 on the supported 3.5 LTS line. The runtime inventory is
+cross-checked against `runtime-info` from the actual executable, including after
+metadata stripping. Existing Python 3.11–3.13 source compatibility is retained.
+
+OpenSSL 3.5.8 contains newer fixes ([25 August advisory](https://openssl-library.org/news/secadv/20260825.txt)).
+The advisory covers QUIC, CMS, CMP, raw-public-key configurations, DTLS and direct
+EVP cipher operations. The default app uses HTTP locally and Python HTTPS clients;
+it does not configure those specialist interfaces. This is a scoped code-review
+assessment, not a claim that 3.5.7 has no advisories. Recheck the final native SBOM
+and use a refreshed official Python build when available. Custom native bindings
+or TLS deployments require their own applicability review.

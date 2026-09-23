@@ -42,6 +42,7 @@ def collect(analysis: Path) -> dict:
 
 def enrich(document: dict, inventory: dict) -> dict:
     packages = list(inventory["packages"]) + [{"name": "CPython", "version": inventory["python"]},
+                                             {"name": "OpenSSL", "version": inventory["openssl"].split()[1]},
                                              {"name": "swagger-ui-dist", "version": "5.33.0"}]
     existing = {p.get("SPDXID") for p in document.get("packages", [])}
     for package in packages:
@@ -53,7 +54,11 @@ def enrich(document: dict, inventory: dict) -> dict:
                  "downloadLocation": "NOASSERTION", "filesAnalyzed": False,
                  "licenseConcluded": "NOASSERTION", "licenseDeclared": "NOASSERTION",
                  "copyrightText": "NOASSERTION"}
-        if name != "CPython":
+        if name in {"CPython", "OpenSSL"}:
+            vendor, product = ("python", "python") if name == "CPython" else ("openssl", "openssl")
+            entry["externalRefs"] = [{"referenceCategory": "SECURITY", "referenceType": "cpe23Type",
+                "referenceLocator": f"cpe:2.3:a:{vendor}:{product}:{version}:*:*:*:*:*:*:*"}]
+        else:
             kind = "npm" if name == "swagger-ui-dist" else "pypi"
             entry["externalRefs"] = [{"referenceCategory": "PACKAGE-MANAGER",
                                       "referenceType": "purl", "referenceLocator": f"pkg:{kind}/{name}@{version}"}]
@@ -70,6 +75,7 @@ def main():
     parser.add_argument("--analysis", type=Path)
     parser.add_argument("--inventory", type=Path, required=True)
     parser.add_argument("--spdx", type=Path)
+    parser.add_argument("--qualification", type=Path)
     args = parser.parse_args()
     if args.analysis:
         result = collect(args.analysis)
@@ -77,6 +83,11 @@ def main():
     if args.spdx:
         document = json.loads(args.spdx.read_text(encoding="utf-8"))
         inventory = json.loads(args.inventory.read_text(encoding="utf-8"))
+        if args.qualification:
+            runtime = json.loads(args.qualification.read_text(encoding="utf-8"))["runtime"]
+            for field in ("python", "openssl"):
+                if runtime[field] != inventory[field]:
+                    raise SystemExit(f"Built executable {field} differs from the inventoried build runtime")
         args.spdx.write_text(json.dumps(enrich(document, inventory), indent=2) + "\n", encoding="utf-8")
 
 

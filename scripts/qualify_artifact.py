@@ -45,6 +45,7 @@ def qualify(executable: Path, dataset: Path, work: Path) -> dict:
         return archive, checksum
 
     results["version"] = run("--version").stdout.strip()
+    results["runtime"] = json.loads(run("runtime-info").stdout)
     run("validate-data", live)
     results["validate_good"] = True
     cards = json.loads((candidate / "cards.json").read_text(encoding="utf-8"))

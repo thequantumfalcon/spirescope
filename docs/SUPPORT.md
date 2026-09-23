@@ -6,7 +6,7 @@ refresh timestamp does not certify support for a game build.
 
 ## Supported paths and qualification
 
-Source installs require Python 3.11 or later; CI checks 3.11, 3.12 and 3.13.
+Source installs require Python 3.11 or later; CI checks 3.11, 3.12, 3.13 and 3.14.
 Desktop candidates target Windows x64 and macOS on the GitHub-hosted build
 runner architecture. Record that architecture from the artifact inventory for
 each release; do not describe an ARM64 binary as an Intel-native build. Docker

@@ -218,7 +218,7 @@ class TestTagBuildsRunTheRealGates:
         workflow = _load_workflow(CI_YML)
         jobs = _jobs(workflow)
         versions = jobs["test"]["strategy"]["matrix"]["python-version"]
-        assert set(versions) == {"3.11", "3.12", "3.13"}
+        assert set(versions) == {"3.11", "3.12", "3.13", "3.14"}
         assert "browser" in jobs
         assert jobs["browser"]["needs"] == "browser-engines"
         assert jobs["browser"]["if"] == "always()"

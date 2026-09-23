@@ -32,6 +32,7 @@ Commands:
   serve         Start the web dashboard (default)
   install-data  Install a local data bundle with a SHA-256 checksum file
   validate-data Check a data directory without starting the dashboard
+  runtime-info  Print the executing Python/OpenSSL versions and architecture
   update        Fetch latest game data from the wiki
   community     Fetch community tips from Steam
   export        Export aggregate stats to JSON file
@@ -133,6 +134,16 @@ def main():
     # `python -m sts2 --browser` correctly defaults to "serve" instead of
     # treating "--browser" as an unknown command.
     command = next((a for a in args if not a.startswith("-")), "serve")
+
+    if command == "runtime-info":
+        import json
+        import platform
+        import ssl
+
+        print(json.dumps({"python": platform.python_version(),
+                          "openssl": ssl.OPENSSL_VERSION,
+                          "machine": platform.machine(), "platform": platform.platform()}))
+        return
 
     if command == "install-data":
         import argparse

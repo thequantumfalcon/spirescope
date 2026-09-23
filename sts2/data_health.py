@@ -87,6 +87,13 @@ def validate_command(args: list[str]) -> int:
             for key in ("STATE_DIR", "SAVE_DIR", "GAME_DIR", "MODS_DIR", "LOG_FILE"):
                 os.environ["STS2_" + key] = str(Path(tmp) / key)
             os.environ["STS2_LANG"] = "en"
+            # Version lookup or an embedding caller may have loaded config
+            # before this command selected the candidate. Rebind it before
+            # importing the loader; never validate a different installed tree.
+            import importlib
+
+            import sts2.config as config
+            importlib.reload(config)
             from sts2.knowledge import KnowledgeBase
             kb = KnowledgeBase()
             for family in FAMILIES:
