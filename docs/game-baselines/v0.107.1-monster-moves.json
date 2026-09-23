@@ -3,8 +3,8 @@
   "game_commit": "59260271",
   "reviewed_at": "2026-09-23",
   "complete": false,
-  "scope": "Move sets, intents, values with Ascension 8+/9+ variants, turn patterns and entry effects for the 102 monsters reachable from the Act 1 pools (Overgrowth and Underdocks act models, 42 encounters), the Act 2 pool (Hive act model, 20 encounters) and the Act 3 pool (Glory act model, 18 encounters).",
-  "method": "Paraphrased from each native MonsterModel move state machine: follow-up states, random branch weights, repeat rules and cooldowns, conditional starts, and AscensionHelper values (ToughEnemies from Ascension 8, DeadlyEnemies from Ascension 9). Titles come from the installed game's English monsters localization table. Named powers are identifiers whose effects are not reviewed; summon slot availability, encounter-specific starting moves and forced-state triggers are not simulated. Reviewed-HP monsters outside the three act pools (event and encounter-specific monsters) remain a review queue.",
+  "scope": "Move sets, intents, values with Ascension 8+/9+ variants, turn patterns and entry effects for all 107 monsters with reviewed HP: the Act 1 pools (Overgrowth and Underdocks act models, 42 encounters), the Act 2 pool (Hive act model, 20 encounters), the Act 3 pool (Glory act model, 18 encounters) and the five event and encounter-specific monsters outside those pools.",
+  "method": "Paraphrased from each native MonsterModel move state machine: follow-up states, random branch weights, repeat rules and cooldowns, conditional starts, and AscensionHelper values (ToughEnemies from Ascension 8, DeadlyEnemies from Ascension 9). Titles come from the installed game's English monsters localization table. Named powers are identifiers whose effects are not reviewed; summon slot availability, encounter-specific starting moves and forced-state triggers are not simulated. Monsters without reviewed HP (companions, the ending creature, mocks and deprecated models) are outside this review.",
   "acts": {
     "ACT1": [
       "MONSTER.ASSASSIN_RUBY_RAIDER",
@@ -113,6 +113,13 @@
       "MONSTER.TORCH_HEAD_AMALGAM",
       "MONSTER.TURRET_OPERATOR",
       "MONSTER.ZAPBOT"
+    ],
+    "EVENT": [
+      "MONSTER.BATTLE_FRIEND_V1",
+      "MONSTER.BATTLE_FRIEND_V2",
+      "MONSTER.BATTLE_FRIEND_V3",
+      "MONSTER.FAKE_MERCHANT_MONSTER",
+      "MONSTER.MYSTERIOUS_KNIGHT"
     ]
   },
   "reviewed_ids": [
@@ -120,6 +127,9 @@
     "MONSTER.ASSASSIN_RUBY_RAIDER",
     "MONSTER.AXEBOT",
     "MONSTER.AXE_RUBY_RAIDER",
+    "MONSTER.BATTLE_FRIEND_V1",
+    "MONSTER.BATTLE_FRIEND_V2",
+    "MONSTER.BATTLE_FRIEND_V3",
     "MONSTER.BOWLBUG_EGG",
     "MONSTER.BOWLBUG_NECTAR",
     "MONSTER.BOWLBUG_ROCK",
@@ -143,6 +153,7 @@
     "MONSTER.EXOSKELETON",
     "MONSTER.EYE_WITH_TEETH",
     "MONSTER.FABRICATOR",
+    "MONSTER.FAKE_MERCHANT_MONSTER",
     "MONSTER.FAT_GREMLIN",
     "MONSTER.FLAIL_KNIGHT",
     "MONSTER.FLYCONID",
@@ -170,6 +181,7 @@
     "MONSTER.MAGI_KNIGHT",
     "MONSTER.MAWLER",
     "MONSTER.MECHA_KNIGHT",
+    "MONSTER.MYSTERIOUS_KNIGHT",
     "MONSTER.MYTE",
     "MONSTER.NIBBIT",
     "MONSTER.NOISEBOT",
@@ -235,6 +247,18 @@
     "MONSTER.AXE_RUBY_RAIDER": {
       "definition_sha256": "3ba51c335698440e17d819ff2f25b4f0668c83b490e373198934b5814739f38d",
       "mechanics_record_sha256": "34efa44e785e8d34b3fa57477b0535a10ccf3f239f6ebed854e323dfe73a6a5f"
+    },
+    "MONSTER.BATTLE_FRIEND_V1": {
+      "definition_sha256": "f8fdadfbaae369a19293360c688b770c9e77a651b9cafb72a219fd6eda818d24",
+      "mechanics_record_sha256": "11f3a73ec61143e285a01550081760e4d16c94b190c455f59ec9e770e39d059d"
+    },
+    "MONSTER.BATTLE_FRIEND_V2": {
+      "definition_sha256": "12b0b40825f04a59481571a0c4f27d274a60360028aa29f9ec59bf0717acb3cf",
+      "mechanics_record_sha256": "0bc52d278eda0b80651da4529822976e82f89d78224b869c8f2b127859438fe2"
+    },
+    "MONSTER.BATTLE_FRIEND_V3": {
+      "definition_sha256": "26338b5a71e0a5b414fb141f061b93117d598480cb6f2126868aa47d5b097822",
+      "mechanics_record_sha256": "efee6536296cba7c2325ddf9b05dccf0fbd35bb14e88243ec44420ed07f6d233"
     },
     "MONSTER.BOWLBUG_EGG": {
       "definition_sha256": "c7bdba96f3ae387cbe6189e5a844d6f05d3fcf0a5aa9e5e06d276ba723c8d1ec",
@@ -327,6 +351,10 @@
     "MONSTER.FABRICATOR": {
       "definition_sha256": "7a78bc8f844f4c92eb877957510dd8d3f1450d9b8eb3bf3f59ebb5bf47678c75",
       "mechanics_record_sha256": "886295717a0e2fe2c1d656d876b500f464f222fe3f5a2f8901913f7f7f12da72"
+    },
+    "MONSTER.FAKE_MERCHANT_MONSTER": {
+      "definition_sha256": "166d54d0a2992dc8cef22ebd81bf90dca1370b99113801471ac8e0cb6e9745f8",
+      "mechanics_record_sha256": "1f9a2d63762b4f5a40c2051da3c58c8c9da3f58bd8f9afc892f5d971001b9149"
     },
     "MONSTER.FAT_GREMLIN": {
       "definition_sha256": "838247477921bdbd2d9eab3c05109be1dac8b00033417e4d2cdc15aa15534472",
@@ -435,6 +463,10 @@
     "MONSTER.MECHA_KNIGHT": {
       "definition_sha256": "b542bb93962c858258ec1a10980cf17412ddb394ba79d4e0c11c364053bbfdd0",
       "mechanics_record_sha256": "d94584bb111ac54690e40dc7a5f30bc15f081f1a7d55577bc9676e78777942de"
+    },
+    "MONSTER.MYSTERIOUS_KNIGHT": {
+      "definition_sha256": "580f6f13e750e948c2bba0cc540d39e99a2c225e80dc17797a6dec73178c9978",
+      "mechanics_record_sha256": "78f546cb6ccdad7fcdb06b36d9801de44246b0be649600a11865d1a21f107a6a"
     },
     "MONSTER.MYTE": {
       "definition_sha256": "37e1f1aea3a5ed18312b0cafa85383a9a52f5a2202e628a65276233c87cf8f23",

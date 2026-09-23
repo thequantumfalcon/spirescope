@@ -7,7 +7,7 @@
       "branch": "main",
       "reviewed_at": "2026-09-22",
       "complete": false,
-      "scope": "Reviewed main pool printed card traits and base/first-upgrade rules; three saved-card rules; potion printed rules/usage/targets; relic general rules/rarity. Runtime simulation, all availability conditions, other systems and beta are not certified. Initial monster HP before scaling and modifiers is reviewed separately from attack patterns. Declared possible-monster rosters and room types are reviewed for main encounters; counts, generation probabilities and encounter adjustments are not simulated. Main timeline requirements, reward lists, score-bar sequence and placeholder classification are reviewed; saved progression is displayed rather than simulated. Separately reviewed event option effects and local eligibility checks are included only for listed events. All 65 main event/Ancient option summaries and normal act-pool placement are reviewed; cross-entity hooks and event simulations remain bounded. Enchantment titles, rules and eligibility are reviewed; per-copy amounts and status reset timing are not. Move sets and turn patterns are reviewed for the 102 Act 1 to Act 3 pool monsters; power effects, summon slot rules and forced-state triggers are not.",
+      "scope": "Reviewed main pool printed card traits and base/first-upgrade rules; three saved-card rules; potion printed rules/usage/targets; relic general rules/rarity. Runtime simulation, all availability conditions, other systems and beta are not certified. Initial monster HP before scaling and modifiers is reviewed separately from attack patterns. Declared possible-monster rosters and room types are reviewed for main encounters; counts, generation probabilities and encounter adjustments are not simulated. Main timeline requirements, reward lists, score-bar sequence and placeholder classification are reviewed; saved progression is displayed rather than simulated. Separately reviewed event option effects and local eligibility checks are included only for listed events. All 65 main event/Ancient option summaries and normal act-pool placement are reviewed; cross-entity hooks and event simulations remain bounded. Enchantment titles, rules and eligibility are reviewed; per-copy amounts and status reset timing are not. Move sets and turn patterns are reviewed for all 107 monsters with reviewed HP; power effects, summon slot rules and forced-state triggers are not.",
       "cards": {
         "CARD.GUIDING_STAR": {
           "star_cost": "2",
@@ -24468,6 +24468,48 @@
           "definition_sha256": "3ba51c335698440e17d819ff2f25b4f0668c83b490e373198934b5814739f38d",
           "verification": "native-review"
         },
+        "MONSTER.BATTLE_FRIEND_V1": {
+          "moves": [
+            {
+              "state": "NOTHING_MOVE",
+              "title": "Nothing",
+              "intent": "None",
+              "effect": "Does nothing."
+            }
+          ],
+          "pattern": "Training dummy with 75 HP; it never acts. Its BattlewornDummyTimeLimitPower 3 governs the encounter and is not reviewed.",
+          "entry_effects": "Gains BattlewornDummyTimeLimitPower 3.",
+          "definition_sha256": "f8fdadfbaae369a19293360c688b770c9e77a651b9cafb72a219fd6eda818d24",
+          "verification": "native-review"
+        },
+        "MONSTER.BATTLE_FRIEND_V2": {
+          "moves": [
+            {
+              "state": "NOTHING_MOVE",
+              "title": "Nothing",
+              "intent": "None",
+              "effect": "Does nothing."
+            }
+          ],
+          "pattern": "Training dummy with 150 HP; it never acts. Its BattlewornDummyTimeLimitPower 3 governs the encounter and is not reviewed.",
+          "entry_effects": "Gains BattlewornDummyTimeLimitPower 3.",
+          "definition_sha256": "12b0b40825f04a59481571a0c4f27d274a60360028aa29f9ec59bf0717acb3cf",
+          "verification": "native-review"
+        },
+        "MONSTER.BATTLE_FRIEND_V3": {
+          "moves": [
+            {
+              "state": "NOTHING_MOVE",
+              "title": "Nothing",
+              "intent": "None",
+              "effect": "Does nothing."
+            }
+          ],
+          "pattern": "Training dummy with 300 HP; it never acts. Its BattlewornDummyTimeLimitPower 3 governs the encounter and is not reviewed.",
+          "entry_effects": "Gains BattlewornDummyTimeLimitPower 3.",
+          "definition_sha256": "26338b5a71e0a5b414fb141f061b93117d598480cb6f2126868aa47d5b097822",
+          "verification": "native-review"
+        },
         "MONSTER.BOWLBUG_EGG": {
           "moves": [
             {
@@ -25028,6 +25070,38 @@
           "pattern": "While fewer than 4 of its side are alive: Fabricate or Fabricating Strike with equal weight. Otherwise Disintegrate.",
           "entry_effects": "",
           "definition_sha256": "7a78bc8f844f4c92eb877957510dd8d3f1450d9b8eb3bf3f59ebb5bf47678c75",
+          "verification": "native-review"
+        },
+        "MONSTER.FAKE_MERCHANT_MONSTER": {
+          "moves": [
+            {
+              "state": "SWIPE_MOVE",
+              "title": "Swipe",
+              "intent": "Attack",
+              "effect": "13 (15 at Ascension 9+) damage."
+            },
+            {
+              "state": "SPEW_COINS_MOVE",
+              "title": "Spew Coins",
+              "intent": "Multi-attack",
+              "effect": "2 damage x8 hits."
+            },
+            {
+              "state": "THROW_RELIC_MOVE",
+              "title": "Throw Relic",
+              "intent": "Attack + Debuff",
+              "effect": "9 (10 at Ascension 9+) damage and applies 1 Frail."
+            },
+            {
+              "state": "ENRAGE_MOVE",
+              "title": "Enrage",
+              "intent": "Buff",
+              "effect": "Gains 2 Strength."
+            }
+          ],
+          "pattern": "Opens with Swipe; then random with equal weight among Swipe, Spew Coins and Throw Relic (never the same twice in a row) and Enrage (never twice in a row, not within 3 moves of its last use). After Throw Relic the next move is one of the three attacks.",
+          "entry_effects": "",
+          "definition_sha256": "166d54d0a2992dc8cef22ebd81bf90dca1370b99113801471ac8e0cb6e9745f8",
           "verification": "native-review"
         },
         "MONSTER.FAT_GREMLIN": {
@@ -25730,6 +25804,32 @@
           "pattern": "Charge, then repeats Flamethrower, Windup, Heavy Cleave.",
           "entry_effects": "Gains ArtifactPower 3.",
           "definition_sha256": "b542bb93962c858258ec1a10980cf17412ddb394ba79d4e0c11c364053bbfdd0",
+          "verification": "native-review"
+        },
+        "MONSTER.MYSTERIOUS_KNIGHT": {
+          "moves": [
+            {
+              "state": "WAR_CHANT",
+              "title": "War Chant",
+              "intent": "Buff",
+              "effect": "Gains 3 Strength."
+            },
+            {
+              "state": "FLAIL_MOVE",
+              "title": "Flail",
+              "intent": "Multi-attack",
+              "effect": "9 damage x2 hits (10 x2 at Ascension 9+)."
+            },
+            {
+              "state": "RAM_MOVE",
+              "title": "Ram",
+              "intent": "Attack",
+              "effect": "15 (17 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "A Flail Knight variant: opens with Ram; then random with equal weight among War Chant (never twice in a row), Flail and Ram (each at most twice in a row).",
+          "entry_effects": "Gains 6 Strength and PlatingPower 6.",
+          "definition_sha256": "580f6f13e750e948c2bba0cc540d39e99a2c225e80dc17797a6dec73178c9978",
           "verification": "native-review"
         },
         "MONSTER.MYTE": {
