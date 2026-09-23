@@ -763,7 +763,7 @@ def analyze_run(run: RunHistory, kb=None) -> dict:
     # Floors recorded below 20% HP
     danger_floors = [f for f in run.floors if f.max_hp > 0 and f.current_hp / f.max_hp < 0.2]
     if danger_floors:
-        insights.append({"type": "info", "text": f"HP recorded below 20% of max on {len(danger_floors)} of {len(run.floors)} floors."})
+        insights.append({"type": "info", "text": f"HP recorded below 20% of max on {len(danger_floors)} of {len(run.floors)} floor{'s' if len(run.floors) != 1 else ''}."})
 
     # Card picks
     cards_picked = [c for f in run.floors for c in f.cards_picked]

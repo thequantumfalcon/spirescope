@@ -775,7 +775,8 @@ def _discover_events_from_saves() -> list[dict]:
         try:
             data = json.loads(progress_path.read_text(encoding="utf-8"))
             for event_id in data.get("discovered_events", []):
-                if event_id and event_id not in existing_ids and event_id not in discovered:
+                # The Architect ending is outside the ordinary event pool.
+                if event_id and event_id not in existing_ids and event_id not in discovered and not is_ending_model(event_id):
                     name = event_id.split(".", 1)[-1].replace("_", " ").title() if "." in event_id else event_id
                     discovered[event_id] = {
                         "id": event_id,

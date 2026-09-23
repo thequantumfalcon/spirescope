@@ -17,7 +17,7 @@ pytest -q
 - Run `python -m sts2` to start the dev server at http://127.0.0.1:8000
 - Run `python -m sts2 update` to fetch fresh game data
 - Run `python -m sts2 community` to pull community data from Steam
-- Run `pytest -q --tb=short` before submitting changes
+- Run `pytest -q --tb=short` before submitting changes. If Slay the Spire 2 is installed, point `STS2_GAME_DIR` at an empty directory first: the suite otherwise applies your game's text overlay and one identities assertion differs.
 
 ## Project Layout
 

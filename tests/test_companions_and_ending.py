@@ -86,3 +86,18 @@ async def test_run_page_labels_companions(client):
     assert response.status_code == 200
     assert "Osty (companion)" in response.text
     assert "Cultist (companion)" not in response.text
+
+
+def test_event_discovery_skips_the_ending(tmp_path):
+    from sts2.fetcher import _discover_events_from_saves
+
+    save_dir = tmp_path / "saves"
+    save_dir.mkdir()
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    (data_dir / "events.json").write_text("[]")
+    (save_dir / "progress.save").write_text(json.dumps(
+        {"discovered_events": ["EVENT.THE_ARCHITECT", "EVENT.SOME_NEW_EVENT"]}))
+    with patch("sts2.fetcher.DATA_DIR", data_dir), patch("sts2.config.SAVE_DIR", save_dir):
+        discovered = [e["id"] for e in _discover_events_from_saves()]
+    assert discovered == ["EVENT.SOME_NEW_EVENT"]
