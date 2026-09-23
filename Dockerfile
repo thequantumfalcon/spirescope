@@ -8,7 +8,9 @@ WORKDIR /app
 # Copy project files and install
 COPY pyproject.toml README.md LICENSE THIRD_PARTY_NOTICES.md ./
 COPY sts2/ sts2/
-RUN pip install --no-cache-dir .
+COPY requirements-runtime-lock.txt ./
+RUN pip install --no-cache-dir --require-hashes -r requirements-runtime-lock.txt \
+    && pip install --no-cache-dir --no-deps .
 
 # Non-root user for security. /app must be writable by it for the source
 # tree, but user state (language setting, hypotheses, community aggregate) no

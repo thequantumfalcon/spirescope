@@ -48,8 +48,8 @@
   {% for d in deck_diff %}
   <tr>
     <td>{{ d.name }}</td>
-    <td class="{% if d.qty_a > d.qty_b %}diff-more{% elif d.qty_a < d.qty_b %}diff-less{% else %}diff-same{% endif %}">{{ d.qty_a }}</td>
-    <td class="{% if d.qty_b > d.qty_a %}diff-more{% elif d.qty_b < d.qty_a %}diff-less{% else %}diff-same{% endif %}">{{ d.qty_b }}</td>
+    <td class="{% if d.qty_a > d.qty_b %}diff-more{% elif d.qty_a < d.qty_b %}diff-less{% else %}diff-same{% endif %}">{{ d.qty_a }}{% if d.upg_a %} <span class="text-green text-sm" title="Upgraded copies">({{ d.upg_a }}+)</span>{% endif %}</td>
+    <td class="{% if d.qty_b > d.qty_a %}diff-more{% elif d.qty_b < d.qty_a %}diff-less{% else %}diff-same{% endif %}">{{ d.qty_b }}{% if d.upg_b %} <span class="text-green text-sm" title="Upgraded copies">({{ d.upg_b }}+)</span>{% endif %}</td>
   </tr>
   {% endfor %}
   </tbody>

@@ -55,6 +55,40 @@ def _levenshtein(a: str, b: str) -> int:
 NON_DRAFTABLE = {"Status", "Curse", "Event", "Token", "Quest"}
 
 
+# Mechanic detection for deck analysis, read from canonical English card
+# text. Display keywords say what a card mentions, not what it does: Body Slam
+# ("damage equal to your Block") and Barricade carry the Block keyword without
+# granting any, and Havoc's Draw keyword comes from "Draw Pile". These match
+# only text that grants the effect to the player: "Gain 5 Block", "gain Block
+# equal to ...", "ALL players gain 12 Block"; "Draw 2 cards", "draw 1
+# additional card", "Draw cards until ...". Triggers ("Whenever you gain
+# Block"), amplifiers ("Double your Block"), draw restrictions ("Draw 1 fewer
+# card") and effects on another player ("Another player draws 1 card") do not
+# match.
+_BLOCK_GAIN_RE = re.compile(r"\bgain (?:\d+|X) Block\b|\bgain Block equal to\b", re.IGNORECASE)
+_CARD_DRAW_RE = re.compile(
+    r"\bdraw (?:\d+|X|that many)(?: additional)? cards?\b|\bdraw cards until\b"
+    # Tutors move cards from the Draw Pile to the Hand, which is a draw that
+    # picks its card ("Put a Skill from your Draw Pile into your Hand")
+    r"|\b(?:from|in) your Draw Pile (?:to add )?into your Hand\b",
+    re.IGNORECASE)
+
+
+def grants_block(text: str) -> bool:
+    """True when card text grants the player Block."""
+    return bool(_BLOCK_GAIN_RE.search(text or ""))
+
+
+def draws_cards(text: str) -> bool:
+    """True when card text draws the player cards."""
+    return bool(_CARD_DRAW_RE.search(text or ""))
+
+
+def hits_all_enemies(text: str) -> bool:
+    """True when card text affects ALL enemies."""
+    return "all enemies" in (text or "").lower()
+
+
 class KnowledgeBase:
     def __init__(self, language: str = ""):
         # Explicit language beats the ambient setting: the caller that just
@@ -80,6 +114,9 @@ class KnowledgeBase:
         self._potions_by_id: dict[str, Potion] = {}
         self._strategies_by_char: dict[str, CharacterStrategy] = {}
         self._epochs_by_id: dict[str, Epoch] = {}
+        # Canonical English (description, description_upgraded) for cards the
+        # content overlay translated; analysis reads these, not display text
+        self._card_text_en: dict[str, tuple[str, str]] = {}
 
         # Pre-built search index: list of (searchable_text, type, obj)
         self._search_index: list[tuple[str, str, object]] = []
@@ -193,6 +230,9 @@ class KnowledgeBase:
                 entry = entries.get(model.id)
                 if not isinstance(entry, dict):
                     continue
+                if family == "cards" and model.id not in self._card_text_en:
+                    self._card_text_en[model.id] = (
+                        model.description, model.description_upgraded)
                 for field in ("name", "description", "description_upgraded"):
                     value = entry.get(field)
                     # setattr bypasses pydantic validation, so a malformed
@@ -208,6 +248,15 @@ class KnowledgeBase:
     def english_name(self, model) -> str:
         """Name to use for joins against English-keyed data."""
         return getattr(model, "name_en", "") or model.name
+
+    def card_text_en(self, card: Card, upgraded: bool = False) -> str:
+        """Canonical English card text for analysis, whatever the display
+        language. Upgraded instances read the upgraded text when it exists."""
+        base, upg = self._card_text_en.get(
+            card.id, (card.description, card.description_upgraded))
+        if upgraded and upg:
+            return upg
+        return base or ""
 
     def _load_mods(self):
         """Load mod data from JSON files in the mods directory."""
@@ -531,7 +580,8 @@ class KnowledgeBase:
         if rarity:
             result = [c for c in result if c.rarity.lower() == rarity.lower()]
         if cost:
-            result = [c for c in result if c.cost == cost]
+            # Case-insensitive like the other filters, so cost=x finds X-cost cards
+            result = [c for c in result if c.cost.lower() == cost.lower()]
         if keyword:
             kw = keyword.lower()
             result = [c for c in result if any(kw in k.lower() for k in c.keywords)]
@@ -608,10 +658,19 @@ class KnowledgeBase:
                 synergies.append(other)
         return synergies
 
-    def analyze_deck(self, card_ids: list[str]) -> dict:
-        """Analyze a deck composition."""
-        raw_cards = [self.get_card_by_id(cid) for cid in card_ids]
-        cards = [c for c in raw_cards if c is not None]
+    def analyze_deck(self, card_ids: list[str],
+                     upgrades: list[bool] | None = None) -> dict:
+        """Analyze a deck composition.
+
+        upgrades, when given, is parallel to card_ids (CurrentRun.deck_upgrades):
+        upgraded instances use the upgraded cost and text. Missing entries
+        count as not upgraded.
+        """
+        flags = list(upgrades or [])
+        raw = [(self.get_card_by_id(cid), i < len(flags) and bool(flags[i]))
+               for i, cid in enumerate(card_ids)]
+        instances = [(c, up) for c, up in raw if c is not None]
+        cards = [c for c, _ in instances]
 
         if not cards:
             return {"error": "No valid cards found"}
@@ -656,15 +715,24 @@ class KnowledgeBase:
         cost_curve: dict[str, int] = {}
         cost_curve_by_type: dict[str, dict[str, int]] = {}
         numeric_costs: list[int] = []
-        for c in cards:
-            cost_curve[c.cost] = cost_curve.get(c.cost, 0) + 1
-            by_type = cost_curve_by_type.setdefault(c.cost, {})
+        for c, upgraded in instances:
+            cost = (c.cost_upgraded if upgraded and c.cost_upgraded else c.cost) or ""
+            cost_curve[cost] = cost_curve.get(cost, 0) + 1
+            by_type = cost_curve_by_type.setdefault(cost, {})
             by_type[c.type] = by_type.get(c.type, 0) + 1
-            if c.cost.isdigit():
-                numeric_costs.append(int(c.cost))
+            if cost.isdigit():
+                numeric_costs.append(int(cost))
 
         avg_cost = round(sum(numeric_costs) / len(numeric_costs), 1) if numeric_costs else 0.0
         energy_per_hand = round(avg_cost * 5, 1)
+
+        # Mechanics come from canonical English card text, never from display
+        # keywords (a keyword marks a mention, not a capability) and never
+        # from the localized description (a language setting must not change
+        # the advice).
+        texts = [self.card_text_en(c, upgraded) for c, upgraded in instances]
+        has_block = any(grants_block(t) for t in texts)
+        unknown_mechanics = len(card_ids) - len(cards) + sum(not t or c.source == "discovered" for (c, _), t in zip(instances, texts))
 
         # Weaknesses
         weaknesses = []
@@ -673,16 +741,16 @@ class KnowledgeBase:
             weaknesses.append("Low attack count — may struggle to kill enemies quickly")
         if len(skills) < tc * 0.2:
             weaknesses.append("Few skills — limited defensive options")
-        if not any(kw in keyword_freq for kw in ("Block", "Dexterity")):
-            weaknesses.append("No Block generation — vulnerable to damage")
+        if not has_block:
+            weaknesses.append("Block generation unknown — some card mechanics are unavailable" if unknown_mechanics else "No Block generation — vulnerable to damage")
         # No card carries an "AoE" keyword — the game never emits one and the
         # fetcher does not derive one, so keying on keyword_freq made this
         # weakness fire on every deck ever analysed. Read the card text, which
         # is where the signal actually lives.
-        if not any("all enemies" in (c.description or "").lower() for c in cards):
-            weaknesses.append("No AoE — vulnerable to multi-enemy fights")
-        if "Draw" not in keyword_freq:
-            weaknesses.append("No card draw — may stall in longer fights")
+        if not any(hits_all_enemies(t) for t in texts):
+            weaknesses.append("AoE coverage unknown — some card mechanics are unavailable" if unknown_mechanics else "No AoE — vulnerable to multi-enemy fights")
+        if not any(draws_cards(t) for t in texts):
+            weaknesses.append("Card draw unknown — some card mechanics are unavailable" if unknown_mechanics else "No card draw — may stall in longer fights")
         if tc > 30:
             weaknesses.append("Deck is bloated (>30 cards) — key cards drawn less often")
         if tc < 15:
@@ -702,14 +770,15 @@ class KnowledgeBase:
         strengths = []
         if 18 <= tc <= 25:
             strengths.append("Good deck size — consistent draws without bloat")
-        if any(kw in keyword_freq for kw in ("Block", "Dexterity")) and any(kw in keyword_freq for kw in ("Strength", "Poison", "Lightning")):
+        if has_block and any(kw in keyword_freq for kw in ("Strength", "Poison", "Lightning")):
             strengths.append("Balanced offense and defense — both scaling and Block present")
         if detected_archetypes:
             strengths.append(f"Clear archetype: {detected_archetypes[0]['name']}")
 
         return {
             "character": character,
-            "deck_size": len(cards),
+            "deck_size": len(card_ids),
+            "unknown_mechanics": unknown_mechanics,
             "attacks": len(attacks),
             "skills": len(skills),
             "powers": len(powers),
@@ -834,7 +903,8 @@ class KnowledgeBase:
                 continue
             if not card.keywords:
                 continue
-            score = sum(need_keywords.get(kw, 0) for kw in card.keywords)
+            score = sum(need_keywords.get(kw, 0) for kw in card.keywords
+                        if kw != "Block" or grants_block(self.card_text_en(card)))
             if score > 0:
                 # Bonus for uncommon/rare (more impactful)
                 if card.rarity in ("Uncommon", "Rare"):

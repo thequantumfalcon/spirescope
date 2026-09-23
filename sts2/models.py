@@ -1,5 +1,5 @@
 """Pydantic models for STS2 game entities."""
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 
 class Card(BaseModel):
@@ -142,10 +142,36 @@ class RunFloor(BaseModel):
     current_hp: int = 0
     max_hp: int = 0
     gold: int = 0
+    # None only at construction: old explicit scalar values count as observed.
+    gold_observed: bool | None = None
     cards_offered: list[str] = []
+    # Every card taken on this floor, in save order. Shops and some fights
+    # hand out more than one; the single card_picked kept only the last.
+    cards_picked: list[str] = []
+    # Legacy convenience for readers that expect one pick: the LAST entry of
+    # cards_picked (what the parser always stored here). Kept in sync with
+    # cards_picked on construction, so exports from before cards_picked
+    # existed still yield their one known pick.
     card_picked: str = ""
     potions_used: list[str] = []
     potions_gained: list[str] = []
+    # 1-based act from the save's per-act map_point_history grouping.
+    # 0 = unknown (runs parsed or exported before this was recorded); analytics
+    # then falls back to estimating the act from the floor number.
+    act: int = 0
+
+    @model_validator(mode="after")
+    def _sync_picks(self) -> "RunFloor":
+        supplied = self.model_fields_set
+        if self.gold_observed is None:
+            self.gold_observed = "gold" in supplied
+        if "cards_picked" not in supplied and self.card_picked:
+            self.cards_picked = [self.card_picked]
+        elif "card_picked" in supplied and self.card_picked != (self.cards_picked[-1] if self.cards_picked else ""):
+            raise ValueError("card_picked must match the final cards_picked entry")
+        elif self.cards_picked:
+            self.card_picked = self.cards_picked[-1]
+        return self
 
 
 class RunHistory(BaseModel):
@@ -158,13 +184,21 @@ class RunHistory(BaseModel):
     killed_by: str = ""
     run_time: int = 0
     deck: list[str] = []
+    # Per-instance data parallel to `deck` (same length when present; empty =
+    # not recorded, e.g. older exports). Upgrade level per card, and the
+    # enchantment id per card ("" = none) — the id-keyed `enchantments` dict
+    # cannot tell two copies of the same card apart.
+    deck_upgrades: list[int] = []
+    deck_enchantments: list[str] = []
     relics: list[str] = []
     floors: list[RunFloor] = []
     build_id: str = ""
     timestamp: int = 0
     total_players: int = 1
     origin: str = "vanilla"  # save tree the run came from: vanilla | modded
-    enchantments: dict[str, str] = {}  # card_id -> enchantment id (final deck)
+    # card_id -> enchantment id (final deck). Legacy view: with duplicate
+    # copies it holds one enchantment per id; deck_enchantments is exact.
+    enchantments: dict[str, str] = {}
 
 
 class CurrentRun(BaseModel):
@@ -187,6 +221,15 @@ class CurrentRun(BaseModel):
     floors: list[RunFloor] = []
     player_index: int = 0
     total_players: int = 1
+    # The watched player's id as the save records it ("1" in solo, a
+    # SteamID64 in co-op). The game log names players by this id, not by
+    # seat index, so it is what log telemetry is matched on.
+    player_id: str = ""
+    # Run seed; lets save and log state be matched to the same run.
+    seed: str = ""
+    # Supporting session evidence, never a filesystem path/account credential.
+    start_time: int = 0
+    telemetry_status: str = "unavailable"  # matched, log_only, unavailable, mismatched
     # Combat telemetry from the game log; pydantic silently dropped these
     # before they were declared, so API/SSE consumers never saw them.
     # Save-file-only paths simply leave the defaults.

@@ -13,6 +13,11 @@
   </div>
 </div>
 
+{% if run.telemetry_status in ['unavailable', 'mismatched'] %}
+<p class="text-muted" role="status">Showing the saved run. Combat telemetry is unavailable because a matching log session has not been established.</p>
+{% elif run.telemetry_status == 'log_only' %}
+<p class="text-muted" role="status">Only log observations are available. The deck, gold and inventory may be incomplete until a save is found.</p>
+{% endif %}
 <div class="live-danger" aria-live="polite">
 {% if danger_level %}
 <div class="danger-banner danger-{{ danger_level }}" role="alert">
@@ -211,7 +216,7 @@
 </div>
 {% endif %}
 
-<div id="live-config" data-player="{{ selected_player }}" data-was-active="true"></div>
+<div id="live-config" data-player="{{ selected_player }}" data-was-active="true" data-revision="{{ live_revision }}"></div>
 <script src="/static/live.js?v={{ live_js_hash }}"></script>
 
 {% else %}

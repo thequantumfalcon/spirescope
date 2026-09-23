@@ -17,7 +17,7 @@ classifiers = [
     "Topic :: Games/Entertainment",
 ]
 dependencies = [
-    "fastapi>=0.100.0",
+    "fastapi>=0.108.0",
     "uvicorn[standard]>=0.20.0",
     "jinja2>=3.1.0",
     "pydantic>=2.0.0",
@@ -72,6 +72,7 @@ sts2 = [
     "templates/*.html",
     "static/*",
     "static/fonts/*",
+    "static/swagger/*",
     "locales/*.json",
 ]
 

@@ -48,13 +48,13 @@ class TestCurrentRunFields:
         import sts2.app as app_module
         import sts2.routes as routes
 
-        save_run = _live_run()
+        save_run = _live_run(seed="MATCHED")
         monkeypatch.setattr(routes, "get_current_run",
                             lambda player_index=None: save_run)
         monkeypatch.setattr(app_module, "_log_run_state",
                             {"active": True, "act": 1, "encounters_won": [],
                              "cards_played": ["BASH"], "extra_turns": 1,
-                             "elites_defeated": 2})
+                             "elites_defeated": 2, "seed": "MATCHED"})
 
         async def noop():
             return None

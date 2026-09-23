@@ -3,6 +3,7 @@
 {% block title %}Guide{% endblock %}
 {% block content %}
 <h1>SpireScope Guide</h1>
+<p class="text-muted">Guides and enemy patterns cover part of the catalog. Missing guidance means unknown coverage. Refresh dates describe data maintenance and do not certify compatibility with every game patch.</p>
 <p class="subtitle">Everything you need to get started with your STS2 companion dashboard.</p>
 
 <div id="toc" class="card mb-lg">
@@ -189,7 +190,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <div class="card mb-md">
   <h3>Deck Health Score</h3>
-  <p>The deck analyzer computes a synergy graph where cards are connected by shared keywords. The health score (0-100) measures how well your cards work together. Orphan cards — those with zero connections — are highlighted. Available on the deck analyzer and live tracker.</p>
+  <p>The deck analyzer builds a graph where cards are connected by shared keywords (keywordless cards of the same type and similar cost get a weak link). The health score (0-100) measures how connected that graph is, not how strong the deck is: five copies of Strike score 100. Orphan cards — those with zero connections — are highlighted. Available on the deck analyzer and live tracker.</p>
 </div>
 
 <div class="card mb-md">

@@ -1,6 +1,7 @@
 # Data maintenance loop
 
-Target: spirescope's game data is current within 24h of any STS2 patch.
+Aim to review each game patch promptly; no fixed turnaround is guaranteed.
+Publish compatibility only after source review and validation (see [SUPPORT.md](SUPPORT.md)).
 App releases and data releases are decoupled — packaged-app users receive
 data through in-app data bundles, not new executables.
 
@@ -8,10 +9,13 @@ data through in-app data bundles, not new executables.
 
 1. `python -m sts2 update` — fetches from the sources in
    [DATA_SOURCES.md](DATA_SOURCES.md) (primary wins per entity, secondary
-   fills gaps) and canonicalizes rarities.
-2. **If the patch changed card/relic rarities:** update the override block in
-   `scripts/fix_card_rarity.py` (it intentionally outranks scraped rarities —
-   see the Predator/Taunt precedent comments) BEFORE trusting the refresh.
+   fills compatible gaps), stages the complete refresh and applies guarded
+   text corrections. Adapter rarity normalization runs during extraction.
+2. **If the patch changed card/relic rarities:** verify the new values against
+   that patch. The historical map in `sts2/corrections/rarity.py` is an explicit
+   maintenance tool, not an automatic override of future source data. Its
+   `scripts/fix_card_rarity.py` wrapper accepts `--dry-run`; review its proposed
+   changes before applying it to the selected data directory.
 3. Eyeball the diff: `git diff --stat sts2/data/` and spot-check a few
    reworked entities against the patch notes
    (https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Patch_Notes).

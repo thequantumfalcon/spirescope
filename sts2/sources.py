@@ -54,8 +54,10 @@ class Sts2ggSource:
 # ── wiki.gg Lua module parsing ──
 
 _LUA_ENTRY_RE = re.compile(r'\["((?:[^"\\]|\\.)+)"\]\s*=\s*\{')
+# Integers may be negative: the card modules write an X cost as -1 and
+# Unplayable as -2, and a digits-only pattern silently dropped both.
 _LUA_FIELD_RE = re.compile(
-    r'(\w+)\s*=\s*(?:"((?:[^"\\]|\\.)*)"|(\d+)|(true|false))'
+    r'(\w+)\s*=\s*(?:"((?:[^"\\]|\\.)*)"|(-?\d+)|(true|false))'
 )
 
 
@@ -136,6 +138,22 @@ def _opt_int_str(value) -> str:
     Writing `value or ""` reads that as missing and drops 27 of them.
     """
     return "" if value is None else str(value)
+
+
+# The modules' sentinel costs: Cost = -1 is X, Cost = -2 is Unplayable, and
+# StarCost = -1 is an X Star cost (Stardust).
+_WIKI_COST_SENTINELS = {-1: "X", -2: "Unplayable"}
+
+
+def _wiki_cost(value) -> str:
+    """A Cost/StarCost/CostPlus field as the app's cost string.
+
+    Absence stays "" (unknown), never "Unplayable": only the module's own
+    -2 says a card cannot be played.
+    """
+    if isinstance(value, int) and value in _WIKI_COST_SENTINELS:
+        return _WIKI_COST_SENTINELS[value]
+    return _opt_int_str(value)
 
 
 def _convert_icon_runs(s: str) -> str:
@@ -227,10 +245,14 @@ class WikiggSource:
     def fetch_cards(self) -> list[dict]:
         from sts2.fetcher import (
             _clean_description,
+            _drop_identity_collisions,
             _extract_keywords,
-            _load_existing_name_index,
+            _load_existing_card_index,
+            _match_existing_card,
+            _suffix_colliding_fallbacks,
         )
-        name_index = _load_existing_name_index("cards.json", "CARD")
+        name_index = _load_existing_card_index()
+        unmatched = []
         modules = self._fetch_modules(_WIKI_CARD_MODULES)
         cards = []
         for title, content in modules.items():
@@ -241,7 +263,9 @@ class WikiggSource:
                     character = "Regent"
                 base, upgraded = _split_wiki_text(str(fields.get("Text", "")))
                 desc = _clean_description(base)
-                game_id = name_index.get(name.lower().strip()) or (
+                matched = _match_existing_card(name_index, name, character)
+                unmatched.append(not bool(matched))
+                game_id = matched or (
                     f"CARD.{re.sub(r'[^A-Z0-9]+', '_', name.upper()).strip('_')}"
                 )
                 rarity = str(fields.get("Rarity", ""))
@@ -249,7 +273,7 @@ class WikiggSource:
                     "id": game_id,
                     "name": name,
                     "character": character,
-                    "cost": str(fields.get("Cost", "")) or "Unplayable",
+                    "cost": _wiki_cost(fields.get("Cost")),
                     # Regent spends Stars as well as Energy. The modules carry
                     # StarCost on the 22 cards that have one, and dropping it
                     # left every Regent card looking free of its real price --
@@ -259,11 +283,11 @@ class WikiggSource:
                     # cards that cost nothing once upgraded -- Body Slam,
                     # Havoc, Shadow Step -- which are the interesting ones.
                     # Absence is the only thing that should read as "none".
-                    "star_cost": _opt_int_str(fields.get("StarCost")),
+                    "star_cost": _wiki_cost(fields.get("StarCost")),
                     # CostPlus is only present when upgrading changes the cost,
                     # and it differs from Cost on every card that carries it,
                     # so it is never redundant with the base cost.
-                    "cost_upgraded": _opt_int_str(fields.get("CostPlus")),
+                    "cost_upgraded": _wiki_cost(fields.get("CostPlus")),
                     # Authoritative where the card page previously compared the
                     # base and upgraded strings to guess whether an upgrade
                     # exists -- two different questions.
@@ -278,6 +302,8 @@ class WikiggSource:
                     # along.
                     "mp_only": bool(fields.get("Multiplayer", False)),
                 })
+        _suffix_colliding_fallbacks(cards, unmatched)
+        cards = _drop_identity_collisions(cards, self.name, "cards")
         return sorted(cards, key=lambda c: (c["character"], c["name"]))
 
     def fetch_relics(self) -> list[dict]:

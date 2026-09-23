@@ -198,6 +198,7 @@ def _full_bundle_files(cards=None, **overrides):
         "potions.json": [{"id": "POTION.FIRE", "name": "Fire Potion"}],
         "enemies.json": [{"id": "ENCOUNTER.JAW_WORM", "name": "Jaw Worm"}],
         "events.json": [{"id": "EVENT.NEOW", "name": "Neow"}],
+        "epochs.json": [{"id": "EPOCH.TEST", "name": "Test"}],
         "patches.json": [{"patch": "v0.110.0", "date": "2026-07-31"}],
         "last_updated.txt": "2026-07-22T20:00:00+00:00",
     }
@@ -601,7 +602,7 @@ class TestDatasetShapeGate:
                 (root / name).write_text(content)
             else:
                 (root / name).write_text(json.dumps(content))
-        with pytest.raises(updater._RejectBundle, match="without a 'id' field"):
+        with pytest.raises(updater._RejectBundle, match="cards.json"):
             updater._validate_dataset(root)
 
     def test_patch_manifest_keyed_on_patch_not_id(self, tmp_path):
@@ -627,18 +628,16 @@ class TestDatasetShapeGate:
                 (root / name).write_text(content)
             else:
                 (root / name).write_text(json.dumps(content))
-        with pytest.raises(updater._RejectBundle, match="does not load"):
+        with pytest.raises(updater._RejectBundle, match="required family is empty"):
             updater._validate_dataset(root)
 
-    def test_load_probe_does_not_read_real_save_files(self):
-        """The probe must redirect the save dir: KnowledgeBase back-fills
-        entities discovered from saves, so a probe pointed at the player's
-        real saves reports families the bundle does not contain (an
-        empty-relics bundle passed until this was isolated)."""
-        import inspect
-        source = inspect.getsource(updater._validate_loadable)
-        for var in ("STS2_SAVE_DIR", "STS2_STATE_DIR", "STS2_MODS_DIR"):
-            assert var in source, f"load probe does not isolate {var}"
+    def test_load_probe_uses_packaged_command(self, tmp_path, monkeypatch):
+        calls = []
+        monkeypatch.setattr("subprocess.run", lambda command, **kwargs:
+                            calls.append(command) or type("Result", (), {"returncode": 0})())
+        monkeypatch.setattr(updater.sys, "frozen", True, raising=False)
+        updater._validate_loadable(tmp_path)
+        assert calls == [[updater.sys.executable, "validate-data", str(tmp_path.resolve()), "--min-cards", "400"]]
 
 
 def test_recovery_runs_before_the_knowledge_base_loads(tmp_path):

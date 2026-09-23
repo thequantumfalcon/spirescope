@@ -531,7 +531,7 @@ async def test_deck_analyze_caps_card_count(client):
         "csrf_token": generate_csrf_token(),
         "card_ids": card_ids,
     })
-    assert resp.status_code == 200
+    assert resp.status_code == 400
 
 
 async def test_admin_token_not_in_logs(client):
@@ -1481,12 +1481,13 @@ async def test_runs_ascension_invalid(client):
 
 # --- Additional coverage: middleware, CSP, rate limiting ---
 
-async def test_docs_csp_allows_cdn(client):
-    """CSP for /docs should allow cdn.jsdelivr.net scripts."""
+async def test_docs_csp_uses_local_assets(client):
+    """API docs use packaged scripts under the narrow dashboard policy."""
     resp = await client.get("/docs")
     csp = resp.headers.get("Content-Security-Policy", "")
     if resp.status_code == 200:
-        assert "cdn.jsdelivr.net" in csp
+        assert "cdn.jsdelivr.net" not in csp
+    assert "script-src 'self'" in csp
 
 
 async def test_static_cache_control(client):
@@ -1807,12 +1808,12 @@ async def test_get_live_run_merge_both_active():
     full_deck = ["CARD.STRIKE"] * 4 + ["CARD.DEFEND"] * 4 + ["CARD.BEAM_CELL", "CARD.TEMPEST"]
     save_run = CurrentRun(active=True, character="Defect", current_hp=60,
                           max_hp=80, gold=50, act=1, floor=3,
-                          deck=full_deck,
+                          seed="MATCHED", deck=full_deck,
                           deck_upgrades=[False] * len(full_deck),
                           deck_enchantments=[""] * len(full_deck),
                           potions=["POTION.FIRE_POTION"],
                           relics=["RELIC.CRACKED_CORE"])
-    log_state = {"active": True, "character": "Defect", "current_hp": 0,
+    log_state = {"seed": "MATCHED", "active": True, "character": "Defect", "current_hp": 0,
                  "max_hp": 0, "gold": 120, "act": 2, "floor": 5,
                  "deck": ["CARD.BEAM_CELL", "CARD.TEMPEST"],
                  "potions": ["POTION.POWER_POTION"],

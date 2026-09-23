@@ -352,7 +352,7 @@ class TestLogTailerPoll:
             f.write("[INFO] Saved run history: 42.run\n")
 
         result = tailer.poll()
-        assert result is None  # run ended, no active state
+        assert result is not None and result["active"] is False  # publishes run end
 
 
 class TestCombatTelemetryFidelity:

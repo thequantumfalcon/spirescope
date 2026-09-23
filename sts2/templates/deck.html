@@ -3,6 +3,9 @@
 {% block title %}Deck Analyzer{% endblock %}
 {% block content %}
 <h1>Deck Analyzer</h1>
+{% if analysis and (analysis.unknown_upgrade_copies or analysis.enchantments_unmodeled) %}
+<p role="status">Analysis is partial: {{ analysis.unknown_upgrade_copies }} copies have unknown upgrades; {{ analysis.enchantments_unmodeled }} have enchantment effects that are not modeled.</p>
+{% endif %}
 <p class="text-muted mb-md">Select the cards in your deck to get archetype detection, synergy analysis, and improvement suggestions.</p>
 
 {% if from_run_id %}
@@ -16,6 +19,8 @@
 {% endif %}
 
 <form method="post" action="/deck/analyze">
+  <input type="hidden" id="deck-instances" name="instances" value='{{ instances | default([]) | tojson }}'>
+  {% if instances %}<p class="text-muted">Upgrade levels and enchantments are retained for each card copy. Unknown upgrade levels use base costs as an estimate; enchantment effects are not included in advice.</p>{% endif %}
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
   {% if selected_counts %}
   {% for card_id, count in selected_counts.items() %}
@@ -166,7 +171,7 @@
 
 {% if spectral_health %}
 <h3 class="mt-md">Deck Health Score</h3>
-<p class="text-sm text-muted">Synergy-graph connectivity. Cards sharing keywords are connected; the more internally connected the deck, the higher the score.</p>
+<p class="text-sm text-muted">Keyword connectivity, not deck strength. Two cards are connected when they share a keyword; two cards with no keywords at all are weakly connected when they are the same type and cost within 1 Energy of each other. The score rises the more internally connected the deck is, so a pile of identical cards scores high. It says nothing about whether the cards win fights.</p>
 <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
   <div class="stat-box">
     <div class="num {% if spectral_health.health_score >= 70 %}text-green{% elif spectral_health.health_score >= 40 %}text-yellow{% else %}text-red{% endif %}">{{ spectral_health.health_score }}</div>

@@ -84,7 +84,7 @@ async def _lifespan(application):
         _observers.clear()
 
 
-app = FastAPI(title="Spirescope", lifespan=_lifespan)
+app = FastAPI(title="Spirescope", lifespan=_lifespan, docs_url=None, redoc_url=None)
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR), html=False), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 templates.env.globals["css_hash"] = _CSS_HASH
@@ -500,7 +500,7 @@ async def rate_limit(request: Request, call_next):
     # Loopback bind = single-user dashboard. Rate-limiting is dead weight there
     # and the unbounded-keys dict is a memory liability if anyone ever spoofs
     # source IPs. Only enforce when bound to a real network interface.
-    if _is_loopback_bind():
+    if _is_loopback_bind(request):
         return await call_next(request)
     # Exempt static files and CORS preflight. The SSE stream is deliberately
     # NOT exempt: each handshake counts against the window, so one client
@@ -565,26 +565,11 @@ async def security_headers(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    if request.url.path in {"/docs", "/redoc", "/openapi.json"}:
-        response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; "
-            "script-src 'self' https://cdn.jsdelivr.net; "
-            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
-            "font-src 'self'; "
-            "img-src 'self' data:; "
-            "connect-src 'self'; "
-            "frame-ancestors 'none'"
-        )
-    else:
-        response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; "
-            "script-src 'self'; "
-            "style-src 'self' 'unsafe-inline'; "
-            "font-src 'self'; "
-            "img-src 'self' data:; "
-            "connect-src 'self'; "
-            "frame-ancestors 'none'"
-        )
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; script-src 'self'; "
+        "style-src 'self' 'unsafe-inline'; font-src 'self'; "
+        "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'"
+    )
     if request.url.path.startswith("/static/"):
         response.headers["Cache-Control"] = "public, max-age=3600"
     return response
@@ -680,11 +665,12 @@ async def check_host(request: Request, call_next):
     wrong for anything that reconfigures after startup.
     """
     allowed = _allowed_hosts()
+    authority = request.headers.get("host", "") or ""
+    match = re.fullmatch(r"(?:\[([^\]\s]+)\]|([^:/?#@\s]+))(?::([0-9]+))?", authority)
+    if match is None or (match.group(3) and (len(match.group(3)) > 5 or int(match.group(3)) > 65535)):
+        return PlainTextResponse("Invalid host header.", status_code=400)
+    host = (match.group(1) or match.group(2)).lower()
     if "*" not in allowed:
-        host = (request.headers.get("host", "") or "").split(":")[0]
-        # Strip brackets so a literal IPv6 host matches its allowlist entry.
-        if host.startswith("[") and host.endswith("]"):
-            host = host[1:-1]
         normalized = [h[1:-1] if h.startswith("[") and h.endswith("]") else h
                       for h in allowed]
         if host not in normalized:
@@ -926,3 +912,9 @@ async def _poll_game_log():
     while True:
         await _poll_game_log_once()
         await asyncio.sleep(3)
+
+
+@app.get("/docs", include_in_schema=False)
+@app.get("/redoc", include_in_schema=False)
+async def api_documentation(request: Request):
+    return templates.TemplateResponse(request, "api_docs.html", {})

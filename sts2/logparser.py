@@ -74,9 +74,16 @@ _RE_NEOW_EVENT = re.compile(r"\[VERYDEBUG\] \[EventSynchronizer\] Event EVENT\.N
 # every play recorded the same meaningless token. The player number is
 # captured too: in co-op the log interleaves both players, and attributing
 # a teammate's plays to whoever the page is watching is simply wrong.
+# Real logs name the card without its CARD. prefix
+# ("Player 1 playing card STRIKE_IRONCLAD (targeting ...)"), and the number
+# is the player's id as the save records it ("1" in solo), not a seat index.
 _RE_PLAYING_CARD = re.compile(r"\[INFO\] Player (\d+) playing card ([\w.]+)")
 _RE_EXTRA_TURN = re.compile(r"\[INFO\] Player (\d+) \([A-Z]+\) is taking an extra turn")
 _RE_ELITES_DEFEATED = re.compile(r"\[INFO\] Elites Defeated: (\d+)/\d+")
+# Run identity: "Embarking on a singleplayer IRONCLAD run. Ascension: 1
+# Seed: 0GUR32LH2X". The seed matches the save's "seed" for the same run, so
+# the live view can refuse to mix a stale or foreign log into the save.
+_RE_EMBARK = re.compile(r"\[INFO\] Embarking on an? (\w+) (\w+) run\.(?: Ascension: (\d+))?(?: Seed: (\w+))?")
 
 # Character ID mapping
 _CHAR_MAP = {
@@ -116,8 +123,30 @@ class LogRunState:
         self.extra_turns_by_player: dict[int, int] = {}
         # Run-wide, not per player: the game emits a cumulative count.
         self.elites_defeated = 0
+        # The number this machine's player appears under in "Player N ..."
+        # lines, from "Local player N is ready". None until seen.
+        self.local_player: int | None = None
+        # Run identity from the "Embarking on ..." line; empty/None = unknown.
+        self.seed = ""
+        self.ascension: int | None = None
 
-    def to_dict(self, player_index: int = 0) -> dict:
+    def _telemetry_player(self, player: int | None) -> int | None:
+        """Which logged player number to report telemetry for.
+
+        An explicit number wins. Otherwise the local player named by the
+        lobby line, and failing that the only player the log has seen (a
+        solo log only ever names one).
+        """
+        if player is not None:
+            return player
+        if self.local_player is not None:
+            return self.local_player
+        seen = set(self.cards_played_by_player) | set(self.extra_turns_by_player)
+        if len(seen) == 1:
+            return next(iter(seen))
+        return None
+
+    def to_dict(self, player: int | None = None) -> dict:
         """Convert to dict compatible with CurrentRun.model_dump().
 
         Combat telemetry (cards_played, extra_turns, elites_defeated) is
@@ -126,12 +155,15 @@ class LogRunState:
         the defaults. Before the fields were declared, pydantic silently
         dropped them here and no consumer ever saw them.
 
-        Telemetry is reported for `player_index`, and the full per-player
+        Telemetry is reported for `player` -- the number the log prints in
+        "Player N ...", which is the save's player id ("1" in solo), not a
+        seat index -- defaulting to the local player. The full per-player
         breakdown rides along under keys CurrentRun does not declare so
-        callers that know which seat they are watching can select. Reporting
+        callers that know whose id they are watching can select. Reporting
         one merged total attributed a co-op partner's plays to whoever the
         page happened to be showing.
         """
+        who = self._telemetry_player(player)
         return {
             "active": self.active,
             "character": self.character,
@@ -150,12 +182,19 @@ class LogRunState:
             "floors": [],
             "player_index": 0,
             "total_players": self.total_players,
-            "cards_played": list(self.cards_played_by_player.get(player_index, [])),
-            "extra_turns": self.extra_turns_by_player.get(player_index, 0),
+            "cards_played": list(self.cards_played_by_player.get(who, []))
+                            if who is not None else [],
+            "extra_turns": self.extra_turns_by_player.get(who, 0)
+                           if who is not None else 0,
             "elites_defeated": self.elites_defeated,
             "cards_played_by_player": {p: list(v) for p, v
                                        in self.cards_played_by_player.items()},
             "extra_turns_by_player": dict(self.extra_turns_by_player),
+            "seed": self.seed,
+            "ascension": self.ascension or 0,
+            # None = the log never said; lets the live merge tell "unknown"
+            # apart from a real ascension 0.
+            "log_ascension": self.ascension,
         }
 
 
@@ -167,124 +206,76 @@ class LogTailer:
         self.state = LogRunState()
         self._offset = 0
         self._last_size = 0
+        self._identity = None
+        self._pending = b""
+        self._discard_line = False
         self._initialized = False
 
+    def _read_lines(self, raw: bytes):
+        raw = self._pending + raw
+        parts = raw.split(b"\n")
+        self._pending = parts.pop()
+        # A malformed writer must not make a partial line grow indefinitely.
+        if len(self._pending) > 65536:
+            self._pending = b""
+            self._discard_line = True
+        if self._discard_line and parts:
+            parts.pop(0)
+            self._discard_line = False
+        return [line.decode("utf-8", errors="replace") for line in parts]
+
     def _parse_initial(self):
-        """Parse the tail of the log file to build initial state.
-
-        Only the last _INIT_TAIL_BYTES are read: the current run's events are
-        by definition at the end, and an unbounded read pinned startup time
-        and memory to however large the log had grown.
-        """
-        if not self.path.exists():
-            return
+        self.state.reset()
+        self._pending = b""
+        self._discard_line = False
         try:
-            size = self.path.stat().st_size
-            with open(self.path, "r", encoding="utf-8", errors="replace") as f:
-                if size > _INIT_TAIL_BYTES:
-                    f.seek(size - _INIT_TAIL_BYTES)
-                    f.readline()  # skip the partial line the seek landed in
-                lines = f.readlines()
-            self._offset = size
-            self._last_size = self._offset
-
-            # Find the LAST run start (work backwards to find it)
-            last_run_start = -1
-            for i in range(len(lines) - 1, -1, -1):
-                line = lines[i]
-                if "Wrote" in line and "current_run" in line and ".save " in line:
-                    # Find the first save write of this run
-                    last_run_start = i
-                    # Keep going back to find the true start
-                    continue
-                if "[StartRunLobby" in line and "Local player" in line:
-                    last_run_start = i
-                    break
-                if "Saved run history" in line and last_run_start > i:
-                    # There was a run end after i, so last_run_start is correct
-                    break
-
-            if last_run_start < 0:
-                return
-
-            # Check if the run ended after last_run_start
-            run_ended = False
-            for i in range(last_run_start, len(lines)):
-                if "Saved run history" in lines[i]:
-                    run_ended = True
-                if "QuitGameOver" in lines[i]:
-                    run_ended = True
-
-            if run_ended:
-                # No active run
-                return
-
-            # Parse from last_run_start to build state
-            self.state.reset()
-            for i in range(last_run_start, len(lines)):
-                self._process_line(lines[i])
-
+            with open(self.path, "rb") as stream:
+                import os
+                stat = os.fstat(stream.fileno())
+                self._identity = (stat.st_dev, stat.st_ino)
+                start = max(0, stat.st_size - _INIT_TAIL_BYTES)
+                stream.seek(start)
+                self._discard_line = start > 0
+                lines = self._read_lines(stream.read(_INIT_TAIL_BYTES))
+                self._offset = stream.tell()
+                self._last_size = self._offset
+            for line in lines:
+                self._process_line(line)
             self._initialized = True
         except OSError:
             log.debug("Failed to read log file", exc_info=True)
 
     def poll(self) -> dict | None:
-        """Check for new log data. Returns updated state dict or None if unchanged.
-
-        Call this periodically (e.g. every 2-5 seconds).
-        """
-        if not self.path.exists():
-            return None
-
-        if not self._initialized:
-            self._parse_initial()
-            self._initialized = True
-            if self.state.active:
-                return self.state.to_dict()
-            return None
-
+        """Read complete byte-delimited lines; reset on replacement or truncation."""
         try:
-            current_size = self.path.stat().st_size
+            stat = self.path.stat()
         except OSError:
+            was_active = self.state.active
+            self.state.reset()
+            self._initialized = False
+            return self.state.to_dict() if was_active else None
+        identity = (stat.st_dev, stat.st_ino)
+        restart = (not self._initialized or identity != self._identity
+                   or stat.st_size < self._offset
+                   or stat.st_size - self._offset > _MAX_POLL_BYTES)
+        if restart:
+            was_active = self.state.active
+            self._parse_initial()
+            return self.state.to_dict() if was_active or self.state.active else None
+        if stat.st_size == self._offset:
             return None
-
-        if current_size == self._last_size:
-            return None  # No new data
-
-        if current_size < self._last_size:
-            # Log was rotated/truncated — re-parse from scratch
-            self._initialized = False
-            self._offset = 0
-            self._last_size = 0
-            return self.poll()
-
-        if current_size - self._offset > _MAX_POLL_BYTES:
-            # Pathological backlog (poller stalled for hours, or something
-            # else is writing the file). Treat like a rotation and re-anchor
-            # on the tail instead of reading it all into memory.
-            self._initialized = False
-            self._offset = 0
-            self._last_size = 0
-            return self.poll()
-
         changed = False
         try:
-            with open(self.path, "r", encoding="utf-8", errors="replace") as f:
-                f.seek(self._offset)
-                new_data = f.read()
-                self._offset = f.tell()
-            self._last_size = current_size
-
-            for line in new_data.splitlines():
-                if self._process_line(line):
-                    changed = True
+            with open(self.path, "rb") as stream:
+                stream.seek(self._offset)
+                lines = self._read_lines(stream.read(_MAX_POLL_BYTES))
+                self._offset = stream.tell()
+                self._last_size = self._offset
+            for line in lines:
+                changed = self._process_line(line) or changed
         except OSError:
             log.debug("Failed to read new log data", exc_info=True)
-            return None
-
-        if changed and self.state.active:
-            return self.state.to_dict()
-        return None
+        return self.state.to_dict() if changed else None
 
     def _process_line(self, line: str) -> bool:
         """Process a single log line. Returns True if state changed."""
@@ -295,6 +286,7 @@ class LogTailer:
         m = _RE_LOCAL_READY.search(line)
         if m:
             self.state.reset()
+            self.state.local_player = int(m.group(1))
             self.state.active = True
             self.state.run_started = True
             return True
@@ -304,6 +296,24 @@ class LogTailer:
             self.state.active = True
             self.state.run_started = True
             self.state.events_seen.append("EVENT.NEOW")
+            return True
+
+        # Run embark: carries the seed and ascension that identify the run
+        m = _RE_EMBARK.search(line)
+        if m:
+            if self.state.seed:
+                self.state.reset()
+            self.state.active = True
+            self.state.run_started = True
+            if m.group(1).lower() == "singleplayer":
+                # Only unambiguous solo: in co-op whose character this names
+                # has not been checked against a real log.
+                char_id = "CHARACTER." + m.group(2)
+                self.state.character = _CHAR_MAP.get(char_id, self.state.character)
+            if m.group(3) is not None:
+                self.state.ascension = int(m.group(3))
+            if m.group(4):
+                self.state.seed = m.group(4)
             return True
 
         # Character selection (during lobby)
@@ -419,7 +429,11 @@ class LogTailer:
         if m:
             player = int(m.group(1))
             played = self.state.cards_played_by_player.setdefault(player, [])
-            played.append(m.group(2))
+            card_id = m.group(2)
+            # Everything else in the app keys cards as CARD.X; the log omits it.
+            if not card_id.startswith("CARD."):
+                card_id = "CARD." + card_id
+            played.append(card_id)
             # Cap each list to prevent unbounded growth on long runs.
             if len(played) > self.state._cards_played_cap:
                 del played[:-self.state._cards_played_cap]

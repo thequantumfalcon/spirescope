@@ -60,10 +60,10 @@ class TestNonObjectJson:
         import sts2.config as cfg
         monkeypatch.setattr(cfg, "STATE_DIR", tmp_path)
         (tmp_path / "hypotheses.json").write_text(
-            json.dumps({"h1": "oops", "h2": [1, 2], "h3": {"text": "ok"}}),
+            json.dumps({"h1": "oops", "h2": [1, 2], "h3": {"text": "ok", "condition_type": "elite_skip"}}),
             encoding="utf-8")
         from sts2.hypothesis import load_hypotheses
-        assert load_hypotheses() == {"h3": {"text": "ok"}}
+        assert load_hypotheses() == {"h3": {"text": "ok", "condition_type": "elite_skip"}}
 
     def test_get_language_survives_truthy_non_string_language(self, tmp_path, monkeypatch):
         """settings.json={"language": ["de"]} used to raise during
@@ -113,19 +113,16 @@ class TestAggregateSanitisation:
         with pytest.raises(ValueError):
             merge_aggregate({}, imported)
 
-    def test_nested_infinity_counters_are_dropped(self):
-        from sts2.aggregate import _sanitise_import
-        clean = _sanitise_import(json.loads(
-            '{"run_count": 5, "card_win_rates": '
-            '{"CARD.X": {"wins": Infinity, "total": 10}}}'))
-        assert clean["card_win_rates"].get("CARD.X", {}).get("wins") is None
+    def test_nested_infinity_counters_are_rejected(self):
+        from sts2.aggregate import AggregateImportError, _sanitise_import
+        with pytest.raises(AggregateImportError):
+            _sanitise_import(json.loads('{"run_count": 5, "card_win_rates": {"CARD.X": {"wins": Infinity, "total": 10}}}'))
 
     def test_wins_cannot_exceed_total(self):
-        from sts2.aggregate import _sanitise_import
-        clean = _sanitise_import(
-            {"run_count": 5,
-             "character_stats": {"Ironclad": {"wins": 99, "total": 10}}})
-        assert clean["character_stats"]["Ironclad"]["wins"] == 10
+        from sts2.aggregate import AggregateImportError, _sanitise_import
+        with pytest.raises(AggregateImportError):
+            _sanitise_import({"run_count": 5,
+                              "character_stats": {"Ironclad": {"wins": 99, "total": 10}}})
 
     def test_picked_cannot_exceed_offered(self):
         from sts2.aggregate import _sanitise_import
@@ -153,7 +150,7 @@ class TestAggregateSanitisation:
             "/api/import/stats",
             files={"file": ("stats.json", body, "application/json")},
             data={"csrf_token": generate_csrf_token()})
-        assert resp.status_code == 500
+        assert resp.status_code == 503
 
     def test_save_aggregate_refuses_non_finite(self, tmp_path, monkeypatch):
         import sts2.config as cfg

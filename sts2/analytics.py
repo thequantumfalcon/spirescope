@@ -22,6 +22,18 @@ def _estimate_act(floor: int) -> int:
     return 3
 
 
+def _floor_act(floor) -> int:
+    """The act a floor was played in.
+
+    Uses the act recorded from the save's per-act grouping. Act 1 is 16 or 17
+    floors depending on the map, so the floor-number estimate misfiles floors
+    near the boundary; it is only the fallback for runs recorded before the
+    act was stored (act == 0).
+    """
+    act = getattr(floor, "act", 0)
+    return act if act > 0 else _estimate_act(floor.floor)
+
+
 def _is_combat(floor) -> bool:
     """True if this floor was a fight.
 
@@ -166,7 +178,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
             "avg_floors": round(sum(len(r.floors) for r in char_run_list) / char_total, 1),
         }
 
-    # --- Card Pick Rates (from floor card_picked / cards_offered) ---
+    # --- Card Pick Rates (from floor cards_picked / cards_offered) ---
     card_offered: Counter[str] = Counter()
     card_picked: Counter[str] = Counter()
     for run in runs:
@@ -175,8 +187,8 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
                 for offered_id in floor.cards_offered:
                     if offered_id:
                         card_offered[offered_id] += 1
-                if floor.card_picked:
-                    card_picked[floor.card_picked] += 1
+                for picked_id in floor.cards_picked:
+                    card_picked[picked_id] += 1
 
     card_pick_rates: list[dict[str, Any]] = []
     for card_id, offered in card_offered.most_common():
@@ -196,7 +208,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
     for run in runs:
         for floor in run.floors:
             if _is_combat(floor):
-                act_damage[_estimate_act(floor.floor)].append(floor.damage_taken)
+                act_damage[_floor_act(floor)].append(floor.damage_taken)
 
     damage_by_act = {}
     for act_num in sorted(act_damage.keys()):
@@ -414,7 +426,7 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
                 elif floor.type == "boss":
                     boss_turns.append(floor.turns)
                 turn_damage_pairs.append((float(floor.turns), float(floor.damage_taken)))
-                act = _estimate_act(floor.floor)
+                act = _floor_act(floor)
                 if act in act_turns:
                     act_turns[act].append(floor.turns)
 
@@ -439,18 +451,17 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
     act_deaths: Counter = Counter()
     for run in runs:
         for floor in run.floors:
-            act = _estimate_act(floor.floor)
+            act = _floor_act(floor)
             if act in act_stats:
                 if _is_combat(floor):
                     act_stats[act]["damage"].append(floor.damage_taken)
-                if floor.card_picked:
-                    act_stats[act]["cards_added"].append(1)
-                if floor.gold > 0:
-                    act_stats[act]["gold"].append(floor.gold)
+                act_stats[act]["cards_added"].extend([1] * len(floor.cards_picked))
+                if floor.gold_observed:
+                    act_stats[act]["gold"].append(floor.gold)  # 0 is a real balance
         if not run.win and run.floors:
             # Use the actual final floor number (not len(floors)) so skipped
             # floors don't misattribute deaths to earlier acts.
-            act_deaths[_estimate_act(run.floors[-1].floor)] += 1
+            act_deaths[_floor_act(run.floors[-1])] += 1
 
     per_act = {}
     for act_num in (1, 2, 3):
@@ -486,14 +497,14 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
     pick_floors: dict[str, list[int]] = defaultdict(list)
     for run in runs:
         for floor in run.floors:
-            if floor.card_picked:
-                pick_floors[floor.card_picked].append(floor.floor)
+            for picked_id in floor.cards_picked:
+                pick_floors[picked_id].append(floor.floor)
                 if floor.floor <= 10:
-                    early_picks[floor.card_picked] += 1
+                    early_picks[picked_id] += 1
                 elif floor.floor <= 25:
-                    mid_picks[floor.card_picked] += 1
+                    mid_picks[picked_id] += 1
                 else:
-                    late_picks[floor.card_picked] += 1
+                    late_picks[picked_id] += 1
 
     def _pick_list(counter: Counter) -> list[dict]:
         return [{"card": card, "count": count,
@@ -535,23 +546,29 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
     win_gold: list[int] = []
     loss_gold: list[int] = []
     for run in runs:
-        run_golds = [f.gold for f in run.floors if f.gold > 0]
-        if run_golds:
-            final_gold = run_golds[-1]
+        # Final observed gold, 0 included: filtering `> 0` reported the value
+        # before a run was spent down to nothing and dropped all-zero runs
+        # from the averages entirely.
+        observed = [floor for floor in run.floors if floor.gold_observed]
+        if observed:
+            final_gold = observed[-1].gold
             all_gold_values.append(final_gold)
             if run.win:
                 win_gold.append(final_gold)
             else:
                 loss_gold.append(final_gold)
-                gold_at_death.append(final_gold)
-        for floor in run.floors:
-            if floor.gold > 0:
-                bucket = ((floor.floor - 1) // 10) * 10 + 5
-                gold_by_floor[bucket].append(floor.gold)
-                if highest_gold is None or floor.gold > highest_gold["gold"]:
-                    highest_gold = {"gold": floor.gold, "run_id": run.id, "floor": floor.floor}
+                # An earlier balance is not an observation at death.
+                if run.floors[-1].gold_observed:
+                    gold_at_death.append(final_gold)
+        for floor in observed:
+            bucket = ((floor.floor - 1) // 10) * 10 + 5
+            gold_by_floor[bucket].append(floor.gold)
+            if floor.gold > 0 and (highest_gold is None or floor.gold > highest_gold["gold"]):
+                highest_gold = {"gold": floor.gold, "run_id": run.id, "floor": floor.floor}
 
     gold_economy = {
+        "observed_runs": len(all_gold_values),
+        "observed_death_balances": len(gold_at_death),
         "avg_gold_per_run": round(sum(all_gold_values) / len(all_gold_values), 0) if all_gold_values else 0,
         "avg_gold_at_death": round(sum(gold_at_death) / len(gold_at_death), 0) if gold_at_death else 0,
         "gold_curve": [{"floor": k, "avg_gold": round(sum(v) / len(v), 0)}
@@ -612,9 +629,12 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
         target_skip = win_skips if run.win else loss_skips
         for floor in run.floors:
             if floor.cards_offered:
+                # Each pick claims one offered copy; the rest were skipped.
+                unclaimed = Counter(floor.cards_picked)
                 for offered_id in floor.cards_offered:
                     if offered_id:
-                        if offered_id == floor.card_picked:
+                        if unclaimed[offered_id] > 0:
+                            unclaimed[offered_id] -= 1
                             target_pick[offered_id] += 1
                         else:
                             target_skip[offered_id] += 1
@@ -718,7 +738,7 @@ def analyze_run(run: RunHistory, kb=None) -> dict:
         insights.append({"type": "warning", "text": f"Dropped below 20% HP on {len(danger_floors)} floors — consider prioritizing healing or Block."})
 
     # Cards picked analysis
-    cards_picked = [f.card_picked for f in run.floors if f.card_picked]
+    cards_picked = [c for f in run.floors for c in f.cards_picked]
     if run.floors and len(cards_picked) == 0:
         insights.append({"type": "warning", "text": "No card rewards picked this run — skipping all rewards weakens your deck."})
 
@@ -809,7 +829,7 @@ def analyze_run_patterns(runs: list[RunHistory], kb=None) -> list[dict]:
     death_acts: Counter = Counter()
     for run in recent:
         if not run.win and run.floors:
-            death_acts[_estimate_act(run.floors[-1].floor)] += 1
+            death_acts[_floor_act(run.floors[-1])] += 1
     for act, count in death_acts.items():
         if count >= 3:
             patterns.append({
@@ -1007,7 +1027,7 @@ def compute_era_split(runs: list, entity_id: str, patch_name: str) -> dict | Non
             for f in r.floors:
                 if entity_id in f.cards_offered:
                     offered += 1
-                    if f.card_picked == entity_id:
+                    if entity_id in f.cards_picked:
                         picked += 1
         if n < 10:
             return {"n": n, "insufficient": True}

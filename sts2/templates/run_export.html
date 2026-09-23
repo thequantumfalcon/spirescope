@@ -31,9 +31,14 @@
     </div>
 
     <h2>Final Deck</h2>
+{% if run.deck and not run.deck_upgrades %}<p class="text-muted">Upgrade levels were not recorded for this run.</p>{% endif %}
+{% if run.deck and not run.deck_enchantments %}<p class="text-muted">Enchantments were not recorded per copy; any legacy card-level marks may apply to only one copy.</p>{% endif %}
     <div class="flex flex-wrap gap-xs mb-lg">
+    {% set per_instance = run.deck_enchantments|length == run.deck|length %}
     {% for card_id in run.deck %}
-    <span class="tag tag-keyword">{{ kb.id_to_name(card_id) }}</span>
+    {% set upg = run.deck_upgrades[loop.index0] if loop.index0 < run.deck_upgrades|length else 0 %}
+    {% set ench = run.deck_enchantments[loop.index0] if per_instance else run.enchantments.get(card_id, '') %}
+    <span class="tag tag-keyword">{{ kb.id_to_name(card_id) }}{% if upg %}+{% if upg > 1 %}{{ upg }}{% endif %}{% endif %}{% if ench %} &#10022; {{ kb.id_to_name(ench) }}{% endif %}</span>
     {% endfor %}
     </div>
 
@@ -66,7 +71,7 @@
       <div class="floor-detail">
         {% if floor.encounter %}<strong>{{ kb.id_to_name(floor.encounter) }}</strong>{% endif %}
         {% if floor.turns %}<span class="text-muted"> ({{ floor.turns }} turns)</span>{% endif %}
-        {% if floor.card_picked %}<br><span class="text-green">+ {{ kb.id_to_name(floor.card_picked) }}</span>{% endif %}
+        {% for c in floor.cards_picked %}<br><span class="text-green">+ {{ kb.id_to_name(c) }}</span>{% endfor %}
         {% if floor.potions_used %}{% for p in floor.potions_used %}<br><span class="text-yellow">Used {{ kb.id_to_name(p) }}</span>{% endfor %}{% endif %}
       </div>
       <div class="floor-hp-col">

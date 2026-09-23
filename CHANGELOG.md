@@ -4,6 +4,34 @@
 
 ### Fixed
 
+- Preserve per-copy upgrades/enchantments, all card picks, native acts and
+  observed zero gold through history, analysis and exports.
+- Keep translated presentation independent of mechanics; use effective upgraded
+  costs and disclose unknown mechanics and the limits of historical estimates.
+- Preserve card identities and mechanical fields across sources. Refresh complete
+  datasets in staging and retain the previous data on validation failure.
+- Validate and install data through fixed-purpose commands that work in the
+  packaged executable, including interrupted-update recovery.
+- Reset live telemetry across log replacement and new runs; attribute native
+  player IDs conservatively and refresh same-floor deck/relic/potion changes.
+- Reject malformed imports and impossible aggregate counters; serialize imports
+  and persist retry digests atomically. Report hypothesis persistence failures.
+- Correct IPv6 authority/effective-bind handling and serve functional Swagger UI
+  entirely from bundled assets under the dashboard content security policy.
+- Bound and coalesce graph analysis work, correct its cache identity, and improve
+  the eigensolver for large decks.
+
+### Release engineering
+
+- Qualify desktop builds on CPython 3.13.15, inventory bundled runtime packages
+  and include them in attested SBOMs; use a hashed runtime lock for Docker.
+- Run actual executable install, corrupt-update and recovery checks after final
+  runtime cleanup. Dry-run artifact names identify the exact candidate commit.
+- Document support/recovery and honest security-warning guidance. The candidate
+  remains Beta pending independent platform/game-session and pilot evidence.
+
+### Documentation
+
 - **The link preview advertised five numbers, all of them wrong.** The social
   card hard-coded its counts and every one had drifted: 589 cards against 639,
   298 relics against 312, 170 enemies against 184, 64 events against 67, and

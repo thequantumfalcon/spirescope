@@ -111,71 +111,33 @@ def _fetch_page(path: str) -> str:
         return body.decode("utf-8")
 
 
+def _scan_json_objects(content: str, category: str, results: list, seen_ids: set):
+    """Decode objects with JSON's own string/brace rules, with bounded input."""
+    decoder = json.JSONDecoder()
+    # A failed candidate costs at most 128 KiB; a successful enclosing object
+    # is walked once and skipped rather than repeatedly reparsed.
+    cursor = 0
+    while True:
+        start = content.find("{", cursor)
+        if start < 0:
+            return
+        try:
+            obj, end = decoder.raw_decode(content[start:start + 131072])
+        except (ValueError, RecursionError):
+            cursor = start + 1
+            continue
+        _walk_json_for_category(obj, category, results, seen_ids)
+        cursor = start + end
+
+
 def _extract_json_objects(html: str, category: str) -> list[dict]:
-    """Extract JSON objects with the given category from RSC payloads in HTML.
-
-    Uses two extraction strategies:
-      1. Flat regex — matches single-level JSON objects with "category":"<cat>"
-      2. Nested regex — matches multi-level JSON (handles wiki redesigns that nest data)
-    Falls back to strategy 2 only if strategy 1 finds nothing.
-    """
-    results = []
-    seen_ids = set()
-
-    # Strategy 1: flat JSON objects (current wiki format)
-    pattern = re.compile(
-        r'\{[^{}]*"category"\s*:\s*"' + re.escape(category) + r'"[^{}]*\}'
-    )
-    for match in pattern.finditer(html):
-        try:
-            obj = json.loads(match.group())
-            if obj.get("category") == category:
-                obj_id = obj.get("id", "")
-                if obj_id and obj_id not in seen_ids:
-                    seen_ids.add(obj_id)
-                    results.append(obj)
-        except (json.JSONDecodeError, ValueError):
-            continue
-
-    if results:
-        return results
-
-    # Strategy 2: nested JSON — find larger blocks containing the category,
-    # then extract individual items from parsed structures
-    log.info("Flat extraction found 0 for %s, trying nested extraction", category)
-    nested_pattern = re.compile(
-        r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*"category"\s*:\s*"' + re.escape(category) + r'"'
-        r'[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'
-    )
-    for match in nested_pattern.finditer(html):
-        try:
-            obj = json.loads(match.group())
-            if obj.get("category") == category:
-                obj_id = obj.get("id", "")
-                if obj_id and obj_id not in seen_ids:
-                    seen_ids.add(obj_id)
-                    results.append(obj)
-        except (json.JSONDecodeError, ValueError):
-            continue
-
-    # Strategy 3: scan __NEXT_DATA__ script tag if present
+    results: list[dict] = []
+    seen_ids: set = set()
+    _scan_json_objects(html, category, results, seen_ids)
+    # A partial inline result must not hide the streamed remainder.
+    _extract_from_rsc_payloads(html, category, results, seen_ids)
     if not results:
-        next_data_match = re.search(r'<script[^>]*id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.DOTALL)
-        if next_data_match:
-            try:
-                next_data = json.loads(next_data_match.group(1))
-                _walk_json_for_category(next_data, category, results, seen_ids)
-            except (json.JSONDecodeError, ValueError):
-                pass
-
-    # Strategy 4: RSC streaming payloads — Next.js 13+ embeds data in
-    # self.__next_f.push() calls with string-escaped JSON
-    if not results:
-        log.info("Trying RSC streaming extraction for %s", category)
-        _extract_from_rsc_payloads(html, category, results, seen_ids)
-
-    if not results:
-        log.warning("All extraction strategies found 0 objects for category=%s (HTML length=%d)", category, len(html))
+        log.warning("All extraction strategies found 0 for %s", category)
     return results
 
 
@@ -215,69 +177,128 @@ def _extract_from_rsc_payloads(html: str, category: str, results: list, seen_ids
     raw_chunks = [m.group(1) for m in chunk_pattern.finditer(html)]
     if not raw_chunks:
         return
-    # Chunks are one continuous stream: the site splits JSON objects
-    # mid-token across push() calls, so join with no separator BEFORE
-    # decoding (an escape sequence can straddle a chunk boundary).
-    combined_raw = "".join(raw_chunks)
-    combined = _decode_unicode_escapes(combined_raw)
-
-    # Now search the decoded content for JSON objects with matching category.
-    # Try both flat and bracket-balanced extraction.
-    cat_escaped = re.escape(category)
-
-    # Attempt 1: find JSON objects using a greedy-but-bounded approach
-    obj_pattern = re.compile(
-        r'\{[^{}]*"category"\s*:\s*"' + cat_escaped + r'"[^{}]*\}'
-    )
-    for match in obj_pattern.finditer(combined):
+    chunks = []
+    for raw in raw_chunks:
         try:
-            obj = json.loads(match.group())
-            if obj.get("category") == category:
-                obj_id = obj.get("id", "")
-                if obj_id and obj_id not in seen_ids:
-                    seen_ids.add(obj_id)
-                    results.append(obj)
-        except (json.JSONDecodeError, ValueError):
-            continue
+            chunks.append(json.loads('"' + raw + '"', strict=False))
+        except ValueError:
+            log.warning("Invalid RSC string literal; refusing partial stream")
+            return
+    _scan_json_objects("".join(chunks), category, results, seen_ids)
 
-    # Attempt 2 always runs: objects whose text contains braces are
-    # invisible to the flat pattern (seen_ids dedupes the overlap).
 
-    # Attempt 2: bracket-balanced extraction for nested objects
-    # Find positions of category marker, then expand outward to find balanced {}
-    for m in re.finditer(r'"category"\s*:\s*"' + cat_escaped + r'"', combined):
-        start = m.start()
-        # Walk backward to find opening brace
-        depth = 0
-        obj_start = start
-        for i in range(start - 1, max(start - 5000, -1), -1):
-            if combined[i] == '}':
-                depth += 1
-            elif combined[i] == '{':
-                if depth == 0:
-                    obj_start = i
-                    break
-                depth -= 1
-        # Walk forward from obj_start to find balanced closing brace
-        depth = 0
-        obj_end = len(combined)
-        for i in range(obj_start, min(obj_start + 5000, len(combined))):
-            if combined[i] == '{':
-                depth += 1
-            elif combined[i] == '}':
-                depth -= 1
-                if depth == 0:
-                    obj_end = i + 1
-                    break
-        try:
-            obj = json.loads(combined[obj_start:obj_end])
-            if obj.get("category") == category:
-                obj_id = obj.get("id", "")
-                if obj_id and obj_id not in seen_ids:
-                    seen_ids.add(obj_id)
-                    results.append(obj)
-        except (json.JSONDecodeError, ValueError):
+def _norm_name(name) -> str:
+    """Display name as a matching key: case- and whitespace-insensitive."""
+    return " ".join(str(name).lower().split())
+
+
+def _load_existing_records(filename: str) -> list[dict]:
+    path = DATA_DIR / filename
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return []
+    return [item for item in data if isinstance(item, dict)] if isinstance(data, list) else []
+
+
+def _load_existing_name_index(filename: str, prefix: str) -> dict[str, str]:
+    """Build a name->id lookup from existing data to match wiki items.
+
+    A name carried by more than one record is left out rather than resolved
+    last-wins: a shared name is not an identity, and guessing attached one
+    entity's update to another. No entry means no match.
+    """
+    index: dict[str, str] = {}
+    ambiguous: set[str] = set()
+    for item in _load_existing_records(filename):
+        name = _norm_name(item.get("name", ""))
+        item_id = item.get("id", "")
+        if name and item_id:
+            if index.get(name, item_id) != item_id:
+                ambiguous.add(name)
+            index[name] = item_id
+    for name in ambiguous:
+        del index[name]
+    return index
+
+
+def _load_existing_card_index() -> dict[tuple[str, str], str]:
+    """(normalized name, character) -> id for the existing cards.
+
+    Name alone is not a card's identity: five characters each have a Strike
+    and a Defend, and Apotheosis exists as both a Colorless and an Event card.
+    Keyed by name only, every Strike resolved to whichever came last
+    (CARD.STRIKE_SILENT). Pairs shared by several records are left out.
+
+    Sources file the app-curated pseudo-categories (Curse, Status, Event, ...)
+    under Colorless, so a name that identifies exactly one record, and that
+    record is curated, is also indexed under (name, "") as a fallback.
+    """
+    index: dict[tuple[str, str], str] = {}
+    ambiguous: set[tuple[str, str]] = set()
+    by_name: dict[str, list[dict]] = {}
+    for item in _load_existing_records("cards.json"):
+        name = _norm_name(item.get("name", ""))
+        item_id = item.get("id", "")
+        if not (name and item_id):
             continue
+        by_name.setdefault(name, []).append(item)
+        key = (name, str(item.get("character", "")))
+        if index.get(key, item_id) != item_id:
+            ambiguous.add(key)
+        index[key] = item_id
+    for key in ambiguous:
+        del index[key]
+    for name, items in by_name.items():
+        if len(items) == 1 and items[0].get("character") in _CURATED_CHARACTERS:
+            index[(name, "")] = items[0]["id"]
+    return index
+
+
+def _match_existing_card(index: dict[tuple[str, str], str], name: str,
+                         character: str) -> str:
+    """The existing card id for this name and character, or "" for no match."""
+    key = _norm_name(name)
+    return index.get((key, character)) or index.get((key, ""), "")
+
+
+def _suffix_colliding_fallbacks(records: list[dict], unmatched: list[bool]) -> None:
+    """Give unmatched records whose derived id collides a character suffix.
+
+    Ids derived from a name or slug drop the character, so with no existing
+    record to match, all five Strikes derive CARD.STRIKE. The app's own ids
+    carry the character for exactly these cards (CARD.STRIKE_IRONCLAD).
+    """
+    counts: dict[str, int] = {}
+    for r in records:
+        counts[r["id"]] = counts.get(r["id"], 0) + 1
+    for r, fallback in zip(records, unmatched):
+        character = str(r.get("character", ""))
+        if fallback and r["id"] in {"CARD.STRIKE", "CARD.DEFEND"} and character:
+            suffix = re.sub(r"[^A-Z0-9]+", "_", character.upper()).strip("_")
+            r["id"] = f"{r['id']}_{suffix}"
+
+
+def _drop_identity_collisions(records: list[dict], source: str, label: str) -> list[dict]:
+    """Remove every record whose id another record in the same batch shares.
+
+    Two records resolving to one id means the join could not tell them apart
+    (wiki.gg lists nine "Mad Science (...)" variants that all reduce to the
+    one Mad Science card). Keeping either would be last-wins by another name,
+    so neither updates anything.
+    """
+    counts: dict[str, int] = {}
+    for r in records:
+        counts[r["id"]] = counts.get(r["id"], 0) + 1
+    colliding = sorted(i for i, n in counts.items() if n > 1)
+    if not colliding:
+        return records
+    log.warning("%s: %d %s ids are ambiguous, skipping them: %s",
+                source, len(colliding), label, ", ".join(colliding))
+    print(f"    {source}: skipped {len(colliding)} ambiguous {label} ids")
+    return [r for r in records if counts[r["id"]] == 1]
 
 
 _CHARACTER_SUFFIXES = {
@@ -285,23 +306,6 @@ _CHARACTER_SUFFIXES = {
     "colorless", "curse", "status",
 }
 
-
-def _load_existing_name_index(filename: str, prefix: str) -> dict[str, str]:
-    """Build a name->id lookup from existing data to match wiki items."""
-    path = DATA_DIR / filename
-    if not path.exists():
-        return {}
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return {}
-    index = {}
-    for item in data:
-        name = item.get("name", "").lower().strip()
-        item_id = item.get("id", "")
-        if name and item_id:
-            index[name] = item_id
-    return index
 
 
 def _wiki_id_to_game_id(wiki_id: str, prefix: str, character: str = "") -> str:
@@ -392,9 +396,10 @@ def _scrape_cards(html: str) -> list[dict]:
     _log_field_drift(raw, "CARD")
     if not _validate_extraction(raw, "CARD"):
         return []
-    # Build name->id index from existing data for matching
-    name_index = _load_existing_name_index("cards.json", "CARD")
+    # Build (name, character)->id index from existing data for matching
+    card_index = _load_existing_card_index()
     cards = []
+    unmatched: list[bool] = []
     seen = set()
     for obj in raw:
         wiki_id = obj.get("id", "")
@@ -407,17 +412,24 @@ def _scrape_cards(html: str) -> list[dict]:
         if character == "The Regent":
             character = "Regent"
         name = obj.get("name", "")
-        # Prefer matching by name against existing data to avoid ID mismatches
-        game_id = name_index.get(name.lower().strip())
+        # Prefer matching by name and character against existing data to
+        # avoid ID mismatches
+        game_id = _match_existing_card(card_index, name, character)
+        unmatched.append(not game_id)
         if not game_id:
             game_id = _wiki_id_to_game_id(wiki_id, "CARD", character)
 
-        # Determine cost string
+        # Determine cost string. The site marks X costs explicitly (costsX,
+        # with energy 0 or absent) and has no flag for Unplayable, so a
+        # missing energy value is unknown, not Unplayable: "" lets the merge
+        # keep the existing cost and lets the secondary fill it. Reading
+        # absence as Unplayable is how ten X-cost cards (Whirlwind, Skewer,
+        # ...) shipped as Unplayable.
         energy = obj.get("energy")
-        if energy is None:
-            cost = "Unplayable"
-        elif isinstance(energy, int):
-            cost = str(energy)
+        if obj.get("costsX") is True:
+            cost = "X"
+        elif energy is None:
+            cost = ""
         else:
             cost = str(energy)
 
@@ -442,7 +454,7 @@ def _scrape_cards(html: str) -> list[dict]:
         if _UNRESOLVED_TOKEN_RE.search(desc_upgraded):
             desc_upgraded = ""
 
-        cards.append({
+        card = {
             "id": game_id,
             "name": obj.get("name", ""),
             "character": character,
@@ -452,8 +464,17 @@ def _scrape_cards(html: str) -> list[dict]:
             "description": desc,
             "description_upgraded": desc_upgraded,
             "keywords": keywords,
-        })
+        }
+        # Star cost only when the site states one (costsStarX: Stardust;
+        # starCost: Resonance). Leaving the key out otherwise keeps "absent"
+        # distinct from "none", so the secondary can still supply it.
+        if obj.get("costsStarX") is True:
+            card["star_cost"] = "X"
+        elif isinstance(obj.get("starCost"), int):
+            card["star_cost"] = str(obj["starCost"])
+        cards.append(card)
 
+    _suffix_colliding_fallbacks(cards, unmatched)
     return sorted(cards, key=lambda c: (c["character"], c["name"]))
 
 
@@ -556,6 +577,18 @@ def _save_update_timestamp():
     path.write_text(datetime.datetime.now(datetime.timezone.utc).isoformat(), encoding="utf-8")
 
 
+def _check_source_compatibility(first: dict, second: dict, *, joining: bool = True) -> None:
+    """Reject known incompatible mechanics; absent metadata stays unknown."""
+    left, right = first.get("branch"), second.get("branch")
+    if left in {"main", "beta"} and right in {"main", "beta"} and left != right:
+        raise ValueError(f"Conflicting source branches for {first.get('id')}: {left} / {right}")
+    # Different change revisions may update the installed record, but must
+    # not supply different halves of a single merged source record.
+    if joining and first.get("last_changed") and second.get("last_changed"):
+        if first["last_changed"] != second["last_changed"]:
+            raise ValueError(f"Conflicting source revisions for {first.get('id')}")
+
+
 def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "id") -> list[dict]:
     """Merge new scraped data with existing data, preserving manual additions.
 
@@ -583,6 +616,7 @@ def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "i
     for item_id, new_item in new_by_id.items():
         if item_id in merged_by_id:
             old = merged_by_id[item_id]
+            _check_source_compatibility(old, new_item, joining=False)
             merged = dict(old)
             changed = False
             for k, v in new_item.items():
@@ -590,7 +624,7 @@ def _merge_with_existing(filename: str, new_data: list[dict], id_field: str = "i
                     continue
                 old_v = old.get(k)
                 # Only preserve old value when new is empty/None and old has content
-                if v in (None, "") and old_v not in (None, ""):
+                if k in {"description", "description_upgraded", "cost", "name", "rarity", "character"} and v in (None, "") and old_v not in (None, ""):
                     continue
                 # Pseudo-categories (Curse/Status/Token/Event/Quest) are app-curated;
                 # no source can express them (the wiki files these cards under
@@ -752,12 +786,13 @@ def _existing_count(filename: str) -> int:
         return 0
 
 
-def run_fetcher(save_only: bool = False):
+def _refresh_staged(save_only: bool = False):
     """Scrape game data and update local JSON files.
 
     Args:
         save_only: If True, skip wiki fetching and only discover from saves.
     """
+    refreshed = 0
     print("\n  Spirescope Data Updater")
     print("  ======================\n")
 
@@ -789,51 +824,30 @@ def run_fetcher(save_only: bool = False):
                     log.exception("%s error for %s", source.name, label)
                     print(f"    Warning: {source.name} error ({e})")
                     fetched = []
+                fetched = _drop_identity_collisions(fetched, source.name, label)
                 for r in fetched:
                     r["fetched_from"] = source.name
                 if not records:
                     records = fetched
                 elif fetched:
-                    # Gap-fill: add entities earlier sources don't know.
-                    # Both name AND id must be unknown — a lagging source
-                    # listing a renamed entity under its old name generates
-                    # the same id and would overwrite the current record
-                    # (rename shadow: Follow Through -> Scare, v0.107.1).
-                    have = {r["name"].lower() for r in records}
-                    have_ids = {r["id"] for r in records}
-                    extra = [r for r in fetched
-                             if r["name"].lower() not in have
-                             and r["id"] not in have_ids]
-                    if extra:
-                        print(f"    {source.name} filled {len(extra)} missing {label}")
-                        records.extend(extra)
-                    # Field-level gap-fill: adopt this source's text for
-                    # records earlier sources left blank (e.g. cards whose
-                    # primary text is an unrenderable template)
-                    by_name = {r["name"].lower(): r for r in fetched}
-                    filled = 0
-                    for r in records:
-                        sec = by_name.get(r["name"].lower())
-                        if not sec:
+                    # Identity joins are shared across adapters. A known zero
+                    # or false is data, while an omitted field is unknown.
+                    by_id = {r["id"]: r for r in records}
+                    for sec in fetched:
+                        current = by_id.get(sec["id"])
+                        if current is None:
+                            records.append(sec)
+                            by_id[sec["id"]] = sec
                             continue
-                        if not r.get("description") and sec.get("description"):
-                            r["description"] = sec["description"]
-                            # Keywords are derived FROM the description, so a
-                            # record whose text arrives here keeps whatever it
-                            # had — usually nothing — and ships as a synergy
-                            # orphan invisible to the deck analyser.
-                            if "keywords" in r:
-                                r["keywords"] = _extract_keywords(r["description"])
-                            filled += 1
-                        # Independent of the above: a record can have primary
-                        # text but no upgraded text. Nesting this inside the
-                        # description branch meant the secondary's upgraded
-                        # text was dropped whenever the primary supplied a
-                        # description.
-                        if not r.get("description_upgraded") and sec.get("description_upgraded"):
-                            r["description_upgraded"] = sec["description_upgraded"]
-                    if filled:
-                        print(f"    {source.name} filled text for {filled} {label}")
+                        _check_source_compatibility(current, sec)
+                        for field, value in sec.items():
+                            missing = field not in current
+                            if field in {"description", "description_upgraded", "cost"}:
+                                missing = not current.get(field)
+                            if missing:
+                                current[field] = value
+                        if "keywords" in current:
+                            current["keywords"] = _extract_keywords(current.get("description", ""))
 
             if not records:
                 log.warning("No %s from any source — keeping existing data", label)
@@ -846,6 +860,7 @@ def run_fetcher(save_only: bool = False):
                 log.warning("Sources returned %d %s vs %d existing — possible format change, skipping", len(records), label, existing)
                 print(f"    Warning: sources returned only {len(records)} {label} vs {existing} existing, skipping overwrite")
                 continue
+            refreshed += 1
             merged = _merge_with_existing(filename, records)
             count = _save_json(filename, merged)
             print(f"    Saved {count} {label} ({len(records)} fetched)")
@@ -887,11 +902,74 @@ def run_fetcher(save_only: bool = False):
         except (json.JSONDecodeError, OSError) as exc:
             print(f"    {f.name}: ERROR reading ({exc})")
 
-    _save_update_timestamp()
+    return refreshed
 
-    print()
-    print("  Done! Restart Spirescope to use updated data.")
-    print()
+
+def run_fetcher(save_only: bool = False):
+    """Stage a complete refresh, validate it, then swap with rollback.
+
+    last_updated is the installed bundle's date, not a network-attempt time.
+    Source attempts therefore cannot suppress a newer verified bundle.
+    """
+    import shutil
+
+    from sts2.data_health import inspect_dataset
+    from sts2.persist import write_json_atomic
+    from sts2.updater import (
+        _acquire_lock,
+        _backup_dir,
+        _fsync_tree,
+        _lock_path,
+        _release_lock,
+        _staging_dir,
+    )
+
+    global DATA_DIR
+    live = DATA_DIR
+    live.parent.mkdir(parents=True, exist_ok=True)
+    lock = _lock_path(live)
+    fd = _acquire_lock(lock)
+    if fd is None:
+        raise RuntimeError("Another data update is already running.")
+    staged = _staging_dir(live)
+    report = {"checked_at": datetime.now(timezone.utc).isoformat(),
+              "source": "saves" if save_only else "wiki", "installed": False}
+    try:
+        shutil.copytree(live, staged)
+        DATA_DIR = staged
+        refreshed = _refresh_staged(save_only)
+        if not save_only and refreshed != 3:
+            raise ValueError("Refresh incomplete: all three source families must succeed; no changes installed.")
+        if not save_only:
+            from sts2.corrections import text
+            text.main(dry_run=False, data_path=staged / "cards.json")
+        health = inspect_dataset(staged)
+        if not health["ok"]:
+            raise ValueError("Refresh rejected: " + "; ".join(health["errors"]))
+        report["content_digest"] = health["content_digest"]
+        before = inspect_dataset(live)
+        if before["content_digest"] != health["content_digest"]:
+            _fsync_tree(staged)
+            backup = _backup_dir(live)
+            if backup.exists():
+                shutil.rmtree(backup)
+            live.rename(backup)
+            try:
+                staged.rename(live)
+            except OSError:
+                backup.rename(live)
+                raise
+            report["installed"] = True
+        return report
+    except Exception as exc:
+        report["error"] = str(exc)[:500]
+        raise
+    finally:
+        DATA_DIR = live
+        if staged.exists():
+            shutil.rmtree(staged)
+        write_json_atomic(live.parent / (live.name + ".refresh.json"), report)
+        _release_lock(lock, fd)
 
 
 def _discover_badges_from_saves() -> list[dict]:

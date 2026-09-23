@@ -648,18 +648,20 @@ class TestCSP:
         assert "cdn.jsdelivr.net" not in csp
         assert "script-src 'self'" in csp
 
-    async def test_relaxed_csp_on_docs(self, client):
+    async def test_narrow_csp_on_docs(self, client):
         resp = await client.get("/docs")
         # /docs may redirect or return 200
         if resp.status_code == 200:
             csp = resp.headers.get("Content-Security-Policy", "")
-            assert "cdn.jsdelivr.net" in csp
+            assert "cdn.jsdelivr.net" not in csp
+        assert "script-src 'self'" in csp
 
-    async def test_relaxed_csp_on_openapi(self, client):
+    async def test_narrow_csp_on_openapi(self, client):
         resp = await client.get("/openapi.json")
         if resp.status_code == 200:
             csp = resp.headers.get("Content-Security-Policy", "")
-            assert "cdn.jsdelivr.net" in csp
+            assert "cdn.jsdelivr.net" not in csp
+        assert "script-src 'self'" in csp
 
 
 # ---------------------------------------------------------------------------

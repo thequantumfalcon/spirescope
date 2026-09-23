@@ -308,7 +308,7 @@ def _run_orchestrator(tmp_path, monkeypatch, primary_result, secondary_result):
         lambda: Stub("secondary.example", secondary_result),
     )
     _ = urllib.error  # imported for parity with fetcher error handling
-    fetcher.run_fetcher(save_only=False)
+    fetcher._refresh_staged(save_only=False)
     path = tmp_path / "cards.json"
     return json.loads(path.read_text()) if path.exists() else []
 
@@ -480,6 +480,7 @@ def _make_bundle(tmp_path: Path, cards) -> tuple[Path, str]:
         json.dumps([{"id": "ENCOUNTER.JAW_WORM", "name": "Jaw Worm"}]))
     (src / "events.json").write_text(
         json.dumps([{"id": "EVENT.NEOW", "name": "Neow"}]))
+    (src / "epochs.json").write_text(json.dumps([{"id": "EPOCH.TEST", "name": "Test"}]))
     (src / "patches.json").write_text(
         json.dumps([{"patch": "v0.110.0", "date": "2026-07-31"}]))
     (src / "last_updated.txt").write_text("2026-07-22T20:00:00+00:00")
@@ -844,7 +845,7 @@ class TestWikiCardFieldsAreNotDropped:
                            .read_text(encoding="utf-8"))
         with_star = [c for c in cards if c.get("star_cost")]
         assert with_star, "no shipped card carries a star_cost"
-        assert all(c["star_cost"].isdigit() for c in with_star)
+        assert all(c["star_cost"].isdigit() or c["star_cost"] == "X" for c in with_star)
         # Every one belongs to the character that spends Stars.
         assert {c["character"] for c in with_star} == {"Regent"}
 
