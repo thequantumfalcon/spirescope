@@ -6,7 +6,7 @@ from pathlib import Path
 # Single source of truth for the version. pyproject.toml declares the version
 # dynamic and reads it straight off this attribute, so there is no second copy
 # to keep in sync -- editing this line is the whole of a version bump.
-VERSION = "3.1.2"
+VERSION = "3.2.0"
 
 # Project paths
 PROJECT_ROOT = Path(__file__).parent

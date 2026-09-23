@@ -11,7 +11,7 @@
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
 
-**Game data:** the catalog includes STS2 **v0.111.0 beta** changes (refreshed 2026-09-15). The latest announced main patch verified on 2026-09-22 is **v0.107.1**, so some card costs and effects differ for main-branch players. Complete build-specific coverage remains under review; see the [game coverage audit and completion plan](docs/GAME_COVERAGE.md). A data refresh does not certify compatibility.
+**Game data:** the catalog includes STS2 **v0.111.0 beta** changes (bundle updated 2026-09-23). The latest announced main patch verified on 2026-09-22 is **v0.107.1**, so some card costs and effects differ for main-branch players. Complete build-specific coverage remains under review; see the [game coverage audit and completion plan](docs/GAME_COVERAGE.md). A data refresh does not certify compatibility.
 
 <p align="center">
   <img src="docs/screenshot-dashboard.png" alt="SpireScope Dashboard — your runs, your stats, your data" width="80%">

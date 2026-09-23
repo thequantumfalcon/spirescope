@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## v3.2.0
+
+Exact-version game coverage for main v0.107.1, honest analysis, co-op live
+tracking, and a fully qualified release path. Beta status is retained.
+
 ### Fixed
 
 - Preserve per-copy upgrades/enchantments, all card picks, native acts and

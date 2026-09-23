@@ -36,8 +36,8 @@ The current candidate adds guarded Star-cost expectations and rejects
 unrecognized correction drift. A complete branch/build-specific dataset remains
 necessary; those targeted checks do not certify every card.
 
-The public app release remains v3.1.2. The repaired executable candidate was
-qualified at `24947e7e58d027617e9e74191b2ab8eb67c46a75` in
+The public app release built from this work is v3.2.0. An earlier repaired
+executable candidate was qualified at `24947e7e58d027617e9e74191b2ab8eb67c46a75` in
 [PR #60](https://github.com/thequantumfalcon/spirescope/pull/60), with
 [CI](https://github.com/thequantumfalcon/spirescope/actions/runs/35807577729) and
 [Windows/macOS artifact rehearsal](https://github.com/thequantumfalcon/spirescope/actions/runs/35807670327).
