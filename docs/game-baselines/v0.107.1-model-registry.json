@@ -8,7 +8,7 @@
   "registry_sha256": "db1df9eef4abc95ba7c5c41b8c60c34f884ee55d9603946151734de24474812c",
   "method": "Resolve every generated native AbstractModel registry entry to one source definition. For reviewed catalog IDs, require the definition hash to match its mechanics proof. Classify explicit mock/deprecated namespaces and six separately traced companion/ending models. Other definitions remain review queues; registry membership alone does not prove playable availability.",
   "limitations": [
-    "Reviewed catalog scope retains each family's existing limits, including HP-only monster review.",
+    "Reviewed catalog scope retains each family's existing limits, including monster review limited to initial HP plus paraphrased move machines.",
     "This is a model registry inventory, not a certification of all behavior or all game systems.",
     "Epochs, intents, keywords, modes and other non-AbstractModel systems need separate inventories.",
     "Companion and ending identities are classified in the application: never enemies, and the ending is not a combat."
