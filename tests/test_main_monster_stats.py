@@ -35,8 +35,15 @@ def test_main_hp_thresholds_do_not_certify_unreviewed_patterns():
     assert cultist.mechanics_version == "v0.107.1"
     aeonglass = kb.get_enemy_by_id("MONSTER.AEONGLASS")
     assert aeonglass.hp_range == "512 (Ascension 8+: 535)"
-    assert aeonglass.stats_version == "v0.107.1" and aeonglass.mechanics_version == ""
-    assert kb.get_counter_cards(aeonglass) == []
+    # HP review alone never certifies patterns: a profile without move records
+    # leaves mechanics_version empty and yields no counter advice.
+    from sts2.mechanics import apply_enemy_profile
+    from sts2.models import Enemy
+    hp_only = kb.mechanics_profile.model_copy(update={"monster_moves": {}})
+    stripped = apply_enemy_profile(Enemy(id="MONSTER.AEONGLASS", name="Aeonglass"), hp_only)
+    assert stripped.hp_range == "512 (Ascension 8+: 535)"
+    assert stripped.stats_version == "v0.107.1" and stripped.mechanics_version == ""
+    assert kb.get_counter_cards(stripped) == []
     assert kb.get_enemy_by_id("MONSTER.BATTLE_FRIEND_V1").hp_range == "75"
     later = kb.enemy_for_version(cultist.id, "v0.111.0")
     assert later.stats_version == "" and kb.get_enemy_by_id(cultist.id) is cultist
@@ -83,7 +90,7 @@ async def test_enemy_page_distinguishes_hp_patterns_and_selected_version(client)
     assert "Initial HP checked for v0.107.1" in main.text
     assert "Ascension 8+: 39–42" in main.text
     assert "Patterns checked for v0.107.1" in main.text
-    unreviewed = await client.get("/enemies/MONSTER.AEONGLASS?game_version=v0.107.1")
+    unreviewed = await client.get("/enemies/MONSTER.AEONGLASS?game_version=v0.111.0")
     assert unreviewed.status_code == 200
     assert "Counter Cards" not in unreviewed.text
     assert "Patterns checked for" not in unreviewed.text

@@ -29,7 +29,7 @@
   run analysis, and companions are labelled in run detail.
 - Review all 22 main-build enchantments (titles, rules, eligibility) in the
   v0.107.1 profile; run detail shows the rules for the run's own version.
-- Review move sets and turn patterns for the 77 Act 1 and Act 2 pool monsters
+- Review move sets and turn patterns for the 102 Act 1 to Act 3 pool monsters
   from the game's own move definitions; enemy pages show them for that
   version in place of reference patterns.
 

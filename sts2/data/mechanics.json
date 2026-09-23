@@ -7,7 +7,7 @@
       "branch": "main",
       "reviewed_at": "2026-09-22",
       "complete": false,
-      "scope": "Reviewed main pool printed card traits and base/first-upgrade rules; three saved-card rules; potion printed rules/usage/targets; relic general rules/rarity. Runtime simulation, all availability conditions, other systems and beta are not certified. Initial monster HP before scaling and modifiers is reviewed separately from attack patterns. Declared possible-monster rosters and room types are reviewed for main encounters; counts, generation probabilities and encounter adjustments are not simulated. Main timeline requirements, reward lists, score-bar sequence and placeholder classification are reviewed; saved progression is displayed rather than simulated. Separately reviewed event option effects and local eligibility checks are included only for listed events. All 65 main event/Ancient option summaries and normal act-pool placement are reviewed; cross-entity hooks and event simulations remain bounded. Enchantment titles, rules and eligibility are reviewed; per-copy amounts and status reset timing are not. Move sets and turn patterns are reviewed for the 77 Act 1 and Act 2 pool monsters; power effects, summon slot rules and forced-state triggers are not.",
+      "scope": "Reviewed main pool printed card traits and base/first-upgrade rules; three saved-card rules; potion printed rules/usage/targets; relic general rules/rarity. Runtime simulation, all availability conditions, other systems and beta are not certified. Initial monster HP before scaling and modifiers is reviewed separately from attack patterns. Declared possible-monster rosters and room types are reviewed for main encounters; counts, generation probabilities and encounter adjustments are not simulated. Main timeline requirements, reward lists, score-bar sequence and placeholder classification are reviewed; saved progression is displayed rather than simulated. Separately reviewed event option effects and local eligibility checks are included only for listed events. All 65 main event/Ancient option summaries and normal act-pool placement are reviewed; cross-entity hooks and event simulations remain bounded. Enchantment titles, rules and eligibility are reviewed; per-copy amounts and status reset timing are not. Move sets and turn patterns are reviewed for the 102 Act 1 to Act 3 pool monsters; power effects, summon slot rules and forced-state triggers are not.",
       "cards": {
         "CARD.GUIDING_STAR": {
           "star_cost": "2",
@@ -24382,6 +24382,32 @@
         }
       },
       "monster_moves": {
+        "MONSTER.AEONGLASS": {
+          "moves": [
+            {
+              "state": "EBB_MOVE",
+              "title": "Ebb",
+              "intent": "Attack + Defend",
+              "effect": "26 (32 at Ascension 9+) damage and gains 33 Block."
+            },
+            {
+              "state": "EYE_LASERS_MOVE",
+              "title": "Eye Lasers",
+              "intent": "Multi-attack",
+              "effect": "11 damage x2 hits (12 x2 at Ascension 9+)."
+            },
+            {
+              "state": "INCREASING_INTENSITY_MOVE",
+              "title": "Increasing Intensity",
+              "intent": "Status + Buff",
+              "effect": "Upgrades every Wither the players hold, adds 1 (2 at Ascension 9+) Wither to the discard pile, and gains 3 (4 at Ascension 9+) Strength plus 1 more for each earlier use."
+            }
+          ],
+          "pattern": "Cycles Ebb, Eye Lasers, Increasing Intensity.",
+          "entry_effects": "Applies WitheringPresencePower 6 aimed at each opponent and gains ArtifactPower 3.",
+          "definition_sha256": "c4be5ff6ae048de1139f9ac2a030835574cd1ae7de53fa0d064957545cbc06b6",
+          "verification": "native-review"
+        },
         "MONSTER.ASSASSIN_RUBY_RAIDER": {
           "moves": [
             {
@@ -24394,6 +24420,32 @@
           "pattern": "Killshot every turn.",
           "entry_effects": "",
           "definition_sha256": "1ded70b4d0a355ab0d0b14e5cdafb3576df1c0504b88aaa837c66fa6744b6564",
+          "verification": "native-review"
+        },
+        "MONSTER.AXEBOT": {
+          "moves": [
+            {
+              "state": "BOOT_UP_MOVE",
+              "title": "Boot Up",
+              "intent": "Defend + Buff",
+              "effect": "Gains 10 (15 at Ascension 9+) Block and 3 (4 at Ascension 9+) Strength for each StockPower below 2."
+            },
+            {
+              "state": "ONE_TWO_MOVE",
+              "title": "The One-Two",
+              "intent": "Multi-attack",
+              "effect": "9 damage x2 hits (10 x2 at Ascension 9+)."
+            },
+            {
+              "state": "HAMMER_UPPERCUT_MOVE",
+              "title": "Hammer Uppercut",
+              "intent": "Attack + Debuff",
+              "effect": "12 (14 at Ascension 9+) damage, applies 2 Weak and 2 Frail."
+            }
+          ],
+          "pattern": "Opens with Hammer Uppercut, then alternates One-Two and Hammer Uppercut. A re-spawned Axebot with overridden StockPower opens with Boot Up instead.",
+          "entry_effects": "Gains StockPower 2 unless the encounter overrides it.",
+          "definition_sha256": "7b6c69c3f530b143a053b1d69e94a58d1c37a0bb91adf76568ed2ccfb67a7247",
           "verification": "native-review"
         },
         "MONSTER.AXE_RUBY_RAIDER": {
@@ -24866,6 +24918,26 @@
           "definition_sha256": "2c0726b24bb74447ba184ebfaac719d48c2bdd9be36a08afdcb7f5a2460c7aaa",
           "verification": "native-review"
         },
+        "MONSTER.DEVOTED_SCULPTOR": {
+          "moves": [
+            {
+              "state": "FORBIDDEN_INCANTATION_MOVE",
+              "title": "Forbidden Incantation",
+              "intent": "Buff",
+              "effect": "Gains RitualPower 9."
+            },
+            {
+              "state": "SAVAGE_MOVE",
+              "title": "Savage",
+              "intent": "Attack",
+              "effect": "12 (15 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Forbidden Incantation once, then Savage every turn.",
+          "entry_effects": "",
+          "definition_sha256": "3a3149c0c5ab743d7d2c18b9d302c61d94b5d3bf4ebdb0851dd446689b3c5217",
+          "verification": "native-review"
+        },
         "MONSTER.ENTOMANCER": {
           "moves": [
             {
@@ -24932,6 +25004,32 @@
           "definition_sha256": "19add9828268c055d7549e4784fd7c6157b45cb030888cf6e6b8e990e8797d29",
           "verification": "native-review"
         },
+        "MONSTER.FABRICATOR": {
+          "moves": [
+            {
+              "state": "FABRICATE_MOVE",
+              "title": "Fabricate",
+              "intent": "Summon",
+              "effect": "Builds one defensive bot (Guardbot or Noisebot) and one aggressive bot (Zapbot or Stabbot), never the model it built last, each with MinionPower 1."
+            },
+            {
+              "state": "FABRICATING_STRIKE_MOVE",
+              "title": "Fabricating Strike",
+              "intent": "Attack + Summon",
+              "effect": "18 (21 at Ascension 9+) damage and builds one aggressive bot."
+            },
+            {
+              "state": "DISINTEGRATE_MOVE",
+              "title": "Disintegrate",
+              "intent": "Attack",
+              "effect": "11 (13 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "While fewer than 4 of its side are alive: Fabricate or Fabricating Strike with equal weight. Otherwise Disintegrate.",
+          "entry_effects": "",
+          "definition_sha256": "7a78bc8f844f4c92eb877957510dd8d3f1450d9b8eb3bf3f59ebb5bf47678c75",
+          "verification": "native-review"
+        },
         "MONSTER.FAT_GREMLIN": {
           "moves": [
             {
@@ -24950,6 +25048,32 @@
           "pattern": "Stunned for its first turn, then flees.",
           "entry_effects": "",
           "definition_sha256": "838247477921bdbd2d9eab3c05109be1dac8b00033417e4d2cdc15aa15534472",
+          "verification": "native-review"
+        },
+        "MONSTER.FLAIL_KNIGHT": {
+          "moves": [
+            {
+              "state": "WAR_CHANT",
+              "title": "War Chant",
+              "intent": "Buff",
+              "effect": "Gains 3 Strength."
+            },
+            {
+              "state": "FLAIL_MOVE",
+              "title": "Flail",
+              "intent": "Multi-attack",
+              "effect": "9 damage x2 hits (10 x2 at Ascension 9+)."
+            },
+            {
+              "state": "RAM_MOVE",
+              "title": "Ram",
+              "intent": "Attack",
+              "effect": "15 (17 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Opens with Ram; then random with equal weight among War Chant (never twice in a row), Flail and Ram (each at most twice in a row).",
+          "entry_effects": "",
+          "definition_sha256": "f5b7c0f3666b0bc1c7033682f96c6d56db0b7b03e249ec82d6c09b265a8a5afb",
           "verification": "native-review"
         },
         "MONSTER.FLYCONID": {
@@ -25030,6 +25154,38 @@
           "definition_sha256": "7600f67781749d7bc48567d9e319481ed2f8afbd1abce031100bec9c5fba4ad4",
           "verification": "native-review"
         },
+        "MONSTER.FROG_KNIGHT": {
+          "moves": [
+            {
+              "state": "FOR_THE_QUEEN",
+              "title": "For the Queen",
+              "intent": "Buff",
+              "effect": "Gains 5 Strength."
+            },
+            {
+              "state": "STRIKE_DOWN_EVIL",
+              "title": "Strike Down Evil",
+              "intent": "Attack",
+              "effect": "21 (23 at Ascension 9+) damage."
+            },
+            {
+              "state": "TONGUE_LASH",
+              "title": "Tongue Lash",
+              "intent": "Attack + Debuff",
+              "effect": "13 (14 at Ascension 9+) damage and applies 2 Frail."
+            },
+            {
+              "state": "BEETLE_CHARGE",
+              "title": "Beetle Charge",
+              "intent": "Attack",
+              "effect": "35 (40 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Opens with Tongue Lash; cycles Tongue Lash, Strike Down Evil, For the Queen. After For the Queen, if it is below half HP and has not used Beetle Charge yet, it uses Beetle Charge once before Tongue Lash.",
+          "entry_effects": "Gains PlatingPower 15 (19 at Ascension 8+).",
+          "definition_sha256": "00913af20ac39aa5a41b6d4a0b9b4ada1339a9317797ed40f16fef58d758c018",
+          "verification": "native-review"
+        },
         "MONSTER.FUZZY_WURM_CRAWLER": {
           "moves": [
             {
@@ -25064,6 +25220,32 @@
           "definition_sha256": "65089c1e1e51dbeb1151ef54ecc44d3ee24b0ff820092c460d81a8a29a35b7d0",
           "verification": "native-review"
         },
+        "MONSTER.GLOBE_HEAD": {
+          "moves": [
+            {
+              "state": "THUNDER_STRIKE",
+              "title": "Channel Lightning",
+              "intent": "Multi-attack",
+              "effect": "6 damage x3 hits (7 x3 at Ascension 9+)."
+            },
+            {
+              "state": "SHOCKING_SLAP",
+              "title": "Shocking Slap",
+              "intent": "Attack + Debuff",
+              "effect": "13 (14 at Ascension 9+) damage and applies 2 Frail."
+            },
+            {
+              "state": "GALVANIC_BURST",
+              "title": "Galvanic Burst",
+              "intent": "Attack + Buff",
+              "effect": "16 (17 at Ascension 9+) damage and gains 2 Strength."
+            }
+          ],
+          "pattern": "Opens with Shocking Slap; then cycles Shocking Slap, Thunder Strike, Galvanic Burst.",
+          "entry_effects": "Gains GalvanicPower 6.",
+          "definition_sha256": "d5918b7ca415a0a3e7979f534aa8e62aedb3672823fae0b95cae60386076a083",
+          "verification": "native-review"
+        },
         "MONSTER.GREMLIN_MERC": {
           "moves": [
             {
@@ -25088,6 +25270,20 @@
           "pattern": "Cycles Gimme, Double Smash, Hehe. Its damage scales at Ascension 8+, not 9+.",
           "entry_effects": "Gains SurprisePower 1 and ThieveryPower 20 aimed at each player.",
           "definition_sha256": "c797fc8dff23fb3a2d6366ac257ee044f66d0bac6bfddc3f5b9f4bd302ddcf9c",
+          "verification": "native-review"
+        },
+        "MONSTER.GUARDBOT": {
+          "moves": [
+            {
+              "state": "GUARD_MOVE",
+              "title": "Guard",
+              "intent": "Defend",
+              "effect": "Gives 15 Block to each Fabricator."
+            }
+          ],
+          "pattern": "Guard every turn. Built by the Fabricator.",
+          "entry_effects": "",
+          "definition_sha256": "6efc28480ec4ca9f43b190d703ac18c961209a765940db652a999d974d9e1753",
           "verification": "native-review"
         },
         "MONSTER.HAUNTED_SHIP": {
@@ -25394,6 +25590,26 @@
           "definition_sha256": "ffb31757b0ab5deb508f6b2784227f9fbac7b99691ab1c615fbce2b0176ab0d5",
           "verification": "native-review"
         },
+        "MONSTER.LIVING_SHIELD": {
+          "moves": [
+            {
+              "state": "SHIELD_SLAM_MOVE",
+              "title": "Shield Slam",
+              "intent": "Attack",
+              "effect": "6 damage."
+            },
+            {
+              "state": "SMASH_MOVE",
+              "title": "Smash",
+              "intent": "Attack + Buff",
+              "effect": "16 (18 at Ascension 9+) damage and gains 3 Strength."
+            }
+          ],
+          "pattern": "Shield Slam every turn while any ally is alive; once alone, Smash every turn.",
+          "entry_effects": "Gains RampartPower 25.",
+          "definition_sha256": "e6d281e37d81061832d54cd2b42052a4c4898eba5699da7aceed9a66396553e7",
+          "verification": "native-review"
+        },
         "MONSTER.LOUSE_PROGENITOR": {
           "moves": [
             {
@@ -25420,6 +25636,44 @@
           "definition_sha256": "b0bdb5d2a7e64382c803b3d776f0b4df24ae3e16a5f1614d98480a041f7c43a4",
           "verification": "native-review"
         },
+        "MONSTER.MAGI_KNIGHT": {
+          "moves": [
+            {
+              "state": "POWER_SHIELD_MOVE",
+              "title": "Power Shield",
+              "intent": "Attack + Defend",
+              "effect": "6 (7 at Ascension 9+) damage and gains 5 (9 at Ascension 8+) Block."
+            },
+            {
+              "state": "DAMPEN_MOVE",
+              "title": "Dampen",
+              "intent": "Debuff",
+              "effect": "Applies DampenPower to each player, adding itself as a caster."
+            },
+            {
+              "state": "PREP_MOVE",
+              "title": "Prep",
+              "intent": "Defend",
+              "effect": "Gains 5 (9 at Ascension 8+) Block."
+            },
+            {
+              "state": "MAGIC_BOMB",
+              "title": "Magic Bomb",
+              "intent": "Attack",
+              "effect": "35 (40 at Ascension 9+) damage."
+            },
+            {
+              "state": "RAM_MOVE",
+              "title": "Ram",
+              "intent": "Attack",
+              "effect": "10 (11 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Power Shield, Dampen, then repeats Ram, Prep, Magic Bomb.",
+          "entry_effects": "",
+          "definition_sha256": "2444b26f50b7dbd88cbbe707bc7aadadb85e2569104a601bd5495f9a9f626fff",
+          "verification": "native-review"
+        },
         "MONSTER.MAWLER": {
           "moves": [
             {
@@ -25444,6 +25698,38 @@
           "pattern": "Opens with Claw; then random with equal weight among Rip and Tear, Roar (once per combat) and Claw, never the same move twice in a row.",
           "entry_effects": "",
           "definition_sha256": "7de9da00958288c7aa3025ce150238cc10a5827050b9ea87d597ba61e056de98",
+          "verification": "native-review"
+        },
+        "MONSTER.MECHA_KNIGHT": {
+          "moves": [
+            {
+              "state": "CHARGE_MOVE",
+              "title": "Charge",
+              "intent": "Attack",
+              "effect": "25 (30 at Ascension 9+) damage."
+            },
+            {
+              "state": "FLAMETHROWER_MOVE",
+              "title": "Flamethrower",
+              "intent": "Status",
+              "effect": "Adds 4 Burn to the hand."
+            },
+            {
+              "state": "WINDUP_MOVE",
+              "title": "Windup",
+              "intent": "Defend + Buff",
+              "effect": "Gains 15 Block and 5 Strength."
+            },
+            {
+              "state": "HEAVY_CLEAVE_MOVE",
+              "title": "Heavy Cleave",
+              "intent": "Attack",
+              "effect": "35 (40 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Charge, then repeats Flamethrower, Windup, Heavy Cleave.",
+          "entry_effects": "Gains ArtifactPower 3.",
+          "definition_sha256": "b542bb93962c858258ec1a10980cf17412ddb394ba79d4e0c11c364053bbfdd0",
           "verification": "native-review"
         },
         "MONSTER.MYTE": {
@@ -25498,6 +25784,20 @@
           "definition_sha256": "5f027dafe55d5be0d4001188ff010cbb087b3c0c9f5b069cd03713b33ea02912",
           "verification": "native-review"
         },
+        "MONSTER.NOISEBOT": {
+          "moves": [
+            {
+              "state": "NOISE_MOVE",
+              "title": "Noise",
+              "intent": "Status",
+              "effect": "Adds 2 Dazed per player: 1 into the discard pile and 1 into the draw pile at random."
+            }
+          ],
+          "pattern": "Noise every turn. Built by the Fabricator.",
+          "entry_effects": "",
+          "definition_sha256": "61948818ecc06fd4b0d5200f249efb0787a26836680ac99bfe526b6ffc1cfaf4",
+          "verification": "native-review"
+        },
         "MONSTER.OVICOPTER": {
           "moves": [
             {
@@ -25528,6 +25828,38 @@
           "pattern": "Lay Eggs, Smash, Tenderizer; then Lay Eggs again while 3 or fewer of its side are alive, otherwise Nutritional Paste; then Smash and Tenderizer again.",
           "entry_effects": "",
           "definition_sha256": "70b6714d1dba0b06e69d0c1c9bebd662d917dd43f41ffbbb73d6736fee5b992c",
+          "verification": "native-review"
+        },
+        "MONSTER.OWL_MAGISTRATE": {
+          "moves": [
+            {
+              "state": "MAGISTRATE_SCRUTINY",
+              "title": "Magistrate Scrutiny",
+              "intent": "Attack",
+              "effect": "16 (17 at Ascension 9+) damage."
+            },
+            {
+              "state": "PECK_ASSAULT",
+              "title": "Peck Assault",
+              "intent": "Multi-attack",
+              "effect": "4 damage x6 hits."
+            },
+            {
+              "state": "JUDICIAL_FLIGHT",
+              "title": "Judicial Flight",
+              "intent": "Buff",
+              "effect": "Gains SoarPower 1 and takes flight."
+            },
+            {
+              "state": "VERDICT",
+              "title": "Verdict",
+              "intent": "Attack + Debuff",
+              "effect": "33 (36 at Ascension 9+) damage, applies 4 Vulnerable and lands, removing its SoarPower."
+            }
+          ],
+          "pattern": "Cycles Magistrate Scrutiny, Peck Assault, Judicial Flight, Verdict.",
+          "entry_effects": "",
+          "definition_sha256": "159fa2cd43f15f52db2dcd0b0cb8e49b9f347ac362e3ea90b8ce4a6133599480",
           "verification": "native-review"
         },
         "MONSTER.PARAFRIGHT": {
@@ -25622,6 +25954,50 @@
           "definition_sha256": "389c64af1b2eb8da881ef51b5f9addf19f5b5f659b706235263c062a2fcc2d7e",
           "verification": "native-review"
         },
+        "MONSTER.QUEEN": {
+          "moves": [
+            {
+              "state": "PUPPET_STRINGS_MOVE",
+              "title": "Puppet Strings",
+              "intent": "Card debuff",
+              "effect": "Applies ChainsOfBindingPower 3."
+            },
+            {
+              "state": "YOU_ARE_MINE_MOVE",
+              "title": "You Are Mine",
+              "intent": "Debuff",
+              "effect": "Applies 99 Frail, 99 Weak and 99 Vulnerable."
+            },
+            {
+              "state": "BURN_BRIGHT_FOR_ME_MOVE",
+              "title": "Burn Bright for Me",
+              "intent": "Buff + Defend",
+              "effect": "Gives 1 Strength to each ally and gains 20 Block."
+            },
+            {
+              "state": "OFF_WITH_YOUR_HEAD_MOVE",
+              "title": "Off with Your Head",
+              "intent": "Multi-attack",
+              "effect": "3 damage x5 hits (4 x5 at Ascension 9+)."
+            },
+            {
+              "state": "EXECUTION_MOVE",
+              "title": "Execution",
+              "intent": "Attack",
+              "effect": "15 (18 at Ascension 9+) damage."
+            },
+            {
+              "state": "ENRAGE_MOVE",
+              "title": "Enrage",
+              "intent": "Buff",
+              "effect": "Gains 2 Strength."
+            }
+          ],
+          "pattern": "Puppet Strings, You Are Mine, then Burn Bright for Me every turn while the Torch Head Amalgam lives. Once it dies she switches to Enrage at once if Burn Bright was queued, then cycles Off With Your Head, Execution, Enrage.",
+          "entry_effects": "",
+          "definition_sha256": "24b3a50000378f84d41d96076bd68a1fafffb665757ab143f9382477ab61944a",
+          "verification": "native-review"
+        },
         "MONSTER.ROCKET": {
           "moves": [
             {
@@ -25658,6 +26034,32 @@
           "pattern": "Cycles Targeting Reticle, Precision Beam, Charge Up, Laser, Recharge. Right arm of the Kaiser Crab.",
           "entry_effects": "Applies SurroundedPower 1 to each opponent; gains BackAttackRightPower 1 and CrabRagePower 1.",
           "definition_sha256": "3b9b3ff7a6c28b59ed11933348793b2de59d0b912cf37cc347219e0ebba166aa",
+          "verification": "native-review"
+        },
+        "MONSTER.SCROLL_OF_BITING": {
+          "moves": [
+            {
+              "state": "CHOMP",
+              "title": "Chomp",
+              "intent": "Attack",
+              "effect": "14 (16 at Ascension 9+) damage."
+            },
+            {
+              "state": "CHEW",
+              "title": "Chew",
+              "intent": "Multi-attack",
+              "effect": "5 damage x2 hits (6 x2 at Ascension 9+)."
+            },
+            {
+              "state": "MORE_TEETH",
+              "title": "More Teeth",
+              "intent": "Buff",
+              "effect": "Gains 2 Strength."
+            }
+          ],
+          "pattern": "Chomp is followed by More Teeth, More Teeth by Chew, and Chew by Chomp (never twice in a row) or Chew (at most twice in a row) with equal weight. Each scroll in an encounter starts at a different point.",
+          "entry_effects": "Gains PaperCutsPower 2.",
+          "definition_sha256": "8e52d930a32782aad93be2eef6f87199e1b320dc969813cdfc5f384292a489bc",
           "verification": "native-review"
         },
         "MONSTER.SEAPUNK": {
@@ -25756,6 +26158,38 @@
           "pattern": "Cycles Zoom, Zoom, Inertia, Piercing Stabs.",
           "entry_effects": "Gains HardenedShellPower 20.",
           "definition_sha256": "b0ee03b9a2a8f3d436a5c4d16a35f037b1f7ed20d3d01fb288e8418c8e86f0e0",
+          "verification": "native-review"
+        },
+        "MONSTER.SLIMED_BERSERKER": {
+          "moves": [
+            {
+              "state": "VOMIT_ICHOR_MOVE",
+              "title": "Vomit Ichor",
+              "intent": "Status",
+              "effect": "Adds 10 Slimed to the discard pile."
+            },
+            {
+              "state": "FURIOUS_PUMMELING_MOVE",
+              "title": "Furious Pummeling",
+              "intent": "Multi-attack",
+              "effect": "4 damage x4 hits (5 x4 at Ascension 9+)."
+            },
+            {
+              "state": "LEECHING_HUG_MOVE",
+              "title": "Leeching Hug",
+              "intent": "Debuff + Buff",
+              "effect": "Applies 3 Weak and gains 3 Strength."
+            },
+            {
+              "state": "SMOTHER_MOVE",
+              "title": "Smother",
+              "intent": "Attack",
+              "effect": "30 (33 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Cycles Vomit Ichor, Furious Pummeling, Leeching Hug, Smother.",
+          "entry_effects": "",
+          "definition_sha256": "7088ce925bcd227302977998173aded28c5ac33861a51fdff463ebf436a925a5",
           "verification": "native-review"
         },
         "MONSTER.SLITHERING_STRANGLER": {
@@ -25902,6 +26336,58 @@
           "definition_sha256": "ac118a01aef90c979783e045100ca765cc794551ea33b873276a20befbaba1d7",
           "verification": "native-review"
         },
+        "MONSTER.SOUL_NEXUS": {
+          "moves": [
+            {
+              "state": "SOUL_BURN_MOVE",
+              "title": "Soul Burn",
+              "intent": "Attack",
+              "effect": "29 (31 at Ascension 9+) damage."
+            },
+            {
+              "state": "MAELSTROM_MOVE",
+              "title": "Maelstrom",
+              "intent": "Multi-attack",
+              "effect": "6 damage x4 hits (7 x4 at Ascension 9+)."
+            },
+            {
+              "state": "DRAIN_LIFE_MOVE",
+              "title": "Drain Life",
+              "intent": "Attack + Debuff",
+              "effect": "18 (19 at Ascension 9+) damage, applies 2 Vulnerable and 2 Weak."
+            }
+          ],
+          "pattern": "Opens with Soul Burn; then random with equal weight among the three moves, never the same move twice in a row.",
+          "entry_effects": "",
+          "definition_sha256": "38d213e39424dd2a8218e53f724e8f8c937bfa8403f0f57ccaa36f9bed9f244b",
+          "verification": "native-review"
+        },
+        "MONSTER.SPECTRAL_KNIGHT": {
+          "moves": [
+            {
+              "state": "HEX",
+              "title": "Hex",
+              "intent": "Debuff",
+              "effect": "Applies HexPower 2 to each player."
+            },
+            {
+              "state": "SOUL_SLASH",
+              "title": "Soul Slash",
+              "intent": "Attack",
+              "effect": "15 (17 at Ascension 9+) damage."
+            },
+            {
+              "state": "SOUL_FLAME",
+              "title": "Soul Flame",
+              "intent": "Multi-attack",
+              "effect": "3 damage x3 hits (4 x3 at Ascension 9+)."
+            }
+          ],
+          "pattern": "Hex, Soul Slash, then random with equal weight between Soul Slash (at most twice in a row) and Soul Flame (never twice in a row).",
+          "entry_effects": "",
+          "definition_sha256": "2304a3b673a334a8e7431c39504a0fc26c58393791d63f780a04c0175e7eabde",
+          "verification": "native-review"
+        },
         "MONSTER.SPINY_TOAD": {
           "moves": [
             {
@@ -25926,6 +26412,20 @@
           "pattern": "Cycles Protruding Spikes, Spike Explosion, Tongue Lash.",
           "entry_effects": "",
           "definition_sha256": "7001b793bebd741f17e9a78ca564d17600d34c65f82da53c580e0c981fbcdfbc",
+          "verification": "native-review"
+        },
+        "MONSTER.STABBOT": {
+          "moves": [
+            {
+              "state": "STAB_MOVE",
+              "title": "Stab",
+              "intent": "Attack + Debuff",
+              "effect": "11 (12 at Ascension 9+) damage and applies 1 Frail."
+            }
+          ],
+          "pattern": "Stab every turn. Built by the Fabricator.",
+          "entry_effects": "",
+          "definition_sha256": "f705f81b577321c520e9349a15c499811a485e9151a241545e33c9efea18a091",
           "verification": "native-review"
         },
         "MONSTER.TERROR_EEL": {
@@ -25960,6 +26460,76 @@
           "definition_sha256": "17c0ed7405e6656600b6d0afbc116751759172ca2dfaa881fed9800ff95cfe6c",
           "verification": "native-review"
         },
+        "MONSTER.TEST_SUBJECT": {
+          "moves": [
+            {
+              "state": "BITE_MOVE",
+              "title": "Bite",
+              "intent": "Attack",
+              "effect": "20 (22 at Ascension 9+) damage."
+            },
+            {
+              "state": "SKULL_BASH_MOVE",
+              "title": "Skull Bash",
+              "intent": "Attack + Debuff",
+              "effect": "14 (16 at Ascension 9+) damage and applies 1 Vulnerable."
+            },
+            {
+              "state": "RESPAWN_MOVE",
+              "title": "Respawn",
+              "intent": "Heal + Buff",
+              "effect": "Revives into the next form: second form HP 200 (212 at Ascension 8+) with PainfulStabsPower 1; third form HP 300 (313 at Ascension 8+) with NemesisPower 1, losing Adaptable and Painful Stabs."
+            },
+            {
+              "state": "MULTI_CLAW_MOVE",
+              "title": "Multi-Claw",
+              "intent": "Multi-attack",
+              "effect": "10 (11 at Ascension 9+) damage x3 hits, one more hit each use."
+            },
+            {
+              "state": "PHASE3_LACERATE_MOVE",
+              "title": "Lacerate",
+              "intent": "Multi-attack",
+              "effect": "10 damage x3 hits (11 x3 at Ascension 9+)."
+            },
+            {
+              "state": "BIG_POUNCE",
+              "title": "Big Pounce",
+              "intent": "Attack",
+              "effect": "45 damage."
+            },
+            {
+              "state": "BURNING_GROWL_MOVE",
+              "title": "Burning Growl",
+              "intent": "Status + Buff",
+              "effect": "Adds 3 (5 at Ascension 9+) Burn to the discard pile and gains 2 (3 at Ascension 9+) Strength."
+            }
+          ],
+          "pattern": "First form alternates Bite and Skull Bash. When killed while it has AdaptablePower it respawns: the second form uses Multi Claw every turn; the third form cycles Lacerate, Big Pounce, Burning Growl.",
+          "entry_effects": "Gains AdaptablePower 1 and EnragePower 2 (3 at Ascension 9+).",
+          "definition_sha256": "5eca8c4805c68bea0660aa18039cd712d2cd3afbcc2d5186cc044facb60dad08",
+          "verification": "native-review"
+        },
+        "MONSTER.THE_FORGOTTEN": {
+          "moves": [
+            {
+              "state": "MIASMA",
+              "title": "Miasma",
+              "intent": "Debuff + Defend + Buff",
+              "effect": "Applies -2 Dexterity to the player, gains 8 Block and 2 Dexterity."
+            },
+            {
+              "state": "DREAD",
+              "title": "Dread",
+              "intent": "Attack",
+              "effect": "13 (15 at Ascension 9+) damage plus its current Dexterity."
+            }
+          ],
+          "pattern": "Alternates Miasma and Dread, starting with Miasma.",
+          "entry_effects": "Gains PossessSpeedPower 1.",
+          "definition_sha256": "dbcfb89ae0a4298a1da4ee196bed1ae17c48b41e77ea383c1a1333868fd89238",
+          "verification": "native-review"
+        },
         "MONSTER.THE_INSATIABLE": {
           "moves": [
             {
@@ -25990,6 +26560,26 @@
           "pattern": "Liquify Ground once; then repeats Thrash, Lunging Bite, Salivate, Thrash.",
           "entry_effects": "",
           "definition_sha256": "7691ddc7f524425d96ec710d85165102adcf72e16fe9442d18cb13cb8521663d",
+          "verification": "native-review"
+        },
+        "MONSTER.THE_LOST": {
+          "moves": [
+            {
+              "state": "DEBILITATING_SMOG",
+              "title": "Debilitating Smog",
+              "intent": "Debuff + Buff",
+              "effect": "Applies -2 Strength to the player and gains 2 Strength."
+            },
+            {
+              "state": "EYE_LASERS",
+              "title": "Eye Lasers",
+              "intent": "Multi-attack",
+              "effect": "4 damage x2 hits (5 x2 at Ascension 9+)."
+            }
+          ],
+          "pattern": "Alternates Debilitating Smog and Eye Lasers, starting with Debilitating Smog.",
+          "entry_effects": "Gains PossessStrengthPower 1.",
+          "definition_sha256": "564b08d314fab67ac4b9370b7da00d9bd6508a652672c7ee07e76f2507d0fc2c",
           "verification": "native-review"
         },
         "MONSTER.THE_OBSCURA": {
@@ -26088,6 +26678,32 @@
           "definition_sha256": "b19b55f6fae0431eb30a2aaa14b6fc98288f6f2d288638d3972731f09f2725c9",
           "verification": "native-review"
         },
+        "MONSTER.TORCH_HEAD_AMALGAM": {
+          "moves": [
+            {
+              "state": "TACKLE_MOVE",
+              "title": "Tackle",
+              "intent": "Attack",
+              "effect": "18 (19 at Ascension 9+) damage."
+            },
+            {
+              "state": "BEAM_MOVE",
+              "title": "Beam",
+              "intent": "Multi-attack",
+              "effect": "8 damage x3 hits."
+            },
+            {
+              "state": "TACKLE_3_MOVE",
+              "title": "Tackle",
+              "intent": "Attack",
+              "effect": "14 (15 at Ascension 9+) damage (the weaker Tackle)."
+            }
+          ],
+          "pattern": "Tackle, Tackle, then repeats Beam, weaker Tackle, weaker Tackle.",
+          "entry_effects": "Gains MinionPower 1.",
+          "definition_sha256": "56f5d1a740e75656d09165db7ff85aca88ad86b5ff9ef3234efdca24cd918915",
+          "verification": "native-review"
+        },
         "MONSTER.TOUGH_EGG": {
           "moves": [
             {
@@ -26158,6 +26774,26 @@
           "pattern": "Bite, Burrow, then Below every turn. When stunned it loses a turn and resumes from Bite.",
           "entry_effects": "",
           "definition_sha256": "8cbe1bd6864c9b38af0e81fdfeb7a5660fd5e60edc54f8d93917a8ee876d2221",
+          "verification": "native-review"
+        },
+        "MONSTER.TURRET_OPERATOR": {
+          "moves": [
+            {
+              "state": "UNLOAD_MOVE",
+              "title": "Unload!",
+              "intent": "Multi-attack",
+              "effect": "3 damage x5 hits (4 x5 at Ascension 9+)."
+            },
+            {
+              "state": "RELOAD_MOVE",
+              "title": "Reload",
+              "intent": "Buff",
+              "effect": "Gains 1 Strength."
+            }
+          ],
+          "pattern": "Unload, Unload, Reload, repeated.",
+          "entry_effects": "",
+          "definition_sha256": "049648efa3b3c7b7aa80d6e9fe225c9002b63fef6cdf96b9e086858f3eb2a2f5",
           "verification": "native-review"
         },
         "MONSTER.TWIG_SLIME_M": {
@@ -26364,6 +27000,20 @@
           "pattern": "Wrigglers in slots 1 and 3 open with Nasty Bite, slots 2 and 4 with Wriggle; then they alternate the two. A spawned Wriggler is stunned for its first turn.",
           "entry_effects": "",
           "definition_sha256": "2d008f4cd9cbe791dc96012a137faa6d6fd7c5696b698ea2f6c67e720320e87a",
+          "verification": "native-review"
+        },
+        "MONSTER.ZAPBOT": {
+          "moves": [
+            {
+              "state": "ZAP",
+              "title": "Zap",
+              "intent": "Attack",
+              "effect": "14 (15 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Zap every turn. Built by the Fabricator.",
+          "entry_effects": "Gains HighVoltagePower 2.",
+          "definition_sha256": "0bd56b1111c8fbd3acdc7592e83d7f4e9a7dfe6338ffd2f490862c2603a2ab32",
           "verification": "native-review"
         }
       }
