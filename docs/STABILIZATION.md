@@ -43,16 +43,19 @@ The isolated public checkout excludes private modules, personal overlays, and
 working build files. Windows source checks cover Python 3.11 and the locked
 desktop Python 3.14.7 environment (3.13 was also exercised). Lint and type checks cover the public package;
 Chromium checks include real Swagger operations with external requests blocked.
-The final local source run passed 1,756 tests (one skipped), with 89.40% branch
-coverage against the 88% gate; all 19 Chromium tests passed. Mypy checked 40
-source files and Ruff passed. Final candidate CI is authoritative for the exact
-committed revision; it also exercises Firefox and WebKit.
+The exact `24947e7` candidate passed
+[GitHub CI](https://github.com/thequantumfalcon/spirescope/actions/runs/35807577729):
+1,757 tests passed on the coverage leg, four skips, and 89.56% branch coverage
+against the 88% gate. All 19 browser tests passed on each of Chromium, Firefox and
+WebKit. Mypy checked 40 public source files; Ruff and dependency checks passed.
 
-A local Windows executable passed valid installation, invalid checksum and empty
-required-family rejection, interrupted-swap recovery, state preservation and key
-page checks. Startup reached readiness in 1.19 seconds. The local Docker build
-also started with a complete dataset. These precede final GitHub builds, which
-rerun the same artifact qualification after runtime metadata cleanup.
+The [artifact rehearsal](https://github.com/thequantumfalcon/spirescope/actions/runs/35807670327)
+qualified actual Windows x64 and macOS ARM64 executables after metadata cleanup:
+valid installation, invalid checksum/empty-family rejection, interrupted-swap
+recovery, state preservation and key pages. Both archives and their SPDX SBOMs
+were verified against the source commit and signer workflow. The downloaded
+Windows archive passed an additional local qualification. These results identify
+that candidate, not a later source revision or a complete real-game audit.
 
 On Windows build 26200 with 32 logical CPUs, 30 measured browse requests had a
 3.62 ms p95. Thirty 100-card analyses at two concurrent requests had a 523.69 ms
@@ -88,13 +91,14 @@ counters alone. The digest ledger never silently forgets old accepted imports.
 
 ## Outstanding release gates
 
-Final CI lint/types/coverage, source/wheel/Docker qualification, complete runtime
-inventories, built-executable update/recovery checks, and artifact attestations
-must be recorded against the exact final candidate. The candidate must also have
-measured responsiveness and independent Windows/macOS game-session coverage,
-including solo/co-op and all five characters. A seed match cannot prove that two
-replays of the same seed are the same session; richer native timing evidence is
-still a compatibility qualification item.
+The engineering gates above passed for `24947e7`; rerun the affected checks
+and final artifact qualification after subsequent implementation changes.
+The [game coverage plan](GAME_COVERAGE.md) records a separate installed-build
+audit and identifies unresolved identity, mechanics and main/beta compatibility.
+Independent Windows/macOS game-session coverage must include solo/co-op and all
+released characters. A seed match cannot prove that two replays of the same seed
+are the same session; richer native timing evidence remains a qualification item.
+Manual accessibility, the two-hour replay/memory test and the pilot remain open.
 
 Signing/notarization depends on actual eligible credentials and distribution
 policy. No credentials are created or purchases made as part of code repair.

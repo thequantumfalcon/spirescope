@@ -11,7 +11,7 @@
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
 
-**Game data:** current through STS2 **v0.111.0** (refreshed 2026-09-15). Card text follows the **beta** branch; the stable branch is on v0.107.1, so if you play stable some costs and numbers will differ from your game. Refresh anytime with `python -m sts2 update`.
+**Game data:** the catalog includes STS2 **v0.111.0 beta** changes (refreshed 2026-09-15). The latest announced main patch verified on 2026-09-22 is **v0.107.1**, so some card costs and effects differ for main-branch players. Complete build-specific coverage remains under review; see the [game coverage audit and completion plan](docs/GAME_COVERAGE.md). A data refresh does not certify compatibility.
 
 <p align="center">
   <img src="docs/screenshot-dashboard.png" alt="SpireScope Dashboard — your runs, your stats, your data" width="80%">
@@ -225,10 +225,12 @@ spirescope localize --list          # which languages your install offers
 spirescope localize --lang de,ja    # only these
 ```
 
-A standard installation offers thirteen languages besides English. Because the
-text comes from your own install, it stays in step with whatever game version
-you have rather than going stale. Anything the game does not translate — and
-any card added since your installed version — stays in English.
+Available languages depend on the installed game and Spirescope's language map.
+Names and templates come from that installation, while numeric values are
+aligned with the bundled catalog. This does not make beta catalog mechanics
+compatible with a main-branch installation. Unresolved text falls back to English;
+rerun localization after a game update. Indonesian support and build-specific
+overlay validation remain part of the [coverage plan](docs/GAME_COVERAGE.md).
 
 ## Why SpireScope?
 
