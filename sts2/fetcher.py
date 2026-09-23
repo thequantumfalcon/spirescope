@@ -8,7 +8,7 @@ import urllib.request
 from datetime import datetime, timezone
 
 from sts2.config import DATA_DIR
-from sts2.identities import canonical_id, canonical_records
+from sts2.identities import canonical_id, canonical_records, is_companion_monster, is_ending_model
 
 log = logging.getLogger(__name__)
 
@@ -698,7 +698,7 @@ def _discover_enemies_from_saves() -> list[dict]:
             data = json.loads(progress_path.read_text(encoding="utf-8"))
             for es in data.get("encounter_stats", []):
                 enc_id = es.get("encounter_id", "")
-                if enc_id and enc_id not in existing_ids and enc_id not in discovered:
+                if enc_id and enc_id not in existing_ids and enc_id not in discovered and not is_ending_model(enc_id):
                     name = enc_id.split(".", 1)[-1].replace("_", " ").title() if "." in enc_id else enc_id
                     etype = "boss" if "BOSS" in enc_id.upper() else "elite" if "ELITE" in enc_id.upper() else "normal"
                     discovered[enc_id] = {
@@ -729,7 +729,9 @@ def _discover_enemies_from_saves() -> list[dict]:
                         floor_type = floor_data.get("map_point_type", room.get("room_type", ""))
                         for monster_id in room.get("monster_ids", []):
                             game_id = f"MONSTER.{monster_id}" if "." not in monster_id else monster_id
-                            if game_id in existing_ids:
+                            # Pets join the player's side and the ending's creature is
+                            # never fought; neither belongs in the enemy catalog.
+                            if game_id in existing_ids or is_companion_monster(game_id) or is_ending_model(game_id):
                                 continue
                             if game_id not in discovered:
                                 name = monster_id.replace("_", " ").title()

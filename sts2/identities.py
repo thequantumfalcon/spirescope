@@ -26,11 +26,42 @@ LEGACY_TO_NATIVE = {
     "BOSS.AEONGLASS": "MONSTER.AEONGLASS",
 }
 
+# Registered monster models that are never enemies (v0.107.1 registry status
+# "companion"). Byrdpip and Pael's Legion are pets a relic adds to the
+# player's side; Osty is the Necrobinder's pet. The game appends every
+# creature with a monster model to the room's monster_ids when it joins a
+# combat, whichever side it is on, so these ids do occur in saved history.
+# Their initial HP values are placeholders.
+COMPANION_MONSTER_IDS = frozenset({"MONSTER.OSTY", "MONSTER.BYRDPIP", "MONSTER.PAELS_LEGION"})
+
+# The ending sequence after the final act (registry status "ending"): an
+# event room whose encounter is declared as a Monster room with a creature
+# that has no moves and placeholder HP. The score shown as damage numbers is
+# a visual effect, not combat damage.
+ENDING_MODEL_IDS = frozenset({
+    "EVENT.THE_ARCHITECT", "ENCOUNTER.THE_ARCHITECT_EVENT_ENCOUNTER", "MONSTER.ARCHITECT",
+})
+
 _T = TypeVar("_T")
 
 
 def canonical_id(identifier: str) -> str:
     return LEGACY_TO_NATIVE.get(identifier, identifier)
+
+
+def native_monster_id(identifier: str) -> str:
+    """Saved monster_ids may omit the MONSTER. prefix."""
+    return identifier if "." in identifier else f"MONSTER.{identifier}"
+
+
+def is_companion_monster(identifier: str) -> bool:
+    """True for a player-side pet recorded among a room's monsters."""
+    return canonical_id(native_monster_id(identifier)) in COMPANION_MONSTER_IDS
+
+
+def is_ending_model(identifier: str) -> bool:
+    """True for the Architect ending's event, encounter or creature."""
+    return canonical_id(native_monster_id(identifier)) in ENDING_MODEL_IDS
 
 
 def canonical_ids(identifiers: Iterable[str]) -> list[str]:

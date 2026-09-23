@@ -24,6 +24,9 @@
   ratios, repeated copies, skipped rewards, fixed boss distances, speed-run and
   death-floor guesses. Analysis reports recorded counts and card-text checks
   with their game-version scope stated.
+- Classify the three companions (Osty, Byrdpip, Pael's Legion) and the
+  Architect ending: never discovered as enemies, the ending is not a combat in
+  run analysis, and companions are labelled in run detail.
 
 ### Release engineering
 

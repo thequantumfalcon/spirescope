@@ -5,7 +5,7 @@ import re
 from typing import Any
 
 from sts2.config import DATA_DIR, GAME_INSTALL_DIR, MODS_DIR
-from sts2.identities import canonical_id, identity_index
+from sts2.identities import canonical_id, identity_index, is_companion_monster
 from sts2.models import (
     Badge,
     Card,
@@ -1074,6 +1074,10 @@ class KnowledgeBase:
                         "strategy": arch.strategy,
                     })
         return results
+
+    def is_companion(self, monster_id: str) -> bool:
+        """True for a player-side pet the save recorded among a room's monsters."""
+        return is_companion_monster(monster_id)
 
     def id_to_name(self, entity_id: str) -> str:
         """Convert a game ID like CARD.BASH to a display name."""

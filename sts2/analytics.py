@@ -2,7 +2,7 @@
 from collections import Counter, defaultdict
 from typing import Any
 
-from sts2.identities import canonical_id, canonical_run
+from sts2.identities import canonical_id, canonical_run, is_ending_model
 from sts2.models import PlayerProgress, RunHistory
 
 # Mega Crit's shipped characters. Modded characters (Komeijikoishi, Hina,
@@ -43,7 +43,11 @@ def _is_combat(floor) -> bool:
     real saves leave some fights typed "unknown" (observed: ENCOUNTER.TUNNELER
     on an unknown-typed floor), so the encounter id is the reliable signal.
     Events use an EVENT.* id and are excluded even when they cost HP.
+    The Architect ending declares a Monster room but has no combat: its
+    creature has no moves and the score it shows is a visual effect.
     """
+    if is_ending_model(floor.encounter):
+        return False
     return floor.type in ("monster", "elite", "boss") or floor.encounter.startswith("ENCOUNTER.")
 
 

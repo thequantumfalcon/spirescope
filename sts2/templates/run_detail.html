@@ -91,7 +91,7 @@
   </div>
   <div class="floor-detail">
     {% if floor.encounter %}<strong>{{ kb.id_to_name(floor.encounter) }}</strong>{% endif %}
-    {% if floor.monsters %}<span class="text-muted text-sm"> ({% for m in floor.monsters %}{{ kb.id_to_name(m) }}{% if not loop.last %}, {% endif %}{% endfor %})</span>{% endif %}
+    {% if floor.monsters %}<span class="text-muted text-sm"> ({% for m in floor.monsters %}{{ kb.id_to_name(m) }}{% if kb.is_companion(m) %} (companion){% endif %}{% if not loop.last %}, {% endif %}{% endfor %})</span>{% endif %}
     {% if floor.turns %}<span class="text-muted"> &mdash; {{ floor.turns }} turns</span>{% endif %}
     {% for c in floor.cards_picked %}<br><span class="text-green">+ {{ kb.id_to_name(c) }}</span>{% endfor %}
     {% if floor.cards_offered %}{% set skipped = floor.cards_offered|reject('in', floor.cards_picked)|list %}{% if skipped %}<br><span class="text-muted text-sm opacity-60">Offered: {% for s in skipped %}{{ kb.id_to_name(s) }}{% if not loop.last %}, {% endif %}{% endfor %}</span>{% endif %}{% endif %}

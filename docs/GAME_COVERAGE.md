@@ -245,6 +245,14 @@ these, **1,193** match the bounded card/relic/potion/monster/encounter/event
 reviews above. This is an inventory, not a completion percentage: it includes
 mock models, deprecated placeholders and infrastructure. Three companion models
 and the Architect event, encounter and visual creature are identified separately.
+The application applies that classification: Osty, Byrdpip and Pael's Legion
+and the Architect ending (event, encounter and creature) are never added to the
+enemy catalog by save discovery, the ending is not counted as a combat in run
+analysis, and a companion recorded among a floor's monsters is labelled as one
+in run detail. The game appends every creature that joins a combat to the
+room's monster list whichever side it is on, so companion ids do occur in
+saved history. Companion and Architect HP values are placeholders and are not
+catalogued.
 The remaining model families are explicit review queues. Epochs, intents,
 keywords, modes and other systems outside this registry still need separate
 accounting; registry membership does not establish playable availability.
