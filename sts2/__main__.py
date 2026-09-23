@@ -30,6 +30,9 @@ Usage: {prog} [command] [options]
 
 Commands:
   serve         Start the web dashboard (default)
+  install-data  Install a local data bundle with a SHA-256 checksum file
+  validate-data Check a data directory without starting the dashboard
+  runtime-info  Print the executing Python/OpenSSL versions and architecture
   update        Fetch latest game data from the wiki
   community     Fetch community tips from Steam
   export        Export aggregate stats to JSON file
@@ -60,22 +63,11 @@ def _get_version() -> str:
 
 
 def _run_post_scrape_script(name: str) -> None:
-    """Run scripts/<name>.py's main() after a wiki refresh.
-
-    Silently no-ops when the script is absent (e.g. frozen builds), which is
-    why these corrections live beside the data rather than inside the fetcher.
-    """
-    import importlib.util
-    from pathlib import Path
-    script_path = Path(__file__).resolve().parent.parent / "scripts" / f"{name}.py"
-    if not script_path.exists():
-        return
-    spec = importlib.util.spec_from_file_location(name, script_path)
-    if spec is None or spec.loader is None:
-        return
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    module.main(dry_run=False)
+    """Run a packaged correction against the configured writable dataset."""
+    from sts2.config import DATA_DIR
+    from sts2.corrections import rarity, text
+    module = {"fix_card_rarity": rarity, "fix_card_text": text}[name]
+    module.main(dry_run=False, data_path=DATA_DIR / "cards.json")
 
 
 def _canonicalize_card_rarities() -> None:
@@ -143,12 +135,41 @@ def main():
     # treating "--browser" as an unknown command.
     command = next((a for a in args if not a.startswith("-")), "serve")
 
+    if command == "runtime-info":
+        import json
+        import platform
+        import ssl
+
+        print(json.dumps({"python": platform.python_version(),
+                          "openssl": ssl.OPENSSL_VERSION,
+                          "machine": platform.machine(), "platform": platform.platform()}))
+        return
+
+    if command == "install-data":
+        import argparse
+        from pathlib import Path
+
+        from sts2.updater import install_data_update
+        parser = argparse.ArgumentParser(prog="spirescope install-data")
+        parser.add_argument("archive", type=Path)
+        parser.add_argument("--sha256", type=Path, required=True)
+        options = parser.parse_args(args[args.index(command) + 1:])
+        ok, message = install_data_update(archive=options.archive, checksum=options.sha256)
+        print(message)
+        sys.exit(0 if ok else 1)
+
+    if command == "validate-data":
+        from sts2.data_health import validate_command
+        sys.exit(validate_command(args[args.index(command) + 1:]))
+
     if command == "update":
         from sts2.fetcher import run_fetcher
         save_only = "--save-only" in args
-        run_fetcher(save_only=save_only)
-        _canonicalize_card_rarities()
-        _pin_card_text()
+        try:
+            run_fetcher(save_only=save_only)
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(f"Data update failed: {exc}", file=sys.stderr)
+            sys.exit(1)
         return
 
     if command == "community":
@@ -157,14 +178,19 @@ def main():
         return
 
     if command == "export":
-        from sts2.aggregate import compute_aggregate_stats, save_aggregate
+        from sts2.aggregate import _aggregate_storage_path, compute_aggregate_stats, save_aggregate
         from sts2.saves import get_run_history
+        from sts2.state_lock import state_lock
         print("Loading run history...")
         runs = get_run_history()
         print(f"Found {len(runs)} runs, computing stats...")
         stats = compute_aggregate_stats(runs)
-        if not save_aggregate(stats):
-            print("Could not write the aggregate stats file (too large or unwritable).")
+        try:
+            with state_lock(_aggregate_storage_path()):
+                if not save_aggregate(stats):
+                    raise OSError("Aggregate is too large or unwritable.")
+        except OSError as exc:
+            print(f"Could not write the aggregate stats file: {exc}")
             sys.exit(1)
         print(f"Exported aggregate stats from {stats.get('run_count', 0)} runs.")
         return
@@ -219,27 +245,33 @@ def main():
         try:
             result = upload_stats(stats)
             print(f"Upload complete. Server now has {result.get('run_count', '?')} total runs.")
-        except SyncError as e:
+        except (SyncError, OSError) as e:
             print(f"Sync failed: {e}")
             sys.exit(1)
         return
 
     if command == "sync-down":
-        from sts2.aggregate import load_aggregate, merge_aggregate, save_aggregate
+        from sts2.aggregate import (
+            DuplicateImportError,
+            import_aggregate,
+        )
         from sts2.sync import SyncError, download_stats
         print("Downloading community stats...")
         try:
             remote = download_stats()
             print(f"Downloaded stats from {remote.get('run_count', 0)} runs.")
-            existing = load_aggregate()
-            merged = merge_aggregate(existing, remote)
-            if not save_aggregate(merged):
-                print("Merged, but the result could not be persisted "
-                      "(too large or unwritable).")
-                sys.exit(1)
+            merged = import_aggregate(remote)
             print(f"Merged. Local aggregate now has {merged.get('run_count', 0)} runs.")
-        except SyncError as e:
+        except (SyncError, OSError) as e:
             print(f"Sync failed: {e}")
+            sys.exit(1)
+        except DuplicateImportError as e:
+            # Nothing new on the server since the last sync-down.
+            print(f"Nothing merged: {e}")
+        except ValueError as e:
+            # The sanitiser's rejections (impossible or non-finite counters)
+            # were an uncaught traceback here.
+            print(f"Sync failed: downloaded stats rejected: {e}")
             sys.exit(1)
         return
 
@@ -248,7 +280,8 @@ def main():
 
         from sts2.config import HOST, PORT
 
-        url = f"http://{HOST}:{PORT}"
+        authority = f"[{HOST}]" if ":" in HOST and not HOST.startswith("[") else HOST
+        url = f"http://{authority}:{PORT}"
         open_browser = _should_open_browser(args)
         if open_browser:
             threading.Timer(1.5, lambda: webbrowser.open(url)).start()

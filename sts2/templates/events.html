@@ -2,7 +2,7 @@
 {% block page_id %}events{% endblock %}
 {% block title %}Events{% endblock %}
 {% block content %}
-<h1>Events ({{ events|length }}{% if total_events and events|length != total_events %} of {{ total_events }}{% endif %})</h1>
+<h1>Events &amp; Ancients ({{ events|length }}{% if total_events and events|length != total_events %} of {{ total_events }}{% endif %})</h1>
 
 <div class="filters">
   <a href="/events" {% if not selected_act %}class="active"{% endif %}>All Acts</a>
@@ -14,12 +14,17 @@
 {% for event in events %}
 <div class="card mb-md">
   <h3>{{ event.name }} <span class="text-sm text-muted">{{ event.act|join(', ') }}</span></h3>
+  {% if event.kind %}<p class="text-sm text-muted">{{ "Ancient" if event.kind == "ancient" else "Event" }}{% if event.locations %} · {{ event.locations|join(", ") }}{% endif %}</p>{% endif %}
+  {% if event.mechanics_version %}<p class="text-sm text-muted">Options checked for {{ event.mechanics_version }}.</p>
+  {% else %}<p class="text-sm text-muted">Reference options; not verified for the selected game version.</p>{% endif %}
   <p>{{ event.description }}</p>
+  {% if event.availability_note %}<p class="text-sm text-muted">{{ event.availability_note }}</p>{% endif %}
+  {% if event.is_shared and not event.sp_only %}<p class="text-sm text-muted">Shared event in multiplayer.</p>{% endif %}
   {% for choice in event.choices %}
   <div class="choice">
     <div class="option">{{ choice.option }}</div>
     <div class="outcome">{{ choice.outcome }}</div>
-    {% if choice.recommendation %}<div class="rec">{{ choice.recommendation }}</div>{% endif %}
+    {% if choice.recommendation and (not mechanics_status().game_version or event.mechanics_version == mechanics_status().game_version) %}<div class="rec">{{ choice.recommendation }}</div>{% endif %}
   </div>
   {% endfor %}
   {% if event.notes %}<p class="text-sm text-muted mt-sm">{{ event.notes }}</p>{% endif %}

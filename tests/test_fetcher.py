@@ -442,7 +442,8 @@ class TestRunFetcher:
              patch("sts2.sources.WikiggSource._fetch_modules", return_value={}), \
              patch("sts2.fetcher.time.sleep"), \
              patch("sts2.config.SAVE_DIR", tmp_path):
-            run_fetcher(save_only=False)
+            with pytest.raises(ValueError, match="Refresh incomplete"):
+                run_fetcher(save_only=False)
 
         # Existing 50 cards should be preserved (not overwritten with 1)
         result = json.loads((tmp_path / "cards.json").read_text())
@@ -458,7 +459,8 @@ class TestRunFetcher:
         with patch("sts2.fetcher.DATA_DIR", tmp_path), \
              patch("sts2.fetcher._fetch_with_retry") as mock_fetch, \
              patch("sts2.config.SAVE_DIR", tmp_path):
-            run_fetcher(save_only=True)
+            with pytest.raises(ValueError, match="Refresh rejected"):
+                run_fetcher(save_only=True)
 
         mock_fetch.assert_not_called()
 
@@ -560,9 +562,9 @@ class TestExtractionStrategyFallbacks:
         """The site splits JSON mid-token across push() calls, so the chunks
         must be concatenated before decoding -- an escape sequence can straddle
         a chunk boundary."""
-        payload = _u22(CARD_OBJ)
+        payload = json.dumps(CARD_OBJ)
         half = len(payload) // 2
-        html = _push(payload[:half]) + _push(payload[half:])
+        html = _push(json.dumps(payload[:half])[1:-1]) + _push(json.dumps(payload[half:])[1:-1])
         assert [o["id"] for o in _extract_json_objects(html, "CARD")] == [
             "bash-ironclad"]
 

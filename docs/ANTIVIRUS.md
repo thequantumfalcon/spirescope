@@ -1,164 +1,82 @@
-# "This file contains a virus" — what's actually happening
+# Download verification and security warnings
 
-If Windows blocked `Spirescope.exe` with *"Operation did not complete
-successfully because the file contains a virus or potentially unwanted
-software"*, or SmartScreen warned you before it ran — this page explains
-exactly why, and gives you three ways forward depending on how much you
-want to trust a stranger's build.
+Spirescope's desktop distribution is an unsigned PyInstaller application.
+A warning can concern reputation, publisher identity, unwanted software or a
+malware detection. We cannot determine its cause from the packaging format or
+declare every detection a false positive. Microsoft's [SmartScreen overview](https://learn.microsoft.com/en-us/windows/security/operating-system-security/virus-and-threat-protection/microsoft-defender-smartscreen/)
+explains its reputation and threat checks.
 
-**Short version:** SpireScope is an unsigned Python application packaged
-with PyInstaller. Antivirus engines flag that *packaging format* on
-reputation and heuristics, not because anything malicious was found. Every
-line of source is in this repository, every release is built in public by
-GitHub Actions, and every archive ships a SHA-256 checksum.
+## Verify the exact download
 
-## Why it happens
+Download from this repository's GitHub Releases page. Compare the archive with
+the adjacent SHA-256 file. On Windows:
 
-PyInstaller bundles a Python interpreter plus your code into an executable
-that unpacks and runs code at startup. That behavior pattern — self-
-extracting, dynamically loading code, unsigned, low download count — is
-also what some malware does, so heuristic scanners score it as suspicious.
-It affects essentially every unsigned PyInstaller app, which is why you'll
-find the same complaint across many open-source Python tools.
+```powershell
+Get-FileHash .\Spirescope-windows.zip -Algorithm SHA256
+```
 
-Two things that *would* make it worse are already avoided in this build:
-UPX compression is disabled, and the app runs with a visible console
-window rather than hidden.
+On macOS:
 
-The permanent fix is a code-signing certificate (see below); until that's
-in place, the warning is expected.
+```bash
+shasum -a 256 -c Spirescope-macos.zip.sha256
+```
 
-## Option 1 — Verify, then allow it
+With GitHub CLI, verify the provenance of the same archive:
 
-1. **Check the checksum.** Every release ships a `.sha256` file next to the
-   zip. On Windows PowerShell:
+```bash
+gh attestation verify Spirescope-windows.zip --repo thequantumfalcon/spirescope
+```
 
-   ```powershell
-   Get-FileHash .\Spirescope-windows.zip -Algorithm SHA256
-   ```
+Inspect the reported source commit, repository, workflow and subject digest.
+A checksum establishes byte equality and provenance identifies the build; neither
+proves the absence of malicious behavior or substitutes for a publisher signature.
 
-   Compare with the contents of `Spirescope-windows.zip.sha256`. If they
-   match, the file you downloaded is bit-for-bit what CI published.
+## Investigate a warning
 
-2. **Allow the file** in Windows Security → Virus & threat protection →
-   Protection history → find the item → Actions → Allow. Or add the
-   SpireScope folder under Manage settings → Exclusions.
+Keep the release version, archive digest, detection name and security-product
+version. Report these in an issue without private paths or user data. If the
+download or provenance does not match, do not run it. A matching file with a
+detection still needs investigation. Do not disable protection or add a broad
+folder exclusion as a routine installation step.
 
-3. If SmartScreen blocks launch instead, click **More info → Run anyway**.
+Microsoft accepts suspected incorrect detections through its
+[file-submission service](https://www.microsoft.com/en-us/wdsi/filesubmission).
+Select the product that issued the warning. Vendor review results and turnaround
+are outside this project's control. A scanner vote count alone does not establish
+whether a file is safe.
 
-## Option 2 — Run from source (no executable at all)
+## Source installation
 
-The most cautious path, and it takes two minutes. Nothing is packaged,
-so there's nothing for a heuristic scanner to object to:
+You can inspect and run the source in a separate Python environment. This avoids
+the frozen executable but still requires trust in the source and its dependencies.
 
 ```bash
 git clone https://github.com/thequantumfalcon/spirescope.git
 cd spirescope
-python -m venv .venv && .venv\Scripts\activate    # macOS/Linux: source .venv/bin/activate
-pip install -e .
+python -m venv .venv
+```
+
+Activate `.venv\Scripts\activate` on Windows or `source .venv/bin/activate` on
+macOS/Linux, then install and start:
+
+```bash
+pip install --require-hashes -r requirements-runtime-lock.txt
+pip install . --no-deps
 spirescope
 ```
 
-Then open <http://127.0.0.1:8000>. Requires Python 3.11 or newer.
+See [SUPPORT.md](SUPPORT.md) for tested Python versions, data/state recovery and
+what information helps reproduce a problem.
 
-## macOS — Gatekeeper blocks the build outright
+## macOS and signing status
 
-This is a different problem from the Windows one, and it is not a heuristic
-false positive: the macOS build is neither signed with an Apple Developer ID
-nor notarized, so Gatekeeper refuses it by policy. Depending on how you open
-it you will see "cannot be opened because the developer cannot be verified",
-"is damaged and can't be opened", or nothing happening at all. The "damaged"
-wording is misleading — the download is intact, it simply carries the
-quarantine attribute your browser attached.
+The current workflow does not apply an Apple Developer ID signature or submit
+the app for notarization. Gatekeeper may block a downloaded build. Verify the
+archive and consult the warning's details before deciding whether to trust it;
+the word "damaged" is not by itself proof of a harmless quarantine flag.
 
-Verify the download against the published `.sha256` first, then clear the
-attribute once:
-
-```bash
-shasum -a 256 -c Spirescope-macos.zip.sha256
-unzip Spirescope-macos.zip
-xattr -dr com.apple.quarantine Spirescope
-cd Spirescope && ./Spirescope
-```
-
-`xattr -dr` removes the quarantine flag recursively. Only do this for software
-you have chosen to trust and whose checksum you have confirmed.
-
-Notarizing properly requires a paid Apple Developer Program membership, which
-this project does not currently hold. Running from source (Option 2 above)
-avoids the issue entirely on macOS.
-
-## Option 3 — Wait for signed builds
-
-Code signing is the only thing that removes these warnings permanently.
-
-SpireScope has applied to the [SignPath Foundation](https://signpath.org/),
-a nonprofit that provides free code signing to open source projects. If
-accepted, release binaries will be signed automatically in CI — the private
-key is held in SignPath's HSM and the certificate is issued in SignPath
-Foundation's name. This page will be updated when signed builds ship.
-
-Note that SignPath covers Windows Authenticode signing only; it does not
-address macOS Gatekeeper, which needs Apple notarization separately.
-
-## How to satisfy yourself it's safe
-
-- **Verify the build provenance.** This is the strongest check available, and
-  it is stronger than the checksum: a checksum proves the file matches what
-  was published, which tells you nothing if the publishing itself were
-  tampered with. The provenance attestation is a signed statement that this
-  exact file was produced by GitHub Actions, from this repository, at a named
-  tag — and it cannot be forged without GitHub's signing key.
-
-  With the [GitHub CLI](https://cli.github.com/):
-
-  ```bash
-  gh attestation verify Spirescope-v3.1.1-windows.zip --repo thequantumfalcon/spirescope
-  ```
-
-  It exits 0 when the file is genuine and non-zero otherwise. Add
-  `--format json` to read the detail; for the v3.1.1 Windows build it reports
-  the builder as
-  `.../.github/workflows/release.yml@refs/tags/v3.1.1`, the source repository
-  as this one, and a subject digest equal to the published `.sha256`.
-
-  Nothing needs to be trusted for this except GitHub. It is worth doing before
-  the steps below, because it answers "did this come from the project" rather
-  than "does a scanner dislike the packaging".
-
-- **Read the source** — it's all here, with an automated test suite (including browser tests) that runs on every change.
-- **Check what it does on the network:** the packaged build makes no
-  outbound calls unless you opt in with `SPIRESCOPE_CHECK_UPDATES=1`.
-  (Source installs check GitHub for app and data updates at startup;
-  `SPIRESCOPE_CHECK_UPDATES=0` turns that off.) The server binds to
-  `127.0.0.1` only.
-- **Check what it touches on disk:** it reads your STS2 save files and
-  never writes to them.
-- **Scan it yourself** — upload the zip to [VirusTotal](https://www.virustotal.com/).
-  Expect a small number of heuristic/ML detections (names like
-  `Trojan.Generic`, `ML.Attribute.HighConfidence`, `Wacatac`) and a large
-  majority of clean results. That distribution is the signature of a
-  false positive on an unsigned packer, not of an actual detection.
-
-## Reporting a false positive
-
-If Microsoft Defender flagged it, submitting the sample genuinely helps —
-they typically correct generic detections within a few days, and the fix
-propagates to everyone:
-
-<https://www.microsoft.com/en-us/wdsi/filesubmission>
-
-Choose "Software developer", submit the zip, and note that it's an
-unsigned PyInstaller build of an open-source project with the repository
-URL. Other vendors have equivalent forms.
-
-## Maintainer notes
-
-- Published builds are produced only by GitHub Actions from tagged commits
-  in this repository; there is no other upload path. (`build_exe.py` exists
-  for local development builds, which are never published.)
-- GitHub Releases is the only official download source.
-- Signing options under consideration: Azure Trusted Signing (about
-  $10/month, works from GitHub Actions, requires identity verification) or
-  a traditional OV/EV certificate (roughly $200–400/year). Until then,
-  this page is the honest answer to the warning.
+Windows Authenticode signing and Apple notarization require separate eligible
+maintainer credentials. No signing integration is claimed until an actual
+distributed artifact verifies. Signing identifies a publisher and does not
+guarantee every security product will accept a build. See the release's runtime
+inventory, SBOM and qualification evidence alongside its provenance.

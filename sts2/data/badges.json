@@ -2,67 +2,231 @@
   {
     "id": "BADGE.BIG_DECK",
     "name": "Big Deck",
-    "requirement": "",
-    "source": "discovered"
+    "requirement": "Win with at least 40 cards in the final deck for Bronze, 60 for Silver, or 100 for Gold.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.CCCCOMBO",
+    "name": "C-C-C-Combo",
+    "requirement": "Play at least 20 cards in one turn.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.CURSES",
+    "name": "Curses",
+    "requirement": "Win with at least 5 Curse cards in the final deck.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.DAMAGE_LEADER",
+    "name": "Damage Leader",
+    "requirement": "In co-op, have the most recorded damage dealt after at least 5 map points in the first act. Ties go to the first player in run order.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": true,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.DEBUFFER",
+    "name": "Debuffer",
+    "requirement": "In co-op, have the most recorded debuffs applied after at least 5 map points in the first act. Ties go to the first player in run order.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": true,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.DOUBLE_SNECKO",
+    "name": "Double Snecko",
+    "requirement": "Finish with both Snecko Eye and Fake Snecko Eye.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   },
   {
     "id": "BADGE.ELITE",
-    "name": "Elite",
-    "requirement": "",
-    "source": "discovered"
+    "name": "Elite Killer",
+    "requirement": "Defeat at least 3 elites for Bronze, 6 for Silver, or 9 for Gold.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.FAMISHED",
+    "name": "Famished",
+    "requirement": "Win with maximum HP below half the character's normal starting HP.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   },
   {
     "id": "BADGE.GLUTTON",
     "name": "Glutton",
-    "requirement": "",
-    "source": "discovered"
+    "requirement": "Win with maximum HP at least 15 above the character's normal starting HP for Bronze, 30 for Silver, or 50 for Gold.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   },
   {
     "id": "BADGE.HEALER",
     "name": "Healer",
-    "requirement": "",
-    "source": "discovered"
+    "requirement": "In co-op, use Mend at rest sites at least once for Bronze, twice for Silver, or 3 times for Gold.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": true,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   },
   {
     "id": "BADGE.HIGHLANDER",
     "name": "Highlander",
-    "requirement": "",
-    "source": "discovered"
+    "requirement": "Win with no duplicate non-Basic card IDs in the final deck. Basic cards are ignored.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   },
   {
     "id": "BADGE.HONED",
     "name": "Honed",
-    "requirement": "",
-    "source": "discovered"
+    "requirement": "Win with at least 5 copies of one non-Basic card ID in the final deck. Upgrade levels do not separate copies.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   },
   {
     "id": "BADGE.ILIKESHINY",
-    "name": "Ilikeshiny",
-    "requirement": "",
-    "source": "discovered"
+    "name": "I Like Shiny",
+    "requirement": "Finish with at least 25 relics.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.KACHING",
+    "name": "Ka-Ching",
+    "requirement": "Spend at least 1,000 Gold in shops during the run.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   },
   {
     "id": "BADGE.MONEY_MONEY",
     "name": "Money Money",
-    "requirement": "",
-    "source": "discovered"
+    "requirement": "Win holding at least 200 Gold for Bronze, 400 for Silver, or 600 for Gold.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.MYSTERY_MACHINE",
+    "name": "Mystery Machine",
+    "requirement": "Visit at least 15 unknown map points during the run, regardless of the rooms revealed.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   },
   {
     "id": "BADGE.PERFECT",
     "name": "Perfect",
-    "requirement": "",
-    "source": "discovered"
+    "requirement": "Defeat a boss without taking damage in that fight for Bronze; 2 such boss fights earn Silver, 3 earn Gold. A fatal final boss fight is excluded.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.RESTFUL",
+    "name": "Restful",
+    "requirement": "Win after visiting at least one rest site and choosing Rest at every rest site visited.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.RESTLESS",
+    "name": "Restless",
+    "requirement": "Win after visiting at least one rest site without ever choosing Rest.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   },
   {
     "id": "BADGE.SPEEDY",
     "name": "Speedy",
-    "requirement": "",
-    "source": "discovered"
+    "requirement": "Win in at most 50 minutes for Bronze, 40 for Silver, or 30 for Gold, using the game's recorded win time.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.TABLET",
+    "name": "Tablet",
+    "requirement": "Win with exactly 1 maximum HP.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
+  },
+  {
+    "id": "BADGE.TEAM_PLAYER",
+    "name": "Team Player",
+    "requirement": "In co-op, finish with at least 3 multiplayer-only cards in the final deck.",
+    "source": "base",
+    "requires_win": false,
+    "mp_only": true,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   },
   {
     "id": "BADGE.TINY_DECK",
     "name": "Tiny Deck",
-    "requirement": "",
-    "source": "discovered"
+    "requirement": "Win with at most 20 cards in the final deck for Bronze, 10 for Silver, or 5 for Gold.",
+    "source": "base",
+    "requires_win": true,
+    "mp_only": false,
+    "mechanics_version": "v0.107.1",
+    "branch": "main"
   }
 ]

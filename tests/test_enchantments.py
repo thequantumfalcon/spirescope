@@ -181,8 +181,13 @@ def _stub_content_locale(tmp_path, monkeypatch, code, payload):
 
 def test_content_overlay_translates_kb_and_search(tmp_path, monkeypatch):
     from sts2.knowledge import KnowledgeBase
+    from sts2.mechanics import mechanics_fingerprint
+    original = KnowledgeBase(language="en")
+    token = mechanics_fingerprint(original.get_card_by_id("CARD.BASH").model_dump())
     _stub_content_locale(tmp_path, monkeypatch, "ja", {
-        "cards": {"CARD.BASH": {"name": "バッシュ", "description": "テスト説明"}},
+        "_meta": {"game_version": original.game_version},
+        "cards": {"CARD.BASH": {"name": "バッシュ", "description": "テスト説明",
+                                 "_mechanics_fingerprint": token}},
     })
     kb = KnowledgeBase()
     bash = next(c for c in kb.cards if c.id == "CARD.BASH")

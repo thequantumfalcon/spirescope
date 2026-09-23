@@ -1,0 +1,122 @@
+{
+  "game_version": "v0.107.1",
+  "game_commit": "59260271",
+  "reviewed_at": "2026-09-23",
+  "complete": false,
+  "scope": "Titles, printed rules, extra card text and eligibility for the 22 registered main enchantments.",
+  "method": "English strings from the installed game's enchantments localization table with colour markup removed; fixed template values substituted from each native model's canonical variables; {Amount} kept as the per-copy saved value. Eligibility and notes paraphrase the native model code. Enchantment status reset timing, per-copy amounts and interactions with relics, powers and other cards are not simulated.",
+  "reviewed_ids": [
+    "ENCHANTMENT.ADROIT",
+    "ENCHANTMENT.CLONE",
+    "ENCHANTMENT.CORRUPTED",
+    "ENCHANTMENT.GLAM",
+    "ENCHANTMENT.GOOPY",
+    "ENCHANTMENT.IMBUED",
+    "ENCHANTMENT.INKY",
+    "ENCHANTMENT.INSTINCT",
+    "ENCHANTMENT.MOMENTUM",
+    "ENCHANTMENT.NIMBLE",
+    "ENCHANTMENT.PERFECT_FIT",
+    "ENCHANTMENT.ROYALLY_APPROVED",
+    "ENCHANTMENT.SHARP",
+    "ENCHANTMENT.SLITHER",
+    "ENCHANTMENT.SLUMBERING_ESSENCE",
+    "ENCHANTMENT.SOULS_POWER",
+    "ENCHANTMENT.SOWN",
+    "ENCHANTMENT.SPIRAL",
+    "ENCHANTMENT.STEADY",
+    "ENCHANTMENT.SWIFT",
+    "ENCHANTMENT.TEZCATARAS_EMBER",
+    "ENCHANTMENT.VIGOROUS"
+  ],
+  "records": {
+    "ENCHANTMENT.ADROIT": {
+      "definition_sha256": "b287082df5e51435b2ef8b4eab406c25efe59559fb6a466e433b620a5d9a33e4",
+      "mechanics_record_sha256": "a7c5a563052c860653e9d4718d19558516bb7afd7781f7bd04d7bfd864b55b18"
+    },
+    "ENCHANTMENT.CLONE": {
+      "definition_sha256": "b6899d775d0fd540f3258741270deb1d8f8ef762a7abedb94c847dd3909e618d",
+      "mechanics_record_sha256": "9a45792b6dfb41171ce1280a521e219da926ffc67a78ff58a37aba7db8ae2d4e"
+    },
+    "ENCHANTMENT.CORRUPTED": {
+      "definition_sha256": "4710884614a3b2f898604feeb5c72426c1b052329d5292973768cd65ba1f29b8",
+      "mechanics_record_sha256": "c5b684728b85c0a3bb13ec38b018e0aa7519de3ca4c12ac6cc9b3c5db81dcd6d"
+    },
+    "ENCHANTMENT.GLAM": {
+      "definition_sha256": "8c1de1683f8c261b3423955027a9bdd4867419e5ee0b6be62b02325588ea0772",
+      "mechanics_record_sha256": "0f423029a94caa6481b2eedb31b3afb0a0ef92a6b36d513a420efca8888d7010"
+    },
+    "ENCHANTMENT.GOOPY": {
+      "definition_sha256": "19d2be6a8583c65d161a15b99e09b68532c5031ddb7b21266d2f7bcee97b3989",
+      "mechanics_record_sha256": "964f1593071703b5f666c063f9fc0b957045e0e3e20f3b49c1cb26175a8161a3"
+    },
+    "ENCHANTMENT.IMBUED": {
+      "definition_sha256": "c946d1480f9f88fc0be71ad13a1cce0c54808955290017802b74474eac90929c",
+      "mechanics_record_sha256": "f4111773f563f601c024118aa83c177cb896f68a8cf51f84b7b8190f429528fc"
+    },
+    "ENCHANTMENT.INKY": {
+      "definition_sha256": "322356054573431f49266f1b85f0588bac8f241483421a2c628820cc77938132",
+      "mechanics_record_sha256": "2af17c6b219d72fc7347c7197db5c1611cd40582b8d78ac4be7f901f3e74c3d3"
+    },
+    "ENCHANTMENT.INSTINCT": {
+      "definition_sha256": "07bd12f12f1a0c6e5d7ac67b119e3aef4056dbf38c99b743ddde414087d9a725",
+      "mechanics_record_sha256": "39aef5d4f0aff920a5e348359dbeb96d6bbd3950530a6d15c472d6f1d22a5e0a"
+    },
+    "ENCHANTMENT.MOMENTUM": {
+      "definition_sha256": "ce3d9a86951cee5bafe4afbeeb37627dbf4ecc388724df89b44eb9c5be25b625",
+      "mechanics_record_sha256": "2729411c5d2cd054f9a4ed32fadeb344a9c9f45f7e5f59a9075a385267bf9c61"
+    },
+    "ENCHANTMENT.NIMBLE": {
+      "definition_sha256": "5b1e5a9075e3f0cff0e39b644dae1a749cc6460721a13423c62231ec93f75142",
+      "mechanics_record_sha256": "6648b201646109cca2163c708a2aba7e642be9a2c62c6144b361d9ca831f2406"
+    },
+    "ENCHANTMENT.PERFECT_FIT": {
+      "definition_sha256": "d78b98df8693c9527f9536c3a3376ea322ce0750cbbdab2d31a8deca0f3caa33",
+      "mechanics_record_sha256": "8d542bf1654a89d14f2f2507fd3014f42cbaf5965225df8079c875f11365dd79"
+    },
+    "ENCHANTMENT.ROYALLY_APPROVED": {
+      "definition_sha256": "41c53d4f161894297de2bacc43f2e97c59e6445965420c80769580518f65ad38",
+      "mechanics_record_sha256": "2148b453fbf6ba3f7daa591e35586ff5376082ba11ca58737d071ba9beb89f17"
+    },
+    "ENCHANTMENT.SHARP": {
+      "definition_sha256": "1de8537303cbb6860d4f55b117c0a8cd6179f3c455456b87393c0a7d135339c5",
+      "mechanics_record_sha256": "1fa43501883656f8b2daadfd6799989939850c73e9290c814e7069b623082ec8"
+    },
+    "ENCHANTMENT.SLITHER": {
+      "definition_sha256": "5a8d07070b85e1857f02b54e0274fa219a98298996f6415fd3edd61f9789e995",
+      "mechanics_record_sha256": "3fe878440bd1c3467a0269c70eee924150c3565b94dfe2c10f79abca1bae61b2"
+    },
+    "ENCHANTMENT.SLUMBERING_ESSENCE": {
+      "definition_sha256": "8ee5d46b2b724c76fdb70ffc8740264b75d4a137798ded3ebdbf49a0b570cc67",
+      "mechanics_record_sha256": "0b03d5b382baa7c7d251f83c184f9eeea9f0974563abbb755d886b67b846cb4d"
+    },
+    "ENCHANTMENT.SOULS_POWER": {
+      "definition_sha256": "3144f630de831e91c6572f38346b136c51141c79c21bbf0984d5f6b1c4c23aec",
+      "mechanics_record_sha256": "51ed75250b42f33d79084692d67c953e023a934ade10227fccb5abf55fd3ca56"
+    },
+    "ENCHANTMENT.SOWN": {
+      "definition_sha256": "fadb10496fc943c5f094de456eb73a7d64dd58104bd920ee2f9c70d95d502e1c",
+      "mechanics_record_sha256": "948a1fc9d1e2682e604b452c7f103e1e578817b71f00dc5de532ca2e488e32b1"
+    },
+    "ENCHANTMENT.SPIRAL": {
+      "definition_sha256": "846fafdcc376d712cc2e1313477781055cc938c833c8a7ae2d1516bffc145f4c",
+      "mechanics_record_sha256": "da4bbe02527b192694f4fee599f47306f2c9dfc6d270d946a80a0d9ef50dfec3"
+    },
+    "ENCHANTMENT.STEADY": {
+      "definition_sha256": "d999e603f048e30cb4644806984e08a40ae5fe3218904fd84a56510f35ccb2eb",
+      "mechanics_record_sha256": "6f2852d7bb597985fdcd012db8ff2aa0dea7a857c568cbe99eb2f7d9032f306c"
+    },
+    "ENCHANTMENT.SWIFT": {
+      "definition_sha256": "fe26a7f3c0d452121e4234ca5e0280d1285baff834b403aba7ea3e176f5995f7",
+      "mechanics_record_sha256": "f4e7d64722d94ba13391582ac95ea4495644e2ac584e98b5fbabea935d590e03"
+    },
+    "ENCHANTMENT.TEZCATARAS_EMBER": {
+      "definition_sha256": "734384ada15d22f19cf65d6a67223a025d8a7a3dd6ee932e56d24884f2c9ba23",
+      "mechanics_record_sha256": "c479c3b70a67ee51179c2ca265380fd029e82676ab7504cd099331f409839b90"
+    },
+    "ENCHANTMENT.VIGOROUS": {
+      "definition_sha256": "cce81d7cc2f06d963e5b046aa91d357cd24e03f14078a775451174bda6ba556e",
+      "mechanics_record_sha256": "0f19fcc5b7c2baf13eb98407b1fa7ea73b9d102da092a62e838327e501dbf498"
+    }
+  }
+}

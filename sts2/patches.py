@@ -16,6 +16,7 @@ import logging
 from threading import Lock
 
 from sts2.config import DATA_DIR
+from sts2.identities import canonical_id
 
 log = logging.getLogger(__name__)
 
@@ -97,7 +98,7 @@ def changed_in(entity_id: str) -> str:
     for entry in reversed(load_patches()):
         changed = entry.get("changed", {})
         for kind in ("cards", "relics", "enemies"):
-            if entity_id in changed.get(kind, []):
+            if canonical_id(entity_id) in map(canonical_id, changed.get(kind, [])):
                 return entry.get("patch", "")
     return ""
 

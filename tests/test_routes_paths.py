@@ -51,7 +51,7 @@ async def test_deck_analysis_survives_a_broken_spectral_analysis(client):
 
 async def test_deck_analysis_caps_the_number_of_cards_accepted(client):
     """An unbounded card list is a cheap way to make the server do a lot of
-    graph work; the handler truncates to _MAX_DECK_SIZE instead.
+    graph work; the handler refuses it before analysis.
 
     Deliberately just over the handler's own cap rather than enormous: a
     submission with thousands of fields is refused by Starlette's form parser
@@ -62,8 +62,8 @@ async def test_deck_analysis_caps_the_number_of_cards_accepted(client):
     resp = await client.post(
         "/deck/analyze",
         data=_form(card_ids=["CARD.BASH"] * (_MAX_DECK_SIZE + 20)))
-    assert resp.status_code == 200
-    assert "Bash" in resp.text
+    assert resp.status_code == 400
+    assert "100 card copies" in resp.text
 
 
 # ------------------------------------------------------------ patch admin

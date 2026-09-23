@@ -534,7 +534,7 @@
 <h2 class="mt-xl">Recurring Patterns</h2>
 <p class="text-sm text-muted mb-sm">Trends detected across your recent runs.</p>
 {% for p in run_patterns %}
-<div class="card {% if p.severity == 'high' %}card-loss{% elif p.severity == 'medium' %}card-caution{% else %}card-tip{% endif %} mb-sm">
+<div class="card {% if p.severity == 'high' %}card-loss{% elif p.severity == 'medium' %}card-caution{% elif p.severity != 'info' %}card-tip{% endif %} mb-sm">
   <p>{{ p.text }}</p>
 </div>
 {% endfor %}

@@ -13,12 +13,14 @@ include sts2/data/cards.json
 include sts2/data/enemies.json
 include sts2/data/epochs.json
 include sts2/data/events.json
+include sts2/data/mechanics.json
 include sts2/data/patches.json
 include sts2/data/potions.json
 include sts2/data/relics.json
 include sts2/data/strategy.json
 include sts2/data/last_updated.txt
 include sts2/data/mods/README.md
+recursive-include docs/game-baselines *.json
 recursive-include sts2/templates *.html
 recursive-include sts2/static *
 include sts2/locales/*.json

@@ -2,7 +2,21 @@
 {% block page_id %}deck{% endblock %}
 {% block title %}Deck Analyzer{% endblock %}
 {% block content %}
+{% if analysis and analysis.copy_details %}
+<details class="mb-md" open>
+  <summary>Saved card values</summary>
+  <ul>{% for copy in analysis.copy_details %}
+    <li><strong>{{ copy.name }} ({{ copy.type }})</strong>: {{ copy.description or copy.note }}</li>
+  {% endfor %}</ul>
+  {% if analysis.unmodeled_copies %}<p role="status">{{ analysis.unmodeled_copies }} customized card copies have missing or unsupported saved values. Their effects are excluded from advice.</p>{% endif %}
+</details>
+{% endif %}
 <h1>Deck Analyzer</h1>
+{% if analysis and analysis.mechanics_warning %}<p role="status">{{ analysis.mechanics_warning }}</p>{% endif %}
+{% if analysis and analysis.unverified_traits %}<p role="status">Costs and types are unverified for {{ analysis.unverified_traits }} card copies. The counts below include only known types.</p>{% endif %}
+{% if analysis and (analysis.unknown_upgrade_copies or analysis.enchantments_unmodeled) %}
+<p role="status">Analysis is partial: {{ analysis.unknown_upgrade_copies }} copies have unknown upgrades; {{ analysis.enchantments_unmodeled }} have enchantment effects that are not modeled.</p>
+{% endif %}
 <p class="text-muted mb-md">Select the cards in your deck to get archetype detection, synergy analysis, and improvement suggestions.</p>
 
 {% if from_run_id %}
@@ -16,7 +30,10 @@
 {% endif %}
 
 <form method="post" action="/deck/analyze">
+  <input type="hidden" id="deck-instances" name="instances" value='{{ instances | default([]) | tojson }}'>
+  {% if instances %}<p class="text-muted">Upgrade levels and enchantments are retained for each card copy. Unknown upgrade levels use base costs as an estimate; enchantment effects are not included in advice.</p>{% endif %}
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <input type="hidden" id="deck-game-version" name="game_version" value="{{ mechanics_view_version|default(mechanics_status().game_version) }}">
   {% if selected_counts %}
   {% for card_id, count in selected_counts.items() %}
   {% for _ in range(count) %}
@@ -27,7 +44,7 @@
   <h2>Select Cards</h2>
   {% set chars = {} %}
   {% for card in cards %}
-    {% if card.character not in ['Status'] %}
+    {% if card.character != 'Status' or (selected_counts and card.id in selected_counts) %}
       {% if chars.update({card.character: chars.get(card.character, []) + [card]}) %}{% endif %}
     {% endif %}
   {% endfor %}
@@ -61,17 +78,16 @@
     <div class="deck-section-body">
       {% set has_known_types = char_cards|selectattr('type', 'in', ['Attack','Skill','Power'])|list|length > 0 %}
       {% if has_known_types %}
-        {% set type_groups = {'Attack': [], 'Skill': [], 'Power': []} %}
+        {% set type_groups = {'Attack': [], 'Skill': [], 'Power': [], 'Other': []} %}
         {% for card in char_cards %}
-          {% if card.type in type_groups %}
-            {% if type_groups.update({card.type: type_groups[card.type] + [card]}) %}{% endif %}
-          {% endif %}
+          {% set group = card.type if card.type in ['Attack', 'Skill', 'Power'] else 'Other' %}
+          {% if type_groups.update({group: type_groups[group] + [card]}) %}{% endif %}
         {% endfor %}
-        {% for type_name in ['Attack', 'Skill', 'Power'] %}
+        {% for type_name in ['Attack', 'Skill', 'Power', 'Other'] %}
           {% if type_groups[type_name] %}
           <div class="deck-type-group" data-card-type="{{ type_name }}">
             <h4 class="deck-type-header {% if type_name == 'Attack' %}text-red{% elif type_name == 'Skill' %}text-accent{% else %}text-yellow{% endif %}">
-              {{ type_name }}s ({{ type_groups[type_name]|length }})
+              {{ 'Other cards' if type_name == 'Other' else type_name + 's' }} ({{ type_groups[type_name]|length }})
             </h4>
             <div class="deck-form">
               {% for card in type_groups[type_name] %}
@@ -152,6 +168,7 @@
 {% if analysis %}
 <hr class="divider">
 <h2>Analysis Results</h2>
+<p class="text-sm text-muted">Card-text checks cover the listed deck. Relics, potions, temporary effects, enchantments and current combat conditions can change its capabilities. Conditional effects still require their conditions.</p>
 
 {% if analysis.error %}
 <p class="text-red">{{ analysis.error }}</p>
@@ -165,29 +182,30 @@
 </div>
 
 {% if spectral_health %}
-<h3 class="mt-md">Deck Health Score</h3>
-<p class="text-sm text-muted">Synergy-graph connectivity. Cards sharing keywords are connected; the more internally connected the deck, the higher the score.</p>
+<h3 class="mt-md">Keyword Connections</h3>
+<p class="text-sm text-muted">Keyword connectivity, not deck strength. Two cards are connected when they share a keyword; two cards with no keywords at all are weakly connected when they are the same type and cost within 1 Energy of each other. The score rises the more internally connected the deck is, so a pile of identical cards scores high. It says nothing about whether the cards win fights.</p>
 <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
   <div class="stat-box">
-    <div class="num {% if spectral_health.health_score >= 70 %}text-green{% elif spectral_health.health_score >= 40 %}text-yellow{% else %}text-red{% endif %}">{{ spectral_health.health_score }}</div>
-    <div class="label">Health (0-100)</div>
+    <div class="num">{{ spectral_health.health_score }}</div>
+    <div class="label">Connectivity (0-100)</div>
   </div>
-  <div class="stat-box"><div class="num">{{ spectral_health.total_edges }}</div><div class="label">Synergy Edges</div></div>
+  <div class="stat-box"><div class="num">{{ spectral_health.total_edges }}</div><div class="label">Keyword Links</div></div>
   <div class="stat-box"><div class="num">{{ spectral_health.avg_degree }}</div><div class="label">Avg Connections</div></div>
-  <div class="stat-box"><div class="num {% if spectral_health.orphans %}text-red{% else %}text-green{% endif %}">{{ spectral_health.orphans|length }}</div><div class="label">Orphan Cards</div></div>
+  <div class="stat-box"><div class="num {% if spectral_health.orphans %}text-red{% else %}text-green{% endif %}">{{ spectral_health.orphans|length }}</div><div class="label">Unconnected Cards</div></div>
 </div>
 {% if spectral_health.orphans %}
-<p class="text-sm mt-sm"><strong>Orphans</strong> (no synergy connections): {% for name in spectral_health.orphans %}<span class="tag opacity-60">{{ name }}</span>{% endfor %}</p>
+<p class="text-sm mt-sm"><strong>Orphans</strong> (no keyword connections): {% for name in spectral_health.orphans %}<span class="tag opacity-60">{{ name }}</span>{% endfor %}</p>
 {% endif %}
 {% endif %}
 
 {% if analysis.detected_archetypes %}
-<h3>Detected Archetypes</h3>
+<h3>Reference Archetype Matches</h3>
+<p class="text-sm text-muted">Matches use card names. Reference strategies may describe a different game patch.</p>
 {% for arch in analysis.detected_archetypes %}
 <div class="archetype">
   <h3>{{ arch.name }}</h3>
   <p><strong>Matched:</strong> {% for c in arch.matched_cards %}<span class="tag tag-keyword">{{ c }}</span>{% endfor %}</p>
-  {% if arch.missing_key_cards %}<p><strong class="text-yellow">Missing:</strong> {% for c in arch.missing_key_cards %}<span class="tag opacity-60">{{ c }}</span>{% endfor %}</p>{% endif %}
+  {% if arch.missing_key_cards %}<p><strong>Other cards in the guide:</strong> {% for c in arch.missing_key_cards %}<span class="tag opacity-60">{{ c }}</span>{% endfor %}</p>{% endif %}
   <p class="mt-sm">{{ arch.strategy }}</p>
 </div>
 {% endfor %}
@@ -203,14 +221,14 @@
 {% endif %}
 
 {% if analysis.strengths %}
-<h3 class="text-green">Strengths</h3>
+<h3>Detected Card Effects</h3>
 {% for s in analysis.strengths %}
 <div class="card card-win mb-sm"><p>{{ s }}</p></div>
 {% endfor %}
 {% endif %}
 
 {% if analysis.weaknesses %}
-<h3 class="text-yellow">Weaknesses</h3>
+<h3>Card-text Gaps</h3>
 {% for w in analysis.weaknesses %}
 <div class="card card-caution mb-sm"><p>{{ w }}</p></div>
 {% endfor %}
@@ -218,9 +236,10 @@
 
 <h3>Cost Curve</h3>
 <div class="cost-curve-summary">
-  <span class="cost-stat">Avg Cost: <strong>{{ analysis.avg_cost }}</strong></span>
-  <span class="cost-stat">Energy/Hand: <strong class="{% if analysis.energy_per_hand <= 15 %}text-green{% elif analysis.energy_per_hand <= 20 %}text-yellow{% else %}text-red{% endif %}">{{ analysis.energy_per_hand }}</strong> / 15</span>
+  <span class="cost-stat">Average printed Energy: <strong>{{ analysis.avg_cost if analysis.numeric_cost_cards else 'Unknown' }}</strong></span>
+  <span class="cost-stat">Five-card Energy estimate: <strong>{{ analysis.energy_per_hand if analysis.numeric_cost_cards else 'Unknown' }}</strong></span>
 </div>
+<p class="text-sm text-muted">Based on {{ analysis.numeric_cost_cards }} of {{ analysis.deck_size }} cards with known numeric Energy costs. The five-card estimate is five times that mean. X, unplayable, variable and unknown costs are excluded; Stars are separate. Actual hand size, available Energy and cost-changing effects are not included.</p>
 {% set max_count = analysis.cost_curve.values()|max if analysis.cost_curve else 1 %}
 <div class="bar-chart bar-chart--tall">
 {% for cost, count in analysis.cost_curve.items() %}
@@ -256,15 +275,7 @@
   <span class="legend-item"><span class="legend-swatch legend-swatch--skill"></span> Skill</span>
   <span class="legend-item"><span class="legend-swatch legend-swatch--power"></span> Power</span>
 </div>
-{% if analysis.avg_cost <= 1.2 %}
-<p class="text-sm text-muted mt-sm">Low curve — you'll play most of your hand every turn. Watch for low-impact plays.</p>
-{% elif analysis.avg_cost <= 1.8 %}
-<p class="text-sm text-green mt-sm">Balanced curve — efficient energy usage with room for impactful plays.</p>
-{% elif analysis.avg_cost <= 2.5 %}
-<p class="text-sm text-yellow mt-sm">Top-heavy curve — consider energy relics or cheap cards to smooth out turns.</p>
-{% else %}
-<p class="text-sm text-red mt-sm">Very expensive — you'll frequently have unplayable cards. Prioritize energy generation.</p>
-{% endif %}
+
 {% endif %}
 {% endif %}
 {% endblock %}

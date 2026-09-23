@@ -1,0 +1,327 @@
+{
+  "game_version": "v0.107.1",
+  "game_commit": "59260271",
+  "reviewed_at": "2026-09-22",
+  "complete": false,
+  "scope": "Printed potion rules, rarity, usage, target and combat-generation flag for the registered main pool.",
+  "method": "Full native English template alignment and literal canonical values, including manually reviewed plural branches. Four wording/target/free-play cases received native definition review. Runtime multipliers, availability conditions and cross-entity interactions are not simulated.",
+  "reviewed_ids": [
+    "POTION.ASHWATER",
+    "POTION.ATTACK_POTION",
+    "POTION.BEETLE_JUICE",
+    "POTION.BLESSING_OF_THE_FORGE",
+    "POTION.BLOCK_POTION",
+    "POTION.BLOOD_POTION",
+    "POTION.BONE_BREW",
+    "POTION.BOTTLED_POTENTIAL",
+    "POTION.CLARITY",
+    "POTION.COLORLESS_POTION",
+    "POTION.COSMIC_CONCOCTION",
+    "POTION.CUNNING_POTION",
+    "POTION.CURE_ALL",
+    "POTION.DEXTERITY_POTION",
+    "POTION.DISTILLED_CHAOS",
+    "POTION.DROPLET_OF_PRECOGNITION",
+    "POTION.DUPLICATOR",
+    "POTION.ENERGY_POTION",
+    "POTION.ENTROPIC_BREW",
+    "POTION.ESSENCE_OF_DARKNESS",
+    "POTION.EXPLOSIVE_AMPOULE",
+    "POTION.FAIRY_IN_A_BOTTLE",
+    "POTION.FIRE_POTION",
+    "POTION.FLEX_POTION",
+    "POTION.FOCUS_POTION",
+    "POTION.FORTIFIER",
+    "POTION.FOUL_POTION",
+    "POTION.FRUIT_JUICE",
+    "POTION.FYSH_OIL",
+    "POTION.GAMBLERS_BREW",
+    "POTION.GHOST_IN_A_JAR",
+    "POTION.GIGANTIFICATION_POTION",
+    "POTION.GLOWWATER_POTION",
+    "POTION.HEART_OF_IRON",
+    "POTION.KINGS_COURAGE",
+    "POTION.LIQUID_BRONZE",
+    "POTION.LIQUID_MEMORIES",
+    "POTION.LUCKY_TONIC",
+    "POTION.MAZALETHS_GIFT",
+    "POTION.OROBIC_ACID",
+    "POTION.POISON_POTION",
+    "POTION.POTION_OF_BINDING",
+    "POTION.POTION_OF_CAPACITY",
+    "POTION.POTION_OF_DOOM",
+    "POTION.POTION_SHAPED_ROCK",
+    "POTION.POT_OF_GHOULS",
+    "POTION.POWDERED_DEMISE",
+    "POTION.POWER_POTION",
+    "POTION.RADIANT_TINCTURE",
+    "POTION.REGEN_POTION",
+    "POTION.SHACKLING_POTION",
+    "POTION.SHIP_IN_A_BOTTLE",
+    "POTION.SKILL_POTION",
+    "POTION.SNECKO_OIL",
+    "POTION.SOLDIERS_STEW",
+    "POTION.SPEED_POTION",
+    "POTION.STABLE_SERUM",
+    "POTION.STAR_POTION",
+    "POTION.STRENGTH_POTION",
+    "POTION.SWIFT_POTION",
+    "POTION.TOUCH_OF_INSANITY",
+    "POTION.VULNERABLE_POTION",
+    "POTION.WEAK_POTION"
+  ],
+  "records": {
+    "POTION.ASHWATER": {
+      "definition_sha256": "0741ac1aa8486b3e837e48c1108e2df0b16e850d55e12a12d3cdd0938519eeb6",
+      "mechanics_record_sha256": "9d8ee819d470ee7e06dbe19b72755182c5a2be3d6fa713ece12412fcf27fb3cc"
+    },
+    "POTION.ATTACK_POTION": {
+      "definition_sha256": "b46ac8e378bd7b7422de208122876f3bb647f35c59739e0108669ba79700984b",
+      "mechanics_record_sha256": "b506da3f1d2d2c24336774da79013a27c46ade66662d320345f30ee10c748317"
+    },
+    "POTION.BEETLE_JUICE": {
+      "definition_sha256": "b133918b5d4f149d6ed9fdb55cd29ba9a2a018ddeeae589496ecfe371de4c152",
+      "mechanics_record_sha256": "fb8e90432e951161474432edf99350ec50348686d51d8ebfdb10a67f9172e6d9"
+    },
+    "POTION.BLESSING_OF_THE_FORGE": {
+      "definition_sha256": "4b097068b7d415633786941d05b1f8a1b19cc5f74900fc85e3240877efa17590",
+      "mechanics_record_sha256": "aec35110122c9ca9c0eb404e3c530af3fba6388b21aad214d38b0061a2129f3b"
+    },
+    "POTION.BLOCK_POTION": {
+      "definition_sha256": "4895e7a8a0303324a2fbe7315b037239e1f5fb9b46fdbb1f359535aebed8d096",
+      "mechanics_record_sha256": "6a41abc11638004d1f06e122c0a7d08ca221e159af489d2d6add919eef3e01b2"
+    },
+    "POTION.BLOOD_POTION": {
+      "definition_sha256": "14e162c222286871396d85d6393ae371a1681d9021c1be51f3571341f80fa951",
+      "mechanics_record_sha256": "1f188e9c22df7c3dfa09a85a6765482461977bf3c5de0bc2d56a2c5bd06f18da"
+    },
+    "POTION.BONE_BREW": {
+      "definition_sha256": "0567fcf468f5f040b69ad79de4821263c29313aef0faeb06f807d849c2e8db46",
+      "mechanics_record_sha256": "826b5ab9f09f68c2241c04464f31709306ab6f3d2cc889afe4c49816b9955d0f"
+    },
+    "POTION.BOTTLED_POTENTIAL": {
+      "definition_sha256": "84751299a3a166db221b537d1b1b38551608d81b36c93c163cd6b18ffe55857a",
+      "mechanics_record_sha256": "4fc6caf95bb1f68ed0f63f130499512d4fca51c21596053dc9593898967c902c"
+    },
+    "POTION.CLARITY": {
+      "definition_sha256": "731ad3f0db1358e7555ee0f5bbafee65f2cce8a8e202286f71841046249967ea",
+      "mechanics_record_sha256": "faa262732dc00d0a10cfd07660028d71172c616cbb0aa81a010e13cdd8363a6b"
+    },
+    "POTION.COLORLESS_POTION": {
+      "definition_sha256": "794b36bacc26ab5ba24f2906aeee4b1ceb06e063cb84f3d34598a4ef6b4e24c0",
+      "mechanics_record_sha256": "4f5888f1af5077e78e75b3468618658dadfe401a5e978f30b5b459412c08dd96"
+    },
+    "POTION.COSMIC_CONCOCTION": {
+      "definition_sha256": "de52a7f1071758305889ca4ad546a8090d589e861c6bd39b69828afafea216ff",
+      "mechanics_record_sha256": "54546bb91b8c5b6ac81d3f2a2a2a59a8ce8f622d08a15b740a9bec3f79ffe8a2"
+    },
+    "POTION.CUNNING_POTION": {
+      "definition_sha256": "513488f7bbf2120edb1be8ceccf44e5d5cb3946f86d1c25a8dd0ac586bb9cc7d",
+      "mechanics_record_sha256": "b6f1fd949aac870b89737b9f423e4e584dd1ad1a9599ac154c1f25de16bd6a4f"
+    },
+    "POTION.CURE_ALL": {
+      "definition_sha256": "66d155b46dd92f39f5db57013a56d691041deffb93a3cd8d0123d667e3196fcd",
+      "mechanics_record_sha256": "d281e0a436a3297142007cbb613ef793f4daab705e13af8896df43b6f4587cd0"
+    },
+    "POTION.DEXTERITY_POTION": {
+      "definition_sha256": "6c36c58ada7a376a37bfd89cd58f065d8e5b301c68742f9bb8e78cd1872f72fc",
+      "mechanics_record_sha256": "8d7ad277711977360b886cd7d4beeca8ca14ee00f8d2a6032f808f117adb1bcc"
+    },
+    "POTION.DISTILLED_CHAOS": {
+      "definition_sha256": "5bb054b8b5de950c94973304aefe11c7dcc894a5c142b4f9f08fdd67f7a060eb",
+      "mechanics_record_sha256": "69426ada86bcd8a6936ce96b7ef6b49b7f6e803511f14eebf7335114f9bef044"
+    },
+    "POTION.DROPLET_OF_PRECOGNITION": {
+      "definition_sha256": "5ff487e1c4c288176acaef0411962cd44f93bc380508af5fceaf1eb25ca61a4c",
+      "mechanics_record_sha256": "e59eca74c58c5622d1681a42c5bfa692bf08f09e1e271cb29d71f18aa59515e1"
+    },
+    "POTION.DUPLICATOR": {
+      "definition_sha256": "5a1c73eda519f4699025709df265a831d3177280454c21b2b62fb4359721759e",
+      "mechanics_record_sha256": "6719bc18b25182dc2d9b1d734011e8dc1136af0bafff300b6e060d21709ba6e3"
+    },
+    "POTION.ENERGY_POTION": {
+      "definition_sha256": "f5cc6403cd9769bde1d960ae637bfe55c9e867449cbd251fa7fdc332b893882e",
+      "mechanics_record_sha256": "50dc2cf20feb6a5bb3b4ac46a447aad91b9b67a707d6fd3cf2d3d883f6b74637"
+    },
+    "POTION.ENTROPIC_BREW": {
+      "definition_sha256": "8b31ace6e542e6879794db0cd13de30f1797af6bc9ae4b6c964eff4118fd3261",
+      "mechanics_record_sha256": "f33dca88b828f621c42ead5e5ec841099235c69bffa1ee5ac966d3d1c5c4cd8c"
+    },
+    "POTION.ESSENCE_OF_DARKNESS": {
+      "definition_sha256": "ac73c78fae761811f1b4002acadb33a64e1876871d6e2788a1ab234c26238796",
+      "mechanics_record_sha256": "b0e4fc4d90e8ea2305a587b981c9b68620ba248b72b4fca7a8ff538a6d243e4c"
+    },
+    "POTION.EXPLOSIVE_AMPOULE": {
+      "definition_sha256": "d0f38761e6c3f32cffec943d51df7b5087695a9a1c19299e2e297cca9399de20",
+      "mechanics_record_sha256": "29cf91dd9fc414de57cdea31fbd2ae9986280b865508e2f7ed7dccb97099520e"
+    },
+    "POTION.FAIRY_IN_A_BOTTLE": {
+      "definition_sha256": "a69db9c41545c7f5a29a9d3ee4bcfc2746bcbb3eba0525a3ccbf86142d6459b1",
+      "mechanics_record_sha256": "f68b4dea0326746b77ec066c4024ea296c9c55938018f1e8c05d663b35fd3edb"
+    },
+    "POTION.FIRE_POTION": {
+      "definition_sha256": "69e11b90b693b35877272b111419a56ffb2df69f20287c1235d1652dbfac2d22",
+      "mechanics_record_sha256": "a9875f2733498030f7d87025efb3a7fcc551d8235b8ad79c10b09e8aa6686bca"
+    },
+    "POTION.FLEX_POTION": {
+      "definition_sha256": "ec81259f539111d4803463e5d2cfe25575a69e81300d6ab3b0638679499b8438",
+      "mechanics_record_sha256": "64bc3c63209f91e778873d0cab9603879b37006aa644db22dc45d42f389494f5"
+    },
+    "POTION.FOCUS_POTION": {
+      "definition_sha256": "30d490c31d9784af006542fdbf2e2752c97f4de8bd713aab3bdbe0cadce1738e",
+      "mechanics_record_sha256": "92c982ad4c41e8824e76db110e4a3fb3ecbff239457d222d90c765f69c70458f"
+    },
+    "POTION.FORTIFIER": {
+      "definition_sha256": "98a589604c8c1ff431fc2f5e02009b21f403208d9e449e8536be0edb9681e174",
+      "mechanics_record_sha256": "df05cd354c24468773ab2df81e7015a22e710d696bf92ae442d89dea42fa8d99"
+    },
+    "POTION.FOUL_POTION": {
+      "definition_sha256": "5fb3b0fed42e91677b0cb6d49c4a7e6422406c357f61e8cca1c0ca7cc5d5913c",
+      "mechanics_record_sha256": "faecf8413add6a303f98ff7eda4622abb71727798fa94ec54c9be65ffd6042fc"
+    },
+    "POTION.FRUIT_JUICE": {
+      "definition_sha256": "d07229b27c818fe509dd4fb360e12c967bda26880b7c6953217e9290944bf71e",
+      "mechanics_record_sha256": "6fd1acfc5b5ed496a65dc4705e4b0ff22cd2d2dd27804d5dfcefecb7b47ff0a8"
+    },
+    "POTION.FYSH_OIL": {
+      "definition_sha256": "ebe6627ac481321a5cc396f5c663cab73f73233bfb0f789e31ed973556225208",
+      "mechanics_record_sha256": "2b5104836b115a90847f0ae8ad5b37ea1d28fe9ba6b45f6eb0e2c06705c8ccab"
+    },
+    "POTION.GAMBLERS_BREW": {
+      "definition_sha256": "efd3eea70c995ae61e09b8f0545c8ba82787e5aff77321f78e898569b599c63f",
+      "mechanics_record_sha256": "28c29096588cbb97363fedd5d005a66273c2a7191ec9a8ab49a13f43f25a688b"
+    },
+    "POTION.GHOST_IN_A_JAR": {
+      "definition_sha256": "02400c106577c035e14567548caac6cdac7cbfc5d24c5d8101a65e32ea60f8eb",
+      "mechanics_record_sha256": "7789daf4189741b1c3ccc8aead4865998848e56833b35bc766b1383493459f0d"
+    },
+    "POTION.GIGANTIFICATION_POTION": {
+      "definition_sha256": "67f28d50b6dce91a98e13027536a73c418ee3c9ea329e55999f46ba0a1a60e1a",
+      "mechanics_record_sha256": "6ea9cb9e1d8c3905da9dd8e629c56553a6913219b5990380e33bf6840aa360ca"
+    },
+    "POTION.GLOWWATER_POTION": {
+      "definition_sha256": "a6e57832f2a75ba3a679901908d7112df84a4e602c18a2cabcb47f228335b2a7",
+      "mechanics_record_sha256": "cd82cbeb024c39843c8db0be767e67517e824fce649f46007f870fe72023782f"
+    },
+    "POTION.HEART_OF_IRON": {
+      "definition_sha256": "1ce5c9fa0717268eaedac3b61d8046d24d5874cd7a6957da36cbb683d0921048",
+      "mechanics_record_sha256": "e173aca621af999c1baf1511420379733514ddfbc3b2a667b362e515d5684731"
+    },
+    "POTION.KINGS_COURAGE": {
+      "definition_sha256": "bd23022f301c8239d92ce040a0c318cd4f2e2c7f5396c677ff9ebd3275bd778d",
+      "mechanics_record_sha256": "bae5505398308cf49e835093a70433a015fd400cbac2d1c9f8da7cde55ba916d"
+    },
+    "POTION.LIQUID_BRONZE": {
+      "definition_sha256": "d696aa2d460b8b47253068d1246b93ca8ae91a797594403d3b019cc666ef4fc5",
+      "mechanics_record_sha256": "2f072815cd43defbf37a24ef026cfe81294e224c314f1a6e59f29e13ad60a10e"
+    },
+    "POTION.LIQUID_MEMORIES": {
+      "definition_sha256": "3b47713f5098ca4d24004712d85026a0f7fcd89aeeae83f2834dfb028ad7a698",
+      "mechanics_record_sha256": "a58f5c5c4db756b21a067179f2078c7a038a4c8e0858bd3f61d3389de79cf270"
+    },
+    "POTION.LUCKY_TONIC": {
+      "definition_sha256": "a0b38683f00b61792f0665ad4dfb1d9919ade356d5ee2802034b489fcc77330c",
+      "mechanics_record_sha256": "302b557bb13b82eb7b20ee777ce3bc07a5a0aca85107493d538501cbc6a1ad3f"
+    },
+    "POTION.MAZALETHS_GIFT": {
+      "definition_sha256": "480946097873e4a714cb337c748be2a7fde66e4bb3e7d316d13b5e4f8f574238",
+      "mechanics_record_sha256": "b9d238e4ec40aad5148481e053fba21de5e59e7a7bb8c8720fba385283992908"
+    },
+    "POTION.OROBIC_ACID": {
+      "definition_sha256": "165e54e9a9948da9ae199d5206c868f1db07a89c8a29ec1d4c4f71b9e1ef9497",
+      "mechanics_record_sha256": "ec09ba3196449c003ff4502fc41ca3ec13fa61ade3e78bc092edabf255c3e91c"
+    },
+    "POTION.POISON_POTION": {
+      "definition_sha256": "87d775476f76cd2b6a7f0d12f7862da9ba528c538f412f5b8b49a59f07e17863",
+      "mechanics_record_sha256": "7f002aa083c6a42a3715d8ad97667f3fa0531f074bd21bd008fe9f6008caaca0"
+    },
+    "POTION.POTION_OF_BINDING": {
+      "definition_sha256": "7250d5e3b27398f330c3b0916f9559993edf1ac66fe55351dbe12d725cdd2428",
+      "mechanics_record_sha256": "3977301c515571cc13247846daf8df4c3ec5004c0d33f22124eeb76ff5862ba4"
+    },
+    "POTION.POTION_OF_CAPACITY": {
+      "definition_sha256": "48b12f6e96488b044a22049d0f69250f48c5268b4bfb88f40d18e0a8bf8e7c0c",
+      "mechanics_record_sha256": "90fe8426d29285e88dadb417d3496ccceb1f18981748ad32e0d79294195e77a2"
+    },
+    "POTION.POTION_OF_DOOM": {
+      "definition_sha256": "68fbd2aba37113fb1a3a1767ea321e782f0086a598f7cfdb1125784177c12f63",
+      "mechanics_record_sha256": "7c20de6720663313c0994d739cd4d4d2e779335a3a20ef702df2b69c4952ae09"
+    },
+    "POTION.POTION_SHAPED_ROCK": {
+      "definition_sha256": "0a28dafb150bb6195ee6af383afc56cb0324dda4d66fd78801e2ee2fb72d8f9f",
+      "mechanics_record_sha256": "f80cdb018063b14b230b246204674789fca991ded40392e1d009abf85d5f21dd"
+    },
+    "POTION.POT_OF_GHOULS": {
+      "definition_sha256": "d3229c784434c6193a92e1f4957f1cbf71ba6ac8ea5b80299fb71ebcccabe7de",
+      "mechanics_record_sha256": "449e2f136b5f38cf0c6156e3219a718460bcf75ef461a5c28d7356cbcfaa90be"
+    },
+    "POTION.POWDERED_DEMISE": {
+      "definition_sha256": "35b087fc0cf8c9e612ba779eb5ba4f3da3628dd735da9a0cf9380f84674fbac0",
+      "mechanics_record_sha256": "38af7ac9cf342de831c5cb05b81e5106e060725ae593f47648db5cbb65f904c6"
+    },
+    "POTION.POWER_POTION": {
+      "definition_sha256": "a2843e1313b51a5efe927f507ea22c3cf68e74d4cd3a1d01927337dc9d562fae",
+      "mechanics_record_sha256": "ec6db0f25da0a657f6361df1740d7ca02e67cf7f255888212dbcd551b832c44d"
+    },
+    "POTION.RADIANT_TINCTURE": {
+      "definition_sha256": "27b0469900f16c1ff2513e31864c8dcbd995fe494e52d611c0cccab4adcdebdd",
+      "mechanics_record_sha256": "52e84aa6b72b886d83abba297a2ba57b4be0fe36e5f61541d39002683b89d937"
+    },
+    "POTION.REGEN_POTION": {
+      "definition_sha256": "7f33d4d5255e8fbfdb04580abc8022a99b67f28d2e4e467d8f5e85535996854f",
+      "mechanics_record_sha256": "81e54d88b9c9d0e967800793f7e7c1d761e7b81824d85d6317fbaf1cf16789b9"
+    },
+    "POTION.SHACKLING_POTION": {
+      "definition_sha256": "f9211e51fda5bd66535873854ffebc094f613464e7b67fa469ee874b912471ed",
+      "mechanics_record_sha256": "f78b3e9271a9f6d6681f19f2c9681493d3c6e26e95a16fdaaa98ad26aaf9a705"
+    },
+    "POTION.SHIP_IN_A_BOTTLE": {
+      "definition_sha256": "979c2ff5c46d602a726c83e4330b832bf2f7b0032b3411f9027ca3773c4f7f55",
+      "mechanics_record_sha256": "b445e9f4bad0726f763b9fef25da8a44d467f66b1037b0ac9dc60d0cb8dbdd51"
+    },
+    "POTION.SKILL_POTION": {
+      "definition_sha256": "3e259bbf95eff0372fcc7fdada9abbc949126169d85d5ae6194b41b66b12a1d3",
+      "mechanics_record_sha256": "027afbaef19a840c8e0570af73f43353fb0a96b38ff67edadc4e14e405eb4af5"
+    },
+    "POTION.SNECKO_OIL": {
+      "definition_sha256": "4af2bae8e2f0b5b079f4eaaa284df6dc2af97cd50366ce7db3a5b98accb642e8",
+      "mechanics_record_sha256": "d2cd4475bd1e9e833f53aaf67808aec6df15983ff73b4af8a9bc73c46a0d91a2"
+    },
+    "POTION.SOLDIERS_STEW": {
+      "definition_sha256": "c9f53c10f1246c7414e84597118aed26bdc1896f867cad3ef6906fbd7403d1af",
+      "mechanics_record_sha256": "1c15ac69fbe12ed2bb918e536b011ca4170117fcf789251f8933fff0f733ec8c"
+    },
+    "POTION.SPEED_POTION": {
+      "definition_sha256": "c5fb8770b4757259e7dd23abcf45b74a1c99c9b00e90662620438aa9d0d084ee",
+      "mechanics_record_sha256": "4685507966a85a5d2c2911c536052301aba76351a523400fc23f05cf1a694b1b"
+    },
+    "POTION.STABLE_SERUM": {
+      "definition_sha256": "184ee4637ebff56c1fafbd1b976c318fffd1a51fa1aa9b5f4343e11d2a4f0757",
+      "mechanics_record_sha256": "a0557956821d5272a26ab2a59623b2c642c8097f8232983e8c5c103ad194f8c4"
+    },
+    "POTION.STAR_POTION": {
+      "definition_sha256": "8c212d832ad7f6eff587d3dc8ef99806975f1025346ae65f8c37b504fcd14586",
+      "mechanics_record_sha256": "b4115c94133420e0a4f528a02a87a2f377c1291e3270e193659856494ee593b6"
+    },
+    "POTION.STRENGTH_POTION": {
+      "definition_sha256": "c25a142913162654f229c0263b2e988df181dcaccea25e5f3f006a4f79767499",
+      "mechanics_record_sha256": "e73c3cf24fcfdf79174af8552e7d5ad17cad851fe3cca989d2b51c4f7d905a11"
+    },
+    "POTION.SWIFT_POTION": {
+      "definition_sha256": "0f7ebfeaf74dabf896323892c14c45e869dc4c65f9e1245d4a6e33a4d68c51e1",
+      "mechanics_record_sha256": "185440c6ccc1b21c7d38ba2cca00e5282380add4d163b4c0f92c2a69da14a64f"
+    },
+    "POTION.TOUCH_OF_INSANITY": {
+      "definition_sha256": "438ae165b1e12c7980423b6441cfb3ad5b82e4b4be2183bec85d0f2a450e042d",
+      "mechanics_record_sha256": "b0139da73f0cb1f79efd27af6bb6f3b782fabd734db5c3a81d84b85ea8b4804a"
+    },
+    "POTION.VULNERABLE_POTION": {
+      "definition_sha256": "0c1420157cba28c54be363c2b36143fd18a2b7ab899fc44e2a8637b0560b5fec",
+      "mechanics_record_sha256": "053c9bbe5124360d80aee3ef82696bdcabadb067e1227b296ad5adc3529acd21"
+    },
+    "POTION.WEAK_POTION": {
+      "definition_sha256": "2b801879e8b11f7d3a9c9aa0e2a82594ffe8bde4a562b299d1f55a84c7856b60",
+      "mechanics_record_sha256": "138d292acc379339777775cc021fc2cf26f5fa65cbbf6c7e857869af1a7d51db"
+    }
+  }
+}

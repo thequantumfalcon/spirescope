@@ -89,6 +89,8 @@
 </table>
 {% endif %}
 
+{% endif %}
+
 {% if badges %}
 <h2>Badges</h2>
 <div class="flex flex-wrap gap-xs mb-lg">
@@ -103,5 +105,16 @@
 </div>
 {% endif %}
 
+{% if kb.badges %}
+<details class="card">
+  <summary>Badge requirements</summary>
+  <p class="text-sm text-muted">Requirements can change between game versions.</p>
+  <dl>
+  {% for badge in kb.badges %}
+    <dt class="mt-sm"><strong>{{ badge.name }}</strong>{% if badge.mechanics_version %} <span class="text-xs text-muted">{{ badge.branch }} {{ badge.mechanics_version }}</span>{% endif %}</dt>
+    <dd>{{ badge.requirement or 'Requirement not yet verified.' }}</dd>
+  {% endfor %}
+  </dl>
+</details>
 {% endif %}
 {% endblock %}

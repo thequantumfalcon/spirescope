@@ -111,7 +111,7 @@ character. → verify: `pytest -q` green.
 
 ## 9. Release
 
-CHANGELOG entry, version bump (`sts2/config.py` + `pyproject.toml`), tag
+CHANGELOG entry, version bump (`sts2/config.py` only; `pyproject.toml` reads it), tag
 `vX.Y.Z`, push tag (app release), then `git tag data-v$(date +%Y.%m.%d) &&
 git push origin data-v...` (data release). → verify: both workflows green;
 in-app data banner offers the bundle on an older install.

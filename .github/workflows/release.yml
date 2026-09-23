@@ -51,6 +51,10 @@ on:
 permissions:
   contents: read
 
+env:
+  # Branch names can contain slashes. A dry-run artifact uses the exact SHA.
+  ARTIFACT_VERSION: ${{ github.event_name == 'push' && github.ref_name || github.sha }}
+
 jobs:
   gate:
     # CA-H8: same job set that protects master/main, run again against this
@@ -75,14 +79,14 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Python 3.12
+      - name: Set up Python 3.14.7
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
-          python-version: "3.12"
+          python-version: "3.14.7"
 
       - name: Install dependencies
         run: |
-          pip install -r requirements-lock.txt
+          pip install --require-hashes -r requirements-lock.txt
           pip install -e . --no-deps
 
       - name: Verify the tag matches the version in the tree
@@ -107,6 +111,17 @@ jobs:
       - name: Build executable
         run: python -m PyInstaller spirescope.spec --clean --noconfirm
 
+      - name: Inventory bundled Python runtime before stripping metadata
+        run: python scripts/runtime_inventory.py --analysis build/spirescope/Analysis-00.toc --inventory dist/Spirescope/runtime-inventory.json
+
+      - name: Validate the packaged dataset with the packaged command
+        run: |
+          import os, subprocess
+          from pathlib import Path
+          binary = Path("dist/Spirescope/Spirescope.exe" if os.name == "nt" else "dist/Spirescope/Spirescope")
+          subprocess.run([str(binary.resolve()), "validate-data", str(Path("sts2/data").resolve())], check=True, timeout=120)
+        shell: python
+
       - name: Collect third-party license texts
         # CA-H9: dist-info is the only place the dependencies' own LICENSE
         # files live once installed, and "Strip dist-info metadata" below
@@ -124,6 +139,14 @@ jobs:
           Get-ChildItem -Path dist/Spirescope -Recurse -Filter "*.dist-info" -Directory | Remove-Item -Recurse -Force
         shell: pwsh
 
+      - name: Qualify real installs and interrupted-update recovery
+        run: |
+          import os, subprocess
+          binary = "dist/Spirescope/Spirescope.exe" if os.name == "nt" else "dist/Spirescope/Spirescope"
+          subprocess.run(["python", "scripts/qualify_artifact.py", "--executable", binary,
+                          "--dataset", "sts2/data", "--output", "dist/Spirescope/qualification.json"], check=True)
+        shell: python
+
       - name: Smoke-test the built app
         # Rule: validate the artifact users receive, not just the source tree.
         # Packaging silently drops files the dev env has (issue #5: locales
@@ -131,7 +154,7 @@ jobs:
         run: |
           $env:STS2_PORT = "8899"
           $env:SPIRESCOPE_CHECK_UPDATES = "0"
-          $proc = Start-Process -FilePath "dist\Spirescope\Spirescope.exe" -ArgumentList "serve","--no-browser" -PassThru
+          $proc = Start-Process -FilePath "dist\Spirescope\Spirescope.exe" -ArgumentList "serve","--no-browser" -PassThru -WindowStyle Hidden
           $html = $null
           foreach ($i in 1..30) {
             Start-Sleep -Seconds 2
@@ -181,13 +204,13 @@ jobs:
 
       - name: Create zip archives
         run: |
-          Compress-Archive -Path dist/Spirescope -DestinationPath dist/Spirescope-${{ github.ref_name }}-windows.zip
-          Copy-Item dist/Spirescope-${{ github.ref_name }}-windows.zip dist/Spirescope-windows.zip
+          Compress-Archive -Path dist/Spirescope -DestinationPath dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.zip
+          Copy-Item dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.zip dist/Spirescope-windows.zip
         shell: pwsh
 
       - name: Create SHA-256 checksums
         run: |
-          $tagZip = "dist/Spirescope-${{ github.ref_name }}-windows.zip"
+          $tagZip = "dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.zip"
           $latestZip = "dist/Spirescope-windows.zip"
           foreach ($path in @($tagZip, $latestZip)) {
             $hash = (Get-FileHash $path -Algorithm SHA256).Hash.ToLower()
@@ -203,17 +226,25 @@ jobs:
         with:
           path: dist/Spirescope
           format: spdx-json
-          output-file: dist/Spirescope-${{ github.ref_name }}-windows.spdx.json
+          output-file: dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.spdx.json
           # Attached explicitly via the publisher job's release `files:`
           # list, once the release actually exists -- this job never
           # creates or touches the release itself.
           upload-release-assets: false
 
+      - name: Include verified Python runtime in the SPDX inventory
+        run: python scripts/runtime_inventory.py --inventory dist/Spirescope/runtime-inventory.json --spdx dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.spdx.json --qualification dist/Spirescope/qualification.json
+
+      - name: Attest runtime SBOM
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.spdx.json
+
       - name: Attest build provenance
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: |
-            dist/Spirescope-${{ github.ref_name }}-windows.zip
+            dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.zip
             dist/Spirescope-windows.zip
 
       - name: Upload Windows release assets
@@ -221,12 +252,12 @@ jobs:
         with:
           name: windows-release-assets
           path: |
-            dist/Spirescope-${{ github.ref_name }}-windows.zip
-            dist/Spirescope-${{ github.ref_name }}-windows.zip.sha256
+            dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.zip
+            dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.zip.sha256
             dist/Spirescope-windows.zip
             dist/Spirescope-windows.zip.sha256
-            dist/Spirescope-${{ github.ref_name }}-windows.spdx.json
-          retention-days: 1
+            dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.spdx.json
+          retention-days: 14
           if-no-files-found: error
 
   build-macos:
@@ -243,14 +274,14 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Python 3.12
+      - name: Set up Python 3.14.7
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
-          python-version: "3.12"
+          python-version: "3.14.7"
 
       - name: Install dependencies
         run: |
-          pip install -r requirements-lock.txt
+          pip install --require-hashes -r requirements-lock.txt
           pip install -e . --no-deps
 
       - name: Verify the tag matches the version in the tree
@@ -275,6 +306,17 @@ jobs:
       - name: Build macOS app
         run: python -m PyInstaller spirescope.spec --clean --noconfirm
 
+      - name: Inventory bundled Python runtime before stripping metadata
+        run: python scripts/runtime_inventory.py --analysis build/spirescope/Analysis-00.toc --inventory dist/Spirescope/runtime-inventory.json
+
+      - name: Validate the packaged dataset with the packaged command
+        run: |
+          import os, subprocess
+          from pathlib import Path
+          binary = Path("dist/Spirescope/Spirescope.exe" if os.name == "nt" else "dist/Spirescope/Spirescope")
+          subprocess.run([str(binary.resolve()), "validate-data", str(Path("sts2/data").resolve())], check=True, timeout=120)
+        shell: python
+
       - name: Collect third-party license texts
         # CA-H9: same reasoning as the Windows job -- harvest verbatim
         # license text out of this venv's dist-info before "Strip dist-info
@@ -283,6 +325,14 @@ jobs:
 
       - name: Strip dist-info metadata
         run: find dist/Spirescope -name "*.dist-info" -type d -exec rm -rf {} +
+
+      - name: Qualify real installs and interrupted-update recovery
+        run: |
+          import os, subprocess
+          binary = "dist/Spirescope/Spirescope.exe" if os.name == "nt" else "dist/Spirescope/Spirescope"
+          subprocess.run(["python", "scripts/qualify_artifact.py", "--executable", binary,
+                          "--dataset", "sts2/data", "--output", "dist/Spirescope/qualification.json"], check=True)
+        shell: python
 
       - name: Smoke-test the built app
         # Rule: validate the artifact users receive, not just the source tree.
@@ -344,9 +394,9 @@ jobs:
       - name: Create zip archive
         run: |
           cd dist
-          zip -r Spirescope-${{ github.ref_name }}-macos.zip Spirescope/
-          cp Spirescope-${{ github.ref_name }}-macos.zip Spirescope-macos.zip
-          for z in Spirescope-${{ github.ref_name }}-macos.zip Spirescope-macos.zip; do
+          zip -r Spirescope-${{ env.ARTIFACT_VERSION }}-macos.zip Spirescope/
+          cp Spirescope-${{ env.ARTIFACT_VERSION }}-macos.zip Spirescope-macos.zip
+          for z in Spirescope-${{ env.ARTIFACT_VERSION }}-macos.zip Spirescope-macos.zip; do
             shasum -a 256 "$z" > "$z.sha256"
           done
 
@@ -355,17 +405,25 @@ jobs:
         with:
           path: dist/Spirescope
           format: spdx-json
-          output-file: dist/Spirescope-${{ github.ref_name }}-macos.spdx.json
+          output-file: dist/Spirescope-${{ env.ARTIFACT_VERSION }}-macos.spdx.json
           # Attached explicitly via the publisher job's release `files:`
           # list, once the release actually exists -- this job never
           # creates or touches the release itself.
           upload-release-assets: false
 
+      - name: Include verified Python runtime in the SPDX inventory
+        run: python scripts/runtime_inventory.py --inventory dist/Spirescope/runtime-inventory.json --spdx dist/Spirescope-${{ env.ARTIFACT_VERSION }}-macos.spdx.json --qualification dist/Spirescope/qualification.json
+
+      - name: Attest runtime SBOM
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/Spirescope-${{ env.ARTIFACT_VERSION }}-macos.spdx.json
+
       - name: Attest build provenance
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: |
-            dist/Spirescope-${{ github.ref_name }}-macos.zip
+            dist/Spirescope-${{ env.ARTIFACT_VERSION }}-macos.zip
             dist/Spirescope-macos.zip
 
       - name: Upload macOS release assets
@@ -373,12 +431,12 @@ jobs:
         with:
           name: macos-release-assets
           path: |
-            dist/Spirescope-${{ github.ref_name }}-macos.zip
-            dist/Spirescope-${{ github.ref_name }}-macos.zip.sha256
+            dist/Spirescope-${{ env.ARTIFACT_VERSION }}-macos.zip
+            dist/Spirescope-${{ env.ARTIFACT_VERSION }}-macos.zip.sha256
             dist/Spirescope-macos.zip
             dist/Spirescope-macos.zip.sha256
-            dist/Spirescope-${{ github.ref_name }}-macos.spdx.json
-          retention-days: 1
+            dist/Spirescope-${{ env.ARTIFACT_VERSION }}-macos.spdx.json
+          retention-days: 14
           if-no-files-found: error
 
   publish:
@@ -411,10 +469,10 @@ jobs:
       # CHANGELOG.md (stdlib re/os) and downloads/uploads artifacts. This is
       # the job holding contents:write, so it must never resolve or execute
       # third-party package code before it creates the release.
-      - name: Set up Python 3.12
+      - name: Set up Python 3.14.7
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
-          python-version: "3.12"
+          python-version: "3.14.7"
 
       - name: Download Windows release assets
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -466,10 +524,10 @@ jobs:
           footer += '**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)**'
           footer += ' — extract the zip, open the \`Spirescope\` folder, double-click \`Spirescope.exe\`.\n\n'
           footer += 'GitHub is the only official download source. Use the release assets here and the attached checksum file.\n\n'
-          footer += '**Windows may flag the download as a virus.** That is a false positive on unsigned PyInstaller apps '
-          footer += '(the packaging format, not the contents). See '
+          footer += '**Windows may flag the download as a virus.** Unsigned builds can trigger security warnings. '
+          footer += 'A warning needs investigation; see '
           footer += '[docs/ANTIVIRUS.md](https://github.com/thequantumfalcon/spirescope/blob/master/docs/ANTIVIRUS.md) '
-          footer += 'to verify the checksum yourself, allow it, or run from source instead.\n\n'
+          footer += 'for checksum and provenance verification, reporting a detection, and source installation.\n\n'
           footer += 'The versioned and unversioned zips are identical; the unversioned names exist so the latest-download URL stays stable.'
           notes = header + body + footer
           with open('RELEASE_NOTES.md', 'w', encoding='utf-8') as f:

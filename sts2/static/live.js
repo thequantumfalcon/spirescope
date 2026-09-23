@@ -6,6 +6,12 @@
   var es = null;
   var lastJson = '';
   var lastFloor = null;
+  // Content revision (deck, upgrades, enchantments, relics, potions, ...)
+  // of what the server rendered. Counters are patched in place below, but
+  // the card/item lists and deck analysis are server-rendered, so a
+  // same-floor change to them needs a reload just like a floor change.
+  var pageRevision = el.dataset.revision || '';
+  var lastRevision = null;
   var lastReloadAt = 0;
   var reloadTimer = null;
   var reconnectTimer = null;
@@ -14,7 +20,28 @@
     var now = Date.now();
     if (now - lastReloadAt < 10000) return;
     lastReloadAt = now;
+    try {
+      var focused = document.activeElement;
+      sessionStorage.setItem('spirescope-live-view', JSON.stringify({
+        x: window.scrollX, y: window.scrollY, id: focused && focused.id,
+        start: focused && focused.selectionStart, end: focused && focused.selectionEnd
+      }));
+    } catch (err) { /* Storage and selection APIs are optional. */ }
     location.reload();
+  }
+  function firstReloadFor(rev) {
+    // The first message is compared with the rendered page, which may be
+    // older than the stream. Reload at most once per revision (remembered
+    // across the reload) so a page and stream that persistently disagree
+    // cannot loop. No storage means no first-message reload at all.
+    try {
+      var key = 'spirescope-live-revision-reload';
+      if (window.sessionStorage.getItem(key) === rev) return false;
+      window.sessionStorage.setItem(key, rev);
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
   function setText(sel, text) {
     var node = document.querySelector(sel);
@@ -81,6 +108,18 @@
       if (d.active !== wasActive) { safeReload(); return; }
       if (lastFloor !== null && d.floor !== lastFloor) { safeReload(); return; }
       lastFloor = d.floor;
+      if (d.revision) {
+        if (lastRevision === null) {
+          if (pageRevision && d.revision !== pageRevision && firstReloadFor(d.revision)) {
+            safeReload(); return;
+          }
+        } else if (d.revision !== lastRevision) {
+          // lastRevision is left as-is, so if the reload cooldown swallowed
+          // this one the next message retries it.
+          safeReload(); return;
+        }
+        lastRevision = d.revision;
+      }
     };
     // The server closes an idle stream after 5 minutes. A paused run that
     // later resumes must still reach this page, so reconnect instead of
@@ -106,5 +145,17 @@
       reloadTimer = setTimeout(function() { location.reload(); }, 10000);
     };
   }
+  try {
+    var saved = JSON.parse(sessionStorage.getItem('spirescope-live-view') || 'null');
+    sessionStorage.removeItem('spirescope-live-view');
+    if (saved) {
+      window.scrollTo(saved.x, saved.y);
+      var focused = saved.id && document.getElementById(saved.id);
+      if (focused) {
+        focused.focus({preventScroll: true});
+        if (focused.setSelectionRange && saved.start !== null) focused.setSelectionRange(saved.start, saved.end);
+      }
+    }
+  } catch (err) { /* Preserve normal startup when storage is unavailable. */ }
   connect();
 })();

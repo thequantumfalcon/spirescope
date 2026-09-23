@@ -16,6 +16,7 @@ from pydantic import ValidationError
 from starlette.responses import StreamingResponse
 
 from sts2.config import CHARACTERS, VERSION
+from sts2.identities import canonical_id, contains_entity, identity_index
 from sts2.models import CurrentRun, RunHistory
 from sts2.saves import get_current_run
 
@@ -119,13 +120,51 @@ async def _get_live_run(player: int | None = None) -> CurrentRun:
         return run
 
 
+def _log_matches_save(run: CurrentRun, log: dict) -> bool:
+    """Require positive identity and reject every known disagreement."""
+    log_seed = log.get("seed") or ""
+    if not run.seed or not log_seed or run.seed != log_seed:
+        return False
+    log_asc = log.get("log_ascension")
+    if log_asc is not None and log_asc != run.ascension:
+        return False
+    log_char = log.get("character") or ""
+    if log_char and run.character and run.total_players <= 1 and log_char != run.character:
+        return False
+    # Replayed seeds cannot establish session time; reject a known mismatch.
+    if run.start_time and log.get("start_time") and run.start_time != log["start_time"]:
+        return False
+    return True
+
+
+def _log_player_key(run: CurrentRun, by_player: dict) -> int | None:
+    """The log's number for the player this view is watching.
+
+    The log prints "Player N" with the player's id as the save records it
+    ("1" in solo), not the seat index, so match on run.player_id. A save
+    with no usable id (older formats, fixtures) can still be matched in
+    solo, where the log only ever names one player.
+    """
+    try:
+        return int(run.player_id)
+    except ValueError:
+        pass
+    if run.total_players <= 1 and len(by_player) == 1:
+        return next(iter(by_player))
+    return None
+
+
 async def _compute_live_run(player: int | None = None) -> CurrentRun:
     """Get the best available live run data, merging save + log sources.
 
     Save is authoritative for everything it records: HP, gold, deck (with
     upgrades and enchantments), relics, potions, floors, run_time, events_seen.
-    Log contributes only act progression, encounters won, and the combat
-    telemetry only it can see — supplements, never overrides.
+    The log is merged in only when it describes the same run (see
+    _log_matches_save); a mismatched log is ignored and the save stands
+    alone. A matching log supplements, never overrides: it may advance the
+    act (never lower it) when it saw an act completion the save has not
+    written yet, fill encounters_won (which the save does not record), and
+    add the combat telemetry only it can see.
     """
     a = _app()
     await a._poll_game_log_once()
@@ -144,19 +183,34 @@ async def _compute_live_run(player: int | None = None) -> CurrentRun:
         # (~100 writes per session), so it is fresh as well as complete.
         assert _log_run_state is not None  # implied by log_active above
         log = _log_run_state
+        if not _log_matches_save(run, log):
+            logging.getLogger(__name__).debug(
+                "Live: active log does not match the active save; using the save alone")
+            return run.model_copy(update={"telemetry_status": "unavailable" if not run.seed or not log.get("seed") else "mismatched"})
         merged = run.model_dump()
+        merged["telemetry_status"] = "matched"
         if log.get("act", 1) > merged.get("act", 1):
             merged["act"] = log["act"]
-        if log.get("encounters_won"):
+        if log.get("encounters_won") and not merged.get("encounters_won"):
             merged["encounters_won"] = log["encounters_won"]
         # Combat telemetry exists only in the log, and in co-op the log
-        # interleaves both players — select the seat this view is watching
+        # interleaves both players — select the player this view is watching
         # rather than reporting one merged total as if it were theirs.
-        seat = merged.get("player_index", 0) or 0
-        by_player = log.get("cards_played_by_player") or {}
-        turns_by_player = log.get("extra_turns_by_player") or {}
-        merged["cards_played"] = by_player.get(seat, log.get("cards_played", []))
-        merged["extra_turns"] = turns_by_player.get(seat, log.get("extra_turns", 0))
+        by_player = log.get("cards_played_by_player")
+        turns_by_player = log.get("extra_turns_by_player")
+        if by_player is None and turns_by_player is None and run.total_players <= 1:
+            # Legacy log state with no per-player breakdown: the flat totals
+            # are all there is.
+            merged["cards_played"] = log.get("cards_played", [])
+            merged["extra_turns"] = log.get("extra_turns", 0)
+        else:
+            # Per-player telemetry exists, so a player with no entry has
+            # played nothing — never borrow another player's plays.
+            by_player = by_player or {}
+            turns_by_player = turns_by_player or {}
+            key = _log_player_key(run, {**by_player, **turns_by_player})
+            merged["cards_played"] = list(by_player.get(key, [])) if key is not None else []
+            merged["extra_turns"] = turns_by_player.get(key, 0) if key is not None else 0
         merged["elites_defeated"] = log.get("elites_defeated", 0)
         return CurrentRun(**merged)
 
@@ -165,7 +219,7 @@ async def _compute_live_run(player: int | None = None) -> CurrentRun:
 
     if log_active:
         assert _log_run_state is not None  # implied by log_active above
-        return CurrentRun(**_log_run_state)  # Log parser only
+        return CurrentRun(**{**_log_run_state, "telemetry_status": "log_only"})
 
     return run  # No active run from either source
 
@@ -246,12 +300,30 @@ def _synergy_pick_hints(run, kb) -> list[dict]:
     return []
 
 
+def _live_content_revision(run) -> str:
+    """Compact revision of everything /live renders as server-side lists
+    (deck with upgrades and enchantments, relics, potions, encounters,
+    events) and the deck analysis derived from them.
+
+    The SSE client patches counters in place but cannot rebuild those lists,
+    so it reloads when this changes -- a same-floor card reward, upgrade or
+    potion used to leave the lists, and even the "Current Deck (N)" heading,
+    disagreeing with the counters until the floor changed.
+    """
+    content = [run.deck, run.deck_upgrades, run.deck_enchantments,
+               [p.model_dump() if p else None for p in run.deck_properties],
+               run.relics, run.potions, run.encounters_won, run.events_seen]
+    raw = json.dumps(content, separators=(",", ":"))
+    return hashlib.sha1(raw.encode(), usedforsecurity=False).hexdigest()[:12]
+
+
 def _build_live_payload(run, all_runs) -> dict:
     """SSE payload: run state plus the danger and ghost data the page shows,
     so an HP change within a floor updates the banner and splits without a
     reload. Enrichment is computed only when the run state changed."""
     a = _app()
     data = run.model_dump()
+    data["revision"] = _live_content_revision(run)
     if run.active:
         level, hp_pct = _danger_assessment(run, a.kb)
         data["danger"] = {"level": level, "hp_pct": hp_pct}
@@ -316,7 +388,7 @@ async def ready():
     a = _app()
     families = {"cards": len(a.kb.cards), "relics": len(a.kb.relics),
                 "enemies": len(a.kb.enemies), "potions": len(a.kb.potions),
-                "events": len(a.kb.events)}
+                "events": len(a.kb.events), "epochs": len(a.kb.epochs)}
     missing = [name for name, count in families.items() if count == 0]
     if missing:
         return JSONResponse(
@@ -325,8 +397,10 @@ async def ready():
     # User state must be writable, or settings, hypotheses and imported stats
     # all fail at the moment the user tries to use them.
     try:
+        import uuid
+
         from sts2.config import state_path
-        probe = state_path(".readiness")
+        probe = state_path(".readiness-" + uuid.uuid4().hex)
         probe.write_text("ok", encoding="utf-8")
         probe.unlink()
     except OSError:
@@ -492,36 +566,33 @@ async def cards(request: Request, character: str = Query(None, max_length=50),
     page = min(page, total_pages)
     start = (page - 1) * _CARDS_PER_PAGE
     paged_cards = card_list[start:start + _CARDS_PER_PAGE]
-    # Card text is scraped from the wiki, which tracks beta. Stable has sat a
-    # long way behind it -- v0.107.1 while beta reached v0.111.0 -- so a player
-    # on stable reads numbers here that their game does not use. Both values
-    # come from the manifest so the line cannot drift from the data.
-    from sts2.patches import current_patch
-    beta_patch = (current_patch("beta") or {}).get("patch", "")
-    main_patch = (current_patch("main") or {}).get("patch", "")
     return a.templates.TemplateResponse(request, "cards.html", {
         "cards": paged_cards, "total_cards": total_cards, "characters": CHARACTERS,
         "selected_character": character, "selected_type": card_type,
         "selected_rarity": rarity, "selected_cost": cost, "selected_keyword": keyword,
         "selected_sort": sort,
         "page": page, "total_pages": total_pages, "card_stats": card_stats,
-        "data_beta_patch": beta_patch, "data_main_patch": main_patch,
     })
 
 
 @router.get("/cards/{card_id}", response_class=HTMLResponse)
-async def card_detail(request: Request, card_id: str = Path(max_length=200)):
+async def card_detail(request: Request, card_id: str = Path(max_length=200),
+                      game_version: str = Query(None, max_length=128)):
     a = _app()
-    card = a.kb.get_card_by_id(card_id)
+    card = a.kb.card_for_version(card_id, game_version)
     if not card:
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Card '{card_id[:100]}' not found.",
         }, status_code=404)
-    synergies = a.kb.find_synergies(card_id)
-    strategy = a.kb.get_strategy(card.character)
+    version = a.kb.game_version if game_version is None else game_version
+    # Recommendations built from another version's text are not a valid
+    # explanation of this historical card.
+    compatible_advice = not version or card.mechanics_version == version == a.kb.game_version
+    synergies = a.kb.find_synergies(card_id) if compatible_advice else []
+    strategy = a.kb.get_strategy(card.character) if compatible_advice else None
     progress = await a._get_progress()
-    card_stats = progress.card_stats.get(card_id, {}) if progress else {}
-    runs_with_card = [r for r in await a._get_runs() if card_id in r.deck]
+    card_stats = identity_index(progress.card_stats).get(canonical_id(card_id), {}) if progress else {}
+    runs_with_card = [r for r in await a._get_runs() if contains_entity(r.deck, card_id)]
     card_run_wins = sum(1 for r in runs_with_card if r.win)
     card_run_total = len(runs_with_card)
     community_tips = a.kb.get_community_tips(a.kb.english_name(card))
@@ -545,6 +616,7 @@ async def card_detail(request: Request, card_id: str = Path(max_length=200)):
         era_split = compute_era_split(await a._get_runs(), card_id, changed_patch)
     return a.templates.TemplateResponse(request, "card_detail.html", {
         "card": card, "synergies": synergies, "strategy": strategy,
+        "mechanics_view_version": game_version,
         "card_stats": card_stats,
         "card_run_wins": card_run_wins, "card_run_total": card_run_total,
         "community_tips": community_tips, "top_enemies": top_enemies, "kb": a.kb,
@@ -564,26 +636,29 @@ async def relics(request: Request, character: str = Query(None, max_length=50),
 
 
 @router.get("/relics/{relic_id}", response_class=HTMLResponse)
-async def relic_detail(request: Request, relic_id: str = Path(max_length=200)):
+async def relic_detail(request: Request, relic_id: str = Path(max_length=200),
+                       game_version: str = Query(None, max_length=128)):
     a = _app()
-    relic = a.kb.get_relic_by_id(relic_id)
+    relic = a.kb.relic_for_version(relic_id, game_version)
     if not relic:
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Relic '{relic_id[:100]}' not found.",
         }, status_code=404)
-    relic_runs = [r for r in await a._get_runs() if relic_id in r.relics]
+    relic_runs = [r for r in await a._get_runs() if contains_entity(r.relics, relic_id)]
     community_tips = a.kb.get_community_tips(a.kb.english_name(relic))
     # Relic synergy — other relics commonly found in winning runs with this one
     relic_synergies = []
     analytics = await a._get_analytics()
     for edge in analytics.get("relic_synergy_edges", []):
-        if edge["source"] == relic_id:
+        if canonical_id(edge["source"]) == canonical_id(relic_id):
             relic_synergies.append({"id": edge["target"], "weight": edge["weight"]})
-        elif edge["target"] == relic_id:
+        elif canonical_id(edge["target"]) == canonical_id(relic_id):
             relic_synergies.append({"id": edge["source"], "weight": edge["weight"]})
     relic_synergies.sort(key=lambda x: -x["weight"])
     # Archetypes mentioning this relic
-    relic_archetypes = a.kb.find_relic_archetypes(a.kb.english_name(relic))
+    version = a.kb.game_version if game_version is None else game_version
+    compatible_advice = not version or relic.mechanics_version == version == a.kb.game_version
+    relic_archetypes = a.kb.find_relic_archetypes(a.kb.english_name(relic)) if compatible_advice else []
     from sts2.analytics import compute_era_split
     from sts2.patches import changed_in
     changed_patch = changed_in(relic_id)
@@ -591,6 +666,7 @@ async def relic_detail(request: Request, relic_id: str = Path(max_length=200)):
     if changed_patch:
         era_split = compute_era_split(await a._get_runs(), relic_id, changed_patch)
     return a.templates.TemplateResponse(request, "relic_detail.html", {
+        "mechanics_view_version": game_version,
         "relic": relic, "relic_runs": relic_runs, "community_tips": community_tips,
         "relic_synergies": relic_synergies[:6], "relic_archetypes": relic_archetypes,
         "kb": a.kb,
@@ -622,9 +698,10 @@ async def enemies(request: Request, act: str = Query(None, max_length=50),
 
 
 @router.get("/enemies/{enemy_id}", response_class=HTMLResponse)
-async def enemy_detail(request: Request, enemy_id: str = Path(max_length=200)):
+async def enemy_detail(request: Request, enemy_id: str = Path(max_length=200),
+                       game_version: str | None = Query(None, max_length=128)):
     a = _app()
-    enemy = a.kb.get_enemy_by_id(enemy_id)
+    enemy = a.kb.enemy_for_version(enemy_id, game_version)
     if not enemy:
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 404, "error_message": f"Enemy '{enemy_id[:100]}' not found.",
@@ -643,11 +720,14 @@ async def enemy_detail(request: Request, enemy_id: str = Path(max_length=200)):
         if not encounter_stats:
             encounter_stats = enemy_fight_stats
     community_tips = a.kb.get_community_tips(a.kb.english_name(enemy))
-    counter_cards = a.kb.get_counter_cards(enemy)
+    counter_cards = a.kb.get_counter_cards(enemy, game_version=game_version)
     analytics = await a._get_analytics()
     danger = analytics.get("encounter_danger", {}).get(enemy_id, None)
     return a.templates.TemplateResponse(request, "enemy_detail.html", {
         "enemy": enemy, "encounter_stats": encounter_stats, "kb": a.kb,
+        "possible_monsters": [monster for identifier in enemy.monster_ids
+                              if (monster := a.kb.enemy_for_version(identifier, game_version)) is not None],
+        "mechanics_view_version": a.kb.game_version if game_version is None else game_version,
         "community_tips": community_tips, "counter_cards": counter_cards,
         "danger": danger,
     })
@@ -848,9 +928,14 @@ async def compare_runs(request: Request,
     a_imported = _get_imported_run(a_id) is not None
     b_imported = _get_imported_run(b_id) is not None
     deck_a, deck_b = Counter(run_a.deck), Counter(run_b.deck)
+    # Upgraded copies per card id (zip stops at the shorter list, so a run
+    # recorded without per-instance upgrades simply shows none).
+    upg_a = Counter(c for c, lvl in zip(run_a.deck, run_a.deck_upgrades) if lvl > 0)
+    upg_b = Counter(c for c, lvl in zip(run_b.deck, run_b.deck_upgrades) if lvl > 0)
     all_cards = sorted(set(deck_a) | set(deck_b))
     deck_diff = [{"id": c, "name": a.kb.id_to_name(c),
-                  "qty_a": deck_a[c], "qty_b": deck_b[c]} for c in all_cards]
+                  "qty_a": deck_a[c], "qty_b": deck_b[c],
+                  "upg_a": upg_a[c], "upg_b": upg_b[c]} for c in all_cards]
     relics_a, relics_b = set(run_a.relics), set(run_b.relics)
     relic_diff = {
         "shared": sorted(relics_a & relics_b),
@@ -1002,6 +1087,34 @@ async def export_run_html(run_id: str = Path(max_length=200)):
     )
 
 
+_NONNEGATIVE_RUN_FIELDS = ("run_time", "ascension", "timestamp", "total_players")
+_NONNEGATIVE_FLOOR_FIELDS = ("floor", "act", "turns")
+
+
+def _impossible_run_value(run) -> str:
+    """Why an imported run is impossible in any game build, or "" if it isn't.
+
+    Reject negative elapsed time/counts and misaligned instance arrays.
+    Signed HP/gold/damage observations may have mod-specific semantics;
+    preserving them is not a claim that vanilla gameplay permits them.
+    No vanilla maxima are imposed here. Native parsing stays independent.
+    """
+    for name in _NONNEGATIVE_RUN_FIELDS:
+        if getattr(run, name) < 0:
+            return f"{name} must not be negative"
+    for f in run.floors:
+        for name in _NONNEGATIVE_FLOOR_FIELDS:
+            if getattr(f, name) < 0:
+                return f"floor {f.floor}: {name} must not be negative"
+    if any(level < 0 for level in run.deck_upgrades):
+        return "deck_upgrades must not be negative"
+    for name in ("deck_upgrades", "deck_enchantments", "deck_properties"):
+        values = getattr(run, name)
+        if values and len(values) != len(run.deck):
+            return f"{name} must have one entry per deck card"
+    return ""
+
+
 @router.post("/runs/import", response_class=HTMLResponse)
 async def import_run(request: Request, file: UploadFile = File(...),
                      csrf_token: str = Form("")):
@@ -1027,7 +1140,7 @@ async def import_run(request: Request, file: UploadFile = File(...),
                 "error_code": 400,
                 "error_message": "Invalid file: expected a JSON object.",
             }, status_code=400)
-        if data.get("format_version") != 1:
+        if type(data.get("format_version")) is not int or data.get("format_version") != 1:
             return a.templates.TemplateResponse(request, "error.html", {
                 "error_code": 400,
                 "error_message": "Unsupported format version. Expected format_version: 1.",
@@ -1041,9 +1154,28 @@ async def import_run(request: Request, file: UploadFile = File(...),
                 "error_code": 400,
                 "error_message": "Invalid file: 'run' must be an object.",
             }, status_code=400)
-        run = RunHistory(**data["run"])
+        def bounded(value, depth=0):
+            if depth > 30:
+                return False
+            if isinstance(value, int) and not isinstance(value, bool):
+                return abs(value) <= 2**53 - 1
+            if isinstance(value, float):
+                return math.isfinite(value) and abs(value) <= 2**53 - 1
+            if isinstance(value, str):
+                return len(value) <= 10000
+            if isinstance(value, dict):
+                return all(bounded(k, depth + 1) and bounded(v, depth + 1) for k, v in value.items())
+            if isinstance(value, list):
+                return all(bounded(v, depth + 1) for v in value)
+            return True
+        if not bounded(data["run"]):
+            raise ValueError("Run values exceed safe representation limits")
+        run = RunHistory.model_validate(data["run"], strict=True)
+    # ValueError also covers bytes that are not valid UTF-8/16/32
+    # (UnicodeDecodeError) and over-long integer literals, which escaped the
+    # JSONDecodeError catch as 500s.
     except (json.JSONDecodeError, ValidationError, KeyError, TypeError,
-            RecursionError):
+            RecursionError, ValueError):
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400,
             "error_message": "Invalid run file format.",
@@ -1060,11 +1192,18 @@ async def import_run(request: Request, file: UploadFile = File(...),
         if (len(getattr(f, "cards_offered", []) or []) > 50 or
                 len(getattr(f, "monsters", []) or []) > 20 or
                 len(getattr(f, "potions_used", []) or []) > 20 or
-                len(getattr(f, "potions_gained", []) or []) > 20):
+                len(getattr(f, "potions_gained", []) or []) > 20 or
+                len(getattr(f, "cards_picked", []) or []) > 50):
             return a.templates.TemplateResponse(request, "error.html", {
                 "error_code": 400,
                 "error_message": "Run file has unreasonable per-floor list sizes.",
             }, status_code=400)
+    impossible = _impossible_run_value(run)
+    if impossible:
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 400,
+            "error_message": f"Invalid run file: {impossible}.",
+        }, status_code=400)
     # Check the FILE against the digest it was exported with — the raw run
     # mapping, not the parsed model. Verifying the model verified only what
     # the model kept: anything added to an exported run was dropped during
@@ -1246,7 +1385,12 @@ async def hypothesis_create(request: Request,
         params["card_id"] = param_value[:100]
     elif condition_type == "character":
         params["character"] = param_value[:50]
-    register_hypothesis(hyp_id, text[:200], condition_type, params)
+    try:
+        saved = await asyncio.to_thread(register_hypothesis, hyp_id, text[:200], condition_type, params)
+    except OSError:
+        saved = None
+    if saved is None:
+        return PlainTextResponse("Could not save the hypothesis. Go back to retain your form and retry.", status_code=503)
     return RedirectResponse("/hypothesis", status_code=303)
 
 
@@ -1256,14 +1400,16 @@ async def hypothesis_delete(request: Request,
                             csrf_token: str = Form("")):
     from starlette.responses import RedirectResponse
 
-    from sts2.hypothesis import load_hypotheses, save_hypotheses
+    from sts2.hypothesis import delete_hypothesis
     a = _app()
     if not a.validate_csrf_token(csrf_token):
         return PlainTextResponse("Invalid form submission.", status_code=403)
-    hyps = load_hypotheses()
-    if hyp_id in hyps:
-        del hyps[hyp_id]
-        save_hypotheses(hyps)
+    try:
+        saved = await asyncio.to_thread(delete_hypothesis, hyp_id)
+    except OSError:
+        saved = False
+    if not saved:
+        return PlainTextResponse("Could not delete the hypothesis. Please retry.", status_code=503)
     return RedirectResponse("/hypothesis", status_code=303)
 
 
@@ -1460,11 +1606,11 @@ async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
     last_enemy_name = ""
     synergy_hints = []
 
-    coaching_alerts = []
+    coaching_alerts: list[dict[str, str]] = []
 
     if run.active and run.deck:
         try:
-            analysis = a.kb.analyze_deck(run.deck)
+            analysis = a.kb.analyze_deck(run.deck, run.deck_upgrades, properties=run.deck_properties)
         except Exception:
             _log.debug("Coaching: analyze_deck failed", exc_info=True)
 
@@ -1475,22 +1621,20 @@ async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
                     for missing_name in arch.get("missing_key_cards", [])[:4]:
                         pick_suggestions.append({
                             "name": missing_name,
-                            "reason": f"Completes {arch['name']} archetype",
+                            "reason": f"Listed in the {arch['name']} reference guide",
                         })
         except Exception:
             _log.debug("Coaching: archetype suggestions failed", exc_info=True)
 
         # Pick suggestions from weakness keywords
         try:
-            deck_keywords = set()
-            for card_id in run.deck:
-                card = a.kb.get_card_by_id(card_id)
-                if card:
-                    deck_keywords.update(card.keywords)
-            if "Block" not in deck_keywords and "Dexterity" not in deck_keywords:
+            # Same mechanic test analyze_deck uses: the Block keyword marks
+            # a mention (Body Slam, Barricade), not a card that grants Block
+            if analysis and any(w.startswith("No Block generation")
+                                for w in analysis.get("weaknesses", [])):
                 pick_suggestions.append({
                     "name": "Any Block card",
-                    "reason": "No Block generation — vulnerable to damage",
+                    "reason": "No Block generation detected in card text; check your relics and other defensive effects too.",
                 })
         except Exception:
             _log.debug("Coaching: weakness suggestions failed", exc_info=True)
@@ -1528,63 +1672,9 @@ async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
         except Exception:
             _log.debug("Coaching: synergy hints failed", exc_info=True)
 
-        # Defensive gap warning — no Block/defense by floor threshold
-        try:
-            if run.floor >= 4 and analysis:
-                kw_freq = dict(analysis.get("top_keywords", []))
-                has_defense = any(k in kw_freq for k in ("Block", "Dexterity", "Frost"))
-                if not has_defense:
-                    severity = "critical" if run.floor >= 8 else "warning"
-                    coaching_alerts.append({
-                        "level": severity,
-                        "text": f"No defensive cards by floor {run.floor} — pick Block/Frost cards to survive elite fights.",
-                    })
-        except Exception:
-            _log.debug("Coaching: defensive gap alert failed", exc_info=True)
-
-        # Card fatigue — flag over-stacking
-        try:
-            from collections import Counter as _Counter
-            card_counts = _Counter(run.deck)
-            for card_id, count in card_counts.items():
-                if count >= 3:
-                    card_name = a.kb.id_to_name(card_id)
-                    coaching_alerts.append({
-                        "level": "warning",
-                        "text": f"{card_name} appears {count}x in deck — diminishing returns, consider diversifying.",
-                    })
-        except Exception:
-            _log.debug("Coaching: card fatigue failed", exc_info=True)
-
-        # Energy efficiency — avg cost too high for default 3 energy
-        try:
-            if analysis and analysis.get("avg_cost", 0) > 1.8:
-                coaching_alerts.append({
-                    "level": "warning",
-                    "text": f"Average card cost is {analysis['avg_cost']:.1f} — you may not play your full hand. Add 0-cost cards or energy relics.",
-                })
-        except Exception:
-            _log.debug("Coaching: energy efficiency failed", exc_info=True)
-
-        # Boss preparation — approaching boss floor without key tools
-        try:
-            boss_floors = {1: 16, 2: 33, 3: 50}
-            boss_floor = boss_floors.get(run.act, 99)
-            floors_to_boss = boss_floor - run.floor
-            if 0 < floors_to_boss <= 4 and analysis:
-                kw_freq = dict(analysis.get("top_keywords", []))
-                missing = []
-                if not any(k in kw_freq for k in ("Block", "Dexterity", "Frost")):
-                    missing.append("Block/defense")
-                if not any(k in kw_freq for k in ("Strength", "Poison", "Lightning", "Frost")):
-                    missing.append("damage scaling")
-                if missing:
-                    coaching_alerts.append({
-                        "level": "critical",
-                        "text": f"Boss in ~{floors_to_boss} floors — still missing {', '.join(missing)}. Prioritize these picks.",
-                    })
-        except Exception:
-            _log.debug("Coaching: boss prep failed", exc_info=True)
+        # Boss distance requires the actual map, and Energy availability depends
+        # on the run. Duplicate counts and keyword mentions do not justify
+        # critical coaching alerts; show the scoped card-text analysis instead.
 
     # Ghost run comparison. The window is centered on the live run's real
     # ascension (the field used to be missing, so this always compared
@@ -1605,6 +1695,7 @@ async def live_run(request: Request, player: int = Query(None, ge=0, le=3)):
     return a.templates.TemplateResponse(request, "live.html", {
         "run": run, "analysis": analysis, "kb": a.kb,
         "selected_player": player, "total_players": run.total_players,
+        "live_revision": _live_content_revision(run),
         "pick_suggestions": pick_suggestions[:6],
         "danger_level": danger_level, "danger_pct": danger_pct,
         "counter_cards": counter_cards, "last_enemy_name": last_enemy_name,
@@ -1657,30 +1748,87 @@ async def overlay(request: Request, player: int = Query(None, ge=0, le=3)):
 async def deck_analyzer(request: Request,
                         from_run: str = Query(None, max_length=200)):
     a = _app()
+    from sts2.deck_instances import instances_from_run
+    instances = []
     selected_ids: list[str] = []
     from_run_id = None
+    game_version = a.kb.game_version
     if from_run:
         if from_run == "live":
             live_run = await _get_live_run(0)
             if live_run.active and live_run.deck:
+                instances = instances_from_run(live_run)[:_MAX_DECK_SIZE]
                 selected_ids = live_run.deck[:_MAX_DECK_SIZE]
                 from_run_id = "live"
         else:
             run = await a._get_run_by_id(from_run)
             if run:
+                instances = instances_from_run(run)[:_MAX_DECK_SIZE]
                 selected_ids = run.deck[:_MAX_DECK_SIZE]
                 from_run_id = run.id
+                game_version = run.build_id
     selected_counts: dict[str, int] = {}
     for cid in selected_ids:
         selected_counts[cid] = selected_counts.get(cid, 0) + 1
     return a.templates.TemplateResponse(request, "deck.html", {
-        "cards": a.kb.cards, "analysis": None, "selected_ids": selected_ids,
+        "cards": [a.kb.card_for_version(card.id, game_version) for card in a.kb.cards],
+        "analysis": None, "selected_ids": selected_ids,
+        "mechanics_view_version": game_version,
         "selected_counts": selected_counts,
+        "instances": instances,
         "from_run_id": from_run_id, "csrf_token": a.generate_csrf_token(),
     })
 
 
 _MAX_DECK_SIZE = 100
+
+# Deck-health results by exact card-id sequence (order kept: the orphan list
+# follows input order). Reloads replace the KnowledgeBase object rather than
+# mutating it, so a different kb means every cached result is stale.
+_SPECTRAL_CACHE_MAX = 64
+_spectral_cache: dict[tuple, dict] = {}
+_spectral_cache_kb: list = [None]
+
+
+_spectral_pending: dict[tuple, asyncio.Task] = {}
+_spectral_slots = asyncio.Semaphore(2)
+
+
+async def _deck_spectral_health_cached(card_ids: list, kb, upgrades=None):
+    from sts2.spectral import deck_spectral_health
+    # Snapshot the actual mechanics used by the graph, including in-place
+    # reloads and per-copy upgraded costs. Names only label returned orphans.
+    cards = []
+    for i, cid in enumerate(card_ids):
+        card = kb.get_card_by_id(cid)
+        if card:
+            cost = card.cost_upgraded if upgrades and upgrades[i] and card.cost_upgraded else card.cost
+            cards.append(card.model_copy(update={"cost": cost}))
+    key = tuple((c.id, c.name, c.type, c.cost, tuple(c.keywords)) for c in cards)
+    if key in _spectral_cache:
+        return _spectral_cache[key]
+    if key in _spectral_pending:
+        return await asyncio.shield(_spectral_pending[key])
+    if len(_spectral_pending) >= 8:
+        return None  # Optional graph must not create an unbounded work queue.
+
+    async def calculate():
+        try:
+            async with _spectral_slots:
+                result = await asyncio.to_thread(deck_spectral_health, [], None, cards=cards)
+            if len(_spectral_cache) >= _SPECTRAL_CACHE_MAX:
+                _spectral_cache.pop(next(iter(_spectral_cache)))
+            _spectral_cache[key] = result
+            return result
+        except Exception:
+            logging.getLogger(__name__).warning("Optional deck connectivity failed", exc_info=True)
+            return None
+        finally:
+            _spectral_pending.pop(key, None)
+
+    task = asyncio.create_task(calculate())
+    _spectral_pending[key] = task
+    return await asyncio.shield(task)
 
 
 @router.post("/deck/analyze", response_class=HTMLResponse)
@@ -1693,32 +1841,63 @@ async def analyze_deck(request: Request):
             "error_code": 403,
             "error_message": "Invalid form submission. Please go back and try again.",
         }, status_code=403)
-    card_ids = form.getlist("card_ids")[:_MAX_DECK_SIZE]
+    from sts2.deck_instances import DeckInstance
+    try:
+        game_version = form.get("game_version", a.kb.game_version)
+        if not isinstance(game_version, str) or len(game_version) > 128 or (game_version and not game_version.isprintable()):
+            raise ValueError("Invalid game version")
+        values = form.getlist("card_ids")
+        if any(not isinstance(cid, str) or len(cid) > 200 for cid in values):
+            raise ValueError("Invalid card IDs")
+        raw_instances = form.get("instances")
+        if raw_instances is not None:
+            if not isinstance(raw_instances, str) or len(raw_instances) > 100000:
+                raise ValueError("Invalid card copies")
+            decoded = json.loads(raw_instances)
+            if not isinstance(decoded, list) or len(decoded) > _MAX_DECK_SIZE:
+                raise ValueError("Too many card copies")
+            instances = [DeckInstance.model_validate(item).model_dump() for item in decoded]
+            card_ids = [item["card_id"] for item in instances]
+        else:
+            if len(values) > _MAX_DECK_SIZE:
+                raise ValueError("Too many cards")
+            card_ids = [cid for cid in values if isinstance(cid, str)]
+            instances = [DeckInstance(card_id=cid, upgrade_level=0, enchantment="").model_dump()
+                         for cid in card_ids]
+    except (ValueError, TypeError, RecursionError):
+        return PlainTextResponse("Invalid deck. Use at most 100 card copies with valid metadata.", status_code=400)
+    upgrades = [(item["upgrade_level"] or 0) > 0 for item in instances]
     if not card_ids:
         return a.templates.TemplateResponse(request, "deck.html", {
             "cards": a.kb.cards, "analysis": {"error": "No cards selected"},
+            "mechanics_view_version": game_version,
             "selected_ids": [], "selected_counts": {},
             "csrf_token": a.generate_csrf_token(),
         })
-    analysis = a.kb.analyze_deck(card_ids)
+    from sts2.card_properties import CardProperties
+    properties = [CardProperties.model_validate(item["properties"]) if item["properties"] is not None else None
+                  for item in instances]
+    analysis = a.kb.analyze_deck(card_ids, upgrades=upgrades, game_version=game_version, properties=properties)
+    analysis["unknown_upgrade_copies"] = sum(item["upgrade_level"] is None for item in instances)
+    analysis["enchantments_unmodeled"] = sum(bool(item["enchantment"]) for item in instances)
     selected_counts: dict[str, int] = {}
     for cid in card_ids:
-        if not isinstance(cid, str):
-            continue
         selected_counts[cid] = selected_counts.get(cid, 0) + 1
     # Deck health via spectral graph analysis: builds keyword-synergy graph,
     # computes algebraic connectivity + orphan list. Score 0-100, higher = more
     # internally coherent. Identifies cards with zero synergy connections.
-    from sts2.spectral import deck_spectral_health
-    try:
-        spectral_health = deck_spectral_health(card_ids, a.kb)
-    except Exception:
-        spectral_health = None
+    # Pure-Python eigen-solve that takes ~1 s for a 100-card deck, so it runs
+    # off the event loop and repeat analyses of the same deck are cached.
+    spectral_health = (await _deck_spectral_health_cached(card_ids, a.kb, upgrades)
+                       if not analysis.get("unknown_mechanics") and not analysis.get("unverified_mechanics")
+                       and not analysis.get("copy_details") and game_version == a.kb.game_version else None)
     return a.templates.TemplateResponse(request, "deck.html", {
-        "cards": a.kb.cards, "analysis": analysis, "selected_ids": card_ids,
+        "cards": [a.kb.card_for_version(card.id, game_version) for card in a.kb.cards],
+        "analysis": analysis, "selected_ids": card_ids,
+        "mechanics_view_version": game_version,
         "selected_counts": selected_counts,
         "kb": a.kb, "csrf_token": a.generate_csrf_token(),
-        "spectral_health": spectral_health,
+        "spectral_health": spectral_health, "instances": instances,
     })
 
 
@@ -1896,7 +2075,7 @@ async def api_card(card_id: str = Path(max_length=200)):
     if not card:
         return _api_error("Card not found.", 404, card_id=card_id)
     progress = await a._get_progress()
-    card_stats = progress.card_stats.get(card_id, {}) if progress else {}
+    card_stats = identity_index(progress.card_stats).get(canonical_id(card_id), {}) if progress else {}
     synergies = a.kb.find_synergies(card_id)
     return {
         **card.model_dump(),
@@ -2017,7 +2196,11 @@ async def api_reset_stats(request: Request):
 @router.post("/api/import/stats")
 async def api_import_stats(request: Request, file: UploadFile = File(...),
                            csrf_token: str = Form("")):
-    from sts2.aggregate import load_aggregate, merge_aggregate, save_aggregate
+    from sts2.aggregate import (
+        AggregateImportError,
+        DuplicateImportError,
+        import_aggregate,
+    )
     a = _app()
     if not a.validate_csrf_token(csrf_token):
         return _api_error("Invalid CSRF token.", 403)
@@ -2028,11 +2211,18 @@ async def api_import_stats(request: Request, file: UploadFile = File(...),
         imported = json.loads(contents)
         if not isinstance(imported, dict) or "run_count" not in imported:
             return _api_error("Invalid aggregate file.", 400)
-    except (json.JSONDecodeError, RecursionError):
+    except (ValueError, RecursionError):
+        # ValueError, not just JSONDecodeError: bytes that are not valid
+        # UTF-8/16/32 raise UnicodeDecodeError and an over-long integer
+        # literal raises a plain ValueError, and both were 500s.
         return _api_error("Invalid JSON.", 400)
-    existing = load_aggregate()
     try:
-        merged = merge_aggregate(existing, imported)
+        merged = await asyncio.to_thread(import_aggregate, imported)
+    except DuplicateImportError as exc:
+        return _api_error(str(exc), 409)
+    except AggregateImportError as exc:
+        # Fixed text from the sanitiser, never payload — safe to return.
+        return _api_error(str(exc), 400)
     except ValueError:
         # Includes Infinity/NaN counters: json.loads accepts them, the
         # sanitiser rejects them, and this used to surface as a 500. The
@@ -2041,11 +2231,9 @@ async def api_import_stats(request: Request, file: UploadFile = File(...),
         logging.getLogger(__name__).info(
             "Rejected an aggregate import", exc_info=True)
         return _api_error("Invalid aggregate file: counters must be finite "
-                          "numbers.", 400)
-    if not save_aggregate(merged):
-        return _api_error(
-            "Import processed but could not be persisted (too large or "
-            "storage unwritable).", 500)
+                          "numbers within range.", 400)
+    except OSError:
+        return _api_error("Could not persist the import. Please retry.", 503)
     return {"status": "ok", "run_count": merged.get("run_count", 0)}
 
 

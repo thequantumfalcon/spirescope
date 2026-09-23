@@ -37,7 +37,7 @@ def load_hypotheses():
     if path.exists():
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
+        except (ValueError, OSError):
             return {}
         # Anything but an object is corrupt state; every caller iterates
         # .items() and would 500 on a top-level array.
@@ -48,10 +48,16 @@ def load_hypotheses():
             # and would crash evaluation. Drop the bad entries and degrade.
             clean = {}
             for hyp_id, hyp in data.items():
-                if isinstance(hyp, dict):
+                if (isinstance(hyp, dict)
+                        and isinstance(hyp.get("condition_type"), str)
+                        and hyp.get("condition_type") in {"elite_skip", "deck_size", "card_pick", "character"}
+                        and isinstance(hyp.get("params", {}), dict)
+                        and isinstance(hyp.get("text", ""), str)
+                        and (hyp.get("condition_type") != "deck_size"
+                             or type(hyp.get("params", {}).get("max_size", 25)) is int)):
                     clean[hyp_id] = hyp
                 else:
-                    log.warning("Dropping non-dict hypothesis entry %r in %s",
+                    log.warning("Dropping malformed hypothesis entry %r in %s",
                                 hyp_id, path)
             return clean
     return {}
@@ -63,12 +69,37 @@ def save_hypotheses(hypotheses) -> bool:
 
 
 def register_hypothesis(hyp_id, text, condition_type, params):
+    from sts2.state_lock import state_lock
+    with state_lock(_hypotheses_file()):
+        return _register_hypothesis(hyp_id, text, condition_type, params)
+
+
+def delete_hypothesis(hyp_id):
+    from sts2.state_lock import state_lock
+    with state_lock(_hypotheses_file()):
+        hypotheses = load_hypotheses()
+        hypotheses.pop(hyp_id, None)
+        return save_hypotheses(hypotheses)
+
+
+def _register_hypothesis(hyp_id, text, condition_type, params):
     """Register a new hypothesis to track.
 
     condition_type: 'elite_skip' | 'deck_size' | 'card_pick' | 'character'
     params: dict with condition-specific parameters
+
+    Returns the stored hypothesis, or None when it could not be persisted —
+    callers must not report success then. Registering the same text,
+    condition and params again returns the existing entry without a second
+    write, so resubmitting a form after an uncertain outcome cannot create a
+    duplicate.
     """
     hypotheses = load_hypotheses()
+    for existing in hypotheses.values():
+        if (existing.get("text") == text
+                and existing.get("condition_type") == condition_type
+                and existing.get("params") == params):
+            return existing
     hypotheses[hyp_id] = {
         "text": text,
         "condition_type": condition_type,
@@ -81,7 +112,8 @@ def register_hypothesis(hyp_id, text, condition_type, params):
         "created": time.time(),
         "verdict": "insufficient_data",
     }
-    save_hypotheses(hypotheses)
+    if not save_hypotheses(hypotheses):
+        return None
     return hypotheses[hyp_id]
 
 

@@ -7,7 +7,7 @@ Modules covered:
   - sts2.rivalry          (Seed-Match Diff on /runs/compare)
   - sts2.cascade          (Cascade Map on /runs/{id})
   - sts2.drift            (Archetype Drift on /runs/{id})
-  - sts2.spectral         (Deck Health Score on POST /deck/analyze)
+  - sts2.spectral         (Keyword Connections on POST /deck/analyze)
   - sts2.prophecy         (GET /prophecy)
   - sts2.behavior         (tilt + anti-patterns on /analytics)
   - sts2.hypothesis       (GET / POST /hypothesis CRUD)
@@ -116,11 +116,11 @@ async def test_drift_module_invoked_on_run_detail(client):
 
 
 # ---------------------------------------------------------------------------
-# sts2.spectral — Deck Health Score on POST /deck/analyze
+# sts2.spectral — Keyword Connections on POST /deck/analyze
 # ---------------------------------------------------------------------------
 
 async def test_spectral_deck_health_rendered(client):
-    """POST /deck/analyze with cards must surface the Deck Health Score section."""
+    """POST /deck/analyze with cards must surface the Keyword Connections section."""
     resp = await client.post("/deck/analyze", data={
         "csrf_token": generate_csrf_token(),
         "card_ids": ["CARD.BASH", "CARD.AGGRESSION", "CARD.ANGER"],
@@ -130,7 +130,7 @@ async def test_spectral_deck_health_rendered(client):
     # The route always supplies a dict from sts2.spectral, so the section
     # should render even for a tiny deck (deck_spectral_health returns a stub
     # health_score for n<3 but the dict itself is truthy).
-    assert "Deck Health Score" in resp.text
+    assert "Keyword Connections" in resp.text
 
 
 # ---------------------------------------------------------------------------

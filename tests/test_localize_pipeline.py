@@ -798,15 +798,14 @@ def test_build_never_invents_an_upgraded_description(built):
     """
     _report, overlay = built
     assert "description_upgraded" not in overlay["cards"]["CARD.STATIC"]
-    # cards that *do* ship upgraded English must still get one, whether or not
-    # their template needs aligning
     assert "description_upgraded" in overlay["cards"]["CARD.BASH"]
-    assert overlay["cards"]["CARD.STATICUP"]["description_upgraded"] == "Verbannen."
+    # Its template omits Innate: translating only Exhaust would lose a mechanic.
+    assert "description_upgraded" not in overlay["cards"]["CARD.STATICUP"]
 
 
-def test_build_uses_the_single_number_fallback_when_wording_drifted(built):
+def test_build_preserves_english_when_translation_would_erase_aoe(built):
     _report, overlay = built
-    assert overlay["cards"]["CARD.DRIFTED"]["description"] == "Verursache 6 Schaden."
+    assert "CARD.DRIFTED" not in overlay["cards"]
 
 
 def test_build_resolves_a_suffixed_id_back_to_its_catalog_entry(built):

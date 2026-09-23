@@ -308,7 +308,7 @@ def _run_orchestrator(tmp_path, monkeypatch, primary_result, secondary_result):
         lambda: Stub("secondary.example", secondary_result),
     )
     _ = urllib.error  # imported for parity with fetcher error handling
-    fetcher.run_fetcher(save_only=False)
+    fetcher._refresh_staged(save_only=False)
     path = tmp_path / "cards.json"
     return json.loads(path.read_text()) if path.exists() else []
 
@@ -480,6 +480,7 @@ def _make_bundle(tmp_path: Path, cards) -> tuple[Path, str]:
         json.dumps([{"id": "ENCOUNTER.JAW_WORM", "name": "Jaw Worm"}]))
     (src / "events.json").write_text(
         json.dumps([{"id": "EVENT.NEOW", "name": "Neow"}]))
+    (src / "epochs.json").write_text(json.dumps([{"id": "EPOCH.TEST", "name": "Test"}]))
     (src / "patches.json").write_text(
         json.dumps([{"patch": "v0.110.0", "date": "2026-07-31"}]))
     (src / "last_updated.txt").write_text("2026-07-22T20:00:00+00:00")
@@ -844,7 +845,7 @@ class TestWikiCardFieldsAreNotDropped:
                            .read_text(encoding="utf-8"))
         with_star = [c for c in cards if c.get("star_cost")]
         assert with_star, "no shipped card carries a star_cost"
-        assert all(c["star_cost"].isdigit() for c in with_star)
+        assert all(c["star_cost"].isdigit() or c["star_cost"] == "X" for c in with_star)
         # Every one belongs to the character that spends Stars.
         assert {c["character"] for c in with_star} == {"Regent"}
 
@@ -876,3 +877,53 @@ class TestWikiCardFieldsAreNotDropped:
                            .read_text(encoding="utf-8"))
         zero = [c for c in cards if c.get("cost_upgraded") == "0"]
         assert zero, "no shipped card becomes free when upgraded -- 0 was dropped again"
+
+
+def test_partial_source_join_cannot_mix_main_star_cost_and_beta_effect(tmp_path, monkeypatch):
+    # The inspected wiki Regent revision still described main's immediate draw.
+    # A beta primary missing Stars must not inherit that revision's cost.
+    with pytest.raises(ValueError, match="Conflicting source mechanics.*star_cost"):
+        _run_orchestrator(
+            tmp_path, monkeypatch,
+            primary_result=[_card("Guiding Star", description="Draw next turn.")],
+            secondary_result=[_card("Guiding Star", description="Draw now.", star_cost="2")],
+        )
+    assert not (tmp_path / "cards.json").exists()
+
+
+def test_claiming_same_branch_does_not_make_conflicting_upgrades_compatible(tmp_path, monkeypatch):
+    with pytest.raises(ValueError, match="Conflicting source mechanics"):
+        _run_orchestrator(
+            tmp_path, monkeypatch,
+            primary_result=[_card("Example", branch="beta", cost="0")],
+            secondary_result=[_card("Example", branch="beta", cost="1", description_upgraded="Better.")],
+        )
+
+
+def test_secondary_mechanics_cannot_replace_explicit_false_or_zero():
+    from sts2.fetcher import _check_source_compatibility
+    # Only upgraded text is missing. Explicit false and zero must participate
+    # in detecting a conflict, not be mistaken for holes to fill.
+    with pytest.raises(ValueError, match="Conflicting source mechanics"):
+        _check_source_compatibility(
+            {"id":"CARD.X", "no_upgrade":False, "cost":0},
+            {"id":"CARD.X", "no_upgrade":True, "cost":1, "description_upgraded":"New."},
+        )
+
+
+def test_wiki_presentation_variants_do_not_suppress_canonical_cards(tmp_path, monkeypatch):
+    from sts2 import fetcher
+    from sts2.sources import WikiggSource
+    monkeypatch.setattr(fetcher, 'DATA_DIR', tmp_path)
+    source = WikiggSource()
+    module = """
+    ["Mad Science"] = { Cost=1, Color="Colorless", Type="Skill", Rarity="Event", Text="Customize this card." },
+    ["Mad Science (Violence)"] = { Cost=1, Color="Colorless", Type="Attack", Rarity="Event", Text="Deal damage.", NoList=true },
+    ["Mad Science (Wisdom)"] = { Cost=1, Color="Colorless", Type="Skill", Rarity="Event", Text="Draw cards.", NoList=true },
+    ["Wither"] = { Cost=-2, Color="Colorless", Type="Status", Rarity="Status", Text="Unplayable.", NoList=false },
+    ["Wither (Upgraded)"] = { Cost=-2, Color="Colorless", Type="Status", Rarity="Status", Text="Unplayable.", NoList=true }
+    """
+    monkeypatch.setattr(source, '_fetch_modules', lambda titles: {'Module:Cards/StS2 data/Colorless':module})
+    cards = source.fetch_cards()
+    assert {card['id'] for card in cards} == {'CARD.MAD_SCIENCE', 'CARD.WITHER'}
+    assert next(card for card in cards if card['id'] == 'CARD.MAD_SCIENCE')['type'] == 'Variable'

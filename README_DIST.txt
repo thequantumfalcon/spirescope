@@ -10,15 +10,15 @@ WINDOWS
 
 IF WINDOWS BLOCKED THIS FILE:
 
-  Windows may flag Spirescope.exe as a virus. It is a false positive that
-  affects unsigned Python applications packaged with PyInstaller - the
-  packaging format is what gets flagged, not the contents.
+  Windows may warn about this unsigned application. Investigate the exact
+  warning: packaging alone does not prove a detection is incorrect. Do not
+  disable protection or add broad exclusions as a routine installation step.
 
   Verify the download yourself: compare the .sha256 file published beside
   the zip on the release page with
   Get-FileHash .\Spirescope-windows.zip -Algorithm SHA256
 
-  Full explanation, plus how to allow it or run from source instead:
+  Verification, detection reporting, and source installation:
   https://github.com/thequantumfalcon/spirescope/blob/master/docs/ANTIVIRUS.md
 
 HOW TO RUN:

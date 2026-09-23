@@ -288,3 +288,122 @@ class TestCardFiltering:
         expect(page.locator("h1")).to_contain_text("Cards")
         # Should have filtered results
         expect(page.locator(".card-link").first).to_be_visible()
+
+
+class TestLiveRevisionReload:
+    """Same-floor deck/item changes must refresh the server-rendered lists.
+
+    live.js used to reload only on an active or floor change, so a card
+    reward, upgrade or potion change on the same floor updated the counters
+    but left the lists and deck analysis stale. The page and stream are
+    served from routes here so the real live.js can be driven through exact
+    message sequences without a running game.
+    """
+
+    _PAGE = ('<!doctype html><html lang="en"><head><title>live</title></head><body>'
+             '<div class="live-cards">0</div><div class="live-gold">0</div>'
+             '<div id="live-config" data-player="0" data-was-active="true"'
+             ' data-revision="{rev}"></div>'
+             '<script src="/static/live.js"></script></body></html>')
+
+    @staticmethod
+    def _msg(rev, gold=10, deck=2):
+        return "data: " + json.dumps({
+            "active": True, "current_hp": 50, "max_hp": 80, "gold": gold,
+            "act": 1, "floor": 5, "deck": ["CARD.BASH"] * deck,
+            "relics": [], "potions": [], "revision": rev}) + "\n\n"
+
+    def _drive(self, page, live_server, page_revs, streams):
+        """Serve page_revs[i] / streams[i] to the i-th load / connection
+        (the last entry repeats); return the list of page loads."""
+        loads: list[str] = []
+        conns: list[int] = []
+
+        def serve_page(route):
+            rev = page_revs[min(len(loads), len(page_revs) - 1)]
+            loads.append(rev)
+            route.fulfill(status=200, content_type="text/html",
+                          body=self._PAGE.format(rev=rev))
+
+        def serve_stream(route):
+            body = streams[min(len(conns), len(streams) - 1)]
+            conns.append(1)
+            # A long retry keeps the ended stream from reconnecting inside
+            # the test window.
+            route.fulfill(status=200, content_type="text/event-stream",
+                          headers={"Cache-Control": "no-cache"},
+                          body="retry: 60000\n\n" + body)
+
+        page.route(f"{live_server}/live-revision-test", serve_page)
+        page.route("**/api/live/stream*", serve_stream)
+        page.goto(f"{live_server}/live-revision-test")
+        return loads
+
+    def test_same_floor_content_change_reloads(self, page, live_server):
+        loads = self._drive(page, live_server, ["aaa", "bbb"],
+                            [self._msg("aaa") + self._msg("bbb", deck=3),
+                             self._msg("bbb", deck=3)])
+        page.wait_for_timeout(2500)
+        assert loads == ["aaa", "bbb"]
+        expect(page.locator(".live-cards")).to_have_text("3")
+
+    def test_counter_only_change_does_not_reload(self, page, live_server):
+        loads = self._drive(page, live_server, ["aaa"],
+                            [self._msg("aaa", gold=10) + self._msg("aaa", gold=20)])
+        expect(page.locator(".live-gold")).to_have_text("20")
+        page.wait_for_timeout(2000)
+        assert loads == ["aaa"]
+
+    def test_persistent_page_stream_mismatch_reloads_once(self, page, live_server):
+        loads = self._drive(page, live_server, ["aaa"], [self._msg("bbb")])
+        page.wait_for_timeout(3000)
+        assert loads == ["aaa", "aaa"]
+
+
+def test_swagger_operations_render_offline_under_csp(page, live_server):
+    errors = []
+    requests = []
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
+    page.on("request", lambda request: requests.append(request.url))
+    page.route("**/*", lambda route: route.continue_() if route.request.url.startswith(live_server) else route.abort())
+    response = page.goto(live_server + "/docs")
+    assert "script-src 'self'" in response.headers["content-security-policy"]
+    expect(page.locator(".opblock").first).to_be_visible(timeout=10000)
+    operation = page.locator(".opblock").filter(has=page.locator('[data-path="/health"]'))
+    operation.locator(".opblock-summary").click()
+    operation.get_by_role("button", name="Try it out").click()
+    operation.get_by_role("button", name="Execute", exact=True).click()
+    expect(operation.locator(".live-responses-table")).to_contain_text("200")
+    assert all(url.startswith(live_server) for url in requests)
+    assert errors == []
+
+
+def test_saved_deck_retains_build_and_customized_copies(page, live_server):
+    errors = []
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.goto(live_server + "/deck")
+    record = {"version": 3, "game_version": "v0.107.1", "instances": [{
+        "card_id": "CARD.MAD_SCIENCE", "upgrade_level": 1, "enchantment": "",
+        "properties": {"ints": {"TinkerTimeType": 2, "TinkerTimeRider": 5}, "unmodeled": False},
+    }]}
+    page.evaluate("value => localStorage.setItem('spirescope_decks', JSON.stringify({Native: value}))", record)
+    page.reload()
+    page.locator("#load-deck").select_option("Native")
+    page.wait_for_url("**/deck/analyze")
+    expect(page.locator("#deck-game-version")).to_have_value("v0.107.1")
+    expect(page.get_by_text("Innate. Gain 8 Block. Draw 3 cards.", exact=False)).to_be_visible()
+    page.once("dialog", lambda dialog: dialog.accept("Saved copy"))
+    page.locator("#save-deck").click()
+    saved = page.evaluate("JSON.parse(localStorage.getItem('spirescope_decks'))")
+    copy = next(value for key, value in saved.items() if key.endswith(" / Saved copy"))
+    assert copy == record
+    # Legacy decks carry no game-build evidence, even when loaded from a main view.
+    page.evaluate("localStorage.setItem('spirescope_decks', JSON.stringify({Legacy: ['CARD.BASH']}))")
+    # Open the builder as a new visit. Playwright Firefox reloads the POST
+    # result as a GET to /deck/analyze, which correctly rejects that method.
+    page.goto(live_server + "/deck")
+    page.locator("#load-deck").select_option("Legacy")
+    expect(page.locator("#deck-game-version")).to_have_value("")
+    expect(page.get_by_text("Game version not verified; analysis uses the reference catalog.")).to_be_visible()
+    assert errors == []

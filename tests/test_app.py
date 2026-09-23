@@ -3,6 +3,8 @@
 import os
 import sys
 
+import pytest
+
 from sts2.app import _ADMIN_TOKEN, _rate_limit_store, generate_csrf_token
 
 
@@ -531,7 +533,7 @@ async def test_deck_analyze_caps_card_count(client):
         "csrf_token": generate_csrf_token(),
         "card_ids": card_ids,
     })
-    assert resp.status_code == 200
+    assert resp.status_code == 400
 
 
 async def test_admin_token_not_in_logs(client):
@@ -1481,12 +1483,13 @@ async def test_runs_ascension_invalid(client):
 
 # --- Additional coverage: middleware, CSP, rate limiting ---
 
-async def test_docs_csp_allows_cdn(client):
-    """CSP for /docs should allow cdn.jsdelivr.net scripts."""
+async def test_docs_csp_uses_local_assets(client):
+    """API docs use packaged scripts under the narrow dashboard policy."""
     resp = await client.get("/docs")
     csp = resp.headers.get("Content-Security-Policy", "")
     if resp.status_code == 200:
-        assert "cdn.jsdelivr.net" in csp
+        assert "cdn.jsdelivr.net" not in csp
+    assert "script-src 'self'" in csp
 
 
 async def test_static_cache_control(client):
@@ -1807,12 +1810,12 @@ async def test_get_live_run_merge_both_active():
     full_deck = ["CARD.STRIKE"] * 4 + ["CARD.DEFEND"] * 4 + ["CARD.BEAM_CELL", "CARD.TEMPEST"]
     save_run = CurrentRun(active=True, character="Defect", current_hp=60,
                           max_hp=80, gold=50, act=1, floor=3,
-                          deck=full_deck,
+                          seed="MATCHED", deck=full_deck,
                           deck_upgrades=[False] * len(full_deck),
                           deck_enchantments=[""] * len(full_deck),
                           potions=["POTION.FIRE_POTION"],
                           relics=["RELIC.CRACKED_CORE"])
-    log_state = {"active": True, "character": "Defect", "current_hp": 0,
+    log_state = {"seed": "MATCHED", "active": True, "character": "Defect", "current_hp": 0,
                  "max_hp": 0, "gold": 120, "act": 2, "floor": 5,
                  "deck": ["CARD.BEAM_CELL", "CARD.TEMPEST"],
                  "potions": ["POTION.POWER_POTION"],
@@ -2027,8 +2030,8 @@ async def test_watch_saves_polling_fallback():
 # ---------------------------------------------------------------------------
 
 
-async def test_coaching_defensive_gap_warning(client):
-    """Floor ≥4 with no Block keywords should produce a warning alert."""
+async def test_coaching_reports_card_text_gap_without_floor_rule(client):
+    """Missing card-text Block does not prove a floor-specific survival risk."""
     from unittest.mock import AsyncMock, patch
 
     from sts2.models import CurrentRun
@@ -2040,11 +2043,12 @@ async def test_coaching_defensive_gap_warning(client):
                return_value=run):
         resp = await client.get("/live")
     assert resp.status_code == 200
-    assert "No defensive cards by floor" in resp.text
+    assert "No defensive cards by floor" not in resp.text
+    assert "No Block generation detected in card text" in resp.text
 
 
-async def test_coaching_defensive_gap_critical(client):
-    """Floor ≥8 with no defense should escalate to critical."""
+async def test_coaching_does_not_escalate_keyword_gap_to_critical(client):
+    """Healthy HP and a keyword gap do not justify a critical floor alert."""
     from unittest.mock import AsyncMock, patch
 
     from sts2.models import CurrentRun
@@ -2056,12 +2060,13 @@ async def test_coaching_defensive_gap_critical(client):
                return_value=run):
         resp = await client.get("/live")
     assert resp.status_code == 200
-    assert "danger-critical" in resp.text
-    assert "No defensive cards by floor" in resp.text
+    assert "danger-critical" not in resp.text
+    assert "No defensive cards by floor" not in resp.text
+    assert "No Block generation detected in card text" in resp.text
 
 
-async def test_coaching_card_fatigue(client):
-    """3+ copies of same card should trigger fatigue warning."""
+async def test_coaching_does_not_assume_duplicate_penalties(client):
+    """Repeated cards alone cannot establish diminishing returns."""
     from unittest.mock import AsyncMock, patch
 
     from sts2.models import CurrentRun
@@ -2073,12 +2078,12 @@ async def test_coaching_card_fatigue(client):
                return_value=run):
         resp = await client.get("/live")
     assert resp.status_code == 200
-    assert "appears 3x in deck" in resp.text
-    assert "diminishing returns" in resp.text
+    assert "appears 3x in deck" not in resp.text
+    assert "diminishing returns" not in resp.text
 
 
-async def test_coaching_boss_prep(client):
-    """Approaching boss floor without defense should warn."""
+async def test_coaching_does_not_predict_boss_without_map(client):
+    """A cumulative floor number alone does not establish boss distance."""
     from unittest.mock import AsyncMock, patch
 
     from sts2.models import CurrentRun
@@ -2090,8 +2095,8 @@ async def test_coaching_boss_prep(client):
                return_value=run):
         resp = await client.get("/live")
     assert resp.status_code == 200
-    assert "Boss in" in resp.text
-    assert "Block/defense" in resp.text
+    assert "Boss in" not in resp.text
+    assert "No Block generation detected in card text" in resp.text
 
 
 # ---------------------------------------------------------------------------
@@ -2099,80 +2104,55 @@ async def test_coaching_boss_prep(client):
 # ---------------------------------------------------------------------------
 
 
-def test_analyze_run_low_skills():
-    """All-attack deck should warn about low Skill percentage."""
-    from unittest.mock import MagicMock
+@pytest.fixture(scope="module")
+def mech_kb():
+    from sts2.knowledge import KnowledgeBase
+    return KnowledgeBase(game_version="v0.107.1")
 
+
+def test_analyze_run_reports_card_types_without_grading(mech_kb):
+    """Card-type counts are reported for the run's own version; no ratio is judged."""
     from sts2.analytics import analyze_run
     from sts2.models import RunHistory
 
-    kb = MagicMock()
-
-    def make_card(type_):
-        card = MagicMock()
-        card.type = type_
-        card.keywords = []
-        return card
-
-    # 8 attacks, 1 skill, 1 power = 10% skills
-    cards = ["CARD.A"] * 8 + ["CARD.S"] + ["CARD.P"]
-    kb.get_card_by_id.side_effect = lambda cid: (
-        make_card("Attack") if "A" in cid else
-        make_card("Skill") if "S" in cid else
-        make_card("Power"))
-
-    run = RunHistory(id="test", character="Defect", win=False, deck=cards,
-                     relics=[], floors=[], run_time=600, ascension=0)
-    result = analyze_run(run, kb=kb)
-    texts = [i["text"] for i in result["insights"]]
-    assert any("Skills" in t and "severely" in t.lower() for t in texts)
+    deck = ["CARD.STRIKE_IRONCLAD"] * 8 + ["CARD.DEFEND_IRONCLAD", "CARD.INFLAME"]
+    run = RunHistory(id="test", character="Ironclad", win=False, deck=deck,
+                     relics=[], floors=[], run_time=600, ascension=0, build_id="v0.107.1")
+    texts = [i["text"] for i in analyze_run(run, kb=mech_kb)["insights"]]
+    assert "Final deck by card type: 8 Attack, 1 Skill, 1 Power (10 of 10 cards typed for v0.107.1)." in texts
+    assert not any("severely" in t or "Winning decks" in t or "below average" in t for t in texts)
 
 
-def test_analyze_run_no_defense():
-    """Deck with no Block keywords should flag defensive gap."""
-    from unittest.mock import MagicMock
-
+def test_analyze_run_no_block_in_card_text(mech_kb):
+    """A deck whose text never grants Block is described, not diagnosed."""
     from sts2.analytics import analyze_run
     from sts2.models import RunHistory
 
-    kb = MagicMock()
-    card = MagicMock()
-    card.type = "Attack"
-    card.keywords = ["Damage"]
-    kb.get_card_by_id.return_value = card
+    run = RunHistory(id="test", character="Ironclad", win=False,
+                     deck=["CARD.STRIKE_IRONCLAD"] * 5, relics=[], floors=[],
+                     run_time=600, ascension=0, build_id="v0.107.1")
+    insights = analyze_run(run, kb=mech_kb)["insights"]
+    line = next(i for i in insights if i["text"].startswith("Final deck card text (v0.107.1):"))
+    assert "No Block generation detected in card text" in line["text"]
+    assert line["type"] == "info"
+    assert not any("#1 cause" in i["text"] or "Block/defensive" in i["text"] for i in insights)
+
+
+def test_analyze_run_repeated_copies_are_counted(mech_kb):
+    """3+ copies of a card are listed with their count; no penalty is claimed."""
+    from sts2.analytics import analyze_run
+    from sts2.models import RunHistory
 
     run = RunHistory(id="test", character="Defect", win=False,
-                     deck=["CARD.A"] * 5, relics=[], floors=[],
-                     run_time=600, ascension=0)
-    result = analyze_run(run, kb=kb)
-    texts = [i["text"] for i in result["insights"]]
-    assert any("Block/defensive" in t for t in texts)
-
-
-def test_analyze_run_card_stacking():
-    """3+ copies of same card should warn about stacking."""
-    from unittest.mock import MagicMock
-
-    from sts2.analytics import analyze_run
-    from sts2.models import RunHistory
-
-    kb = MagicMock()
-    card = MagicMock()
-    card.type = "Attack"
-    card.keywords = ["Block"]
-    kb.get_card_by_id.return_value = card
-    kb.id_to_name.return_value = "Zap"
-
-    run = RunHistory(id="test", character="Defect", win=False,
-                     deck=["CARD.ZAP"] * 4 + ["CARD.OTHER"],
-                     relics=[], floors=[], run_time=600, ascension=0)
-    result = analyze_run(run, kb=kb)
-    texts = [i["text"] for i in result["insights"]]
-    assert any("Card stacking" in t for t in texts)
+                     deck=["CARD.ZAP"] * 4 + ["CARD.STRIKE_IRONCLAD"],
+                     relics=[], floors=[], run_time=600, ascension=0, build_id="v0.107.1")
+    texts = [i["text"] for i in analyze_run(run, kb=mech_kb)["insights"]]
+    assert any(t.startswith("Repeated copies in final deck:") and "×4" in t for t in texts)
+    assert not any("diminishing" in t or "Card stacking" in t for t in texts)
 
 
 def test_analyze_run_without_kb():
-    """Without kb, analyze_run should produce existing insights only."""
+    """Without kb, analyze_run should produce recorded-data insights only."""
     from sts2.analytics import analyze_run
     from sts2.models import RunHistory
 
@@ -2182,31 +2162,25 @@ def test_analyze_run_without_kb():
     result = analyze_run(run)
     # Should still work without kb
     assert "insights" in result
-    # No KB-powered insights about Skills percentage
+    # No card-text or card-type observations without a knowledge base
     texts = [i["text"] for i in result["insights"]]
-    assert not any("Skills" in t for t in texts)
+    assert not any("Skills" in t or "card text" in t or "card type" in t for t in texts)
 
 
-def test_analyze_run_patterns_defense_neglect():
-    """6/10 runs with no defense should produce a recurring pattern."""
-    from unittest.mock import MagicMock
-
+def test_analyze_run_patterns_no_block_recurs(mech_kb):
+    """Runs whose final deck text never grants Block are counted, not diagnosed."""
     from sts2.analytics import analyze_run_patterns
     from sts2.models import RunHistory
 
-    kb = MagicMock()
-    # All cards have no defensive keywords
-    card = MagicMock()
-    card.keywords = ["Damage"]
-    kb.get_card_by_id.return_value = card
-
-    runs = [RunHistory(id=f"r{i}", character="Defect", win=False,
-                       deck=["CARD.A"] * 5, relics=[], floors=[],
-                       run_time=600, ascension=0)
+    runs = [RunHistory(id=f"r{i}", character="Ironclad", win=False,
+                       deck=["CARD.STRIKE_IRONCLAD"] * 5, relics=[], floors=[],
+                       run_time=600, ascension=0, build_id="v0.107.1")
             for i in range(8)]
-    patterns = analyze_run_patterns(runs, kb=kb)
-    assert len(patterns) >= 1
-    assert any("Defense neglected" in p["text"] for p in patterns)
+    patterns = analyze_run_patterns(runs, kb=mech_kb)
+    assert [p["text"] for p in patterns] == [
+        "No Block generation detected in the final deck's card text in 8 of your last 8 runs."]
+    assert patterns[0]["severity"] == "info"
+    assert not any("blind spot" in p["text"] or "Defense neglected" in p["text"] for p in patterns)
 
 
 def test_analyze_run_patterns_insufficient_runs():
@@ -3117,33 +3091,40 @@ class TestHostAndBindBoundary:
 
 
 class TestCardDataBranchNotice:
-    """The cards page says which branch its text follows.
-
-    Card text is scraped from the wiki, which tracks beta. Stable trails it --
-    v0.107.1 while beta reached v0.111.0 -- so a player on stable reads costs
-    and numbers their game does not use, with nothing on the page saying so.
-    """
-
-    async def test_notice_names_both_branches(self, client):
-        from unittest.mock import patch as _patch
-
-        def _fake(branch=""):
-            return {"main": {"patch": "v0.107.1"}, "beta": {"patch": "v0.111.0"}}.get(
-                branch, {"patch": "v0.111.0"})
-
-        with _patch("sts2.patches.current_patch", side_effect=_fake):
-            resp = await client.get("/cards")
+    async def test_notice_exposes_unverified_catalog(self, client):
+        resp = await client.get("/cards")
         assert resp.status_code == 200
-        assert "v0.111.0" in resp.text and "v0.107.1" in resp.text
-        assert "Card text follows" in resp.text
+        assert "Compatibility details" in resp.text
+        assert "The remaining catalog may describe other game versions" in resp.text
+        assert "Card text follows" not in resp.text
 
-    async def test_no_notice_when_the_branches_agree(self, client):
-        """After a beta promotion the two coincide and there is nothing to warn
-        about; the line would be noise."""
+    async def test_patch_announcements_cannot_certify_mechanics(self, client):
         from unittest.mock import patch as _patch
 
         with _patch("sts2.patches.current_patch",
                     side_effect=lambda branch="": {"patch": "v0.111.0"}):
             resp = await client.get("/cards")
         assert resp.status_code == 200
+        assert "Compatibility details" in resp.text
         assert "Card text follows" not in resp.text
+
+
+async def test_badge_progress_and_requirements_survive_absent_run_history(client):
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import PlayerProgress
+    progress = PlayerProgress(badges={'ILIKESHINY':{'bronze':2}, 'FUTURE_BADGE':{'gold':1}})
+    with patch('sts2.app._get_runs', new=AsyncMock(return_value=[])), \
+         patch('sts2.app._get_progress', new=AsyncMock(return_value=progress)):
+        response = await client.get('/records')
+    assert response.status_code == 200
+    assert 'I Like Shiny' in response.text and 'Future Badge' in response.text
+    assert 'at least 25 relics' in response.text
+    assert 'main v0.107.1' in response.text
+
+
+async def test_native_event_monster_page_discloses_verified_game_version(client):
+    response = await client.get('/enemies/MONSTER.MYSTERIOUS_KNIGHT')
+    assert response.status_code == 200
+    assert '6 Strength' in response.text
+    assert 'Patterns checked for v0.107.1' in response.text

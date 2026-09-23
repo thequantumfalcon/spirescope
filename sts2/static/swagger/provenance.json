@@ -1,0 +1,25 @@
+{
+  "version": "5.33.0",
+  "files": [
+    {
+      "file": "swagger-ui-bundle.js",
+      "url": "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.33.0/swagger-ui-bundle.js",
+      "sha256": "62df541529080464a7660adc793eab7128c6193ce3be24ddc1e0e0a4a63edc2f"
+    },
+    {
+      "file": "swagger-ui.css",
+      "url": "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.33.0/swagger-ui.css",
+      "sha256": "1ac324f7dcd27e4b9386b4bd6421271ec147e922a22c05ba24b11515e9aa6321"
+    },
+    {
+      "file": "LICENSE",
+      "url": "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.33.0/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "file": "NOTICE",
+      "url": "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.33.0/NOTICE",
+      "sha256": "0d20d1adef18aee3f40dd258172155521ce702ac445cb5f7b7d60ed32dad2fb2"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 """Deck health analysis — synergy graph connectivity scoring."""
 
 
-def deck_spectral_health(card_ids, kb):
+def deck_spectral_health(card_ids, kb, *, cards=None):
     """Compute health of a deck by analyzing its synergy graph.
 
     Builds a graph where cards are nodes and shared keywords are edges.
@@ -14,11 +14,12 @@ def deck_spectral_health(card_ids, kb):
         total_edges: number of synergy connections
         avg_degree: average connections per card
     """
-    cards = []
-    for cid in card_ids:
-        card = kb.get_card_by_id(cid) if kb else None
-        if card:
-            cards.append(card)
+    if cards is None:
+        cards = []
+        for cid in card_ids:
+            card = kb.get_card_by_id(cid) if kb else None
+            if card:
+                cards.append(card)
 
     n = len(cards)
     if n < 3:
@@ -127,43 +128,32 @@ def _compute_components(matrix, max_iter=100):
     if n == 1:
         return [matrix[0][0]]
 
-    # Copy matrix
-    A = [row[:] for row in matrix]
-
-    for _ in range(max_iter):
-        # Find largest off-diagonal element
-        max_val = 0
-        p, q = 0, 1
-        for i in range(n):
-            for j in range(i + 1, n):
-                if abs(A[i][j]) > max_val:
-                    max_val = abs(A[i][j])
-                    p, q = i, j
-
-        if max_val < 1e-10:
-            break  # Converged
-
-        # Compute rotation angle
-        if abs(A[p][p] - A[q][q]) < 1e-15:
-            theta = math.pi / 4
-        else:
-            theta = 0.5 * math.atan2(2 * A[p][q], A[p][p] - A[q][q])
-
-        c = math.cos(theta)
-        s = math.sin(theta)
-
-        # Apply rotation
-        new_A = [row[:] for row in A]
-        for i in range(n):
-            if i != p and i != q:
-                new_A[i][p] = c * A[i][p] + s * A[i][q]
-                new_A[p][i] = new_A[i][p]
-                new_A[i][q] = -s * A[i][p] + c * A[i][q]
-                new_A[q][i] = new_A[i][q]
-        new_A[p][p] = c * c * A[p][p] + 2 * s * c * A[p][q] + s * s * A[q][q]
-        new_A[q][q] = s * s * A[p][p] - 2 * s * c * A[p][q] + c * c * A[q][q]
-        new_A[p][q] = 0
-        new_A[q][p] = 0
-        A = new_A
-
-    return [A[i][i] for i in range(n)]
+    # Cyclic Jacobi sweeps avoid a full matrix scan and allocation for
+    # every rotation. Preserve the input and the bounded rotation budget.
+    a = [row[:] for row in matrix]
+    rotations = 0
+    while rotations < max_iter:
+        largest = max(abs(a[p][q]) for p in range(n) for q in range(p + 1, n))
+        if largest < 1e-10:
+            break
+        for p in range(n - 1):
+            for q in range(p + 1, n):
+                apq = a[p][q]
+                if abs(apq) < 1e-12:
+                    continue
+                tau = (a[q][q] - a[p][p]) / (2 * apq)
+                tangent = math.copysign(1.0 / (abs(tau) + math.hypot(1, tau)), tau)
+                cosine = 1.0 / math.sqrt(1 + tangent * tangent)
+                sine = tangent * cosine
+                a[p][p] -= tangent * apq
+                a[q][q] += tangent * apq
+                a[p][q] = a[q][p] = 0.0
+                for k in range(n):
+                    if k != p and k != q:
+                        kp, kq = a[k][p], a[k][q]
+                        a[k][p] = a[p][k] = cosine * kp - sine * kq
+                        a[k][q] = a[q][k] = sine * kp + cosine * kq
+                rotations += 1
+                if rotations >= max_iter:
+                    return [a[i][i] for i in range(n)]
+    return [a[i][i] for i in range(n)]

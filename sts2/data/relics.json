@@ -30,7 +30,7 @@
     "description": "Start each combat with 10 Block."
   },
   {
-    "id": "RELIC.ANCHOR_FAKE",
+    "id": "RELIC.FAKE_ANCHOR",
     "name": "Anchor???",
     "character": "Event",
     "rarity": "Event",
@@ -167,7 +167,7 @@
     "description": "At the start of each combat, heal 2 HP."
   },
   {
-    "id": "RELIC.BLOOD_VIAL_FAKE",
+    "id": "RELIC.FAKE_BLOOD_VIAL",
     "name": "Blood Vial???",
     "character": "Event",
     "rarity": "Event",
@@ -790,7 +790,7 @@
     "description": "Every 3 turns, gain 1 Energy."
   },
   {
-    "id": "RELIC.HAPPY_FLOWER_FAKE",
+    "id": "RELIC.FAKE_HAPPY_FLOWER",
     "name": "Happy Flower???",
     "character": "Event",
     "rarity": "Event",
@@ -993,7 +993,7 @@
     "description": "Upon pickup, raise your Max HP by 7 and heal all of your HP."
   },
   {
-    "id": "RELIC.LEES_WAFFLE_FAKE",
+    "id": "RELIC.FAKE_LEES_WAFFLE",
     "name": "Lee's Waffle???",
     "character": "Event",
     "rarity": "Event",
@@ -1071,7 +1071,7 @@
     "description": "Upon pickup, raise your Max HP by 14."
   },
   {
-    "id": "RELIC.MANGO_FAKE",
+    "id": "RELIC.FAKE_MANGO",
     "name": "Mango???",
     "character": "Event",
     "rarity": "Event",
@@ -1308,7 +1308,7 @@
     "description": "If you end your turn without Block, gain 6 Block."
   },
   {
-    "id": "RELIC.ORICHALCUM_FAKE",
+    "id": "RELIC.FAKE_ORICHALCUM",
     "name": "Orichalcum???",
     "character": "Event",
     "rarity": "Event",
@@ -1843,7 +1843,7 @@
     "description": "At the start of your turn, draw 2 additional cards. Start each combat Confused."
   },
   {
-    "id": "RELIC.SNECKO_EYE_FAKE",
+    "id": "RELIC.FAKE_SNECKO_EYE",
     "name": "Snecko Eye???",
     "character": "Event",
     "rarity": "Event",
@@ -1924,7 +1924,7 @@
     "description": "Cards containing “Strike” deal 3 additional damage."
   },
   {
-    "id": "RELIC.STRIKE_DUMMY_FAKE",
+    "id": "RELIC.FAKE_STRIKE_DUMMY",
     "name": "Strike Dummy???",
     "character": "Event",
     "rarity": "Event",
@@ -1987,7 +1987,7 @@
     "description": "Whenever you would deal 4 or less unblocked attack damage, increase it to 5."
   },
   {
-    "id": "RELIC.THE_CHOSEN_CHEESE",
+    "id": "RELIC.CHOSEN_CHEESE",
     "name": "The Chosen Cheese",
     "character": "Event",
     "rarity": "Event",
@@ -2001,7 +2001,7 @@
     "description": "The merchant no longer runs out of cards, relics, or potions and his prices are reduced by 20%."
   },
   {
-    "id": "RELIC.THE_MERCHANTS_RUG_FAKE",
+    "id": "RELIC.FAKE_MERCHANTS_RUG",
     "name": "The Merchant's Rug???",
     "character": "Event",
     "rarity": "Event",
@@ -2161,7 +2161,7 @@
     "fetched_at": "2026-08-08"
   },
   {
-    "id": "RELIC.VENERABLE_TEA_SET_FAKE",
+    "id": "RELIC.FAKE_VENERABLE_TEA_SET",
     "name": "Venerable Tea Set???",
     "character": "Event",
     "rarity": "Event",

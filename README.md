@@ -11,7 +11,7 @@
 
 A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/enemy lookup, deck analysis, live run tracking, run history, analytics, community meta, and strategy guides. No cloud, no accounts, no telemetry. Runs entirely on your machine.
 
-**Game data:** current through STS2 **v0.111.0** (refreshed 2026-09-15). Card text follows the **beta** branch; the stable branch is on v0.107.1, so if you play stable some costs and numbers will differ from your game. Refresh anytime with `python -m sts2 update`.
+**Game data:** the catalog includes STS2 **v0.111.0 beta** changes (bundle updated 2026-09-23). The latest announced main patch verified on 2026-09-22 is **v0.107.1**, so some card costs and effects differ for main-branch players. Complete build-specific coverage remains under review; see the [game coverage audit and completion plan](docs/GAME_COVERAGE.md). A data refresh does not certify compatibility.
 
 <p align="center">
   <img src="docs/screenshot-dashboard.png" alt="SpireScope Dashboard — your runs, your stats, your data" width="80%">
@@ -85,7 +85,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Deck Health Score** — Synergy graph analysis scoring deck coherence from 0-100. Identifies orphan cards with zero synergy connections.
 - **Archetype Drift** — Alerts when your card picks drift away from your deck's archetype mid-run.
 - **Cascade Map** — Open a completed run to see, for each card you picked, how damage taken, fight length, and HP changed afterwards. Observational before/after comparison — later floors are harder, so it shows what happened after a pick, not what the pick caused.
-- **Prophecy Engine** — Pre-run predictions based on your history: win probability, danger zone floors, and strategic recommendations. Shown on the home page and graded against the outcome on the run detail page.
+- **Prophecy Engine** — Historical estimates based on your recorded runs: observed win rate, danger zone floors, and strategic recommendations. Shown on the home page and graded against the outcome on the run detail page.
 - **Hypothesis Lab** — Register strategic beliefs (*"Skipping elites helps"*) and test them with a Beta-Binomial model across your runs: posterior win rates per arm and the probability your history leans that way. An association in your own runs, not a controlled result.
 - **Rivalry Seeds** — Export your run, share the seed with a friend, import their run, and compare decisions against your own attempt on that seed.
 - **Run Integrity** — SHA-256 checksum over a run's complete record, shown on the run detail page and embedded in every export; imports are re-checked against it. Tamper evidence, not proof of authorship.
@@ -105,13 +105,12 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 **[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)** — extract the zip, open the `Spirescope` folder and double-click `Spirescope.exe`. Your browser opens automatically; leave the console window open while you use it, since closing it stops the app. (If the browser doesn't open, go to `http://127.0.0.1:8000` yourself.) A macOS build ([Spirescope-macos.zip](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-macos.zip)) is also attached to each release. All archives ship with `.sha256` checksum files.
 
 > **Windows may warn you, or block the file outright** ("contains a virus or
-> potentially unwanted software"). This is a false positive on unsigned
-> PyInstaller apps — the packaging format, not the contents. **[Read
-> docs/ANTIVIRUS.md](docs/ANTIVIRUS.md)** for why it happens, how to verify
-> the download yourself with the published SHA-256, and how to run from
-> source instead if you'd rather not touch the executable at all.
+> potentially unwanted software"). Investigate the exact warning; unsigned
+> packaging alone does not establish that a detection is incorrect. See
+> **[docs/ANTIVIRUS.md](docs/ANTIVIRUS.md)** for checksum and provenance
+> verification, detection reporting, and source installation.
 
-SpireScope is open source, local-only by default, and the packaged release avoids the UPX-compressed hidden-window profile that triggers extra false positives. Builds are produced only by GitHub Actions from tagged commits in this repository, and GitHub Releases is the only official download source.
+SpireScope is open source, local-only by default, and the packaged release disables UPX compression and uses a visible console. Builds are produced only by GitHub Actions from tagged commits in this repository, and GitHub Releases is the only official download source.
 
 > **macOS will refuse to run the download until you clear the quarantine
 > flag.** The build is not signed or notarized, so Gatekeeper blocks it —
@@ -226,14 +225,16 @@ spirescope localize --list          # which languages your install offers
 spirescope localize --lang de,ja    # only these
 ```
 
-A standard installation offers thirteen languages besides English. Because the
-text comes from your own install, it stays in step with whatever game version
-you have rather than going stale. Anything the game does not translate — and
-any card added since your installed version — stays in English.
+Available languages depend on the installed game and Spirescope's language map.
+Names and templates come from that installation, while numeric values are
+aligned with the bundled catalog. This does not make beta catalog mechanics
+compatible with a main-branch installation. Unresolved text falls back to English;
+rerun localization after a game update. Indonesian support and build-specific
+overlay validation remain part of the [coverage plan](docs/GAME_COVERAGE.md).
 
 ## Why SpireScope?
 
-Unlike cloud trackers, SpireScope runs entirely on your machine -- your run data never leaves your PC. Unlike browser extensions, it works on any OS and doesn't require game mods. Unlike the wiki, it knows your specific run history and tracks how your win rate changes across patches, characters, and ascension levels. And unlike anything else in the STS2 ecosystem, it's fully open source.
+SpireScope runs locally and reads your save files without requiring a game mod. It tracks your recorded results across patches, characters and ascension levels. Optional sync/export features share data only when you invoke them. The source is open under the MIT license; supported desktop builds and qualification limits are documented in [STABILIZATION.md](docs/STABILIZATION.md).
 
 ## Works Without STS2 Installed
 
@@ -364,9 +365,9 @@ SpireScope auto-detects both vanilla and modded paths; history merges across the
 
 ## Code signing
 
-Windows release builds are currently **unsigned**, which is why Windows
-Defender and SmartScreen may flag the download — a false positive on the
-packaging format rather than the contents. See
+Windows release builds are currently **unsigned**. Windows Defender or
+SmartScreen warnings need investigation; packaging alone does not establish
+their cause. See
 [docs/ANTIVIRUS.md](docs/ANTIVIRUS.md) to verify a download yourself or run
 from source instead.
 

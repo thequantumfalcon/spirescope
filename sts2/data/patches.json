@@ -188,7 +188,7 @@
         "RELIC.DISTINGUISHED_CAPE"
       ],
       "enemies": [
-        "BOSS.AEONGLASS",
+        "MONSTER.AEONGLASS",
         "MONSTER.TORCH_HEAD_AMALGAM"
       ]
     }

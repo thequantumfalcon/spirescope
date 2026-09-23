@@ -15,7 +15,10 @@
   <p class="text-muted">{{ relic.character }}</p>
 </div>
 
+{% if relic.mechanics_version %}<p class="text-sm text-muted">General rules checked for {{ relic.mechanics_version }}. Remaining uses and stored selections are not calculated here.</p>
+{% elif mechanics_view_version %}<p class="text-sm text-muted">Reference rules; not verified for {{ mechanics_view_version }}.</p>{% endif %}
 <div class="detail-desc">{{ relic.description }}</div>
+{% if relic.mechanics_note %}<p class="text-sm text-muted">{{ relic.mechanics_note }}</p>{% endif %}
 
 {% if relic_runs %}
 <h2>Your Stats</h2>

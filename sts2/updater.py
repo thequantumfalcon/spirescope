@@ -292,6 +292,8 @@ def _extract_capped(bundle: Path, extract_dir: Path) -> None:
             raise _RejectBundle(f"Bundle has too many entries ({len(members)}) — rejected.")
         total = 0
         for member in members:
+            if not (member.isfile() or member.isdir()):
+                raise _RejectBundle("Bundle links and special files are not permitted.")
             if member.isfile():
                 if member.size > _MAX_MEMBER_BYTES:
                     raise _RejectBundle(f"Bundle entry {member.name!r} is too large — rejected.")
@@ -311,29 +313,10 @@ def _validate_dataset(root: Path) -> None:
     whole directory must survive an actual KnowledgeBase construction before
     it is allowed anywhere near the live data directory.
     """
-    if not (root / "last_updated.txt").exists():
-        raise _RejectBundle("Bundle missing last_updated.txt — rejected.")
-    for name in _REQUIRED_DATA_FILES:
-        path = root / name
-        if not path.exists():
-            raise _RejectBundle(f"Bundle missing {name} — rejected.")
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError) as exc:
-            raise _RejectBundle(f"Bundle {name} failed to parse — rejected.") from exc
-        if not isinstance(data, list):
-            raise _RejectBundle(f"Bundle {name} is not a list — rejected.")
-        # Entries must be objects carrying their family's identifying field;
-        # anything else is not the shape consumers assume. patches.json keys
-        # on "patch" rather than "id", so the field is per-family.
-        key = _IDENTIFYING_FIELD[name]
-        for entry in data:
-            if not isinstance(entry, dict) or not entry.get(key):
-                raise _RejectBundle(
-                    f"Bundle {name} has entries without a '{key}' field "
-                    f"— rejected.")
-        if name == "cards.json" and len(data) < _MIN_CARDS:
-            raise _RejectBundle("Bundle cards.json has too few entries — rejected.")
+    from sts2.data_health import inspect_dataset
+    health = inspect_dataset(root, _MIN_CARDS)
+    if not health["ok"]:
+        raise _RejectBundle("Bundle rejected: " + "; ".join(health["errors"]))
     _validate_loadable(root)
 
 
@@ -348,30 +331,13 @@ def _validate_loadable(root: Path) -> None:
     import subprocess
     import sys
 
-    probe = (
-        "import os, sys\n"
-        "from sts2.knowledge import KnowledgeBase\n"
-        "kb = KnowledgeBase()\n"
-        "if len(kb.cards) < %d:\n"
-        "    sys.exit('too few cards loaded')\n"
-        "if not kb.relics or not kb.enemies:\n"
-        "    sys.exit('required families did not load')\n"
-    ) % _MIN_CARDS
-    env = dict(os.environ, STS2_DATA_DIR=str(root))
-    # Isolate the probe completely. Beyond not touching real user state, the
-    # save directory MUST be redirected: KnowledgeBase back-fills entities
-    # discovered from save files, so a probe pointed at the player's real
-    # saves reports families as present that the bundle does not actually
-    # contain — an empty-relics bundle passed until this was redirected.
-    probe_dir = root / "_probe"
-    env["STS2_STATE_DIR"] = str(probe_dir / "state")
-    env["STS2_MODS_DIR"] = str(probe_dir / "mods")
-    env["STS2_SAVE_DIR"] = str(probe_dir / "saves")
-    env["STS2_LOG_FILE"] = str(probe_dir / "none.log")
-    env["STS2_LANG"] = "en"
+    # The same public command dispatch is shipped in source, wheels and exe.
+    command = [sys.executable]
+    if not getattr(sys, "frozen", False):
+        command.extend(["-m", "sts2"])
+    command.extend(["validate-data", str(root.resolve()), "--min-cards", str(_MIN_CARDS)])
     try:
-        result = subprocess.run([sys.executable, "-c", probe], env=env,
-                                capture_output=True, text=True, timeout=120)
+        result = subprocess.run(command, capture_output=True, text=True, timeout=120)
     except (OSError, subprocess.SubprocessError) as exc:
         raise _RejectBundle("Bundle could not be verified — rejected.") from exc
     if result.returncode != 0:
@@ -483,7 +449,7 @@ def _merge_local_build_ids(local_patches, staged_patches) -> None:
             log.warning("Could not write merged patch manifest: %s", exc)
 
 
-def install_data_update() -> tuple[bool, str]:
+def install_data_update(*, archive: Path | None = None, checksum: Path | None = None) -> tuple[bool, str]:
     """Download, sha256-verify, extract, validate, and atomically install the
     pending data bundle.
 
@@ -497,13 +463,14 @@ def install_data_update() -> tuple[bool, str]:
     stays in place. Returns (ok, message).
     """
     global _data_update
-    info = _data_update
+    info = {"tag": "local verified bundle"} if archive is not None else _data_update
     if not info:
         return False, "No data update available."
 
     from sts2.config import DATA_DIR
     recover_data_dir()
 
+    DATA_DIR.parent.mkdir(parents=True, exist_ok=True)
     lock_path = _lock_path(DATA_DIR)
     lock_fd = _acquire_lock(lock_path)
     if lock_fd is None:
@@ -514,9 +481,9 @@ def install_data_update() -> tuple[bool, str]:
 
     staging = None
     try:
-        if not info["tarball"].startswith(_GITHUB_PREFIX):
+        if archive is None and not info["tarball"].startswith(_GITHUB_PREFIX):
             raise _RejectBundle("Bundle URL is not from github.com — rejected.")
-        if not info["sha256"].startswith(_GITHUB_PREFIX):
+        if archive is None and not info["sha256"].startswith(_GITHUB_PREFIX):
             raise _RejectBundle("Checksum URL is not from github.com — rejected.")
 
         with tempfile.TemporaryDirectory(prefix="sts2-data-") as tmp:
@@ -526,8 +493,19 @@ def install_data_update() -> tuple[bool, str]:
 
             import hashlib
             hasher = hashlib.sha256()
-            _download_capped(info["tarball"], bundle, _MAX_BUNDLE_BYTES, hasher=hasher)
-            _download_capped(info["sha256"], checksum_file, _MAX_CHECKSUM_BYTES)
+            if archive is None:
+                _download_capped(info["tarball"], bundle, _MAX_BUNDLE_BYTES, hasher=hasher)
+                _download_capped(info["sha256"], checksum_file, _MAX_CHECKSUM_BYTES)
+            else:
+                if checksum is None:
+                    raise _RejectBundle("A checksum file is required.")
+                if archive.stat().st_size > _MAX_BUNDLE_BYTES or checksum.stat().st_size > _MAX_CHECKSUM_BYTES:
+                    raise _RejectBundle("Local bundle or checksum exceeds size limit.")
+                shutil.copyfile(archive, bundle)
+                shutil.copyfile(checksum, checksum_file)
+                with bundle.open("rb") as stream:
+                    while chunk := stream.read(65536):
+                        hasher.update(chunk)
 
             expected = checksum_file.read_text(encoding="utf-8").split()[0].strip().lower()
             if hasher.hexdigest() != expected:
@@ -548,7 +526,7 @@ def install_data_update() -> tuple[bool, str]:
             # The listing is snapshotted first — the app may write into
             # DATA_DIR while this runs, so iterating it live risks a file
             # vanishing mid-loop.
-            for item in list(DATA_DIR.iterdir()):
+            for item in list(DATA_DIR.iterdir()) if DATA_DIR.exists() else []:
                 target = staging / item.name
                 if target.exists():
                     continue
@@ -567,11 +545,13 @@ def install_data_update() -> tuple[bool, str]:
             # never leaves fewer than one full dataset on disk.
             backup = _backup_dir(DATA_DIR)
             shutil.rmtree(backup, ignore_errors=True)
-            DATA_DIR.rename(backup)
+            if DATA_DIR.exists():
+                DATA_DIR.rename(backup)
             try:
                 staging.rename(DATA_DIR)
             except OSError:
-                backup.rename(DATA_DIR)  # roll back
+                if backup.exists():
+                    backup.rename(DATA_DIR)  # roll back
                 raise
             staging = None
         _data_update = None

@@ -30,7 +30,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -44,7 +44,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements-lock.txt
+          pip install --require-hashes -r requirements-lock.txt
           pip install -e . --no-deps
 
       - name: Lint with ruff
@@ -168,12 +168,17 @@ jobs:
           rc="${{ steps.tests.outputs.rc }}"
           exit "${rc:-0}"
 
-  browser:
+  browser-engines:
     # Playwright suite: the only tests that exercise the actual JS/CSS
     # (theme persistence, mobile nav, search, contrast). Separate job so a
     # browser download never slows the main matrix.
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -187,18 +192,28 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements-lock.txt
+          pip install --require-hashes -r requirements-lock.txt
           pip install -e . --no-deps
           # browser extra isn't part of the dev-extra lock (kept separate so
           # the Chromium download doesn't weigh down every other leg);
-          # pinned to the same floor pyproject.toml declares.
-          pip install "pytest-playwright>=0.4.0" "playwright>=1.40.0"
+          # Exact versions qualified in the stabilization browser suite.
+          pip install "pytest-playwright==0.7.2" "playwright==1.58.0"
 
-      - name: Install Chromium
-        run: playwright install --with-deps chromium
+      - name: Install ${{ matrix.browser }}
+        run: playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run browser tests
-        run: pytest -m browser -q
+        run: pytest -m browser -q --browser ${{ matrix.browser }}
+
+  browser:
+    # Preserve the required branch-protection context, now gating all engines.
+    needs: browser-engines
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require every browser engine
+        run: test "${{ needs.browser-engines.result }}" = "success"
 
   test-windows:
     # New leg (not a required status check -- "test (3.11)" etc. are), so a
@@ -218,7 +233,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements-lock.txt
+          pip install --require-hashes -r requirements-lock.txt
           pip install -e . --no-deps
 
       - name: Run tests
@@ -239,7 +254,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements-lock.txt
+          pip install --require-hashes -r requirements-lock.txt
           pip install -e . --no-deps
 
       - name: Run tests
@@ -275,7 +290,8 @@ jobs:
       - name: Install the wheel into a fresh venv outside the checkout
         run: |
           python -m venv /tmp/wheel-venv
-          /tmp/wheel-venv/bin/pip install dist/*.whl
+          /tmp/wheel-venv/bin/pip install --require-hashes -r requirements-runtime-lock.txt
+          /tmp/wheel-venv/bin/pip install --no-deps dist/*.whl
 
       - name: Import smoke test from a neutral cwd
         run: |
@@ -283,6 +299,11 @@ jobs:
           cd /tmp/neutral-cwd
           STS2_STATE_DIR=/tmp/sts2-state STS2_SAVE_DIR=/tmp/sts2-saves \
             /tmp/wheel-venv/bin/python -c "import sts2.app"
+
+      - name: Qualify the installed wheel command
+        run: |
+          python scripts/qualify_artifact.py --executable /tmp/wheel-venv/bin/spirescope \
+            --dataset sts2/data --output dist/wheel-qualification.json
 
       - name: Assert packaged resource directories exist
         run: |
@@ -310,14 +331,14 @@ jobs:
         run: |
           docker run --rm -d --name spirescope-ci \
             -e STS2_ALLOW_UNAUTHENTICATED=1 \
-            -p 8000:8000 \
+            -p 127.0.0.1:8000:8000 \
             spirescope-ci
 
-      - name: Wait for /health
+      - name: Wait for /ready
         run: |
           ok=0
           for i in $(seq 1 30); do
-            if curl -sf http://127.0.0.1:8000/health > /dev/null; then
+            if curl -sf http://127.0.0.1:8000/ready > /dev/null; then
               ok=1
               break
             fi
@@ -329,6 +350,17 @@ jobs:
             exit 1
           fi
           echo "container healthy"
+
+      - name: Qualify installed container command and key pages
+        run: |
+          for path in cards settings docs static/swagger/init.js; do
+            curl -fsS "http://127.0.0.1:8000/$path" > /dev/null
+          done
+          docker cp scripts/qualify_artifact.py spirescope-ci:/tmp/qualify_artifact.py
+          docker exec spirescope-ci python /tmp/qualify_artifact.py \
+            --executable /usr/local/bin/spirescope --dataset /app/sts2/data \
+            --output /tmp/container-qualification.json
+          docker cp spirescope-ci:/tmp/container-qualification.json container-qualification.json
 
       - name: Stop container
         if: always()

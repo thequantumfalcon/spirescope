@@ -204,3 +204,25 @@ def test_localize_against_real_game(tmp_path, monkeypatch):
         for eid, entry in entries.items():
             for field, value in entry.items():
                 assert not residue.search(value), f"{eid}.{field}: {value!r}"
+
+
+@pytest.mark.parametrize("version", ["v0.111.0", None])
+def test_overlay_uses_selected_install_identity_and_handles_small_tables(tmp_path, monkeypatch, version):
+    game = _build_pck(tmp_path, {
+        "localization/eng/cards.json": _loc({"BASH.title":"Bash", "BASH.description":"Damage."}),
+        "localization/deu/cards.json": _loc({"BASH.title":"Schlag", "BASH.description":"Schaden."}),
+    })
+    if version:
+        (game/'release_info.json').write_text(json.dumps({"version":version, "commit":"abc12345"}))
+    app = tmp_path / 'catalog'
+    app.mkdir()
+    for family in ('cards', 'relics', 'potions', 'enemies', 'events'):
+        rows = [{'id':'CARD.BASH', 'name':'Bash', 'description':'Damage.'}] if family == 'cards' else []
+        (app/f'{family}.json').write_text(json.dumps(rows))
+    monkeypatch.setattr(localize, 'APP', app)
+    monkeypatch.setattr(localize, 'OUT', tmp_path/'overlays')
+    paths = localize.run(langs=['de'], game_dir=game)
+    overlay = json.loads(paths[0].read_text(encoding='utf-8'))
+    assert overlay['_meta']['game_version'] == (version or '')
+    assert overlay['_meta'].get('game_commit', '') == ('abc12345' if version else '')
+    assert overlay['cards']['CARD.BASH']['name'] == 'Schlag'

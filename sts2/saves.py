@@ -4,6 +4,7 @@ import json
 import logging
 from pathlib import Path
 
+from sts2.card_properties import read_card_properties
 from sts2.config import CHARACTER_IDS, SAVE_DIR, SAVE_DIRS, local_steam_id
 from sts2.models import CurrentRun, PlayerProgress, RunFloor, RunHistory
 
@@ -42,7 +43,7 @@ def _read_json(path: Path) -> dict | None:
                 return None
             with open(path, "r", encoding="utf-8") as f:
                 return json.load(f)
-    except (json.JSONDecodeError, OSError) as e:
+    except (json.JSONDecodeError, UnicodeError, OSError) as e:
         log.warning("Failed to read %s: %s", path, e)
     return None
 
@@ -81,6 +82,48 @@ def _get_player_stats(player_stats: list[dict], player: dict) -> dict:
         if str(ps.get("player_id", "")) == player_id:
             return ps
     return {}
+
+
+def _picked_card_ids(p_stats: dict) -> list[str]:
+    """Every card taken on a floor, in save order.
+
+    A floor can carry several was_picked choices (a shop lists each card
+    bought; some fights grant two rewards) — keeping only one lost the rest.
+    """
+    return [
+        cid for cc in p_stats.get("card_choices", [])
+        if cc.get("was_picked") and (cid := (cc.get("card") or {}).get("id", ""))
+    ]
+
+
+def _upgrade_level(card: dict) -> int | None:
+    """Preserve an explicitly observed native level; missing is unavailable."""
+    value = card.get("current_upgrade_level", card.get("upgrade_count"))
+    return value if type(value) is int and value >= 0 else None
+
+
+def _history_upgrade_levels(cards: list[dict]) -> list[int]:
+    levels = [_upgrade_level(card) for card in cards]
+    # The compatible array contract has no nullable elements. Preserve other
+    # run facts and mark this field unavailable rather than inventing zeros.
+    return [level for level in levels if level is not None] if all(level is not None for level in levels) else []
+
+
+def _current_run_seed(data: dict) -> str:
+    """Native current saves store rng.seed; older fixtures/exports used seed.
+
+    Never manufacture a seed from a dict, number or contradictory fields: it
+    is identity evidence used to join private player state with log telemetry.
+    """
+    def valid(value) -> str:
+        return value if isinstance(value, str) and 0 < len(value) <= 256 and value.isprintable() else ""
+
+    rng = data.get("rng")
+    native = valid(rng.get("seed")) if isinstance(rng, dict) else ""
+    legacy = valid(data.get("seed"))
+    if native and legacy and native != legacy:
+        return ""
+    return native or legacy
 
 
 def get_current_run(player_index: int | None = None) -> CurrentRun:
@@ -152,7 +195,7 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
     # Filter empty IDs: malformed entries would pollute analytics with "" keys.
     deck_entries = [c for c in player.get("deck", []) if c.get("id")]
     deck = [c.get("id", "") for c in deck_entries]
-    deck_upgrades = [(c.get("upgrade_count") or 0) > 0 for c in deck_entries]
+    deck_upgrades = [(_upgrade_level(c) or 0) > 0 for c in deck_entries]
     deck_enchantments = [
         (c.get("enchantment") or {}).get("id", "") for c in deck_entries
     ]
@@ -162,7 +205,7 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
     # Parse floor history
     floors = []
     floor_num = 0
-    for act_floors in data.get("map_point_history", []):
+    for act_idx, act_floors in enumerate(data.get("map_point_history", [])):
         for floor_data in act_floors:
             floor_num += 1
             rooms = floor_data.get("rooms", [])
@@ -170,10 +213,7 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
             p_stats = _get_player_stats(
                 floor_data.get("player_stats", []), player
             )
-            card_picked = ""
-            for cc in p_stats.get("card_choices", []):
-                if cc.get("was_picked"):
-                    card_picked = cc.get("card", {}).get("id", "")
+            cards_picked = _picked_card_ids(p_stats)
             floors.append(RunFloor(
                 floor=floor_num,
                 type=floor_data.get("map_point_type", room.get("room_type", "")),
@@ -185,7 +225,9 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
                 current_hp=p_stats.get("current_hp", 0),
                 max_hp=p_stats.get("max_hp", 0),
                 gold=p_stats.get("current_gold", 0),
-                card_picked=card_picked,
+                gold_observed="current_gold" in p_stats,
+                cards_picked=cards_picked,
+                act=act_idx + 1,
             ))
 
     try:
@@ -208,12 +250,16 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
         deck=deck,
         deck_upgrades=deck_upgrades,
         deck_enchantments=deck_enchantments,
+        deck_properties=[read_card_properties(c.get("props")) for c in deck_entries],
         relics=relics,
         potions=potions,
         events_seen=data.get("events_seen", []),
         floors=floors,
         player_index=player_index,
         total_players=total_players,
+        player_id=str(player.get("id", "") or ""),
+        seed=_current_run_seed(data),
+        start_time=int(data["start_time"]) if type(data.get("start_time")) is int else 0,
     )
 
 
@@ -312,6 +358,30 @@ def get_progress() -> PlayerProgress | None:
     )
 
 
+def _read_history_files(history_dir: Path):
+    """Overlap slow file opens with four readers; retain input order and bounds."""
+    from concurrent.futures import ThreadPoolExecutor
+    from itertools import islice
+
+    def read(path):
+        try:
+            if path.stat().st_size > _MAX_SAVE_FILE_SIZE:
+                log.warning("Skipping oversized run file %s (> %d bytes)", path.name, _MAX_SAVE_FILE_SIZE)
+                return None
+            raw = path.read_bytes()
+            return path, raw, hashlib.sha256(raw).hexdigest()
+        except OSError as exc:
+            log.warning("Failed to read run file %s: %s", path.name, exc)
+            return None
+
+    paths = iter(history_dir.glob("*.run"))
+    with ThreadPoolExecutor(max_workers=4, thread_name_prefix="history-read") as pool:
+        while batch := list(islice(paths, 32)):
+            for result in pool.map(read, batch):
+                if result is not None:
+                    yield result
+
+
 def get_run_history() -> list[RunHistory]:
     """Read all completed run history files, merged across save trees.
 
@@ -327,17 +397,7 @@ def get_run_history() -> list[RunHistory]:
         history_dir = save_dir / "history"
         if not history_dir.exists():
             continue
-        for run_file in history_dir.glob("*.run"):
-            try:
-                if run_file.stat().st_size > _MAX_SAVE_FILE_SIZE:
-                    log.warning("Skipping oversized run file %s (> %d bytes)",
-                                run_file.name, _MAX_SAVE_FILE_SIZE)
-                    continue
-                raw = run_file.read_bytes()
-                digest = hashlib.sha256(raw).hexdigest()
-            except OSError as e:
-                log.warning("Failed to read run file %s: %s", run_file.name, e)
-                continue
+        for run_file, raw, digest in _read_history_files(history_dir):
             stem = run_file.stem
             if stem not in first_digest:
                 first_digest[stem] = digest
@@ -371,7 +431,12 @@ def get_run_history() -> list[RunHistory]:
             # Try both to keep per-character analytics consistent across both.
             char_key = player.get("character_id") or player.get("character", "")
             character = CHARACTER_IDS.get(char_key, char_key or "Unknown")
-            deck = [c.get("id", "") for c in player.get("deck", []) if c.get("id")]
+            deck_entries = [c for c in player.get("deck", []) if c.get("id")]
+            deck = [c.get("id", "") for c in deck_entries]
+            deck_upgrades = _history_upgrade_levels(deck_entries)
+            deck_enchantments = [
+                (c.get("enchantment") or {}).get("id", "") or "" for c in deck_entries
+            ]
             enchantments = {
                 c["id"]: (c.get("enchantment") or {}).get("id", "")
                 for c in player.get("deck", [])
@@ -382,7 +447,7 @@ def get_run_history() -> list[RunHistory]:
             # Parse floor history
             floors = []
             floor_num = 0
-            for act_floors in data.get("map_point_history", []):
+            for act_idx, act_floors in enumerate(data.get("map_point_history", [])):
                 for floor_data in act_floors:
                     floor_num += 1
                     rooms = floor_data.get("rooms", [])
@@ -392,7 +457,6 @@ def get_run_history() -> list[RunHistory]:
                         floor_data.get("player_stats", []), player
                     )
 
-                    card_picked = ""
                     cards_offered = []
                     for cc in p_stats.get("card_choices", []):
                         card_info = cc.get("card", {})
@@ -400,8 +464,7 @@ def get_run_history() -> list[RunHistory]:
                         if not cid:
                             continue  # skip empty IDs — they pollute pick-rate counters
                         cards_offered.append(cid)
-                        if cc.get("was_picked"):
-                            card_picked = cid
+                    cards_picked = _picked_card_ids(p_stats)
 
                     floors.append(RunFloor(
                         floor=floor_num,
@@ -414,10 +477,12 @@ def get_run_history() -> list[RunHistory]:
                         current_hp=p_stats.get("current_hp", 0),
                         max_hp=p_stats.get("max_hp", 0),
                         gold=p_stats.get("current_gold", 0),
+                        gold_observed="current_gold" in p_stats,
                         cards_offered=cards_offered,
-                        card_picked=card_picked,
+                        cards_picked=cards_picked,
                         potions_used=[p for p in p_stats.get("potion_used", []) if p],
                         potions_gained=[p.get("choice", "") for p in p_stats.get("potion_choices", []) if p.get("was_picked") and p.get("choice")],
+                        act=act_idx + 1,
                     ))
 
             # Timestamp: prefer start_time from data, fallback to filename
@@ -438,6 +503,9 @@ def get_run_history() -> list[RunHistory]:
                 killed_by=data.get("killed_by_encounter", ""),
                 run_time=data.get("run_time", 0),
                 deck=deck,
+                deck_upgrades=deck_upgrades,
+                deck_enchantments=deck_enchantments,
+                deck_properties=[read_card_properties(c.get("props")) for c in deck_entries],
                 relics=relics,
                 floors=floors,
                 build_id=data.get("build_id", ""),

@@ -308,7 +308,7 @@ class TestCoaching:
         with patch("sts2.routes.get_current_run", return_value=mock_run):
             resp = await client.get("/live")
         assert resp.status_code == 200
-        assert "WARNING" in resp.text or "warning" in resp.text.lower()
+        assert "WARNING: 31% HP" in resp.text
 
     async def test_no_danger_healthy_hp(self, client):
         from sts2.models import CurrentRun
@@ -648,18 +648,20 @@ class TestCSP:
         assert "cdn.jsdelivr.net" not in csp
         assert "script-src 'self'" in csp
 
-    async def test_relaxed_csp_on_docs(self, client):
+    async def test_narrow_csp_on_docs(self, client):
         resp = await client.get("/docs")
         # /docs may redirect or return 200
         if resp.status_code == 200:
             csp = resp.headers.get("Content-Security-Policy", "")
-            assert "cdn.jsdelivr.net" in csp
+            assert "cdn.jsdelivr.net" not in csp
+        assert "script-src 'self'" in csp
 
-    async def test_relaxed_csp_on_openapi(self, client):
+    async def test_narrow_csp_on_openapi(self, client):
         resp = await client.get("/openapi.json")
         if resp.status_code == 200:
             csp = resp.headers.get("Content-Security-Policy", "")
-            assert "cdn.jsdelivr.net" in csp
+            assert "cdn.jsdelivr.net" not in csp
+        assert "script-src 'self'" in csp
 
 
 # ---------------------------------------------------------------------------

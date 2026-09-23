@@ -2,7 +2,62 @@
 
 ## Unreleased
 
+## v3.2.0
+
+Exact-version game coverage for main v0.107.1, honest analysis, co-op live
+tracking, and a fully qualified release path. Beta status is retained.
+
 ### Fixed
+
+- Preserve per-copy upgrades/enchantments, all card picks, native acts and
+  observed zero gold through history, analysis and exports.
+- Keep translated presentation independent of mechanics; use effective upgraded
+  costs and disclose unknown mechanics and the limits of historical estimates.
+- Preserve card identities and mechanical fields across sources. Refresh complete
+  datasets in staging and retain the previous data on validation failure.
+- Validate and install data through fixed-purpose commands that work in the
+  packaged executable, including interrupted-update recovery.
+- Reset live telemetry across log replacement and new runs; attribute native
+  player IDs conservatively and refresh same-floor deck/relic/potion changes.
+- Reject malformed imports and impossible aggregate counters; serialize imports
+  and persist retry digests atomically. Report hypothesis persistence failures.
+- Correct IPv6 authority/effective-bind handling and serve functional Swagger UI
+  entirely from bundled assets under the dashboard content security policy.
+- Bound and coalesce graph analysis work, correct its cache identity, and improve
+  the eigensolver for large decks.
+- Remove unsupported deck, live and run-history advice: deck size, card-type
+  ratios, repeated copies, skipped rewards, fixed boss distances, speed-run and
+  death-floor guesses. Analysis reports recorded counts and card-text checks
+  with their game-version scope stated.
+- Classify the three companions (Osty, Byrdpip, Pael's Legion) and the
+  Architect ending: never discovered as enemies, the ending is not a combat in
+  run analysis, and companions are labelled in run detail.
+- Review all 22 main-build enchantments (titles, rules, eligibility) in the
+  v0.107.1 profile; run detail shows the rules for the run's own version.
+- Review move sets and turn patterns for all 107 monsters with reviewed HP
+  from the game's own move definitions; enemy pages show them for that
+  version in place of reference patterns.
+- Ignore mechanics-profile sections this version does not read, with a
+  logged warning, so a newer data bundle that adds a reviewed family still
+  installs on an older app. Known sections stay strict and the schema version
+  still gates incompatible shapes.
+- Parse the co-op embark line (player list, ascension, seed) and take the
+  local player's character from it; lobby character messages for other
+  players no longer override it. Live telemetry now matches co-op runs
+  instead of reporting unavailable.
+- Run post-mortem insights name the encounter from the catalog instead of
+  showing its raw id.
+
+### Release engineering
+
+- Qualify desktop builds on CPython 3.14.7, inventory bundled runtime packages
+  and include them in attested SBOMs; use a hashed runtime lock for Docker.
+- Run actual executable install, corrupt-update and recovery checks after final
+  runtime cleanup. Dry-run artifact names identify the exact candidate commit.
+- Document support/recovery and honest security-warning guidance. The candidate
+  remains Beta pending independent platform/game-session and pilot evidence.
+
+### Documentation
 
 - **The link preview advertised five numbers, all of them wrong.** The social
   card hard-coded its counts and every one had drifted: 589 cards against 639,
