@@ -134,6 +134,18 @@ class EventMechanics(BaseModel):
     definition_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
 
 
+class EnchantmentMechanics(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    title: str = Field(min_length=1)
+    description: str = Field(min_length=1)
+    extra_card_text: str = ""
+    eligibility: str = Field(min_length=1)
+    mechanics_note: str = ""
+    definition_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    verification: Literal["native-review"]
+
+
 class MechanicsProfile(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
 
@@ -151,6 +163,7 @@ class MechanicsProfile(BaseModel):
     encounter_rosters: dict[str, EncounterRoster] = {}
     epochs: dict[str, EpochMechanics] = {}
     events: dict[str, EventMechanics] = {}
+    enchantments: dict[str, EnchantmentMechanics] = {}
 
 
 class MechanicsCatalog(BaseModel):
@@ -194,6 +207,9 @@ def read_profiles(path: Path) -> dict[str, MechanicsProfile]:
         for identifier in profile.potions:
             if not identifier.startswith("POTION.") or canonical_id(identifier) != identifier:
                 raise ValueError("mechanics must use canonical potion identifiers")
+        for identifier in profile.enchantments:
+            if not identifier.startswith("ENCHANTMENT.") or canonical_id(identifier) != identifier:
+                raise ValueError("mechanics must use canonical enchantment identifiers")
         for identifier, mechanics in profile.cards.items():
             traits = profile.card_traits.get(identifier)
             if traits and any(mechanics.model_dump()[key] != value

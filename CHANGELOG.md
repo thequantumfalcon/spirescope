@@ -27,6 +27,8 @@
 - Classify the three companions (Osty, Byrdpip, Pael's Legion) and the
   Architect ending: never discovered as enemies, the ending is not a combat in
   run analysis, and companions are labelled in run detail.
+- Review all 22 main-build enchantments (titles, rules, eligibility) in the
+  v0.107.1 profile; run detail shows the rules for the run's own version.
 
 ### Release engineering
 

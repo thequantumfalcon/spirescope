@@ -182,6 +182,17 @@ all cross-item interactions are not simulated. Jeweled Mask explicitly records
 the observed discrepancy between its printed combat-long free effect and the
 installed implementation's opening-turn duration.
 
+The profile also records titles, printed rules, extra card text and eligibility
+for all **22 enchantments** registered in the main build, with the review in
+[enchantment mechanics](game-baselines/v0.107.1-enchantment-mechanics.json).
+Strings come from the installed game's English localization table; fixed
+values come from each native model's canonical variables, and `{Amount}` stays
+a placeholder because it is saved per card copy and Spirescope records only
+the enchantment id. Run detail shows the rules for the run's own recorded
+version and falls back to the bare title otherwise. Status reset timing,
+per-copy amounts and interactions with relics, powers and other cards are not
+simulated, and deck analysis still counts enchanted copies as unmodeled.
+
 Initial HP is reviewed for all **107 monsters**, including the Ascension 8
 threshold. These are base ranges before multiplayer scaling, encounter effects,
 powers or modifiers. [The HP review](game-baselines/v0.107.1-monster-stats.json)
@@ -241,8 +252,8 @@ review. Foreign builds and extra reference records remain visibly unverified.
 
 [The complete native model registry inventory](game-baselines/v0.107.1-model-registry.json)
 resolves all **1,624 registered model types** to unique definition hashes. Of
-these, **1,193** match the bounded card/relic/potion/monster/encounter/event
-reviews above. This is an inventory, not a completion percentage: it includes
+these, **1,215** match the bounded card/relic/potion/enchantment/monster/
+encounter/event reviews above. This is an inventory, not a completion percentage: it includes
 mock models, deprecated placeholders and infrastructure. Three companion models
 and the Architect event, encounter and visual creature are identified separately.
 The application applies that classification: Osty, Byrdpip and Pael's Legion
@@ -314,8 +325,8 @@ behavior, full event simulations, other systems and beta remain review work. The
 profiles and refresh guards do not establish unreviewed families' or beta's
 compatibility.
 
-Characters, acts, powers, enchantments, afflictions, orbs, keywords, intents,
-ascension, modes, modifiers and achievements need a feature-by-feature audit.
+Characters, acts, powers, afflictions, orbs, keywords, intents, ascension,
+modes, modifiers and achievements need a feature-by-feature audit.
 Some already participate in live records or analysis. A model definition alone
 does not prove a shipped feature; neither does absence of a dedicated JSON file
 prove that the app has no support for it.

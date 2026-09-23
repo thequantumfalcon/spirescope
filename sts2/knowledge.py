@@ -317,6 +317,12 @@ class KnowledgeBase:
         reference = self._reference_enemies.get(enemy_id, enemy)
         return apply_enemy_profile(reference, self.mechanics_profiles.get(game_version))
 
+    def enchantment_for_version(self, enchantment_id: str, game_version: str | None = None):
+        """Reviewed enchantment rules for a version; None when unreviewed."""
+        version = self.game_version if game_version is None else game_version
+        profile = self.mechanics_profiles.get(version)
+        return profile.enchantments.get(canonical_id(enchantment_id)) if profile else None
+
     def mechanics_status(self, game_version: str | None = None) -> dict:
         version = self.game_version if game_version is None else game_version
         profile = self.mechanics_profiles.get(version)
@@ -331,6 +337,7 @@ class KnowledgeBase:
             "reviewed_encounters": len(profile.encounter_rosters) if profile else 0,
             "reviewed_epochs": len(profile.epochs) if profile else 0,
             "reviewed_events": len(profile.events) if profile else 0,
+            "reviewed_enchantments": len(profile.enchantments) if profile else 0,
             "complete": bool(profile and profile.complete),
             "overlay_descriptions_skipped": self.overlay_descriptions_skipped,
         }
@@ -1096,6 +1103,10 @@ class KnowledgeBase:
         badge = self._badges_by_id.get(entity_id)
         if badge:
             return badge.name
+        if entity_id.startswith("ENCHANTMENT."):
+            facts = self.enchantment_for_version(entity_id)
+            if facts:
+                return facts.title
         # Fallback: strip prefix and format
         if "." in entity_id:
             return entity_id.split(".", 1)[1].replace("_", " ").title()

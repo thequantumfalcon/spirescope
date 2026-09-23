@@ -7,7 +7,7 @@
       "branch": "main",
       "reviewed_at": "2026-09-22",
       "complete": false,
-      "scope": "Reviewed main pool printed card traits and base/first-upgrade rules; three saved-card rules; potion printed rules/usage/targets; relic general rules/rarity. Runtime simulation, all availability conditions, other systems and beta are not certified. Initial monster HP before scaling and modifiers is reviewed separately from attack patterns. Declared possible-monster rosters and room types are reviewed for main encounters; counts, generation probabilities and encounter adjustments are not simulated. Main timeline requirements, reward lists, score-bar sequence and placeholder classification are reviewed; saved progression is displayed rather than simulated. Separately reviewed event option effects and local eligibility checks are included only for listed events. All 65 main event/Ancient option summaries and normal act-pool placement are reviewed; cross-entity hooks and event simulations remain bounded.",
+      "scope": "Reviewed main pool printed card traits and base/first-upgrade rules; three saved-card rules; potion printed rules/usage/targets; relic general rules/rarity. Runtime simulation, all availability conditions, other systems and beta are not certified. Initial monster HP before scaling and modifiers is reviewed separately from attack patterns. Declared possible-monster rosters and room types are reviewed for main encounters; counts, generation probabilities and encounter adjustments are not simulated. Main timeline requirements, reward lists, score-bar sequence and placeholder classification are reviewed; saved progression is displayed rather than simulated. Separately reviewed event option effects and local eligibility checks are included only for listed events. All 65 main event/Ancient option summaries and normal act-pool placement are reviewed; cross-entity hooks and event simulations remain bounded. Enchantment titles, rules and eligibility are reviewed; per-copy amounts and status reset timing are not.",
       "cards": {
         "CARD.GUIDING_STAR": {
           "star_cost": "2",
@@ -24179,6 +24179,206 @@
             "Glory"
           ],
           "sp_only": false
+        }
+      },
+      "enchantments": {
+        "ENCHANTMENT.ADROIT": {
+          "title": "Adroit",
+          "description": "Gain {Amount} Block.",
+          "extra_card_text": "Gain {Amount} Block.",
+          "eligibility": "No card-type restriction beyond the base enchantment rules.",
+          "mechanics_note": "On play the owner gains {Amount} Block; the amount is saved per copy.",
+          "definition_sha256": "b287082df5e51435b2ef8b4eab406c25efe59559fb6a466e433b620a5d9a33e4",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.CLONE": {
+          "title": "Clone",
+          "description": "This card can be duplicated at Rest Sites.",
+          "extra_card_text": "",
+          "eligibility": "No card-type restriction beyond the base enchantment rules.",
+          "mechanics_note": "No combat behaviour in the native enchantment model; the Rest Site duplication offer is implemented elsewhere and was not reviewed.",
+          "definition_sha256": "b6899d775d0fd540f3258741270deb1d8f8ef762a7abedb94c847dd3909e618d",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.CORRUPTED": {
+          "title": "Corrupted",
+          "description": "Deal 50% more damage, but lose 2 HP.",
+          "extra_card_text": "Lose 2 HP.",
+          "eligibility": "Attacks only.",
+          "mechanics_note": "Powered attack damage x1.5; on play the owner takes 2 unblockable, unpowered damage.",
+          "definition_sha256": "4710884614a3b2f898604feeb5c72426c1b052329d5292973768cd65ba1f29b8",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.GLAM": {
+          "title": "Glam",
+          "description": "This card has Replay once per combat.",
+          "extra_card_text": "",
+          "eligibility": "No card-type restriction beyond the base enchantment rules.",
+          "mechanics_note": "Replay 1 until first used in a combat, then disabled for that combat.",
+          "definition_sha256": "8c1de1683f8c261b3423955027a9bdd4867419e5ee0b6be62b02325588ea0772",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.GOOPY": {
+          "title": "Goopy",
+          "description": "This card gains Exhaust. When played, permanently increase this card's Block by 1.",
+          "extra_card_text": "Permanently increase this card's Block by 1.",
+          "eligibility": "Cards tagged Defend.",
+          "mechanics_note": "Adds Exhaust; each play permanently raises the saved amount, which adds amount minus 1 Block.",
+          "definition_sha256": "19d2be6a8583c65d161a15b99e09b68532c5031ddb7b21266d2f7bcee97b3989",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.IMBUED": {
+          "title": "Imbued",
+          "description": "This card is played automatically at the start of each combat.",
+          "extra_card_text": "Imbued.",
+          "eligibility": "Skills only.",
+          "mechanics_note": "Auto-played in the owner's first turn; starts at the bottom of the draw pile.",
+          "definition_sha256": "c946d1480f9f88fc0be71ad13a1cce0c54808955290017802b74474eac90929c",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.INKY": {
+          "title": "Inky",
+          "description": "This card deals 1 additional damage and applies 1 Weak.",
+          "extra_card_text": "Apply 1 Weak (to ALL enemies when the card targets all enemies).",
+          "eligibility": "No card-type restriction beyond the base enchantment rules.",
+          "mechanics_note": "+1 damage on powered attacks; on play applies 1 Weak to the target, or to all enemies for all-enemy cards.",
+          "definition_sha256": "322356054573431f49266f1b85f0588bac8f241483421a2c628820cc77938132",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.INSTINCT": {
+          "title": "Instinct",
+          "description": "This card's attack damage is doubled.",
+          "extra_card_text": "",
+          "eligibility": "Attacks only.",
+          "mechanics_note": "Powered attack damage x2.",
+          "definition_sha256": "07bd12f12f1a0c6e5d7ac67b119e3aef4056dbf38c99b743ddde414087d9a725",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.MOMENTUM": {
+          "title": "Momentum",
+          "description": "Increase this card's attack damage by {Amount} this combat when played.",
+          "extra_card_text": "Increase this card's damage by {Amount} this combat.",
+          "eligibility": "Attacks only.",
+          "mechanics_note": "Each play adds the saved amount to this combat's extra damage, cumulatively.",
+          "definition_sha256": "ce3d9a86951cee5bafe4afbeeb37627dbf4ecc388724df89b44eb9c5be25b625",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.NIMBLE": {
+          "title": "Nimble",
+          "description": "Increases Block gained from this card by {Amount}.",
+          "extra_card_text": "",
+          "eligibility": "Cards that gain Block.",
+          "mechanics_note": "+{Amount} Block.",
+          "definition_sha256": "5b1e5a9075e3f0cff0e39b644dae1a749cc6460721a13423c62231ec93f75142",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.PERFECT_FIT": {
+          "title": "Perfect Fit",
+          "description": "Whenever this would be shuffled into your Draw Pile, place it on the top instead.",
+          "extra_card_text": "Perfect Fit.",
+          "eligibility": "No card-type restriction beyond the base enchantment rules.",
+          "mechanics_note": "On shuffles after the initial one the card is moved to the top of the draw pile.",
+          "definition_sha256": "d78b98df8693c9527f9536c3a3376ea322ce0750cbbdab2d31a8deca0f3caa33",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.ROYALLY_APPROVED": {
+          "title": "Royally Approved",
+          "description": "This card has Innate and Retain.",
+          "extra_card_text": "",
+          "eligibility": "Attacks and Skills.",
+          "mechanics_note": "Adds Innate and Retain.",
+          "definition_sha256": "41c53d4f161894297de2bacc43f2e97c59e6445965420c80769580518f65ad38",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.SHARP": {
+          "title": "Sharp",
+          "description": "Increases damage on this card by {Amount}.",
+          "extra_card_text": "",
+          "eligibility": "Attacks only.",
+          "mechanics_note": "+{Amount} damage on powered attacks.",
+          "definition_sha256": "1de8537303cbb6860d4f55b117c0a8cd6179f3c455456b87393c0a7d135339c5",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.SLITHER": {
+          "title": "Slither",
+          "description": "When you draw this card, randomize its cost from 0 to 3.",
+          "extra_card_text": "",
+          "eligibility": "Playable cards without an X cost.",
+          "mechanics_note": "When drawn into the hand, the cost becomes a random 0 to 3 for this combat.",
+          "definition_sha256": "5a8d07070b85e1857f02b54e0274fa219a98298996f6415fd3edd61f9789e995",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.SLUMBERING_ESSENCE": {
+          "title": "Slumbering Essence",
+          "description": "If this card is in your hand at the end of turn, reduce its cost by 1 until it is played.",
+          "extra_card_text": "",
+          "eligibility": "No card-type restriction beyond the base enchantment rules.",
+          "mechanics_note": "If in hand before the end-of-turn discard, cost -1 until played.",
+          "definition_sha256": "8ee5d46b2b724c76fdb70ffc8740264b75d4a137798ded3ebdbf49a0b570cc67",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.SOULS_POWER": {
+          "title": "Soul's Power",
+          "description": "This card loses Exhaust.",
+          "extra_card_text": "",
+          "eligibility": "Cards with their own Exhaust keyword.",
+          "mechanics_note": "Removes Exhaust.",
+          "definition_sha256": "3144f630de831e91c6572f38346b136c51141c79c21bbf0984d5f6b1c4c23aec",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.SOWN": {
+          "title": "Sown",
+          "description": "The first time you play this card each combat, gain {Amount} Energy.",
+          "extra_card_text": "Gain {Amount} Energy.",
+          "eligibility": "No card-type restriction beyond the base enchantment rules.",
+          "mechanics_note": "First play in a combat gains {Amount} Energy, then disabled for that combat.",
+          "definition_sha256": "fadb10496fc943c5f094de456eb73a7d64dd58104bd920ee2f9c70d95d502e1c",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.SPIRAL": {
+          "title": "Spiral",
+          "description": "This card gains Replay 1.",
+          "extra_card_text": "",
+          "eligibility": "Basic-rarity cards tagged Strike or Defend.",
+          "mechanics_note": "Replay 1.",
+          "definition_sha256": "846fafdcc376d712cc2e1313477781055cc938c833c8a7ae2d1516bffc145f4c",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.STEADY": {
+          "title": "Steady",
+          "description": "This card gains Retain.",
+          "extra_card_text": "",
+          "eligibility": "No card-type restriction beyond the base enchantment rules.",
+          "mechanics_note": "Adds Retain.",
+          "definition_sha256": "d999e603f048e30cb4644806984e08a40ae5fe3218904fd84a56510f35ccb2eb",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.SWIFT": {
+          "title": "Swift",
+          "description": "The first time you play this card, draw {Amount} card(s).",
+          "extra_card_text": "Draw {Amount} card(s) the first time this is played.",
+          "eligibility": "No card-type restriction beyond the base enchantment rules.",
+          "mechanics_note": "First play draws {Amount} cards, then disabled.",
+          "definition_sha256": "fe26a7f3c0d452121e4234ca5e0280d1285baff834b403aba7ea3e176f5995f7",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.TEZCATARAS_EMBER": {
+          "title": "Tezcatara's Ember",
+          "description": "Costs 0, deals 3 additional damage, and gains Eternal.",
+          "extra_card_text": "",
+          "eligibility": "No card-type restriction beyond the base enchantment rules.",
+          "mechanics_note": "Cost set to 0, Eternal added, +3 damage on powered attacks.",
+          "definition_sha256": "734384ada15d22f19cf65d6a67223a025d8a7a3dd6ee932e56d24884f2c9ba23",
+          "verification": "native-review"
+        },
+        "ENCHANTMENT.VIGOROUS": {
+          "title": "Vigorous",
+          "description": "The first time this card is played, it deals {Amount} additional damage.",
+          "extra_card_text": "",
+          "eligibility": "Attacks only.",
+          "mechanics_note": "First play deals +{Amount} damage, then disabled.",
+          "definition_sha256": "cce81d7cc2f06d963e5b046aa91d357cd24e03f14078a775451174bda6ba556e",
+          "verification": "native-review"
         }
       }
     }

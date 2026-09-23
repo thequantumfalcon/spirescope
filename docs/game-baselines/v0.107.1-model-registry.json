@@ -11,7 +11,7 @@
     "Reviewed catalog scope retains each family's existing limits, including HP-only monster review.",
     "This is a model registry inventory, not a certification of all behavior or all game systems.",
     "Epochs, intents, keywords, modes and other non-AbstractModel systems need separate inventories.",
-    "Companion and ending identities are traced, but not yet integrated as dedicated app records."
+    "Companion and ending identities are classified in the application: never enemies, and the ending is not a combat."
   ],
   "family_counts": {
     "Achievements": {
@@ -43,7 +43,7 @@
       "deprecated_placeholder": 1
     },
     "Enchantments": {
-      "needs_family_review": 22,
+      "reviewed_catalog_scope": 22,
       "deprecated_placeholder": 1,
       "mock": 1
     },
@@ -4477,145 +4477,169 @@
       "registry_index": 631,
       "family": "Enchantments",
       "definition_sha256": "b287082df5e51435b2ef8b4eab406c25efe59559fb6a466e433b620a5d9a33e4",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.ADROIT"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Clone": {
       "registry_index": 632,
       "family": "Enchantments",
       "definition_sha256": "b6899d775d0fd540f3258741270deb1d8f8ef762a7abedb94c847dd3909e618d",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.CLONE"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Corrupted": {
       "registry_index": 633,
       "family": "Enchantments",
       "definition_sha256": "4710884614a3b2f898604feeb5c72426c1b052329d5292973768cd65ba1f29b8",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.CORRUPTED"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.DeprecatedEnchantment": {
       "registry_index": 634,
       "family": "Enchantments",
       "definition_sha256": "45c274f8d2cbdf3e232dd79c589ba341eb7f598a7f603d078d222046da4d8caf",
-      "status": "deprecated_placeholder"
+      "status": "deprecated_placeholder",
+      "model_id": "ENCHANTMENT.DEPRECATED_ENCHANTMENT"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Glam": {
       "registry_index": 635,
       "family": "Enchantments",
       "definition_sha256": "8c1de1683f8c261b3423955027a9bdd4867419e5ee0b6be62b02325588ea0772",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.GLAM"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Goopy": {
       "registry_index": 636,
       "family": "Enchantments",
       "definition_sha256": "19d2be6a8583c65d161a15b99e09b68532c5031ddb7b21266d2f7bcee97b3989",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.GOOPY"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Imbued": {
       "registry_index": 637,
       "family": "Enchantments",
       "definition_sha256": "c946d1480f9f88fc0be71ad13a1cce0c54808955290017802b74474eac90929c",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.IMBUED"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Inky": {
       "registry_index": 638,
       "family": "Enchantments",
       "definition_sha256": "322356054573431f49266f1b85f0588bac8f241483421a2c628820cc77938132",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.INKY"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Instinct": {
       "registry_index": 639,
       "family": "Enchantments",
       "definition_sha256": "07bd12f12f1a0c6e5d7ac67b119e3aef4056dbf38c99b743ddde414087d9a725",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.INSTINCT"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Mocks.MockFreeEnchantment": {
       "registry_index": 640,
       "family": "Enchantments",
       "definition_sha256": "9f6051d4eda7ac470b536bcb4a8bf86d4fad80218b16e6f034956a058830ad81",
-      "status": "mock"
+      "status": "mock",
+      "model_id": "ENCHANTMENT.MOCK_FREE_ENCHANTMENT"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Momentum": {
       "registry_index": 641,
       "family": "Enchantments",
       "definition_sha256": "ce3d9a86951cee5bafe4afbeeb37627dbf4ecc388724df89b44eb9c5be25b625",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.MOMENTUM"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Nimble": {
       "registry_index": 642,
       "family": "Enchantments",
       "definition_sha256": "5b1e5a9075e3f0cff0e39b644dae1a749cc6460721a13423c62231ec93f75142",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.NIMBLE"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.PerfectFit": {
       "registry_index": 643,
       "family": "Enchantments",
       "definition_sha256": "d78b98df8693c9527f9536c3a3376ea322ce0750cbbdab2d31a8deca0f3caa33",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.PERFECT_FIT"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.RoyallyApproved": {
       "registry_index": 644,
       "family": "Enchantments",
       "definition_sha256": "41c53d4f161894297de2bacc43f2e97c59e6445965420c80769580518f65ad38",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.ROYALLY_APPROVED"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Sharp": {
       "registry_index": 645,
       "family": "Enchantments",
       "definition_sha256": "1de8537303cbb6860d4f55b117c0a8cd6179f3c455456b87393c0a7d135339c5",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.SHARP"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Slither": {
       "registry_index": 646,
       "family": "Enchantments",
       "definition_sha256": "5a8d07070b85e1857f02b54e0274fa219a98298996f6415fd3edd61f9789e995",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.SLITHER"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.SlumberingEssence": {
       "registry_index": 647,
       "family": "Enchantments",
       "definition_sha256": "8ee5d46b2b724c76fdb70ffc8740264b75d4a137798ded3ebdbf49a0b570cc67",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.SLUMBERING_ESSENCE"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.SoulsPower": {
       "registry_index": 648,
       "family": "Enchantments",
       "definition_sha256": "3144f630de831e91c6572f38346b136c51141c79c21bbf0984d5f6b1c4c23aec",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.SOULS_POWER"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Sown": {
       "registry_index": 649,
       "family": "Enchantments",
       "definition_sha256": "fadb10496fc943c5f094de456eb73a7d64dd58104bd920ee2f9c70d95d502e1c",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.SOWN"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Spiral": {
       "registry_index": 650,
       "family": "Enchantments",
       "definition_sha256": "846fafdcc376d712cc2e1313477781055cc938c833c8a7ae2d1516bffc145f4c",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.SPIRAL"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Steady": {
       "registry_index": 651,
       "family": "Enchantments",
       "definition_sha256": "d999e603f048e30cb4644806984e08a40ae5fe3218904fd84a56510f35ccb2eb",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.STEADY"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Swift": {
       "registry_index": 652,
       "family": "Enchantments",
       "definition_sha256": "fe26a7f3c0d452121e4234ca5e0280d1285baff834b403aba7ea3e176f5995f7",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.SWIFT"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.TezcatarasEmber": {
       "registry_index": 653,
       "family": "Enchantments",
       "definition_sha256": "734384ada15d22f19cf65d6a67223a025d8a7a3dd6ee932e56d24884f2c9ba23",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.TEZCATARAS_EMBER"
     },
     "MegaCrit.Sts2.Core.Models.Enchantments.Vigorous": {
       "registry_index": 654,
       "family": "Enchantments",
       "definition_sha256": "cce81d7cc2f06d963e5b046aa91d357cd24e03f14078a775451174bda6ba556e",
-      "status": "needs_family_review"
+      "status": "reviewed_catalog_scope",
+      "model_id": "ENCHANTMENT.VIGOROUS"
     },
     "MegaCrit.Sts2.Core.Models.Encounters.AeonglassBoss": {
       "registry_index": 655,

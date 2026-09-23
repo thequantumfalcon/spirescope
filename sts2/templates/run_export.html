@@ -38,7 +38,7 @@
     {% for card_id in run.deck %}
     {% set upg = run.deck_upgrades[loop.index0] if loop.index0 < run.deck_upgrades|length else 0 %}
     {% set ench = run.deck_enchantments[loop.index0] if per_instance else run.enchantments.get(card_id, '') %}
-    <span class="tag tag-keyword">{{ kb.id_to_name(card_id) }}{% if upg %}+{% if upg > 1 %}{{ upg }}{% endif %}{% endif %}{% if ench %} &#10022; {{ kb.id_to_name(ench) }}{% endif %}</span>
+    <span class="tag tag-keyword">{{ kb.id_to_name(card_id) }}{% if upg %}+{% if upg > 1 %}{{ upg }}{% endif %}{% endif %}{% if ench %}{% set facts = kb.enchantment_for_version(ench, run.build_id) %} &#10022; {{ facts.title if facts else kb.id_to_name(ench) }}{% endif %}</span>
     {% endfor %}
     </div>
 

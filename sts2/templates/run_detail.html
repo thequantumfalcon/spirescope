@@ -37,7 +37,7 @@
 {% for card_id in run.deck %}
 {% set upg = run.deck_upgrades[loop.index0] if loop.index0 < run.deck_upgrades|length else 0 %}
 {% set ench = run.deck_enchantments[loop.index0] if per_instance else run.enchantments.get(card_id, '') %}
-<a href="/cards/{{ card_id }}?game_version={{ run.build_id|urlencode }}" class="tag tag-keyword card-link">{{ kb.id_to_name(card_id) }}{% if upg %}<span class="text-green" title="Upgraded">+{% if upg > 1 %}{{ upg }}{% endif %}</span>{% endif %}{% if ench %} <span class="text-accent" title="Enchanted: {{ kb.id_to_name(ench) }}">&#10022; {{ kb.id_to_name(ench) }}</span>{% endif %}</a>
+<a href="/cards/{{ card_id }}?game_version={{ run.build_id|urlencode }}" class="tag tag-keyword card-link">{{ kb.id_to_name(card_id) }}{% if upg %}<span class="text-green" title="Upgraded">+{% if upg > 1 %}{{ upg }}{% endif %}</span>{% endif %}{% if ench %}{% set facts = kb.enchantment_for_version(ench, run.build_id) %} <span class="text-accent" title="{% if facts %}{{ facts.title }} ({{ run.build_id }}): {{ facts.description }} {{ facts.eligibility }}{% else %}Enchanted: {{ kb.id_to_name(ench) }}{% endif %}">&#10022; {{ facts.title if facts else kb.id_to_name(ench) }}</span>{% endif %}</a>
 {% endfor %}
 </div>
 <a href="/deck?from_run={{ run.id }}" class="btn btn-sm btn-secondary">Analyze Deck</a>
