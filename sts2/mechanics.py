@@ -81,6 +81,35 @@ class MonsterStats(BaseModel):
         return self
 
 
+class MonsterMove(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    state: str = Field(pattern=r"^[A-Z0-9_]+$")
+    title: str = Field(min_length=1)
+    intent: str = Field(min_length=1)
+    effect: str = Field(min_length=1)
+
+
+class MonsterMoves(BaseModel):
+    """Paraphrased move set and turn pattern from the native move state machine."""
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    moves: list[MonsterMove] = Field(min_length=1, max_length=20)
+    pattern: str = Field(min_length=1)
+    entry_effects: str = ""
+    definition_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    verification: Literal["native-review"]
+
+
+def render_monster_moves(facts: MonsterMoves) -> list[str]:
+    """Pattern lines for the enemy page, one per move plus the turn order."""
+    lines = [f"{move.title} ({move.intent}): {move.effect}" for move in facts.moves]
+    lines.append(f"Pattern: {facts.pattern}")
+    if facts.entry_effects:
+        lines.append(f"On entering combat: {facts.entry_effects}")
+    return lines
+
+
 class EncounterRoster(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
 
@@ -164,6 +193,7 @@ class MechanicsProfile(BaseModel):
     epochs: dict[str, EpochMechanics] = {}
     events: dict[str, EventMechanics] = {}
     enchantments: dict[str, EnchantmentMechanics] = {}
+    monster_moves: dict[str, MonsterMoves] = {}
 
 
 class MechanicsCatalog(BaseModel):
@@ -210,6 +240,11 @@ def read_profiles(path: Path) -> dict[str, MechanicsProfile]:
         for identifier in profile.enchantments:
             if not identifier.startswith("ENCHANTMENT.") or canonical_id(identifier) != identifier:
                 raise ValueError("mechanics must use canonical enchantment identifiers")
+        for identifier in profile.monster_moves:
+            if not identifier.startswith("MONSTER.") or canonical_id(identifier) != identifier:
+                raise ValueError("monster moves must use canonical monster identifiers")
+            if identifier not in profile.monster_stats:
+                raise ValueError("monster moves require reviewed monster stats")
         for identifier, mechanics in profile.cards.items():
             traits = profile.card_traits.get(identifier)
             if traits and any(mechanics.model_dump()[key] != value
@@ -297,13 +332,19 @@ def apply_enemy_profile(enemy: Enemy, profile: MechanicsProfile | None) -> Enemy
     if profile is None or enemy.source == "mod":
         return enemy
     facts = profile.encounter_rosters.get(canonical_id(enemy.id))
-    if facts is None:
+    if facts is not None:
+        return enemy.model_copy(update={
+            "monster_ids": list(facts.monster_ids), "roster_version": profile.game_version,
+            "type": facts.room_type,
+            # An encounter has several possible monsters, not one HP range.
+            "hp_range": "", "stats_version": "", "stats_note": "",
+        })
+    moves = profile.monster_moves.get(canonical_id(enemy.id))
+    if moves is None:
         return enemy
+    # Reviewed moves replace reference patterns; tips stay reference strategy.
     return enemy.model_copy(update={
-        "monster_ids": list(facts.monster_ids), "roster_version": profile.game_version,
-        "type": facts.room_type,
-        # An encounter has several possible monsters, not one HP range.
-        "hp_range": "", "stats_version": "", "stats_note": "",
+        "patterns": render_monster_moves(moves), "mechanics_version": profile.game_version,
     })
 
 

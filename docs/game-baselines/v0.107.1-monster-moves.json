@@ -1,0 +1,267 @@
+{
+  "game_version": "v0.107.1",
+  "game_commit": "59260271",
+  "reviewed_at": "2026-09-23",
+  "complete": false,
+  "scope": "Move sets, intents, values with Ascension 8+/9+ variants, turn patterns and entry effects for the 51 monsters reachable from the Act 1 pools (Overgrowth and Underdocks act models, 42 encounters).",
+  "method": "Paraphrased from each native MonsterModel move state machine: follow-up states, random branch weights, repeat rules and cooldowns, conditional starts, and AscensionHelper values (ToughEnemies from Ascension 8, DeadlyEnemies from Ascension 9). Titles come from the installed game's English monsters localization table. Named powers are identifiers whose effects are not reviewed; summon slot availability, encounter-specific starting moves and forced-state triggers are not simulated. Act 2 and Act 3 monsters remain review queues.",
+  "reviewed_ids": [
+    "MONSTER.ASSASSIN_RUBY_RAIDER",
+    "MONSTER.AXE_RUBY_RAIDER",
+    "MONSTER.BRUTE_RUBY_RAIDER",
+    "MONSTER.BYGONE_EFFIGY",
+    "MONSTER.BYRDONIS",
+    "MONSTER.CALCIFIED_CULTIST",
+    "MONSTER.CEREMONIAL_BEAST",
+    "MONSTER.CORPSE_SLUG",
+    "MONSTER.CROSSBOW_RUBY_RAIDER",
+    "MONSTER.CUBEX_CONSTRUCT",
+    "MONSTER.DAMP_CULTIST",
+    "MONSTER.EYE_WITH_TEETH",
+    "MONSTER.FAT_GREMLIN",
+    "MONSTER.FLYCONID",
+    "MONSTER.FOGMOG",
+    "MONSTER.FOSSIL_STALKER",
+    "MONSTER.FUZZY_WURM_CRAWLER",
+    "MONSTER.GAS_BOMB",
+    "MONSTER.GREMLIN_MERC",
+    "MONSTER.HAUNTED_SHIP",
+    "MONSTER.INKLET",
+    "MONSTER.KIN_FOLLOWER",
+    "MONSTER.KIN_PRIEST",
+    "MONSTER.LAGAVULIN_MATRIARCH",
+    "MONSTER.LEAF_SLIME_M",
+    "MONSTER.LEAF_SLIME_S",
+    "MONSTER.LIVING_FOG",
+    "MONSTER.MAWLER",
+    "MONSTER.NIBBIT",
+    "MONSTER.PHANTASMAL_GARDENER",
+    "MONSTER.PHROG_PARASITE",
+    "MONSTER.PUNCH_CONSTRUCT",
+    "MONSTER.SEAPUNK",
+    "MONSTER.SEWER_CLAM",
+    "MONSTER.SHRINKER_BEETLE",
+    "MONSTER.SKULKING_COLONY",
+    "MONSTER.SLITHERING_STRANGLER",
+    "MONSTER.SLUDGE_SPINNER",
+    "MONSTER.SNAPPING_JAXFRUIT",
+    "MONSTER.SNEAKY_GREMLIN",
+    "MONSTER.SOUL_FYSH",
+    "MONSTER.TERROR_EEL",
+    "MONSTER.TOADPOLE",
+    "MONSTER.TRACKER_RUBY_RAIDER",
+    "MONSTER.TWIG_SLIME_M",
+    "MONSTER.TWIG_SLIME_S",
+    "MONSTER.TWO_TAILED_RAT",
+    "MONSTER.VANTOM",
+    "MONSTER.VINE_SHAMBLER",
+    "MONSTER.WATERFALL_GIANT",
+    "MONSTER.WRIGGLER"
+  ],
+  "records": {
+    "MONSTER.ASSASSIN_RUBY_RAIDER": {
+      "definition_sha256": "1ded70b4d0a355ab0d0b14e5cdafb3576df1c0504b88aaa837c66fa6744b6564",
+      "mechanics_record_sha256": "a2fad780e294a1bdb02eebf231004e2c81c58c943daa395c2f196804f9ad84ad"
+    },
+    "MONSTER.AXE_RUBY_RAIDER": {
+      "definition_sha256": "3ba51c335698440e17d819ff2f25b4f0668c83b490e373198934b5814739f38d",
+      "mechanics_record_sha256": "34efa44e785e8d34b3fa57477b0535a10ccf3f239f6ebed854e323dfe73a6a5f"
+    },
+    "MONSTER.BRUTE_RUBY_RAIDER": {
+      "definition_sha256": "3b99a34ef4bf1eb2a1acb2d7ce8adaf5c722e594ac6842a3c2d028cf2a74b4f9",
+      "mechanics_record_sha256": "abcdf2a8e262d74f24871df63d5dafbb623514415bf23436cd29ea4a16affe97"
+    },
+    "MONSTER.BYGONE_EFFIGY": {
+      "definition_sha256": "8fedd470cb6d997997e4144dc289b7ff40b1acfaeaa5dc660b61bc71ef18cd72",
+      "mechanics_record_sha256": "54777c8f3bdb02ec23fc5abf69dc602d105bd7932d1432630663314bf5c99dcd"
+    },
+    "MONSTER.BYRDONIS": {
+      "definition_sha256": "5d8f5592396162db13f7b7a2978303a20ab32f92e2f3f485add3ab4dbfb0fc69",
+      "mechanics_record_sha256": "d45936c54403ffefe72e89f5a7770f80f04058ee6c0a8ed30e91b75dbf8f9721"
+    },
+    "MONSTER.CALCIFIED_CULTIST": {
+      "definition_sha256": "9a91ad1f81beacfde0de7457313a67052c1db4c774976ad4b1c37c6f4d2b67ce",
+      "mechanics_record_sha256": "566ebc5d7ae131e95f536f6b37b90d800337c2ee4bc5e50d9a9dbb99feb61e2b"
+    },
+    "MONSTER.CEREMONIAL_BEAST": {
+      "definition_sha256": "cecf869f380e0e67d7d295b3337de1755a6bb0b804ce91b3ccc0644e0caf8a21",
+      "mechanics_record_sha256": "f6ea79af1117a988b7e046adfdda4f5f35a441a2e0acd45398cb0aa931645a5b"
+    },
+    "MONSTER.CORPSE_SLUG": {
+      "definition_sha256": "9751c826847380eac6c74ac0eaa9806d3bc0a8997d8f3ea1cbc1a695aeaef71d",
+      "mechanics_record_sha256": "949f8a4302471e15d4216b0b313ea068cdeda7dbad341b69939f1a4f721a461c"
+    },
+    "MONSTER.CROSSBOW_RUBY_RAIDER": {
+      "definition_sha256": "1e8bc45eea94eb686aa9c29ad3cd7cea6c78ab9358a4da82132664d2df24c116",
+      "mechanics_record_sha256": "663fe046c854d6213edf70237ac2698c5988a6dfda701da65b4371a7e010f7fe"
+    },
+    "MONSTER.CUBEX_CONSTRUCT": {
+      "definition_sha256": "179a141152ee7adffe79dbb1f9e30fd8bb7c42ecb13ef1f3a6554ce8dfb058d8",
+      "mechanics_record_sha256": "2a1750adae2a248b7d5ef229796d13da1614f1c7fcc9a612b1fd6f7b392fb004"
+    },
+    "MONSTER.DAMP_CULTIST": {
+      "definition_sha256": "d0f0da6376a3857c8ff7f39457e81854e09facf0ba496abf5a2f724a5f216ecc",
+      "mechanics_record_sha256": "526e2446b2f095a1554dc226bd3f2339628a3295d5d90bbfd79d910c11644d6b"
+    },
+    "MONSTER.EYE_WITH_TEETH": {
+      "definition_sha256": "19add9828268c055d7549e4784fd7c6157b45cb030888cf6e6b8e990e8797d29",
+      "mechanics_record_sha256": "7b1d436e3022a7bad83b6c11a49bd24e544db84df0a967279819cfae4aad8a7d"
+    },
+    "MONSTER.FAT_GREMLIN": {
+      "definition_sha256": "838247477921bdbd2d9eab3c05109be1dac8b00033417e4d2cdc15aa15534472",
+      "mechanics_record_sha256": "b571ac3ac97921137f5e65e13863ac415b98b6e33ede3d9f4aa0dfd4b2ce1fb3"
+    },
+    "MONSTER.FLYCONID": {
+      "definition_sha256": "7757a4fe33cf738c8cc7ee1f20d0065ed8ea802fb64c3237645565557f3df599",
+      "mechanics_record_sha256": "e62a7a5ae80bf28710c2410ad8db8f88dc5c8abd983811ea8ad6cdb4e884c417"
+    },
+    "MONSTER.FOGMOG": {
+      "definition_sha256": "2ad0311f9f2c369c90fb0838e03c23609a760bce167cfed4f9f35028ba2bd037",
+      "mechanics_record_sha256": "06cf0289b2e88f0d5148e25bbc5c6e5d5ad49691462ffcdfc9d0d1d88ade7448"
+    },
+    "MONSTER.FOSSIL_STALKER": {
+      "definition_sha256": "7600f67781749d7bc48567d9e319481ed2f8afbd1abce031100bec9c5fba4ad4",
+      "mechanics_record_sha256": "a740386a1d455e1d8c94610b378f1f14480c832c0929f21350b27e93c8385d4a"
+    },
+    "MONSTER.FUZZY_WURM_CRAWLER": {
+      "definition_sha256": "1b985c2625c86375a377bb8f124e339cba9af66ce4c6b7d0d5f4548662ce8bb8",
+      "mechanics_record_sha256": "94f74d8885461fa3da88b22a3d86849cfa86352299b629dc99046e8e14c73b6c"
+    },
+    "MONSTER.GAS_BOMB": {
+      "definition_sha256": "65089c1e1e51dbeb1151ef54ecc44d3ee24b0ff820092c460d81a8a29a35b7d0",
+      "mechanics_record_sha256": "fd4cb74a1ebf267aedb15008e3f71ad47acbeeb1a0689ca6781bd2597a498b2e"
+    },
+    "MONSTER.GREMLIN_MERC": {
+      "definition_sha256": "c797fc8dff23fb3a2d6366ac257ee044f66d0bac6bfddc3f5b9f4bd302ddcf9c",
+      "mechanics_record_sha256": "08dc349ef2343de24c0db0bf5f8e4e2e7b6833f3a58f62694b868f3793e9bb2b"
+    },
+    "MONSTER.HAUNTED_SHIP": {
+      "definition_sha256": "156a0dba14b61c567084d9beda14455cb0bbbf0bebfe3d56a4581c41891ab89e",
+      "mechanics_record_sha256": "c1816c5082a5acce47a9cc1c34f8213c6a0e5522920e559d4ef4c78107e0b1a5"
+    },
+    "MONSTER.INKLET": {
+      "definition_sha256": "04bf5f68788f176f946872688364898b698b7d69139954d6bd4b2dd3c8bad475",
+      "mechanics_record_sha256": "1bede7afcb1f81a97ce9daf479b05d1ab5a266944b4997f1d5b589836638f79e"
+    },
+    "MONSTER.KIN_FOLLOWER": {
+      "definition_sha256": "0f67cb923b10b2555efe7b8029b26673b9273430313e4b8784b35aefb5468020",
+      "mechanics_record_sha256": "98f6b9b6fcd0913bebabcbabfb26fb9abef1f81591d3c2ed7b644c9dff21d820"
+    },
+    "MONSTER.KIN_PRIEST": {
+      "definition_sha256": "0abb61a23090075044ad13429f25db1ede66e02ea4d2e193264d1a56cf5148e1",
+      "mechanics_record_sha256": "39ccd6795a8505335f6b5d7d9d212dff6dc762d67cb944a6ebec30e09af3ec1d"
+    },
+    "MONSTER.LAGAVULIN_MATRIARCH": {
+      "definition_sha256": "b779e5c08fa421499bedca32e6c9c04b3bb5ee0b0d080bed56778517a4cffd78",
+      "mechanics_record_sha256": "d1952fe51da89cd34cbb1f42ea0e49a093f0abc7ae878181bfb543910e7eb701"
+    },
+    "MONSTER.LEAF_SLIME_M": {
+      "definition_sha256": "3a044a8d00944d164be7ea9385500083cb56832bbde64a3ff04679958546d793",
+      "mechanics_record_sha256": "9f8788bafe485db3590f790603393367bf27ed4787bd2b9f8cbce11bcba468b3"
+    },
+    "MONSTER.LEAF_SLIME_S": {
+      "definition_sha256": "6db6f1ccc681f86ca48584827b4276c9881297e3c5cb07ddf7516735d9779815",
+      "mechanics_record_sha256": "009517253e3ce551beaf0e87150a714dd86b733a125cbc97ab855d4774dc1f25"
+    },
+    "MONSTER.LIVING_FOG": {
+      "definition_sha256": "ffb31757b0ab5deb508f6b2784227f9fbac7b99691ab1c615fbce2b0176ab0d5",
+      "mechanics_record_sha256": "514da0d1a47e040084806e5609c19a6c6e6770b1f5bc493000db59539c4141b2"
+    },
+    "MONSTER.MAWLER": {
+      "definition_sha256": "7de9da00958288c7aa3025ce150238cc10a5827050b9ea87d597ba61e056de98",
+      "mechanics_record_sha256": "fa39c3c7d749a5edc2d0865330fc48b73d0c5792104ff8ece477ee0250002c5a"
+    },
+    "MONSTER.NIBBIT": {
+      "definition_sha256": "5f027dafe55d5be0d4001188ff010cbb087b3c0c9f5b069cd03713b33ea02912",
+      "mechanics_record_sha256": "37bd8aab69d97f90d709f5c3dc9b44efa91cce9e3afc5c121d21ddaabad75904"
+    },
+    "MONSTER.PHANTASMAL_GARDENER": {
+      "definition_sha256": "99bff217af84a3f9e31530f394bb72fbe0256089c36ed5616b98aa11ee3c1a9f",
+      "mechanics_record_sha256": "5b3ae8c58adb26f8791dc76fb49885921bc46ee78318322cdc16c02933e13132"
+    },
+    "MONSTER.PHROG_PARASITE": {
+      "definition_sha256": "9716e37f502e678a1153d6e946b1a2c6f9b53b217fc1b34784a3a317751b91ef",
+      "mechanics_record_sha256": "79bd73fd9336ab1341685ab92c7e60ef8a0ab84d1e9ba6badfc6c57f3a626051"
+    },
+    "MONSTER.PUNCH_CONSTRUCT": {
+      "definition_sha256": "389c64af1b2eb8da881ef51b5f9addf19f5b5f659b706235263c062a2fcc2d7e",
+      "mechanics_record_sha256": "263b15f6d0493e55b88e06f1bc423a5ddaa5c0440f98418080db0c362cf91d3e"
+    },
+    "MONSTER.SEAPUNK": {
+      "definition_sha256": "5502426b447c4f7f3d40cdc046d945eae91037d7f90db72816aff5de0ed5d594",
+      "mechanics_record_sha256": "68a6268d39e8703a62c9e274c17f0c36e5c192efc60a86f7f10f5426369bd714"
+    },
+    "MONSTER.SEWER_CLAM": {
+      "definition_sha256": "ca9f3c24098ca3f783a16c0454d113a1ede94c5cceb833d9e8b1f6efa6717708",
+      "mechanics_record_sha256": "cfa76ea211b5bcd1b27d4fcd13700b26e9f0265b08182148c2d4fdd5a1ea71ee"
+    },
+    "MONSTER.SHRINKER_BEETLE": {
+      "definition_sha256": "91969dc1ad9b68ece0dc42cf84461e6988724b3438091bfd007a288534d686ab",
+      "mechanics_record_sha256": "e4fac4776ee4093ba3e987a8cbf8b1f61744804ff3e396775171bf0a4713b321"
+    },
+    "MONSTER.SKULKING_COLONY": {
+      "definition_sha256": "b0ee03b9a2a8f3d436a5c4d16a35f037b1f7ed20d3d01fb288e8418c8e86f0e0",
+      "mechanics_record_sha256": "87ac5d0ea9d582e6d4c7adb7e175e46fb215b25ee7ec2ee0800775d7934e4cf9"
+    },
+    "MONSTER.SLITHERING_STRANGLER": {
+      "definition_sha256": "d300724b95c294ae62cfc5d2dadad851884dd0f1e512684cfb4a7eed36a18b9c",
+      "mechanics_record_sha256": "b81105783305f039933184c825fd47abcb1afbdce99497ca65c8a718db49454e"
+    },
+    "MONSTER.SLUDGE_SPINNER": {
+      "definition_sha256": "8fe29f4f22d2725e732394828e154800518cfc85c2d85ae680677f7fc356e315",
+      "mechanics_record_sha256": "2f9e5a02c49d3e029729850a284349d9604917343ed04052ef553640bbe5cdee"
+    },
+    "MONSTER.SNAPPING_JAXFRUIT": {
+      "definition_sha256": "d8f124d4fb907f790cb6ff24c558fc836cd45900ec334c0da288dde7bf092957",
+      "mechanics_record_sha256": "887d7586ccd91d3c3ce6f4c33fd0ca876db6e9c788612e380701f185928b3f31"
+    },
+    "MONSTER.SNEAKY_GREMLIN": {
+      "definition_sha256": "ad35c5bfcd96bad7cedd5e616340ea399653705fd88c205bacfc4cb817215725",
+      "mechanics_record_sha256": "bb04b6ededbaaf056982ed65defdeff4ab30127ebf781a17c56aa989f3d1ac7f"
+    },
+    "MONSTER.SOUL_FYSH": {
+      "definition_sha256": "ac118a01aef90c979783e045100ca765cc794551ea33b873276a20befbaba1d7",
+      "mechanics_record_sha256": "ccee9c81babfa1256a1da774353baa983663211f663825f929f6a5e013c2c7e7"
+    },
+    "MONSTER.TERROR_EEL": {
+      "definition_sha256": "17c0ed7405e6656600b6d0afbc116751759172ca2dfaa881fed9800ff95cfe6c",
+      "mechanics_record_sha256": "05e0c07cb9f53a8c5d0a7784bd9065bc0f7e942a8fc5217e2db82e504b84efff"
+    },
+    "MONSTER.TOADPOLE": {
+      "definition_sha256": "b19b55f6fae0431eb30a2aaa14b6fc98288f6f2d288638d3972731f09f2725c9",
+      "mechanics_record_sha256": "a615fb36801df4c29b4498e95afce05527314097901861bc353acb916cce2484"
+    },
+    "MONSTER.TRACKER_RUBY_RAIDER": {
+      "definition_sha256": "d4a177e9a9668f6c185482d4b8ec00746818391f1d9fa86421bfc0569afdc6ad",
+      "mechanics_record_sha256": "26313dc43648e9afd755a95fb2922b4615502c4ee5e9d180dc36cda29ccfdc10"
+    },
+    "MONSTER.TWIG_SLIME_M": {
+      "definition_sha256": "c2f054fa762d13e72544ac9b4318295e7c5a9f05db5ae7c33e4950540b020e30",
+      "mechanics_record_sha256": "dea31d8dbba32714a32b20c48c1cf193fa782ba4d043d7dccad48b7198936968"
+    },
+    "MONSTER.TWIG_SLIME_S": {
+      "definition_sha256": "20df69868780ab61d8fd0e33aaeda150928ab98bc35c5276a2271563c4b46c0b",
+      "mechanics_record_sha256": "b9b5fd69d964e50ea75326fcee9b67c7933d03c6d4a88ba5153ef7fa96be38fa"
+    },
+    "MONSTER.TWO_TAILED_RAT": {
+      "definition_sha256": "e50556be2187d67a41044f471d7d3270511b2aed9a599f7ef6b33d558b9aa1fb",
+      "mechanics_record_sha256": "c967c5abb23e185264ecfb926ae334f87da7556d0854e67aec4581e1973fa71a"
+    },
+    "MONSTER.VANTOM": {
+      "definition_sha256": "476c9b05288a7446c25a65d1099490146b8aebe9de0fe1f1dc6b65e44b357469",
+      "mechanics_record_sha256": "5b6245a14dee06c76d901f50abec423c00c361e4adcf24edc3f5773e11e78821"
+    },
+    "MONSTER.VINE_SHAMBLER": {
+      "definition_sha256": "f11dc9dcf84b569801a2444a2b05a0eb7775e0a770931f60057047f98da83eb5",
+      "mechanics_record_sha256": "a39e17d450534b2c9a8d71a1ad88317c7e9f606b0cebb940d5fbf58a8490fa97"
+    },
+    "MONSTER.WATERFALL_GIANT": {
+      "definition_sha256": "957bcde9afeec1ee7cd414a3d69296990942dd2c1161b02c18a833975103c80f",
+      "mechanics_record_sha256": "2506de3ed233948254b056dc009be6dede534323e55b5bc627914a33f0d79940"
+    },
+    "MONSTER.WRIGGLER": {
+      "definition_sha256": "2d008f4cd9cbe791dc96012a137faa6d6fd7c5696b698ea2f6c67e720320e87a",
+      "mechanics_record_sha256": "fe5884684faf3cb88e9ae3ef3a2f345a0b6b6dda1b22c30cc61b437895571198"
+    }
+  }
+}

@@ -18,7 +18,7 @@
 <p class="text-sm text-muted">Reference HP{% if mechanics_view_version %}; not verified for {{ mechanics_view_version }}{% endif %}.</p>
 {% endif %}
 {% if enemy.mechanics_version %}
-<p class="text-sm text-muted">Patterns checked for {{ enemy.mechanics_version }}{% if mechanics_view_version and enemy.mechanics_version != mechanics_view_version %}; not verified for {{ mechanics_view_version }}{% endif %}.</p>
+<p class="text-sm text-muted">Patterns checked for {{ enemy.mechanics_version }}{% if mechanics_view_version and enemy.mechanics_version != mechanics_view_version %}; not verified for {{ mechanics_view_version }}{% endif %}. Where values differ by ascension, 8+ and 9+ are the Tough Enemies and Deadly Enemies levels. Named powers are the game's identifiers; their effects, summon slot rules and encounter-specific starting moves are not simulated. Tips are reference strategy.</p>
 {% elif enemy.patterns or enemy.tips %}
 <p class="text-sm text-muted">Reference patterns and strategy{% if mechanics_view_version %}; not verified for {{ mechanics_view_version }}{% endif %}.</p>
 {% endif %}

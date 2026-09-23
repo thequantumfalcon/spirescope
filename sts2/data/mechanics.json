@@ -7,7 +7,7 @@
       "branch": "main",
       "reviewed_at": "2026-09-22",
       "complete": false,
-      "scope": "Reviewed main pool printed card traits and base/first-upgrade rules; three saved-card rules; potion printed rules/usage/targets; relic general rules/rarity. Runtime simulation, all availability conditions, other systems and beta are not certified. Initial monster HP before scaling and modifiers is reviewed separately from attack patterns. Declared possible-monster rosters and room types are reviewed for main encounters; counts, generation probabilities and encounter adjustments are not simulated. Main timeline requirements, reward lists, score-bar sequence and placeholder classification are reviewed; saved progression is displayed rather than simulated. Separately reviewed event option effects and local eligibility checks are included only for listed events. All 65 main event/Ancient option summaries and normal act-pool placement are reviewed; cross-entity hooks and event simulations remain bounded. Enchantment titles, rules and eligibility are reviewed; per-copy amounts and status reset timing are not.",
+      "scope": "Reviewed main pool printed card traits and base/first-upgrade rules; three saved-card rules; potion printed rules/usage/targets; relic general rules/rarity. Runtime simulation, all availability conditions, other systems and beta are not certified. Initial monster HP before scaling and modifiers is reviewed separately from attack patterns. Declared possible-monster rosters and room types are reviewed for main encounters; counts, generation probabilities and encounter adjustments are not simulated. Main timeline requirements, reward lists, score-bar sequence and placeholder classification are reviewed; saved progression is displayed rather than simulated. Separately reviewed event option effects and local eligibility checks are included only for listed events. All 65 main event/Ancient option summaries and normal act-pool placement are reviewed; cross-entity hooks and event simulations remain bounded. Enchantment titles, rules and eligibility are reviewed; per-copy amounts and status reset timing are not. Move sets and turn patterns are reviewed for the 51 Act 1 pool monsters; power effects, summon slot rules and forced-state triggers are not.",
       "cards": {
         "CARD.GUIDING_STAR": {
           "star_cost": "2",
@@ -24378,6 +24378,1286 @@
           "eligibility": "Attacks only.",
           "mechanics_note": "First play deals +{Amount} damage, then disabled.",
           "definition_sha256": "cce81d7cc2f06d963e5b046aa91d357cd24e03f14078a775451174bda6ba556e",
+          "verification": "native-review"
+        }
+      },
+      "monster_moves": {
+        "MONSTER.ASSASSIN_RUBY_RAIDER": {
+          "moves": [
+            {
+              "state": "KILLSHOT_MOVE",
+              "title": "Killshot",
+              "intent": "Attack",
+              "effect": "10 (11 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Killshot every turn.",
+          "entry_effects": "",
+          "definition_sha256": "1ded70b4d0a355ab0d0b14e5cdafb3576df1c0504b88aaa837c66fa6744b6564",
+          "verification": "native-review"
+        },
+        "MONSTER.AXE_RUBY_RAIDER": {
+          "moves": [
+            {
+              "state": "SWING_1",
+              "title": "Swing",
+              "intent": "Attack + Defend",
+              "effect": "5 (6 at Ascension 9+) damage and gains 5 (6 at Ascension 9+) Block."
+            },
+            {
+              "state": "BIG_SWING",
+              "title": "Big Swing",
+              "intent": "Attack",
+              "effect": "12 (13 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Swing, Swing, Big Swing, then repeats from Swing.",
+          "entry_effects": "",
+          "definition_sha256": "3ba51c335698440e17d819ff2f25b4f0668c83b490e373198934b5814739f38d",
+          "verification": "native-review"
+        },
+        "MONSTER.BRUTE_RUBY_RAIDER": {
+          "moves": [
+            {
+              "state": "BEAT_MOVE",
+              "title": "Beat",
+              "intent": "Attack",
+              "effect": "7 (8 at Ascension 9+) damage."
+            },
+            {
+              "state": "ROAR_MOVE",
+              "title": "Roar",
+              "intent": "Buff",
+              "effect": "Gains 3 Strength."
+            }
+          ],
+          "pattern": "Alternates Beat and Roar, starting with Beat.",
+          "entry_effects": "",
+          "definition_sha256": "3b99a34ef4bf1eb2a1acb2d7ce8adaf5c722e594ac6842a3c2d028cf2a74b4f9",
+          "verification": "native-review"
+        },
+        "MONSTER.BYGONE_EFFIGY": {
+          "moves": [
+            {
+              "state": "SLEEP_MOVE",
+              "title": "Sleep",
+              "intent": "Sleep",
+              "effect": "Does nothing."
+            },
+            {
+              "state": "WAKE_MOVE",
+              "title": "Wake",
+              "intent": "Buff",
+              "effect": "Gains 10 Strength."
+            },
+            {
+              "state": "SLASHES_MOVE",
+              "title": "Slashes",
+              "intent": "Attack",
+              "effect": "13 (15 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Sleep, Wake, then Slashes every turn.",
+          "entry_effects": "Gains SlowPower 1.",
+          "definition_sha256": "8fedd470cb6d997997e4144dc289b7ff40b1acfaeaa5dc660b61bc71ef18cd72",
+          "verification": "native-review"
+        },
+        "MONSTER.BYRDONIS": {
+          "moves": [
+            {
+              "state": "PECK_MOVE",
+              "title": "Peck",
+              "intent": "Multi-attack",
+              "effect": "3 damage x3 hits (4 x3 at Ascension 9+)."
+            },
+            {
+              "state": "SWOOP_MOVE",
+              "title": "Swoop",
+              "intent": "Attack",
+              "effect": "17 (19 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Opens with Swoop, then alternates Peck and Swoop.",
+          "entry_effects": "Gains TerritorialPower 1.",
+          "definition_sha256": "5d8f5592396162db13f7b7a2978303a20ab32f92e2f3f485add3ab4dbfb0fc69",
+          "verification": "native-review"
+        },
+        "MONSTER.CALCIFIED_CULTIST": {
+          "moves": [
+            {
+              "state": "INCANTATION_MOVE",
+              "title": "Incantation",
+              "intent": "Buff",
+              "effect": "Gains RitualPower 2."
+            },
+            {
+              "state": "DARK_STRIKE_MOVE",
+              "title": "Dark Strike",
+              "intent": "Attack",
+              "effect": "9 (11 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Incantation once, then Dark Strike every turn.",
+          "entry_effects": "",
+          "definition_sha256": "9a91ad1f81beacfde0de7457313a67052c1db4c774976ad4b1c37c6f4d2b67ce",
+          "verification": "native-review"
+        },
+        "MONSTER.CEREMONIAL_BEAST": {
+          "moves": [
+            {
+              "state": "STAMP_MOVE",
+              "title": "Stamp",
+              "intent": "Buff",
+              "effect": "Gains PlowPower 150 (160 at Ascension 9+)."
+            },
+            {
+              "state": "PLOW_MOVE",
+              "title": "Plow",
+              "intent": "Attack + Buff",
+              "effect": "18 (20 at Ascension 9+) damage and gains 2 Strength."
+            },
+            {
+              "state": "STUN_MOVE",
+              "title": "Stun",
+              "intent": "Stun",
+              "effect": "Loses a turn when its Plow is removed."
+            },
+            {
+              "state": "BEAST_CRY_MOVE",
+              "title": "Beast Cry",
+              "intent": "Debuff",
+              "effect": "Applies RingingPower 1."
+            },
+            {
+              "state": "STOMP_MOVE",
+              "title": "Stomp",
+              "intent": "Attack",
+              "effect": "15 (17 at Ascension 9+) damage."
+            },
+            {
+              "state": "CRUSH_MOVE",
+              "title": "Crush",
+              "intent": "Attack + Buff",
+              "effect": "17 (19 at Ascension 9+) damage and gains 3 (4 at Ascension 9+) Strength."
+            }
+          ],
+          "pattern": "Stamp, then Plow every turn. When its Plow is removed it is stunned for a turn, then cycles Beast Cry, Stomp, Crush.",
+          "entry_effects": "",
+          "definition_sha256": "cecf869f380e0e67d7d295b3337de1755a6bb0b804ce91b3ccc0644e0caf8a21",
+          "verification": "native-review"
+        },
+        "MONSTER.CORPSE_SLUG": {
+          "moves": [
+            {
+              "state": "WHIP_SLAP_MOVE",
+              "title": "Whip Slap",
+              "intent": "Multi-attack",
+              "effect": "3 damage x2 hits."
+            },
+            {
+              "state": "GLOMP_MOVE",
+              "title": "Glomp",
+              "intent": "Attack",
+              "effect": "8 (9 at Ascension 9+) damage."
+            },
+            {
+              "state": "GOOP_MOVE",
+              "title": "Goop",
+              "intent": "Debuff",
+              "effect": "Applies 2 Frail."
+            }
+          ],
+          "pattern": "Cycles Whip Slap, Glomp, Goop. Each Corpse Slug in an encounter starts at a different point of the cycle.",
+          "entry_effects": "Gains RavenousPower 4 (5 at Ascension 9+).",
+          "definition_sha256": "9751c826847380eac6c74ac0eaa9806d3bc0a8997d8f3ea1cbc1a695aeaef71d",
+          "verification": "native-review"
+        },
+        "MONSTER.CROSSBOW_RUBY_RAIDER": {
+          "moves": [
+            {
+              "state": "FIRE_MOVE",
+              "title": "Fire!",
+              "intent": "Attack",
+              "effect": "14 (16 at Ascension 9+) damage."
+            },
+            {
+              "state": "RELOAD_MOVE",
+              "title": "Reload",
+              "intent": "Defend",
+              "effect": "Gains 3 Block."
+            }
+          ],
+          "pattern": "Starts with Reload, then alternates Fire and Reload.",
+          "entry_effects": "",
+          "definition_sha256": "1e8bc45eea94eb686aa9c29ad3cd7cea6c78ab9358a4da82132664d2df24c116",
+          "verification": "native-review"
+        },
+        "MONSTER.CUBEX_CONSTRUCT": {
+          "moves": [
+            {
+              "state": "CHARGE_UP_MOVE",
+              "title": "Charge Up",
+              "intent": "Buff",
+              "effect": "Gains 2 Strength and unburrows."
+            },
+            {
+              "state": "REPEATER_BLAST_MOVE",
+              "title": "Repeater Blast",
+              "intent": "Attack + Buff",
+              "effect": "7 (8 at Ascension 9+) damage and gains 2 Strength."
+            },
+            {
+              "state": "EXPEL_MOVE",
+              "title": "Expel",
+              "intent": "Multi-attack",
+              "effect": "5 damage x2 hits (6 x2 at Ascension 9+)."
+            }
+          ],
+          "pattern": "Charge Up, then cycles Repeater Blast, Repeater Blast, Expel.",
+          "entry_effects": "Gains 13 Block and ArtifactPower 1; starts burrowed.",
+          "definition_sha256": "179a141152ee7adffe79dbb1f9e30fd8bb7c42ecb13ef1f3a6554ce8dfb058d8",
+          "verification": "native-review"
+        },
+        "MONSTER.DAMP_CULTIST": {
+          "moves": [
+            {
+              "state": "INCANTATION_MOVE",
+              "title": "Incantation",
+              "intent": "Buff",
+              "effect": "Gains RitualPower 5 (6 at Ascension 9+)."
+            },
+            {
+              "state": "DARK_STRIKE_MOVE",
+              "title": "Dark Strike",
+              "intent": "Attack",
+              "effect": "1 (3 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Incantation once, then Dark Strike every turn.",
+          "entry_effects": "",
+          "definition_sha256": "d0f0da6376a3857c8ff7f39457e81854e09facf0ba496abf5a2f724a5f216ecc",
+          "verification": "native-review"
+        },
+        "MONSTER.EYE_WITH_TEETH": {
+          "moves": [
+            {
+              "state": "DISTRACT_MOVE",
+              "title": "Distract",
+              "intent": "Status",
+              "effect": "Adds 3 Dazed to the discard pile."
+            }
+          ],
+          "pattern": "Distract every turn. Summoned by Fogmog's Illusion.",
+          "entry_effects": "Gains IllusionPower 1.",
+          "definition_sha256": "19add9828268c055d7549e4784fd7c6157b45cb030888cf6e6b8e990e8797d29",
+          "verification": "native-review"
+        },
+        "MONSTER.FAT_GREMLIN": {
+          "moves": [
+            {
+              "state": "SPAWNED_MOVE",
+              "title": "Wake Up",
+              "intent": "Stun",
+              "effect": "Does nothing on the turn it appears."
+            },
+            {
+              "state": "FLEE_MOVE",
+              "title": "Flee",
+              "intent": "Escape",
+              "effect": "Leaves the combat."
+            }
+          ],
+          "pattern": "Stunned for its first turn, then flees.",
+          "entry_effects": "",
+          "definition_sha256": "838247477921bdbd2d9eab3c05109be1dac8b00033417e4d2cdc15aa15534472",
+          "verification": "native-review"
+        },
+        "MONSTER.FLYCONID": {
+          "moves": [
+            {
+              "state": "VULNERABLE_SPORES_MOVE",
+              "title": "Vulnerable Spores",
+              "intent": "Debuff",
+              "effect": "Applies 2 Vulnerable."
+            },
+            {
+              "state": "FRAIL_SPORES_MOVE",
+              "title": "Frail Spores",
+              "intent": "Attack + Debuff",
+              "effect": "8 (9 at Ascension 9+) damage and applies 2 Frail."
+            },
+            {
+              "state": "SMASH_MOVE",
+              "title": "Smash",
+              "intent": "Attack",
+              "effect": "11 (12 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "First turn: Frail Spores or Smash with equal weight. Afterwards random with equal weight among Vulnerable Spores (not within 3 moves of its last use), Frail Spores (not within 2 moves of its last use) and Smash; never the same move twice in a row.",
+          "entry_effects": "",
+          "definition_sha256": "7757a4fe33cf738c8cc7ee1f20d0065ed8ea802fb64c3237645565557f3df599",
+          "verification": "native-review"
+        },
+        "MONSTER.FOGMOG": {
+          "moves": [
+            {
+              "state": "ILLUSION_MOVE",
+              "title": "Illusory Spores",
+              "intent": "Summon",
+              "effect": "Adds an Eye With Teeth."
+            },
+            {
+              "state": "SWIPE_MOVE",
+              "title": "Thwack",
+              "intent": "Attack + Buff",
+              "effect": "8 (9 at Ascension 9+) damage and gains 1 Strength."
+            },
+            {
+              "state": "HEADBUTT_MOVE",
+              "title": "Headbutt",
+              "intent": "Attack",
+              "effect": "14 (16 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Illusion, then Swipe. After each Swipe: 40% a second Swipe followed by Headbutt, 60% Headbutt directly. Every Headbutt is followed by Swipe.",
+          "entry_effects": "",
+          "definition_sha256": "2ad0311f9f2c369c90fb0838e03c23609a760bce167cfed4f9f35028ba2bd037",
+          "verification": "native-review"
+        },
+        "MONSTER.FOSSIL_STALKER": {
+          "moves": [
+            {
+              "state": "TACKLE_MOVE",
+              "title": "Tackle",
+              "intent": "Attack + Debuff",
+              "effect": "9 (11 at Ascension 9+) damage and applies 1 Frail."
+            },
+            {
+              "state": "LATCH_MOVE",
+              "title": "Latch",
+              "intent": "Attack",
+              "effect": "12 (14 at Ascension 9+) damage."
+            },
+            {
+              "state": "LASH_MOVE",
+              "title": "Lash",
+              "intent": "Multi-attack",
+              "effect": "3 damage x2 hits (4 x2 at Ascension 9+)."
+            }
+          ],
+          "pattern": "Opens with Latch; then random with equal weight among Tackle, Latch and Lash, each at most twice in a row.",
+          "entry_effects": "Gains SuckPower 3.",
+          "definition_sha256": "7600f67781749d7bc48567d9e319481ed2f8afbd1abce031100bec9c5fba4ad4",
+          "verification": "native-review"
+        },
+        "MONSTER.FUZZY_WURM_CRAWLER": {
+          "moves": [
+            {
+              "state": "ACID_GOOP",
+              "title": "Acid Goop",
+              "intent": "Attack",
+              "effect": "4 (6 at Ascension 9+) damage."
+            },
+            {
+              "state": "INHALE",
+              "title": "Inhale",
+              "intent": "Buff",
+              "effect": "Gains 7 Strength."
+            }
+          ],
+          "pattern": "Acid Goop, then repeats Inhale, Acid Goop, Acid Goop.",
+          "entry_effects": "",
+          "definition_sha256": "1b985c2625c86375a377bb8f124e339cba9af66ce4c6b7d0d5f4548662ce8bb8",
+          "verification": "native-review"
+        },
+        "MONSTER.GAS_BOMB": {
+          "moves": [
+            {
+              "state": "EXPLODE_MOVE",
+              "title": "Explode",
+              "intent": "Death blow",
+              "effect": "8 (9 at Ascension 9+) damage, then it dies."
+            }
+          ],
+          "pattern": "Explodes on its first turn. Summoned by Living Fog's Bloat.",
+          "entry_effects": "Gains MinionPower 1.",
+          "definition_sha256": "65089c1e1e51dbeb1151ef54ecc44d3ee24b0ff820092c460d81a8a29a35b7d0",
+          "verification": "native-review"
+        },
+        "MONSTER.GREMLIN_MERC": {
+          "moves": [
+            {
+              "state": "GIMME_MOVE",
+              "title": "Gimme",
+              "intent": "Multi-attack",
+              "effect": "7 (8 at Ascension 8+) damage x2 hits and steals gold."
+            },
+            {
+              "state": "DOUBLE_SMASH_MOVE",
+              "title": "Double Smash",
+              "intent": "Multi-attack + Debuff",
+              "effect": "6 (7 at Ascension 8+) damage x2 hits, steals gold and applies 2 Weak."
+            },
+            {
+              "state": "HEHE_MOVE",
+              "title": "Hehe",
+              "intent": "Attack + Buff",
+              "effect": "8 (9 at Ascension 8+) damage, steals gold and gains 2 Strength."
+            }
+          ],
+          "pattern": "Cycles Gimme, Double Smash, Hehe. Its damage scales at Ascension 8+, not 9+.",
+          "entry_effects": "Gains SurprisePower 1 and ThieveryPower 20 aimed at each player.",
+          "definition_sha256": "c797fc8dff23fb3a2d6366ac257ee044f66d0bac6bfddc3f5b9f4bd302ddcf9c",
+          "verification": "native-review"
+        },
+        "MONSTER.HAUNTED_SHIP": {
+          "moves": [
+            {
+              "state": "HAUNT_MOVE",
+              "title": "Haunt",
+              "intent": "Debuff + Status",
+              "effect": "Applies 3 Weak and adds 5 Dazed to the discard pile."
+            },
+            {
+              "state": "SWIPE_MOVE",
+              "title": "Swipe",
+              "intent": "Attack",
+              "effect": "13 (14 at Ascension 9+) damage."
+            },
+            {
+              "state": "STOMP_MOVE",
+              "title": "Stomp",
+              "intent": "Multi-attack",
+              "effect": "4 damage x3 hits (5 x3 at Ascension 9+)."
+            }
+          ],
+          "pattern": "Haunt once, then alternates Swipe and Stomp.",
+          "entry_effects": "",
+          "definition_sha256": "156a0dba14b61c567084d9beda14455cb0bbbf0bebfe3d56a4581c41891ab89e",
+          "verification": "native-review"
+        },
+        "MONSTER.INKLET": {
+          "moves": [
+            {
+              "state": "JAB_MOVE",
+              "title": "Jab",
+              "intent": "Attack",
+              "effect": "3 (4 at Ascension 9+) damage."
+            },
+            {
+              "state": "WHIRLWIND_MOVE",
+              "title": "Whirlwind",
+              "intent": "Multi-attack",
+              "effect": "2 damage x3 hits (3 x3 at Ascension 9+)."
+            },
+            {
+              "state": "PIERCING_GAZE_MOVE",
+              "title": "Piercing Gaze",
+              "intent": "Attack",
+              "effect": "10 (11 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "The middle Inklet opens with Whirlwind, the others with Jab. Jab is followed by Piercing Gaze or Whirlwind with equal weight; both are followed by Jab.",
+          "entry_effects": "Gains SlipperyPower 1.",
+          "definition_sha256": "04bf5f68788f176f946872688364898b698b7d69139954d6bd4b2dd3c8bad475",
+          "verification": "native-review"
+        },
+        "MONSTER.KIN_FOLLOWER": {
+          "moves": [
+            {
+              "state": "QUICK_SLASH_MOVE",
+              "title": "Quick Slash",
+              "intent": "Attack",
+              "effect": "5 damage."
+            },
+            {
+              "state": "BOOMERANG_MOVE",
+              "title": "Boomerang",
+              "intent": "Multi-attack",
+              "effect": "2 damage x2 hits."
+            },
+            {
+              "state": "POWER_DANCE_MOVE",
+              "title": "Power Dance",
+              "intent": "Buff",
+              "effect": "Gains 2 (3 at Ascension 9+) Strength."
+            }
+          ],
+          "pattern": "Cycles Quick Slash, Boomerang, Power Dance; the encounter may start some Followers at Power Dance.",
+          "entry_effects": "Gains MinionPower 1.",
+          "definition_sha256": "0f67cb923b10b2555efe7b8029b26673b9273430313e4b8784b35aefb5468020",
+          "verification": "native-review"
+        },
+        "MONSTER.KIN_PRIEST": {
+          "moves": [
+            {
+              "state": "ORB_OF_FRAILTY_MOVE",
+              "title": "Orb of Frailty",
+              "intent": "Attack + Debuff",
+              "effect": "8 (9 at Ascension 9+) damage and applies 1 Frail."
+            },
+            {
+              "state": "ORB_OF_WEAKNESS_MOVE",
+              "title": "Orb of Weakness",
+              "intent": "Attack + Debuff",
+              "effect": "8 (9 at Ascension 9+) damage and applies 1 Weak."
+            },
+            {
+              "state": "BEAM_MOVE",
+              "title": "Soul Beam",
+              "intent": "Multi-attack",
+              "effect": "3 damage x3 hits."
+            },
+            {
+              "state": "RITUAL_MOVE",
+              "title": "Dark Ritual",
+              "intent": "Buff",
+              "effect": "Gains 2 (3 at Ascension 9+) Strength."
+            }
+          ],
+          "pattern": "Cycles Orb of Frailty, Orb of Weakness, Beam, Ritual. It reacts when every Kin Follower is dead; that response is not reviewed.",
+          "entry_effects": "",
+          "definition_sha256": "0abb61a23090075044ad13429f25db1ede66e02ea4d2e193264d1a56cf5148e1",
+          "verification": "native-review"
+        },
+        "MONSTER.LAGAVULIN_MATRIARCH": {
+          "moves": [
+            {
+              "state": "SLEEP_MOVE",
+              "title": "Sleep",
+              "intent": "Sleep",
+              "effect": "Does nothing while it has AsleepPower."
+            },
+            {
+              "state": "SLASH_MOVE",
+              "title": "Slash",
+              "intent": "Attack",
+              "effect": "19 (21 at Ascension 9+) damage."
+            },
+            {
+              "state": "DISEMBOWEL_MOVE",
+              "title": "Disembowel",
+              "intent": "Multi-attack",
+              "effect": "9 damage x2 hits (10 x2 at Ascension 9+)."
+            },
+            {
+              "state": "SLASH2_MOVE",
+              "title": "Slash",
+              "intent": "Attack + Defend",
+              "effect": "12 (14 at Ascension 9+) damage and gains 12 (14 at Ascension 8+) Block."
+            },
+            {
+              "state": "SOUL_SIPHON_MOVE",
+              "title": "Soul Siphon",
+              "intent": "Debuff + Buff",
+              "effect": "Applies -2 Strength and -2 Dexterity to the player and gains 2 Strength."
+            }
+          ],
+          "pattern": "Sleeps while AsleepPower lasts; once awake cycles Slash, Disembowel, Slash with Block, Soul Siphon.",
+          "entry_effects": "Gains PlatingPower 12 and AsleepPower 3.",
+          "definition_sha256": "b779e5c08fa421499bedca32e6c9c04b3bb5ee0b0d080bed56778517a4cffd78",
+          "verification": "native-review"
+        },
+        "MONSTER.LEAF_SLIME_M": {
+          "moves": [
+            {
+              "state": "CLUMP_SHOT",
+              "title": "Clump Shot",
+              "intent": "Attack",
+              "effect": "8 (9 at Ascension 9+) damage."
+            },
+            {
+              "state": "STICKY_SHOT",
+              "title": "Sticky Shot",
+              "intent": "Status",
+              "effect": "Adds 2 Slimed to the discard pile."
+            }
+          ],
+          "pattern": "Starts with Sticky Shot, then alternates Clump Shot and Sticky Shot.",
+          "entry_effects": "",
+          "definition_sha256": "3a044a8d00944d164be7ea9385500083cb56832bbde64a3ff04679958546d793",
+          "verification": "native-review"
+        },
+        "MONSTER.LEAF_SLIME_S": {
+          "moves": [
+            {
+              "state": "TACKLE_MOVE",
+              "title": "Tackle",
+              "intent": "Attack",
+              "effect": "3 (4 at Ascension 9+) damage."
+            },
+            {
+              "state": "GOOP_MOVE",
+              "title": "Goop",
+              "intent": "Status",
+              "effect": "Adds 1 Slimed to the discard pile."
+            }
+          ],
+          "pattern": "Random each turn between Tackle and Goop with equal weight, never the same move twice in a row.",
+          "entry_effects": "",
+          "definition_sha256": "6db6f1ccc681f86ca48584827b4276c9881297e3c5cb07ddf7516735d9779815",
+          "verification": "native-review"
+        },
+        "MONSTER.LIVING_FOG": {
+          "moves": [
+            {
+              "state": "ADVANCED_GAS_MOVE",
+              "title": "Advanced Gas",
+              "intent": "Attack + Card debuff",
+              "effect": "8 (9 at Ascension 9+) damage and applies SmoggyPower 1."
+            },
+            {
+              "state": "BLOAT_MOVE",
+              "title": "Bloat",
+              "intent": "Attack + Summon",
+              "effect": "5 (6 at Ascension 9+) damage and adds a Gas Bomb if a slot is free."
+            },
+            {
+              "state": "SUPER_GAS_BLAST_MOVE",
+              "title": "Super Gas Blast",
+              "intent": "Attack",
+              "effect": "8 (9 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Advanced Gas once, then alternates Bloat and Super Gas Blast.",
+          "entry_effects": "",
+          "definition_sha256": "ffb31757b0ab5deb508f6b2784227f9fbac7b99691ab1c615fbce2b0176ab0d5",
+          "verification": "native-review"
+        },
+        "MONSTER.MAWLER": {
+          "moves": [
+            {
+              "state": "RIP_AND_TEAR_MOVE",
+              "title": "Rip and Tear",
+              "intent": "Attack",
+              "effect": "14 (16 at Ascension 9+) damage."
+            },
+            {
+              "state": "ROAR_MOVE",
+              "title": "Roar",
+              "intent": "Debuff",
+              "effect": "Applies 3 Vulnerable."
+            },
+            {
+              "state": "CLAW_MOVE",
+              "title": "Claw",
+              "intent": "Multi-attack",
+              "effect": "4 damage x2 hits (5 x2 at Ascension 9+)."
+            }
+          ],
+          "pattern": "Opens with Claw; then random with equal weight among Rip and Tear, Roar (once per combat) and Claw, never the same move twice in a row.",
+          "entry_effects": "",
+          "definition_sha256": "7de9da00958288c7aa3025ce150238cc10a5827050b9ea87d597ba61e056de98",
+          "verification": "native-review"
+        },
+        "MONSTER.NIBBIT": {
+          "moves": [
+            {
+              "state": "BUTT_MOVE",
+              "title": "Butt",
+              "intent": "Attack",
+              "effect": "12 (13 at Ascension 9+) damage."
+            },
+            {
+              "state": "SLICE_MOVE",
+              "title": "Slice",
+              "intent": "Attack + Defend",
+              "effect": "6 (7 at Ascension 9+) damage and gains 5 (6 at Ascension 8+) Block."
+            },
+            {
+              "state": "HISS_MOVE",
+              "title": "Hiss",
+              "intent": "Buff",
+              "effect": "Gains 2 (3 at Ascension 9+) Strength."
+            }
+          ],
+          "pattern": "Alone it opens with Butt. In a group the front Nibbit opens with Slice and the others with Hiss. Then it cycles Butt, Slice, Hiss.",
+          "entry_effects": "",
+          "definition_sha256": "5f027dafe55d5be0d4001188ff010cbb087b3c0c9f5b069cd03713b33ea02912",
+          "verification": "native-review"
+        },
+        "MONSTER.PHANTASMAL_GARDENER": {
+          "moves": [
+            {
+              "state": "BITE_MOVE",
+              "title": "Bite",
+              "intent": "Attack",
+              "effect": "5 damage."
+            },
+            {
+              "state": "LASH_MOVE",
+              "title": "Lash",
+              "intent": "Attack",
+              "effect": "7 damage."
+            },
+            {
+              "state": "FLAIL_MOVE",
+              "title": "Flail",
+              "intent": "Multi-attack",
+              "effect": "1 damage x3 hits."
+            },
+            {
+              "state": "ENLARGE_MOVE",
+              "title": "Enlarge",
+              "intent": "Buff",
+              "effect": "Gains 2 (3 at Ascension 9+) Strength."
+            }
+          ],
+          "pattern": "Cycles Bite, Lash, Flail, Enlarge. The first Gardener opens with Flail, the second with Bite, the third with Lash, the fourth with Enlarge.",
+          "entry_effects": "Gains SkittishPower 6 (7 at Ascension 8+).",
+          "definition_sha256": "99bff217af84a3f9e31530f394bb72fbe0256089c36ed5616b98aa11ee3c1a9f",
+          "verification": "native-review"
+        },
+        "MONSTER.PHROG_PARASITE": {
+          "moves": [
+            {
+              "state": "INFECT_MOVE",
+              "title": "Infect",
+              "intent": "Status",
+              "effect": "Adds 3 Infection to the discard pile."
+            },
+            {
+              "state": "LASH_MOVE",
+              "title": "Lash",
+              "intent": "Multi-attack",
+              "effect": "4 damage x4 hits (5 x4 at Ascension 9+)."
+            }
+          ],
+          "pattern": "Starts with Infect, then alternates Lash and Infect.",
+          "entry_effects": "Gains InfestedPower 4.",
+          "definition_sha256": "9716e37f502e678a1153d6e946b1a2c6f9b53b217fc1b34784a3a317751b91ef",
+          "verification": "native-review"
+        },
+        "MONSTER.PUNCH_CONSTRUCT": {
+          "moves": [
+            {
+              "state": "READY_MOVE",
+              "title": "READY",
+              "intent": "Defend",
+              "effect": "Gains 10 Block."
+            },
+            {
+              "state": "STRONG_PUNCH_MOVE",
+              "title": "Strong Punch",
+              "intent": "Attack",
+              "effect": "14 (16 at Ascension 9+) damage."
+            },
+            {
+              "state": "FAST_PUNCH_MOVE",
+              "title": "Fast Punch",
+              "intent": "Multi-attack + Debuff",
+              "effect": "5 damage x2 hits (6 x2 at Ascension 9+) and applies 1 Frail."
+            }
+          ],
+          "pattern": "Cycles Ready, Fast Punch, Strong Punch. Some encounters start it at Fast Punch or with reduced HP.",
+          "entry_effects": "Gains ArtifactPower 1.",
+          "definition_sha256": "389c64af1b2eb8da881ef51b5f9addf19f5b5f659b706235263c062a2fcc2d7e",
+          "verification": "native-review"
+        },
+        "MONSTER.SEAPUNK": {
+          "moves": [
+            {
+              "state": "SEA_KICK_MOVE",
+              "title": "Sea Kick",
+              "intent": "Attack",
+              "effect": "11 (13 at Ascension 9+) damage."
+            },
+            {
+              "state": "SPINNING_KICK_MOVE",
+              "title": "Spinning Kick",
+              "intent": "Multi-attack",
+              "effect": "2 damage x4 hits."
+            },
+            {
+              "state": "BUBBLE_BURP_MOVE",
+              "title": "Bubble Burp",
+              "intent": "Buff + Defend",
+              "effect": "Gains 7 (8 at Ascension 8+) Block and 1 (2 at Ascension 9+) Strength."
+            }
+          ],
+          "pattern": "Cycles Sea Kick, Spinning Kick, Bubble Burp.",
+          "entry_effects": "",
+          "definition_sha256": "5502426b447c4f7f3d40cdc046d945eae91037d7f90db72816aff5de0ed5d594",
+          "verification": "native-review"
+        },
+        "MONSTER.SEWER_CLAM": {
+          "moves": [
+            {
+              "state": "PRESSURIZE_MOVE",
+              "title": "Pressurize",
+              "intent": "Buff",
+              "effect": "Gains 4 Strength."
+            },
+            {
+              "state": "JET_MOVE",
+              "title": "Jet",
+              "intent": "Attack",
+              "effect": "10 (11 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Starts with Jet, then alternates Pressurize and Jet.",
+          "entry_effects": "Gains PlatingPower 8 (9 at Ascension 8+).",
+          "definition_sha256": "ca9f3c24098ca3f783a16c0454d113a1ede94c5cceb833d9e8b1f6efa6717708",
+          "verification": "native-review"
+        },
+        "MONSTER.SHRINKER_BEETLE": {
+          "moves": [
+            {
+              "state": "SHRINKER_MOVE",
+              "title": "Shrinker",
+              "intent": "Debuff",
+              "effect": "Applies ShrinkPower -1 to the player."
+            },
+            {
+              "state": "CHOMP_MOVE",
+              "title": "Chomp",
+              "intent": "Attack",
+              "effect": "7 (8 at Ascension 9+) damage."
+            },
+            {
+              "state": "STOMP_MOVE",
+              "title": "Stomp",
+              "intent": "Attack",
+              "effect": "13 (14 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Shrinker once, then alternates Chomp and Stomp.",
+          "entry_effects": "",
+          "definition_sha256": "91969dc1ad9b68ece0dc42cf84461e6988724b3438091bfd007a288534d686ab",
+          "verification": "native-review"
+        },
+        "MONSTER.SKULKING_COLONY": {
+          "moves": [
+            {
+              "state": "ZOOM_MOVE",
+              "title": "Zoom",
+              "intent": "Attack",
+              "effect": "14 (16 at Ascension 9+) damage."
+            },
+            {
+              "state": "INERTIA_MOVE",
+              "title": "Inertia",
+              "intent": "Attack + Buff",
+              "effect": "9 (11 at Ascension 9+) damage and gains 2 (4 at Ascension 9+) Strength."
+            },
+            {
+              "state": "PIERCING_STABS_MOVE",
+              "title": "Piercing Stabs",
+              "intent": "Multi-attack",
+              "effect": "7 damage x2 hits (8 x2 at Ascension 9+)."
+            }
+          ],
+          "pattern": "Cycles Zoom, Zoom, Inertia, Piercing Stabs.",
+          "entry_effects": "Gains HardenedShellPower 20.",
+          "definition_sha256": "b0ee03b9a2a8f3d436a5c4d16a35f037b1f7ed20d3d01fb288e8418c8e86f0e0",
+          "verification": "native-review"
+        },
+        "MONSTER.SLITHERING_STRANGLER": {
+          "moves": [
+            {
+              "state": "CONSTRICT",
+              "title": "Constrict",
+              "intent": "Debuff",
+              "effect": "Applies ConstrictPower 3."
+            },
+            {
+              "state": "THWACK",
+              "title": "Thwack",
+              "intent": "Attack + Defend",
+              "effect": "7 (8 at Ascension 9+) damage and gains 5 Block."
+            },
+            {
+              "state": "LASH",
+              "title": "Lash",
+              "intent": "Attack",
+              "effect": "12 (13 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Constrict, then Thwack or Lash with equal weight, then Constrict again; it alternates like that.",
+          "entry_effects": "",
+          "definition_sha256": "d300724b95c294ae62cfc5d2dadad851884dd0f1e512684cfb4a7eed36a18b9c",
+          "verification": "native-review"
+        },
+        "MONSTER.SLUDGE_SPINNER": {
+          "moves": [
+            {
+              "state": "OIL_SPRAY_MOVE",
+              "title": "Oil Spray",
+              "intent": "Attack + Debuff",
+              "effect": "8 (9 at Ascension 9+) damage and applies 1 Weak."
+            },
+            {
+              "state": "SLAM_MOVE",
+              "title": "Slam",
+              "intent": "Attack",
+              "effect": "11 (12 at Ascension 9+) damage."
+            },
+            {
+              "state": "RAGE_MOVE",
+              "title": "Rage",
+              "intent": "Attack + Buff",
+              "effect": "6 (7 at Ascension 9+) damage and gains 3 Strength."
+            }
+          ],
+          "pattern": "Opens with Oil Spray; then random with equal weight among the three moves, never the same move twice in a row.",
+          "entry_effects": "",
+          "definition_sha256": "8fe29f4f22d2725e732394828e154800518cfc85c2d85ae680677f7fc356e315",
+          "verification": "native-review"
+        },
+        "MONSTER.SNAPPING_JAXFRUIT": {
+          "moves": [
+            {
+              "state": "ENERGY_ORB_MOVE",
+              "title": "Energy Orb",
+              "intent": "Attack + Buff",
+              "effect": "3 (4 at Ascension 9+) damage and gains 2 Strength."
+            }
+          ],
+          "pattern": "Energy Orb every turn.",
+          "entry_effects": "",
+          "definition_sha256": "d8f124d4fb907f790cb6ff24c558fc836cd45900ec334c0da288dde7bf092957",
+          "verification": "native-review"
+        },
+        "MONSTER.SNEAKY_GREMLIN": {
+          "moves": [
+            {
+              "state": "SPAWNED_MOVE",
+              "title": "Wake Up",
+              "intent": "Stun",
+              "effect": "Does nothing on the turn it appears."
+            },
+            {
+              "state": "TACKLE_MOVE",
+              "title": "Tackle",
+              "intent": "Attack",
+              "effect": "9 (10 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Stunned for its first turn, then Tackle every turn.",
+          "entry_effects": "",
+          "definition_sha256": "ad35c5bfcd96bad7cedd5e616340ea399653705fd88c205bacfc4cb817215725",
+          "verification": "native-review"
+        },
+        "MONSTER.SOUL_FYSH": {
+          "moves": [
+            {
+              "state": "BECKON_MOVE",
+              "title": "Beckon",
+              "intent": "Status",
+              "effect": "Adds 2 Beckon per player: 1 into the draw pile at random, 1 into the discard pile."
+            },
+            {
+              "state": "DE_GAS_MOVE",
+              "title": "De-Gas",
+              "intent": "Attack",
+              "effect": "16 (17 at Ascension 9+) damage."
+            },
+            {
+              "state": "GAZE_MOVE",
+              "title": "Gaze",
+              "intent": "Attack + Status",
+              "effect": "7 (8 at Ascension 9+) damage and adds 1 Beckon to the discard pile."
+            },
+            {
+              "state": "FADE_MOVE",
+              "title": "Fade",
+              "intent": "Buff",
+              "effect": "Gains IntangiblePower 2."
+            },
+            {
+              "state": "SCREAM_MOVE",
+              "title": "Scream",
+              "intent": "Attack + Debuff",
+              "effect": "13 (15 at Ascension 9+) damage and applies 3 Vulnerable."
+            }
+          ],
+          "pattern": "Cycles Beckon, De-Gas, Gaze, Fade, Scream.",
+          "entry_effects": "",
+          "definition_sha256": "ac118a01aef90c979783e045100ca765cc794551ea33b873276a20befbaba1d7",
+          "verification": "native-review"
+        },
+        "MONSTER.TERROR_EEL": {
+          "moves": [
+            {
+              "state": "CRASH_MOVE",
+              "title": "Crash",
+              "intent": "Attack",
+              "effect": "16 (18 at Ascension 9+) damage."
+            },
+            {
+              "state": "THRASH_MOVE",
+              "title": "Thrash",
+              "intent": "Multi-attack + Buff",
+              "effect": "3 damage x3 hits (4 x3 at Ascension 9+) and gains 6 Vigor."
+            },
+            {
+              "state": "STUN_MOVE",
+              "title": "Stun",
+              "intent": "Stun",
+              "effect": "Does nothing."
+            },
+            {
+              "state": "TERROR_MOVE",
+              "title": "Terrorize",
+              "intent": "Debuff",
+              "effect": "Applies 99 Vulnerable."
+            }
+          ],
+          "pattern": "Alternates Crash and Thrash. When its Shriek puts it into the stunned state it loses a turn, uses Terror, then resumes with Crash.",
+          "entry_effects": "Gains ShriekPower 70 (75 at Ascension 8+).",
+          "definition_sha256": "17c0ed7405e6656600b6d0afbc116751759172ca2dfaa881fed9800ff95cfe6c",
+          "verification": "native-review"
+        },
+        "MONSTER.TOADPOLE": {
+          "moves": [
+            {
+              "state": "SPIKE_SPIT_MOVE",
+              "title": "Spike Spit",
+              "intent": "Multi-attack",
+              "effect": "3 damage x3 hits (4 x3 at Ascension 9+) and loses 2 Thorns."
+            },
+            {
+              "state": "WHIRL_MOVE",
+              "title": "Whirl",
+              "intent": "Attack",
+              "effect": "7 (8 at Ascension 9+) damage."
+            },
+            {
+              "state": "SPIKEN_MOVE",
+              "title": "Spiken",
+              "intent": "Buff",
+              "effect": "Gains 2 Thorns."
+            }
+          ],
+          "pattern": "The front Toadpole opens with Spiken, the others with Whirl; then it cycles Whirl, Spiken, Spike Spit.",
+          "entry_effects": "",
+          "definition_sha256": "b19b55f6fae0431eb30a2aaa14b6fc98288f6f2d288638d3972731f09f2725c9",
+          "verification": "native-review"
+        },
+        "MONSTER.TRACKER_RUBY_RAIDER": {
+          "moves": [
+            {
+              "state": "TRACK_MOVE",
+              "title": "Track",
+              "intent": "Debuff",
+              "effect": "Applies 2 Frail."
+            },
+            {
+              "state": "HOUNDS_MOVE",
+              "title": "Unleash the Hounds",
+              "intent": "Multi-attack",
+              "effect": "1 damage x8 hits (1 x9 at Ascension 9+)."
+            }
+          ],
+          "pattern": "Track once, then Hounds every turn.",
+          "entry_effects": "",
+          "definition_sha256": "d4a177e9a9668f6c185482d4b8ec00746818391f1d9fa86421bfc0569afdc6ad",
+          "verification": "native-review"
+        },
+        "MONSTER.TWIG_SLIME_M": {
+          "moves": [
+            {
+              "state": "POKEY_POUNCE_MOVE",
+              "title": "Pokey Pounce",
+              "intent": "Attack",
+              "effect": "11 (12 at Ascension 9+) damage."
+            },
+            {
+              "state": "STICKY_SHOT_MOVE",
+              "title": "Sticky Shot",
+              "intent": "Status",
+              "effect": "Adds 1 Slimed to the discard pile."
+            }
+          ],
+          "pattern": "Starts with Sticky Shot; then random with equal weight between Pokey Pounce (at most twice in a row) and Sticky Shot (never twice in a row).",
+          "entry_effects": "",
+          "definition_sha256": "c2f054fa762d13e72544ac9b4318295e7c5a9f05db5ae7c33e4950540b020e30",
+          "verification": "native-review"
+        },
+        "MONSTER.TWIG_SLIME_S": {
+          "moves": [
+            {
+              "state": "TACKLE_MOVE",
+              "title": "Tackle",
+              "intent": "Attack",
+              "effect": "4 (5 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Tackle every turn.",
+          "entry_effects": "",
+          "definition_sha256": "20df69868780ab61d8fd0e33aaeda150928ab98bc35c5276a2271563c4b46c0b",
+          "verification": "native-review"
+        },
+        "MONSTER.TWO_TAILED_RAT": {
+          "moves": [
+            {
+              "state": "SCRATCH_MOVE",
+              "title": "Scratch",
+              "intent": "Attack",
+              "effect": "8 (9 at Ascension 9+) damage."
+            },
+            {
+              "state": "DISEASE_BITE_MOVE",
+              "title": "Disease Bite",
+              "intent": "Attack",
+              "effect": "6 (7 at Ascension 9+) damage."
+            },
+            {
+              "state": "SCREECH_MOVE",
+              "title": "Screech",
+              "intent": "Debuff",
+              "effect": "Applies 1 Frail."
+            },
+            {
+              "state": "CALL_FOR_BACKUP_MOVE",
+              "title": "Call for Backup",
+              "intent": "Summon",
+              "effect": "Adds another Two-Tailed Rat in a free slot."
+            }
+          ],
+          "pattern": "Random among Scratch and Disease Bite (never twice in a row) and Screech (never twice in a row, not within 3 moves of its last use). Call for Backup becomes available after a rat's first 2 moves, needs a free slot, is used at most once per rat and 3 times per encounter, and is then chosen 75% of the time. Rats in an encounter may be given different starting moves.",
+          "entry_effects": "",
+          "definition_sha256": "e50556be2187d67a41044f471d7d3270511b2aed9a599f7ef6b33d558b9aa1fb",
+          "verification": "native-review"
+        },
+        "MONSTER.VANTOM": {
+          "moves": [
+            {
+              "state": "INK_BLOT_MOVE",
+              "title": "Ink Blot",
+              "intent": "Attack",
+              "effect": "7 (8 at Ascension 9+) damage."
+            },
+            {
+              "state": "INKY_LANCE_MOVE",
+              "title": "Inky Lance",
+              "intent": "Multi-attack",
+              "effect": "6 damage x2 hits (7 x2 at Ascension 9+)."
+            },
+            {
+              "state": "DISMEMBER_MOVE",
+              "title": "Dismember",
+              "intent": "Attack + Status",
+              "effect": "26 (30 at Ascension 9+) damage and adds 3 Wound to the discard pile."
+            },
+            {
+              "state": "PREPARE_MOVE",
+              "title": "Prepare",
+              "intent": "Buff",
+              "effect": "Gains 2 Strength."
+            }
+          ],
+          "pattern": "Cycles Ink Blot, Inky Lance, Dismember, Prepare.",
+          "entry_effects": "Gains SlipperyPower 8 (9 at Ascension 8+).",
+          "definition_sha256": "476c9b05288a7446c25a65d1099490146b8aebe9de0fe1f1dc6b65e44b357469",
+          "verification": "native-review"
+        },
+        "MONSTER.VINE_SHAMBLER": {
+          "moves": [
+            {
+              "state": "GRASPING_VINES_MOVE",
+              "title": "Grasping Vines",
+              "intent": "Attack + Card debuff",
+              "effect": "8 (9 at Ascension 9+) damage and applies TangledPower 1."
+            },
+            {
+              "state": "SWIPE_MOVE",
+              "title": "Swipe",
+              "intent": "Multi-attack",
+              "effect": "6 damage x2 hits (7 x2 at Ascension 9+)."
+            },
+            {
+              "state": "CHOMP_MOVE",
+              "title": "Chomp",
+              "intent": "Attack",
+              "effect": "16 (18 at Ascension 9+) damage."
+            }
+          ],
+          "pattern": "Opens with Swipe; then cycles Swipe, Grasping Vines, Chomp.",
+          "entry_effects": "",
+          "definition_sha256": "f11dc9dcf84b569801a2444a2b05a0eb7775e0a770931f60057047f98da83eb5",
+          "verification": "native-review"
+        },
+        "MONSTER.WATERFALL_GIANT": {
+          "moves": [
+            {
+              "state": "PRESSURIZE_MOVE",
+              "title": "Pressurize",
+              "intent": "Buff",
+              "effect": "Gains SteamEruptionPower 15 (20 at Ascension 9+)."
+            },
+            {
+              "state": "STOMP_MOVE",
+              "title": "Stomp",
+              "intent": "Attack + Debuff + Buff",
+              "effect": "15 (16 at Ascension 9+) damage, applies 1 Weak and gains SteamEruptionPower 3."
+            },
+            {
+              "state": "RAM_MOVE",
+              "title": "Ram",
+              "intent": "Attack + Buff",
+              "effect": "10 (11 at Ascension 9+) damage and gains SteamEruptionPower 3."
+            },
+            {
+              "state": "SIPHON_MOVE",
+              "title": "Siphon",
+              "intent": "Heal + Buff",
+              "effect": "Heals 10 (15 at Ascension 8+) per player and gains SteamEruptionPower 3."
+            },
+            {
+              "state": "PRESSURE_GUN_MOVE",
+              "title": "Pressure Gun",
+              "intent": "Attack + Buff",
+              "effect": "20 (23 at Ascension 9+) damage, 5 more each use, and gains SteamEruptionPower 3."
+            },
+            {
+              "state": "PRESSURE_UP_MOVE",
+              "title": "Pressure Up",
+              "intent": "Attack + Buff",
+              "effect": "13 (14 at Ascension 9+) damage and gains SteamEruptionPower 3."
+            },
+            {
+              "state": "ABOUT_TO_BLOW_MOVE",
+              "title": "About to Blow",
+              "intent": "Stun",
+              "effect": "Becomes unkillable and converts its SteamEruptionPower into the coming explosion."
+            },
+            {
+              "state": "EXPLODE_MOVE",
+              "title": "Explode",
+              "intent": "Death blow",
+              "effect": "Damage equal to the converted SteamEruptionPower amount, then it dies."
+            }
+          ],
+          "pattern": "Pressurize, then cycles Stomp, Ram, Siphon, Pressure Gun, Pressure Up. About to Blow and Explode are triggered by its SteamEruptionPower; that trigger is not reviewed.",
+          "entry_effects": "",
+          "definition_sha256": "957bcde9afeec1ee7cd414a3d69296990942dd2c1161b02c18a833975103c80f",
+          "verification": "native-review"
+        },
+        "MONSTER.WRIGGLER": {
+          "moves": [
+            {
+              "state": "NASTY_BITE_MOVE",
+              "title": "Nasty Bite",
+              "intent": "Attack",
+              "effect": "6 (7 at Ascension 9+) damage."
+            },
+            {
+              "state": "WRIGGLE_MOVE",
+              "title": "Wriggle",
+              "intent": "Buff + Status",
+              "effect": "Adds 1 Infection to the discard pile and gains 2 Strength."
+            },
+            {
+              "state": "SPAWNED_MOVE",
+              "title": "Spawned",
+              "intent": "Stun",
+              "effect": "Does nothing on the turn it was spawned."
+            }
+          ],
+          "pattern": "Wrigglers in slots 1 and 3 open with Nasty Bite, slots 2 and 4 with Wriggle; then they alternate the two. A spawned Wriggler is stunned for its first turn.",
+          "entry_effects": "",
+          "definition_sha256": "2d008f4cd9cbe791dc96012a137faa6d6fd7c5696b698ea2f6c67e720320e87a",
           "verification": "native-review"
         }
       }

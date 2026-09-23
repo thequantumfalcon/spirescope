@@ -193,6 +193,20 @@ version and falls back to the bare title otherwise. Status reset timing,
 per-copy amounts and interactions with relics, powers and other cards are not
 simulated, and deck analysis still counts enchanted copies as unmodeled.
 
+Move sets and turn patterns are reviewed for all **51 monsters** reachable
+from the two Act 1 pools (the Overgrowth and Underdocks act models, 42
+encounters), with the review in
+[monster moves](game-baselines/v0.107.1-monster-moves.json): each move's
+intent, damage, hits, Block and applied powers with their Ascension 8+ and
+9+ variants, the turn order including random-branch weights, repeat rules and
+cooldowns, and effects applied on entering combat. Titles come from the game's
+localization table. Enemy pages show these in place of reference patterns for
+that version, and counter-card suggestions read the reviewed text. Named
+powers are identifiers whose effects are not reviewed; summon slot
+availability, encounter-specific starting moves and forced-state triggers are
+not simulated. The 56 Act 2 and Act 3 monsters with reviewed HP remain review
+queues for moves.
+
 Initial HP is reviewed for all **107 monsters**, including the Ascension 8
 threshold. These are base ranges before multiplayer scaling, encounter effects,
 powers or modifiers. [The HP review](game-baselines/v0.107.1-monster-stats.json)
@@ -321,7 +335,8 @@ still require verification.
 Branch metadata remains absent on 636/639 cards, 310/312 relics and 64/65 potions.
 The catalog still mixes information collected at different revisions. Versioned
 mechanics now cover the bounded main scopes above. Enemy move/state-machine
-behavior, full event simulations, other systems and beta remain review work. These
+behavior outside the Act 1 pools, full event simulations, other systems and
+beta remain review work. These
 profiles and refresh guards do not establish unreviewed families' or beta's
 compatibility.
 

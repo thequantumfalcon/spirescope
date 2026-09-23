@@ -338,6 +338,7 @@ class KnowledgeBase:
             "reviewed_epochs": len(profile.epochs) if profile else 0,
             "reviewed_events": len(profile.events) if profile else 0,
             "reviewed_enchantments": len(profile.enchantments) if profile else 0,
+            "reviewed_monster_moves": len(profile.monster_moves) if profile else 0,
             "complete": bool(profile and profile.complete),
             "overlay_descriptions_skipped": self.overlay_descriptions_skipped,
         }

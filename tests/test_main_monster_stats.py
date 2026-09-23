@@ -31,9 +31,12 @@ def test_main_hp_thresholds_do_not_certify_unreviewed_patterns():
     cultist = kb.get_enemy_by_id("MONSTER.CALCIFIED_CULTIST")
     assert cultist.hp_range == "38–41 (Ascension 8+: 39–42)"
     assert cultist.stats_version == "v0.107.1"
-    assert cultist.mechanics_version == ""
-    assert kb.get_counter_cards(cultist) == []
-    assert kb.get_enemy_by_id("MONSTER.AEONGLASS").hp_range == "512 (Ascension 8+: 535)"
+    # Act 1 moves are reviewed; HP review alone still certifies nothing about patterns.
+    assert cultist.mechanics_version == "v0.107.1"
+    aeonglass = kb.get_enemy_by_id("MONSTER.AEONGLASS")
+    assert aeonglass.hp_range == "512 (Ascension 8+: 535)"
+    assert aeonglass.stats_version == "v0.107.1" and aeonglass.mechanics_version == ""
+    assert kb.get_counter_cards(aeonglass) == []
     assert kb.get_enemy_by_id("MONSTER.BATTLE_FRIEND_V1").hp_range == "75"
     later = kb.enemy_for_version(cultist.id, "v0.111.0")
     assert later.stats_version == "" and kb.get_enemy_by_id(cultist.id) is cultist
@@ -79,5 +82,9 @@ async def test_enemy_page_distinguishes_hp_patterns_and_selected_version(client)
     assert main.status_code == later.status_code == 200
     assert "Initial HP checked for v0.107.1" in main.text
     assert "Ascension 8+: 39–42" in main.text
-    assert "Counter Cards" not in main.text
+    assert "Patterns checked for v0.107.1" in main.text
+    unreviewed = await client.get("/enemies/MONSTER.AEONGLASS?game_version=v0.107.1")
+    assert unreviewed.status_code == 200
+    assert "Counter Cards" not in unreviewed.text
+    assert "Patterns checked for" not in unreviewed.text
     assert "Initial HP checked for v0.107.1" not in later.text
