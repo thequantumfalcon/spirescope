@@ -25,12 +25,20 @@ Energy per Attack. Hyperbeam has temporary Focus loss in the catalog and
 unqualified Focus loss in that main build. This confirms the disclosed branch
 difference; it does not establish either branch's complete correctness.
 
+A field-level v0.111.0 check found Guiding Star already had next-turn draw
+but still cost 2 Stars. The candidate now corrects its Star cost to 1, matching
+the official notes linked above. This is a targeted beta-catalog correction;
+the old data-fetch timestamp is retained and no complete-refresh claim is made.
+The updater still needs versioned expectations so later source drift cannot
+silently reintroduce such a partially updated record.
+
 The public app release remains v3.1.2. The repaired executable candidate was
 qualified at `24947e7e58d027617e9e74191b2ab8eb67c46a75` in
 [PR #60](https://github.com/thequantumfalcon/spirescope/pull/60), with
 [CI](https://github.com/thequantumfalcon/spirescope/actions/runs/35807577729) and
 [Windows/macOS artifact rehearsal](https://github.com/thequantumfalcon/spirescope/actions/runs/35807670327).
-The content-audit tool and this document were added after that executable build.
+The content-audit tool, this document and the Guiding Star correction were
+added after that executable build; its archived data predates that correction.
 
 ## What changed after the installed main release
 
