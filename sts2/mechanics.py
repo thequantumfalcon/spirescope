@@ -176,7 +176,11 @@ class EnchantmentMechanics(BaseModel):
 
 
 class MechanicsProfile(BaseModel):
-    model_config = ConfigDict(extra="forbid", strict=True)
+    # Sections this version does not know are ignored, not rejected, so a
+    # newer data bundle that adds a reviewed family still installs on an
+    # older app. Each known section stays strict. schema_version still gates
+    # incompatible shapes.
+    model_config = ConfigDict(extra="ignore", strict=True)
 
     game_version: str = Field(pattern=r"^v[0-9]+\.[0-9]+\.[0-9]+$")
     game_commit: str = Field(min_length=1, max_length=128)
@@ -212,6 +216,12 @@ def read_profiles(path: Path) -> dict[str, MechanicsProfile]:
     if len(raw) > 8 * 1024 * 1024:
         raise ValueError("mechanics catalog exceeds size limit")
     data = MechanicsCatalog.model_validate_json(raw)
+    known = set(MechanicsProfile.model_fields)
+    for entry in json.loads(raw).get("profiles", []):
+        unknown = sorted(set(entry) - known) if isinstance(entry, dict) else []
+        if unknown:
+            log.warning("Mechanics profile %s carries sections this version does not read: %s",
+                        entry.get("game_version", "?"), ", ".join(unknown))
     profiles = {}
     for profile in data.profiles:
         if profile.game_version in profiles:

@@ -63,7 +63,7 @@ _RE_LOBBY_DISCONNECT = re.compile(r"\[INFO\] \[RunLobby\] Disconnected\. Reason:
 _RE_MOVING = re.compile(r"\[DEBUG\] \[MapSelectionSynchronizer\] Moving to coordinate MapCoord \((\d+), (\d+)\)")
 _RE_ROOM_PRELOAD = re.compile(r"\[INFO\] Preloading '(.+?)' assets")
 _RE_EPOCH = re.compile(r"\[INFO\] Epoch obtained for completing Act (\d+)")
-_RE_CHAR_SELECT = re.compile(r"Received LobbyPlayerChangedCharacterMessage for \d+ (CHARACTER\.\w+)")
+_RE_CHAR_SELECT = re.compile(r"Received LobbyPlayerChangedCharacterMessage for (\d+) (CHARACTER\.\w+)")
 _RE_LOCAL_READY = re.compile(r"\[INFO\] \[StartRunLobby.*?\] Local player (\d+) is ready")
 _RE_CLIENT_CONNECT = re.compile(r"\[INFO\] \[StartRunLobby.*?\] Client (\d+) connected")
 _RE_NEOW_EVENT = re.compile(r"\[VERYDEBUG\] \[EventSynchronizer\] Event EVENT\.NEOW began for player (\d+)")
@@ -84,6 +84,13 @@ _RE_ELITES_DEFEATED = re.compile(r"\[INFO\] Elites Defeated: (\d+)/\d+")
 # Seed: 0GUR32LH2X". The seed matches the save's "seed" for the same run, so
 # the live view can refuse to mix a stale or foreign log into the save.
 _RE_EMBARK = re.compile(r"\[INFO\] Embarking on an? (\w+) (\w+) run\.(?: Ascension: (\d+))?(?: Seed: (\w+))?")
+# Co-op embark, observed 2026-09-23 on v0.107.1: "Embarking on a multiplayer
+# run. Players: Player <id>, IRONCLAD,Player <id>, SILENT. Ascension: 2
+# Seed: 0G1GSK9FGA". The ids are the same numbers "Player N ..." and "Local
+# player N is ready" print, so the local player's own character is the entry
+# with that id.
+_RE_EMBARK_MP = re.compile(r"\[INFO\] Embarking on a multiplayer run\. Players: (.+?)\.(?: Ascension: (\d+))?(?: Seed: (\w+))?")
+_RE_EMBARK_PLAYER = re.compile(r"Player (\d+), (\w+)")
 
 # Character ID mapping
 _CHAR_MAP = {
@@ -298,6 +305,27 @@ class LogTailer:
             self.state.events_seen.append("EVENT.NEOW")
             return True
 
+        # Co-op embark: the player list names every character; only the
+        # local player's entry describes this machine's run.
+        m = _RE_EMBARK_MP.search(line)
+        if m:
+            if self.state.seed:
+                self.state.reset()
+            self.state.active = True
+            self.state.run_started = True
+            players = _RE_EMBARK_PLAYER.findall(m.group(1))
+            if players:
+                self.state.total_players = max(self.state.total_players, len(players))
+                local = self.state.local_player
+                chosen = next((char for pid, char in players if local is not None and int(pid) == local),
+                              players[0][1])
+                self.state.character = _CHAR_MAP.get("CHARACTER." + chosen, self.state.character)
+            if m.group(2) is not None:
+                self.state.ascension = int(m.group(2))
+            if m.group(3):
+                self.state.seed = m.group(3)
+            return True
+
         # Run embark: carries the seed and ascension that identify the run
         m = _RE_EMBARK.search(line)
         if m:
@@ -319,8 +347,12 @@ class LogTailer:
         # Character selection (during lobby)
         m = _RE_CHAR_SELECT.search(line)
         if m:
-            char_id = m.group(1)
-            self.state.character = _CHAR_MAP.get(char_id, char_id)
+            # In co-op these messages arrive for the other players; the local
+            # player's character comes from the embark line.
+            local = self.state.local_player
+            if local is None or int(m.group(1)) == local:
+                char_id = m.group(2)
+                self.state.character = _CHAR_MAP.get(char_id, char_id)
             return True
 
         # Client connected (co-op)

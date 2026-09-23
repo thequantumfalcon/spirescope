@@ -320,6 +320,32 @@ class TestLogTailerPoll:
         assert result is not None
         assert result["total_players"] == 2
 
+    def test_poll_coop_embark_identifies_local_player_seed_and_ascension(self, tmp_path):
+        """Line shapes observed in a real v0.107.1 co-op session (host view).
+
+        The lobby messages name the partner's picks; the embark line lists
+        every player. Only the local player's entry describes this run.
+        """
+        log_file = tmp_path / "godot.log"
+        log_file.write_text(
+            "[INFO] [StartRunLobby (76561198062036692)] Client 76561198049095178 connected. Sending initial game info message\n"
+            "[DEBUG] [StartRunLobby (76561198062036692)] Received LobbyPlayerChangedCharacterMessage for 76561198049095178 CHARACTER.IRONCLAD (43308298)\n"
+            "[INFO] [StartRunLobby (76561198062036692)] Local player 76561198062036692 is ready\n"
+            "[DEBUG] [StartRunLobby (76561198062036692)] Received LobbyPlayerChangedCharacterMessage for 76561198049095178 CHARACTER.SILENT (8388506)\n"
+            "[INFO] Embarking on a multiplayer run. Players: Player 76561198062036692, IRONCLAD,Player 76561198049095178, SILENT. Ascension: 2 Seed: 0G1GSK9FGA\n"
+            r"[INFO] Wrote 54543 bytes to path=user://steam/76561198062036692/profile1\saves\current_run_mp.save save_dir=user://steam/76561198062036692" + "\n"
+            "[INFO] Player 76561198062036692 playing card CARD.STRIKE_IRONCLAD\n"
+            "[INFO] Player 76561198049095178 playing card CARD.NEUTRALIZE\n"
+        )
+        tailer = LogTailer(log_path=log_file)
+        result = tailer.poll()
+        assert result is not None
+        assert result["character"] == "Ironclad"
+        assert result["seed"] == "0G1GSK9FGA"
+        assert result["log_ascension"] == 2
+        assert result["total_players"] == 2
+        assert result["cards_played"] == ["CARD.STRIKE_IRONCLAD"]
+
     def test_poll_full_run_lifecycle(self, tmp_path):
         """Simulate a complete run: start, play, end."""
         log_file = tmp_path / "godot.log"

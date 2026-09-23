@@ -32,6 +32,16 @@
 - Review move sets and turn patterns for all 107 monsters with reviewed HP
   from the game's own move definitions; enemy pages show them for that
   version in place of reference patterns.
+- Ignore mechanics-profile sections this version does not read, with a
+  logged warning, so a newer data bundle that adds a reviewed family still
+  installs on an older app. Known sections stay strict and the schema version
+  still gates incompatible shapes.
+- Parse the co-op embark line (player list, ascension, seed) and take the
+  local player's character from it; lobby character messages for other
+  players no longer override it. Live telemetry now matches co-op runs
+  instead of reporting unavailable.
+- Run post-mortem insights name the encounter from the catalog instead of
+  showing its raw id.
 
 ### Release engineering
 

@@ -753,12 +753,15 @@ def analyze_run(run: RunHistory, kb=None) -> dict:
     combat_damage = sum(f.damage_taken for f in combat_floors)
     other_damage = sum(f.damage_taken for f in run.floors) - combat_damage
 
+    def name(identifier: str) -> str:
+        return kb.id_to_name(identifier) if kb else identifier
+
     # Largest single-combat damage
     if combat_floors:
         worst = max(combat_floors, key=lambda f: f.damage_taken)
         if worst.damage_taken > 0:
             where = f" on floor {worst.floor}" if worst.floor > 0 else ""
-            insights.append({"type": "info", "text": f"Largest single-combat damage: {worst.damage_taken}{where} ({worst.encounter or 'unknown encounter'})."})
+            insights.append({"type": "info", "text": f"Largest single-combat damage: {worst.damage_taken}{where} ({name(worst.encounter) if worst.encounter else 'unknown encounter'})."})
 
     # Floors recorded below 20% HP
     danger_floors = [f for f in run.floors if f.max_hp > 0 and f.current_hp / f.max_hp < 0.2]
@@ -788,7 +791,7 @@ def analyze_run(run: RunHistory, kb=None) -> dict:
     elif run.killed_by:
         floor = _death_floor(run)
         where = f" on floor {floor}" if floor > 0 else ""
-        insights.append({"type": "bad", "text": f"Killed by {run.killed_by}{where}."})
+        insights.append({"type": "bad", "text": f"Killed by {name(run.killed_by)}{where}."})
 
     if kb and run.deck:
         # Card-text checks, scoped to the run's recorded game version

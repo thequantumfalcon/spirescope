@@ -50,6 +50,15 @@ def test_death_floor_comes_from_the_recorded_floor_number():
     assert not any("floor 2" in t for t in texts)
 
 
+def test_recorded_ids_render_as_catalog_names_when_a_knowledge_base_is_given(kb):
+    floors = [RunFloor(floor=3, type="monster", encounter="ENCOUNTER.NIBBITS_NORMAL", damage_taken=9)]
+    texts = _texts(_run(killed_by="ENCOUNTER.NIBBITS_NORMAL", floors=floors), kb)
+    label = kb.id_to_name("ENCOUNTER.NIBBITS_NORMAL")
+    assert f"Killed by {label} on floor 3." in texts
+    assert f"Largest single-combat damage: 9 on floor 3 ({label})." in texts
+    assert not any("ENCOUNTER." in t for t in texts)
+
+
 def test_death_without_floor_numbers_names_no_floor():
     floors = [RunFloor(type="monster"), RunFloor(type="monster")]
     assert "Killed by Guardian." in _texts(_run(killed_by="Guardian", floors=floors))
