@@ -1,0 +1,5 @@
+# Preserve vendored bytes so the recorded upstream SHA-256 values verify on every OS.
+sts2/static/swagger/swagger-ui-bundle.js -text
+sts2/static/swagger/swagger-ui.css -text
+sts2/static/swagger/LICENSE -text
+sts2/static/swagger/NOTICE -text
