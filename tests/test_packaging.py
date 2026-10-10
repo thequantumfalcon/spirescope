@@ -446,6 +446,30 @@ def test_dockerignore_covers_the_private_set():
     for name in ("sts2/risk.py", "sts2/diagnosis.py",
                  "sts2/data/.fetcher_keys.json", "sts2/locales/content/"):
         assert name in ignored, f".dockerignore does not exclude {name}"
+    # Excluding risk.py is not enough when its compiled bytecode sits in
+    # sts2/__pycache__: Docker matches `__pycache__/` and `*.pyc` only at the
+    # context root, so nested bytecode needs the recursive forms. Build venvs
+    # (.venv_build, .venv_build.<suffix>) hold a whole interpreter's packages.
+    patterns = {line.strip() for line in ignored.splitlines()}
+    for pattern in ("**/__pycache__/", "**/*.pyc", ".venv_build*/"):
+        assert pattern in patterns, f".dockerignore lacks {pattern}"
+
+
+def test_docker_base_image_is_digest_pinned_and_kept_current():
+    """The base image is pinned by digest, and Dependabot's docker entry is
+    what moves the digest; with no such entry it only moved by hand."""
+    import yaml
+
+    dockerfile = (PROJECT_ROOT / "Dockerfile").read_text(encoding="utf-8")
+    base = re.search(r"^FROM\s+(\S+)", dockerfile, re.M)
+    assert base, "Dockerfile has no FROM line"
+    assert re.fullmatch(r"python:3\.12-slim@sha256:[0-9a-f]{64}", base.group(1)), base.group(1)
+    config = yaml.safe_load(
+        (PROJECT_ROOT / ".github" / "dependabot.yml").read_text(encoding="utf-8"))
+    docker = [u for u in config["updates"] if u["package-ecosystem"] == "docker"]
+    assert docker, "dependabot.yml has no docker ecosystem entry"
+    assert docker[0]["directory"] == "/"
+    assert docker[0]["schedule"]["interval"] == "monthly"
 
 
 def test_every_configuration_variable_is_documented():

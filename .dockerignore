@@ -4,13 +4,17 @@
 .gitignore
 .dockerignore
 .env
-__pycache__/
-*.pyc
+# Recursive on purpose: a bare `__pycache__/` or `*.pyc` matches only at the
+# build-context root, so bytecode under sts2/ (including compiled copies of
+# the private modules excluded below) would still reach the image.
+**/__pycache__/
+**/*.pyc
 *.egg-info/
 dist/
 build/
 .venv/
 .venv_build/
+.venv_build*/
 venv/
 tests/
 *.md

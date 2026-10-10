@@ -12,6 +12,25 @@ updates:
     labels:
       - dependencies
 
+  # The Dockerfile pins python:3.12-slim by digest. Without this entry that
+  # digest only moved when someone remembered to re-resolve it, so the image
+  # kept building on the 3.12-slim of that day and missed the upstream
+  # rebuilds that carry Debian and CPython security fixes.
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "docker"
+    labels:
+      - dependencies
+    ignore:
+      # Digest refreshes within 3.12 only. requirements-runtime-lock.txt is
+      # resolved for Python 3.12, so moving the image to 3.13-slim is a
+      # deliberate change (re-lock, re-qualify), not a monthly bump.
+      - dependency-name: "python"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
   - package-ecosystem: pip
     directory: "/"
     schedule:

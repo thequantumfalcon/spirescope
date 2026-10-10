@@ -1,7 +1,8 @@
-# Digest for the python:3.12-slim multi-arch tag, resolved 2026-08-12 against
-# registry-1.docker.io/v2/library/python/manifests/3.12-slim. Re-resolve and
-# bump this when a rebuild against a newer 3.12-slim is wanted.
-FROM python:3.12-slim@sha256:229a2c5bfa27522db7815ea81f9bed70af17ccb9de9fc7ad142b1877b5830d36
+# Digest for the python:3.12-slim multi-arch tag, resolved 2026-10-10 against
+# registry-1.docker.io/v2/library/python/manifests/3.12-slim. Dependabot's
+# docker entry proposes a new digest monthly; re-resolve and bump this by hand
+# when a rebuild against a newer 3.12-slim is wanted sooner.
+FROM python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
 
 WORKDIR /app
 
