@@ -239,6 +239,7 @@ h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; font-weight: 600; }
 .font-bold { font-weight: 700; }
 
 /* ── Utility: Spacing ── */
+.mb-0, .card .mb-0 { margin-bottom: 0; } /* .card scope outranks .card h3 */
 .mb-xs { margin-bottom: 0.25rem; }
 .mb-sm { margin-bottom: 0.5rem; }
 .mb-md { margin-bottom: 1rem; }

@@ -45,3 +45,20 @@ async def test_no_anchor_on_the_epochs_page_repeats_an_attribute(client):
     for attrs in parser.anchors:
         names = [name for name, _ in attrs]
         assert len(names) == len(set(names)), attrs
+
+
+def test_the_epoch_header_uses_classes_the_stylesheet_defines():
+    """The header used flex-between, flex-center and mb-0, none of which
+    existed, so the name and category tag were never laid out as intended."""
+    import re
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "sts2"
+    css = (root / "static" / "style.css").read_text(encoding="utf-8")
+    defined = set(re.findall(r"\.([A-Za-z][\w-]*)", css))
+    template = (root / "templates" / "epochs.html").read_text(encoding="utf-8")
+    header = re.search(r'<div class="(flex [^"]*)">\s*<h3 class="([^"]*)"', template)
+    assert header, "epoch card header not found"
+    used = set(header.group(1).split()) | set(header.group(2).split())
+    assert used <= defined, sorted(used - defined)
+

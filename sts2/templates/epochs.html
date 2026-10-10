@@ -55,7 +55,7 @@
 {% set ep = item.epoch %}
 {% set is_unlocked = item.state == 'revealed' %}
 <div class="card {% if ep.status == 'deprecated' %}collection-undiscovered opacity-60{% elif is_unlocked %}collection-discovered{% else %}collection-undiscovered{% endif %}">
-  <div class="flex flex-between flex-center mb-xs">
+  <div class="flex justify-between items-center mb-xs">
     <h3 class="mb-0">
       {% if ep.status == 'deprecated' %}&#9888;{% elif is_unlocked %}&#10003;{% else %}&#128274;{% endif %}
       {{ ep.name }}
