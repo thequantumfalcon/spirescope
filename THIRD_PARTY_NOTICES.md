@@ -103,8 +103,8 @@ project. Bundled data is derived from:
 
 | Source | License / Terms | Use |
 |---|---|---|
-| [slaythespire2.gg](https://slaythespire2.gg/) | Scraped under their robots.txt permission. Disallowed paths (`/api/`, `/admin/`, `/analysis/`, `/planner/`) are never requested. We identify ourselves with a project-named User-Agent. Their AI-train opt-out is respected — this project is not training models. | Primary source for cards, relics and potions in the data refresh; reference for events |
-| [slaythespire.wiki.gg](https://slaythespire.wiki.gg/) | CC BY-SA 4.0 (wiki.gg standard) | Secondary source for cards, relics and potions in the data refresh: fills gaps and takes over entirely when the primary is unavailable; reference for events and patch notes |
+| [slaythespire2.gg](https://slaythespire2.gg/) | Scraped under their robots.txt permission. Disallowed paths (`/api/`, `/admin/`, `/analysis/`, `/planner/`) are never requested. We identify ourselves with a project-named User-Agent. Their AI-train opt-out is respected — this project is not training models. | First source the data refresh tries for cards, relics and potions; reference for events. No record in the current bundle names it in `fetched_from` |
+| [slaythespire.wiki.gg](https://slaythespire.wiki.gg/) | CC BY-SA 4.0 (wiki.gg standard) | Source of every scraped card, relic and potion record in the current bundle that names one in `fetched_from`; second in the refresh order, where it fills gaps and takes over when slaythespire2.gg is unavailable; reference for events and patch notes |
 | [sts2.untapped.gg](https://sts2.untapped.gg/) | Public reference; not fetched by the data refresh | Manual cross-reference only |
 | Steam community pages | Valve ToS (public reading) | Steam guide highlights in the `/community` view |
 | NeonLightsMedia Epochs guide | Cited reference (not redistributed verbatim) | Epoch unlock requirement notes in `sts2/data/epochs.json` |
