@@ -33,7 +33,7 @@ Commands:
   install-data  Install a local data bundle with a SHA-256 checksum file
   validate-data Check a data directory without starting the dashboard
   runtime-info  Print the executing Python/OpenSSL versions and architecture
-  update        Fetch latest game data from the wiki
+  update        Fetch latest game data from slaythespire2.gg and the wiki
   community     Fetch community tips from Steam
   export        Export aggregate stats to JSON file
   reset-stats   Delete aggregate stats file
@@ -43,7 +43,7 @@ Commands:
 
 Options:
   --browser     With 'serve': force opening browser automatically
-  --save-only   With 'update': skip wiki, only discover from save files
+  --save-only   With 'update': skip the websites, only discover from save files
   --no-browser  With 'serve': don't open browser automatically
   --lang CODES  With 'localize': comma-separated languages (default: all)
   --list        With 'localize': list languages your game install offers
@@ -301,7 +301,8 @@ def main():
         if HOST not in ("127.0.0.1", "localhost", "::1"):
             if os.environ.get("STS2_AUTH_TOKEN"):
                 print("  Network bind: every request must present STS2_AUTH_TOKEN.")
-                print(f"  Open {url}/?token=<your token> once per browser to sign in.")
+                print(f"  Open {url}/?token=<your token> to sign in. A browser stays signed in")
+                print("  for a week, or until Spirescope restarts.")
                 print("  Use TLS or a reverse proxy for anything beyond a trusted LAN.\n")
             elif os.environ.get("STS2_ALLOW_UNAUTHENTICATED") == "1":
                 print("  WARNING: STS2_ALLOW_UNAUTHENTICATED=1 — every client that can")
