@@ -527,7 +527,12 @@ async def index(request: Request):
 @router.get("/search", response_class=HTMLResponse)
 async def search(request: Request, q: str = Query("", max_length=200)):
     a = _app()
-    results = a.kb.search(q)
+    # A query with no match falls through to the pure-Python edit-distance
+    # suggester over every entity name: CPU work that held the event loop,
+    # and every live stream with it, for tens of milliseconds a request. The
+    # KnowledgeBase is never mutated after it is built (reloads swap in a new
+    # one), so reading it from a thread is safe.
+    results = await asyncio.to_thread(a.kb.search, q)
     total = sum(len(v) for k, v in results.items() if k != "suggestions")
     return a.templates.TemplateResponse(request, "search.html", {
         "query": q, "results": results, "total": total, "kb": a.kb,
@@ -1755,7 +1760,9 @@ async def deck_analyzer(request: Request,
     game_version = a.kb.game_version
     if from_run:
         if from_run == "live":
-            live_run = await _get_live_run(0)
+            # The local player, as /live and the overlay show: seat 0 is the
+            # host, which in co-op is often the teammate.
+            live_run = await _get_live_run()
             if live_run.active and live_run.deck:
                 instances = instances_from_run(live_run)[:_MAX_DECK_SIZE]
                 selected_ids = live_run.deck[:_MAX_DECK_SIZE]
@@ -2154,7 +2161,8 @@ async def api_export_runs_csv(character: str = Query(None, max_length=50),
 @router.get("/api/search")
 async def api_search(q: str = Query("", max_length=200)):
     a = _app()
-    results = a.kb.search(q)
+    # Off the event loop for the same reason as the /search page.
+    results = await asyncio.to_thread(a.kb.search, q)
     return {
         "query": q,
         "cards": [c.model_dump() for c in results["cards"]],
