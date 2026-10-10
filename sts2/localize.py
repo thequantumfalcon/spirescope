@@ -949,7 +949,8 @@ def run(langs=None, game_dir=None) -> list:
     """Write overlays for `langs` (default: every language the game ships).
 
     Returns the paths written. Raises LocalizeError when the game install
-    cannot be read or a requested language is not in it.
+    cannot be read, a requested language is not in it, or the overlays cannot
+    be written.
     """
     global _LOC_DATA, LANGS
     _LOC_DATA = read_localization(game_dir)
@@ -970,21 +971,30 @@ def run(langs=None, game_dir=None) -> list:
     if not LANGS:
         raise LocalizeError("This game install has no translatable languages")
 
-    OUT.mkdir(parents=True, exist_ok=True)
-    _build_all(read_game_release(Path(game_dir or GAME_INSTALL_DIR)))
+    try:
+        OUT.mkdir(parents=True, exist_ok=True)
+        _build_all(read_game_release(Path(game_dir or GAME_INSTALL_DIR)))
 
-    # The builder names files by game locale; the app looks them up by app code
-    written = []
-    for lang in LANGS:
-        src = OUT / f"{lang}.json"
-        if not src.exists():
-            continue
-        payload = json.loads(src.read_text(encoding="utf-8"))
-        payload.setdefault("_meta", {})["code"] = LANG_CODES[lang]
-        dest = OUT / f"{LANG_CODES[lang]}.json"
-        dest.write_text(json.dumps(payload, ensure_ascii=False),
-                        encoding="utf-8")
-        if src != dest:
-            src.unlink()
-        written.append(dest)
+        # The builder names files by game locale; the app looks them up by app code
+        written = []
+        for lang in LANGS:
+            src = OUT / f"{lang}.json"
+            if not src.exists():
+                continue
+            payload = json.loads(src.read_text(encoding="utf-8"))
+            payload.setdefault("_meta", {})["code"] = LANG_CODES[lang]
+            dest = OUT / f"{LANG_CODES[lang]}.json"
+            dest.write_text(json.dumps(payload, ensure_ascii=False),
+                            encoding="utf-8")
+            if src != dest:
+                src.unlink()
+            written.append(dest)
+    except OSError as exc:
+        # The overlays are written inside the installed package, which a
+        # Program Files or container install does not let the user write.
+        # That is a setup problem to explain, not a traceback to print.
+        raise LocalizeError(
+            f"{exc.strerror or exc}: {exc.filename or OUT}. Translations are "
+            f"written to {OUT}, so that folder must be writable by this user."
+        ) from exc
     return written
