@@ -28,27 +28,69 @@ sts2/
   routes.py          # All route handlers
   analytics.py       # Run analytics computation
   aggregate.py       # Aggregate stats computation and merging
+  card_properties.py # Native card properties and exact-build views of customized copies
   community/         # Community data sourcing
     __init__.py      # Orchestrator + re-exports
     _types.py        # Shared types, extraction functions
     _merge.py        # Weighted merge logic
     steam.py         # Steam data fetcher (reviews, guides, discussions)
   config.py          # Auto-detected paths and settings
-  fetcher.py         # Data fetcher (wiki + save file discovery)
+  corrections/       # Version-scoped corrections for known source defects
+    rarity.py        # Historical rarity map (explicit maintenance tool)
+    text.py          # Card text pinned from official patch notes
+  data_health.py     # Side-effect-free dataset checks (refresh, validate-data)
+  deck_instances.py  # Positional card copies with upgrade/enchantment metadata
+  fetcher.py         # Data refresh (slaythespire2.gg scraping, staged install, save file discovery)
+  game_version.py    # Reads the installed game's release identity
+  i18n.py            # Interface translation, content overlays
+  identities.py      # Mappings from older catalog IDs to native game IDs
   knowledge.py       # Search, filter, synergy, and deck analysis engine
+  localize.py        # Builds translated game text from your install
   logparser.py       # Game log tailer for live run tracking
+  mechanics.py       # Exact-version mechanics profiles
   models.py          # Pydantic models for all game entities
+  patches.py         # Patch manifest: build id to patch era
+  persist.py         # Atomic writes for the small state files
   saves.py           # Save file parser (progress + run history + co-op)
+  sources.py         # Data source adapters for the update pipeline
+  state_lock.py      # Cross-process locks for state transactions
   sync.py            # Aggregate sync client (upload/download)
-  updater.py         # Auto-update checker
+  updater.py         # Auto-update checker + data-bundle installer
   watcher.py         # File watcher with debounce + polling fallback
-  data/              # JSON game data + mods
+  behavior.py, cascade.py, drift.py, ghost.py, graveyard.py,
+  hypothesis.py, integrity.py, prophecy.py, rivalry.py,
+  spectral.py        # The advanced analytics modules
+  data/              # JSON game data; mods/ here holds only the mod format README
+  locales/           # Interface translations; content/ holds text built by `localize`
   templates/         # Jinja2 HTML templates
   static/            # CSS, fonts, images, JS
+scripts/             # Maintenance tools and correction wrappers
 tests/               # pytest + pytest-asyncio (browser tests deselected by default)
-                     # + 15 Playwright browser tests: pip install -e ".[browser]"
+                     # + Playwright browser tests: pip install -e ".[browser]"
                      #   && playwright install chromium && pytest -m browser
 ```
+
+Mod files are user content: they load from `STS2_MODS_DIR`, which defaults to
+`mods/` under the state directory (beside the executable in packaged builds),
+not from `sts2/data/mods/`.
+
+## Git Hooks
+
+The repository ships three hooks in `.githooks/`. Git does not run them until
+you point it there, once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+- `pre-commit` rejects a commit whose staged changes contain AI-tool
+  authorship attribution lines.
+- `commit-msg` applies the same check to the commit message.
+- `pre-push` re-checks the messages of the commits being pushed and the
+  tracked files at `HEAD`, and blocks the push on a match.
+
+The `No AI Attribution` workflow in `.github/workflows/` runs the same kind of
+scan on every push and pull request.
 
 ## CSS Conventions
 

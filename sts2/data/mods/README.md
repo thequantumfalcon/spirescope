@@ -1,6 +1,11 @@
 # Spirescope Mod Support
 
-Place `.json` files in this directory to add mod cards, relics, and enemies.
+Mod `.json` files add cards, relics, potions and enemies. Spirescope reads them
+from its mods directory, not from this one: `STS2_MODS_DIR` if set, otherwise
+`mods/` beside the executable in packaged builds, or `mods/` under the state
+directory (`STS2_STATE_DIR`) in a source install. Mod files left here by older
+versions are moved to `mods/` under the state directory at startup; this README
+stays here to document the format.
 
 ## File Format
 
@@ -43,9 +48,10 @@ Place `.json` files in this directory to add mod cards, relics, and enemies.
 
 ## Notes
 
-- All entity types (cards, relics, enemies) are optional per file.
+- All entity types (cards, relics, potions, enemies) are optional per file.
 - Base game data always takes priority — conflicting IDs are skipped.
-- Restart Spirescope or call `POST /api/reload` after adding files.
+- Restart Spirescope or call `POST /api/reload` (needs the `X-Admin-Token`
+  header and `SPIRESCOPE_ADMIN_TOKEN` set) after adding files.
 
 ## Schema v2 fields (optional)
 
