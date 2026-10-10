@@ -96,6 +96,7 @@ def _fake_manifest(tmp_path, monkeypatch):
     ]
     (tmp_path / "patches.json").write_text(json.dumps(manifest))
     monkeypatch.setattr(patch_manifest, "DATA_DIR", tmp_path)
+    monkeypatch.setattr("sts2.config.STATE_DIR", tmp_path / "state")
     patch_manifest.invalidate_cache()
     return manifest
 
@@ -121,10 +122,12 @@ def test_unmapped_builds_counts(tmp_path, monkeypatch):
 def test_assign_build_persists_and_resolves(tmp_path, monkeypatch):
     _fake_manifest(tmp_path, monkeypatch)
     assert patch_manifest.assign_build("v0.109.1", "v0.109.0") is True
-    # persisted to disk, not just cache
-    on_disk = json.loads((tmp_path / "patches.json").read_text())
-    entry = next(p for p in on_disk if p["patch"] == "v0.109.0")
-    assert "v0.109.1" in entry["build_ids"]
+    # Persisted to the state folder, not just the cache; the shipped manifest
+    # in the data folder is left as it was.
+    on_disk = json.loads((tmp_path / "state" / "patch_assignments.json").read_text())
+    assert on_disk == {"v0.109.0": ["v0.109.1"]}
+    shipped = json.loads((tmp_path / "patches.json").read_text())
+    assert next(p for p in shipped if p["patch"] == "v0.109.0")["build_ids"] == ["v0.109.0"]
     assert patch_manifest.resolve_build("v0.109.1")["patch"] == "v0.109.0"
 
 
