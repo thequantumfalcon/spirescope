@@ -1,4 +1,4 @@
-"""The Prophecy Engine — pre-run predictions based on historical data."""
+"""The Prophecy Engine — historical estimates from recorded runs, shown before a run."""
 
 
 def generate_prophecy(character, ascension, runs):

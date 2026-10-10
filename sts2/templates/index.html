@@ -84,7 +84,7 @@
 {% if home_prophecy %}
 <div class="card {% if home_prophecy.available %}card-tip{% else %}card-caution{% endif %} mb-md">
   {% if home_prophecy.available %}
-  <p><strong>Prophecy:</strong> <span class="char-{{ home_prophecy.character|lower }}">{{ home_prophecy.character }}</span> win probability <strong>{{ home_prophecy.win_probability }}%</strong> at this ascension (from {{ home_prophecy.sample_size }} runs). <a href="/prophecy?character={{ home_prophecy.character }}&ascension={{ home_prophecy.ascension }}">Full prophecy &rarr;</a></p>
+  <p><strong>Prophecy:</strong> <span class="char-{{ home_prophecy.character|lower }}">{{ home_prophecy.character }}</span> observed win rate <strong>{{ home_prophecy.win_probability }}%</strong> within two ascensions of your latest run (from {{ home_prophecy.sample_size }} runs). <a href="/prophecy?character={{ home_prophecy.character }}&ascension={{ home_prophecy.ascension }}">Full prophecy &rarr;</a></p>
   {% else %}
   <p><strong>Prophecy:</strong> {{ home_prophecy.reason }} <a href="/prophecy">Try the Prophecy Engine &rarr;</a></p>
   {% endif %}
