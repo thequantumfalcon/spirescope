@@ -63,3 +63,23 @@ async def test_every_static_reference_in_the_pages_exists(client):
     for url in sorted(seen):
         asset = await client.get(url)
         assert asset.status_code == 200, url
+
+
+async def test_versions_follow_the_file_contents(client):
+    """The version is the file's own content hash, like the other scripts, so
+    an edit busts the cache even within one release."""
+    import hashlib
+
+    from sts2.config import STATIC_DIR
+
+    pages = {"/": ["/static/nav.js"], "/overlay": ["/static/overlay.js"],
+             "/docs": ["/static/swagger/swagger-ui.css",
+                       "/static/swagger/swagger-ui-bundle.js",
+                       "/static/swagger/init.js"]}
+    for page, paths in pages.items():
+        html = (await client.get(page)).text
+        for path in paths:
+            data = (STATIC_DIR / path.removeprefix("/static/")).read_bytes()
+            expected = hashlib.md5(data, usedforsecurity=False).hexdigest()[:8]
+            assert _versioned(html, path) == expected, path
+

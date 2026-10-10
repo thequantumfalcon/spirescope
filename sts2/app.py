@@ -57,6 +57,16 @@ _compare_js_path = STATIC_DIR / "compare.js"
 _COMPARE_JS_HASH = hashlib.md5(_compare_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _compare_js_path.exists() else "0"
 _live_js_path = STATIC_DIR / "live.js"
 _LIVE_JS_HASH = hashlib.md5(_live_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _live_js_path.exists() else "0"
+_nav_js_path = STATIC_DIR / "nav.js"
+_NAV_JS_HASH = hashlib.md5(_nav_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _nav_js_path.exists() else "0"
+_overlay_js_path = STATIC_DIR / "overlay.js"
+_OVERLAY_JS_HASH = hashlib.md5(_overlay_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _overlay_js_path.exists() else "0"
+_swagger_css_path = STATIC_DIR / "swagger/swagger-ui.css"
+_SWAGGER_CSS_HASH = hashlib.md5(_swagger_css_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _swagger_css_path.exists() else "0"
+_swagger_js_path = STATIC_DIR / "swagger/swagger-ui-bundle.js"
+_SWAGGER_JS_HASH = hashlib.md5(_swagger_js_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _swagger_js_path.exists() else "0"
+_swagger_init_path = STATIC_DIR / "swagger/init.js"
+_SWAGGER_INIT_HASH = hashlib.md5(_swagger_init_path.read_bytes(), usedforsecurity=False).hexdigest()[:8] if _swagger_init_path.exists() else "0"
 
 
 @contextlib.asynccontextmanager
@@ -139,6 +149,11 @@ templates.env.globals["collections_js_hash"] = _COLLECTIONS_JS_HASH
 templates.env.globals["shortcuts_js_hash"] = _SHORTCUTS_JS_HASH
 templates.env.globals["compare_js_hash"] = _COMPARE_JS_HASH
 templates.env.globals["live_js_hash"] = _LIVE_JS_HASH
+templates.env.globals["nav_js_hash"] = _NAV_JS_HASH
+templates.env.globals["overlay_js_hash"] = _OVERLAY_JS_HASH
+templates.env.globals["swagger_css_hash"] = _SWAGGER_CSS_HASH
+templates.env.globals["swagger_js_hash"] = _SWAGGER_JS_HASH
+templates.env.globals["swagger_init_hash"] = _SWAGGER_INIT_HASH
 
 # Repair a half-finished data swap FIRST. A process killed between the
 # live->backup and staging->live renames leaves no live dataset, and every
