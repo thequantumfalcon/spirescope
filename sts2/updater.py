@@ -126,6 +126,11 @@ _VALIDATED_PARTS = ("cards.json", "relics.json", "potions.json", "enemies.json",
 _LOCK_STALE_SECONDS = 600
 
 
+# Set while install_data_update() runs in this process, so a shutdown request
+# can refuse instead of cutting the install off part-way.
+_installing = threading.Event()
+
+
 class _RejectBundle(Exception):
     """A downloaded/extracted bundle failed validation.
 
@@ -138,6 +143,11 @@ class _RejectBundle(Exception):
     def __init__(self, user_message: str, detail: str = ""):
         super().__init__(detail or user_message)
         self.user_message = user_message
+
+
+def data_install_in_progress() -> bool:
+    """Whether a data-bundle install is running in this process."""
+    return _installing.is_set()
 
 
 def _local_data_date() -> str:
@@ -504,6 +514,7 @@ def install_data_update(*, archive: Path | None = None, checksum: Path | None = 
 
     staging = None
     try:
+        _installing.set()
         if archive is None and not info["tarball"].startswith(_GITHUB_PREFIX):
             raise _RejectBundle("Bundle URL is not from github.com — rejected.")
         if archive is None and not info["sha256"].startswith(_GITHUB_PREFIX):
@@ -595,4 +606,5 @@ def install_data_update(*, archive: Path | None = None, checksum: Path | None = 
     finally:
         if staging is not None and staging.exists():
             shutil.rmtree(staging, ignore_errors=True)
+        _installing.clear()
         _release_lock(lock_path, lock_fd)

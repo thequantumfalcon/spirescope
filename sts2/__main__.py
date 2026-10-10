@@ -314,7 +314,12 @@ def main():
         else:
             print()
         from sts2.app import app
-        uvicorn.run(app, host=HOST, port=PORT, log_level="warning")
+        # A stop (Ctrl+C or the Stop button) waits for open responses, and a
+        # Live page's event stream stays open until it idles out after five
+        # minutes. Past this bound uvicorn cancels what is left and still runs
+        # the lifespan cleanup.
+        uvicorn.run(app, host=HOST, port=PORT, log_level="warning",
+                    timeout_graceful_shutdown=5)
         return
 
     print(f"Unknown command: {command}\n")

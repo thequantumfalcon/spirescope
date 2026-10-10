@@ -2066,6 +2066,31 @@ async def reload_data(request: Request):
             "potions": len(a.kb.potions), "enemies": len(a.kb.enemies)}
 
 
+import threading
+
+_server_exit_requested = False
+_server_exit_lock = threading.Lock()
+
+
+def _request_server_exit() -> None:
+    """Ask the server to stop the way Ctrl+C in its console window does.
+
+    `python -m sts2` runs uvicorn in the main thread, and uvicorn handles
+    SIGINT by finishing in-flight requests and then running the lifespan
+    cleanup. os.kill(pid, SIGTERM) did that on POSIX only: on Windows it is
+    TerminateProcess, so the process died without any cleanup. uvicorn treats
+    a second SIGINT as "quit now" and skips the cleanup, so it is raised once
+    however many stop requests arrive.
+    """
+    global _server_exit_requested
+    with _server_exit_lock:
+        if _server_exit_requested:
+            return
+        _server_exit_requested = True
+    import signal
+    signal.raise_signal(signal.SIGINT)
+
+
 @router.post("/shutdown")
 async def shutdown(request: Request):
     """Gracefully stop SpireScope. Requires admin token, or a loopback client
@@ -2082,10 +2107,15 @@ async def shutdown(request: Request):
         csrf = request.headers.get("X-CSRF-Token", "")
         if not _is_loopback_client(request) or not a.validate_csrf_token(csrf):
             return PlainTextResponse("Unauthorized.", status_code=403)
-    import os
-    import signal
-    import threading
-    threading.Timer(0.5, lambda: os.kill(os.getpid(), signal.SIGTERM)).start()
+    from sts2.updater import data_install_in_progress
+    if data_install_in_progress():
+        # Refused rather than queued: an install cut off part-way leaves the
+        # update lock and a staging directory behind, and the next install is
+        # refused until that lock goes stale.
+        return _api_error("A game data update is being installed. Stop Spirescope "
+                          "again once it has finished.", 409)
+    # The delay lets this response reach the browser before the server stops.
+    threading.Timer(0.5, _request_server_exit).start()
     return {"status": "shutting down"}
 
 
