@@ -1072,6 +1072,8 @@ async def export_run(run_id: str = Path(max_length=200)):
 
 @router.get("/runs/{run_id}/export/html")
 async def export_run_html(run_id: str = Path(max_length=200)):
+    from markupsafe import Markup
+
     from sts2.analytics import analyze_run
     from sts2.config import STATIC_DIR, VERSION
     a = _app()
@@ -1081,9 +1083,16 @@ async def export_run_html(run_id: str = Path(max_length=200)):
     run_analysis = analyze_run(run, kb=a.kb)
     css_path = STATIC_DIR / "style.css"
     css_content = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
+    # The stylesheet is the app's own static file, never user input, so it is
+    # inlined as trusted markup. Autoescaped, its quotes and ">" became
+    # entities, which browsers do not decode inside <style>, and the fonts,
+    # child selectors and light-theme rules dropped out of every export.
+    # A literal "</style" would still end the element early; "<\/" is the
+    # same text to CSS (in a string or comment) but not to the HTML parser.
+    css_content = re.sub(r"</(style)", r"<\\/\1", css_content, flags=re.IGNORECASE)
     html = a.templates.env.get_template("run_export.html").render(
         run=run, kb=a.kb, run_analysis=run_analysis,
-        css_content=css_content, version=VERSION,
+        css_content=Markup(css_content), version=VERSION,
     )
     safe_id = re.sub(r'[^\w\-.]', '_', run.id)
     return HTMLResponse(
