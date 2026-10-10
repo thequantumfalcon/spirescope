@@ -207,12 +207,18 @@ def tokens_equal(provided: str, expected: str) -> bool:
     compare_digest raises TypeError on non-ASCII str, and every caller here
     feeds it a request header. That turned a 403 into a 500, and in the
     rate-limit middleware it raised before the request was recorded, so a peer
-    could stay unthrottled by sending a non-ASCII key. A non-ASCII token can
-    never equal these hex/ASCII secrets, so rejecting it early is equivalent.
+    could stay unthrottled by sending a non-ASCII key. Rejecting a non-ASCII
+    provided value was not enough: the expected side is whatever the operator
+    put in STS2_AUTH_TOKEN, SPIRESCOPE_ADMIN_TOKEN or SPIRESCOPE_API_KEY, and
+    a non-ASCII one made every request on a network bind a 500. Both sides are
+    therefore compared as UTF-8 bytes. surrogatepass keeps an environment
+    value with undecodable bytes (POSIX decodes those to lone surrogates) from
+    raising during the encode.
     """
-    if not provided or not provided.isascii():
+    if not provided:
         return False
-    return secrets.compare_digest(provided, expected)
+    return secrets.compare_digest(provided.encode("utf-8", "surrogatepass"),
+                                  expected.encode("utf-8", "surrogatepass"))
 
 
 def validate_csrf_token(token: str) -> bool:
