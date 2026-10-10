@@ -1,9 +1,9 @@
 #
-# Hashed pins for the CI-only tools listed in ci/requirements-ci.in: pytest-cov
-# (the coverage leg), pytest-playwright and playwright (browser engines), build
-# (build-dist) and pip-audit. ci.yml used to install these by exact version
-# but without hashes, so the bytes were whatever the index served that day.
-# Install with pip install --require-hashes -r requirements-ci-lock.txt.
+# Hashed pins for the CI-only tools: pytest-cov (the coverage leg),
+# pytest-playwright and playwright (browser engines), build (build-dist) and
+# pip-audit. ci.yml used to install these by exact version but without hashes,
+# so the bytes were whatever the index served that day. Install with
+# pip install --require-hashes -r requirements-ci-lock.txt.
 #
 # Resolved for the jobs that install it -- ubuntu-latest, CPython 3.12, x86_64
 # -- with requirements-lock.txt as constraints, so every package the two files
@@ -11,14 +11,16 @@
 # install into one environment. pip itself is left out: pip-audit depends on
 # it, and the runner's own pip satisfies that without a download.
 #
-# This file holds the versions; ci/requirements-ci.in names the tools only, so
-# Dependabot can update the pins here in place. To recompile, put the tool
-# versions you want in a constraints file (say tools.txt, one name==version
-# per line) and run, from the repository root, with uv 0.10.9:
+# There is deliberately no pip-compile input file for this lock, anywhere in
+# the repository: Dependabot finds one even when only an annotation here names
+# it, and then treats requirements-lock.txt as pip-compile output it cannot
+# regenerate and stops updating it. This file is the only record of the versions; Dependabot
+# updates them here in place. To recompile, from the repository root with
+# uv 0.10.9, feed the five tools at the versions you want on stdin:
 #
-#    uv pip compile ci/requirements-ci.in -c requirements-lock.txt -c tools.txt \
-#        --generate-hashes --python-version 3.12 \
-#        --python-platform x86_64-manylinux_2_28 \
+#    printf 'pytest-cov==X\npytest-playwright==X\nplaywright==X\nbuild==X\npip-audit==X\n' \
+#      | uv pip compile - -c requirements-lock.txt --generate-hashes \
+#        --python-version 3.12 --python-platform x86_64-manylinux_2_28 \
 #        --no-emit-package pip --no-header -o requirements-ci-lock.txt
 #
 # and restore this header above the output. Not resolved for Windows or
@@ -31,9 +33,6 @@ boolean-py==5.0 \
 build==1.5.0 \
     --hash=sha256:13f3eecb844759ab66efec90ca17639bbf14dc06cb2fdf37a9010322d9c50a6f \
     --hash=sha256:302c22c3ba2a0fd5f3911918651341ebb3896176cbdec15bd421f80b1afc7647
-    # via
-    #   -c C:/Temp/claude/c--Users-tomal-Desktop-Spirescope/101ef4f3-63f3-4f43-b826-567b373d1e1d/scratchpad/ci-hold.txt
-    #   -r ci/requirements-ci.in
 cachecontrol==0.14.4 \
     --hash=sha256:b7ac014ff72ee199b5f8af1de29d60239954f223e948196fa3d84adaffc71d2b \
     --hash=sha256:e6220afafa4c22a47dd0badb319f84475d79108100d04e26e8542ef7d3ab05a1
@@ -571,9 +570,6 @@ pip-api==0.0.35 \
 pip-audit==2.10.1 \
     --hash=sha256:1eb4565d19ebe5d48996f4b770b4d2b32887e12cb12cfa637f1a064011b55ffc \
     --hash=sha256:99ef3f600a317c1945f1e89e227ef26e1c2d618429b8bd3fa6f4f7c440c4611a
-    # via
-    #   -c C:/Temp/claude/c--Users-tomal-Desktop-Spirescope/101ef4f3-63f3-4f43-b826-567b373d1e1d/scratchpad/ci-hold.txt
-    #   -r ci/requirements-ci.in
 pip-requirements-parser==32.0.1 \
     --hash=sha256:4659bc2a667783e7a15d190f6fccf8b2486685b6dba4c19c3876314769c57526 \
     --hash=sha256:b4fa3a7a0be38243123cf9d1f3518da10c51bdb165a2b2985566247f9155a7d3
@@ -591,10 +587,7 @@ playwright==1.58.0 \
     --hash=sha256:96e3204aac292ee639edbfdef6298b4be2ea0a55a16b7068df91adac077cc606 \
     --hash=sha256:a2bf639d0ce33b3ba38de777e08697b0d8f3dc07ab6802e4ac53fb65e3907af8 \
     --hash=sha256:c95568ba1eda83812598c1dc9be60b4406dffd60b149bc1536180ad108723d6b
-    # via
-    #   -c C:/Temp/claude/c--Users-tomal-Desktop-Spirescope/101ef4f3-63f3-4f43-b826-567b373d1e1d/scratchpad/ci-hold.txt
-    #   -r ci/requirements-ci.in
-    #   pytest-playwright
+    # via pytest-playwright
 pluggy==1.6.0 \
     --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
     --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
@@ -635,15 +628,9 @@ pytest==9.1.1 \
 pytest-cov==7.1.0 \
     --hash=sha256:30674f2b5f6351aa09702a9c8c364f6a01c27aae0c1366ae8016160d1efc56b2 \
     --hash=sha256:a0461110b7865f9a271aa1b51e516c9a95de9d696734a2f71e3e78f46e1d4678
-    # via
-    #   -c C:/Temp/claude/c--Users-tomal-Desktop-Spirescope/101ef4f3-63f3-4f43-b826-567b373d1e1d/scratchpad/ci-hold.txt
-    #   -r ci/requirements-ci.in
 pytest-playwright==0.10.0 \
     --hash=sha256:47baf574dfb120bb53675d05c9784f8bf94e04c6dd7477dc56159ce732191952 \
     --hash=sha256:8314d1af726e2c15531635902ece3ee47ed83f5a75c937a7eda8686d3dae6c0d
-    # via
-    #   -c C:/Temp/claude/c--Users-tomal-Desktop-Spirescope/101ef4f3-63f3-4f43-b826-567b373d1e1d/scratchpad/ci-hold.txt
-    #   -r ci/requirements-ci.in
 python-slugify==9.1.3 \
     --hash=sha256:90e997f2e0987239ce95e12f700086eb18e1d1d3ee22624fbbdbd095afca42b6 \
     --hash=sha256:9aced0670e54c5603e2335c0fa9a4011ad4bc41ecb3c46e8097294c46fd60ed4

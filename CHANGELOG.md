@@ -5,11 +5,13 @@
 ### Internal
 
 - **Dependabot updates the dependency locks again.** The CI tool list added
-  in 3.2.1 was a .in file in the repository root, which made Dependabot treat
+  in 3.2.1 was a pip-compile .in file, which made Dependabot treat
   requirements-lock.txt as pip-compile output it could not regenerate: it
   stopped updating that lock and opened partial updates that failed the
-  lock-agreement tests. The list moved to ci/, and its five pending updates
-  are applied together: python-dotenv 1.2.4, markupsafe 3.0.4 and pygments
+  lock-agreement tests. Moving the file into ci/ was not enough, because
+  Dependabot followed the CI lock's annotations to it, so there is now no .in
+  file at all; the CI lock names its tools and documents the recompile. The
+  five pending updates are applied together: python-dotenv 1.2.4, markupsafe 3.0.4 and pygments
   2.21.0 in every lock that carries them, and pytest-playwright 0.10.0 with
   python-slugify 9.1.3 for the browser tests (0.7.2 and 0.9.0 both refuse
   python-slugify 9).
