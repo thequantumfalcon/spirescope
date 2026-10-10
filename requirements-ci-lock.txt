@@ -1,6 +1,6 @@
 #
-# Hashed pins for the CI-only tools in requirements-ci.in: pytest-cov (the
-# coverage leg), pytest-playwright and playwright (browser engines), build
+# Hashed pins for the CI-only tools listed in ci/requirements-ci.in: pytest-cov
+# (the coverage leg), pytest-playwright and playwright (browser engines), build
 # (build-dist) and pip-audit. ci.yml used to install these by exact version
 # but without hashes, so the bytes were whatever the index served that day.
 # Install with pip install --require-hashes -r requirements-ci-lock.txt.
@@ -11,13 +11,17 @@
 # install into one environment. pip itself is left out: pip-audit depends on
 # it, and the runner's own pip satisfies that without a download.
 #
-# Compiled with uv 0.10.9, from the repository root, by:
+# This file holds the versions; ci/requirements-ci.in names the tools only, so
+# Dependabot can update the pins here in place. To recompile, put the tool
+# versions you want in a constraints file (say tools.txt, one name==version
+# per line) and run, from the repository root, with uv 0.10.9:
 #
-#    uv pip compile requirements-ci.in -c requirements-lock.txt --generate-hashes \
-#        --python-version 3.12 --python-platform x86_64-manylinux_2_28 \
+#    uv pip compile ci/requirements-ci.in -c requirements-lock.txt -c tools.txt \
+#        --generate-hashes --python-version 3.12 \
+#        --python-platform x86_64-manylinux_2_28 \
 #        --no-emit-package pip --no-header -o requirements-ci-lock.txt
 #
-# and this header restored above the output. Not resolved for Windows or
+# and restore this header above the output. Not resolved for Windows or
 # macOS: nothing installs it there.
 #
 boolean-py==5.0 \
@@ -27,7 +31,9 @@ boolean-py==5.0 \
 build==1.5.0 \
     --hash=sha256:13f3eecb844759ab66efec90ca17639bbf14dc06cb2fdf37a9010322d9c50a6f \
     --hash=sha256:302c22c3ba2a0fd5f3911918651341ebb3896176cbdec15bd421f80b1afc7647
-    # via -r requirements-ci.in
+    # via
+    #   -c C:/Temp/claude/c--Users-tomal-Desktop-Spirescope/101ef4f3-63f3-4f43-b826-567b373d1e1d/scratchpad/ci-hold.txt
+    #   -r ci/requirements-ci.in
 cachecontrol==0.14.4 \
     --hash=sha256:b7ac014ff72ee199b5f8af1de29d60239954f223e948196fa3d84adaffc71d2b \
     --hash=sha256:e6220afafa4c22a47dd0badb319f84475d79108100d04e26e8542ef7d3ab05a1
@@ -565,7 +571,9 @@ pip-api==0.0.35 \
 pip-audit==2.10.1 \
     --hash=sha256:1eb4565d19ebe5d48996f4b770b4d2b32887e12cb12cfa637f1a064011b55ffc \
     --hash=sha256:99ef3f600a317c1945f1e89e227ef26e1c2d618429b8bd3fa6f4f7c440c4611a
-    # via -r requirements-ci.in
+    # via
+    #   -c C:/Temp/claude/c--Users-tomal-Desktop-Spirescope/101ef4f3-63f3-4f43-b826-567b373d1e1d/scratchpad/ci-hold.txt
+    #   -r ci/requirements-ci.in
 pip-requirements-parser==32.0.1 \
     --hash=sha256:4659bc2a667783e7a15d190f6fccf8b2486685b6dba4c19c3876314769c57526 \
     --hash=sha256:b4fa3a7a0be38243123cf9d1f3518da10c51bdb165a2b2985566247f9155a7d3
@@ -584,7 +592,8 @@ playwright==1.58.0 \
     --hash=sha256:a2bf639d0ce33b3ba38de777e08697b0d8f3dc07ab6802e4ac53fb65e3907af8 \
     --hash=sha256:c95568ba1eda83812598c1dc9be60b4406dffd60b149bc1536180ad108723d6b
     # via
-    #   -r requirements-ci.in
+    #   -c C:/Temp/claude/c--Users-tomal-Desktop-Spirescope/101ef4f3-63f3-4f43-b826-567b373d1e1d/scratchpad/ci-hold.txt
+    #   -r ci/requirements-ci.in
     #   pytest-playwright
 pluggy==1.6.0 \
     --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
@@ -601,9 +610,9 @@ pyee==13.0.1 \
     --hash=sha256:0b931f7c14535667ed4c7e0d531716368715e860b988770fc7eb8578d1f67fc8 \
     --hash=sha256:af2f8fede4171ef667dfded53f96e2ed0d6e6bd7ee3bb46437f77e3b57689228
     # via playwright
-pygments==2.20.0 \
-    --hash=sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f \
-    --hash=sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176
+pygments==2.21.0 \
+    --hash=sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9 \
+    --hash=sha256:610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c
     # via
     #   -c requirements-lock.txt
     #   pytest
@@ -621,24 +630,23 @@ pytest==9.1.1 \
     --hash=sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c
     # via
     #   -c requirements-lock.txt
-    #   pytest-base-url
     #   pytest-cov
     #   pytest-playwright
-pytest-base-url==2.1.0 \
-    --hash=sha256:02748589a54f9e63fcbe62301d6b0496da0d10231b753e950c63e03aee745d45 \
-    --hash=sha256:3ad15611778764d451927b2a53240c1a7a591b521ea44cebfe45849d2d2812e6
-    # via pytest-playwright
 pytest-cov==7.1.0 \
     --hash=sha256:30674f2b5f6351aa09702a9c8c364f6a01c27aae0c1366ae8016160d1efc56b2 \
     --hash=sha256:a0461110b7865f9a271aa1b51e516c9a95de9d696734a2f71e3e78f46e1d4678
-    # via -r requirements-ci.in
-pytest-playwright==0.7.2 \
-    --hash=sha256:247b61123b28c7e8febb993a187a07e54f14a9aa04edc166f7a976d88f04c770 \
-    --hash=sha256:8084e015b2b3ecff483c2160f1c8219b38b66c0d4578b23c0f700d1b0240ea38
-    # via -r requirements-ci.in
-python-slugify==8.0.4 \
-    --hash=sha256:276540b79961052b66b7d116620b36518847f52d5fd9e3a70164fc8c50faa6b8 \
-    --hash=sha256:59202371d1d05b54a9e7720c5e038f928f45daaffe41dd10822f3907b937c856
+    # via
+    #   -c C:/Temp/claude/c--Users-tomal-Desktop-Spirescope/101ef4f3-63f3-4f43-b826-567b373d1e1d/scratchpad/ci-hold.txt
+    #   -r ci/requirements-ci.in
+pytest-playwright==0.10.0 \
+    --hash=sha256:47baf574dfb120bb53675d05c9784f8bf94e04c6dd7477dc56159ce732191952 \
+    --hash=sha256:8314d1af726e2c15531635902ece3ee47ed83f5a75c937a7eda8686d3dae6c0d
+    # via
+    #   -c C:/Temp/claude/c--Users-tomal-Desktop-Spirescope/101ef4f3-63f3-4f43-b826-567b373d1e1d/scratchpad/ci-hold.txt
+    #   -r ci/requirements-ci.in
+python-slugify==9.1.3 \
+    --hash=sha256:90e997f2e0987239ce95e12f700086eb18e1d1d3ee22624fbbdbd095afca42b6 \
+    --hash=sha256:9aced0670e54c5603e2335c0fa9a4011ad4bc41ecb3c46e8097294c46fd60ed4
     # via pytest-playwright
 requests==2.34.2 \
     --hash=sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0 \
@@ -646,7 +654,6 @@ requests==2.34.2 \
     # via
     #   cachecontrol
     #   pip-audit
-    #   pytest-base-url
 rich==15.0.0 \
     --hash=sha256:33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb \
     --hash=sha256:edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36

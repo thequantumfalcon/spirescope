@@ -841,10 +841,29 @@ class TestEveryWorkflowInstallIsHashChecked:
                         f"{path.name}:{job_id} installs outside the hashed locks: {command!r}")
 
     def test_the_ci_only_tools_are_in_the_ci_lock(self):
+        """Every tool ci/requirements-ci.in names is hash-pinned in the lock.
+
+        By name, not version: the lock is where the versions live, and
+        Dependabot updates them there in place. Pinning the versions here as
+        well made every Dependabot bump of a CI tool fail this test."""
+        listed = (REPO_ROOT / "ci" / "requirements-ci.in").read_text(encoding="utf-8")
+        tools = [line.strip() for line in listed.splitlines()
+                 if line.strip() and not line.lstrip().startswith("#")]
+        assert set(tools) == {"pytest-cov", "pytest-playwright", "playwright", "build", "pip-audit"}
         text = (REPO_ROOT / "requirements-ci-lock.txt").read_text(encoding="utf-8")
-        for pin in ("pytest-cov==7.1.0", "pytest-playwright==0.7.2", "playwright==1.58.0",
-                    "build==1.5.0", "pip-audit==2.10.1"):
-            assert re.search(rf"^{re.escape(pin)} \\$", text, re.M), f"{pin} is not hash-pinned"
+        for tool in tools:
+            assert re.search(rf"^{re.escape(tool)}==\S+ \\$", text, re.M), f"{tool} is not hash-pinned"
+
+    def test_no_pip_compile_input_in_the_repository_root(self):
+        """A .in file beside the locks makes Dependabot treat requirements-lock.txt
+        as a pip-compile output it cannot regenerate. On 2026-10-10 that stopped
+        it updating that lock (ruff, mypy and pyinstaller failed with "No files
+        have changed") and produced partial PRs that updated one lock but not
+        the other, which the lock-agreement tests then failed."""
+        # MANIFEST.in is setuptools' sdist manifest, not a pip input; it was
+        # already here when Dependabot updated the locks correctly.
+        assert not sorted(p.name for p in REPO_ROOT.glob("*.in") if p.name != "MANIFEST.in")
+        assert not (REPO_ROOT / "requirements").exists()
 
 
 class TestDockerSmokeChecksTheImageHealthcheck:

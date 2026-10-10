@@ -31,6 +31,11 @@ updates:
       - dependency-name: "python"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
+  # No .in file may sit in the repository root: one there makes Dependabot
+  # treat requirements-lock.txt as pip-compile output it cannot regenerate, so
+  # it stops updating that lock and opens partial PRs that fail the
+  # lock-agreement tests (2026-10-10). The CI tool list lives in ci/ instead;
+  # tests/test_release_pipeline.py guards this.
   - package-ecosystem: pip
     directory: "/"
     schedule:
