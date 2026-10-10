@@ -13,8 +13,23 @@
   var pageRevision = el.dataset.revision || '';
   var lastRevision = null;
   var lastReloadAt = 0;
-  var reloadTimer = null;
   var reconnectTimer = null;
+  // A stream that fails or drops is retried after 5 s, doubling to a 60 s
+  // cap, and given up after RETRY_LIMIT attempts in a row (about 5 minutes).
+  // A message resets the count. Reloading the page instead, as this used to,
+  // never got past a refused stream (a 429 is not retried by EventSource)
+  // and replaced the page with the browser's error page once the server
+  // stopped.
+  var RETRY_BASE_MS = 5000;
+  var RETRY_MAX_MS = 60000;
+  var RETRY_LIMIT = 8;
+  var retries = 0;
+  var statusEl = document.getElementById('live-connection');
+  function showStatus(text) {
+    if (!statusEl) return;
+    statusEl.textContent = text;
+    statusEl.hidden = !text;
+  }
   function safeReload() {
     // Cooldown 10s between reloads to prevent flap-loop on transient SSE state.
     var now = Date.now();
@@ -80,9 +95,9 @@
   function connect() {
     es = new EventSource('/api/live/stream?player=' + player);
     es.onmessage = function(e) {
-      // A healthy message means the stream recovered — cancel any reload the
-      // error handler scheduled, or a spurious full reload fires 10s later.
-      if (reloadTimer !== null) { clearTimeout(reloadTimer); reloadTimer = null; }
+      // A healthy message means the stream recovered.
+      retries = 0;
+      if (statusEl && !statusEl.hidden) showStatus('');
       if (e.data === lastJson) return;
       lastJson = e.data;
       var d;
@@ -129,7 +144,6 @@
     // period) can't stack another pending reconnect on top of it.
     es.addEventListener('timeout', function() {
       es.close();
-      if (reloadTimer !== null) { clearTimeout(reloadTimer); reloadTimer = null; }
       if (reconnectTimer === null) {
         reconnectTimer = setTimeout(function() {
           reconnectTimer = null;
@@ -137,12 +151,32 @@
         }, 15000);
       }
     });
-    es.onerror = function() {
-      // Dedup: a flapping SSE connection can fire onerror many times in
-      // quick succession. Without cancellation, each fires a 10s reload
-      // timer and they pile up. Cancel any pending timer first.
-      if (reloadTimer !== null) { clearTimeout(reloadTimer); }
-      reloadTimer = setTimeout(function() { location.reload(); }, 10000);
+    // Fires for a refused or dropped connection, and for the server's own
+    // 'error' event, which carries a reason. Closing first stops the
+    // browser's built-in retry so the schedule above is the only one.
+    es.onerror = function(e) {
+      es.close();
+      if (reconnectTimer !== null) return;
+      var reason = '';
+      if (typeof e.data === 'string') {
+        try { reason = JSON.parse(e.data).reason || ''; } catch (err) { /* no reason given */ }
+      }
+      if (reason === 'too_many') {
+        // Retrying cannot help until another live page closes.
+        showStatus('Live updates are off: too many live pages are open. Close another Spirescope tab, then reload this page.');
+        return;
+      }
+      if (retries >= RETRY_LIMIT) {
+        showStatus('Live updates stopped: Spirescope could not be reached. Reload the page to try again.');
+        return;
+      }
+      var delay = Math.min(RETRY_BASE_MS * Math.pow(2, retries), RETRY_MAX_MS);
+      retries++;
+      showStatus('Lost the connection to Spirescope. Retrying in ' + Math.round(delay / 1000) + ' s.');
+      reconnectTimer = setTimeout(function() {
+        reconnectTimer = null;
+        connect();
+      }, delay);
     };
   }
   try {

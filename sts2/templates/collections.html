@@ -56,11 +56,12 @@
 {% endfor %}
 {% for char_name, char_cards in card_chars.items() %}
 <div class="deck-section" data-character="{{ char_name }}">
-  <h3 class="deck-section-header char-{{ char_name|lower }}"
-      role="button" tabindex="0" aria-expanded="true">
-    <span class="deck-section-arrow">&#9662;</span>
-    {{ char_name }}
-    <span class="deck-section-count text-muted">({{ char_cards|length }})</span>
+  <h3 class="deck-section-header char-{{ char_name|lower }}">
+    <button type="button" class="deck-section-toggle" aria-expanded="true">
+      <span class="deck-section-arrow" aria-hidden="true">&#9662;</span>
+      {{ char_name }}
+      <span class="deck-section-count text-muted">({{ char_cards|length }})</span>
+    </button>
   </h3>
   <div class="deck-section-body">
     <div class="flex flex-wrap gap-xs">

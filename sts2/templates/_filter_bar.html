@@ -53,7 +53,7 @@
   <button type="submit" name="preset" value="all" class="btn btn-sm {% if not selected_from and not selected_to and selected_preset != '7d' and selected_preset != '30d' and selected_preset != '90d' %}active{% endif %}">All</button>
 
   <span class="filter-divider"></span>
-  <input type="date" name="from" class="select-input date-input" value="{{ selected_from }}" title="From date" data-auto-submit>
+  <input type="date" name="from" class="select-input date-input" value="{{ selected_from }}" title="From date" aria-label="From date" data-auto-submit>
   <span class="text-muted">&ndash;</span>
-  <input type="date" name="to" class="select-input date-input" value="{{ selected_to }}" title="To date" data-auto-submit>
+  <input type="date" name="to" class="select-input date-input" value="{{ selected_to }}" title="To date" aria-label="To date" data-auto-submit>
 </form>

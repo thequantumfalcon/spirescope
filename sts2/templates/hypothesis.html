@@ -10,7 +10,7 @@
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
   <label>
     Hypothesis text:
-    <input type="text" name="text" maxlength="200" required placeholder="e.g. Skipping elites helps me win" style="width:30em;">
+    <input type="text" name="text" maxlength="200" required placeholder="e.g. Skipping elites helps me win" class="w-30em">
   </label>
   <br><br>
   <label>
@@ -33,13 +33,13 @@
 {% if hypotheses %}
 <h2 class="mt-md">Active Hypotheses</h2>
 {% for hyp_id, h in hypotheses.items() %}
-<div class="card mb-md" style="border-left: 3px solid {% if h.verdict == 'supported' %}var(--green){% elif h.verdict == 'contradicted' %}var(--crimson){% else %}var(--gold){% endif %};">
+<div class="card mb-md {% if h.verdict == 'supported' %}card-edge-green{% elif h.verdict == 'contradicted' %}card-edge-crimson{% else %}card-edge-gold{% endif %}">
   <p><strong>{{ h.text }}</strong></p>
   <p class="text-sm text-muted">
     Condition: <code>{{ h.condition_type }}</code>
     {% if h.params %} · Params: <code>{{ h.params }}</code>{% endif %}
   </p>
-  <div class="stat-grid mt-sm" style="grid-template-columns:repeat(5,1fr)">
+  <div class="stat-grid stat-grid--5 mt-sm">
     <div class="stat-box">
       <div class="num {% if h.verdict == 'supported' %}text-green{% elif h.verdict == 'contradicted' %}text-red{% else %}text-muted{% endif %}">{{ h.verdict }}</div>
       <div class="label">Verdict</div>

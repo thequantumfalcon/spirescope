@@ -24,6 +24,7 @@
     .hp-warning { background: #c9a55c; }
     .hp-critical { background: #d15858; }
     .danger { background: rgba(209, 88, 88, 0.2); border: 1px solid rgba(209, 88, 88, 0.4); border-radius: 4px; padding: 6px 8px; margin-bottom: 8px; color: #d15858; font-size: 12px; font-weight: bold; }
+    .danger-warning { border-color: rgba(201,165,92,0.4); background: rgba(201,165,92,0.15); color: #c9a55c; }
     .deck-top { font-size: 12px; color: #938880; margin-bottom: 4px; }
     .deck-top b { color: #c9a55c; }
     .alerts { font-size: 12px; }
@@ -59,7 +60,7 @@
   {% if danger_level == 'critical' %}
   <div class="danger">CRITICAL: {{ danger_pct }}% HP</div>
   {% elif danger_level == 'warning' %}
-  <div class="danger" style="border-color: rgba(201,165,92,0.4); background: rgba(201,165,92,0.15); color: #c9a55c;">LOW HP: {{ danger_pct }}%</div>
+  <div class="danger danger-warning">LOW HP: {{ danger_pct }}%</div>
   {% endif %}
 
   {% if top_cards %}
@@ -86,6 +87,6 @@
 {% endif %}
 </div>
 
-<script src="/static/overlay.js"></script>
+<script src="/static/overlay.js?v={{ overlay_js_hash|default(version) }}"></script>
 </body>
 </html>

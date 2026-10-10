@@ -45,7 +45,6 @@
   <a href="/epochs?category=character" {% if not selected_character %}class="active"{% endif %}>All Characters</a>
   {% for char in characters %}
   <a href="/epochs?category=character&character={{ char }}"
-     {% if selected_character == char %}class="active"{% endif %}
      class="{% if selected_character == char %}active {% endif %}char-{{ char|lower }}">{{ char }}</a>
   {% endfor %}
 </div>

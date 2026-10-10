@@ -69,6 +69,7 @@
   </footer>
   <div id="shortcut-overlay" class="shortcut-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="shortcut-overlay-title">
     <div class="shortcut-overlay-content" tabindex="-1">
+      <button type="button" class="shortcut-close" aria-label="Close keyboard shortcuts">&times;</button>
       <h3 id="shortcut-overlay-title">Keyboard Shortcuts</h3>
       <table class="shortcut-table">
         <tr><td><kbd>/</kbd></td><td>Search</td></tr>
@@ -83,7 +84,7 @@
       </table>
     </div>
   </div>
-  <script src="/static/nav.js"></script>
+  <script src="/static/nav.js?v={{ nav_js_hash|default(version) }}"></script>
   <script src="/static/shortcuts.js?v={{ shortcuts_js_hash }}"></script>
 </body>
 </html>

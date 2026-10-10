@@ -325,6 +325,11 @@ h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; font-weight: 600; }
 .card-caution { border-left: 3px solid var(--yellow); }
 .card-highlight { border-left: 3px solid var(--crimson); }
 .card-tip { border-left: 3px solid var(--green); margin-bottom: 0.5rem; }
+/* Left edge coloured by the card's content, specific enough to outrank
+   [data-page] .card and its :hover, which recolour the whole border. */
+[data-page] .card.card-edge-green, [data-page] .card.card-edge-green:hover { border-left: 3px solid var(--green); }
+[data-page] .card.card-edge-crimson, [data-page] .card.card-edge-crimson:hover { border-left: 3px solid var(--crimson); }
+[data-page] .card.card-edge-gold, [data-page] .card.card-edge-gold:hover { border-left: 3px solid var(--gold); }
 
 /* ── Tags ── */
 .tag { display: inline-block; padding: 0.2rem 0.55rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; margin: 0.15rem; letter-spacing: 0.02em; text-transform: uppercase; }
@@ -345,8 +350,8 @@ h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; font-weight: 600; }
 .tag-cost { background: var(--bg3); color: var(--text); border: 1px solid var(--border); font-weight: 700; min-width: 24px; text-align: center; }
 .tag-mod { background: rgba(201,123,42,0.15); color: var(--orange); border: 1px solid rgba(201,123,42,0.3); }
 .tag-discovered { background: rgba(74,158,92,0.1); color: var(--green); border: 1px solid rgba(74,158,92,0.25); }
-.tag-reddit { background: rgba(255,69,0,0.12); color: #ff6a33; border: 1px solid rgba(255,69,0,0.25); }
 .tag-steam { background: rgba(102,153,204,0.12); color: #6699cc; border: 1px solid rgba(102,153,204,0.25); }
+.tag-tier { background: var(--bg3); color: var(--yellow); border: 1px solid var(--border); font-size: 1rem; }
 
 /* ── Character colors ── */
 .char-ironclad { color: var(--ironclad); } .char-silent { color: var(--silent); }
@@ -400,6 +405,11 @@ h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; font-weight: 600; }
   background-clip: text; color: var(--gold);
 }
 .stat-box .label { font-size: 0.75rem; color: var(--text2); margin-top: 0.35rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+/* Fixed column counts; two classes so the narrow-screen .stat-grid rules
+   below do not override them. */
+.stat-grid.stat-grid--3 { grid-template-columns: repeat(3, 1fr); }
+.stat-grid.stat-grid--4 { grid-template-columns: repeat(4, 1fr); }
+.stat-grid.stat-grid--5 { grid-template-columns: repeat(5, 1fr); }
 
 /* ── Tables ── */
 table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
@@ -438,6 +448,7 @@ tr:hover { background: rgba(201,165,92,0.03); }
 .hp-bar { display: inline-flex; align-items: center; gap: 0.5rem; }
 .hp-fill { height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--green), #6bc77a); transition: width 0.3s ease; box-shadow: 0 0 6px rgba(74,158,92,0.3); }
 .hp-bg { width: 100px; height: 8px; border-radius: 4px; background: var(--bg3); overflow: hidden; }
+.hp-bg--full { width: 100%; }
 
 /* ── Event choices ── */
 .choice { background: var(--bg3); border-radius: var(--radius); padding: 0.85rem 1rem; margin: 0.5rem 0; border-left: 2px solid var(--gold); }
@@ -566,10 +577,15 @@ tr:hover { background: rgba(201,165,92,0.03); }
 .deck-section-header {
   cursor: pointer; user-select: none;
   display: flex; align-items: center; gap: 0.5rem;
-  padding: 0.5rem 0; margin-top: 0.5rem;
+  margin-top: 0.5rem;
   transition: color 0.15s;
 }
 .deck-section-header:hover { color: var(--gold); }
+.deck-section-toggle {
+  display: flex; align-items: center; gap: 0.5rem; flex: 1;
+  padding: 0.5rem 0; background: none; border: none;
+  color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
 .deck-section-arrow {
   display: inline-block; transition: transform 0.2s;
   font-size: 0.7rem; color: var(--text2); width: 1em; text-align: center;
@@ -712,6 +728,19 @@ input[type="date"].date-input { width: auto; min-width: 140px; color-scheme: dar
 .run-result-min-w { min-width: 40px; }
 .run-char-min-w { min-width: 100px; }
 .ml-auto { margin-left: auto; }
+.inline { display: inline; }
+.w-5em { width: 5em; }
+.w-30em { width: 30em; }
+.min-w-60 { min-width: 60px; }
+/* Data colours for bars, heatmap cells and timeline bars. After .bar so they
+   replace its gradient. */
+.bg-green { background: var(--green); }
+.bg-yellow { background: var(--yellow); }
+.bg-red { background: var(--red); }
+.bg-muted { background: var(--bg3); }
+/* Text for assistive technology only. Elements stay focusable. */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.sr-only:focus-visible + .btn { outline: 2px solid var(--gold); outline-offset: 2px; }
 /* ── Run timeline chart ── */
 .timeline-chart { display: flex; gap: 2px; align-items: flex-end; height: 120px; padding: 0.5rem 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); overflow-x: auto; overflow-y: hidden; }
 .timeline-col { flex: 1; min-width: 8px; max-width: 24px; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; position: relative; cursor: default; }
@@ -888,7 +917,16 @@ input[type="date"].date-input { width: auto; min-width: 140px; color-scheme: dar
 .shortcut-overlay-content {
   background: var(--bg2); border: 1px solid var(--border);
   border-radius: 8px; padding: 1.5rem 2rem; max-width: 400px; width: 90%;
+  position: relative;
 }
+.shortcut-close {
+  position: absolute; top: 0.5rem; right: 0.5rem;
+  min-width: 2rem; min-height: 2rem; padding: 0 0.4rem;
+  background: none; border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text); font-size: 1.2rem; line-height: 1; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.shortcut-close:hover { border-color: var(--gold); }
 .shortcut-overlay-content h3 {
   margin: 0 0 1rem; color: var(--gold); font-family: 'Cinzel', serif;
 }

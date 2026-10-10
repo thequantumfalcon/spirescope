@@ -45,8 +45,8 @@
   <p class="text-muted">Showing {{ runs|length }} run{{ 's' if runs|length != 1 else '' }}</p>
   <form action="/runs/import" method="post" enctype="multipart/form-data" class="flex items-center gap-sm">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <label for="import-file" class="btn btn-sm btn-secondary" style="cursor:pointer">Import Run</label>
-    <input type="file" id="import-file" name="file" accept=".json" style="display:none" data-auto-submit>
+    <input type="file" id="import-file" name="file" accept=".json" class="sr-only" data-auto-submit>
+    <label for="import-file" class="btn btn-sm btn-secondary">Import Run</label>
   </form>
 </div>
 
@@ -59,7 +59,7 @@
 {% for run in runs %}
 <div class="run-item-row flex items-center gap-sm">
   <input type="checkbox" class="compare-check" data-run-id="{{ run.id }}" aria-label="Select {{ run.id }} for comparison">
-  <a href="/runs/{{ run.id }}" class="run-item" style="flex:1">
+  <a href="/runs/{{ run.id }}" class="run-item flex-1">
     <span class="result {{ 'win' if run.win else 'loss' }} run-result-min-w">{{ 'WIN' if run.win else 'LOSS' }}</span>
     <span class="char-{{ run.character|lower }} run-char-min-w">{{ run.character }}</span>
     <span class="text-muted">A{{ run.ascension }}</span>
@@ -81,7 +81,7 @@
 {% for imported_id, irun in imported_runs %}
 <div class="run-item-row flex items-center gap-sm">
   <input type="checkbox" class="compare-check" data-run-id="{{ imported_id }}" aria-label="Select {{ imported_id }} for comparison">
-  <span class="run-item" style="flex:1">
+  <span class="run-item flex-1">
     <span class="result {{ 'win' if irun.win else 'loss' }} run-result-min-w">{{ 'WIN' if irun.win else 'LOSS' }}</span>
     <span class="char-{{ irun.character|lower }} run-char-min-w">{{ irun.character }}</span>
     <span class="text-muted">A{{ irun.ascension }}</span>

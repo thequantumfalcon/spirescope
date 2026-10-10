@@ -1,6 +1,7 @@
 (function() {
   var overlay = document.getElementById('shortcut-overlay');
   var overlayContent = overlay ? overlay.querySelector('.shortcut-overlay-content') : null;
+  var closeBtn = overlay ? overlay.querySelector('.shortcut-close') : null;
   var trigger = document.querySelector('.shortcuts-btn');
   var routes = {
     'h': '/',
@@ -22,9 +23,11 @@
     ).filter(function(el) { return !el.disabled && el.offsetParent !== null; });
   }
 
-  function openOverlay() {
+  function openOverlay(opener) {
     if (!overlay) return;
-    invoker = document.activeElement;
+    // A clicked button is not focused in every browser (Safari), so the
+    // trigger names itself rather than relying on the active element.
+    invoker = opener || document.activeElement;
     overlay.hidden = false;
     var focusables = focusableInOverlay();
     (focusables[0] || overlayContent || overlay).focus();
@@ -40,10 +43,20 @@
   if (trigger) {
     trigger.addEventListener('click', function() {
       if (overlay && overlay.hidden) {
-        openOverlay();
+        openOverlay(trigger);
       } else {
         closeOverlay();
       }
+    });
+  }
+
+  // The dialog covers the whole page, including the '?' button, so it needs
+  // its own way out for pointer and touch users: the close button, or a
+  // click on the backdrop outside the panel.
+  if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
+  if (overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeOverlay();
     });
   }
 
@@ -93,6 +106,10 @@
       return;
     }
 
+    // Nothing below may act behind the open dialog: letters would navigate
+    // away and '/' would move focus out of it.
+    if (overlay && !overlay.hidden) return;
+
     if (e.key === '/') {
       var deckSearch = document.getElementById('deck-search');
       var navSearch = document.querySelector('.search-form input[name="q"]');
@@ -105,6 +122,10 @@
       }
       return;
     }
+
+    // Section headers are controls; a letter typed on one is not a request
+    // to leave the page.
+    if (e.target.closest && e.target.closest('.deck-section-header')) return;
 
     var dest = routes[e.key];
     if (dest && window.location.pathname !== dest) {

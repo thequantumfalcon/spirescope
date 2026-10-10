@@ -100,7 +100,7 @@
     document.querySelectorAll('.deck-section').forEach(function(sec) {
       if (sec.querySelector('.deck-card--selected')) {
         sec.classList.remove('collapsed');
-        var h = sec.querySelector('.deck-section-header');
+        var h = sec.querySelector('.deck-section-toggle');
         if (h) h.setAttribute('aria-expanded', 'true');
       }
     });
@@ -132,14 +132,28 @@
     return sum;
   }
 
+  // Card count of a stored deck, or -1 when the record is malformed. This
+  // runs at startup before the handlers below attach, so one bad record
+  // (hand-edited, or from another build) must be skipped, not thrown on.
+  function storedDeckSize(d) {
+    if (!d || typeof d !== 'object') return -1;
+    if (d.version === 2 || d.version === 3) {
+      var ok = Array.isArray(d.instances) && d.instances.every(function(item) {
+        return item && typeof item.card_id === 'string';
+      });
+      return ok ? d.instances.length : -1;
+    }
+    return Array.isArray(d) ? d.length : deckCardCount(d);
+  }
+
   function refreshSelect() {
     var sel = document.getElementById('load-deck');
     if (!sel) return;
     var decks = getDecks();
     sel.innerHTML = '<option value="">Load saved deck...</option>';
     Object.keys(decks).sort().forEach(function(name) {
-      var d = decks[name];
-      var count = (d.version === 2 || d.version === 3) ? d.instances.length : (Array.isArray(d) ? d.length : deckCardCount(d));
+      var count = storedDeckSize(decks[name]);
+      if (count < 0) return;
       var o = document.createElement('option'); o.value = name; o.textContent = name + ' (' + count + ' cards)';
       sel.appendChild(o);
     });
@@ -259,7 +273,7 @@
       html += '<div class="popover-desc">' + escapeHtml(desc) + '</div>';
     }
     if (descUp && descUp !== desc) {
-      html += '<div class="popover-desc"><span style="color:var(--green)">Upgraded:</span> ' + escapeHtml(descUp) + '</div>';
+      html += '<div class="popover-desc"><span class="text-green">Upgraded:</span> ' + escapeHtml(descUp) + '</div>';
     }
 
     html += '<div class="popover-meta">';
@@ -389,12 +403,12 @@
         !g.querySelector('.deck-card:not(.deck-card--hidden)'));
     });
     var noResults = document.getElementById('deck-no-results');
-    if (noResults) noResults.style.display = visibleCount === 0 ? '' : 'none';
+    if (noResults) noResults.hidden = visibleCount !== 0;
     if (query) {
       document.querySelectorAll('.deck-section').forEach(function(sec) {
         if (sec.querySelector('.deck-card:not(.deck-card--hidden)')) {
           sec.classList.remove('collapsed');
-          var h = sec.querySelector('.deck-section-header');
+          var h = sec.querySelector('.deck-section-toggle');
           if (h) h.setAttribute('aria-expanded', 'true');
         }
       });
@@ -425,18 +439,12 @@
   });
 
   /* ── Collapsible sections ── */
-  document.querySelectorAll('.deck-section-header').forEach(function(header) {
-    header.addEventListener('click', function() {
-      var section = header.closest('.deck-section');
+  document.querySelectorAll('.deck-section-toggle').forEach(function(toggle) {
+    toggle.addEventListener('click', function() {
+      var section = toggle.closest('.deck-section');
       section.classList.toggle('collapsed');
-      header.setAttribute('aria-expanded',
+      toggle.setAttribute('aria-expanded',
         String(!section.classList.contains('collapsed')));
-    });
-    header.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        header.click();
-      }
     });
   });
 
@@ -452,7 +460,7 @@
         } else {
           sec.classList.remove('collapsed');
         }
-        var h = sec.querySelector('.deck-section-header');
+        var h = sec.querySelector('.deck-section-toggle');
         if (h) h.setAttribute('aria-expanded', String(!allExpanded));
       });
       toggleAllBtn.textContent = allExpanded ? 'Expand All' : 'Collapse All';

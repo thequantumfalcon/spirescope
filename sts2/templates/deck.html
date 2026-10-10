@@ -51,7 +51,7 @@
 
   <div class="deck-toolbar">
     <div class="deck-search-wrap">
-      <input type="text" id="deck-search" placeholder="Search cards..." maxlength="200" autocomplete="off">
+      <input type="text" id="deck-search" placeholder="Search cards..." aria-label="Search cards" maxlength="200" autocomplete="off">
       <button type="button" id="deck-search-clear" class="deck-search-clear" aria-label="Clear search">&times;</button>
     </div>
     <div class="deck-filters">
@@ -63,17 +63,18 @@
     <span id="deck-count" class="deck-count">0 selected</span>
     <button type="button" id="deck-toggle-all" class="deck-toggle-all">Expand All</button>
   </div>
-  <p id="deck-no-results" class="text-muted" style="display:none">No cards match your search.</p>
+  <p id="deck-no-results" class="text-muted" hidden>No cards match your search.</p>
 
   {% for char_name, char_cards in chars.items() %}
   {% set has_selected = selected_counts and char_cards|selectattr('id', 'in', selected_counts)|list|length > 0 %}
   <div class="deck-section{% if not loop.first and not has_selected %} collapsed{% endif %}" data-character="{{ char_name }}">
-    <h3 class="deck-section-header char-{{ char_name|lower }} mt-md"
-        role="button" tabindex="0" aria-expanded="{{ 'true' if loop.first or has_selected else 'false' }}">
-      <span class="deck-section-arrow">&#9662;</span>
-      {{ char_name }}
-      <span class="deck-section-count text-muted">({{ char_cards|length }})</span>
-      <span class="deck-section-checked"></span>
+    <h3 class="deck-section-header char-{{ char_name|lower }} mt-md">
+      <button type="button" class="deck-section-toggle" aria-expanded="{{ 'true' if loop.first or has_selected else 'false' }}">
+        <span class="deck-section-arrow" aria-hidden="true">&#9662;</span>
+        {{ char_name }}
+        <span class="deck-section-count text-muted">({{ char_cards|length }})</span>
+        <span class="deck-section-checked"></span>
+      </button>
     </h3>
     <div class="deck-section-body">
       {% set has_known_types = char_cards|selectattr('type', 'in', ['Attack','Skill','Power'])|list|length > 0 %}
@@ -99,7 +100,7 @@
                   <span class="qty-count">{{ qty }}</span>
                   <button type="button" class="qty-btn qty-plus" aria-label="Add one {{ card.name }}">+</button>
                 </div>
-                <span class="card-label">{{ card.name }} <span class="rarity-dot rarity-{{ card.rarity|lower }}" title="{{ card.rarity }}"></span> ({{ card.cost }})</span>
+                <span class="card-label">{{ card.name }} <span class="rarity-dot rarity-{{ card.rarity|lower }}" title="{{ card.rarity }}"></span>{% if card.rarity %}<span class="sr-only">{{ card.rarity }} rarity</span>{% endif %} ({{ card.cost }})</span>
                 <button type="button" class="card-info-btn"
                   aria-label="Info about {{ card.name }}"
                   data-card-id="{{ card.id }}"
@@ -129,7 +130,7 @@
               <span class="qty-count">{{ qty }}</span>
               <button type="button" class="qty-btn qty-plus" aria-label="Add one {{ card.name }}">+</button>
             </div>
-            <span class="card-label">{{ card.name }} <span class="rarity-dot rarity-{{ card.rarity|lower }}" title="{{ card.rarity }}"></span> ({{ card.cost }})</span>
+            <span class="card-label">{{ card.name }} <span class="rarity-dot rarity-{{ card.rarity|lower }}" title="{{ card.rarity }}"></span>{% if card.rarity %}<span class="sr-only">{{ card.rarity }} rarity</span>{% endif %} ({{ card.cost }})</span>
             <button type="button" class="card-info-btn"
               aria-label="Info about {{ card.name }}"
               data-card-id="{{ card.id }}"
@@ -153,7 +154,7 @@
   <div class="deck-actions">
     <button type="submit" class="btn btn-primary">Analyze Deck</button>
     <button type="button" id="save-deck" class="btn btn-secondary btn-green btn-sm">Save Deck</button>
-    <select id="load-deck" class="select-input">
+    <select id="load-deck" class="select-input" aria-label="Load saved deck">
       <option value="">Load saved deck...</option>
     </select>
     <button type="button" id="delete-deck" class="btn btn-secondary btn-red btn-sm">Delete</button>
@@ -184,7 +185,7 @@
 {% if spectral_health %}
 <h3 class="mt-md">Keyword Connections</h3>
 <p class="text-sm text-muted">Keyword connectivity, not deck strength. Two cards are connected when they share a keyword; two cards with no keywords at all are weakly connected when they are the same type and cost within 1 Energy of each other. The score rises the more internally connected the deck is, so a pile of identical cards scores high. It says nothing about whether the cards win fights.</p>
-<div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
+<div class="stat-grid stat-grid--4">
   <div class="stat-box">
     <div class="num">{{ spectral_health.health_score }}</div>
     <div class="label">Connectivity (0-100)</div>

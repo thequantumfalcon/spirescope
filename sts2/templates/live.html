@@ -21,6 +21,7 @@
     {{ (run.run_time / 60)|int }}m elapsed &bull; Updates when the game saves (floor transitions, rest sites, etc.)
   </div>
 </div>
+<p id="live-connection" class="text-sm text-yellow mb-md" role="status" hidden></p>
 
 {% if run.telemetry_status in ['unavailable', 'mismatched'] %}
 <p class="text-muted" role="status">Showing the saved run. Combat telemetry is unavailable because a matching log session has not been established.</p>
@@ -45,10 +46,10 @@
 
 <div class="stat-grid">
   <div class="stat-box">
-    <div class="num live-hp" style="color:{% if run.current_hp < run.max_hp * 0.3 %}var(--red){% elif run.current_hp < run.max_hp * 0.6 %}var(--yellow){% else %}var(--green){% endif %}">{{ run.current_hp }}/{{ run.max_hp }}</div>
+    <div class="num live-hp {% if run.current_hp < run.max_hp * 0.3 %}text-red{% elif run.current_hp < run.max_hp * 0.6 %}text-yellow{% else %}text-green{% endif %}">{{ run.current_hp }}/{{ run.max_hp }}</div>
     <div class="label">HP</div>
     <div class="hp-bar mt-sm">
-      <div class="hp-bg" style="width:100%" role="progressbar" aria-valuenow="{{ run.current_hp }}" aria-valuemin="0" aria-valuemax="{{ run.max_hp }}" aria-label="HP: {{ run.current_hp }} of {{ run.max_hp }}"><div class="hp-fill" style="width:{{ (run.current_hp / run.max_hp * 100) if run.max_hp > 0 else 0 }}%"></div></div>
+      <div class="hp-bg hp-bg--full" role="progressbar" aria-valuenow="{{ run.current_hp }}" aria-valuemin="0" aria-valuemax="{{ run.max_hp }}" aria-label="HP: {{ run.current_hp }} of {{ run.max_hp }}"><div class="hp-fill" style="width:{{ (run.current_hp / run.max_hp * 100) if run.max_hp > 0 else 0 }}%"></div></div>
     </div>
   </div>
   <div class="stat-box"><div class="num live-gold text-yellow">{{ run.gold }}</div><div class="label">Gold</div></div>
@@ -109,7 +110,7 @@
     {% if analysis %}
     <h2>Deck Analysis</h2>
     {% if analysis.mechanics_warning %}<p class="text-sm text-muted">{{ analysis.mechanics_warning }}</p>{% endif %}
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-grid stat-grid--3">
       <div class="stat-box"><div class="num text-red">{{ analysis.attacks }}</div><div class="label">Attacks</div></div>
       <div class="stat-box"><div class="num text-accent">{{ analysis.skills }}</div><div class="label">Skills</div></div>
       <div class="stat-box"><div class="num text-yellow">{{ analysis.powers }}</div><div class="label">Powers</div></div>
@@ -235,6 +236,7 @@
 <h1>No Active Run</h1>
 <p class="text-muted mb-md">Start a run in Slay the Spire 2 and this page will automatically show your live progress.</p>
 <p class="text-muted">Checking for an active run...</p>
+<p id="live-connection" class="text-sm text-yellow mt-sm" role="status" hidden></p>
 <div id="live-config" data-player="{{ selected_player }}" data-was-active="false"></div>
 <script src="/static/live.js?v={{ live_js_hash }}"></script>
 {% endif %}

@@ -1,7 +1,7 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Spirescope API</title><link rel="icon" href="/static/logo.svg">
-<link rel="stylesheet" href="/static/swagger/swagger-ui.css"></head>
+<html lang="{{ ui_lang() }}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spirescope API</title><link rel="icon" type="image/jpeg" href="/static/logo.jpg?v={{ logo_hash }}">
+<link rel="stylesheet" href="/static/swagger/swagger-ui.css?v={{ swagger_css_hash|default(version) }}"></head>
 <body><div id="swagger-ui"></div>
-<script src="/static/swagger/swagger-ui-bundle.js"></script>
-<script src="/static/swagger/init.js"></script></body></html>
+<script src="/static/swagger/swagger-ui-bundle.js?v={{ swagger_js_hash|default(version) }}"></script>
+<script src="/static/swagger/init.js?v={{ swagger_init_hash|default(version) }}"></script></body></html>

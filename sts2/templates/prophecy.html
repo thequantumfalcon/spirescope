@@ -15,14 +15,14 @@
     </select>
   </label>
   <label class="mr-sm">Ascension:
-    <input type="number" name="ascension" min="0" max="20" value="{{ selected_ascension }}" style="width:5em;">
+    <input type="number" name="ascension" min="0" max="20" value="{{ selected_ascension }}" class="w-5em">
   </label>
   <button type="submit" class="btn btn-sm">Show estimate</button>
 </form>
 
 {% if result %}
   {% if result.available %}
-  <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+  <div class="stat-grid stat-grid--3">
     <div class="stat-box">
       <div class="num {% if result.win_probability >= 50 %}text-green{% elif result.win_probability >= 25 %}text-yellow{% else %}text-red{% endif %}">{{ result.win_probability }}%</div>
       <div class="label">Observed Win Rate</div>
