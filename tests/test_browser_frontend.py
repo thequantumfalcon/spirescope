@@ -465,3 +465,23 @@ class TestStatNumberColours:
         assert fills["win"] != fills["plain"], fills
         assert fills["red"] != fills["plain"], fills
 
+
+class TestStopButton:
+    def test_a_refused_stop_shows_the_server_reason(self, page, live_server):
+        """/shutdown answers 409 with a JSON reason while a data update is
+        installing; the page shows that reason instead of a bare status."""
+        page.route("**/shutdown", lambda route: route.fulfill(
+            status=409, content_type="application/json",
+            body='{"error": "A game data update is being installed.", "status": 409}'))
+        messages = []
+
+        def on_dialog(dialog):
+            messages.append(dialog.message)
+            dialog.accept()
+
+        page.on("dialog", on_dialog)
+        page.goto(live_server + "/relics")
+        page.click(".stop-btn")
+        page.wait_for_timeout(500)
+        assert any("A game data update is being installed." in m for m in messages), messages
+

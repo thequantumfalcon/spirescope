@@ -44,7 +44,14 @@
           document.body.innerHTML =
             '<h1 class="shutdown-msg">SpireScope stopped. You can close this tab.</h1>';
         } else {
-          window.alert('Could not stop SpireScope (HTTP ' + response.status + ').');
+          // The server explains a refusal (for example a data update still
+          // installing) in a JSON error; show that rather than a bare status.
+          response.json().then(function(body) {
+            var reason = body && body.error ? body.error : 'HTTP ' + response.status;
+            window.alert('Could not stop SpireScope: ' + reason);
+          }, function() {
+            window.alert('Could not stop SpireScope (HTTP ' + response.status + ').');
+          });
         }
       }).catch(function() {
         // True network error — leave the page intact so the user can retry.

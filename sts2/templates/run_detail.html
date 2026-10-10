@@ -19,7 +19,7 @@
 </p>
 
 {% if prophecy_grade %}
-<p class="text-sm text-muted">Prophecy said <strong>{{ prophecy_grade.predicted_win_prob }}%</strong> win chance for this setup; outcome: <strong class="{{ 'win' if prophecy_grade.actual_win else 'loss' }}">{{ 'won' if prophecy_grade.actual_win else 'lost' }}</strong>.</p>
+<p class="text-sm text-muted">Prophecy said <strong>{{ prophecy_grade.predicted_win_prob }}%</strong> observed win rate for comparable past runs; outcome: <strong class="{{ 'win' if prophecy_grade.actual_win else 'loss' }}">{{ 'won' if prophecy_grade.actual_win else 'lost' }}</strong>.</p>
 {% endif %}
 
 <div class="stat-grid mt-md">
