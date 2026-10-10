@@ -1,8 +1,0 @@
-# CI-only tools that are not part of the project's own dependency set, at the
-# exact versions ci.yml already used. requirements-ci-lock.txt is compiled
-# from this file; see its header for the command.
-pytest-cov==7.1.0
-pytest-playwright==0.7.2
-playwright==1.58.0
-build==1.5.0
-pip-audit==2.10.1
