@@ -26,7 +26,13 @@ def get_last_updated() -> str:
     """Return the last data update timestamp, or empty string if unknown."""
     path = DATA_DIR / "last_updated.txt"
     if path.exists():
-        return path.read_text(encoding="utf-8").strip()
+        # The file can vanish or be held open between exists() and the read
+        # (a data swap renames the directory; a scanner can lock the file).
+        # This runs on every home page render, which must not fail over it.
+        try:
+            return path.read_text(encoding="utf-8").strip()
+        except (OSError, UnicodeError):
+            log.debug("Could not read %s", path, exc_info=True)
     return ""
 
 
