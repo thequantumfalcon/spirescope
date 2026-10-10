@@ -56,10 +56,15 @@ against the site.
 
 ## 4. Rarity canonicalizer
 
-`scripts/fix_card_rarity.py` — add the character's card lists from the wiki
+`sts2/corrections/rarity.py` — add the character's card lists from the wiki
 Lua module (`Module:Cards/StS2 data/<Name>`), same `_add(...)` blocks as
 the existing characters. Basic → Starter mapping applies.
-→ verify: `RARITY:` drift lines in update output are taxonomy-only.
+`scripts/fix_card_rarity.py` is a thin wrapper around that module. The
+automatic refresh (`python -m sts2 update`) does not run the rarity map (see
+[DATA_MAINTENANCE.md](DATA_MAINTENANCE.md)), so run it explicitly.
+→ verify: `python scripts/fix_card_rarity.py --dry-run` lists no `NOT FOUND`
+lines for the new character and its `RARITY:` lines are taxonomy-only; then
+run it without `--dry-run`.
 
 ## 5. Strategy entry
 
@@ -77,13 +82,15 @@ the existing characters. Basic → Starter mapping applies.
       "name": "<Archetype>",
       "description": "…",
       "strategy": "How the archetype is played.",
-      "key_cards": ["CARD.X", "CARD.Y"],
-      "key_relics": ["RELIC.Z"]
+      "key_cards": ["<Card Name>", "<Card Name>"],
+      "key_relics": ["<Relic Name>"]
     }
   ]
 }
 ```
 
+`key_cards` and `key_relics` hold English display names, not IDs: archetype
+detection matches them against each card's English name.
 Archetype seeds power deck analysis + live pick suggestions; 2–3 archetypes
 with 4–6 cards each is enough for day one.
 → verify: /strategy/<Name> renders; deck analyzer detects an archetype from
