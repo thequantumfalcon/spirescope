@@ -1,4 +1,5 @@
 """Shared test configuration and fixtures."""
+import atexit
 import json
 import os
 import shutil
@@ -93,15 +94,31 @@ def _clear_rate_limits():
     _live_memo.clear()
 
 
-def pytest_sessionfinish(session, exitstatus):
+_TEST_MACHINE_HANDLED = False
+
+
+def _remove_test_machine():
     """Remove the run's private state directory, unless importing the app moved
     pre-3.0.3 state or user-added mods out of sts2/data into it: those files
     belong to the developer, so keep them and say where they went."""
+    global _TEST_MACHINE_HANDLED
+    if _TEST_MACHINE_HANDLED or not _TEST_MACHINE.exists():
+        return
+    _TEST_MACHINE_HANDLED = True
     if sts2.app._migrated:
         print(f"\nSpirescope moved {sts2.app._migrated} from sts2/data into "
               f"{_TEST_MACHINE / 'state'}; that directory was kept.")
         return
     shutil.rmtree(_TEST_MACHINE, ignore_errors=True)
+
+
+def pytest_sessionfinish(session, exitstatus):
+    _remove_test_machine()
+
+
+# Also at interpreter exit: a tool that imports this module outside a pytest
+# session never reaches pytest_sessionfinish and used to leave the folder.
+atexit.register(_remove_test_machine)
 
 
 @pytest_asyncio.fixture(scope="module")
