@@ -42,7 +42,12 @@ def _read_json(path: Path) -> dict | None:
                             path, _MAX_SAVE_FILE_SIZE)
                 return None
             with open(path, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+            # Every save read here is a JSON object, and every caller indexes
+            # it like one; a list or a bare value is a corrupt file.
+            if isinstance(data, dict):
+                return data
+            log.warning("Ignoring %s: not a JSON object", path)
     except (json.JSONDecodeError, UnicodeError, OSError) as e:
         log.warning("Failed to read %s: %s", path, e)
     return None
@@ -139,6 +144,7 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
     # inactive tree). Same patched-SAVE_DIR escape hatch as history search.
     search_dirs = SAVE_DIRS if SAVE_DIRS and SAVE_DIRS[0] == SAVE_DIR else [SAVE_DIR]
     data = None
+    source: Path | None = None
     best_mtime = -1.0
     for save_dir in search_dirs:
         for fname in ("current_run.save", "current_run_mp.save"):
@@ -151,7 +157,7 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
                 continue
             candidate = _read_json(path)
             if candidate:
-                data, best_mtime = candidate, mtime
+                data, best_mtime, source = candidate, mtime, path
 
     if not data:
         # No live file — check backups across trees, pick the most recently
@@ -177,12 +183,26 @@ def get_current_run(player_index: int | None = None) -> CurrentRun:
                 if save_time > best_time:
                     best = candidate
                     best_time = save_time
+                    source = save_dir / fname
         if best:
             data = best
 
     if not data:
         return CurrentRun(active=False)
+    # The parse below trusts the save's shape. A file the game never wrote
+    # that way (players not a list, a deck entry that is not an object, a
+    # value the model rejects) used to raise out of here and turn every live
+    # page into a 500 until the file changed; treat it as no current run.
+    try:
+        return _current_run_from_save(data, player_index)
+    except Exception as e:
+        log.warning("Failed to parse current run %s: %s",
+                    source.name if source else "save", e)
+        return CurrentRun(active=False)
 
+
+def _current_run_from_save(data: dict, player_index: int | None) -> CurrentRun:
+    """Build the CurrentRun for one player from a current-run save."""
     players = data.get("players", [])
     total_players = len(players)
     if player_index is None:
@@ -276,7 +296,17 @@ def get_progress() -> PlayerProgress | None:
     data = _read_json(path)
     if not data:
         return None
+    # Same reasoning as get_current_run: an unexpected shape anywhere in the
+    # file must read as "no progress", not fail every page that shows it.
+    try:
+        return _progress_from_save(data)
+    except Exception as e:
+        log.warning("Failed to parse progress file %s: %s", path.name, e)
+        return None
 
+
+def _progress_from_save(data: dict) -> PlayerProgress:
+    """Build PlayerProgress from the contents of progress.save."""
     char_stats = {}
     badges: dict[str, dict[str, int]] = {}
     for cs in data.get("character_stats", []):
@@ -352,7 +382,9 @@ def get_progress() -> PlayerProgress | None:
         discovered_events=[i for i in data.get("discovered_events", []) if i],
         epochs=[
             {"id": e.get("id", ""), "state": e.get("state", "not_obtained"),
-             "obtain_date": e.get("obtain_date", 0)}
+             # The epochs page compares this with 0; a null date in the save
+             # used to reach it as None and fail the page.
+             "obtain_date": e["obtain_date"] if type(e.get("obtain_date")) is int else 0}
             for e in data.get("epochs", [])
         ],
     )
