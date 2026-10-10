@@ -48,11 +48,29 @@ class TestParseVersion:
         assert _parse_version("1.0.0") < _parse_version("1.1.0")
 
 
+class _InlineThread:
+    """Stands in for threading.Thread and runs the target inside start()."""
+
+    def __init__(self, target, daemon=None):
+        self._target = target
+
+    def start(self):
+        self._target()
+
+
 class TestCheckForUpdate:
     def setup_method(self):
         updater._latest_version = None
         updater._update_url = None
         updater._checked = False
+
+    @pytest.fixture(autouse=True)
+    def _run_the_check_inline(self, monkeypatch):
+        """check_for_update runs the request on a daemon thread. A fixed sleep
+        did not guarantee it finished while urlopen was still patched, so on a
+        slow machine it could run afterwards and query api.github.com for
+        real. Run inline, it completes inside the patch."""
+        monkeypatch.setattr(updater.threading, "Thread", _InlineThread)
 
     def test_newer_version_detected(self):
         mock_data = json.dumps({
@@ -66,9 +84,6 @@ class TestCheckForUpdate:
 
         with patch("urllib.request.urlopen", return_value=mock_resp):
             check_for_update("1.1.0")
-            # Wait for background thread
-            import time
-            time.sleep(0.5)
 
         info = get_update_info()
         assert info is not None
@@ -87,16 +102,12 @@ class TestCheckForUpdate:
 
         with patch("urllib.request.urlopen", return_value=mock_resp):
             check_for_update("1.1.0")
-            import time
-            time.sleep(0.5)
 
         assert get_update_info() is None
 
     def test_network_error_no_crash(self):
         with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("timeout")):
             check_for_update("1.1.0")
-            import time
-            time.sleep(0.5)
 
         assert get_update_info() is None
         assert updater._checked is True
@@ -113,8 +124,6 @@ class TestCheckForUpdate:
 
         with patch("urllib.request.urlopen", return_value=mock_resp):
             check_for_update("1.1.0")
-            import time
-            time.sleep(0.5)
 
         assert get_update_info() is None
 
