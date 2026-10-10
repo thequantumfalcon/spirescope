@@ -632,9 +632,9 @@ pytest-cov==7.1.0 \
     --hash=sha256:30674f2b5f6351aa09702a9c8c364f6a01c27aae0c1366ae8016160d1efc56b2 \
     --hash=sha256:a0461110b7865f9a271aa1b51e516c9a95de9d696734a2f71e3e78f46e1d4678
     # via -r requirements-ci.in
-pytest-playwright==0.7.2 \
-    --hash=sha256:247b61123b28c7e8febb993a187a07e54f14a9aa04edc166f7a976d88f04c770 \
-    --hash=sha256:8084e015b2b3ecff483c2160f1c8219b38b66c0d4578b23c0f700d1b0240ea38
+pytest-playwright==0.9.0 \
+    --hash=sha256:9d9dc74e335c647944cecfffa706cc9e6e4bf4c25e84592c128b584d494d4471 \
+    --hash=sha256:bd44daa852b0fb8b0e55a2f88b727507dedda0e350bea5d09420647252f2454b
     # via -r requirements-ci.in
 python-slugify==8.0.4 \
     --hash=sha256:276540b79961052b66b7d116620b36518847f52d5fd9e3a70164fc8c50faa6b8 \
