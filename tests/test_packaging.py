@@ -246,6 +246,8 @@ class TestStateDirSplit:
 
         monkeypatch.setattr(cfg, "DATA_DIR", data_dir)
         monkeypatch.setattr(cfg, "STATE_DIR", state_dir)
+        # A source checkout loads mods from STATE_DIR/mods (see _find_mods_dir).
+        monkeypatch.setattr(cfg, "MODS_DIR", state_dir / "mods")
         moved = cfg.migrate_state_from_data_dir()
 
         assert set(moved) == {"settings.json", "community_aggregate.json", "mods/my_mod.json"}
