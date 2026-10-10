@@ -9,7 +9,8 @@ patch entries:
 
 Mapping is append-as-observed: a run whose build_id matches no entry resolves
 to None ("unmapped era") and is surfaced in the admin view for one-click
-assignment — no guessing.
+assignment — no guessing. Those assignments are the user's, so they are kept
+in STATE_DIR (patch_assignments.json) and merged in when the manifest loads.
 """
 import json
 import logging
@@ -21,8 +22,35 @@ from sts2.identities import canonical_id
 log = logging.getLogger(__name__)
 
 _PATCHES_FILE = "patches.json"
+_ASSIGNMENTS_FILE = "patch_assignments.json"
 _lock = Lock()
 _cache: list[dict] | None = None
+
+
+def _assignments_path():
+    from sts2 import config
+    return config.STATE_DIR / _ASSIGNMENTS_FILE
+
+
+def _load_assignments() -> dict[str, list[str]]:
+    """The user's build-id assignments, {patch name: [build ids]}.
+
+    {} when there are none or the file is unreadable; malformed parts are
+    skipped rather than trusted.
+    """
+    path = _assignments_path()
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return {}
+    except (OSError, ValueError) as exc:
+        log.warning("Failed to load %s: %s", _ASSIGNMENTS_FILE, exc)
+        return {}
+    if not isinstance(data, dict):
+        log.warning("%s is not an object, ignoring", _ASSIGNMENTS_FILE)
+        return {}
+    return {patch: [b for b in ids if isinstance(b, str) and b]
+            for patch, ids in data.items() if isinstance(ids, list)}
 
 
 def load_patches() -> list[dict]:
@@ -39,6 +67,23 @@ def load_patches() -> list[dict]:
     if not isinstance(data, list):
         log.warning("%s is not a list, ignoring", _PATCHES_FILE)
         data = []
+    # Build ids the user assigned are applied on top of the shipped manifest.
+    # They used to be written into patches.json itself, which is read-only in
+    # Docker and Program Files installs; ids already written there by those
+    # versions are still honoured, as part of the manifest.
+    assignments = _load_assignments()
+    for entry in data:
+        if not isinstance(entry, dict) or not isinstance(entry.get("patch"), str):
+            continue
+        mine = assignments.get(entry["patch"])
+        if not mine:
+            continue
+        build_ids = entry.setdefault("build_ids", [])
+        if not isinstance(build_ids, list):
+            continue
+        for build_id in mine:
+            if build_id not in build_ids:
+                build_ids.append(build_id)
     _cache = data
     return _cache
 
@@ -72,21 +117,24 @@ def unmapped_builds(runs: list) -> list[dict]:
 
 
 def assign_build(build_id: str, patch_name: str) -> bool:
-    """Append build_id to the named patch's build_ids and persist."""
+    """Record build_id as part of the named patch, in STATE_DIR.
+
+    Returns False for an empty build id or a patch the manifest does not
+    name. Raises OSError when the assignment cannot be saved, so a caller can
+    tell an unwritable state folder apart from a bad request.
+    """
     if not build_id or not patch_name:
         return False
     with _lock:
-        patches = load_patches()
-        entry = next((p for p in patches if p.get("patch") == patch_name), None)
+        entry = next((p for p in load_patches() if p.get("patch") == patch_name), None)
         if entry is None:
             return False
-        build_ids = entry.setdefault("build_ids", [])
-        if build_id not in build_ids:
-            build_ids.append(build_id)
+        if build_id not in entry.get("build_ids", []):
+            assignments = _load_assignments()
+            assignments.setdefault(patch_name, []).append(build_id)
             from sts2.persist import write_json_atomic
-            if not write_json_atomic(DATA_DIR / _PATCHES_FILE, patches):
-                build_ids.remove(build_id)
-                return False
+            if not write_json_atomic(_assignments_path(), assignments):
+                raise OSError("Could not save the patch assignment")
         invalidate_cache()
         return True
 

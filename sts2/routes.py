@@ -2290,7 +2290,17 @@ async def admin_patches_assign(request: Request,
             "error_code": 403,
             "error_message": "Invalid form submission. Please go back and try again.",
         }, status_code=403)
-    if not patch_manifest.assign_build(build_id.strip(), patch.strip()):
+    try:
+        # A file write: kept off the event loop.
+        assigned = await asyncio.to_thread(patch_manifest.assign_build,
+                                           build_id.strip(), patch.strip())
+    except OSError:
+        return a.templates.TemplateResponse(request, "error.html", {
+            "error_code": 503,
+            "error_message": "Could not save the assignment: the Spirescope state "
+                             "folder is not writable.",
+        }, status_code=503)
+    if not assigned:
         return a.templates.TemplateResponse(request, "error.html", {
             "error_code": 400,
             "error_message": "Unknown patch or empty build id.",
