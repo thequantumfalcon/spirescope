@@ -6,7 +6,7 @@ body:
     id: version
     attributes:
       label: SpireScope version
-      placeholder: 'e.g. v3.1.0'
+      placeholder: 'Shown in the footer of every page, or run with --version'
     validations:
       required: true
   - type: dropdown

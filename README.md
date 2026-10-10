@@ -13,6 +13,8 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 **Game data:** the catalog includes STS2 **v0.111.0 beta** changes (bundle updated 2026-09-23). The latest announced main patch verified on 2026-09-22 is **v0.107.1**, so some card costs and effects differ for main-branch players. Complete build-specific coverage remains under review; see the [game coverage audit and completion plan](docs/GAME_COVERAGE.md). A data refresh does not certify compatibility.
 
+**Status:** Beta. Supported paths, how to report a problem, and backup and recovery are covered in [docs/SUPPORT.md](docs/SUPPORT.md).
+
 <p align="center">
   <img src="docs/screenshot-dashboard.png" alt="SpireScope Dashboard — your runs, your stats, your data" width="80%">
 </p>
@@ -27,7 +29,7 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 
 ## Features
 
-### Current With Every Patch (v3.0)
+### Patches and Game Data
 
 - **Self-updating game data** — a multi-source pipeline (slaythespire2.gg primary, slaythespire.wiki.gg secondary, save-file discovery third) keeps cards, relics, and potions current; a source run offers new data bundles on startup for one-click, checksum-verified install — no app update needed. Packaged builds keep that check off unless you set `SPIRESCOPE_CHECK_UPDATES=1`, so a downloaded copy makes no unsolicited network call; `python -m sts2 update` refreshes on demand either way.
 - **Patch-era analytics** — every run resolves to a named patch era. Default views scope to the current patch with an all-time toggle; reworked cards and relics carry "Changed in ..." markers with before/after win-rate and pick-rate comparisons (sample-size guarded).
@@ -76,12 +78,12 @@ A local-first intelligence dashboard for **Slay the Spire 2** — card/relic/ene
 - **Community Meta** — Tier lists and strategy guides from the Steam community, community-voted card tiers, aggregate player stats with import/export
 - **Global Search** — Fuzzy search with "Did you mean?" suggestions across all entities
 
-### Advanced Analytics (v2.9.3)
+### Advanced Analytics
 
 - **The Graveyard** — Every dead run gets a procedural epitaph: *"Had 4 potions. Used none of them."* Visit `/graveyard` to see your memorial wall.
 - **Ghost Run Comparison** — Speedrun-style splits against your best run. See HP and gold deltas floor by floor during live runs. Green arrows = ahead, red = behind.
 - **Tilt Detection** — Tracks session momentum and warns when you're on a losing streak: *"Your last 4 runs averaged floor 11. Your session average is 23. Consider a break."*
-- **Anti-Pattern Detection** — Named recurring mistakes: "The Hoarder" (unused potions), "The Greedy Builder" (oversized decks), "The Coward" (skipping elites).
+- **Anti-Pattern Detection** — Named recurring mistakes: "The Hoarder" (unused potions), "The Greedy Builder" (oversized decks), "The Coward" (skipping elites), "Potion Paralysis" (dying with two or more potions left).
 - **Deck Health Score** — Synergy graph analysis scoring deck coherence from 0-100. Identifies orphan cards with zero synergy connections.
 - **Archetype Drift** — Alerts when your card picks drift away from your deck's archetype mid-run.
 - **Cascade Map** — Open a completed run to see, for each card you picked, how damage taken, fight length, and HP changed afterwards. Observational before/after comparison — later floors are harder, so it shows what happened after a pick, not what the pick caused.
@@ -181,7 +183,8 @@ docker compose up --build
 The bundled compose file publishes on `127.0.0.1` only, keeps state in a
 named volume, and requires `STS2_AUTH_TOKEN` — inside a container the app
 binds a non-loopback interface, and network binds always require the token
-(open `http://127.0.0.1:8000/?token=<your token>` once per browser). With
+(open `http://127.0.0.1:8000/?token=<your token>` in each browser; the
+sign-in lasts a week, or until the server restarts). With
 plain `docker run`:
 
 ```bash
@@ -281,8 +284,11 @@ spirescope              # Start the web dashboard (default)
 spirescope serve        # Same as above
 spirescope serve --browser     # Force opening browser automatically
 spirescope serve --no-browser  # Start without opening browser
-spirescope update       # Fetch latest data from the wiki + saves
+spirescope update       # Fetch latest data from slaythespire2.gg and slaythespire.wiki.gg, plus saves
 spirescope update --save-only  # Discover from saves only (no network)
+spirescope install-data <archive> --sha256 <file>  # Install a local data bundle after checking it against its SHA-256 file
+spirescope validate-data <dir>  # Check that a data directory loads, without starting the dashboard (prints JSON)
+spirescope runtime-info # Print Python and OpenSSL versions, machine and platform as JSON
 spirescope community    # Fetch community data from Steam
 spirescope export       # Export aggregate stats to JSON file
 spirescope reset-stats  # Delete aggregate stats file
@@ -304,7 +310,7 @@ spirescope --version    # Show version
 | `STS2_MODS_DIR` | Path to mods directory (JSON files) | `mods/` under `STS2_STATE_DIR`; beside the executable in packaged builds |
 | `STS2_HOST` | Server bind address | `127.0.0.1` |
 | `STS2_PORT` | Server port | `8000` |
-| `STS2_AUTH_TOKEN` | Required credential for every request on a non-loopback bind (header `X-Auth-Token`, or `?token=` once per browser) | None — non-loopback serve refuses to start without it |
+| `STS2_AUTH_TOKEN` | Required credential for every request on a non-loopback bind (header `X-Auth-Token`, or `?token=` once in a browser, which signs it in for a week or until the server restarts) | None — non-loopback serve refuses to start without it |
 | `STS2_ALLOW_UNAUTHENTICATED` | `1` explicitly serves a non-loopback bind with no credential — trusted reverse proxy/network only | Off |
 | `STS2_ALLOWED_HOSTS` | Comma-separated `Host` header values this server answers to. Requests carrying any other host are refused, which is what stops a page that has repointed its own hostname at your machine from talking to a loopback install | Loopback names on a loopback bind; unrestricted on a network bind, where only you know the address it is reached by |
 | `STS2_LOG_FILE` | Path to the game's `godot.log` for live tracking | Auto-detected |
@@ -312,7 +318,7 @@ spirescope --version    # Show version
 | `STS2_SYNC_URL` | Sync service URL (opt-in) | Disabled |
 | `STS2_SYNC_KEY` | API key for sync service | None |
 | `SPIRESCOPE_API_KEY` | Optional API key for rate limit bypass | None |
-| `SPIRESCOPE_ADMIN_TOKEN` | Token for `/api/reload` and `/api/reset/stats` | Unset — admin endpoints disabled |
+| `SPIRESCOPE_ADMIN_TOKEN` | Token for `/api/reload`, `/api/reset/stats` and remote `/shutdown` | Unset — admin endpoints disabled |
 | `SPIRESCOPE_OPEN_BROWSER` | `1`/`0` override for browser auto-open on `serve` | Enabled |
 | `SPIRESCOPE_CHECK_UPDATES` | `1`/`0` override for automatic GitHub update checks, both directions: `1` enables them for packaged builds, `0` disables them for source installs | Source: enabled, packaged build: disabled |
 | `STS2_CORS_ORIGINS` | Comma-separated CORS allowed origins | Localhost only |
@@ -345,7 +351,7 @@ SpireScope auto-detects both vanilla and modded paths; history merges across the
 | `/api/reload` | POST | Hot-reload knowledge base (requires `X-Admin-Token` header) |
 | `/api/reset/stats` | POST | Reset aggregate stats (requires `X-Admin-Token` header) |
 | `/overlay?player=0` | GET | Minimal overlay for OBS browser source or second monitor |
-| `/shutdown` | POST | Gracefully stop SpireScope (localhost only) |
+| `/shutdown` | POST | Gracefully stop SpireScope (a loopback client with the page's CSRF token, or any client with a valid `X-Admin-Token` header) |
 | `/health` | GET | Liveness check for monitors (always 200) |
 | `/ready` | GET | Readiness check (503 until card data has loaded) |
 | `/docs` | GET | Interactive API documentation (Swagger UI) |
@@ -406,7 +412,8 @@ sts2/
     steam.py         # Steam data fetcher (reviews, guides, discussions)
   aggregate.py       # Aggregate stats computation and merging
   config.py          # Auto-detected paths and settings
-  fetcher.py         # Data fetcher (wiki + save file discovery)
+  corrections/       # Post-scrape corrections (rarity map, pinned card text)
+  fetcher.py         # Data refresh (slaythespire2.gg scraping, staged install, save file discovery)
   knowledge.py       # Search, filter, synergy, and deck analysis engine
   logparser.py       # Game log tailer for live run tracking
   models.py          # Pydantic models for all game entities
@@ -420,10 +427,10 @@ sts2/
   behavior.py           # The advanced analytics modules
   data/              # JSON game data (mods live with your user state, not here)
   locales/           # Interface translations; content/ holds text built by `localize`
-  templates/         # Jinja2 HTML templates (32 templates)
+  templates/         # Jinja2 HTML templates
   static/            # CSS, fonts (Cinzel), images, JS
-scripts/             # Post-scrape corrections (rarity map, pinned card text)
-tests/               # pytest + pytest-asyncio, plus 15 Playwright browser tests
+scripts/             # Maintenance tools (content audit, notices and licenses, artifact checks) and correction wrappers
+tests/               # pytest + pytest-asyncio, plus Playwright browser tests (run with -m browser)
 ```
 
 ## Requirements
