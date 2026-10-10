@@ -18,10 +18,9 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-# Default to read-only. Jobs that genuinely need to write (publishing the test
-# badge) grant it themselves at the job level, and that job is gated so it
-# never even runs on pull_request events -- a PR run of this workflow never
-# holds a write-scoped token.
+# Read-only for every job. Publishing the test badge needs contents: write, so
+# it lives in badge.yml, which runs on workflow_run after a master push; no run
+# of this workflow, pull_request or otherwise, holds a write-scoped token.
 permissions:
   contents: read
 
@@ -148,9 +147,9 @@ jobs:
           fi
 
       - name: Upload badge artifact
-        # Handoff to the publish-badge job below, which is the only job in
-        # this workflow that holds contents: write, and only runs on master
-        # pushes -- artifact upload/download needs no such permission.
+        # Handoff to badge.yml, which downloads this artifact after a master
+        # push and alone holds contents: write to publish it -- uploading an
+        # artifact needs no such permission.
         if: matrix.python-version == '3.12' && github.ref == 'refs/heads/master' && github.event_name == 'push'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
