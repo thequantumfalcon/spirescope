@@ -134,7 +134,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <h2 id="mods">Mod Support</h2>
 <div class="card mb-md">
-  <p>SpireScope can load custom mod data (cards, relics, enemies) from JSON files. Place <code>.json</code> files in the mods directory:</p>
+  <p>SpireScope can load custom mod data (cards, relics, potions, enemies) from JSON files. Place <code>.json</code> files in the mods directory:</p>
   <pre><code># Packaged build: mods/ folder next to the executable
 # Source install: mods/ under the state directory (see STS2_STATE_DIR)</code></pre>
   <p class="mt-sm">You can also set <code>STS2_MODS_DIR</code> to a custom path. Each JSON file should follow this format:</p>
@@ -158,7 +158,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <h2 id="advanced">Advanced Analytics</h2>
 <div class="card mb-md">
-  <p>SpireScope includes advanced analytics that go deeper than any STS2 companion tool. Here's how to use each one:</p>
+  <p>SpireScope includes these advanced analytics. Here's how to use each one:</p>
 </div>
 
 <div class="card mb-md">
@@ -200,7 +200,7 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
 
 <div class="card mb-md">
   <h3>Prophecy Engine</h3>
-  <p>Before starting a run, the home page shows a prediction based on your history with that character: win probability, danger zone floors, and a recommendation. After the run, the prophecy is graded. Requires 5+ runs with the same character.</p>
+  <p>Before starting a run, the home page shows a historical estimate from your recorded runs with the character of your latest run: the observed win rate. The <a href="/prophecy">Prophecy</a> page adds danger zone floors and a recommendation. These describe how your past runs went, not a forecast. After a run, its detail page compares the outcome with the estimate from the runs before it. Requires 5+ runs with the same character within two ascension levels.</p>
 </div>
 
 <div class="card mb-md">
@@ -245,17 +245,17 @@ export STS2_SAVE_DIR=~/.local/share/SlayTheSpire2/steam/YOUR_ID/profile1/saves</
     <tr><td><code>STS2_AUTH_TOKEN</code></td><td>Required on any non-loopback bind: every request must present it</td><td>Unset &mdash; a network bind refuses to start without it</td></tr>
     <tr><td><code>STS2_ALLOWED_HOSTS</code></td><td>Comma-separated <code>Host</code> values this server answers to</td><td>Loopback names on a loopback bind</td></tr>
     <tr><td><code>STS2_PORT</code></td><td>Server port</td><td><code>8000</code></td></tr>
-    <tr><td><code>SPIRESCOPE_ADMIN_TOKEN</code></td><td>Token for <code>/api/reload</code></td><td>Unset — endpoint disabled</td></tr>
+    <tr><td><code>SPIRESCOPE_ADMIN_TOKEN</code></td><td>Token for <code>/api/reload</code>, <code>/api/reset/stats</code> and remote <code>/shutdown</code></td><td>Unset — admin endpoints disabled</td></tr>
   </table>
 </div>
 
 <h2 id="troubleshooting">Troubleshooting</h2>
 <div class="card mb-md">
   <p><strong>"No save files found"</strong> &mdash; Set <code>STS2_SAVE_DIR</code> to point to your saves directory. Make sure you've launched STS2 at least once.</p>
-  <p class="mt-sm"><strong>Empty card/relic lists</strong> &mdash; Run <code>{{ cli }} update</code> to fetch data from the wiki.</p>
+  <p class="mt-sm"><strong>Empty card/relic lists</strong> &mdash; Run <code>{{ cli }} update</code> to fetch data from its sources (slaythespire2.gg, then the community wiki).</p>
   <p class="mt-sm"><strong>Live run not updating</strong> &mdash; The game must be running with an active run. Check that your save directory is correct.</p>
   <p class="mt-sm"><strong>Port already in use</strong> &mdash; Set <code>STS2_PORT=8001</code> (or any free port) before starting.</p>
-  <p class="mt-sm"><strong>Rate limited (429)</strong> &mdash; The server limits to 60 requests per minute per IP. Wait a moment and try again.</p>
+  <p class="mt-sm"><strong>Rate limited (429)</strong> &mdash; When the server is bound to a network (non-loopback) address, it limits each IP to 60 requests per minute; the default loopback bind is not limited. Wait a moment and try again.</p>
   <p class="mt-sm"><strong>Windows warns about the download</strong> &mdash; The packaged build is unsigned, so SmartScreen or mod-host scanners may still show a reputation warning. The release zip ships with a <code>.sha256</code> file so you can verify integrity, and the app runs locally on <code>127.0.0.1</code> by default.</p>
 </div>
 {% endblock %}
