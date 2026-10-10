@@ -51,7 +51,9 @@ _RE_DISCARD_POTION = re.compile(r"\[INFO\] Player \d+ discarding potion (\w+)")
 _RE_COMBAT_START = re.compile(r"\[INFO\] Creating NCombatRoom with mode=ActiveCombat encounter=(\w+)")
 _RE_WON_ENCOUNTER = re.compile(r"\[INFO\] (CHARACTER\.\w+) has won against encounter (ENCOUNTER\.\w+)")
 _RE_LOST_ENCOUNTER = re.compile(r"\[INFO\] (CHARACTER\.\w+) fought (ENCOUNTER\.\w+) for the first time and LOST")
-_RE_WROTE_SAVE = re.compile(r"\[INFO\] Wrote \d+ bytes to path=.*?\\(current_run(?:_mp)?\.save)")
+# Either separator: the Windows build writes "...\saves\current_run.save",
+# while macOS and Linux paths use "/" throughout and never matched.
+_RE_WROTE_SAVE = re.compile(r"\[INFO\] Wrote \d+ bytes to path=.*?[\\/](current_run(?:_mp)?\.save)")
 _RE_SAVED_HISTORY = re.compile(r"\[INFO\] Saved run history: (\d+)\.run")
 _RE_LOBBY_DISCONNECT = re.compile(r"\[INFO\] \[RunLobby\] Disconnected\. Reason: (\w+)")
 # Unmatched on real logs: a full v0.103.2 session emitted no
