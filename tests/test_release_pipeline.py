@@ -38,6 +38,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 WORKFLOWS_DIR = REPO_ROOT / ".github" / "workflows"
 RELEASE_YML = WORKFLOWS_DIR / "release.yml"
 CI_YML = WORKFLOWS_DIR / "ci.yml"
+DATA_RELEASE_YML = WORKFLOWS_DIR / "data-release.yml"
 SPEC = REPO_ROOT / "spirescope.spec"
 COLLECT_LICENSES = REPO_ROOT / "scripts" / "collect_licenses.py"
 
@@ -222,6 +223,11 @@ class TestTagBuildsRunTheRealGates:
         assert "browser" in jobs
         assert jobs["browser"]["needs"] == "browser-engines"
         assert jobs["browser"]["if"] == "always()"
+        # Also required on master. A job without a `name:` reports under its
+        # id, so the id itself is the context name.
+        for job_id in ("test-windows", "test-macos"):
+            assert job_id in jobs, f"required check {job_id} is gone"
+            assert "name" not in jobs[job_id], f"{job_id} renamed its check context"
 
 
 class TestNoUnpinnedInstallsBeforePublishing:
@@ -248,7 +254,7 @@ class TestNoUnpinnedInstallsBeforePublishing:
                 result[job_id] = job
         return result
 
-    @pytest.mark.parametrize("workflow_path", [RELEASE_YML, CI_YML])
+    @pytest.mark.parametrize("workflow_path", [RELEASE_YML, CI_YML, DATA_RELEASE_YML])
     def test_no_write_scoped_job_installs_unpinned_packages(self, workflow_path):
         workflow = _load_workflow(workflow_path)
         for job_id, job in self._write_scoped_jobs(workflow).items():
@@ -414,7 +420,8 @@ class TestWorkflowYamlIsWellFormed:
     standalone check outside pytest; this keeps a regression guard inside
     the suite too."""
 
-    @pytest.mark.parametrize("name", ["release.yml", "ci.yml"])
+    @pytest.mark.parametrize("name", ["release.yml", "ci.yml", "data-release.yml",
+                                      "no-ai-attribution.yml", "badge.yml"])
     def test_workflow_parses_as_yaml(self, name):
         workflow = _load_workflow(WORKFLOWS_DIR / name)
         assert isinstance(workflow, dict)
@@ -601,3 +608,305 @@ class TestChangelogAlwaysHasAnUnreleasedSection:
                     if ln.strip() and not ln.lstrip().startswith("#")]:
                 empty.append(name)
         assert not empty, f"version sections with nothing under them: {empty}"
+
+
+RELEASE_NOTES_SCRIPT = REPO_ROOT / "scripts" / "release_notes.py"
+
+
+def _load_release_notes():
+    spec = importlib.util.spec_from_file_location("release_notes", RELEASE_NOTES_SCRIPT)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class TestReleaseNotesAreRequired:
+    """A tag must not publish an immutable release with placeholder notes.
+
+    The publisher used to fall back to "See CHANGELOG.md for details." when
+    no `## v<version>` section matched, and the only tag check compared the
+    tag with VERSION -- so a tag pushed before `## Unreleased` was renamed
+    shipped a release whose notes can never be corrected.
+    """
+
+    def test_no_placeholder_fallback_remains(self):
+        text = RELEASE_YML.read_text(encoding="utf-8")
+        assert "See CHANGELOG.md for details" not in text
+
+    def test_notes_are_checked_before_either_build(self):
+        jobs = _jobs(_load_workflow(RELEASE_YML))
+        notes = jobs["release-notes"]
+        assert not notes.get("needs"), (
+            "the notes check should not wait on anything, so a bad tag fails fast")
+        assert notes["permissions"] == {"contents": "read"}
+        [check] = [s for s in notes["steps"] if "release_notes.py" in str(s.get("run", ""))]
+        assert check.get("if") == "github.event_name == 'push'", (
+            "a dry run has no tag; the check must skip there, not fail")
+        assert "--output" not in check["run"], "the early job only checks"
+        for job_id in ("build-windows", "build-macos"):
+            assert "release-notes" in _as_list(jobs[job_id].get("needs")), (
+                f"{job_id} can start before the release notes are known to exist")
+
+    def test_notes_job_installs_nothing(self):
+        notes = _jobs(_load_workflow(RELEASE_YML))["release-notes"]
+        for step in notes["steps"]:
+            assert "pip install" not in str(step.get("run", ""))
+
+    def test_publisher_writes_notes_with_the_same_refusing_script(self):
+        jobs = _jobs(_load_workflow(RELEASE_YML))
+        [publisher_id] = _publishing_jobs(jobs)
+        runs = [str(s.get("run", "")) for s in jobs[publisher_id]["steps"]]
+        assert any("scripts/release_notes.py" in r and "--output RELEASE_NOTES.md" in r
+                   for r in runs), "publish no longer builds its body with release_notes.py"
+        [create] = [s for s in jobs[publisher_id]["steps"]
+                    if "action-gh-release" in str(s.get("uses", ""))]
+        assert create["with"]["body_path"] == "RELEASE_NOTES.md"
+
+    def test_missing_section_is_refused_and_writes_nothing(self, tmp_path):
+        module = _load_release_notes()
+        changelog = tmp_path / "CHANGELOG.md"
+        changelog.write_text("# Changelog\n\n## Unreleased\n\n- pending\n\n"
+                             "## v1.0.0\n\n- first\n", encoding="utf-8")
+        output = tmp_path / "RELEASE_NOTES.md"
+        assert module.main(["--tag", "v1.1.0", "--changelog", str(changelog),
+                            "--output", str(output)]) == 1
+        assert not output.exists()
+
+    @pytest.mark.parametrize("section", ["", "\n\n", "### Fixed\n\n### Added\n"])
+    def test_empty_section_is_refused(self, tmp_path, section):
+        module = _load_release_notes()
+        changelog = tmp_path / "CHANGELOG.md"
+        changelog.write_text(f"## Unreleased\n\n## v1.1.0\n{section}\n## v1.0.0\n\n- first\n",
+                             encoding="utf-8")
+        output = tmp_path / "RELEASE_NOTES.md"
+        assert module.main(["--tag", "v1.1.0", "--changelog", str(changelog),
+                            "--output", str(output)]) == 1
+        assert not output.exists()
+
+    def test_section_body_stops_at_the_next_heading(self, tmp_path):
+        module = _load_release_notes()
+        changelog = tmp_path / "CHANGELOG.md"
+        changelog.write_text("## Unreleased\n\n## v1.1.0\n\nA paragraph is enough.\n\n"
+                             "### Fixed\n\n- thing\n\n## v1.0.0\n\n- older entry\n",
+                             encoding="utf-8")
+        output = tmp_path / "RELEASE_NOTES.md"
+        assert module.main(["--tag", "v1.1.0", "--changelog", str(changelog),
+                            "--output", str(output)]) == 0
+        notes = output.read_text(encoding="utf-8")
+        assert "A paragraph is enough." in notes and "- thing" in notes
+        assert "older entry" not in notes
+        assert "## What's New in v1.1.0" in notes
+
+    def test_a_version_prefix_does_not_match_a_longer_version(self, tmp_path):
+        """`## v1.1.0` must not be taken for v1.1 (or v1.1.0 for v1.1.01)."""
+        module = _load_release_notes()
+        changelog = tmp_path / "CHANGELOG.md"
+        changelog.write_text("## v1.1.0\n\n- notes\n", encoding="utf-8")
+        assert module.main(["--tag", "v1.1", "--changelog", str(changelog)]) == 1
+
+    def test_the_newest_real_section_renders(self, tmp_path):
+        """Run against the real CHANGELOG, not just fixtures."""
+        text = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        newest = re.search(r"^## v(\S+)\s*$", text, re.M)
+        assert newest, "CHANGELOG.md has no released version section"
+        output = tmp_path / "RELEASE_NOTES.md"
+        result = subprocess.run(
+            [sys.executable, str(RELEASE_NOTES_SCRIPT), "--tag", f"v{newest.group(1)}",
+             "--output", str(output)],
+            cwd=REPO_ROOT, capture_output=True, text=True,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert output.stat().st_size > 500
+
+
+class TestDryRunMintsNoAttestations:
+    """A dry run must not publish anything, and an attestation is published
+    as soon as it is minted. Every attest step runs for tag pushes only."""
+
+    def test_every_attest_step_is_tag_only(self):
+        jobs = _jobs(_load_workflow(RELEASE_YML))
+        attest = [(job_id, s) for job_id, job in jobs.items()
+                  for s in job.get("steps", [])
+                  if "attest" in str(s.get("uses", ""))]
+        assert len(attest) == 4, f"expected two attest steps per build job, found {len(attest)}"
+        for job_id, step in attest:
+            assert step.get("if") == "github.event_name == 'push'", (
+                f"{job_id}: {step.get('name')} would run on a dry run")
+
+
+_USES = re.compile(r"^\s*(?:-\s*)?uses:\s*(?P<ref>\S+?)@(?P<pin>\S+)(?P<comment>[^\n]*)$", re.M)
+
+
+class TestActionsArePinnedExactly:
+    """Every action is pinned to a full commit SHA with the exact release it
+    corresponds to. A bare major comment such as `# v3` stays true only until
+    that major tag moves, and then silently describes a different commit."""
+
+    @pytest.mark.parametrize("path", sorted(WORKFLOWS_DIR.glob("*.yml")), ids=lambda p: p.name)
+    def test_pins_are_full_shas_with_exact_versions(self, path):
+        found = 0
+        for match in _USES.finditer(path.read_text(encoding="utf-8")):
+            ref, pin, comment = match.group("ref", "pin", "comment")
+            if ref.startswith("./"):
+                continue
+            found += 1
+            assert re.fullmatch(r"[0-9a-f]{40}", pin), f"{path.name}: {ref} pinned to {pin!r}"
+            assert re.fullmatch(r"\s+# v\d+\.\d+\.\d+\s*", comment), (
+                f"{path.name}: {ref}@{pin[:7]} needs an exact '# vX.Y.Z' comment, has {comment!r}")
+        assert found, f"no pinned actions found in {path.name}; the pattern has stopped matching"
+
+
+class TestDataReleaseSeparatesWriteFromExecution:
+    """data-release.yml used to install the whole dev lock and run pytest in
+    the same job that held contents: write, so every package in that lock ran
+    with a token able to publish a release. Verification and publishing are
+    now separate jobs, and only the one that executes nothing can write."""
+
+    @staticmethod
+    def _jobs():
+        return _jobs(_load_workflow(DATA_RELEASE_YML))
+
+    @staticmethod
+    def _runs(job: dict) -> str:
+        return "\n".join(str(s.get("run", "")) for s in job.get("steps", []))
+
+    def _writers_and_readers(self):
+        writers, readers = {}, {}
+        for job_id, job in self._jobs().items():
+            perms = job.get("permissions") or {}
+            (writers if perms.get("contents") == "write" else readers)[job_id] = job
+        return writers, readers
+
+    def test_the_writing_job_runs_no_third_party_code(self):
+        writers, _ = self._writers_and_readers()
+        assert len(writers) == 1, f"expected one write-scoped job, found {sorted(writers)}"
+        [(job_id, job)] = writers.items()
+        runs = self._runs(job)
+        for forbidden in ("pip install", "pytest", "python"):
+            assert forbidden not in runs, f"{job_id} holds contents: write and runs {forbidden!r}"
+        assert not any("setup-python" in str(s.get("uses", "")) for s in job["steps"])
+        assert "gh release create" in runs
+
+    def test_publishing_waits_for_verification(self):
+        writers, readers = self._writers_and_readers()
+        [(job_id, job)] = writers.items()
+        needs = _as_list(job.get("needs"))
+        verifiers = [r for r in readers if "pytest" in self._runs(readers[r])]
+        assert verifiers, "no read-only job runs the tests"
+        assert set(verifiers) <= set(needs), f"{job_id} does not wait for {verifiers}"
+        for reader in readers.values():
+            assert reader["permissions"] == {"contents": "read"}
+
+    def test_verification_installs_hash_checked_and_uses_the_shipped_validator(self):
+        _, readers = self._writers_and_readers()
+        runs = "\n".join(self._runs(job) for job in readers.values())
+        assert "pip install --require-hashes -r requirements-lock.txt" in runs
+        assert "python -m sts2 validate-data sts2/data" in runs
+        assert "tests/test_data_pipeline.py" in runs
+        # The tag-date check stays: a mismatched tag re-offers the bundle forever.
+        assert "last_updated.txt" in runs and "data-v" in runs
+        # No third hand-kept list of required files.
+        assert '"epochs.json"' not in runs
+
+    def test_data_releases_never_become_latest(self):
+        writers, _ = self._writers_and_readers()
+        [job] = writers.values()
+        assert "--latest=false" in self._runs(job), (
+            "a data bundle must not displace the app release as 'latest'")
+
+
+class TestDockerSmokeChecksTheImageHealthcheck:
+    """docker-smoke polled /ready from the host, which proves the app serves
+    but not that the image's own HEALTHCHECK can reach it -- and the
+    HEALTHCHECK is what an orchestrator acts on."""
+
+    def test_smoke_waits_for_the_container_to_report_healthy(self):
+        steps = _jobs(_load_workflow(CI_YML))["docker-smoke"]["steps"]
+        names = [s.get("name", "") for s in steps]
+        health = [i for i, s in enumerate(steps) if ".State.Health" in str(s.get("run", ""))]
+        assert health, "nothing checks the container's health status"
+        run = steps[health[0]]["run"]
+        assert "docker inspect" in run
+        assert '"$status" != "healthy"' in run and "exit 1" in run, (
+            "the step must fail unless the status is healthy")
+        assert re.search(r"seq 1 \d+", run), "the wait must be bounded"
+        assert names.index("Run container") < health[0] < names.index("Stop container")
+
+    def test_the_image_defines_a_healthcheck(self):
+        dockerfile = (REPO_ROOT / "Dockerfile").read_text(encoding="utf-8")
+        assert re.search(r"^HEALTHCHECK\s", dockerfile, re.M)
+
+
+HOOKS_DIR = REPO_ROOT / ".githooks"
+ATTRIBUTION_YML = WORKFLOWS_DIR / "no-ai-attribution.yml"
+_PATTERN_ARRAY = re.compile(r"^\s*PATTERNS=\(\s*$(.*?)^\s*\)\s*$", re.M | re.S)
+
+
+def _pattern_arrays(path: Path) -> list[list[str]]:
+    """Every PATTERNS=( ... ) bash array in a file, entries unquoted.
+
+    Read from the files rather than restated here: this test module is itself
+    scanned by those guards, so it must never hold a pattern literally.
+    """
+    arrays = []
+    for body in _PATTERN_ARRAY.findall(path.read_text(encoding="utf-8")):
+        entries = [line.strip() for line in body.splitlines() if line.strip()]
+        assert all(e.startswith('"') and e.endswith('"') for e in entries), path.name
+        arrays.append([e[1:-1] for e in entries])
+    return arrays
+
+
+class TestAttributionGuardsAgree:
+    """Three local hooks and the server-side workflow each kept their own
+    pattern list, and the lists had drifted: one hook carried three patterns
+    the others lacked, and the workflow had one no hook had while missing one
+    every hook had. A message one guard refuses must be refused by all."""
+
+    GUARDS = {
+        "commit-msg": (HOOKS_DIR / "commit-msg", 1),
+        "pre-commit": (HOOKS_DIR / "pre-commit", 1),
+        "pre-push": (HOOKS_DIR / "pre-push", 1),
+        # Commit-message scan and tracked-file scan.
+        "no-ai-attribution.yml": (ATTRIBUTION_YML, 2),
+    }
+
+    def _all_lists(self) -> dict[str, list[str]]:
+        lists = {}
+        for label, (path, expected) in self.GUARDS.items():
+            arrays = _pattern_arrays(path)
+            assert len(arrays) == expected, (
+                f"{label}: expected {expected} PATTERNS array(s), found {len(arrays)}")
+            for i, array in enumerate(arrays):
+                lists[f"{label}[{i}]"] = array
+        return lists
+
+    def test_every_guard_carries_the_same_patterns(self):
+        lists = self._all_lists()
+        reference_name, reference = next(iter(lists.items()))
+        assert len(reference) >= 14, "the pattern list shrank; patterns are never removed"
+        assert len(set(reference)) == len(reference), "duplicate entries"
+        for name, patterns in lists.items():
+            assert patterns == reference, (
+                f"{name} differs from {reference_name}: "
+                f"missing {sorted(set(reference) - set(patterns))}, "
+                f"extra {sorted(set(patterns) - set(reference))}")
+
+    def test_the_parser_sees_real_arrays(self):
+        """Guard the guard: a regex that matched nothing would compare
+        empty lists and pass."""
+        for label, patterns in self._all_lists().items():
+            assert patterns and all(patterns), label
+
+    @pytest.mark.parametrize("path", [HOOKS_DIR / "pre-push", ATTRIBUTION_YML],
+                             ids=["pre-push", "no-ai-attribution.yml"])
+    def test_file_scans_pass_paths_nul_delimited(self, path):
+        """`git ls-files` without -z C-quotes unusual paths, and xargs without
+        -0 parses quotes: one tracked name containing an apostrophe made xargs
+        abort and silently skip every file after it."""
+        # Code only: the comments explain what the old form got wrong.
+        text = "\n".join(line for line in path.read_text(encoding="utf-8").splitlines()
+                         if not line.lstrip().startswith("#"))
+        assert "xargs -I{}" not in text
+        assert "git ls-files -z" in text
+        assert "xargs -0" in text
+        assert "git ls-files |" not in text

@@ -4,8 +4,9 @@ dependency into a single LICENSES.txt.
 Compliance-risk repair, not legal advice: THIRD_PARTY_NOTICES.md lists package
 names, SPDX identifiers and project URLs, but a URL is not a reproduction of a
 license text. BSD-3-Clause and similar licenses require the notice,
-conditions and disclaimer to travel *with* a binary redistribution. Both
-release workflows build the frozen app and then delete every bundled
+conditions and disclaimer to travel *with* a binary redistribution. The
+release workflow (both platform jobs) and build_exe.py build the frozen app
+and then delete every bundled
 `*.dist-info` directory (to avoid false positives from package scanners),
 which also deletes the one place those license files lived. This script reads
 them out of dist-info BEFORE that stripping step runs, so the text survives

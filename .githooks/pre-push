@@ -9,6 +9,8 @@ set -euo pipefail
 REMOTE="${1:-}"
 URL="${2:-}"
 
+# Same list in every hook and in .github/workflows/no-ai-attribution.yml; the
+# test suite fails if they drift apart. Entries overlap; none is ever removed.
 PATTERNS=(
     "co-authored-by:[[:space:]]*claude"
     "noreply@anthropic\.com"
@@ -16,11 +18,14 @@ PATTERNS=(
     "🤖 generated with"
     "generated with.*\[claude code\]"
     "generated with.*claude\.com/claude-code"
+    "generated with.*claude code"
     "assisted by claude"
     "authored by claude code"
     "claude \(anthropic\)"
+    "\bclaude \(anthropic\)"
     "senior research partner:[[:space:]]*claude"
     "thomas[[:space:]]*/[[:space:]]*claude"
+    "thomas[[:space:]]*\([^)]*\),[[:space:]]*claude"
 )
 
 FAIL=0
@@ -67,10 +72,17 @@ fi
 # The self-referential files contain the patterns by design and must be
 # excluded. The previous EXCLUDES anchored on whole-filename equality
 # (^.githooks/$) which never matched the actual paths (.githooks/pre-push
-# etc.), so the hook blocked itself. Switched to prefix/glob style.
-EXCLUDES='^(CLAUDE\.md|\.githooks/.*|\.github/workflows/no-ai-attribution\.yml|\.gitignore)$'
+# etc.), so the hook blocked itself. Switched to prefix/glob style, and then
+# to git pathspecs so the file list can stay NUL-delimited: `xargs -I{}` split
+# it on whitespace, so a path containing a space was never scanned.
+EXCLUDES=(
+    ':(exclude)CLAUDE.md'
+    ':(exclude).githooks/*'
+    ':(exclude).github/workflows/no-ai-attribution.yml'
+    ':(exclude).gitignore'
+)
 for pat in "${PATTERNS[@]}"; do
-    hits=$(git ls-files | grep -vE "$EXCLUDES" | xargs -I{} grep -liE "$pat" {} 2>/dev/null || true)
+    hits=$(git ls-files -z -- . "${EXCLUDES[@]}" | xargs -0 -r grep -liE -- "$pat" 2>/dev/null || true)
     if [ -n "$hits" ]; then
         echo "" >&2
         echo "🛑 pre-push BLOCKED: tracked files contain AI attribution matching '$pat':" >&2

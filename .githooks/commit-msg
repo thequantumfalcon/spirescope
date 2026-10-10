@@ -14,6 +14,8 @@ if [ ! -f "$COMMIT_MSG_FILE" ]; then
     exit 0
 fi
 
+# Same list in every hook and in .github/workflows/no-ai-attribution.yml; the
+# test suite fails if they drift apart. Entries overlap; none is ever removed.
 PATTERNS=(
     "co-authored-by:[[:space:]]*claude"
     "noreply@anthropic\.com"
@@ -21,8 +23,14 @@ PATTERNS=(
     "🤖 generated with"
     "generated with.*\[claude code\]"
     "generated with.*claude\.com/claude-code"
+    "generated with.*claude code"
     "assisted by claude"
     "authored by claude code"
+    "claude \(anthropic\)"
+    "\bclaude \(anthropic\)"
+    "senior research partner:[[:space:]]*claude"
+    "thomas[[:space:]]*/[[:space:]]*claude"
+    "thomas[[:space:]]*\([^)]*\),[[:space:]]*claude"
 )
 
 MSG=$(grep -v '^#' "$COMMIT_MSG_FILE" || true)

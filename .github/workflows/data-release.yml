@@ -7,48 +7,42 @@ on:
 permissions:
   contents: read
 
+# Two jobs so the write-scoped token never shares a job with third-party code.
+# `verify` installs the full dev lock and runs pytest -- every package in that
+# lock executes there -- so it holds contents: read only. `publish` needs it,
+# installs nothing, and is the only job that can create the release.
 jobs:
-  package:
+  verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: write  # only this job publishes the release
+      contents: read
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
 
       - name: Install dependencies
-        # Locked install: test/build code must not resolve unpinned packages
-        # while the job holds a write-scoped token.
+        # Hash-checked, as everywhere else: a lock without --require-hashes
+        # pins versions but would still accept whatever bytes the index serves.
         run: |
-          pip install -r requirements-lock.txt
+          pip install --require-hashes -r requirements-lock.txt
           pip install -e . --no-deps
 
       - name: Validate data files
-        run: |
-          python - <<'EOF'
-          import json, pathlib, sys
-          data = pathlib.Path("sts2/data")
-          required = ["cards.json", "relics.json", "potions.json", "enemies.json",
-                      "events.json", "epochs.json", "patches.json", "last_updated.txt"]
-          for name in required:
-              path = data / name
-              if not path.exists():
-                  sys.exit(f"Missing {name}")
-              if name.endswith(".json"):
-                  json.loads(path.read_text(encoding="utf-8"))
-          cards = json.loads((data / "cards.json").read_text(encoding="utf-8"))
-          if len(cards) < 400:
-              sys.exit(f"cards.json suspiciously small ({len(cards)})")
-          print(f"OK: {len(cards)} cards")
-          EOF
+        # The same validator the app ships (and the release builds run against
+        # their packaged copy), rather than a third hand-kept list of required
+        # files: it requires every family plus patches.json and
+        # last_updated.txt, validates each record against the models, rejects
+        # duplicate identities and fewer than 400 cards, and then loads the
+        # set through KnowledgeBase.
+        run: python -m sts2 validate-data sts2/data
 
       - name: Verify the tag date matches sts2/data/last_updated.txt
         # A mismatched tag means clients' local-vs-remote date comparison in
@@ -74,6 +68,20 @@ jobs:
       - name: Run data pipeline tests
         run: python -m pytest tests/test_data_pipeline.py -q
 
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write  # only this job publishes the release
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # No Python and no package installation here: tar, sha256sum and gh
+      # are all on the runner image.
       - name: Package data bundle
         run: |
           TAG="${GITHUB_REF_NAME}"

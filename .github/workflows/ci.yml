@@ -5,12 +5,13 @@ on:
     branches: [master, main]
   pull_request:
     branches: [master, main]
-  # CA-H8: release.yml/release-macos.yml used to run only a plain `pytest`
-  # before publishing a tagged release, skipping ruff, mypy, the browser
-  # suite, the wheel install check, docker-smoke and pip-audit entirely --
-  # none of those run on a tag push. Reusable-workflow-call lets the release
-  # workflow depend on this exact job set (see the `gate` job there) instead
-  # of re-implementing a second, drifting copy of it.
+  # CA-H8: the release workflows (release.yml and release-macos.yml, since
+  # consolidated into release.yml) used to run only a plain `pytest` before
+  # publishing a tagged release, skipping ruff, mypy, the browser suite, the
+  # wheel install check, docker-smoke and pip-audit entirely -- the push and
+  # pull_request triggers above never fire for a tag. Reusable-workflow-call
+  # lets the release workflow depend on this exact job set (see the `gate`
+  # job there) instead of re-implementing a second, drifting copy of it.
   workflow_call:
 
 concurrency:
@@ -33,12 +34,12 @@ jobs:
         python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -149,7 +150,7 @@ jobs:
         # this workflow that holds contents: write, and only runs on master
         # pushes -- artifact upload/download needs no such permission.
         if: matrix.python-version == '3.12' && github.ref == 'refs/heads/master' && github.event_name == 'push'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: test-badge
           # The whole directory: this now carries the coverage badge as well
@@ -181,12 +182,12 @@ jobs:
         browser: [chromium, firefox, webkit]
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
 
@@ -216,18 +217,18 @@ jobs:
         run: test "${{ needs.browser-engines.result }}" = "success"
 
   test-windows:
-    # New leg (not a required status check -- "test (3.11)" etc. are), so a
-    # Windows-only regression is visible on PRs without blocking merges on a
-    # brand-new job while it settles.
+    # A required status check on master, as is test-macos below: renaming
+    # either job renames its context and leaves branch protection waiting on
+    # a check that never reports.
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python 3.12
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
 
@@ -243,12 +244,12 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python 3.12
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
 
@@ -268,12 +269,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python 3.12
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
 
@@ -320,7 +321,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -351,6 +352,31 @@ jobs:
           fi
           echo "container healthy"
 
+      - name: Wait for the image's HEALTHCHECK to report healthy
+        # /ready answering from the host proves the app serves; it does not
+        # prove the HEALTHCHECK baked into the image works, and that is what
+        # orchestrators and `docker ps` act on. A probe that cannot reach the
+        # app (wrong port, missing interpreter, a URL the auth gate refuses)
+        # would mark a perfectly good container unhealthy and get it
+        # restarted. The first probe fires one --interval (30s) after start,
+        # so allow several intervals.
+        run: |
+          status=""
+          for i in $(seq 1 60); do
+            status=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' spirescope-ci)
+            case "$status" in
+              healthy|unhealthy|none) break ;;
+            esac
+            sleep 2
+          done
+          if [ "$status" != "healthy" ]; then
+            echo "::error::HEALTHCHECK status is '$status' (expected healthy)"
+            docker inspect --format '{{json .State.Health}}' spirescope-ci || true
+            docker logs spirescope-ci
+            exit 1
+          fi
+          echo "HEALTHCHECK reports healthy"
+
       - name: Qualify installed container command and key pages
         run: |
           for path in cards settings docs static/swagger/init.js; do
@@ -370,12 +396,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python 3.12
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
 

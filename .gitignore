@@ -39,6 +39,16 @@ htmlcov/
 *.log
 spirescope logo.jpg
 
+# Generated at the repo root. (The SBOMs, runtime-inventory.json and the
+# qualification reports the release jobs write all land under dist/, which is
+# ignored above.)
+# scripts/collect_licenses.py without --output:
+/LICENSES.txt
+# scripts/release_notes.py --output, as release.yml's publish job runs it:
+/RELEASE_NOTES.md
+# ci.yml's docker-smoke job copies this out of the container:
+/container-qualification.json
+
 # Private modules (active investigation dependencies)
 sts2/risk.py
 sts2/diagnosis.py

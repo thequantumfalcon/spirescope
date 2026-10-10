@@ -12,7 +12,9 @@
 
 set -euo pipefail
 
-# Pattern list — case-insensitive
+# Pattern list — case-insensitive. Same list in every hook and in
+# .github/workflows/no-ai-attribution.yml; the test suite fails if they drift
+# apart. Entries overlap; none is ever removed.
 PATTERNS=(
     "co-authored-by:[[:space:]]*claude"
     "noreply@anthropic\.com"
@@ -20,8 +22,14 @@ PATTERNS=(
     "🤖 generated with"
     "generated with.*\[claude code\]"
     "generated with.*claude\.com/claude-code"
+    "generated with.*claude code"
     "assisted by claude"
     "authored by claude code"
+    "claude \(anthropic\)"
+    "\bclaude \(anthropic\)"
+    "senior research partner:[[:space:]]*claude"
+    "thomas[[:space:]]*/[[:space:]]*claude"
+    "thomas[[:space:]]*\([^)]*\),[[:space:]]*claude"
 )
 
 # The commit message is in .git/COMMIT_EDITMSG at pre-commit time if using -m

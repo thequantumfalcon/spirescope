@@ -15,6 +15,8 @@ name: Release
 #   gate            -> the full CI gate set (ruff, mypy, pytest, browser,
 #                       wheel install), via reusable-workflow-call into
 #                       ci.yml. Nothing here re-implements those checks.
+#   release-notes   -> refuses a tag whose CHANGELOG.md section is missing
+#                       or empty, before either build starts.
 #   build-windows,
 #   build-macos     -> build + package only. Produce artifacts via
 #                       actions/upload-artifact; never touch the release.
@@ -32,15 +34,18 @@ name: Release
 # is the cheaper failure, so a partial release is simply not reachable.
 #
 # `workflow_dispatch` runs gate + both builds and stops there, uploading
-# artifacts without creating anything. That exists so the pipeline can be
-# rehearsed before a real tag: without it, a tag push is the first time any
-# of this executes for real.
+# artifacts without creating anything -- no release, and no attestation
+# either: those are signed into the public transparency log, so they are
+# minted only for a tag. That exists so the pipeline can be rehearsed before
+# a real tag: without it, a tag push is the first time any of this executes
+# for real.
 
 on:
   push:
     tags: ["v*"]
   # Dry run: exercise the gate and both platform builds without publishing
-  # anything. The version-vs-tag check and the publish job are both skipped,
+  # anything. The version-vs-tag check, the release-notes check, the
+  # attestation steps and the publish job are all skipped,
   # so this can be run from a branch at any time — it is the only way to
   # prove the pipeline end to end before a real tag exists, and a real tag is
   # otherwise the first time any of it executes.
@@ -65,22 +70,56 @@ jobs:
     permissions:
       contents: read
 
-  build-windows:
-    needs: gate
-    runs-on: windows-latest
-    timeout-minutes: 45
+  release-notes:
+    # A release is immutable once published, so notes missing at tag time
+    # can never be added. The publisher used to fall back to a placeholder
+    # body and publish anyway, which is what a tag pushed before `##
+    # Unreleased` was renamed to `## v<version>` produced. This needs nothing,
+    # so it runs alongside the gate and fails in seconds; both builds wait on
+    # it, so a bad tag never reaches a build, let alone the publisher.
+    # On a dry run there is no tag to look up: the check is skipped and the
+    # job succeeds without doing anything.
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
-      id-token: write
-      attestations: write
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python 3.14.7
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.14.7"
+
+      - name: Require release notes for this tag in CHANGELOG.md
+        # Standard library only; nothing is installed.
+        if: github.event_name == 'push'
+        run: python scripts/release_notes.py --tag "$TAG"
+        env:
+          TAG: ${{ github.ref_name }}
+
+  build-windows:
+    needs: [gate, release-notes]
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      # Used only by the two attest steps, which run for tags alone.
+      # Permissions cannot depend on the event, so a dry run holds these too
+      # without any step that uses them.
+      id-token: write
+      attestations: write
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.14.7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.14.7"
 
@@ -222,7 +261,7 @@ jobs:
         shell: pwsh
 
       - name: Generate SBOM
-        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
         with:
           path: dist/Spirescope
           format: spdx-json
@@ -236,11 +275,18 @@ jobs:
         run: python scripts/runtime_inventory.py --inventory dist/Spirescope/runtime-inventory.json --spdx dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.spdx.json --qualification dist/Spirescope/qualification.json
 
       - name: Attest runtime SBOM
+        # Tags only. An attestation is published the moment it is minted --
+        # signed into the public transparency log and stored against this
+        # repository -- so a dry run creating one would publish provenance
+        # for artifacts that were never released.
+        if: github.event_name == 'push'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: dist/Spirescope-${{ env.ARTIFACT_VERSION }}-windows.spdx.json
 
       - name: Attest build provenance
+        # Tags only, for the same reason as the SBOM attestation above.
+        if: github.event_name == 'push'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: |
@@ -248,7 +294,7 @@ jobs:
             dist/Spirescope-windows.zip
 
       - name: Upload Windows release assets
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: windows-release-assets
           path: |
@@ -261,7 +307,7 @@ jobs:
           if-no-files-found: error
 
   build-macos:
-    needs: gate
+    needs: [gate, release-notes]
     runs-on: macos-latest
     timeout-minutes: 45
     permissions:
@@ -270,12 +316,12 @@ jobs:
       attestations: write
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python 3.14.7
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.14.7"
 
@@ -401,7 +447,7 @@ jobs:
           done
 
       - name: Generate SBOM
-        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
         with:
           path: dist/Spirescope
           format: spdx-json
@@ -415,11 +461,15 @@ jobs:
         run: python scripts/runtime_inventory.py --inventory dist/Spirescope/runtime-inventory.json --spdx dist/Spirescope-${{ env.ARTIFACT_VERSION }}-macos.spdx.json --qualification dist/Spirescope/qualification.json
 
       - name: Attest runtime SBOM
+        # Tags only: see the Windows job. A dry run must not publish
+        # provenance for artifacts that were never released.
+        if: github.event_name == 'push'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: dist/Spirescope-${{ env.ARTIFACT_VERSION }}-macos.spdx.json
 
       - name: Attest build provenance
+        if: github.event_name == 'push'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: |
@@ -427,7 +477,7 @@ jobs:
             dist/Spirescope-macos.zip
 
       - name: Upload macOS release assets
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: macos-release-assets
           path: |
@@ -449,6 +499,9 @@ jobs:
     #
     # Skipped entirely on workflow_dispatch: that path exists to rehearse the
     # gate and the builds, never to publish.
+    #
+    # release-notes is required too, transitively: neither build runs unless
+    # it succeeded, and this job requires both builds to have succeeded.
     needs: [gate, build-windows, build-macos]
     if: >-
       github.event_name == 'push'
@@ -461,7 +514,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -470,12 +523,12 @@ jobs:
       # the job holding contents:write, so it must never resolve or execute
       # third-party package code before it creates the release.
       - name: Set up Python 3.14.7
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.14.7"
 
       - name: Download Windows release assets
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: windows-release-assets
           path: release-assets
@@ -485,7 +538,7 @@ jobs:
         # next step refuses to publish a release missing either platform's
         # assets, because a partial release cannot be corrected once immutable
         # releases are on. A failure here is meant to stop the job.
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: macos-release-assets
           path: release-assets
@@ -505,40 +558,17 @@ jobs:
 
       - name: Extract release notes from CHANGELOG
         id: changelog
-        run: |
-          python -c "
-          import re, os
-          tag = os.environ['TAG']
-          version = tag.removeprefix('v')
-          with open('CHANGELOG.md', encoding='utf-8') as f:
-              text = f.read()
-          # Extract section for this version
-          pattern = rf'## v{re.escape(version)}\n(.*?)(?=\n## v|\Z)'
-          m = re.search(pattern, text, re.DOTALL)
-          body = m.group(1).strip() if m else 'See CHANGELOG.md for details.'
-          # Build full release body
-          header = '<h2 align=\"center\">⚔ S P I R E S C O P E ⚔</h2>\n'
-          header += '<p align=\"center\"><em>Card lookup · Deck analysis · Live run tracking · Analytics for Slay the Spire 2</em></p>\n\n---\n\n'
-          header += f'## What\'s New in {tag}\n\n'
-          footer = '\n\n---\n\n### Download\n\n'
-          footer += '**[Download Spirescope for Windows](https://github.com/thequantumfalcon/spirescope/releases/latest/download/Spirescope-windows.zip)**'
-          footer += ' — extract the zip, open the \`Spirescope\` folder, double-click \`Spirescope.exe\`.\n\n'
-          footer += 'GitHub is the only official download source. Use the release assets here and the attached checksum file.\n\n'
-          footer += '**Windows may flag the download as a virus.** Unsigned builds can trigger security warnings. '
-          footer += 'A warning needs investigation; see '
-          footer += '[docs/ANTIVIRUS.md](https://github.com/thequantumfalcon/spirescope/blob/master/docs/ANTIVIRUS.md) '
-          footer += 'for checksum and provenance verification, reporting a detection, and source installation.\n\n'
-          footer += 'The versioned and unversioned zips are identical; the unversioned names exist so the latest-download URL stays stable.'
-          notes = header + body + footer
-          with open('RELEASE_NOTES.md', 'w', encoding='utf-8') as f:
-              f.write(notes)
-          "
+        # The same script the release-notes job ran before the builds, now
+        # writing the body. It refuses rather than falling back to a
+        # placeholder, so a section that went missing in between still stops
+        # the release instead of publishing it without notes.
+        run: python scripts/release_notes.py --tag "$TAG" --output RELEASE_NOTES.md
         env:
           TAG: ${{ github.ref_name }}
         shell: bash
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: release-assets/*
           # A named file that is not there means the release would be

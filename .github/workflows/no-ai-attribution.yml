@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout full history
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -55,14 +55,24 @@ jobs:
           fi
           echo "Scanning commit messages in range: $RANGE"
           MSGS=$(git log --format='%B' "$RANGE" 2>/dev/null || git log --format='%B' -50)
+          # One list everywhere: both scans here and the three hooks in
+          # .githooks carry this exact set, and the test suite fails if they
+          # drift apart. Entries overlap; none is ever removed.
           PATTERNS=(
             "co-authored-by:[[:space:]]*claude"
             "noreply@anthropic\.com"
             "claude@anthropic\.com"
+            "🤖 generated with"
             "generated with.*\[claude code\]"
             "generated with.*claude\.com/claude-code"
+            "generated with.*claude code"
             "assisted by claude"
             "authored by claude code"
+            "claude \(anthropic\)"
+            "\bclaude \(anthropic\)"
+            "senior research partner:[[:space:]]*claude"
+            "thomas[[:space:]]*/[[:space:]]*claude"
+            "thomas[[:space:]]*\([^)]*\),[[:space:]]*claude"
           )
           FAIL=0
           for pat in "${PATTERNS[@]}"; do
@@ -79,16 +89,26 @@ jobs:
       - name: Scan tracked file content
         run: |
           set -euo pipefail
-          # Exclude legitimate guardrail files (these contain the patterns by design)
-          EXCLUDES='^(CLAUDE\.md|\.githooks/.*|\.github/workflows/no-ai-attribution\.yml|\.gitignore)$'
-          FILES=$(git ls-files | grep -vE "$EXCLUDES")
+          # Exclude legitimate guardrail files (these contain the patterns by
+          # design). Pathspecs rather than a grep over `git ls-files` output, so
+          # the file list can stay NUL-delimited end to end.
+          EXCLUDES=(
+            ':(exclude)CLAUDE.md'
+            ':(exclude).githooks/*'
+            ':(exclude).github/workflows/no-ai-attribution.yml'
+            ':(exclude).gitignore'
+          )
           PATTERNS=(
             "co-authored-by:[[:space:]]*claude"
             "noreply@anthropic\.com"
             "claude@anthropic\.com"
+            "🤖 generated with"
+            "generated with.*\[claude code\]"
+            "generated with.*claude\.com/claude-code"
             "generated with.*claude code"
             "assisted by claude"
             "authored by claude code"
+            "claude \(anthropic\)"
             "\bclaude \(anthropic\)"
             "senior research partner:[[:space:]]*claude"
             "thomas[[:space:]]*/[[:space:]]*claude"
@@ -96,14 +116,17 @@ jobs:
           )
           FAIL=0
           for pat in "${PATTERNS[@]}"; do
-            HITS=$(echo "$FILES" | xargs -I{} grep -liE "$pat" {} 2>/dev/null || true)
+            # NUL-delimited and batched: `xargs -I{}` split the list on
+            # whitespace, so a path containing a space was never scanned, and
+            # it spawned one grep per file per pattern.
+            HITS=$(git ls-files -z -- . "${EXCLUDES[@]}" | xargs -0 -r grep -liE -- "$pat" 2>/dev/null || true)
             if [ -n "$HITS" ]; then
               echo "::error::Tracked files contain forbidden pattern '$pat':"
               echo "$HITS"
-              for f in $HITS; do
+              while IFS= read -r f; do
                 echo "  $f:"
-                grep -inE "$pat" "$f" | head -3 | sed 's/^/    /'
-              done
+                grep -inE -- "$pat" "$f" | head -3 | sed 's/^/    /'
+              done <<< "$HITS"
               FAIL=1
             fi
           done
