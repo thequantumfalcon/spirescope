@@ -2219,6 +2219,7 @@ async def api_reset_stats(request: Request):
 async def api_import_stats(request: Request, file: UploadFile = File(...),
                            csrf_token: str = Form("")):
     from sts2.aggregate import (
+        IMPORT_REJECTIONS,
         AggregateImportError,
         DuplicateImportError,
         import_aggregate,
@@ -2240,11 +2241,13 @@ async def api_import_stats(request: Request, file: UploadFile = File(...),
         return _api_error("Invalid JSON.", 400)
     try:
         merged = await asyncio.to_thread(import_aggregate, imported)
-    except DuplicateImportError as exc:
-        return _api_error(str(exc), 409)
+    except DuplicateImportError:
+        return _api_error(IMPORT_REJECTIONS["duplicate"], 409)
     except AggregateImportError as exc:
-        # Fixed text from the sanitiser, never payload — safe to return.
-        return _api_error(str(exc), 400)
+        # The text comes from the fixed table, looked up by the reason the
+        # sanitiser named, so nothing from the exception object itself can
+        # reach the response.
+        return _api_error(IMPORT_REJECTIONS.get(exc.reason, "Invalid aggregate file."), 400)
     except ValueError:
         # Includes Infinity/NaN counters: json.loads accepts them, the
         # sanitiser rejects them, and this used to surface as a 500. The

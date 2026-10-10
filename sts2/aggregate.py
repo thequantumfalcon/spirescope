@@ -148,16 +148,43 @@ _MAX_COUNT = 10 ** 12
 _MAX_IMPORT_DIGESTS = 1000
 
 
-class AggregateImportError(ValueError):
-    """An import rejected for a reason the caller may show to the user.
+# What a rejected import may tell the user, by reason. Each raise below names
+# its reason, and a response looks its text up here, so what reaches the user
+# is one of these constants and never anything read off the exception.
+IMPORT_REJECTIONS = {
+    "run_count": "run_count must be a nonnegative whole number",
+    "family": "Invalid aggregate counter family.",
+    "entry": "Invalid aggregate entry: both finite counters are required.",
+    "wins_exceed_total": "Invalid aggregate file: an entry records more wins than runs.",
+    "entry_exceeds_runs": ("Invalid aggregate file: an entry appears in more runs than "
+                           "the file's run_count."),
+    "partition_exceeds_runs": ("Invalid aggregate file: character or ascension totals add up "
+                               "to more runs than the file's run_count."),
+    "impossible_picks": ("Invalid aggregate file: pick counts are impossible for the "
+                         "file's run_count."),
+    "duplicate": "This aggregate file has already been imported.",
+    "ledger_full": ("Import ledger is full. Export a backup before resetting community "
+                    "statistics."),
+}
 
-    The message is always fixed text written here, never a fragment of the
-    submitted file, so it is safe to return in a response.
+
+class AggregateImportError(ValueError):
+    """An import rejected for one of the reasons in IMPORT_REJECTIONS.
+
+    reason is the table key; str(exc) is that reason's text, for logs and
+    command-line output.
     """
+
+    def __init__(self, reason: str):
+        super().__init__(IMPORT_REJECTIONS[reason])
+        self.reason = reason
 
 
 class DuplicateImportError(AggregateImportError):
     """The exact same aggregate content has already been merged."""
+
+    def __init__(self):
+        super().__init__("duplicate")
 
 
 def _counter(value):
@@ -195,7 +222,7 @@ def _sanitise_import(imported: dict) -> dict:
             or (isinstance(count, float) and not math.isfinite(count))):
         raise ValueError("run_count must be a finite number")
     if count < 0 or count != int(count):
-        raise AggregateImportError("run_count must be a nonnegative whole number")
+        raise AggregateImportError("run_count")
     clean["run_count"] = int(count)
     if clean["run_count"] > _MAX_COUNT:
         raise ValueError("run_count must be a finite number")
@@ -205,15 +232,15 @@ def _sanitise_import(imported: dict) -> dict:
         if field not in imported:
             continue
         if not isinstance(source, dict):
-            raise AggregateImportError("Invalid aggregate counter family.")
+            raise AggregateImportError("family")
         kept: dict = {}
         for key, values in source.items():
             if not isinstance(key, str) or not isinstance(values, dict):
-                raise AggregateImportError("Invalid aggregate entry: both finite counters are required.")
+                raise AggregateImportError("entry")
             part_n = _counter(values.get(part))
             whole_n = _counter(values.get(whole))
             if part_n is None or whole_n is None:
-                raise AggregateImportError("Invalid aggregate entry: both finite counters are required.")
+                raise AggregateImportError("entry")
             kept[key] = {part: part_n, whole: whole_n}
         clean[field] = kept
 
@@ -224,23 +251,16 @@ def _sanitise_import(imported: dict) -> dict:
     for field in _PER_RUN_FAMILIES:
         for values in clean.get(field, {}).values():
             if values["wins"] > values["total"]:
-                raise AggregateImportError(
-                    "Invalid aggregate file: an entry records more wins than runs.")
+                raise AggregateImportError("wins_exceed_total")
             if values["total"] > runs:
-                raise AggregateImportError(
-                    "Invalid aggregate file: an entry appears in more runs than "
-                    "the file's run_count.")
+                raise AggregateImportError("entry_exceeds_runs")
     for field in _PARTITION_FAMILIES:
         if sum(v["total"] for v in clean.get(field, {}).values()) > runs:
-            raise AggregateImportError(
-                "Invalid aggregate file: character or ascension totals add up "
-                "to more runs than the file's run_count.")
+            raise AggregateImportError("partition_exceeds_runs")
     for values in clean.get("card_pick_rates", {}).values():
         if (values["offered"] > runs * _MAX_FLOORS_PER_RUN * _MAX_OFFERS_PER_FLOOR
                 or values["picked"] > runs * _MAX_FLOORS_PER_RUN):
-            raise AggregateImportError(
-                "Invalid aggregate file: pick counts are impossible for the "
-                "file's run_count.")
+            raise AggregateImportError("impossible_picks")
         # A pick of a card missing from its floor's offer list is a data
         # quirk rather than manipulation: clamp it instead of rejecting.
         if values["picked"] > values["offered"]:
@@ -274,10 +294,9 @@ def merge_aggregate(existing: dict, imported: dict) -> dict:
     digest = _import_digest(imported)
     seen = _stored_digests(existing)
     if digest in seen:
-        raise DuplicateImportError(
-            "This aggregate file has already been imported.")
+        raise DuplicateImportError()
     if len(seen) >= _MAX_IMPORT_DIGESTS:
-        raise AggregateImportError("Import ledger is full. Export a backup before resetting community statistics.")
+        raise AggregateImportError("ledger_full")
     digests = seen + [digest]
     if not existing or existing.get("run_count", 0) == 0:
         # Apply min-cap even on first import — prevents a malicious first file
