@@ -3,8 +3,9 @@
 This work implements the independent review against release v3.1.2
 (`ef038a679aa7c777913a309cfbac369618277384`) and master
 `2f39ce07f25325e84df26761a9e69105beacf002`. The four intervening commits
-changed documentation, not application behavior. Development is on
-`fix/stabilization`; a passing source suite is not a stable-release decision.
+changed documentation, not application behavior. The work was developed on
+`fix/stabilization`, merged through PR #60 and released as v3.2.0 (`50ef2f9`);
+a passing source suite is not a stable-release decision.
 
 ## Verified implementation progress
 
@@ -40,13 +41,15 @@ changed documentation, not application behavior. Development is on
 ## Validation recorded so far
 
 The isolated public checkout excludes private modules, personal overlays, and
-working build files. Windows source checks cover Python 3.11 and the locked
-desktop Python 3.14.7 environment (3.13 was also exercised). Lint and type checks cover the public package;
+working build files. The Windows source checks recorded here cover Python 3.11
+and the locked desktop Python 3.14.7 environment (3.13 was also exercised); the
+CI Windows and macOS jobs run Python 3.12, and the CI Linux matrix runs 3.11
+through 3.14. Lint and type checks cover the public package;
 Chromium checks include real Swagger operations with external requests blocked.
 The exact `24947e7` candidate passed
 [GitHub CI](https://github.com/thequantumfalcon/spirescope/actions/runs/35807577729):
 1,757 tests passed on the coverage leg, four skips, and 89.56% branch coverage
-against the 88% gate. All 19 browser tests passed on each of Chromium, Firefox and
+against the 88% gate. All 19 browser tests in that commit passed on each of Chromium, Firefox and
 WebKit. Mypy checked 40 public source files; Ruff and dependency checks passed.
 
 The [artifact rehearsal](https://github.com/thequantumfalcon/spirescope/actions/runs/35807670327)

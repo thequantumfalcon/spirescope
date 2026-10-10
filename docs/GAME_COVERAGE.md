@@ -43,7 +43,8 @@ executable candidate was qualified at `24947e7e58d027617e9e74191b2ab8eb67c46a75`
 [Windows/macOS artifact rehearsal](https://github.com/thequantumfalcon/spirescope/actions/runs/35807670327).
 The content audit, versioned main profile, saved-card properties and live-seed
 repair all postdate that executable build. Those archives and earlier remote
-CI results do not qualify the current uncommitted candidate.
+CI results do not qualify that later work, which was committed and released as
+v3.2.0 (`50ef2f9`).
 
 ## What changed after the installed main release
 
@@ -94,7 +95,7 @@ all game modes and beta still require separate review. Five playable character
 registrations are present. The four act models are Overgrowth and Underdocks
 (alternative Act 1s), Hive (Act 2), and Glory (Act 3).
 
-The current uncommitted candidate includes these repairs:
+The v3.2.0 release (`50ef2f9`) includes these repairs:
 
 - Twenty-four explicit legacy-to-native mappings, verified against native model
   identities. Old links and overlays still resolve. Analytics and aggregate

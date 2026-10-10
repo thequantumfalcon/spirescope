@@ -12,7 +12,7 @@ runner architecture. Record that architecture from the artifact inventory for
 each release; do not describe an ARM64 binary as an Intel-native build. Docker
 uses the pinned base image and hashed runtime lock in the repository.
 
-The stabilization candidate retains Beta status. Its local evidence and remaining
+Spirescope retains Beta status. The stabilization evidence and remaining
 gates are in [STABILIZATION.md](STABILIZATION.md); build-specific coverage and
 the remaining content work are in [GAME_COVERAGE.md](GAME_COVERAGE.md). No game build or OS should be
 added to the verified support matrix solely because the program starts there.

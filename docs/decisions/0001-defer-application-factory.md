@@ -3,6 +3,12 @@
 Date: 2026-08-12
 Status: Accepted (revisit after v3.1.0 has shipped and settled)
 
+Status note, 2026-10-10: the revisit trigger has passed. v3.1.0, v3.1.1,
+v3.1.2 and v3.2.0 have all been released, and the refactor has not been done:
+`sts2/app.py` still builds the application at import and `routes.py` is still
+one module. The revisit is still open; the decision below stands until it
+happens.
+
 ## Context
 
 `sts2/app.py` builds the FastAPI application at module import: it constructs
