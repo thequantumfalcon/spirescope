@@ -404,6 +404,17 @@ h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; font-weight: 600; }
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; color: var(--gold);
 }
+/* A colour class on a stat number carries meaning: HP danger, ahead of or
+   behind the ghost run, wins and losses. The gold gradient fill above painted
+   over it in both themes, so those numbers always showed gold. */
+.stat-box .num.text-red, .stat-box .num.text-green, .stat-box .num.text-yellow,
+.stat-box .num.text-muted, .stat-box .num.win, .stat-box .num.loss {
+  background: none; -webkit-text-fill-color: currentColor;
+}
+.stat-box .num.text-red, .stat-box .num.loss { color: var(--red); }
+.stat-box .num.text-green, .stat-box .num.win { color: var(--green); }
+.stat-box .num.text-yellow { color: var(--yellow); }
+.stat-box .num.text-muted { color: var(--text2); }
 .stat-box .label { font-size: 0.75rem; color: var(--text2); margin-top: 0.35rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
 /* Fixed column counts; two classes so the narrow-screen .stat-grid rules
    below do not override them. */

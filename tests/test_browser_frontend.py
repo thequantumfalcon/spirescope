@@ -440,3 +440,28 @@ class TestCopySeed:
         expect(page.locator(".copy-seed")).to_have_text(re.compile(r"^(Copied!|Seed selected)$"))
         assert page.evaluate("window.getSelection().toString()") == "ABC123"
         assert errors == []
+
+
+class TestStatNumberColours:
+    """Colour classes on stat numbers (live HP danger, ghost ahead/behind,
+    wins/losses) used to be painted over by the gold gradient fill."""
+
+    @pytest.mark.parametrize("theme", ["dark", "light"])
+    def test_colour_classes_show_on_stat_numbers(self, page, live_server, theme):
+        page.goto(live_server + "/relics")
+        page.evaluate("t => document.documentElement.setAttribute('data-theme', t)", theme)
+        fills = page.evaluate("""() => {
+            const box = document.createElement('div');
+            box.className = 'stat-box';
+            box.innerHTML = '<div class="num text-red">1</div><div class="num win">2</div>'
+                          + '<div class="num">3</div><span class="text-red">4</span>';
+            document.body.appendChild(box);
+            const fill = el => getComputedStyle(el).webkitTextFillColor;
+            const [red, win, plain, ref] = box.children;
+            return {red: fill(red), win: fill(win), plain: fill(plain),
+                    ref: getComputedStyle(ref).color};
+        }""")
+        assert fills["red"] == fills["ref"], fills
+        assert fills["win"] != fills["plain"], fills
+        assert fills["red"] != fills["plain"], fills
+
