@@ -152,3 +152,10 @@ async def test_the_epochs_page_survives_a_null_obtain_date(client, uncached_save
            {"epochs": [{"id": "NEOW_EPOCH", "state": "revealed", "obtain_date": None}]})
     resp = await client.get("/epochs")
     assert resp.status_code == 200
+
+
+async def test_the_epochs_page_survives_an_out_of_range_obtain_date(client, uncached_saves):
+    _write(uncached_saves / "progress.save",
+           {"epochs": [{"id": "NEOW_EPOCH", "state": "revealed", "obtain_date": 10 ** 20}]})
+    resp = await client.get("/epochs")
+    assert resp.status_code == 200

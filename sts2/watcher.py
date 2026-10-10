@@ -58,6 +58,13 @@ class SaveFileHandler(FileSystemEventHandler):
 
     on_created = on_modified
 
+    def on_moved(self, event):
+        # A file written under a temporary name and then renamed into place
+        # arrives only as a move, with the save file as the destination.
+        if event.is_directory or not self._should_handle(getattr(event, "dest_path", "")):
+            return
+        self._loop.call_soon_threadsafe(self._restart_timer)
+
     def _restart_timer(self) -> None:
         """Move the signal to one full interval after the latest write."""
         if self._timer is not None:

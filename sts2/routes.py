@@ -1512,7 +1512,12 @@ async def epochs_page(request: Request, category: str = Query(None, max_length=5
         ts = state_data.get("obtain_date", 0)
         date_str = ""
         if ts > 0:
-            date_str = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%b %d, %Y")
+            try:
+                date_str = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%b %d, %Y")
+            except (OverflowError, OSError, ValueError):
+                # A timestamp past what the platform can represent (OSError on
+                # Windows, OverflowError elsewhere) shows as no date, not a 500.
+                date_str = ""
         epochs_with_state.append({
             "epoch": ep,
             "state": state_data.get("state", "not_obtained"),

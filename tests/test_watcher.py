@@ -107,6 +107,20 @@ class TestSaveFileHandler:
         handler.on_created(evt)
         handler._loop.call_soon_threadsafe.assert_called_once()
 
+    def test_a_save_renamed_into_place_triggers(self):
+        handler = self._make_handler()
+        evt = SimpleNamespace(is_directory=False, src_path="/saves/progress.save.tmp",
+                              dest_path="/saves/progress.save")
+        handler.on_moved(evt)
+        handler._loop.call_soon_threadsafe.assert_called_once()
+
+    def test_a_move_to_another_kind_of_file_is_ignored(self):
+        handler = self._make_handler()
+        evt = SimpleNamespace(is_directory=False, src_path="/saves/progress.save",
+                              dest_path="/saves/progress.save.bak")
+        handler.on_moved(evt)
+        handler._loop.call_soon_threadsafe.assert_not_called()
+
     def test_a_burst_of_writes_signals_once_after_the_last_one(self):
         """Trailing edge: nothing fires while the game is still writing, and
         the one signal comes a full interval after the final write."""
