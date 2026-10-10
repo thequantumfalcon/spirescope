@@ -8,6 +8,16 @@ import pytest
 from sts2.sync import SyncError, _validate_url, download_stats, upload_stats
 
 
+@pytest.fixture(autouse=True)
+def _no_real_dns(monkeypatch):
+    """upload_stats and download_stats validate the configured URL first, and
+    that resolves its host name. Mocking only _open left every such test doing
+    a live DNS lookup, so answer with a public address here; a test that needs
+    a different answer patches getaddrinfo itself."""
+    monkeypatch.setattr("sts2.sync.socket.getaddrinfo",
+                        lambda *args, **kwargs: [(2, 1, 6, "", ("93.184.216.34", 0))])
+
+
 class TestUploadStats:
     """Tests for upload_stats()."""
 
@@ -192,26 +202,26 @@ class TestRedirectValidation:
 
     def test_redirect_into_loopback_is_rejected(self):
         import pytest
-        with pytest.raises(ValueError):
+        with pytest.raises(SyncError, match="redirect blocked"):
             self._handler().redirect_request(
                 self._req(), None, 302, "Found", {}, "https://127.0.0.1:8000/health")
 
     def test_redirect_to_cloud_metadata_is_rejected(self):
         import pytest
-        with pytest.raises(ValueError):
+        with pytest.raises(SyncError, match="redirect blocked"):
             self._handler().redirect_request(
                 self._req(), None, 302, "Found", {},
                 "https://169.254.169.254/latest/meta-data/")
 
     def test_redirect_to_private_lan_is_rejected(self):
         import pytest
-        with pytest.raises(ValueError):
+        with pytest.raises(SyncError, match="redirect blocked"):
             self._handler().redirect_request(
                 self._req(), None, 302, "Found", {}, "https://192.168.1.1/setup.cgi")
 
     def test_redirect_downgrade_to_http_is_rejected(self):
         import pytest
-        with pytest.raises(ValueError):
+        with pytest.raises(SyncError, match="redirect blocked"):
             self._handler().redirect_request(
                 self._req(), None, 302, "Found", {}, "http://sync.example.com/x")
 
@@ -263,3 +273,71 @@ class TestInvalidUrlSurfacesAsSyncError:
         monkeypatch.setattr(sync, "SYNC_URL", "http://example.com")  # not https
         with pytest.raises(sync.SyncError, match="Invalid sync URL"):
             sync.download_stats()
+
+
+class TestBlockedRedirectIsReportedCleanly:
+    """The redirect check raised a bare ValueError. upload_stats catches only
+    SyncError and network errors, so sync-up ended in a traceback, and
+    sync-down reported the blocked redirect as "downloaded stats rejected".
+    These go through the real opener; only the HTTPS transport is replaced, by
+    a server that answers every request with a redirect into loopback."""
+
+    @pytest.fixture
+    def redirecting_server(self, monkeypatch):
+        import email.message
+        import io
+        import urllib.request
+        import urllib.response
+
+        requested = []
+
+        def https_open(handler, req):
+            requested.append(req.full_url)
+            headers = email.message.Message()
+            headers["Location"] = "https://127.0.0.1:8000/api/v1/aggregate"
+            resp = urllib.response.addinfourl(io.BytesIO(b""), headers, req.full_url, 302)
+            resp.msg = "Found"
+            return resp
+
+        monkeypatch.setattr(urllib.request.HTTPSHandler, "https_open", https_open)
+        monkeypatch.setattr("sts2.sync.SYNC_URL", "https://sync.example.com")
+        return requested
+
+    def test_upload_raises_sync_error(self, redirecting_server):
+        with pytest.raises(SyncError, match="redirect blocked"):
+            upload_stats({"run_count": 1})
+        assert redirecting_server == ["https://sync.example.com/api/v1/aggregate"]
+
+    def test_download_raises_sync_error(self, redirecting_server):
+        with pytest.raises(SyncError, match="redirect blocked"):
+            download_stats()
+        assert redirecting_server == ["https://sync.example.com/api/v1/aggregate"]
+
+    def test_sync_up_reports_it_without_a_traceback(self, redirecting_server, capsys,
+                                                    monkeypatch):
+        import sys
+
+        from sts2.__main__ import main
+        monkeypatch.setattr(sys, "argv", ["sts2", "sync-up"])
+        monkeypatch.setattr("sts2.saves.get_run_history", lambda: [])
+        with pytest.raises(SystemExit) as exc:
+            main()
+        assert exc.value.code == 1
+        out = capsys.readouterr().out
+        assert "Sync failed: Sync server redirect blocked" in out
+        assert "127.0.0.1" in out
+        assert redirecting_server == ["https://sync.example.com/api/v1/aggregate"]
+
+    def test_sync_down_does_not_call_it_rejected_stats(self, redirecting_server, capsys,
+                                                       monkeypatch):
+        import sys
+
+        from sts2.__main__ import main
+        monkeypatch.setattr(sys, "argv", ["sts2", "sync-down"])
+        with pytest.raises(SystemExit) as exc:
+            main()
+        assert exc.value.code == 1
+        out = capsys.readouterr().out
+        assert "Sync failed: Sync server redirect blocked" in out
+        assert "downloaded stats rejected" not in out
+        assert redirecting_server == ["https://sync.example.com/api/v1/aggregate"]

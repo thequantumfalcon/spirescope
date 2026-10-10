@@ -108,7 +108,14 @@ class _ValidatingRedirectHandler(urllib.request.HTTPRedirectHandler):
     """
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        _validate_url(newurl)
+        # SyncError, not the ValueError _validate_url raises: the upload path
+        # catches only SyncError and network errors, so sync-up ended in a
+        # traceback, and sync-down reported the blocked redirect as rejected
+        # stats.
+        try:
+            _validate_url(newurl)
+        except ValueError as e:
+            raise SyncError(f"Sync server redirect blocked: {e}") from e
         new = super().redirect_request(req, fp, code, msg, headers, newurl)
         if new is not None and _origin(newurl) != _origin(req.full_url):
             new.headers.pop("X-api-key", None)
