@@ -205,6 +205,7 @@ def test_migration_moves_user_mods_but_never_the_shipped_readme(
     (mods / "subdir").mkdir()
     monkeypatch.setattr(config, "DATA_DIR", data)
     monkeypatch.setattr(config, "STATE_DIR", state)
+    monkeypatch.setattr(config, "MODS_DIR", state / "mods")
     assert config.migrate_state_from_data_dir() == ["mods/my_mod.json"]
     assert (mods / "README.md").exists()
     assert (state / "mods" / "my_mod.json").exists()
@@ -219,8 +220,24 @@ def test_migration_skips_a_mod_that_already_exists_in_the_new_location(
     (state / "mods" / "my_mod.json").write_text('{"new": 1}', encoding="utf-8")
     monkeypatch.setattr(config, "DATA_DIR", data)
     monkeypatch.setattr(config, "STATE_DIR", state)
+    monkeypatch.setattr(config, "MODS_DIR", state / "mods")
     assert config.migrate_state_from_data_dir() == []
     assert "new" in (state / "mods" / "my_mod.json").read_text(encoding="utf-8")
+
+
+def test_migration_moves_user_mods_to_the_folder_the_loader_reads(
+        monkeypatch, tmp_path):
+    """With STS2_MODS_DIR set, or in a frozen build, mods load from somewhere
+    other than STATE_DIR/mods; a migrated mod has to land there to load."""
+    data, state, mods_dir = tmp_path / "data", tmp_path / "state", tmp_path / "custom-mods"
+    (data / "mods").mkdir(parents=True)
+    (data / "mods" / "my_mod.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(config, "DATA_DIR", data)
+    monkeypatch.setattr(config, "STATE_DIR", state)
+    monkeypatch.setattr(config, "MODS_DIR", mods_dir)
+    assert config.migrate_state_from_data_dir() == ["mods/my_mod.json"]
+    assert (mods_dir / "my_mod.json").exists()
+    assert not (state / "mods").exists()
 
 
 def test_migration_reports_nothing_when_there_is_nothing_to_move(

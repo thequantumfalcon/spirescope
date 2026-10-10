@@ -116,7 +116,11 @@ def migrate_state_from_data_dir() -> list[str]:
     # explaining the format. Move only files the user added, and never the
     # directory itself, or a source checkout loses a tracked file.
     old_mods = DATA_DIR / "mods"
-    new_mods = STATE_DIR / "mods"
+    # The folder the mod loader actually reads: STATE_DIR/mods in a source
+    # checkout, but beside the executable in a frozen build and wherever
+    # STS2_MODS_DIR points when set. Moving into STATE_DIR/mods regardless
+    # left migrated mods where nothing would load them.
+    new_mods = MODS_DIR
     if old_mods.is_dir():
         for mod_file in sorted(old_mods.iterdir()):
             if not mod_file.is_file() or mod_file.name == "README.md":
