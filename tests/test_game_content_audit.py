@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.test_localize import _build_pck
+from tests._pck_builder import _build_pck
 
 spec = importlib.util.spec_from_file_location(
     "audit_game_content", Path(__file__).parents[1] / "scripts/audit_game_content.py")

@@ -1,5 +1,5 @@
 """Tests for the STS2 log parser (LogRunState + LogTailer)."""
-from pathlib import Path
+import pytest
 
 from sts2.logparser import LogRunState, LogTailer
 
@@ -66,8 +66,11 @@ class TestLogRunState:
 # ── LogTailer._process_line ──────────────────────────────────────────────
 
 class TestProcessLine:
-    def setup_method(self):
-        self.tailer = LogTailer(log_path=Path("/dev/null"))
+    @pytest.fixture(autouse=True)
+    def _tailer(self, tmp_path):
+        # _process_line never opens the file; the path only has to be one
+        # that exists nowhere else on the machine.
+        self.tailer = LogTailer(log_path=tmp_path / "godot.log")
         self.state = self.tailer.state
 
     def test_empty_line(self):
@@ -214,8 +217,8 @@ class TestProcessLine:
 # ── LogTailer.poll ───────────────────────────────────────────────────────
 
 class TestLogTailerPoll:
-    def test_poll_nonexistent_file(self):
-        tailer = LogTailer(log_path=Path("/nonexistent/path/godot.log"))
+    def test_poll_nonexistent_file(self, tmp_path):
+        tailer = LogTailer(log_path=tmp_path / "nonexistent" / "godot.log")
         assert tailer.poll() is None
 
     def test_poll_empty_file(self, tmp_path):
