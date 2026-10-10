@@ -802,9 +802,9 @@ typing-inspection==0.4.4 \
     # via
     #   fastapi
     #   pydantic
-uvicorn[standard]==0.52.1 \
-    --hash=sha256:112ec661814189acbccd3f7b86460147cc065fc92c0821afa78918780e4354dd \
-    --hash=sha256:e4403f9d93188cf9d1088e9f40e3acd12630e2df8675316704379a7fc20fff6a
+uvicorn[standard]==0.54.0 \
+    --hash=sha256:505bdb0f318731d45f1f712071fc781a8981f6847a31c902c9f5e652d4f67faf \
+    --hash=sha256:a2e33cbfaa0306f8e6b0c13e0cb89d7d7a2da3e62b90c66e18c33d9807b28620
     # via spirescope (pyproject.toml)
 uvloop==0.22.1 ; sys_platform != "win32" and sys_platform != "cygwin" and platform_python_implementation != "PyPy" \
     --hash=sha256:017bd46f9e7b78e81606329d07141d3da446f8798c6baeec124260e22c262772 \
