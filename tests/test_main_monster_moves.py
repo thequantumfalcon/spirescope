@@ -1,4 +1,5 @@
-"""Act 1 monster move sets are build-qualified and scoped to the run's version."""
+"""Monster move sets (107 monsters across Acts 1-3 and events) are
+build-qualified and scoped to the run's version."""
 import hashlib
 import json
 from pathlib import Path
@@ -11,7 +12,7 @@ from sts2.mechanics import MonsterMove, MonsterMoves, read_profiles, render_mons
 ROOT = Path(__file__).parents[1]
 
 
-def test_act1_monster_moves_match_stats_registry_and_record_hashes():
+def test_monster_moves_match_stats_registry_and_record_hashes():
     proof = json.loads((ROOT / "docs/game-baselines/v0.107.1-monster-moves.json").read_text(encoding="utf-8"))
     registry = json.loads((ROOT / "docs/game-baselines/v0.107.1-model-registry.json").read_text(encoding="utf-8"))
     profile = json.loads((ROOT / "sts2/data/mechanics.json").read_text(encoding="utf-8"))["profiles"][0]

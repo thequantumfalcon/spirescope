@@ -31,7 +31,8 @@ def test_main_hp_thresholds_do_not_certify_unreviewed_patterns():
     cultist = kb.get_enemy_by_id("MONSTER.CALCIFIED_CULTIST")
     assert cultist.hp_range == "38–41 (Ascension 8+: 39–42)"
     assert cultist.stats_version == "v0.107.1"
-    # Act 1 moves are reviewed; HP review alone still certifies nothing about patterns.
+    # Its moves are reviewed too, as are every profiled monster's; HP review
+    # alone still certifies nothing about patterns.
     assert cultist.mechanics_version == "v0.107.1"
     aeonglass = kb.get_enemy_by_id("MONSTER.AEONGLASS")
     assert aeonglass.hp_range == "512 (Ascension 8+: 535)"
