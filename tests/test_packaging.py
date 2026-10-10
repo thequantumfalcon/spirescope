@@ -435,7 +435,10 @@ def test_local_build_refuses_a_tree_holding_unshippable_files():
     text = (PROJECT_ROOT / "build_exe.py").read_text(encoding="utf-8")
     assert "_refuse_dirty_tree" in text
     for name in ("sts2/risk.py", "sts2/diagnosis.py",
-                 "sts2/data/.fetcher_keys.json"):
+                 "sts2/data/.fetcher_keys.json",
+                 # Legacy user state, and mods dropped into the data dir.
+                 "sts2/data/settings.json", "sts2/data/community_aggregate.json",
+                 "sts2/data/hypotheses.json", '"sts2" / "data" / "mods"'):
         assert name in text, f"build guard does not cover {name}"
 
 
@@ -585,3 +588,255 @@ class TestSdistDataAllowlist:
         assert not globbed, (
             "MANIFEST.in data includes must name files literally; these "
             f"wildcards would sweep in state and credentials: {globbed}")
+
+
+# ── Lock files: one set of pins, hashes everywhere ──
+
+FULL_LOCK = PROJECT_ROOT / "requirements-lock.txt"
+RUNTIME_LOCK = PROJECT_ROOT / "requirements-runtime-lock.txt"
+CI_LOCK = PROJECT_ROOT / "requirements-ci-lock.txt"
+
+
+def _lock_pins(text: str) -> dict[str, dict]:
+    """Package -> its requirement (with extras), version, marker and hashes.
+
+    Written independently of build_exe.py's own reader, so neither vouches
+    for itself.
+    """
+    pins: dict[str, dict] = {}
+    current = None
+    for line in text.splitlines():
+        if line and not line[0].isspace() and not line.startswith("#"):
+            requirement, _, marker = line.rstrip("\\").strip().partition(";")
+            name, _, version = requirement.strip().partition("==")
+            key = re.sub(r"[-_.]+", "-", re.sub(r"\[.*\]", "", name)).lower()
+            current = pins[key] = {"requirement": name.strip(), "version": version.strip(),
+                                   "marker": " ".join(marker.split()), "hashes": set()}
+        elif current is not None:
+            current["hashes"].update(re.findall(r"--hash=(sha256:[0-9a-f]{64})", line))
+    return pins
+
+
+def _drift(reference: dict, other: dict) -> list[str]:
+    """Every package in `other` must appear in `reference` identically."""
+    problems = []
+    for key, pin in sorted(other.items()):
+        expected = reference.get(key)
+        if expected is None:
+            problems.append(f"{key}: absent from the reference lock")
+            continue
+        problems += [f"{key}: {field} differs ({expected[field]!r} vs {pin[field]!r})"
+                     for field in ("requirement", "version", "marker", "hashes")
+                     if pin[field] != expected[field]]
+    return problems
+
+
+class TestLocksAgree:
+    """requirements-runtime-lock.txt is documented as a subset of
+    requirements-lock.txt with identical versions and hashes, but nothing
+    checked it: a Dependabot PR bumping a package in one file only would
+    leave the wheel check, the Docker image and the frozen build on
+    different bytes than the test suite, and pass."""
+
+    def test_every_runtime_pin_matches_the_full_lock(self):
+        full = _lock_pins(FULL_LOCK.read_text(encoding="utf-8"))
+        runtime = _lock_pins(RUNTIME_LOCK.read_text(encoding="utf-8"))
+        assert len(runtime) >= 20, "the runtime lock parsed to almost nothing"
+        assert all(pin["version"] and pin["hashes"] for pin in runtime.values())
+        drift = _drift(full, runtime)
+        assert not drift, "requirements-runtime-lock.txt has drifted:\n  " + "\n  ".join(drift)
+
+    def test_the_ci_lock_agrees_wherever_it_overlaps_the_full_lock(self):
+        """Both files install into one environment on the test and browser
+        legs, so a shared package pinned differently would not install."""
+        full = _lock_pins(FULL_LOCK.read_text(encoding="utf-8"))
+        ci = _lock_pins(CI_LOCK.read_text(encoding="utf-8"))
+        assert all(pin["version"] and pin["hashes"] for pin in ci.values())
+        shared = {key: pin for key, pin in ci.items() if key in full}
+        assert shared, "no overlap found; the parser or the lock has changed shape"
+        drift = _drift(full, shared)
+        assert not drift, "requirements-ci-lock.txt disagrees:\n  " + "\n  ".join(drift)
+
+    @pytest.mark.parametrize("field, change", [
+        ("version", lambda p: p.update(version="0.0.1")),
+        ("hashes", lambda p: p.update(hashes=p["hashes"] | {"sha256:" + "0" * 64})),
+        ("marker", lambda p: p.update(marker='sys_platform == "win32"')),
+        ("requirement", lambda p: p.update(requirement=p["requirement"] + "[extra]")),
+    ])
+    def test_drift_of_each_kind_is_caught(self, field, change):
+        """Guard the guard on the real files: one edited field must show up."""
+        full = _lock_pins(FULL_LOCK.read_text(encoding="utf-8"))
+        runtime = _lock_pins(RUNTIME_LOCK.read_text(encoding="utf-8"))
+        change(runtime["fastapi"])
+        assert any(p.startswith(f"fastapi: {field}") for p in _drift(full, runtime))
+
+    def test_a_package_missing_from_the_full_lock_is_caught(self):
+        full = _lock_pins(FULL_LOCK.read_text(encoding="utf-8"))
+        runtime = _lock_pins(RUNTIME_LOCK.read_text(encoding="utf-8"))
+        del full["fastapi"]
+        assert "fastapi: absent from the reference lock" in _drift(full, runtime)
+
+
+def _load_build_exe():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("build_exe", PROJECT_ROOT / "build_exe.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class TestLocalBuildInstallsFromTheLocks:
+    """build_exe.py used `pip install --upgrade . "pyinstaller>=6.0"`: no
+    lock, no hashes, whatever the index offered that day, straight into a
+    binary meant for distribution."""
+
+    def test_no_unpinned_install_remains(self):
+        """Command-line arguments only (list elements), not the prose that
+        explains what the old command did wrong."""
+        import ast
+
+        tree = ast.parse((PROJECT_ROOT / "build_exe.py").read_text(encoding="utf-8"))
+        installs = []
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.List):
+                continue
+            words = [e.value for e in node.elts
+                     if isinstance(e, ast.Constant) and isinstance(e.value, str)]
+            if "install" in words:
+                installs.append(words)
+        assert installs, "found no pip install call; the scan is broken"
+        flags = set()
+        for words in installs:
+            # pip, -m, install, flags and "." -- any other literal would be a
+            # requirement resolved from the index.
+            named = [w for w in words if w not in ("pip", "-m", "install", ".")
+                     and not w.startswith("-")]
+            assert not named, f"build_exe.py installs {named} outside the locks"
+            flags.update(w for w in words if w.startswith("-"))
+        assert {"--require-hashes", "--no-deps"} <= flags
+
+    def test_build_tools_are_pyinstallers_locked_closure(self):
+        build_exe = _load_build_exe()
+        tools = _lock_pins(build_exe._build_tool_requirements())
+        full = _lock_pins(FULL_LOCK.read_text(encoding="utf-8"))
+        runtime = _lock_pins(RUNTIME_LOCK.read_text(encoding="utf-8"))
+        assert "pyinstaller" in tools
+        # Exactly the full lock's pins and hashes, nothing the runtime lock
+        # already covers, and none of the dev tools.
+        assert not _drift(full, tools)
+        assert not set(tools) & set(runtime)
+        for dev_only in ("pytest", "mypy", "ruff", "httpx"):
+            assert dev_only not in tools, f"{dev_only} would be installed into the build venv"
+
+    def test_every_dependency_pyinstaller_declares_is_covered(self):
+        """Check the via-walk against PyInstaller's own metadata where it is
+        installed; the build itself would fail on a gap, this fails sooner."""
+        import importlib.metadata as metadata
+
+        from packaging.requirements import Requirement
+
+        try:
+            requires = metadata.requires("pyinstaller") or []
+        except metadata.PackageNotFoundError:
+            pytest.skip("pyinstaller is not installed here")
+        build_exe = _load_build_exe()
+        covered = set(_lock_pins(build_exe._build_tool_requirements())) | set(
+            _lock_pins(RUNTIME_LOCK.read_text(encoding="utf-8")))
+        for raw in requires:
+            req = Requirement(raw)
+            if req.marker and not req.marker.evaluate({"extra": ""}):
+                continue
+            name = re.sub(r"[-_.]+", "-", req.name).lower()
+            assert name in covered, f"pyinstaller needs {name}, which the build venv would lack"
+
+
+class TestUnshippableDataStaysOutOfTheBuild:
+    """spirescope.spec bundled sts2/data wholesale, so legacy user state and
+    mods dropped into data/mods went into the executable, and build_exe.py's
+    guard did not look for either."""
+
+    @staticmethod
+    def _tree(root: Path, extra: dict[str, str]) -> Path:
+        (root / "sts2" / "data" / "mods").mkdir(parents=True)
+        (root / "sts2" / "locales").mkdir(parents=True)
+        (root / "sts2" / "config.py").write_text('VERSION = "1.2.3"\n', encoding="utf-8")
+        (root / "sts2" / "locales" / "en.json").write_text("{}", encoding="utf-8")
+        for rel, text in {"sts2/data/cards.json": "[]",
+                          "sts2/data/last_updated.txt": "2026-10-10",
+                          "sts2/data/mods/README.md": "format notes", **extra}.items():
+            (root / rel).write_text(text, encoding="utf-8")
+        return root
+
+    STATE = {
+        "sts2/data/settings.json": "{}",
+        "sts2/data/community_aggregate.json": "{}",
+        "sts2/data/hypotheses.json": "{}",
+        "sts2/data/pheromones.json": "{}",
+        "sts2/data/.fetcher_keys.json": "{}",
+        "sts2/data/mods/my_mod.json": "{}",
+    }
+
+    def _spec_datas(self, root: Path, monkeypatch) -> list[tuple[str, str]]:
+        """Execute the real spec with PyInstaller's build classes stubbed out."""
+        import sys as _sys
+        from types import SimpleNamespace
+
+        if _sys.platform == "win32":
+            pytest.importorskip("PyInstaller")
+        captured: dict = {}
+
+        def analysis(*args, **kwargs):
+            captured.update(kwargs)
+            return SimpleNamespace(pure=[], zipped_data=[], scripts=[], binaries=[],
+                                   zipfiles=[], datas=[])
+
+        def stub(*args, **kwargs):
+            return None
+
+        monkeypatch.chdir(root)
+        namespace = {"SPECPATH": str(root), "Analysis": analysis, "PYZ": stub,
+                     "EXE": stub, "COLLECT": stub}
+        exec(compile(SPEC.read_text(encoding="utf-8"), str(SPEC), "exec"), namespace)
+        return [(Path(src).as_posix(), dest) for src, dest in captured["datas"]]
+
+    def test_spec_bundles_shipped_data_but_not_state_or_mods(self, tmp_path, monkeypatch):
+        root = self._tree(tmp_path, self.STATE)
+        datas = self._spec_datas(root, monkeypatch)
+        bundled = {src for src, _ in datas if src.startswith("sts2/data")}
+        assert {"sts2/data/cards.json", "sts2/data/last_updated.txt",
+                "sts2/data/mods/README.md"} <= bundled
+        leaked = sorted(bundled & set(self.STATE))
+        assert not leaked, f"spec would bundle user state or mods: {leaked}"
+        assert ("sts2/data/mods/README.md", "sts2/data/mods") in datas
+
+    def test_spec_stops_on_a_data_subdirectory_it_does_not_handle(self, tmp_path, monkeypatch):
+        root = self._tree(tmp_path, {})
+        (root / "sts2" / "data" / "new_family").mkdir()
+        with pytest.raises(SystemExit):
+            self._spec_datas(root, monkeypatch)
+
+    def test_spec_on_the_real_tree_bundles_every_tracked_data_file(self, monkeypatch):
+        tracked = subprocess.run(["git", "ls-files", "sts2/data"], cwd=PROJECT_ROOT,
+                                 capture_output=True, text=True)
+        if tracked.returncode != 0:
+            pytest.skip("git unavailable")
+        datas = self._spec_datas(PROJECT_ROOT, monkeypatch)
+        bundled = {src for src, _ in datas}
+        missing = sorted(set(tracked.stdout.split()) - bundled)
+        assert not missing, f"tracked data the spec no longer bundles: {missing}"
+
+    @pytest.mark.parametrize("rel", sorted(STATE))
+    def test_build_guard_refuses_each_one(self, tmp_path, monkeypatch, capsys, rel):
+        build_exe = _load_build_exe()
+        root = self._tree(tmp_path, {rel: "{}"})
+        monkeypatch.setattr(build_exe, "ROOT", root)
+        with pytest.raises(SystemExit):
+            build_exe._refuse_dirty_tree()
+        out = capsys.readouterr().out
+        assert Path(rel).name in out
+
+    def test_build_guard_accepts_a_clean_tree(self, tmp_path, monkeypatch):
+        build_exe = _load_build_exe()
+        monkeypatch.setattr(build_exe, "ROOT", self._tree(tmp_path, {}))
+        assert build_exe._refuse_dirty_tree() is None

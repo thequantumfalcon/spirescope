@@ -60,12 +60,34 @@ if sys.platform == "win32":
         ],
     )
 
+# Shipped game data only. A working tree's sts2/data can also hold state a
+# legacy install left there (the user's settings, aggregate, hypotheses),
+# fetcher credentials, and mods the user dropped into data/mods; naming the
+# directory bundled all of it into the executable. build_exe.py refuses to
+# build from such a tree, and this keeps the spec safe for any other caller.
+# Keep it in step with build_exe.py and the "Private modules" section of
+# .gitignore.
+_DATA_NEVER_SHIPPED = {
+    'settings.json', 'community_aggregate.json', 'hypotheses.json',
+    'pheromones.json', '.fetcher_keys.json',
+}
+# A new subdirectory would otherwise be dropped without a word.
+_unhandled = sorted(p.name for p in Path('sts2/data').iterdir()
+                    if p.is_dir() and p.name != 'mods')
+if _unhandled:
+    raise SystemExit(f"spirescope.spec: sts2/data/{_unhandled} is not handled; add it to datas")
+
 a = Analysis(
     ['sts2/__main__.py'],
     pathex=[],
     binaries=[],
     datas=[
-        ('sts2/data', 'sts2/data'),
+        *[(str(p), 'sts2/data')
+          for p in sorted(Path('sts2/data').iterdir())
+          if p.is_file() and p.name not in _DATA_NEVER_SHIPPED
+          and not p.name.startswith('.')],
+        # User mods load from the state directory; only the format notes ship.
+        ('sts2/data/mods/README.md', 'sts2/data/mods'),
         ('sts2/templates', 'sts2/templates'),
         ('sts2/static', 'sts2/static'),
         # UI strings only. sts2/locales/content holds translations built from

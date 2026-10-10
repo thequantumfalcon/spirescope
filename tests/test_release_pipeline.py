@@ -815,6 +815,38 @@ class TestDataReleaseSeparatesWriteFromExecution:
             "a data bundle must not displace the app release as 'latest'")
 
 
+class TestEveryWorkflowInstallIsHashChecked:
+    """No workflow installs from the index without hashes. pytest-cov,
+    pytest-playwright, playwright, build and pip-audit used to be installed
+    by exact version only, which pins a name and a number but accepts
+    whatever bytes the index serves; they now come from
+    requirements-ci-lock.txt like everything else."""
+
+    _ALLOWED = re.compile(
+        r"(?:\S*/)?pip install (?:"
+        r"--require-hashes -r requirements(?:-runtime|-ci)?-lock\.txt"
+        r"|-e \. --no-deps"
+        r"|--no-deps dist/\*\.whl"
+        r")$")
+
+    @pytest.mark.parametrize("path", sorted(WORKFLOWS_DIR.glob("*.yml")), ids=lambda p: p.name)
+    def test_only_locked_or_local_installs(self, path):
+        for job_id, job in _jobs(_load_workflow(path)).items():
+            for step in job.get("steps", []):
+                for line in str(step.get("run", "")).splitlines():
+                    command = line.split("#", 1)[0].strip()
+                    if "pip install" not in command:
+                        continue
+                    assert self._ALLOWED.fullmatch(command), (
+                        f"{path.name}:{job_id} installs outside the hashed locks: {command!r}")
+
+    def test_the_ci_only_tools_are_in_the_ci_lock(self):
+        text = (REPO_ROOT / "requirements-ci-lock.txt").read_text(encoding="utf-8")
+        for pin in ("pytest-cov==7.1.0", "pytest-playwright==0.7.2", "playwright==1.58.0",
+                    "build==1.5.0", "pip-audit==2.10.1"):
+            assert re.search(rf"^{re.escape(pin)} \\$", text, re.M), f"{pin} is not hash-pinned"
+
+
 class TestDockerSmokeChecksTheImageHealthcheck:
     """docker-smoke polled /ready from the host, which proves the app serves
     but not that the image's own HEALTHCHECK can reach it -- and the

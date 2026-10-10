@@ -58,11 +58,13 @@ jobs:
         run: mypy sts2
 
       - name: Install coverage plugin
-        # Not part of pyproject.toml's dev extra (and so not in the lock) --
-        # kept as a standalone, version-pinned install so only this one leg
-        # pays for it.
+        # Not part of pyproject.toml's dev extra (and so not in the dev lock)
+        # -- installed on this one leg only, from requirements-ci-lock.txt:
+        # hashed, and pinned identically to the dev lock wherever they
+        # overlap. That file carries all the CI-only tools; the extra ones
+        # are idle here.
         if: matrix.python-version == '3.12'
-        run: pip install "pytest-cov==7.1.0"
+        run: pip install --require-hashes -r requirements-ci-lock.txt
 
       - name: Run tests
         id: tests
@@ -197,8 +199,9 @@ jobs:
           pip install -e . --no-deps
           # browser extra isn't part of the dev-extra lock (kept separate so
           # the Chromium download doesn't weigh down every other leg);
-          # Exact versions qualified in the stabilization browser suite.
-          pip install "pytest-playwright==0.7.2" "playwright==1.58.0"
+          # Exact versions qualified in the stabilization browser suite,
+          # hash-pinned in requirements-ci-lock.txt.
+          pip install --require-hashes -r requirements-ci-lock.txt
 
       - name: Install ${{ matrix.browser }}
         run: playwright install --with-deps ${{ matrix.browser }}
@@ -279,7 +282,8 @@ jobs:
           python-version: "3.12"
 
       - name: Install build backend
-        run: pip install "build==1.5.0"
+        # build (and the other CI-only tools) from the hashed CI lock.
+        run: pip install --require-hashes -r requirements-ci-lock.txt
 
       - name: Build sdist, then the wheel from that sdist
         run: |
@@ -406,7 +410,8 @@ jobs:
           python-version: "3.12"
 
       - name: Install pip-audit
-        run: pip install "pip-audit==2.10.1"
+        # From the hashed CI lock, with the other CI-only tools.
+        run: pip install --require-hashes -r requirements-ci-lock.txt
 
       - name: Audit locked dependencies
         run: pip-audit -r requirements-lock.txt
