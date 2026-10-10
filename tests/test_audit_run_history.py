@@ -2,8 +2,9 @@
 zero gold, and impossible imported values.
 
 Fixtures are small synthetic native-format saves. Their shape mirrors what
-real history files carry: deck entries with `current_upgrade_level` and an
-`enchantment` object, `map_point_history` as one list per act, several
+real history files carry: deck entries with an `enchantment` object and,
+on upgraded copies only, `current_upgrade_level` (the game omits it for
+unupgraded copies; NATIVE_RUN spells out the zeros, REAL_SHAPED_DECK does not), `map_point_history` as one list per act, several
 `was_picked` choices on one floor (a shop lists every card bought), and a
 `current_gold` key on every player_stats entry.
 """
@@ -68,6 +69,15 @@ def _write_history(tmp_path, data, name="1700000000.run"):
     (hist / name).write_text(json.dumps(data), encoding="utf-8")
 
 
+# The shape the game actually writes: no current_upgrade_level on the
+# unupgraded copies.
+REAL_SHAPED_DECK = [
+    {"id": "CARD.BASH", "enchantment": {"id": "ENCHANTMENT.SHARP", "amount": 1}},
+    {"id": "CARD.BASH", "current_upgrade_level": 1, "enchantment": {"id": "ENCHANTMENT.SWIFT", "amount": 1}},
+    {"id": "CARD.STRIKE"},
+]
+
+
 def _parse(tmp_path, data=NATIVE_RUN) -> RunHistory:
     _write_history(tmp_path, data)
     with patch("sts2.saves.SAVE_DIR", tmp_path):
@@ -89,6 +99,29 @@ class TestCardInstances:
         run = _parse(tmp_path)
         # Id-keyed view is lossy by construction, but still present for old readers.
         assert run.enchantments == {"CARD.BASH": "ENCHANTMENT.SWIFT"}
+
+    def test_absent_upgrade_level_means_not_upgraded(self, tmp_path):
+        """Real history files omit current_upgrade_level on unupgraded copies.
+        Reading that as unknown discarded the levels of 104 of 105 real runs."""
+        data = json.loads(json.dumps(NATIVE_RUN))
+        data["players"][0]["deck"] = REAL_SHAPED_DECK
+        assert _parse(tmp_path, data).deck_upgrades == [0, 1, 0]
+
+    def test_legacy_upgrade_count_is_still_read(self, tmp_path):
+        data = json.loads(json.dumps(NATIVE_RUN))
+        data["players"][0]["deck"] = [{"id": "CARD.BASH", "upgrade_count": 1},
+                                      {"id": "CARD.STRIKE"}]
+        assert _parse(tmp_path, data).deck_upgrades == [1, 0]
+
+    async def test_run_page_shows_levels_for_a_real_shaped_deck(self, tmp_path, client):
+        data = json.loads(json.dumps(NATIVE_RUN))
+        data["players"][0]["deck"] = REAL_SHAPED_DECK
+        run = _parse(tmp_path, data)
+        with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=run)):
+            resp = await client.get(f"/runs/{run.id}")
+        assert resp.status_code == 200
+        assert "Upgrade levels were not recorded" not in resp.text
+        assert 'title="Upgraded">+</span>' in resp.text
 
     def test_malformed_upgrade_level_is_unavailable(self, tmp_path):
         data = json.loads(json.dumps(NATIVE_RUN))

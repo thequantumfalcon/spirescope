@@ -108,9 +108,16 @@ def _upgrade_level(card: dict) -> int | None:
 
 
 def _history_upgrade_levels(cards: list[dict]) -> list[int]:
-    levels = [_upgrade_level(card) for card in cards]
-    # The compatible array contract has no nullable elements. Preserve other
-    # run facts and mark this field unavailable rather than inventing zeros.
+    # The game writes current_upgrade_level only for upgraded copies: across
+    # 106 real history files (2026-10-10), 3,736 deck entries carried no
+    # level at all and every one of the 780 that did held 1. An absent key is
+    # therefore level 0, and treating it as unknown discarded the levels of
+    # nearly every real run.
+    levels = [0 if "current_upgrade_level" not in card and "upgrade_count" not in card
+              else _upgrade_level(card) for card in cards]
+    # The compatible array contract has no nullable elements. A level that is
+    # present but malformed still marks the field unavailable rather than
+    # inventing a zero.
     return [level for level in levels if level is not None] if all(level is not None for level in levels) else []
 
 

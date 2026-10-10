@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Fixed
+
+- **Run history shows card upgrades again.** The game records an upgrade level
+  only on upgraded copies and leaves it out on the rest, but run history read
+  a missing level as unknown and then discarded the levels of the whole deck.
+  On real save files that hid the upgrades of nearly every run, and run pages
+  said the levels were not recorded. A missing level now reads as not
+  upgraded; a present but malformed one still marks the levels unavailable.
+
 ### Internal
 
 - **Dependabot updates the dependency locks again.** The CI tool list added
