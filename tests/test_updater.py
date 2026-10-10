@@ -720,3 +720,108 @@ class TestOriginCheckResistsLookalikes:
 
         assert not ok, f"origin check accepted {url}"
         updater._data_update = None
+
+
+class TestUserFacingMessagesAreFixedText:
+    """install_data_update's message is rendered on an HTML error page, and it
+    used to carry exception text there verbatim: an OSError names absolute
+    paths, which on Windows include the user name, and the load probe's last
+    stderr line is a traceback tail with temp paths. The page now gets fixed
+    text and the detail goes to the log."""
+
+    SECRET = r"C:\Users\someone-private\AppData\Local\Temp\sts2-data-x"
+
+    def _install(self, tmp_path, monkeypatch, bundle, checksum_text=None):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+        checksum = tmp_path / "data.sha256"
+        if checksum_text is None:
+            checksum_text = hashlib.sha256(bundle.read_bytes()).hexdigest() + "  data.tar.gz"
+        checksum.write_text(checksum_text)
+        return updater.install_data_update(archive=bundle, checksum=checksum)
+
+    def test_an_unexpected_error_shows_no_exception_text(self, tmp_path, monkeypatch, caplog):
+        bundle = _make_bundle(tmp_path, _full_bundle_files())
+
+        def unwritable(bundle, extract_dir):
+            raise PermissionError(13, "Permission denied", self.SECRET)
+
+        monkeypatch.setattr(updater, "_extract_capped", unwritable)
+        with caplog.at_level("ERROR", logger="sts2.updater"):
+            ok, msg = self._install(tmp_path, monkeypatch, bundle)
+
+        assert not ok
+        assert msg == ("Data update failed because of an unexpected error. "
+                       "The details are in the log.")
+        assert "someone-private" in caplog.text
+
+    def test_the_load_probe_output_is_logged_not_shown(self, tmp_path, monkeypatch, caplog):
+        bundle = _make_bundle(tmp_path, _full_bundle_files())
+        stderr = (f'Traceback (most recent call last):\n  File "{self.SECRET}\\x.py"\n'
+                  f"ValueError: cannot load {self.SECRET}\\cards.json")
+        monkeypatch.setattr("subprocess.run", lambda command, **kwargs: type(
+            "Result", (), {"returncode": 1, "stderr": stderr, "stdout": ""})())
+        with caplog.at_level("WARNING", logger="sts2.updater"):
+            ok, msg = self._install(tmp_path, monkeypatch, bundle)
+
+        assert not ok
+        assert msg == "Bundle does not load — rejected."
+        assert self.SECRET in caplog.text
+
+    def test_an_archive_member_name_is_not_echoed(self, tmp_path, monkeypatch):
+        bundle = _make_bundle(tmp_path, _full_bundle_files())
+        monkeypatch.setattr(updater, "_MAX_MEMBER_BYTES", 1)
+        ok, msg = self._install(tmp_path, monkeypatch, bundle)
+
+        assert not ok
+        assert "too large" in msg
+        assert "data/" not in msg and ".json" not in msg
+
+    def test_a_validator_os_error_names_the_file_but_not_its_path(self, tmp_path, monkeypatch,
+                                                                  caplog):
+        import tempfile
+        files = _full_bundle_files()
+        del files["relics.json"]
+        bundle = _make_bundle(tmp_path, files)
+        with caplog.at_level("WARNING", logger="sts2.updater"):
+            ok, msg = self._install(tmp_path, monkeypatch, bundle)
+
+        assert not ok
+        assert msg == "Bundle rejected: relics.json did not pass validation."
+        assert tempfile.gettempdir() not in msg and "Errno" not in msg
+        # The full validator text, path included, is still in the log.
+        assert "relics.json: [Errno" in caplog.text
+
+    @pytest.mark.parametrize("content", ["", "  \n\t\n"])
+    def test_an_empty_checksum_file_is_rejected(self, tmp_path, monkeypatch, content):
+        """split()[0] on an empty file raised IndexError, which surfaced as
+        "Data update failed: list index out of range"."""
+        bundle = _make_bundle(tmp_path, _full_bundle_files())
+        ok, msg = self._install(tmp_path, monkeypatch, bundle, checksum_text=content)
+
+        assert not ok
+        assert msg == "Checksum file is empty — bundle rejected."
+
+    async def test_the_install_page_shows_no_path(self, client, tmp_path, monkeypatch):
+        from sts2.app import generate_csrf_token
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "cards.json").write_text(json.dumps(_cards(1)))
+        monkeypatch.setattr("sts2.config.DATA_DIR", data_dir)
+
+        def unreachable(req, timeout):
+            raise PermissionError(13, "Permission denied", self.SECRET)
+
+        monkeypatch.setattr(updater.urllib.request, "urlopen", unreachable)
+        _set_pending_update()
+        try:
+            resp = await client.post("/data-update/install",
+                                     data={"csrf_token": generate_csrf_token()})
+        finally:
+            updater._data_update = None
+
+        assert resp.status_code == 500
+        assert "someone-private" not in resp.text
+        assert "Data update failed because of an unexpected error." in resp.text

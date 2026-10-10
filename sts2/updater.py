@@ -117,6 +117,9 @@ _IDENTIFYING_FIELD = {
     "enemies.json": "id", "events.json": "id", "patches.json": "patch",
 }
 _MIN_CARDS = 400
+# The parts sts2.data_health reports on by name ("<part>: <reason>").
+_VALIDATED_PARTS = ("cards.json", "relics.json", "potions.json", "enemies.json",
+                    "events.json", "epochs.json", "metadata", "mechanics.json")
 
 # Long enough that a slow install never trips it, short enough that a lock
 # left behind by a killed process self-heals without manual cleanup.
@@ -124,7 +127,17 @@ _LOCK_STALE_SECONDS = 600
 
 
 class _RejectBundle(Exception):
-    """A downloaded/extracted bundle failed validation. str(exc) is user-facing."""
+    """A downloaded/extracted bundle failed validation.
+
+    user_message is fixed text written in this module and is all the user is
+    shown. str(exc) can also carry detail taken from the bundle or from the
+    validator (an archive member name, a traceback line with temp paths under
+    the user's profile), so it goes to the log only.
+    """
+
+    def __init__(self, user_message: str, detail: str = ""):
+        super().__init__(detail or user_message)
+        self.user_message = user_message
 
 
 def _local_data_date() -> str:
@@ -296,7 +309,8 @@ def _extract_capped(bundle: Path, extract_dir: Path) -> None:
                 raise _RejectBundle("Bundle links and special files are not permitted.")
             if member.isfile():
                 if member.size > _MAX_MEMBER_BYTES:
-                    raise _RejectBundle(f"Bundle entry {member.name!r} is too large — rejected.")
+                    raise _RejectBundle("A bundle entry is too large — rejected.",
+                                        f"Bundle entry {member.name!r} is too large — rejected.")
                 total += member.size
         if total > _MAX_EXPANDED_BYTES:
             raise _RejectBundle("Bundle expands beyond the size cap — rejected.")
@@ -316,7 +330,15 @@ def _validate_dataset(root: Path) -> None:
     from sts2.data_health import inspect_dataset
     health = inspect_dataset(root, _MIN_CARDS)
     if not health["ok"]:
-        raise _RejectBundle("Bundle rejected: " + "; ".join(health["errors"]))
+        # The validator quotes exceptions, and an OSError names a path in the
+        # temp directory under the user's profile. The page therefore names
+        # only which of the checked parts failed, from this fixed list.
+        failed = [part for part in _VALIDATED_PARTS
+                  if any(error.startswith(part + ":") for error in health["errors"])]
+        raise _RejectBundle(
+            "Bundle rejected: " + (", ".join(failed) or "a data file")
+            + " did not pass validation.",
+            "Bundle rejected: " + "; ".join(health["errors"]))
     _validate_loadable(root)
 
 
@@ -343,7 +365,8 @@ def _validate_loadable(root: Path) -> None:
     if result.returncode != 0:
         detail = (result.stderr or result.stdout or "").strip().splitlines()
         reason = detail[-1][:200] if detail else "unknown error"
-        raise _RejectBundle(f"Bundle does not load: {reason} — rejected.")
+        raise _RejectBundle("Bundle does not load — rejected.",
+                            f"Bundle does not load: {reason} — rejected.")
 
 
 def check_for_data_update() -> dict | None:
@@ -507,7 +530,10 @@ def install_data_update(*, archive: Path | None = None, checksum: Path | None = 
                     while chunk := stream.read(65536):
                         hasher.update(chunk)
 
-            expected = checksum_file.read_text(encoding="utf-8").split()[0].strip().lower()
+            fields = checksum_file.read_text(encoding="utf-8").split()
+            if not fields:
+                raise _RejectBundle("Checksum file is empty — bundle rejected.")
+            expected = fields[0].strip().lower()
             if hasher.hexdigest() != expected:
                 raise _RejectBundle("Checksum mismatch — bundle rejected.")
 
@@ -559,10 +585,13 @@ def install_data_update(*, archive: Path | None = None, checksum: Path | None = 
         return True, f"Game data updated to {info['tag']}."
     except _RejectBundle as exc:
         log.warning("Data update rejected: %s", exc)
-        return False, str(exc)
-    except Exception as exc:
+        return False, exc.user_message
+    except Exception:
+        # The exception text is for the log only: an OSError here names an
+        # absolute path, which on Windows includes the user name, and the
+        # message is rendered on an HTML error page.
         log.exception("Data update failed")
-        return False, f"Data update failed: {exc}"
+        return False, "Data update failed because of an unexpected error. The details are in the log."
     finally:
         if staging is not None and staging.exists():
             shutil.rmtree(staging, ignore_errors=True)
