@@ -41,7 +41,11 @@ os.environ["STS2_LOG_FILE"] = str(Path(__file__).parent / "_no_such_godot.log")
 # end-to-end test against a real install (test_localize.py) finds the game
 # itself, starting from whatever STS2_GAME_DIR said before this override.
 _TEST_MACHINE = Path(tempfile.mkdtemp(prefix="spirescope-tests-"))
-os.environ["SPIRESCOPE_TEST_REAL_GAME_DIR"] = os.environ.get("STS2_GAME_DIR", "")
+# setdefault: pytest-xdist workers inherit this process's environment, where
+# STS2_GAME_DIR is already the hidden folder, so only the first process
+# records it. "detect" rather than an empty string, because Windows drops an
+# empty variable from the environment child processes inherit.
+os.environ.setdefault("SPIRESCOPE_TEST_REAL_GAME_DIR", os.environ.get("STS2_GAME_DIR") or "detect")
 os.environ["STS2_GAME_DIR"] = str(_TEST_MACHINE / "no-game")
 os.environ["STS2_SAVE_DIR"] = str(_TEST_MACHINE / "no-saves")
 os.environ["STS2_STATE_DIR"] = str(_TEST_MACHINE / "state")

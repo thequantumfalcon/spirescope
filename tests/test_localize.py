@@ -150,7 +150,7 @@ def _real_game_dir() -> Path:
     from sts2.config import _find_game_dir
 
     explicit = os.environ.get("SPIRESCOPE_TEST_REAL_GAME_DIR")
-    if explicit:
+    if explicit and explicit != "detect":
         return Path(explicit)
     hidden = os.environ.pop("STS2_GAME_DIR", None)
     try:
