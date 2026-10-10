@@ -7,8 +7,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import threading
-import time
 from pathlib import Path
 
 log = logging.getLogger(__name__)
@@ -25,7 +23,15 @@ except ImportError:
 
 
 class SaveFileHandler(FileSystemEventHandler):
-    """Debounced handler that signals an asyncio Event on save file changes."""
+    """Debounced handler that signals an asyncio Event on save file changes.
+
+    The debounce is on the trailing edge: the event is set once the save
+    files have been quiet for the debounce interval, not at the first
+    modification. The game writes a file in more than one step, and firing
+    at the first event let the refresh read progress.save or a .run file
+    half-written; the events for the rest of that write were then swallowed
+    by the debounce, so the torn read stayed cached until the next change.
+    """
 
     def __init__(
         self,
@@ -36,12 +42,9 @@ class SaveFileHandler(FileSystemEventHandler):
         self._loop = loop
         self._event = event
         self._debounce = debounce_seconds
-        self._last_trigger = 0.0
-        # watchdog fires events from a background thread; without a lock the
-        # check-and-set on _last_trigger is a TOCTOU race that under burst
-        # events can fire call_soon_threadsafe multiple times within the
-        # debounce window on multi-core.
-        self._lock = threading.Lock()
+        # Only ever touched on the event loop thread (see _restart_timer), so
+        # watchdog's thread never races the loop for it and it needs no lock.
+        self._timer: asyncio.TimerHandle | None = None
 
     def _should_handle(self, path: str) -> bool:
         """Only react to save-relevant files."""
@@ -50,14 +53,20 @@ class SaveFileHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if event.is_directory or not self._should_handle(event.src_path):
             return
-        now = time.monotonic()
-        with self._lock:
-            if now - self._last_trigger < self._debounce:
-                return
-            self._last_trigger = now
-        self._loop.call_soon_threadsafe(self._event.set)
+        # watchdog calls this from its own thread; the timer lives on the loop.
+        self._loop.call_soon_threadsafe(self._restart_timer)
 
     on_created = on_modified
+
+    def _restart_timer(self) -> None:
+        """Move the signal to one full interval after the latest write."""
+        if self._timer is not None:
+            self._timer.cancel()
+        self._timer = self._loop.call_later(self._debounce, self._fire)
+
+    def _fire(self) -> None:
+        self._timer = None
+        self._event.set()
 
 
 def start_observer(

@@ -2013,7 +2013,7 @@ async def live_stream(request: Request, player: int = Query(None, ge=0, le=3)):
                 # Wake instantly on file change, or poll every 3s as fallback
                 try:
                     a = _app()
-                    await asyncio.wait_for(a._save_changed_event.wait(), timeout=3.0)
+                    await asyncio.wait_for(a._live_data_event.wait(), timeout=3.0)
                 except asyncio.TimeoutError:
                     pass
         finally:
