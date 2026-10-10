@@ -145,6 +145,22 @@ def test_tilt_reports_no_message_when_not_tilting():
     assert result["message"] == ""
 
 
+def test_tilt_detection_separates_a_slump_from_a_streak():
+    from sts2.behavior import detect_tilt
+
+    losing = [_run(str(i), False, 1700000000 + i * 600,
+                   [_floor(j) for j in range(1, 5)]) for i in range(6)]
+    winning = [_run(str(i), True, 1700000000 + i * 600,
+                    [_floor(j) for j in range(1, 30)]) for i in range(6)]
+    slump, streak = detect_tilt(losing), detect_tilt(winning)
+    assert slump["tilting"] is True
+    assert slump["consecutive_losses"] == 6
+    assert slump["session_avg_floor"] == 4.0
+    assert streak["tilting"] is False
+    assert streak["consecutive_losses"] == 0
+    assert streak["session_avg_floor"] > slump["session_avg_floor"]
+
+
 # ------------------------------------------------------------ anti-patterns
 
 def test_anti_patterns_need_at_least_five_runs():

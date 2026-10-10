@@ -157,6 +157,9 @@ def test_prophecy_win_probability_is_the_empirical_rate():
     assert prophecy["available"] is True
     assert prophecy["win_probability"] == 30.0
     assert prophecy["sample_size"] == 10
+    # and no cap or smoothing at the top: every run won reads as 100%
+    all_won = [_run(str(i), win=True) for i in range(10)]
+    assert generate_prophecy("Ironclad", 5, all_won)["win_probability"] == 100.0
 
 
 def test_prophecy_reports_the_average_floor_reached():
@@ -328,15 +331,29 @@ def test_rivalry_handles_runs_with_no_floors():
 
 # --------------------------------------------------- durability on POSIX
 
+def _persist_os(monkeypatch, **fakes):
+    """Give persist its own stand-in for the os module.
+
+    Setting attributes on persist.os patches the real, global os module, so
+    for the length of the test pytest's own file handling would see the fake
+    os.name, os.open, os.fsync and os.close too. Swapping the module reference
+    inside persist reaches _fsync_dir and nothing else."""
+    from types import SimpleNamespace
+
+    from sts2 import persist
+    real = dict(name=os.name, O_RDONLY=os.O_RDONLY, open=os.open,
+                fsync=os.fsync, close=os.close)
+    monkeypatch.setattr(persist, "os", SimpleNamespace(**{**real, **fakes}))
+    return persist
+
+
 def test_directory_fsync_is_skipped_on_windows(monkeypatch):
     """os.open on a directory raises on Windows, so the whole call is a no-op
     there; attempting it would turn a successful write into a reported failure.
     """
-    from sts2 import persist
-    monkeypatch.setattr(persist.os, "name", "nt")
     calls = []
-    monkeypatch.setattr(persist.os, "open", lambda *a, **k: calls.append(a))
-    persist._fsync_dir_target = None
+    persist = _persist_os(monkeypatch, name="nt",
+                          open=lambda *a, **k: calls.append(a))
     persist._fsync_dir(os.getcwd())
     assert calls == []
 
@@ -345,38 +362,30 @@ def test_directory_fsync_commits_the_rename_on_posix(monkeypatch, tmp_path):
     """The rename is only durably committed once the *directory* is synced.
     This leg never runs on the maintainer's machine, so it is only ever
     exercised here."""
-    from sts2 import persist
-    monkeypatch.setattr(persist.os, "name", "posix")
     opened, synced, closed = [], [], []
-    monkeypatch.setattr(persist.os, "open", lambda p, f: opened.append(p) or 42)
-    monkeypatch.setattr(persist.os, "fsync", synced.append)
-    monkeypatch.setattr(persist.os, "close", closed.append)
+    persist = _persist_os(monkeypatch, name="posix",
+                          open=lambda p, f: opened.append(p) or 42,
+                          fsync=synced.append, close=closed.append)
     persist._fsync_dir(tmp_path)
     assert opened == [str(tmp_path)]
     assert synced == [42] and closed == [42]
 
 
 def test_a_failed_directory_fsync_never_fails_the_write(monkeypatch, tmp_path):
-    from sts2 import persist
-    monkeypatch.setattr(persist.os, "name", "posix")
-
     def boom(*_a, **_kw):
         raise OSError("not a directory")
 
-    monkeypatch.setattr(persist.os, "open", boom)
+    persist = _persist_os(monkeypatch, name="posix", open=boom)
     persist._fsync_dir(tmp_path)          # must not raise
 
 
 def test_the_descriptor_is_closed_even_when_the_sync_fails(monkeypatch, tmp_path):
-    from sts2 import persist
-    monkeypatch.setattr(persist.os, "name", "posix")
     closed = []
-    monkeypatch.setattr(persist.os, "open", lambda _p, _f: 7)
-    monkeypatch.setattr(persist.os, "close", closed.append)
 
     def boom(_fd):
         raise OSError("sync failed")
 
-    monkeypatch.setattr(persist.os, "fsync", boom)
+    persist = _persist_os(monkeypatch, name="posix", open=lambda _p, _f: 7,
+                          close=closed.append, fsync=boom)
     persist._fsync_dir(tmp_path)
     assert closed == [7], "a leaked descriptor on every failed sync"

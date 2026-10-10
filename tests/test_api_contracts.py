@@ -93,8 +93,7 @@ async def test_api_import_stats_bad_csrf_is_json_error_shape(client):
 
 async def test_api_live_stream_cap_is_json_error_shape(client):
     """GET /api/live/stream at the connection cap returns the JSON error
-    shape (still containing "Too many" so the pre-existing HTML/text
-    assertion in test_app.py keeps passing against the same substring)."""
+    shape, still containing "Too many"."""
     import sts2.routes as routes_mod
 
     original = routes_mod._sse_active

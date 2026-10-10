@@ -4,7 +4,8 @@ Covers: graveyard newest-50 selection/order, spectral health score range +
 integer edge count + Jacobi convergence, cascade acquisition-floor exclusion
 + minimum-sample skip + duplicate-pick rows + hp_delta, drift alert minimum
 trajectory length, home-page prophecy/tilt wiring, and run-detail prophecy
-grading.
+grading. Also cascade, drift-trajectory and spectral values computed against
+the shipped knowledge base.
 """
 from unittest.mock import AsyncMock, patch
 
@@ -295,3 +296,83 @@ class TestProphecyUsesOnlyPriorRuns:
              patch("sts2.app._get_runs", new=AsyncMock(return_value=[first] + later)):
             html = (await client.get("/runs/first")).text
         assert "Prophecy said" not in html
+
+
+# ---------------------------------------------------------------------------
+# Cascade, drift and spectral values against the shipped knowledge base
+# ---------------------------------------------------------------------------
+
+class TestAdvancedAnalyticsValues:
+    """Value-level coverage for the "Advanced Analytics" modules.
+
+    These were the least-tested code in the repo despite being the headline
+    features: every existing reference was a mock asserting `mock.called`, so
+    all seven could be replaced by constant-returning stubs simultaneously and
+    the suite stayed green. Each test below asserts a computed value and
+    contrasts two different inputs, so a constant return fails. Graveyard,
+    tilt, prophecy and ghost values are covered in test_graveyard.py,
+    test_behavior.py and test_run_comparison.py.
+    """
+
+    @staticmethod
+    def _floor(n, enc="ENCOUNTER.X", dmg=5, hp=70, gold=100, pick="", turns=3):
+        return RunFloor(floor=n, type="monster", encounter=enc, turns=turns,
+                        damage_taken=dmg, current_hp=hp, max_hp=80, gold=gold,
+                        card_picked=pick)
+
+    @classmethod
+    def _run(cls, rid, win, ts, floors, deck=None, potions=None):
+        return RunHistory(id=rid, timestamp=ts, character="Ironclad", win=win,
+                          ascension=5, run_time=1200, deck=deck or ["CARD.STRIKE"] * 10,
+                          relics=["RELIC.BURNING_BLOOD"], potions=potions or [],
+                          floors=floors)
+
+    def test_cascade_contrasts_before_and_after_a_pick(self):
+        """Two combats on each side of the pick; the acquisition floor is
+        excluded from 'after', and a pick with no pre-pick combats is
+        skipped instead of compared against a fabricated zero baseline."""
+        from sts2.app import kb as _kb
+        from sts2.cascade import trace_card_impact
+
+        run = self._run("c", False, 4, [
+            self._floor(1, dmg=20), self._floor(2, dmg=20),
+            self._floor(3, dmg=99, pick="CARD.BASH"),
+            self._floor(4, dmg=5), self._floor(5, dmg=5)])
+        impact = trace_card_impact(run, "CARD.BASH", _kb)
+        assert impact["card_id"] == "CARD.BASH"
+        assert impact["picked_floor"] == 3
+        assert impact["pre_avg_damage"] == 20.0
+        assert impact["post_avg_damage"] == 5.0  # floor 3's 99 dmg excluded
+        assert impact["damage_delta"] == -15.0
+        assert "hp_delta" in impact
+
+        early = self._run("c2", False, 4, [
+            self._floor(1, dmg=20, pick="CARD.BASH"),
+            self._floor(2, dmg=5), self._floor(3, dmg=5)])
+        assert "error" in trace_card_impact(early, "CARD.BASH", _kb)
+
+    def test_drift_trajectory_tracks_every_floor_and_its_pick(self):
+        from sts2.app import kb as _kb
+        from sts2.drift import compute_archetype_drift
+
+        run = self._run("d", False, 5, [self._floor(1, pick="CARD.BASH"),
+                                        self._floor(2), self._floor(3)])
+        trajectory = compute_archetype_drift(run, _kb)
+        assert len(trajectory) == 3
+        assert [t["floor"] for t in trajectory] == [1, 2, 3]
+        assert trajectory[0]["card_added"] == "CARD.BASH"
+        assert trajectory[1]["card_added"] == ""
+
+    def test_spectral_health_scores_a_coherent_deck_above_an_incoherent_one(self):
+        from sts2.app import kb as _kb
+        from sts2.spectral import deck_spectral_health
+
+        coherent = [c.id for c in _kb.cards if "Block" in (c.keywords or [])][:6]
+        orphans = [c.id for c in _kb.cards if not c.keywords][:5]
+        seed = [c.id for c in _kb.cards if c.keywords][:1]
+        assert len(coherent) == 6 and len(orphans) == 5, "shipped data changed shape"
+        good = deck_spectral_health(coherent, _kb)
+        bad = deck_spectral_health(seed + orphans, _kb)
+        assert good["health_score"] > bad["health_score"]
+        assert good["orphans"] == []
+        assert bad["orphans"], "orphan detection found nothing in a deck of unlinked cards"

@@ -1,5 +1,5 @@
 """Tests for Spirescope v2.0 features: analytics, import/export, coaching,
-aggregation, mod loading, CSV export, API pagination, theme, CSP, rate limiter."""
+aggregation, mod loading, CSV export, API pagination, CSP, rate limiter."""
 import json
 import sys
 from pathlib import Path
@@ -141,10 +141,10 @@ class TestCardQuality:
         result = compute_analytics(runs)
         assert "card_quality" in result
         # CARD.BASH appears in all 3 runs and was offered/picked
-        if result["card_quality"]:
-            for entry in result["card_quality"]:
-                assert "win_rate" in entry
-                assert "pick_rate" in entry
+        bash = [e for e in result["card_quality"] if e["id"] == "CARD.BASH"]
+        assert len(bash) == 1
+        assert bash[0]["pick_rate"] == 100.0  # picked at all 3 offers
+        assert bash[0]["win_rate"] == 66.7    # in 3 decks, 2 of them winners
 
     def test_card_quality_empty(self):
         from sts2.analytics import compute_analytics
@@ -158,13 +158,12 @@ class TestDamagePercentiles:
         runs = _make_runs()
         result = compute_analytics(runs)
         assert "damage_percentiles" in result
-        # JAW_WORM appears in all 3 runs with damage
-        if result["damage_percentiles"]:
-            entry = result["damage_percentiles"][0]
-            assert "p25" in entry
-            assert "median" in entry
-            assert "p75" in entry
-            assert "fights" in entry
+        # JAW_WORM appears in all 3 runs with damage (10, 20, 5); GREMLIN's
+        # two fights and HEXAGHOST's one are below the three-fight minimum
+        assert result["damage_percentiles"] == [{
+            "id": "ENCOUNTER.JAW_WORM", "fights": 3,
+            "p25": 5, "median": 10, "p75": 20, "deaths": 0,
+        }]
 
     def test_damage_percentiles_empty(self):
         from sts2.analytics import compute_analytics
@@ -193,12 +192,17 @@ class TestRunExport:
         assert resp.status_code == 404
 
     async def test_export_filename_sanitized(self, client):
+        # The filename comes from the stored run's id, not from the URL. The
+        # old request encoded the slashes into the path, which the router
+        # decodes before matching, so it got a 404 and asserted nothing.
         with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=RunHistory(
                 id="test/../../evil", character="Ironclad", win=True, deck=[]))):
-            resp = await client.get("/runs/test%2F..%2F..%2Fevil/export")
-        if resp.status_code == 200:
-            disp = resp.headers.get("content-disposition", "")
-            assert "/" not in disp.split("filename=")[1] if "filename=" in disp else True
+            resp = await client.get("/runs/evil/export")
+        assert resp.status_code == 200
+        disp = resp.headers.get("content-disposition", "")
+        filename = disp.split("filename=")[1]
+        assert "/" not in filename
+        assert filename == '"spirescope_test_.._.._evil.json"'
 
 
 class TestRunExportHTML:
@@ -420,17 +424,17 @@ class TestAggregate:
         assert result["card_win_rates"]["strike"]["total"] == 100 + 1000
         assert result["card_win_rates"]["strike"]["wins"] == 49 + 1000
 
-    def test_reset_nonexistent(self):
+    def test_reset_nonexistent(self, tmp_path):
         from sts2.aggregate import reset_aggregate
         with patch("sts2.aggregate._aggregate_storage_path") as mock_path:
-            mock_p = Path("/tmp/nonexistent_aggregate.json")
+            mock_p = tmp_path / "nonexistent_aggregate.json"
             mock_path.return_value = mock_p
             result = reset_aggregate()
         assert result is False
 
-    def test_load_missing_file(self):
+    def test_load_missing_file(self, tmp_path):
         from sts2.aggregate import load_aggregate
-        with patch("sts2.aggregate._aggregate_storage_path", return_value=Path("/tmp/no_such_file.json")):
+        with patch("sts2.aggregate._aggregate_storage_path", return_value=tmp_path / "no_such_file.json"):
             result = load_aggregate()
         assert result == {}
 
@@ -603,44 +607,6 @@ class TestAPIPagination:
 
 
 # ---------------------------------------------------------------------------
-# Theme
-# ---------------------------------------------------------------------------
-
-class TestTheme:
-    def test_theme_init_js_exists(self):
-        from sts2.config import STATIC_DIR
-        assert (STATIC_DIR / "theme-init.js").exists()
-
-    async def test_base_has_theme_toggle(self, client):
-        resp = await client.get("/")
-        assert resp.status_code == 200
-        assert "theme-init.js" in resp.text
-        assert "theme-toggle" in resp.text
-
-    def test_css_has_light_theme(self):
-        from sts2.config import STATIC_DIR
-        css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
-        assert '[data-theme="light"]' in css
-        # The light theme must override the character and status colours, but
-        # pin the names rather than the hex values: the old version hardcoded
-        # three literals and annotated them "WCAG-safe" when --ironclad
-        # #c0392b actually measured 4.30:1 on --bg3. Contrast is verified for
-        # real, across every colour and background, in
-        # test_theme_text_colours_meet_wcag_aa.
-        import re
-        block = re.search(r'\[data-theme="light"\]\s*\{([^}]+)\}', css)
-        assert block, "no light theme block"
-        for name in ("--regent", "--silent", "--ironclad", "--yellow", "--red"):
-            assert f"{name}:" in block.group(1), f"light theme does not override {name}"
-
-    def test_css_card_bg_not_circular(self):
-        from sts2.config import STATIC_DIR
-        css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
-        # Should NOT have --card-bg: var(--card-bg) (circular reference)
-        assert "--card-bg: var(--card-bg)" not in css
-
-
-# ---------------------------------------------------------------------------
 # CSP
 # ---------------------------------------------------------------------------
 
@@ -652,18 +618,18 @@ class TestCSP:
         assert "script-src 'self'" in csp
 
     async def test_narrow_csp_on_docs(self, client):
+        """API docs use packaged scripts under the narrow dashboard policy."""
         resp = await client.get("/docs")
-        # /docs may redirect or return 200
-        if resp.status_code == 200:
-            csp = resp.headers.get("Content-Security-Policy", "")
-            assert "cdn.jsdelivr.net" not in csp
+        assert resp.status_code == 200
+        csp = resp.headers.get("Content-Security-Policy", "")
+        assert "cdn.jsdelivr.net" not in csp
         assert "script-src 'self'" in csp
 
     async def test_narrow_csp_on_openapi(self, client):
         resp = await client.get("/openapi.json")
-        if resp.status_code == 200:
-            csp = resp.headers.get("Content-Security-Policy", "")
-            assert "cdn.jsdelivr.net" not in csp
+        assert resp.status_code == 200
+        csp = resp.headers.get("Content-Security-Policy", "")
+        assert "cdn.jsdelivr.net" not in csp
         assert "script-src 'self'" in csp
 
 
@@ -773,10 +739,10 @@ class TestAnalyzeDeckBugFix:
         from sts2.app import kb as _kb
         non_draw_cards = [c for c in _kb.cards
                           if "Draw" not in c.keywords and c.type == "Attack"][:5]
-        if non_draw_cards:
-            analysis = _kb.analyze_deck([c.id for c in non_draw_cards])
-            has_draw_weakness = any("draw" in w.lower() for w in analysis.get("weaknesses", []))
-            assert has_draw_weakness
+        assert non_draw_cards, "shipped data has no Attack without Draw"
+        analysis = _kb.analyze_deck([c.id for c in non_draw_cards])
+        has_draw_weakness = any("draw" in w.lower() for w in analysis.get("weaknesses", []))
+        assert has_draw_weakness
 
 
 # ---------------------------------------------------------------------------
@@ -792,10 +758,14 @@ class TestSourceBadges:
                 id="MOD.TEST_BADGE", name="Test Badge Card", character="Ironclad",
                 cost="1", type="Attack", rarity="Common", source="mod")]
             _kb._cards_by_id["MOD.TEST_BADGE"] = _kb.cards[-1]
-            resp = await client.get("/cards")
+            # The appended card is last, so it renders on the last page;
+            # page 1 never showed it and the check below never ran.
+            from sts2.routes import _CARDS_PER_PAGE
+            last_page = (len(_kb.cards) + _CARDS_PER_PAGE - 1) // _CARDS_PER_PAGE
+            resp = await client.get(f"/cards?page={last_page}")
             assert resp.status_code == 200
-            if "Test Badge Card" in resp.text:
-                assert "tag-mod" in resp.text
+            assert "Test Badge Card" in resp.text
+            assert "tag-mod" in resp.text
         finally:
             _kb.cards = original
             _kb._cards_by_id.pop("MOD.TEST_BADGE", None)
@@ -825,55 +795,6 @@ class TestCommunityAggregate:
         assert resp.status_code == 200
         # Should not show player stats section
         assert "Player Stats" not in resp.text
-
-
-# ---------------------------------------------------------------------------
-# CLI commands
-# ---------------------------------------------------------------------------
-
-class TestCLI:
-    def test_cli_help_lists_new_commands(self):
-        import subprocess
-        result = subprocess.run(
-            [sys.executable, "-m", "sts2", "--help"],
-            capture_output=True, text=True, timeout=10,
-        )
-        assert "export" in result.stdout
-        assert "reset-stats" in result.stdout
-
-    def test_cli_export_writes_file(self, tmp_path):
-        """Export CLI should compute stats and write aggregate JSON to disk."""
-        from sts2.aggregate import compute_aggregate_stats, save_aggregate
-        from sts2.saves import get_run_history
-        runs = get_run_history()
-        stats = compute_aggregate_stats(runs)
-        # Write to a temp path to verify the round-trip
-        out = tmp_path / "community_aggregate.json"
-        with patch("sts2.aggregate._aggregate_storage_path", return_value=out):
-            save_aggregate(stats)
-        assert out.exists()
-        loaded = json.loads(out.read_text(encoding="utf-8"))
-        assert "run_count" in loaded
-        assert loaded["run_count"] == len(runs)
-
-    def test_cli_reset_stats_deletes_file(self, tmp_path):
-        """Reset CLI should delete the aggregate file."""
-        from sts2.aggregate import reset_aggregate, save_aggregate
-        out = tmp_path / "community_aggregate.json"
-        with patch("sts2.aggregate._aggregate_storage_path", return_value=out):
-            save_aggregate({"run_count": 5})
-            assert out.exists()
-            result = reset_aggregate()
-        assert result is True
-        assert not out.exists()
-
-    def test_cli_reset_stats_nonexistent(self, tmp_path):
-        """Reset CLI should return False when no file exists."""
-        from sts2.aggregate import reset_aggregate
-        out = tmp_path / "nonexistent.json"
-        with patch("sts2.aggregate._aggregate_storage_path", return_value=out):
-            result = reset_aggregate()
-        assert result is False
 
 
 # ---------------------------------------------------------------------------
@@ -907,11 +828,6 @@ class TestSSEIntegration:
         # Close the generator to clean up the SSE connection counter
         await body_gen.aclose()
 
-    async def test_sse_connection_limit_enforced(self):
-        """SSE max connections constant should be reasonable."""
-        from sts2.routes import _SSE_MAX_CONNECTIONS
-        assert 1 <= _SSE_MAX_CONNECTIONS <= 50
-
     async def test_sse_idle_timeout_set(self):
         """SSE should have an idle timeout to prevent zombie connections."""
         from sts2.routes import _SSE_IDLE_TIMEOUT
@@ -928,103 +844,6 @@ class TestRunsImportForm:
         resp = await client.get("/runs")
         assert resp.status_code == 200
         assert "csrf_token" in resp.text
-
-
-# ---------------------------------------------------------------------------
-# WCAG AA contrast validation for light theme colors
-# ---------------------------------------------------------------------------
-
-def _srgb_to_linear(c: int) -> float:
-    """Convert 8-bit sRGB channel to linear luminance component."""
-    s = c / 255.0
-    return s / 12.92 if s <= 0.04045 else ((s + 0.055) / 1.055) ** 2.4
-
-
-def _relative_luminance(hex_color: str) -> float:
-    """Compute WCAG relative luminance from hex color string."""
-    h = hex_color.lstrip("#")
-    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-    return 0.2126 * _srgb_to_linear(r) + 0.7152 * _srgb_to_linear(g) + 0.0722 * _srgb_to_linear(b)
-
-
-def _contrast_ratio(fg: str, bg: str) -> float:
-    """Compute WCAG contrast ratio between two hex colors."""
-    l1 = _relative_luminance(fg)
-    l2 = _relative_luminance(bg)
-    lighter, darker = max(l1, l2), min(l1, l2)
-    return (lighter + 0.05) / (darker + 0.05)
-
-
-class TestWCAGContrast:
-    """Verify light theme color pairs meet WCAG AA (4.5:1 for normal text)."""
-
-    LIGHT_BG = "#f5f0e8"
-    # All text/accent colors from [data-theme="light"] CSS block
-    # Read from the stylesheet rather than restated here. The hardcoded
-    # version listed 8 of 17 colours and omitted --yellow, which shipped at
-    # 4.07:1 — the list itself was the blind spot.
-    @staticmethod
-    def _light_colours() -> list[tuple[str, str]]:
-        import re
-
-        from sts2.config import STATIC_DIR
-        css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
-        block = re.search(r'\[data-theme="light"\]\s*\{([^}]+)\}', css)
-        assert block, "no light theme block"
-        found = re.findall(r"--([\w-]+):\s*(#[0-9a-fA-F]{6})", block.group(1))
-        skip = {"bg", "bg2", "bg3", "border", "card-bg", "nav-bg", "accent2"}
-        return [(f"--{n}", v) for n, v in found if n not in skip]
-
-    def test_all_text_colors_pass_wcag_aa(self):
-        """All light-theme text/accent colors must have >= 4.5:1 contrast on bg."""
-        failures = []
-        for name, color in self._light_colours():
-            ratio = _contrast_ratio(color, self.LIGHT_BG)
-            if ratio < 4.5:
-                failures.append(f"{name} ({color}): {ratio:.2f}:1 < 4.5:1")
-        assert not failures, "WCAG AA contrast failures:\n" + "\n".join(failures)
-
-    def test_contrast_ratio_math(self):
-        """Sanity check: black on white should be ~21:1."""
-        ratio = _contrast_ratio("#000000", "#ffffff")
-        assert 20.9 < ratio < 21.1
-
-    def test_light_theme_colors_parsed_from_css(self):
-        """Verify the CSS file actually contains the colors we're testing."""
-        import re
-
-        from sts2.config import STATIC_DIR
-        css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
-        # Find the [data-theme="light"] block
-        match = re.search(r'\[data-theme="light"\]\s*\{([^}]+)\}', css)
-        assert match, "No [data-theme='light'] block in CSS"
-        block = match.group(1)
-        for name, expected_color in self._light_colours():
-            assert expected_color in block, f"{name}: {expected_color} not found in light theme CSS"
-
-
-# ---------------------------------------------------------------------------
-# --no-browser CLI flag
-# ---------------------------------------------------------------------------
-
-class TestNoBrowserFlag:
-    def test_help_shows_no_browser(self):
-        import subprocess
-        result = subprocess.run(
-            [sys.executable, "-m", "sts2", "--help"],
-            capture_output=True, text=True, timeout=10,
-        )
-        assert "--no-browser" in result.stdout
-
-    def test_no_browser_in_source(self):
-        """Verify --no-browser flag is wired into serve command."""
-        import inspect
-
-        from sts2.__main__ import _should_open_browser, main
-        main_source = inspect.getsource(main)
-        helper_source = inspect.getsource(_should_open_browser)
-        assert "--no-browser" in helper_source
-        assert "webbrowser" in main_source
 
 
 # ---------------------------------------------------------------------------
@@ -1116,7 +935,7 @@ class TestPerActBreakdown:
     def test_analytics_per_act_empty_runs(self):
         from sts2.analytics import compute_analytics
         result = compute_analytics([])
-        assert result.get("per_act") is None or result == {"overview": {"total": 0}, "hp_tracking": [], "death_floors": [], "ascension_curve": [], "card_quality": [], "damage_percentiles": []}
+        assert result == {"overview": {"total": 0}, "hp_tracking": [], "death_floors": [], "ascension_curve": [], "card_quality": [], "damage_percentiles": []}
 
 
 # ---------------------------------------------------------------------------
@@ -1174,8 +993,7 @@ class TestArchetypeDetection:
         kb = KnowledgeBase()
         # Get a character that has strategy data
         strategies = [s for s in kb.strategies if s.archetypes]
-        if not strategies:
-            return  # skip if no strategy data
+        assert strategies, "shipped strategy data has no archetypes"
         strat = strategies[0]
         arch = strat.archetypes[0]
         # Build deck from key card names -> IDs by searching all cards
@@ -1185,8 +1003,7 @@ class TestArchetypeDetection:
             cid = name_lower_to_id.get(name.lower())
             if cid:
                 card_ids.append(cid)
-        if len(card_ids) < 2:
-            return  # skip if can't resolve enough cards
+        assert len(card_ids) >= 2, f"key cards of {arch.name} no longer resolve to card ids"
         result = kb.classify_archetype(card_ids, strat.character)
         assert result["name"] == arch.name
         assert result["confidence"] > 0
@@ -1274,7 +1091,7 @@ class TestEncounterDanger:
     def test_encounter_danger_empty(self):
         from sts2.analytics import compute_analytics
         result = compute_analytics([])
-        assert result.get("encounter_danger") is None or result == {"overview": {"total": 0}, "hp_tracking": [], "death_floors": [], "ascension_curve": [], "card_quality": [], "damage_percentiles": []}
+        assert result == {"overview": {"total": 0}, "hp_tracking": [], "death_floors": [], "ascension_curve": [], "card_quality": [], "damage_percentiles": []}
 
 
 # ---------------------------------------------------------------------------
@@ -1654,133 +1471,3 @@ class TestSecondPassRegressions:
             assert largest < total * 0.5, (
                 f"{largest}/{total} enemies share one counter-card set — "
                 "the generic fallback is back")
-
-
-class TestAdvancedAnalyticsValues:
-    """Value-level coverage for the seven "Advanced Analytics" modules.
-
-    These were the least-tested code in the repo despite being the headline
-    features: every existing reference was a mock asserting `mock.called`, so
-    all seven could be replaced by constant-returning stubs simultaneously and
-    the suite stayed green. Each test below asserts a computed value and
-    contrasts two different inputs, so a constant return fails.
-    """
-
-    @staticmethod
-    def _floor(n, enc="ENCOUNTER.X", dmg=5, hp=70, gold=100, pick="", turns=3):
-        return RunFloor(floor=n, type="monster", encounter=enc, turns=turns,
-                        damage_taken=dmg, current_hp=hp, max_hp=80, gold=gold,
-                        card_picked=pick)
-
-    @classmethod
-    def _run(cls, rid, win, ts, floors, deck=None, potions=None):
-        return RunHistory(id=rid, timestamp=ts, character="Ironclad", win=win,
-                          ascension=5, run_time=1200, deck=deck or ["CARD.STRIKE"] * 10,
-                          relics=["RELIC.BURNING_BLOOD"], potions=potions or [],
-                          floors=floors)
-
-    def test_graveyard_epitaph_varies_with_the_run(self):
-        from sts2.app import kb as _kb
-        from sts2.graveyard import generate_epitaph
-
-        deep = self._run("a", False, 1, [self._floor(i) for i in range(1, 25)],
-                         deck=["CARD.STRIKE"] * 28)
-        shallow = self._run("b", False, 2, [self._floor(1)], deck=["CARD.STRIKE"] * 10)
-        first, second = generate_epitaph(deep, _kb), generate_epitaph(shallow, _kb)
-        assert first and second
-        assert first != second, "epitaph does not depend on the run"
-
-    def test_tilt_detection_separates_a_slump_from_a_streak(self):
-        from sts2.behavior import detect_tilt
-
-        losing = [self._run(str(i), False, 1700000000 + i * 600,
-                            [self._floor(j) for j in range(1, 5)]) for i in range(6)]
-        winning = [self._run(str(i), True, 1700000000 + i * 600,
-                             [self._floor(j) for j in range(1, 30)]) for i in range(6)]
-        slump, streak = detect_tilt(losing), detect_tilt(winning)
-        assert slump["tilting"] is True
-        assert slump["consecutive_losses"] == 6
-        assert slump["session_avg_floor"] == 4.0
-        assert streak["tilting"] is False
-        assert streak["consecutive_losses"] == 0
-        assert streak["session_avg_floor"] > slump["session_avg_floor"]
-
-    def test_prophecy_win_probability_is_the_empirical_rate(self):
-        from sts2.prophecy import generate_prophecy
-
-        half = [self._run(str(i), i % 2 == 0, 1700000000 + i * 600,
-                          [self._floor(j) for j in range(1, 20)]) for i in range(8)]
-        allwin = [self._run(str(i), True, 1700000000 + i * 600,
-                            [self._floor(j) for j in range(1, 20)]) for i in range(8)]
-        p_half, p_all = generate_prophecy("Ironclad", 5, half), generate_prophecy("Ironclad", 5, allwin)
-        assert p_half["available"] is True
-        assert p_half["sample_size"] == 8
-        assert p_half["win_probability"] == 50.0
-        assert p_all["win_probability"] == 100.0
-
-    def test_ghost_picks_the_better_run_and_signs_the_deltas(self):
-        from sts2.ghost import compute_splits, find_ghost_run
-
-        best = self._run("best", True, 1, [self._floor(i, hp=80, gold=100 + i * 10)
-                                           for i in range(1, 11)])
-        worse = self._run("worse", True, 2, [self._floor(i, hp=50, gold=50)
-                                             for i in range(1, 11)])
-        ghost = find_ghost_run("Ironclad", 5, [best, worse])
-        assert ghost is not None and ghost.id == "best"
-
-        behind = self._run("cur", False, 3, [self._floor(i, hp=60, gold=80)
-                                             for i in range(1, 6)])
-        splits = compute_splits(behind, ghost)
-        assert splits, "no splits computed"
-        assert splits[0]["hp_delta"] == -20
-        assert splits[0]["ahead"] is False
-
-    def test_cascade_contrasts_before_and_after_a_pick(self):
-        """Two combats on each side of the pick; the acquisition floor is
-        excluded from 'after', and a pick with no pre-pick combats is
-        skipped instead of compared against a fabricated zero baseline."""
-        from sts2.app import kb as _kb
-        from sts2.cascade import trace_card_impact
-
-        run = self._run("c", False, 4, [
-            self._floor(1, dmg=20), self._floor(2, dmg=20),
-            self._floor(3, dmg=99, pick="CARD.BASH"),
-            self._floor(4, dmg=5), self._floor(5, dmg=5)])
-        impact = trace_card_impact(run, "CARD.BASH", _kb)
-        assert impact["card_id"] == "CARD.BASH"
-        assert impact["picked_floor"] == 3
-        assert impact["pre_avg_damage"] == 20.0
-        assert impact["post_avg_damage"] == 5.0  # floor 3's 99 dmg excluded
-        assert impact["damage_delta"] == -15.0
-        assert "hp_delta" in impact
-
-        early = self._run("c2", False, 4, [
-            self._floor(1, dmg=20, pick="CARD.BASH"),
-            self._floor(2, dmg=5), self._floor(3, dmg=5)])
-        assert "error" in trace_card_impact(early, "CARD.BASH", _kb)
-
-    def test_drift_trajectory_tracks_every_floor_and_its_pick(self):
-        from sts2.app import kb as _kb
-        from sts2.drift import compute_archetype_drift
-
-        run = self._run("d", False, 5, [self._floor(1, pick="CARD.BASH"),
-                                        self._floor(2), self._floor(3)])
-        trajectory = compute_archetype_drift(run, _kb)
-        assert len(trajectory) == 3
-        assert [t["floor"] for t in trajectory] == [1, 2, 3]
-        assert trajectory[0]["card_added"] == "CARD.BASH"
-        assert trajectory[1]["card_added"] == ""
-
-    def test_spectral_health_scores_a_coherent_deck_above_an_incoherent_one(self):
-        from sts2.app import kb as _kb
-        from sts2.spectral import deck_spectral_health
-
-        coherent = [c.id for c in _kb.cards if "Block" in (c.keywords or [])][:6]
-        orphans = [c.id for c in _kb.cards if not c.keywords][:5]
-        seed = [c.id for c in _kb.cards if c.keywords][:1]
-        assert len(coherent) == 6 and len(orphans) == 5, "shipped data changed shape"
-        good = deck_spectral_health(coherent, _kb)
-        bad = deck_spectral_health(seed + orphans, _kb)
-        assert good["health_score"] > bad["health_score"]
-        assert good["orphans"] == []
-        assert bad["orphans"], "orphan detection found nothing in a deck of unlinked cards"

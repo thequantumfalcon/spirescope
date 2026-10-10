@@ -1,4 +1,5 @@
 """Tests for the CLI entry point (__main__.py)."""
+import json
 import os
 import sys
 from unittest.mock import MagicMock, patch
@@ -450,3 +451,64 @@ def test_cli_serve_refuses_an_unauthenticated_network_bind(capsys):
     out = capsys.readouterr().out
     assert "refusing to bind" in out
     assert "STS2_AUTH_TOKEN" in out
+
+
+# ── export / reset-stats against a real file ─────────────────────────────
+
+class TestCLI:
+    def test_cli_help_lists_new_commands(self):
+        import subprocess
+        result = subprocess.run(
+            [sys.executable, "-m", "sts2", "--help"],
+            capture_output=True, text=True, timeout=10,
+        )
+        assert "export" in result.stdout
+        assert "reset-stats" in result.stdout
+
+    def test_cli_export_writes_file(self, tmp_path):
+        """Export CLI should compute stats and write aggregate JSON to disk."""
+        from sts2.aggregate import compute_aggregate_stats, save_aggregate
+        from sts2.saves import get_run_history
+        runs = get_run_history()
+        stats = compute_aggregate_stats(runs)
+        # Write to a temp path to verify the round-trip
+        out = tmp_path / "community_aggregate.json"
+        with patch("sts2.aggregate._aggregate_storage_path", return_value=out):
+            save_aggregate(stats)
+        assert out.exists()
+        loaded = json.loads(out.read_text(encoding="utf-8"))
+        assert "run_count" in loaded
+        assert loaded["run_count"] == len(runs)
+
+    def test_cli_reset_stats_deletes_file(self, tmp_path):
+        """Reset CLI should delete the aggregate file."""
+        from sts2.aggregate import reset_aggregate, save_aggregate
+        out = tmp_path / "community_aggregate.json"
+        with patch("sts2.aggregate._aggregate_storage_path", return_value=out):
+            save_aggregate({"run_count": 5})
+            assert out.exists()
+            result = reset_aggregate()
+        assert result is True
+        assert not out.exists()
+
+
+# ── --no-browser flag ────────────────────────────────────────────────────
+
+class TestNoBrowserFlag:
+    def test_help_shows_no_browser(self):
+        import subprocess
+        result = subprocess.run(
+            [sys.executable, "-m", "sts2", "--help"],
+            capture_output=True, text=True, timeout=10,
+        )
+        assert "--no-browser" in result.stdout
+
+    def test_no_browser_in_source(self):
+        """Verify --no-browser flag is wired into serve command."""
+        import inspect
+
+        from sts2.__main__ import _should_open_browser, main
+        main_source = inspect.getsource(main)
+        helper_source = inspect.getsource(_should_open_browser)
+        assert "--no-browser" in helper_source
+        assert "webbrowser" in main_source

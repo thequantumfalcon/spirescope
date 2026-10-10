@@ -271,3 +271,109 @@ async def test_the_logged_path_is_sanitised(caplog):
         _request("/boom\r\nFAKE-LOG-LINE"), RuntimeError("x"))
     assert "FAKE-LOG-LINE" in caplog.text        # still present...
     assert "\r\n" not in caplog.text.split("FAKE")[0][-40:]  # ...but not as a break
+
+
+# ------------------------------------------- data refresh and background loops
+
+async def test_refresh_data_clears_caches():
+    """_refresh_data should reset analytics cache."""
+    from unittest.mock import AsyncMock, patch
+
+    import sts2.app as app_mod
+    from sts2.app import _refresh_data
+
+    original_kb = app_mod.kb
+    # Pre-fill caches
+    app_mod._analytics_cache = {None: {"total": 5}}
+    app_mod._analytics_cache_time = {None: 1000.0}
+
+    try:
+        with patch("sts2.app.asyncio.to_thread", new_callable=AsyncMock,
+                   side_effect=[original_kb, None, []]):
+            await _refresh_data()
+
+        assert app_mod._analytics_cache == {}
+        assert app_mod._analytics_cache_time == {}
+    finally:
+        app_mod.kb = original_kb
+
+
+async def test_refresh_data_reloads_kb():
+    """_refresh_data should create a new KnowledgeBase."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    import sts2.app as app_mod
+    from sts2.app import _refresh_data
+
+    original_kb = app_mod.kb
+    mock_kb = MagicMock()
+    try:
+        with patch("sts2.app.asyncio.to_thread", new_callable=AsyncMock,
+                   side_effect=[mock_kb, None, []]):
+            await _refresh_data()
+        assert app_mod.kb is mock_kb
+    finally:
+        app_mod.kb = original_kb  # Restore for other tests
+
+
+async def test_poll_game_log_handles_error():
+    """_poll_game_log should not crash on exceptions."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    from sts2.app import _poll_game_log
+
+    mock_tailer = MagicMock()
+    mock_tailer.poll.side_effect = RuntimeError("log file missing")
+    mock_tailer.state = None
+
+    call_count = 0
+
+    async def fake_to_thread(fn, *args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        if call_count > 2:
+            raise asyncio.CancelledError  # Stop the infinite loop
+        return fn(*args, **kwargs)
+
+    import asyncio
+
+    with patch("sts2.logparser.LogTailer", return_value=mock_tailer), \
+         patch("sts2.app.asyncio.to_thread", side_effect=fake_to_thread), \
+         patch("sts2.app.asyncio.sleep", new_callable=AsyncMock):
+        try:
+            await _poll_game_log()
+        except asyncio.CancelledError:
+            pass  # Expected — we use this to break the infinite loop
+
+    # If we got here without an unhandled exception, the error handling works
+    assert call_count >= 2
+
+
+async def test_watch_saves_polling_fallback():
+    """_watch_saves should fall back to polling when watchdog unavailable."""
+    from unittest.mock import patch
+
+    from sts2.app import _watch_saves
+
+    call_count = 0
+
+    async def fake_sleep(t):
+        nonlocal call_count
+        call_count += 1
+        if call_count > 2:
+            raise asyncio.CancelledError
+
+    import asyncio
+    from unittest.mock import MagicMock
+    mock_dir = MagicMock()
+    mock_dir.exists.return_value = False
+    with patch("sts2.watcher.start_observer", return_value=None), \
+         patch("sts2.app.SAVE_DIRS", [mock_dir]), \
+         patch("sts2.app.asyncio.sleep", side_effect=fake_sleep), \
+         patch("sts2.app._check_mtime", return_value=0.0):
+        try:
+            await _watch_saves()
+        except asyncio.CancelledError:
+            pass
+
+    assert call_count >= 2  # Confirms polling loop ran

@@ -116,15 +116,14 @@ class TestSearch:
                 assert len(v) <= 3
 
     def test_search_suggestions_on_no_results(self, kb):
-        if not kb.cards:
-            pytest.skip("No cards loaded")
+        assert kb.cards, "No cards loaded"
         card = kb.cards[0]
         # Mangle name to miss exact match but stay close for suggestions
         mangled = card.name[:-1] + "z"
         results = kb.search(mangled)
         total = sum(len(v) for k, v in results.items() if k != "suggestions")
-        if total == 0:
-            assert len(results["suggestions"]) > 0
+        assert total == 0, f"{mangled!r} still matches; the case below never runs"
+        assert card.name in results["suggestions"]
 
     def test_search_no_suggestions_when_results_found(self, kb):
         card = kb.cards[0]
@@ -165,23 +164,20 @@ class TestSynergies:
     def test_find_synergies_returns_same_character(self, kb):
         # Find a card with keywords
         card = next((c for c in kb.cards if c.keywords), None)
-        if card is None:
-            pytest.skip("No cards with keywords")
+        assert card is not None, "No cards with keywords"
         synergies = kb.find_synergies(card.id)
         for s in synergies:
             assert s.character == card.character or s.character in ("Colorless", "Status")
 
     def test_find_synergies_excludes_self(self, kb):
         card = next((c for c in kb.cards if c.keywords), None)
-        if card is None:
-            pytest.skip("No cards with keywords")
+        assert card is not None, "No cards with keywords"
         synergies = kb.find_synergies(card.id)
         assert all(s.id != card.id for s in synergies)
 
     def test_find_synergies_no_keywords(self, kb):
         card = next((c for c in kb.cards if not c.keywords), None)
-        if card is None:
-            pytest.skip("All cards have keywords")
+        assert card is not None, "All cards have keywords"
         assert kb.find_synergies(card.id) == []
 
     def test_find_synergies_missing_card(self, kb):
@@ -227,8 +223,7 @@ class TestDeckAnalysis:
 
     def test_analyze_deck_character_detection(self, kb):
         ironclad = [c.id for c in kb.cards if c.character == "Ironclad"][:5]
-        if not ironclad:
-            pytest.skip("No Ironclad cards")
+        assert ironclad, "No Ironclad cards"
         result = kb.analyze_deck(ironclad)
         assert result["character"] == "Ironclad"
 
@@ -241,8 +236,7 @@ class TestDeckAnalysis:
                 ids.append(c.id)
             if len(chars) >= 2:
                 break
-        if len(chars) < 2:
-            pytest.skip("Not enough characters")
+        assert len(chars) >= 2, "Not enough characters"
         result = kb.analyze_deck(ids)
         assert result["character"] == "Mixed"
 
@@ -273,13 +267,39 @@ class TestLevenshtein:
 
 class TestAutoDiscovery:
     def test_discover_from_saves_adds_enemies(self, kb):
-        """KB should have auto-discovered enemies from save files (if saves exist)."""
-        # This just checks the mechanism doesn't crash; actual discovery depends on saves
-        assert isinstance(kb.enemies, list)
+        """KB should add the enemies and encounters a save mentions that the
+        shipped data lacks, once each, and leave the shipped ones alone."""
+        from unittest.mock import patch
+
+        from sts2.models import PlayerProgress
+
+        shipped = kb.enemies[0]
+        mock_progress = PlayerProgress(
+            enemy_stats={shipped.id: {}},
+            encounter_stats={"ENCOUNTER.TEST_FIGHT": {}},
+        )
+        with patch("sts2.saves.get_progress", return_value=mock_progress):
+            test_kb = KnowledgeBase()
+        assert len(test_kb.enemies) == len(kb.enemies) + 1
+        assert test_kb.get_enemy_by_id("ENCOUNTER.TEST_FIGHT").source == "discovered"
+        assert test_kb.get_enemy_by_id(shipped.id).source == shipped.source
 
     def test_discover_from_saves_adds_events(self, kb):
-        """KB should have auto-discovered events from save files (if saves exist)."""
-        assert isinstance(kb.events, list)
+        """KB should add the events a save mentions that the shipped data
+        lacks, once each, and leave the shipped ones alone."""
+        from unittest.mock import patch
+
+        from sts2.models import PlayerProgress
+
+        shipped = kb.events[0]
+        mock_progress = PlayerProgress(
+            discovered_events=[shipped.id, "EVENT.TEST_DISCOVERY", "EVENT.TEST_DISCOVERY"],
+        )
+        with patch("sts2.saves.get_progress", return_value=mock_progress):
+            test_kb = KnowledgeBase()
+        assert len(test_kb.events) == len(kb.events) + 1
+        added = [e for e in test_kb.events if e.id == "EVENT.TEST_DISCOVERY"]
+        assert [e.source for e in added] == ["discovered"]
 
     def test_discovered_enemy_has_type(self):
         """Auto-discovered enemies from saves should have a type assigned."""
@@ -293,8 +313,8 @@ class TestAutoDiscovery:
         with patch("sts2.saves.get_progress", return_value=mock_progress):
             test_kb = KnowledgeBase()
         enemy = test_kb.get_enemy_by_id("BOSS.TEST_BOSS")
-        if enemy:
-            assert enemy.type == "boss"
+        assert enemy is not None, "BOSS.TEST_BOSS was not discovered"
+        assert enemy.type == "boss"
 
     def test_discovered_event_has_name(self):
         """Auto-discovered events from saves should have readable names."""
@@ -308,14 +328,13 @@ class TestAutoDiscovery:
         with patch("sts2.saves.get_progress", return_value=mock_progress):
             test_kb = KnowledgeBase()
         found = [e for e in test_kb.events if e.id == "EVENT.DEAD_ADVENTURER"]
-        if found:
-            assert found[0].name == "Dead Adventurer"
+        assert found, "EVENT.DEAD_ADVENTURER was not discovered"
+        assert found[0].name == "Dead Adventurer"
 
 
 class TestSuggest:
     def test_suggest_finds_close_match(self, kb):
-        if not kb.cards:
-            pytest.skip("No cards loaded")
+        assert kb.cards, "No cards loaded"
         card = kb.cards[0]
         # Mangle the name slightly
         mangled = card.name[:-1] + "z"
@@ -326,8 +345,7 @@ class TestSuggest:
         assert kb.suggest("") == []
 
     def test_suggest_exact_match_returns(self, kb):
-        if not kb.cards:
-            pytest.skip("No cards loaded")
+        assert kb.cards, "No cards loaded"
         card = kb.cards[0]
         suggestions = kb.suggest(card.name)
         assert card.name in suggestions

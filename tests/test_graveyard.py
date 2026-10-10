@@ -49,6 +49,10 @@ def test_a_won_run_has_no_epitaph():
 def test_the_epitaph_is_stable_for_the_same_run():
     run = _run(rid="stable-run")
     assert generate_epitaph(run) == generate_epitaph(run)
+    # Pinned as well as compared with itself: the line is picked by an md5 of
+    # the run id, so it must also survive a restart. A per-process seed such
+    # as Python's own hash() would pass the comparison above and fail this.
+    assert generate_epitaph(run) == "Ironclad, floor 20. Gone but not forgotten."
 
 
 def test_the_epitaph_depends_on_the_run_id():

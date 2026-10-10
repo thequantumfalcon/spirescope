@@ -3,7 +3,8 @@
 Covers: the <html lang> attribute tracking the active UI language instead of
 being hardcoded, the nav-toggle/shortcuts-dialog ARIA wiring, the
 prefers-reduced-motion stylesheet block, and the docs/index.html landing page
-(heading order, <main> landmark, canonical/og:url, and CTA contrast).
+(heading order, <main> landmark, canonical/og:url, and CTA contrast). Also
+the theme toggle and the light theme's colour overrides and WCAG AA contrast.
 """
 import re
 from pathlib import Path
@@ -157,3 +158,89 @@ def test_docs_index_screenshots_have_dimensions_and_lazy_loading():
         assert re.search(r'width="\d+"', tag), f"{src} missing width"
         assert re.search(r'height="\d+"', tag), f"{src} missing height"
         assert 'loading="lazy"' in tag, f"{src} missing loading=lazy"
+
+
+# ── Theme toggle and light theme ──
+
+class TestTheme:
+    def test_theme_init_js_exists(self):
+        from sts2.config import STATIC_DIR
+        assert (STATIC_DIR / "theme-init.js").exists()
+
+    async def test_base_has_theme_toggle(self, client):
+        resp = await client.get("/")
+        assert resp.status_code == 200
+        assert "theme-init.js" in resp.text
+        assert "theme-toggle" in resp.text
+
+    def test_css_has_light_theme(self):
+        from sts2.config import STATIC_DIR
+        css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
+        assert '[data-theme="light"]' in css
+        # The light theme must override the character and status colours, but
+        # pin the names rather than the hex values: the old version hardcoded
+        # three literals and annotated them "WCAG-safe" when --ironclad
+        # #c0392b actually measured 4.30:1 on --bg3. Contrast is verified for
+        # real, across every colour and background, in
+        # test_theme_text_colours_meet_wcag_aa.
+        import re
+        block = re.search(r'\[data-theme="light"\]\s*\{([^}]+)\}', css)
+        assert block, "no light theme block"
+        for name in ("--regent", "--silent", "--ironclad", "--yellow", "--red"):
+            assert f"{name}:" in block.group(1), f"light theme does not override {name}"
+
+    def test_css_card_bg_not_circular(self):
+        from sts2.config import STATIC_DIR
+        css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
+        # Should NOT have --card-bg: var(--card-bg) (circular reference)
+        assert "--card-bg: var(--card-bg)" not in css
+
+
+# ── WCAG AA contrast of the light theme's colours ──
+
+class TestWCAGContrast:
+    """Verify light theme color pairs meet WCAG AA (4.5:1 for normal text)."""
+
+    LIGHT_BG = "#f5f0e8"
+    # All text/accent colors from [data-theme="light"] CSS block
+    # Read from the stylesheet rather than restated here. The hardcoded
+    # version listed 8 of 17 colours and omitted --yellow, which shipped at
+    # 4.07:1 — the list itself was the blind spot.
+    @staticmethod
+    def _light_colours() -> list[tuple[str, str]]:
+        import re
+
+        from sts2.config import STATIC_DIR
+        css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
+        block = re.search(r'\[data-theme="light"\]\s*\{([^}]+)\}', css)
+        assert block, "no light theme block"
+        found = re.findall(r"--([\w-]+):\s*(#[0-9a-fA-F]{6})", block.group(1))
+        skip = {"bg", "bg2", "bg3", "border", "card-bg", "nav-bg", "accent2"}
+        return [(f"--{n}", v) for n, v in found if n not in skip]
+
+    def test_all_text_colors_pass_wcag_aa(self):
+        """All light-theme text/accent colors must have >= 4.5:1 contrast on bg."""
+        failures = []
+        for name, color in self._light_colours():
+            ratio = _contrast_ratio(color, self.LIGHT_BG)
+            if ratio < 4.5:
+                failures.append(f"{name} ({color}): {ratio:.2f}:1 < 4.5:1")
+        assert not failures, "WCAG AA contrast failures:\n" + "\n".join(failures)
+
+    def test_contrast_ratio_math(self):
+        """Sanity check: black on white should be ~21:1."""
+        ratio = _contrast_ratio("#000000", "#ffffff")
+        assert 20.9 < ratio < 21.1
+
+    def test_light_theme_colors_parsed_from_css(self):
+        """Verify the CSS file actually contains the colors we're testing."""
+        import re
+
+        from sts2.config import STATIC_DIR
+        css = (STATIC_DIR / "style.css").read_text(encoding="utf-8")
+        # Find the [data-theme="light"] block
+        match = re.search(r'\[data-theme="light"\]\s*\{([^}]+)\}', css)
+        assert match, "No [data-theme='light'] block in CSS"
+        block = match.group(1)
+        for name, expected_color in self._light_colours():
+            assert expected_color in block, f"{name}: {expected_color} not found in light theme CSS"

@@ -7,6 +7,7 @@ It also joined fields with ':'/',' unescaped, so ['Louse,Louse'] and
 ['Louse','Louse'] collided. And verify_run had no callers, so nothing was
 ever actually verified.
 """
+import hashlib
 import json
 from unittest.mock import AsyncMock, patch
 
@@ -55,6 +56,13 @@ class TestDigestBindsEveryField:
 
     def test_digest_is_stable_for_identical_runs(self):
         assert compute_run_digest(_base_run()) == compute_run_digest(_base_run())
+        # Not merely self-consistent: it is the documented value, a SHA-256
+        # over the version prefix and the canonical JSON of the whole run.
+        canonical = json.dumps(_base_run().model_dump(), sort_keys=True,
+                               ensure_ascii=False, separators=(",", ":"))
+        expected = hashlib.sha256(
+            f"spirescope-run-v{DIGEST_VERSION}\n{canonical}".encode("utf-8")).hexdigest()
+        assert compute_run_digest(_base_run()) == expected
 
     def test_verify_run_round_trip(self):
         run = _base_run()

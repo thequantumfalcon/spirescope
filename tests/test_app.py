@@ -347,10 +347,10 @@ async def test_api_card_includes_synergies(client):
 async def test_api_card_synergies_empty_for_keywordless(client):
     """Card with no keywords should return empty synergies."""
     resp = await client.get("/api/cards/CARD.BYRDONIS_EGG")
-    if resp.status_code == 200:
-        data = resp.json()
-        assert "synergies" in data
-        assert data["synergies"] == []
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "synergies" in data
+    assert data["synergies"] == []
 
 
 async def test_deck_page_has_search_input(client):
@@ -486,9 +486,9 @@ async def test_cards_pagination_shows_range(client):
     """When paginated, shows 'Showing X-Y of Z' indicator."""
     resp = await client.get("/cards?page=1")
     assert resp.status_code == 200
-    # If more than one page exists, should show range indicator
-    if "page=2" in resp.text or "Next" in resp.text:
-        assert "Showing" in resp.text
+    # The shipped catalog spans several pages, so the range indicator shows
+    assert "page=2" in resp.text
+    assert "Showing 1&ndash;30 of" in resp.text
 
 
 async def test_sse_connection_limit_registered(client):
@@ -622,9 +622,9 @@ async def test_card_detail_shows_card_stats(client):
     )
     with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
         resp = await client.get("/cards/CARD.BASH")
-    if resp.status_code == 200:
-        assert "Your Stats" in resp.text
-        assert "Picked" in resp.text
+    assert resp.status_code == 200
+    assert "Your Stats" in resp.text
+    assert "Picked" in resp.text
 
 
 async def test_card_detail_no_stats_when_empty(client):
@@ -636,8 +636,8 @@ async def test_card_detail_no_stats_when_empty(client):
     mock_progress = PlayerProgress(card_stats={})
     with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
         resp = await client.get("/cards/CARD.BASH")
-    if resp.status_code == 200:
-        assert "Your Stats" not in resp.text
+    assert resp.status_code == 200
+    assert "Your Stats" not in resp.text
 
 
 async def test_card_detail_hides_an_upgraded_block_that_repeats_the_base(client):
@@ -737,10 +737,10 @@ async def test_runs_filter_by_result(client):
 async def test_api_card_detail(client):
     """API should return card JSON with stats."""
     resp = await client.get("/api/cards/CARD.BASH")
-    if resp.status_code == 200:
-        data = resp.json()
-        assert "name" in data
-        assert "stats" in data
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "name" in data
+    assert "stats" in data
 
 
 async def test_api_card_detail_404(client):
@@ -777,8 +777,7 @@ async def test_nav_highlights_current_page(client):
 async def test_card_detail_has_breadcrumb(client):
     """Card detail should have breadcrumb navigation."""
     from sts2.app import kb as _kb
-    if not _kb.cards:
-        return
+    assert _kb.cards
     card = _kb.cards[0]
     resp = await client.get(f"/cards/{card.id}")
     assert resp.status_code == 200
@@ -789,8 +788,7 @@ async def test_card_detail_has_breadcrumb(client):
 async def test_enemy_detail_has_breadcrumb(client):
     """Enemy detail should have breadcrumb navigation."""
     from sts2.app import kb as _kb
-    if not _kb.enemies:
-        return
+    assert _kb.enemies
     enemy = _kb.enemies[0]
     resp = await client.get(f"/enemies/{enemy.id}")
     assert resp.status_code == 200
@@ -814,8 +812,7 @@ async def test_events_no_filter(client):
 async def test_relic_detail_page(client):
     """Relic detail page should render for a known relic."""
     from sts2.app import kb as _kb
-    if not _kb.relics:
-        return
+    assert _kb.relics
     relic = _kb.relics[0]
     resp = await client.get(f"/relics/{relic.id}")
     assert resp.status_code == 200
@@ -833,8 +830,7 @@ async def test_relic_detail_404(client):
 async def test_relics_page_links_to_detail(client):
     """Relics page should link to individual relic detail pages."""
     from sts2.app import kb as _kb
-    if not _kb.relics:
-        return
+    assert _kb.relics
     resp = await client.get("/relics")
     assert resp.status_code == 200
     assert f'href="/relics/{_kb.relics[0].id}"' in resp.text
@@ -881,28 +877,39 @@ async def test_cards_page_shows_pick_rate(client):
     mock_progress = PlayerProgress(
         card_stats={"CARD.BASH": {"picked": 8, "skipped": 2, "won": 5, "lost": 3}},
     )
+    # Bash is on page 8 of the unfiltered list, so page 1 never showed it;
+    # filtered to Ironclad attacks it is on the first page.
     with patch("sts2.app._get_progress", new=AsyncMock(return_value=mock_progress)):
-        resp = await client.get("/cards")
-    if resp.status_code == 200 and ("CARD.BASH" in resp.text or "Bash" in resp.text):
-        assert "Picked" in resp.text or "80%" in resp.text
+        resp = await client.get("/cards?character=Ironclad&type=Attack")
+    assert resp.status_code == 200
+    assert 'href="/cards/CARD.BASH"' in resp.text
+    assert "Picked 8/10 (80%)" in resp.text
 
 
 async def test_search_results_link_to_relic_detail(client):
     """Search results should link relics to their detail pages."""
     from sts2.app import kb as _kb
-    if not _kb.relics:
-        return
+    assert _kb.relics
     relic = _kb.relics[0]
     resp = await client.get(f"/search?q={relic.name}")
-    if resp.status_code == 200 and relic.name in resp.text:
-        assert f'href="/relics/{relic.id}"' in resp.text
+    assert resp.status_code == 200
+    assert relic.name in resp.text
+    assert f'href="/relics/{relic.id}"' in resp.text
 
 
 async def test_run_detail_links_relics(client):
     """Run detail page should link relics to detail pages."""
-    resp = await client.get("/runs")
-    # Just verify the template renders without error
+    from unittest.mock import AsyncMock, patch
+
+    from sts2.models import RunHistory
+
+    run = RunHistory(id="relic-run", character="Ironclad", win=False,
+                     relics=["RELIC.AKABEKO"], build_id="v0.107.1")
+    with patch("sts2.app._get_run_by_id", new=AsyncMock(return_value=run)), \
+         patch("sts2.app._get_runs", new=AsyncMock(return_value=[run])):
+        resp = await client.get("/runs/relic-run")
     assert resp.status_code == 200
+    assert 'href="/relics/RELIC.AKABEKO?game_version=v0.107.1"' in resp.text
 
 
 async def test_card_detail_shows_run_win_rate(client):
@@ -918,22 +925,21 @@ async def test_card_detail_shows_run_win_rate(client):
     ]
     with patch("sts2.app._get_runs", new=AsyncMock(return_value=mock_runs)):
         resp = await client.get("/cards/CARD.BASH")
-    if resp.status_code == 200:
-        assert "Run History with" in resp.text
-        assert "Win Rate" in resp.text
-        assert "67%" in resp.text
+    assert resp.status_code == 200
+    assert "Run History with" in resp.text
+    assert "Win Rate" in resp.text
+    assert "67%" in resp.text
 
 
 async def test_card_detail_og_title(client):
     """Card detail should have og:title meta tag."""
     from sts2.app import kb as _kb
-    if not _kb.cards:
-        return
+    assert _kb.cards
     card = _kb.cards[0]
     resp = await client.get(f"/cards/{card.id}")
-    if resp.status_code == 200:
-        assert "og:title" in resp.text
-        assert "SpireScope" in resp.text
+    assert resp.status_code == 200
+    assert "og:title" in resp.text
+    assert "SpireScope" in resp.text
 
 
 # --- Analytics tests ---
@@ -1151,15 +1157,14 @@ async def test_card_detail_passes_community_tips(client):
     from unittest.mock import patch
 
     from sts2.app import kb as _kb
-    if not _kb.cards:
-        return
+    assert _kb.cards
     card = _kb.cards[0]
     mock_tips = ["This card is amazing in act 1 for dealing damage."]
     with patch.object(_kb, "get_community_tips", return_value=mock_tips):
         resp = await client.get(f"/cards/{card.id}")
-    if resp.status_code == 200:
-        assert "Community Tips" in resp.text
-        assert "Steam" in resp.text
+    assert resp.status_code == 200
+    assert "Community Tips" in resp.text
+    assert "Steam" in resp.text
 
 
 async def test_relic_detail_passes_community_tips(client):
@@ -1167,14 +1172,13 @@ async def test_relic_detail_passes_community_tips(client):
     from unittest.mock import patch
 
     from sts2.app import kb as _kb
-    if not _kb.relics:
-        return
+    assert _kb.relics
     relic = _kb.relics[0]
     mock_tips = ["This relic synergizes well with strength builds."]
     with patch.object(_kb, "get_community_tips", return_value=mock_tips):
         resp = await client.get(f"/relics/{relic.id}")
-    if resp.status_code == 200:
-        assert "Community Tips" in resp.text
+    assert resp.status_code == 200
+    assert "Community Tips" in resp.text
 
 
 async def test_community_cli_entry():
@@ -1236,15 +1240,14 @@ async def test_enemy_detail_community_tips(client):
     from unittest.mock import patch
 
     from sts2.app import kb as _kb
-    if not _kb.enemies:
-        return
+    assert _kb.enemies
     enemy = _kb.enemies[0]
     mock_tips = ["This enemy hits hard in act 2, bring block cards."]
     with patch.object(_kb, "get_community_tips", return_value=mock_tips):
         resp = await client.get(f"/enemies/{enemy.id}")
-    if resp.status_code == 200:
-        assert "Community Tips" in resp.text
-        assert "Steam" in resp.text
+    assert resp.status_code == 200
+    assert "Community Tips" in resp.text
+    assert "Steam" in resp.text
 
 
 async def test_analytics_cache_returns_same_object():
@@ -1324,28 +1327,6 @@ async def test_cli_help():
     assert "Usage:" in result.stdout
     assert "serve" in result.stdout
     assert "update" in result.stdout
-
-
-async def test_cli_version():
-    """CLI --version should print version."""
-    import subprocess
-    result = subprocess.run(
-        [sys.executable, "-m", "sts2", "--version"],
-        capture_output=True, text=True, timeout=10,
-    )
-    assert result.returncode == 0
-    assert "Spirescope" in result.stdout
-
-
-async def test_cli_unknown_command():
-    """CLI unknown command should exit with error."""
-    import subprocess
-    result = subprocess.run(
-        [sys.executable, "-m", "sts2", "foobar"],
-        capture_output=True, text=True, timeout=10,
-    )
-    assert result.returncode != 0
-    assert "Unknown command" in result.stdout
 
 
 async def test_analytics_single_run():
@@ -1483,15 +1464,6 @@ async def test_runs_ascension_invalid(client):
 
 # --- Additional coverage: middleware, CSP, rate limiting ---
 
-async def test_docs_csp_uses_local_assets(client):
-    """API docs use packaged scripts under the narrow dashboard policy."""
-    resp = await client.get("/docs")
-    csp = resp.headers.get("Content-Security-Policy", "")
-    if resp.status_code == 200:
-        assert "cdn.jsdelivr.net" not in csp
-    assert "script-src 'self'" in csp
-
-
 async def test_static_cache_control(client):
     """Static files should have Cache-Control header."""
     resp = await client.get("/static/favicon.ico")
@@ -1499,24 +1471,29 @@ async def test_static_cache_control(client):
     assert resp.headers.get("Cache-Control") == "public, max-age=3600"
 
 
-async def test_rate_limit_cleanup():
+async def test_rate_limit_cleanup(client, monkeypatch):
     """Stale entries in rate limit store should be cleaned up."""
     import collections
     import time
 
+    import sts2.app as app_mod
 
     _rate_limit_store.clear()
-    # Add a stale entry (timestamp in the distant past)
-    stale_deque = collections.deque()
-    stale_deque.append(0.0)  # epoch = very old
-    _rate_limit_store["stale_ip"] = stale_deque
+    now = time.monotonic()
+    # A client whose last request fell outside the window, one with nothing
+    # left in its window, and one seen just now
+    _rate_limit_store["stale_ip"] = collections.deque(
+        [now - app_mod._RATE_LIMIT_WINDOW - 1])
+    _rate_limit_store["empty_ip"] = collections.deque()
+    _rate_limit_store["fresh_ip"] = collections.deque([now])
+    # The middleware sweeps at most once per interval; make a sweep due
+    monkeypatch.setattr(app_mod, "_rate_limit_last_cleanup",
+                        now - app_mod._RATE_LIMIT_CLEANUP_INTERVAL - 1)
 
-    # Add a fresh entry
-    fresh_deque = collections.deque()
-    fresh_deque.append(time.monotonic())
-    _rate_limit_store["fresh_ip"] = fresh_deque
-
-    assert "stale_ip" in _rate_limit_store
+    resp = await client.get("/health")
+    assert resp.status_code == 200
+    assert "stale_ip" not in _rate_limit_store
+    assert "empty_ip" not in _rate_limit_store
     assert "fresh_ip" in _rate_limit_store
 
 
@@ -1593,10 +1570,11 @@ async def test_csrf_token_validation():
     assert validate_csrf_token("no_dot") is False
 
 
-async def test_run_cache_by_id():
+async def test_run_cache_by_id(monkeypatch):
     """_get_run_by_id should return the correct run."""
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import patch
 
+    import sts2.app as app_mod
     from sts2.app import _get_run_by_id
     from sts2.models import RunHistory
 
@@ -1604,14 +1582,20 @@ async def test_run_cache_by_id():
         RunHistory(id="run_abc", character="Ironclad", win=True, deck=["CARD.BASH"]),
         RunHistory(id="run_def", character="Silent", win=False, deck=["CARD.NEUTRALIZE"]),
     ]
-    with patch("sts2.app._get_runs", new=AsyncMock(return_value=mock_runs)):
-        # Populate the cache
-        from sts2.app import _get_runs
-        await _get_runs()
-
-    result = await _get_run_by_id("run_abc")
-    if result:
-        assert result.character == "Ironclad"
+    # Patching _get_runs itself never populated the cache _get_run_by_id
+    # reads, so the lookup found nothing and the check below never ran. Load
+    # through the real cache instead, from an empty one, restored afterwards.
+    monkeypatch.setattr(app_mod, "_run_cache", [])
+    monkeypatch.setattr(app_mod, "_run_cache_by_id", {})
+    monkeypatch.setattr(app_mod, "_run_cache_time", 0)
+    with patch("sts2.app.get_run_history", return_value=mock_runs):
+        result = await _get_run_by_id("run_abc")
+        other = await _get_run_by_id("run_def")
+        missing = await _get_run_by_id("run_xyz")
+    assert result is not None
+    assert result.character == "Ironclad"
+    assert other.character == "Silent"
+    assert missing is None
 
 
 async def test_strategy_page_renders(client):
@@ -1661,13 +1645,6 @@ async def test_shortcuts_hash_not_zero():
 # ── Ascension Filtering (Feature 3) ──
 
 
-async def test_analytics_no_filter(client):
-    """Analytics page loads without ascension filter."""
-    resp = await client.get("/analytics")
-    assert resp.status_code == 200
-    assert "Analytics" in resp.text
-
-
 async def test_analytics_with_ascension(client):
     """Analytics page accepts ascension query parameter."""
     resp = await client.get("/analytics?ascension=0")
@@ -1680,10 +1657,27 @@ async def test_analytics_invalid_ascension(client):
     assert resp.status_code == 422
 
 
-async def test_analytics_cache_keyed_by_ascension():
+async def test_analytics_cache_keyed_by_ascension(monkeypatch):
     """Filtered and unfiltered analytics use separate cache entries."""
-    from sts2.app import _analytics_cache_time
-    assert isinstance(_analytics_cache_time, dict)
+    from unittest.mock import AsyncMock, patch
+
+    import sts2.app as app_mod
+    from sts2.models import RunHistory
+
+    runs = [RunHistory(id="a0", character="Ironclad", win=True, ascension=0),
+            RunHistory(id="a5", character="Ironclad", win=False, ascension=5)]
+    monkeypatch.setattr(app_mod, "_analytics_cache", {})
+    monkeypatch.setattr(app_mod, "_analytics_cache_time", {})
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=runs)), \
+         patch("sts2.app._get_progress", new=AsyncMock(return_value=None)):
+        unfiltered = await app_mod._get_analytics()
+        filtered = await app_mod._get_analytics(ascension=5)
+        # a second call is served from the cache entry for its own key
+        assert await app_mod._get_analytics(ascension=5) is filtered
+    assert unfiltered["overview"]["total"] == 2
+    assert filtered["overview"]["total"] == 1
+    assert app_mod._analytics_cache[None] is unfiltered
+    assert app_mod._analytics_cache[5] is filtered
 
 
 # ---------------------------------------------------------------------------
@@ -1881,148 +1875,12 @@ async def test_get_live_run_neither():
 # ---------------------------------------------------------------------------
 
 
-async def test_sse_connection_cap_enforced(client):
-    """SSE endpoint should reject when at max connections."""
-    import sts2.routes as routes_mod
-    original = routes_mod._sse_active
-    try:
-        routes_mod._sse_active = 10
-        resp = await client.get("/api/live/stream")
-        assert resp.status_code == 429
-        assert "Too many" in resp.text
-    finally:
-        routes_mod._sse_active = original
-
-
 async def test_sse_counter_tracks_connections():
     """SSE active counter should exist as module-level int."""
     import sts2.routes as routes_mod
     assert hasattr(routes_mod, "_sse_active")
     assert isinstance(routes_mod._sse_active, int)
     assert routes_mod._SSE_MAX_CONNECTIONS == 10
-
-
-# ---------------------------------------------------------------------------
-# Background tasks
-# ---------------------------------------------------------------------------
-
-
-async def test_prewarm_caches():
-    """_prewarm_caches should call get_progress and get_run_history."""
-    from unittest.mock import AsyncMock, patch
-
-    from sts2.app import _prewarm_caches
-
-    with patch("sts2.app.get_progress", return_value=None), \
-         patch("sts2.app.get_run_history", return_value=[]), \
-         patch("sts2.app.asyncio.to_thread", new_callable=AsyncMock,
-               side_effect=[None, []]):
-        await _prewarm_caches()
-    # to_thread is called twice: once for progress, once for runs
-
-
-async def test_refresh_data_clears_caches():
-    """_refresh_data should reset analytics cache."""
-    from unittest.mock import AsyncMock, patch
-
-    import sts2.app as app_mod
-    from sts2.app import _refresh_data
-
-    original_kb = app_mod.kb
-    # Pre-fill caches
-    app_mod._analytics_cache = {None: {"total": 5}}
-    app_mod._analytics_cache_time = {None: 1000.0}
-
-    try:
-        with patch("sts2.app.asyncio.to_thread", new_callable=AsyncMock,
-                   side_effect=[original_kb, None, []]):
-            await _refresh_data()
-
-        assert app_mod._analytics_cache == {} or None not in app_mod._analytics_cache_time or \
-            app_mod._analytics_cache_time.get(None, 0) != 1000.0
-    finally:
-        app_mod.kb = original_kb
-
-
-async def test_refresh_data_reloads_kb():
-    """_refresh_data should create a new KnowledgeBase."""
-    from unittest.mock import AsyncMock, MagicMock, patch
-
-    import sts2.app as app_mod
-    from sts2.app import _refresh_data
-
-    original_kb = app_mod.kb
-    mock_kb = MagicMock()
-    try:
-        with patch("sts2.app.asyncio.to_thread", new_callable=AsyncMock,
-                   side_effect=[mock_kb, None, []]):
-            await _refresh_data()
-        assert app_mod.kb is mock_kb
-    finally:
-        app_mod.kb = original_kb  # Restore for other tests
-
-
-async def test_poll_game_log_handles_error():
-    """_poll_game_log should not crash on exceptions."""
-    from unittest.mock import AsyncMock, MagicMock, patch
-
-    from sts2.app import _poll_game_log
-
-    mock_tailer = MagicMock()
-    mock_tailer.poll.side_effect = RuntimeError("log file missing")
-    mock_tailer.state = None
-
-    call_count = 0
-
-    async def fake_to_thread(fn, *args, **kwargs):
-        nonlocal call_count
-        call_count += 1
-        if call_count > 2:
-            raise asyncio.CancelledError  # Stop the infinite loop
-        return fn(*args, **kwargs)
-
-    import asyncio
-
-    with patch("sts2.logparser.LogTailer", return_value=mock_tailer), \
-         patch("sts2.app.asyncio.to_thread", side_effect=fake_to_thread), \
-         patch("sts2.app.asyncio.sleep", new_callable=AsyncMock):
-        try:
-            await _poll_game_log()
-        except asyncio.CancelledError:
-            pass  # Expected — we use this to break the infinite loop
-
-    # If we got here without an unhandled exception, the error handling works
-    assert call_count >= 2
-
-
-async def test_watch_saves_polling_fallback():
-    """_watch_saves should fall back to polling when watchdog unavailable."""
-    from unittest.mock import patch
-
-    from sts2.app import _watch_saves
-
-    call_count = 0
-
-    async def fake_sleep(t):
-        nonlocal call_count
-        call_count += 1
-        if call_count > 2:
-            raise asyncio.CancelledError
-
-    import asyncio
-    from unittest.mock import MagicMock
-    mock_dir = MagicMock()
-    mock_dir.exists.return_value = False
-    with patch("sts2.watcher.start_observer", return_value=None), \
-         patch("sts2.app.SAVE_DIRS", [mock_dir]), \
-         patch("sts2.app.asyncio.sleep", side_effect=fake_sleep), \
-         patch("sts2.app._check_mtime", return_value=0.0):
-        try:
-            await _watch_saves()
-        except asyncio.CancelledError:
-            pass
-
-    assert call_count >= 2  # Confirms polling loop ran
 
 
 # ---------------------------------------------------------------------------
