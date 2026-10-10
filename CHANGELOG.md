@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Internal
+
+- **A local test run no longer touches the developer's own game or state.**
+  The suite used the real Spirescope state directory, so the stats import and
+  reset tests wrote to and then deleted the developer's
+  `community_aggregate.json`. It also read the real save history, and on a
+  machine with the game installed it checked the reviewed profile for that
+  build instead of the bundle CI checks, so three catalog tests failed only
+  locally. The suite now points the game, saves, state and mods at a
+  temporary directory, and the one test that needs a real install finds it
+  itself.
+
 ## v3.2.0
 
 Exact-version game coverage for main v0.107.1, honest analysis, co-op live

@@ -1,6 +1,8 @@
 """Shared test configuration and fixtures."""
 import json
 import os
+import shutil
+import tempfile
 from pathlib import Path
 
 # Force the rate-limiter to engage during tests. The app skips rate-limiting
@@ -30,10 +32,26 @@ os.environ["STS2_LANG"] = "en"
 # machine last played.
 os.environ["STS2_LOG_FILE"] = str(Path(__file__).parent / "_no_such_godot.log")
 
+# The same for the rest of this machine's game and Spirescope state. With the
+# game installed, every KnowledgeBase built without an explicit version used
+# the reviewed profile for the installed build, while CI (no game) used the
+# bundle, so catalog assertions passed in CI and failed locally. Unpatched
+# route tests read the real save history, and the import and reset routes
+# wrote to and then deleted the real community_aggregate.json. The one
+# end-to-end test against a real install (test_localize.py) finds the game
+# itself, starting from whatever STS2_GAME_DIR said before this override.
+_TEST_MACHINE = Path(tempfile.mkdtemp(prefix="spirescope-tests-"))
+os.environ["SPIRESCOPE_TEST_REAL_GAME_DIR"] = os.environ.get("STS2_GAME_DIR", "")
+os.environ["STS2_GAME_DIR"] = str(_TEST_MACHINE / "no-game")
+os.environ["STS2_SAVE_DIR"] = str(_TEST_MACHINE / "no-saves")
+os.environ["STS2_STATE_DIR"] = str(_TEST_MACHINE / "state")
+os.environ["STS2_MODS_DIR"] = str(_TEST_MACHINE / "state" / "mods")
+
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
+import sts2.app
 from sts2.app import _rate_limit_store, app
 
 DATA_DIR = Path(__file__).parent.parent / "sts2" / "data"
@@ -69,6 +87,17 @@ def _clear_rate_limits():
     _rate_limit_store.clear()
     from sts2.routes import _live_memo
     _live_memo.clear()
+
+
+def pytest_sessionfinish(session, exitstatus):
+    """Remove the run's private state directory, unless importing the app moved
+    pre-3.0.3 state or user-added mods out of sts2/data into it: those files
+    belong to the developer, so keep them and say where they went."""
+    if sts2.app._migrated:
+        print(f"\nSpirescope moved {sts2.app._migrated} from sts2/data into "
+              f"{_TEST_MACHINE / 'state'}; that directory was kept.")
+        return
+    shutil.rmtree(_TEST_MACHINE, ignore_errors=True)
 
 
 @pytest_asyncio.fixture(scope="module")

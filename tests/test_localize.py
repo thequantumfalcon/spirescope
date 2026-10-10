@@ -6,7 +6,9 @@ is absent — CI has no game, so the archive reader and the failure paths are
 covered with a synthetic .pck built here.
 """
 import json
+import os
 import struct
+from pathlib import Path
 
 import pytest
 
@@ -177,8 +179,28 @@ def test_unknown_language_lists_what_is_available(tmp_path, monkeypatch):
     assert "klingon" in str(exc.value) and "ja" in str(exc.value)
 
 
+def _real_game_dir() -> Path:
+    """The install this machine actually has. conftest points STS2_GAME_DIR at
+    an empty directory for every other test and keeps the original setting in
+    SPIRESCOPE_TEST_REAL_GAME_DIR; with neither set, detect it as the app does."""
+    from sts2.config import _find_game_dir
+
+    explicit = os.environ.get("SPIRESCOPE_TEST_REAL_GAME_DIR")
+    if explicit:
+        return Path(explicit)
+    hidden = os.environ.pop("STS2_GAME_DIR", None)
+    try:
+        return _find_game_dir()
+    finally:
+        if hidden is not None:
+            os.environ["STS2_GAME_DIR"] = hidden
+
+
+_REAL_GAME_DIR = _real_game_dir()
+
+
 @pytest.mark.skipif(
-    not (localize.GAME_INSTALL_DIR / "SlayTheSpire2.pck").exists(),
+    not (_REAL_GAME_DIR / "SlayTheSpire2.pck").exists(),
     reason="Slay the Spire 2 is not installed on this machine")
 def test_localize_against_real_game(tmp_path, monkeypatch):
     """End to end against a real install: the overlay must be loadable, carry
@@ -186,11 +208,11 @@ def test_localize_against_real_game(tmp_path, monkeypatch):
     import re
 
     monkeypatch.setattr(localize, "OUT", tmp_path / "content")
-    langs = localize.available_languages()
+    langs = localize.available_languages(_REAL_GAME_DIR)
     assert langs, "install exposes no translatable languages"
     target = "ja" if "ja" in langs else langs[0]
 
-    written = localize.run(langs=[target])
+    written = localize.run(langs=[target], game_dir=_REAL_GAME_DIR)
     assert [p.name for p in written] == [f"{target}.json"]
 
     data = json.loads(written[0].read_text(encoding="utf-8"))

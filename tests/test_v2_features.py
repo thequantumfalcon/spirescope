@@ -300,8 +300,11 @@ class TestCoaching:
         assert resp.status_code == 200
         assert "CRITICAL" in resp.text or "critical" in resp.text.lower()
 
-    async def test_danger_zone_warning(self, client):
+    async def test_danger_zone_warning(self, client, monkeypatch):
         from sts2.models import CurrentRun
+        # This banner is the HP-threshold fallback. Without the pin, a checkout
+        # that has the private risk scorer replaces it with the scorer's level.
+        monkeypatch.setitem(sys.modules, "sts2.risk", None)
         mock_run = CurrentRun(active=True, character="Ironclad",
                               current_hp=25, max_hp=80, deck=["CARD.BASH"],
                               floors=[RunFloor(floor=1)])
