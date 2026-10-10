@@ -498,6 +498,9 @@
   /* ── "/" keyboard shortcut to focus search ── */
   document.addEventListener('keydown', function(e) {
     if (e.key === '/' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      // The keyboard-shortcuts dialog keeps focus while it is open.
+      var shortcuts = document.getElementById('shortcut-overlay');
+      if (shortcuts && !shortcuts.hidden) return;
       e.preventDefault();
       if (searchInput) searchInput.focus();
     }

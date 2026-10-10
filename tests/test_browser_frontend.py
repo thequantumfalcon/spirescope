@@ -270,6 +270,18 @@ class TestShortcutsDialog:
         assert page.url.endswith("/relics")
         expect(page.locator("#shortcut-overlay")).to_be_visible()
 
+    def test_slash_keeps_focus_in_the_open_dialog_on_the_deck_page(self, page, live_server):
+        """deck.js has its own '/' shortcut; it must not pull focus out from
+        behind the open shortcuts dialog."""
+        page.goto(live_server + "/deck")
+        page.keyboard.press("?")
+        expect(page.locator("#shortcut-overlay")).to_be_visible()
+        page.keyboard.press("/")
+        page.wait_for_timeout(200)
+        assert page.evaluate("document.activeElement.id") != "deck-search"
+        assert page.evaluate(
+            "document.getElementById('shortcut-overlay').contains(document.activeElement)")
+
     def test_letters_do_not_navigate_from_a_section_header(self, page, live_server):
         page.goto(live_server + "/deck")
         page.locator(".deck-section-toggle").first.focus()
