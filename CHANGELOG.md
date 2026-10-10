@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## v3.2.2
+
+Run history shows card upgrades again: 3.2.0 and 3.2.1 read the level the
+game leaves out on unupgraded cards as unknown and dropped the levels of the
+whole deck, which hid upgrades on nearly every real run. Also two strategy
+guide corrections and dependency updates. Beta status is retained.
+
 ### Fixed
 
 - **Run history shows card upgrades again.** The game records an upgrade level
@@ -10,6 +17,21 @@
   On real save files that hid the upgrades of nearly every run, and run pages
   said the levels were not recorded. A missing level now reads as not
   upgraded; a present but malformed one still marks the levels unavailable.
+
+### Content
+
+- Strategy guide: Sow is no longer listed as a Soul Engine key card (it deals
+  damage and has no Soul effect), and Accelerant is described as the key card
+  rather than the key rare, since its rarity differs between the main-game
+  profile (Rare) and the bundled card data (Uncommon).
+
+### Dependencies
+
+- Shipped in the executables: starlette 1.7.0, python-dotenv 1.2.4,
+  markupsafe 3.0.4, uvloop 0.23.0 and idna 3.20.
+- Development and CI: ruff 0.16.10, mypy 2.4.0 with ast-serialize 0.12.1,
+  librt 0.16.0, pygments 2.21.0, playwright 1.63.0 and pytest-playwright
+  0.10.0 with python-slugify 9.1.3.
 
 ### Internal
 
