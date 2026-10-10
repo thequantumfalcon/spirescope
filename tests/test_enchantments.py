@@ -271,9 +271,15 @@ async def test_settings_language_post_round_trip(client, tmp_path, monkeypatch):
     Covers the whole handler: CSRF rejection, unknown-locale rejection, and
     the success path that swaps the translator and rebuilds the KB.
     """
+    import sts2.app as app_module
     from sts2 import i18n
     from sts2.app import generate_csrf_token
     monkeypatch.setattr(i18n, "_settings_path", lambda: tmp_path / "settings.json")
+    # The success path swaps the shared translator and rebuilds the shared
+    # KB; restore both so later tests do not run in Traditional Chinese.
+    monkeypatch.setitem(app_module.templates.env.globals, "t",
+                        app_module.templates.env.globals["t"])
+    monkeypatch.setattr(app_module, "kb", app_module.kb)
 
     resp = await client.post("/settings/language",
                              data={"language": "zht", "csrf_token": "bad"})
@@ -290,6 +296,8 @@ async def test_settings_language_post_round_trip(client, tmp_path, monkeypatch):
         follow_redirects=False)
     assert resp.status_code == 303
     assert "saved=1" in resp.headers["location"]
+    assert json.loads((tmp_path / "settings.json").read_text(
+        encoding="utf-8"))["language"] == "zht"
 
 
 async def test_settings_tells_you_how_to_translate_game_text(client, monkeypatch):

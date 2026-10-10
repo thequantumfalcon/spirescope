@@ -318,11 +318,16 @@ class TestCacheGenerationOnReload:
         assert resp.status_code == 200
         assert app_module._data_generation > before
 
-    async def test_language_change_bumps_the_generation(self, client, monkeypatch):
+    async def test_language_change_bumps_the_generation(self, client, monkeypatch,
+                                                        tmp_path):
         import sts2.app as app_module
         import sts2.config as cfg
-        monkeypatch.setattr(cfg, "STATE_DIR", __import__("pathlib").Path(
-            __import__("tempfile").mkdtemp()))
+        monkeypatch.setattr(cfg, "STATE_DIR", tmp_path)
+        # The route swaps the shared translator and rebuilds the shared KB in
+        # German; restore both so later tests see the English app.
+        monkeypatch.setitem(app_module.templates.env.globals, "t",
+                            app_module.templates.env.globals["t"])
+        monkeypatch.setattr(app_module, "kb", app_module.kb)
         before = app_module._data_generation
         from sts2.app import generate_csrf_token
         # Must differ from the active language, or the route correctly skips
@@ -333,6 +338,8 @@ class TestCacheGenerationOnReload:
                                  follow_redirects=False)
         assert resp.status_code == 303
         assert app_module._data_generation > before
+        assert json.loads((tmp_path / "settings.json").read_text(
+            encoding="utf-8"))["language"] == "de"
 
 
 class TestLiveMemoIsSingleFlight:
