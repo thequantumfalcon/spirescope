@@ -73,10 +73,11 @@ jobs:
   release-notes:
     # A release is immutable once published, so notes missing at tag time
     # can never be added. The publisher used to fall back to a placeholder
-    # body and publish anyway, which is what a tag pushed before `##
-    # Unreleased` was renamed to `## v<version>` produced. This needs nothing,
-    # so it runs alongside the gate and fails in seconds; both builds wait on
-    # it, so a bad tag never reaches a build, let alone the publisher.
+    # body and publish anyway -- which is what a tag pushed before
+    # `## Unreleased` was renamed to `## v<version>` produced. This needs
+    # nothing, so it runs alongside the gate and fails in seconds; both
+    # builds wait on it, so a bad tag never reaches a build, let alone the
+    # publisher.
     # On a dry run there is no tag to look up: the check is skipped and the
     # job succeeds without doing anything.
     runs-on: ubuntu-latest

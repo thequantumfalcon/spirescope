@@ -361,9 +361,9 @@ jobs:
         # prove the HEALTHCHECK baked into the image works, and that is what
         # orchestrators and `docker ps` act on. A probe that cannot reach the
         # app (wrong port, missing interpreter, a URL the auth gate refuses)
-        # would mark a perfectly good container unhealthy and get it
-        # restarted. The first probe fires one --interval (30s) after start,
-        # so allow several intervals.
+        # would mark a perfectly good container unhealthy, and an orchestrator
+        # would then replace it. The first probe fires one --interval (30s)
+        # after start, so allow about four intervals.
         run: |
           status=""
           for i in $(seq 1 60); do
