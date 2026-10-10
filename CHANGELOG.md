@@ -2,6 +2,98 @@
 
 ## Unreleased
 
+## v3.2.1
+
+Fixes from a full review of the repository: live play no longer reloads all
+data on every game-log change, exported run pages keep their styling, error
+pages no longer show internal paths, and stopping the server from the page
+shuts it down cleanly on Windows. Beta status is retained.
+
+### Fixed
+
+- **Live play reloaded all data on every game-log change.** The game-log
+  poller woke the save watcher, which rebuilt the knowledge base and re-read
+  every run file every few seconds during combat. Log changes now wake only
+  the live views; save changes still reload.
+- **Exported run pages lost most of their styling.** The stylesheet was
+  HTML-escaped inside the page's style element, where browsers do not decode
+  entities, so fonts, theme rules and several selectors dropped out.
+- **The data-update error page could show internal error text,** including
+  Windows paths with the user name. Every message shown is now fixed text and
+  the details go to the log. An empty checksum file is rejected by name
+  instead of reporting "list index out of range".
+- **Stopping Spirescope from the page now shuts it down cleanly on Windows.**
+  It used to end the process without running cleanup, which could leave a
+  data-update lock in place for ten minutes. A stop requested while a data
+  update is installing is refused, and the page says why.
+- **Unexpected save shapes no longer break pages.** A malformed current-run
+  or progress save, a null or out-of-range epoch date, or an unreadable
+  last_updated.txt now reads as missing data instead of a server error.
+- **Saves are read once the game has finished writing them,** not at the
+  first write, and a save renamed into place is noticed.
+- **In co-op, the deck analyser loads your own live deck,** not the host's.
+- **The live page and the OBS overlay no longer reload in a loop.** The live
+  page retries with growing delays, says when it is retrying, and stops when
+  the server reports too many open streams. The overlay no longer reloads
+  after every five quiet minutes.
+- **Stat numbers show their colour again.** Low HP, ghost ahead or behind,
+  Prophecy rates and win/loss counts were always painted gold.
+- **Build-id assignments are stored in the state folder,** not in the
+  shipped data folder, which is read-only in Docker and Program Files
+  installs.
+- **User mods left in the shipped data folder now migrate to the folder the
+  mod loader reads,** including beside a packaged executable or wherever
+  STS2_MODS_DIR points.
+- **A non-ASCII auth or admin token no longer makes every request fail.**
+- **sync-up and sync-down report a refused redirect cleanly** instead of a
+  traceback or a misleading message.
+- **`localize` reports an unwritable install folder clearly** instead of a
+  traceback.
+- **Save writes are recognised in macOS and Linux game logs.**
+- Searches run off the event loop. The nav, overlay and API-docs assets are
+  versioned by content, so an update is not hidden by the browser cache. The
+  API docs icon no longer 404s, and the epoch card header lays out as
+  intended.
+
+### Accessibility
+
+- The keyboard-shortcuts dialog has a close button, closes on a backdrop
+  click, returns focus to where it was opened, and keeps letter and slash
+  shortcuts from acting behind it.
+- Run import is keyboard-operable. Collapsible section headings keep their
+  heading semantics with a real button inside. The deck search, saved-deck
+  list and date filters have labels. Rarity dots, heatmap cells and timeline
+  markers carry text, not colour alone.
+- Theme and deck storage survive browsers that block site storage, and the
+  copy-seed button works on plain-HTTP network installs.
+
+### Content and documentation
+
+- Strategy corrections: Divine Right gives 3 Star; Arsenal triggers whenever
+  a card is created; Accelerant's effect replaces a reference to a card that
+  does not exist; two personal run notes became general guidance.
+- Prophecy is described as the observed win rate of comparable past runs,
+  not a prediction.
+- The notices file credits slaythespire.wiki.gg as the source of the shipped
+  bundle's scraped records.
+- README lists every CLI command and states the Beta status. The landing page
+  no longer promises to track every patch. Contributor docs describe the real
+  layout and the repository's git hooks.
+
+### Release engineering
+
+- A release tag without its changelog section now fails before anything is
+  built, instead of publishing placeholder notes.
+- Provenance attestations are minted only for tag pushes, not dry runs. The
+  data release runs its checks without write permission and validates with
+  the shipped validator.
+- Docker images exclude nested bytecode, the base image digest is current,
+  and Dependabot now keeps it current.
+- Local builds and CI tools install from hash-checked locks, and a packaged
+  build can no longer pick up user state from a working tree.
+- The release SBOM declares package licenses, action pins are current with
+  exact version comments, and the attribution guards share one pattern list.
+
 ### Internal
 
 - **A local test run no longer touches the developer's own game or state.**
@@ -13,6 +105,9 @@
   locally. The suite now points the game, saves, state and mods at a
   temporary directory, and the one test that needs a real install finds it
   itself.
+- **Test quality.** About 40 assertions that could never fail now check real
+  values, eleven exact duplicate tests are gone, state no longer leaks
+  between tests, and no test reaches the network.
 
 ## v3.2.0
 
