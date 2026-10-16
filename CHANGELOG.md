@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Fixed
+
+- Live run floor history is filled in again. Live saves identify the player by
+  `net_id` rather than `id`, so since v2.9.5 no floor matched and every floor
+  showed no cards, HP or gold. The live view also lists every card taken on a
+  floor, not just the last, and potions found and used.
+
 ## v3.2.2
 
 Run history shows card upgrades again: 3.2.0 and 3.2.1 read the level the

@@ -214,7 +214,9 @@
   </div>
   <div class="floor-detail">
     {% if floor.encounter %}<strong>{{ kb.id_to_name(floor.encounter) }}</strong>{% endif %}
-    {% if floor.card_picked %}<br><span class="text-green">+ {{ kb.id_to_name(floor.card_picked) }}</span>{% endif %}
+    {% for c in floor.cards_picked %}<br><span class="text-green">+ {{ kb.id_to_name(c) }}</span>{% endfor %}
+    {% for p in floor.potions_gained %}<br><span class="text-accent text-sm">Found {{ kb.id_to_name(p) }}</span>{% endfor %}
+    {% for p in floor.potions_used %}<br><span class="text-yellow">Used {{ kb.id_to_name(p) }}</span>{% endfor %}
   </div>
   <div class="floor-hp-col">
     {% if floor.damage_taken %}<span class="loss">-{{ floor.damage_taken }} HP</span>{% endif %}

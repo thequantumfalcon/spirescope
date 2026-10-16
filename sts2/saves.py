@@ -53,6 +53,14 @@ def _read_json(path: Path) -> dict | None:
     return None
 
 
+def _player_id(player: dict) -> str:
+    """History files key players by id; live saves (current_run.save) by net_id."""
+    pid = player.get("id")
+    if pid is None or pid == "":
+        pid = player.get("net_id", "")
+    return str(pid)
+
+
 def local_player_index(players: list[dict]) -> int:
     """Index of the machine owner in a run's player list.
 
@@ -65,7 +73,7 @@ def local_player_index(players: list[dict]) -> int:
     steam_id = local_steam_id(SAVE_DIR)
     if steam_id:
         for i, player in enumerate(players):
-            if str(player.get("id", "")) == steam_id:
+            if _player_id(player) == steam_id:
                 return i
     return 0
 
@@ -82,7 +90,7 @@ def _get_player(players: list[dict], index: int | None = None) -> dict:
 def _get_player_stats(player_stats: list[dict], player: dict) -> dict:
     """Find matching player stats for a floor. Returns {} when no match — co-op
     runs must not cross-contaminate by returning the wrong player's stats."""
-    player_id = str(player.get("id", ""))
+    player_id = _player_id(player)
     for ps in player_stats:
         if str(ps.get("player_id", "")) == player_id:
             return ps
@@ -253,6 +261,8 @@ def _current_run_from_save(data: dict, player_index: int | None) -> CurrentRun:
                 max_hp=p_stats.get("max_hp", 0),
                 gold=p_stats.get("current_gold", 0),
                 gold_observed="current_gold" in p_stats,
+                potions_used=[p for p in p_stats.get("potion_used", []) if p],
+                potions_gained=[p.get("choice", "") for p in p_stats.get("potion_choices", []) if p.get("was_picked") and p.get("choice")],
                 cards_picked=cards_picked,
                 act=act_idx + 1,
             ))
