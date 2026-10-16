@@ -178,8 +178,9 @@ class RunFloor(BaseModel):
     # None only at construction: old explicit scalar values count as observed.
     gold_observed: bool | None = None
     cards_offered: list[str] = []
-    # Every card taken on this floor, in save order. Shops and some fights
-    # hand out more than one; the single card_picked kept only the last.
+    # Every card added to the deck on this floor, in save order: reward picks
+    # first, then shop purchases and event/Ancient gifts. Several can land on
+    # one floor; the single card_picked kept only the last.
     cards_picked: list[str] = []
     # Legacy convenience for readers that expect one pick: the LAST entry of
     # cards_picked (what the parser always stored here). Kept in sync with
@@ -188,6 +189,10 @@ class RunFloor(BaseModel):
     card_picked: str = ""
     potions_used: list[str] = []
     potions_gained: list[str] = []
+    relics_gained: list[str] = []
+    relics_removed: list[str] = []
+    # Cards upgraded on this floor (Smith, events), one entry per upgrade.
+    cards_upgraded: list[str] = []
     # 1-based act from the save's per-act map_point_history grouping.
     # 0 = unknown (runs parsed or exported before this was recorded); analytics
     # then falls back to estimating the act from the floor number.

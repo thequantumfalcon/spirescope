@@ -762,6 +762,7 @@ input[type="date"].date-input { width: auto; min-width: 140px; color-scheme: dar
 .timeline-marker { position: absolute; width: 6px; height: 6px; border-radius: 50%; }
 .timeline-card { background: var(--green); top: 0; }
 .timeline-hit { background: var(--red); top: 8px; }
+.timeline-relic { background: var(--gold); top: 16px; border-radius: 0; transform: rotate(45deg); }
 
 .heatmap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 3px; margin-bottom: 1.5rem; }
 .heatmap-cell { padding: 0.4rem 0.3rem; border-radius: 4px; text-align: center; opacity: 0.85; transition: opacity 0.15s; text-decoration: none; color: #fff; }

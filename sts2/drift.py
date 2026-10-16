@@ -23,13 +23,12 @@ def compute_archetype_drift(run, kb):
         running_deck = []
         # Add starter-like cards (those without a pick floor)
         for cid in run.deck:
-            found_pick = any(f.card_picked == cid for f in run.floors)
+            found_pick = any(cid in f.cards_picked for f in run.floors)
             if not found_pick:
                 running_deck.append(cid)
 
         for floor in run.floors:
-            if floor.card_picked:
-                running_deck.append(floor.card_picked)
+            running_deck.extend(floor.cards_picked)
 
             if len(running_deck) >= 5:
                 archetype = kb.classify_archetype(running_deck, run.character)
@@ -38,6 +37,9 @@ def compute_archetype_drift(run, kb):
                     "archetype": archetype.get("name", "None"),
                     "confidence": archetype.get("confidence", 0),
                     "card_added": floor.card_picked or "",
+                    "cards_added": list(floor.cards_picked),
+                    "relics_gained": list(floor.relics_gained),
+                    "relics_removed": list(floor.relics_removed),
                     "deck_size": len(running_deck),
                 })
 

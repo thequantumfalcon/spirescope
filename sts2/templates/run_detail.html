@@ -65,17 +65,18 @@
 
 {% if run.floors and run.floors|selectattr('max_hp', 'gt', 0)|list %}
 <h2>Run Timeline</h2>
-<p class="text-sm text-muted mb-sm">HP trajectory across floors — hover for details</p>
+<p class="text-sm text-muted mb-sm">HP trajectory across floors — hover for details. Green dots: cards picked; gold diamonds: relics obtained; red dots: heavy damage.</p>
 <div class="timeline-chart">
 {% for floor in run.floors %}
 {% if floor.max_hp > 0 %}
 {% set hp_pct = (floor.current_hp / floor.max_hp * 100)|int %}
-<div class="timeline-col" title="F{{ floor.floor }}: {{ floor.current_hp }}/{{ floor.max_hp }} HP{% if floor.damage_taken %} (-{{ floor.damage_taken }}){% endif %}{% for c in floor.cards_picked %} +{{ kb.id_to_name(c) }}{% endfor %}">
+<div class="timeline-col" title="F{{ floor.floor }}: {{ floor.current_hp }}/{{ floor.max_hp }} HP{% if floor.damage_taken %} (-{{ floor.damage_taken }}){% endif %}{% for c in floor.cards_picked %} +{{ kb.id_to_name(c) }}{% endfor %}{% for c in floor.cards_upgraded %}, upgraded {{ kb.id_to_name(c) }}{% endfor %}{% for r in floor.relics_gained %}, obtained relic {{ kb.id_to_name(r) }}{% endfor %}{% for r in floor.relics_removed %}, removed relic {{ kb.id_to_name(r) }}{% endfor %}">
   <div class="timeline-bar {% if hp_pct < 30 %}bg-red{% elif hp_pct < 60 %}bg-yellow{% else %}bg-green{% endif %}" style="height:{{ hp_pct }}%"></div>
   {% if floor.cards_picked %}<div class="timeline-marker timeline-card" title="Picked card"></div>{% endif %}
+  {% if floor.relics_gained %}<div class="timeline-marker timeline-relic" title="Relics obtained: {% for r in floor.relics_gained %}{{ kb.id_to_name(r) }}{% if not loop.last %}, {% endif %}{% endfor %}"></div>{% endif %}
   {% if floor.damage_taken > 20 %}<div class="timeline-marker timeline-hit" title="-{{ floor.damage_taken }} HP"></div>{% endif %}
   <span class="timeline-label" aria-hidden="true">{{ floor.floor }}</span>
-  <span class="sr-only">Floor {{ floor.floor }}: {{ floor.current_hp }}/{{ floor.max_hp }} HP{% if floor.damage_taken %}, lost {{ floor.damage_taken }} HP{% endif %}{% for c in floor.cards_picked %}, picked {{ kb.id_to_name(c) }}{% endfor %}</span>
+  <span class="sr-only">Floor {{ floor.floor }}: {{ floor.current_hp }}/{{ floor.max_hp }} HP{% if floor.damage_taken %}, lost {{ floor.damage_taken }} HP{% endif %}{% for c in floor.cards_picked %}, picked {{ kb.id_to_name(c) }}{% endfor %}{% for c in floor.cards_upgraded %}, upgraded {{ kb.id_to_name(c) }}{% endfor %}{% for r in floor.relics_gained %}, obtained relic {{ kb.id_to_name(r) }}{% endfor %}{% for r in floor.relics_removed %}, removed relic {{ kb.id_to_name(r) }}{% endfor %}</span>
 </div>
 {% endif %}
 {% endfor %}
@@ -95,6 +96,9 @@
     {% if floor.monsters %}<span class="text-muted text-sm"> ({% for m in floor.monsters %}{{ kb.id_to_name(m) }}{% if kb.is_companion(m) %} (companion){% endif %}{% if not loop.last %}, {% endif %}{% endfor %})</span>{% endif %}
     {% if floor.turns %}<span class="text-muted"> &mdash; {{ floor.turns }} turns</span>{% endif %}
     {% for c in floor.cards_picked %}<br><span class="text-green">+ {{ kb.id_to_name(c) }}</span>{% endfor %}
+    {% for c in floor.cards_upgraded %}<br><span class="text-accent">Upgraded: {{ kb.id_to_name(c) }}</span>{% endfor %}
+    {% for r in floor.relics_gained %}<br><span class="text-yellow">Relic obtained: {{ kb.id_to_name(r) }}</span>{% endfor %}
+    {% for r in floor.relics_removed %}<br><span class="text-muted">Relic removed: {{ kb.id_to_name(r) }}</span>{% endfor %}
     {% if floor.cards_offered %}{% set skipped = floor.cards_offered|reject('in', floor.cards_picked)|list %}{% if skipped %}<br><span class="text-muted text-sm opacity-60">Offered: {% for s in skipped %}{{ kb.id_to_name(s) }}{% if not loop.last %}, {% endif %}{% endfor %}</span>{% endif %}{% endif %}
     {% if floor.potions_gained %}{% for p in floor.potions_gained %}<br><span class="text-accent text-sm">Found {{ kb.id_to_name(p) }}</span>{% endfor %}{% endif %}
     {% if floor.potions_used %}{% for p in floor.potions_used %}<br><span class="text-yellow">Used {{ kb.id_to_name(p) }}</span>{% endfor %}{% endif %}
@@ -150,9 +154,9 @@
 {% if drift_alert %}
 <div class="card card-caution mb-md"><p><strong>Drift detected:</strong> {{ drift_alert }}</p></div>
 {% endif %}
-<p class="text-sm text-muted">Approximate reconstruction: deck state is inferred floor-by-floor from pick events, so it can't distinguish starter copies from later duplicates and doesn't see removals or transforms. Floor-by-floor archetype classification as the deck grew — drift between early and late dominant archetype is the signal to watch.</p>
+<p class="text-sm text-muted">Approximate reconstruction: deck state is inferred floor-by-floor from pick events, so it can't distinguish starter copies from later duplicates and doesn't see card removals or transforms. Floor-by-floor archetype classification as the deck grew — drift between early and late dominant archetype is the signal to watch. Relic changes are shown for context; classification is based on cards only. Older imports may not include relic acquisition floors.</p>
 <table class="comparison-table">
-  <thead><tr><th>Floor</th><th>Archetype</th><th>Confidence</th><th>Deck Size</th><th>Card Added</th></tr></thead>
+  <thead><tr><th>Floor</th><th>Archetype</th><th>Confidence</th><th>Deck Size</th><th>Cards Added</th><th>Relics Obtained</th><th>Relics Removed</th></tr></thead>
   <tbody>
   {% for t in drift_trajectory %}
     <tr>
@@ -160,7 +164,9 @@
       <td>{{ t.archetype }}</td>
       <td>{{ (t.confidence * 100)|int }}%</td>
       <td>{{ t.deck_size }}</td>
-      <td>{% if t.card_added %}{{ kb.id_to_name(t.card_added) }}{% else %}—{% endif %}</td>
+      <td>{% for c in t.cards_added %}{{ kb.id_to_name(c) }}{% if not loop.last %}, {% endif %}{% else %}—{% endfor %}</td>
+      <td>{% for r in t.relics_gained %}{{ kb.id_to_name(r) }}{% if not loop.last %}, {% endif %}{% else %}—{% endfor %}</td>
+      <td>{% for r in t.relics_removed %}{{ kb.id_to_name(r) }}{% if not loop.last %}, {% endif %}{% else %}—{% endfor %}</td>
     </tr>
   {% endfor %}
   </tbody>

@@ -72,6 +72,9 @@
         {% if floor.encounter %}<strong>{{ kb.id_to_name(floor.encounter) }}</strong>{% endif %}
         {% if floor.turns %}<span class="text-muted"> ({{ floor.turns }} turns)</span>{% endif %}
         {% for c in floor.cards_picked %}<br><span class="text-green">+ {{ kb.id_to_name(c) }}</span>{% endfor %}
+        {% for c in floor.cards_upgraded %}<br><span class="text-accent">Upgraded: {{ kb.id_to_name(c) }}</span>{% endfor %}
+        {% for r in floor.relics_gained %}<br><span class="text-yellow">Relic obtained: {{ kb.id_to_name(r) }}</span>{% endfor %}
+        {% for r in floor.relics_removed %}<br><span class="text-muted">Relic removed: {{ kb.id_to_name(r) }}</span>{% endfor %}
         {% if floor.potions_used %}{% for p in floor.potions_used %}<br><span class="text-yellow">Used {{ kb.id_to_name(p) }}</span>{% endfor %}{% endif %}
       </div>
       <div class="floor-hp-col">

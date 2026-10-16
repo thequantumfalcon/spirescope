@@ -101,7 +101,7 @@ def canonical_run(run: "RunHistory") -> "RunHistory":
     floors = []
     for floor in run.floors:
         changes: dict[str, Any] = {}
-        for field in ("monsters", "cards_offered", "cards_picked", "potions_used", "potions_gained"):
+        for field in ("monsters", "cards_offered", "cards_picked", "cards_upgraded", "potions_used", "potions_gained"):
             original = getattr(floor, field)
             normalized = canonical_ids(original)
             if normalized != original:

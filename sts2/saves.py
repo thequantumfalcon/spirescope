@@ -2,6 +2,7 @@
 import hashlib
 import json
 import logging
+from collections import Counter
 from pathlib import Path
 
 from sts2.card_properties import read_card_properties
@@ -53,6 +54,14 @@ def _read_json(path: Path) -> dict | None:
     return None
 
 
+def _player_id(player: dict) -> str:
+    """History files key players by id; live saves (current_run.save) by net_id."""
+    pid = player.get("id")
+    if pid is None or pid == "":
+        pid = player.get("net_id", "")
+    return str(pid)
+
+
 def local_player_index(players: list[dict]) -> int:
     """Index of the machine owner in a run's player list.
 
@@ -65,7 +74,7 @@ def local_player_index(players: list[dict]) -> int:
     steam_id = local_steam_id(SAVE_DIR)
     if steam_id:
         for i, player in enumerate(players):
-            if str(player.get("id", "")) == steam_id:
+            if _player_id(player) == steam_id:
                 return i
     return 0
 
@@ -82,7 +91,7 @@ def _get_player(players: list[dict], index: int | None = None) -> dict:
 def _get_player_stats(player_stats: list[dict], player: dict) -> dict:
     """Find matching player stats for a floor. Returns {} when no match — co-op
     runs must not cross-contaminate by returning the wrong player's stats."""
-    player_id = str(player.get("id", ""))
+    player_id = _player_id(player)
     for ps in player_stats:
         if str(ps.get("player_id", "")) == player_id:
             return ps
@@ -90,21 +99,48 @@ def _get_player_stats(player_stats: list[dict], player: dict) -> dict:
 
 
 def _picked_card_ids(p_stats: dict) -> list[str]:
-    """Every card taken on a floor, in save order.
+    """Every card added to the deck on a floor: reward picks first, in save order.
 
-    A floor can carry several was_picked choices (a shop lists each card
-    bought; some fights grant two rewards) — keeping only one lost the rest.
+    A floor can carry several was_picked choices (some fights grant two
+    rewards) — keeping only one lost the rest. Cards that never pass through a
+    choice screen (shop purchases incl. colorless, Ancient and event gifts)
+    appear only in cards_gained, which also repeats the picks; those are
+    appended once each so no copy is counted twice.
     """
-    return [
+    picked = [
         cid for cc in p_stats.get("card_choices", [])
         if cc.get("was_picked") and (cid := (cc.get("card") or {}).get("id", ""))
     ]
+    unclaimed = Counter(picked)
+    for card in p_stats.get("cards_gained", []):
+        cid = (card or {}).get("id", "") if isinstance(card, dict) else ""
+        if not cid:
+            continue
+        if unclaimed[cid] > 0:
+            unclaimed[cid] -= 1
+        else:
+            picked.append(cid)
+    return picked
+
+
+def _upgraded_card_ids(p_stats: dict) -> list[str]:
+    return [cid for cid in p_stats.get("upgraded_cards", []) if isinstance(cid, str) and cid]
 
 
 def _upgrade_level(card: dict) -> int | None:
     """Preserve an explicitly observed native level; missing is unavailable."""
     value = card.get("current_upgrade_level", card.get("upgrade_count"))
     return value if type(value) is int and value >= 0 else None
+
+
+def _gained_relic_ids(p_stats: dict) -> list[str]:
+    """Merge rewards and purchases: native shops record both for the same relic."""
+    picked = [
+        rc["choice"] for rc in p_stats.get("relic_choices", [])
+        if rc.get("was_picked") and rc.get("choice")
+    ]
+    bought = [rid for rid in p_stats.get("bought_relics", []) if rid]
+    return list(dict.fromkeys(picked + bought))
 
 
 def _history_upgrade_levels(cards: list[dict]) -> list[int]:
@@ -253,7 +289,12 @@ def _current_run_from_save(data: dict, player_index: int | None) -> CurrentRun:
                 max_hp=p_stats.get("max_hp", 0),
                 gold=p_stats.get("current_gold", 0),
                 gold_observed="current_gold" in p_stats,
+                potions_used=[p for p in p_stats.get("potion_used", []) if p],
+                potions_gained=[p.get("choice", "") for p in p_stats.get("potion_choices", []) if p.get("was_picked") and p.get("choice")],
                 cards_picked=cards_picked,
+                relics_gained=_gained_relic_ids(p_stats),
+                relics_removed=[rid for rid in p_stats.get("relics_removed", []) if rid],
+                cards_upgraded=_upgraded_card_ids(p_stats),
                 act=act_idx + 1,
             ))
 
@@ -519,6 +560,9 @@ def get_run_history() -> list[RunHistory]:
                         gold_observed="current_gold" in p_stats,
                         cards_offered=cards_offered,
                         cards_picked=cards_picked,
+                        relics_gained=_gained_relic_ids(p_stats),
+                        relics_removed=[rid for rid in p_stats.get("relics_removed", []) if rid],
+                        cards_upgraded=_upgraded_card_ids(p_stats),
                         potions_used=[p for p in p_stats.get("potion_used", []) if p],
                         potions_gained=[p.get("choice", "") for p in p_stats.get("potion_choices", []) if p.get("was_picked") and p.get("choice")],
                         act=act_idx + 1,

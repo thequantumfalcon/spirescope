@@ -193,8 +193,11 @@ def compute_analytics(runs: list[RunHistory], card_stats: dict | None = None, kb
                 for offered_id in floor.cards_offered:
                     if offered_id:
                         card_offered[offered_id] += 1
-                for picked_id in floor.cards_picked:
-                    card_picked[picked_id] += 1
+                # Only picks from this floor's offer count: shop and event
+                # gains were never offered, so they'd push rates past 100%.
+                offered_here = Counter(floor.cards_offered)
+                for picked_id, n in (Counter(floor.cards_picked) & offered_here).items():
+                    card_picked[picked_id] += n
 
     card_pick_rates: list[dict[str, Any]] = []
     for card_id, offered in card_offered.most_common():

@@ -4,6 +4,7 @@ import hashlib
 import json
 import logging
 import math
+from collections import Counter
 from pathlib import Path
 
 from sts2.identities import canonical_run
@@ -72,11 +73,13 @@ def compute_aggregate_stats(runs: list[RunHistory]) -> dict:
                     if offered_id:
                         cp = card_pick_rates.setdefault(offered_id, {"picked": 0, "offered": 0})
                         cp["offered"] += 1
-                # Every pick, not just the last: shops and some fights
-                # take several cards on one floor.
-                for picked_id in floor.cards_picked:
+                # Every pick, not just the last: some fights take several
+                # cards on one floor. Only picks from this floor's offer
+                # count; shop and event gains were never offered.
+                offered_here = Counter(floor.cards_offered)
+                for picked_id, n in (Counter(floor.cards_picked) & offered_here).items():
                     cp = card_pick_rates.setdefault(picked_id, {"picked": 0, "offered": 0})
-                    cp["picked"] += 1
+                    cp["picked"] += n
 
     return {
         "run_count": len(runs),

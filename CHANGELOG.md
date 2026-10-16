@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+### Fixed
+
+- Live run floor history is filled in again. Live saves identify the player by
+  `net_id` rather than `id`, so since v2.9.5 no floor matched and every floor
+  showed no cards, HP or gold. The live view also lists every card taken on a
+  floor, not just the last, and potions found and used.
+- Preserve relic acquisition and removal floors in run history, including shop
+  purchases without double-counting their reward entries. Show obtained relics
+  on the run timeline, in floor-by-floor details and HTML exports, and alongside
+  archetype drift. Drift also includes every card picked on a floor, rather than
+  only the last; archetype classification remains card-based.
+- Show cards that never pass through a reward screen in run history: shop
+  purchases (including colorless cards), Ancient and event gifts were in the
+  final deck but missing from the floor-by-floor view, timeline, exports and
+  drift. Card pick rates still count only cards picked from that floor's offer.
+- Show card upgrades (Smith at rest sites, events) on the floor they happened,
+  in the floor-by-floor view, timeline tooltips, and JSON and HTML exports.
+- The live run floor history also shows card upgrades and relics obtained and
+  removed, and includes shop, Ancient and event cards, matching run history.
+
 ## v3.2.2
 
 Run history shows card upgrades again: 3.2.0 and 3.2.1 read the level the
