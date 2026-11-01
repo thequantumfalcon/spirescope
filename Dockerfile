@@ -2,7 +2,7 @@
 # registry-1.docker.io/v2/library/python/manifests/3.12-slim. Dependabot's
 # docker entry proposes a new digest monthly; re-resolve and bump this by hand
 # when a rebuild against a newer 3.12-slim is wanted sooner.
-FROM python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+FROM python:3.12-slim@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159
 
 WORKDIR /app
 
