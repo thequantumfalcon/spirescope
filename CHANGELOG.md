@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Fixed
+
+- **Card pages count every fight in Enemies Faced.** The table counted a floor
+  only when it cost HP, so fights won without taking a hit were left out
+  (too few fights, too high an average damage) and events that cost HP were
+  listed as enemies. It now uses the same fight check as the analytics danger
+  ratings.
+
 ## v3.2.2
 
 Run history shows card upgrades again: 3.2.0 and 3.2.1 read the level the
