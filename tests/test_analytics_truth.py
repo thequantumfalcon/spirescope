@@ -376,3 +376,28 @@ class TestAdvancedAnalyticsValues:
         assert good["health_score"] > bad["health_score"]
         assert good["orphans"] == []
         assert bad["orphans"], "orphan detection found nothing in a deck of unlinked cards"
+
+
+# ---------------------------------------------------------------------------
+# Card detail "Enemies Faced": a fight is a fight whether or not it cost HP,
+# and an event that cost HP is not a fight.
+# ---------------------------------------------------------------------------
+
+async def test_card_enemies_faced_counts_undamaged_fights_and_skips_events(client):
+    run = RunHistory(id="r1", character="Ironclad", win=True, deck=["CARD.BASH"], floors=[
+        RunFloor(floor=1, type="monster", encounter="ENCOUNTER.NIBBITS_WEAK", damage_taken=0),
+        RunFloor(floor=2, type="monster", encounter="ENCOUNTER.NIBBITS_WEAK", damage_taken=10),
+        RunFloor(floor=3, type="event", encounter="EVENT.ZZ_HP_COST_EVENT", damage_taken=7),
+    ])
+    with patch("sts2.app._get_runs", new=AsyncMock(return_value=[run])), \
+         patch("sts2.app._get_progress", new=AsyncMock(return_value=None)):
+        resp = await client.get("/cards/CARD.BASH")
+    assert resp.status_code == 200
+    text = resp.text
+    assert "Enemies Faced" in text
+    # Both Nibbits fights counted: 2 fights, average damage 5 (not 1 fight / 10).
+    row = text[text.index("Enemies Faced"):]
+    row = row[:row.index("</table>")]
+    assert "<td>2</td>" in row
+    assert ">5</td>" in row
+    assert "ZZ_HP_COST_EVENT" not in row and "Zz Hp Cost Event" not in row
