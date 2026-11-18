@@ -601,11 +601,14 @@ async def card_detail(request: Request, card_id: str = Path(max_length=200),
     card_run_wins = sum(1 for r in runs_with_card if r.win)
     card_run_total = len(runs_with_card)
     community_tips = a.kb.get_community_tips(a.kb.english_name(card))
-    # Enemies faced in runs containing this card
+    # Enemies faced in runs containing this card. Gate on _is_combat, not
+    # damage_taken > 0: that dropped fights won without a hit (inflating avg
+    # damage) and listed HP-costing events as enemies.
+    from sts2.analytics import _is_combat
     enemies_faced: dict[str, dict] = {}
     for run in runs_with_card:
         for floor in run.floors:
-            if floor.encounter and floor.damage_taken > 0:
+            if floor.encounter and _is_combat(floor):
                 enc = floor.encounter
                 if enc not in enemies_faced:
                     enemies_faced[enc] = {"fights": 0, "total_damage": 0}
